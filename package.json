@@ -1,5 +1,5 @@
 {
-  "name": "@aragon/aragon-dev-cli",
+  "name": "@aragon/cli",
   "version": "1.0.0",
   "description": "Aragon command-line tools",
   "main": "bin/cli.js",

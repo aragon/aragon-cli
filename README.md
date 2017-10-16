@@ -5,7 +5,7 @@ CLI tool for creating, testing and publishing Aragon modules.
 ## Installation
 
 ```bash
-npm install -g aragon-dev-cli
+npm install -g @aragon/cli
 ```
 
 ## Usage
