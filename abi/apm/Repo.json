@@ -1,0 +1,187 @@
+[
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_semanticVersion",
+        "type": "uint16[3]"
+      }
+    ],
+    "name": "getBySemanticVersion",
+    "outputs": [
+      {
+        "name": "semanticVersion",
+        "type": "uint16[3]"
+      },
+      {
+        "name": "contractAddress",
+        "type": "address"
+      },
+      {
+        "name": "contentURI",
+        "type": "bytes"
+      }
+    ],
+    "payable": false,
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_newSemanticVersion",
+        "type": "uint16[3]"
+      },
+      {
+        "name": "_contractAddress",
+        "type": "address"
+      },
+      {
+        "name": "_contentURI",
+        "type": "bytes"
+      }
+    ],
+    "name": "newVersion",
+    "outputs": [],
+    "payable": false,
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_versionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getByVersionId",
+    "outputs": [
+      {
+        "name": "semanticVersion",
+        "type": "uint16[3]"
+      },
+      {
+        "name": "contractAddress",
+        "type": "address"
+      },
+      {
+        "name": "contentURI",
+        "type": "bytes"
+      }
+    ],
+    "payable": false,
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_contractAddress",
+        "type": "address"
+      }
+    ],
+    "name": "getLatestForContractAddress",
+    "outputs": [
+      {
+        "name": "semanticVersion",
+        "type": "uint16[3]"
+      },
+      {
+        "name": "contractAddress",
+        "type": "address"
+      },
+      {
+        "name": "contentURI",
+        "type": "bytes"
+      }
+    ],
+    "payable": false,
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_oldVersion",
+        "type": "uint16[3]"
+      },
+      {
+        "name": "_newVersion",
+        "type": "uint16[3]"
+      }
+    ],
+    "name": "isValidBump",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getLatest",
+    "outputs": [
+      {
+        "name": "semanticVersion",
+        "type": "uint16[3]"
+      },
+      {
+        "name": "contractAddress",
+        "type": "address"
+      },
+      {
+        "name": "contentURI",
+        "type": "bytes"
+      }
+    ],
+    "payable": false,
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "payable": false,
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "versionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "semanticVersion",
+        "type": "uint16[3]"
+      }
+    ],
+    "name": "NewVersion",
+    "type": "event"
+  }
+]
