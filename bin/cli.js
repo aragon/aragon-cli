@@ -5,19 +5,20 @@ const handle = require('../src/handle')
 const cli = meow(`
   Usage
     $ aragon-dev-cli <subcommand>
-  
+
   Commands
     init <name>                   Initialize a new Aragon module
     version <major|minor|patch>   Bump the module version
     versions                      List the published versions of this module
     publish                       Publish a new version of the module
-    playground                    Inject module into local Aragon application    
-  
+    playground                    Inject module into local Aragon application
+
   Options
-    --key <privkey>               The Ethereum private key to sign transactions with. Raw transaction will be dumped to stdout if no key is provided.  
+    --key <privkey>               The Ethereum private key to sign transactions with. Raw transaction will be dumped to stdout if no key is provided.
     --registry <registry>         The repository registry to use for creating and publishing packages (default: aragonpm.eth)
     --rpc                         A URI to the Ethereum node used for RPC calls (default: https://ropsten.infura.io)
     --chain-id                    The ID of the chain to interact with (default: 3)
+    --ens                         Address for the ENS registry (default: canonical ENS for chainId)
 
   Examples
     $ aragon-dev-cli version major
