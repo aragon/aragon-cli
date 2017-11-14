@@ -7,7 +7,7 @@ const cli = meow(`
     $ aragon-dev-cli <subcommand>
   
   Commands
-    init <name>                   Initialize a new Aragon module
+    init <name> [template]        Initialize a new Aragon module from a template (default template: react)
     version <major|minor|patch>   Bump the module version
     versions                      List the published versions of this module
     publish                       Publish a new version of the module
