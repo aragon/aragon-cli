@@ -26,12 +26,8 @@ const handlers = {
       reporter.fatal('No name specified')
     }
 
-    if (!flags.apm-registry) {
-      reporter.fatal('No registry specified')
-    }
-
     pkg.write({
-      appName: name + '.' + flags.apm-registry,
+      appName: name,
       version: '1.0.0',
       roles: [],
       path: 'src/App.sol'
@@ -44,7 +40,7 @@ const handlers = {
       .then(async ({ appName }) => {
         const eth = new Web3Eth(flags.rpc)
 
-        const ensAddress = flags.ens-registry || ens.chainRegistry(flags.chainId)
+        const ensAddress = flags.ensRegistry || ens.chainRegistry(flags.chainId)
         const repoAddress = await ens.resolve(appName, eth, ensAddress)
         if (repoAddress === consts.NULL_ADDRESS) {
           return []
@@ -201,7 +197,7 @@ const handlers = {
       .then(async ({ appName, version, hash }) => {
         const eth = new Web3Eth(flags.rpc)
 
-        const ensAddress = flags.ens-registry || ens.chainRegistry(flags.chainId)
+        const ensAddress = flags.ensRegistry || ens.chainRegistry(flags.chainId)
         let repoAddress = await ens.resolve(appName, eth, ensAddress)
         if (repoAddress === consts.NULL_ADDRESS) {
           // Create new repo
