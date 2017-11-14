@@ -13,6 +13,7 @@ const namehash = require('eth-ens-namehash')
 const inspector = require('solidity-inspector')
 const config = require('./config')()
 const pkgDir = require('pkg-dir')
+const clone = require('git-clone')
 
 const prettyKey = (key) => {
   let str = decamelize(key, ' ')
@@ -21,7 +22,7 @@ const prettyKey = (key) => {
 }
 
 const handlers = {
-  init ([name], flags) {
+  init ([name, template], flags) {
     if (!name) {
       reporter.fatal('No name specified')
     }
@@ -30,13 +31,22 @@ const handlers = {
       reporter.fatal('No registry specified')
     }
 
-    pkg.write({
-      appName: name + '.' + flags.registry,
-      version: '1.0.0',
-      roles: [],
-      path: 'src/App.sol'
-    }).then(({ appName }) => {
-      reporter.info(`Created new module ${appName}`)
+    if (!template) {
+      template = 'react'
+    }
+
+    // Determine template repository name
+    const aliasedTemplates = {
+      bare: 'aragon/aragon-bare-boilerplate',
+      react: 'aragon/aragon-react-boilerplate'
+    }
+    if (aliasedTemplates[template]) template = aliasedTemplates[template]
+
+    // Clone the template into the directory
+    // TODO: Somehow write name to `manifest.json` in template?
+    const basename = name.split('.')[0]
+    clone(`https://github.com/${template}`, basename, { shallow: true }, () => {
+      reporter.info(`Created new module ${appName} in ${basename}`)
     })
   },
   versions (_, flags) {
