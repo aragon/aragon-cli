@@ -27,10 +27,6 @@ const handlers = {
       reporter.fatal('No name specified')
     }
 
-    if (!flags.registry) {
-      reporter.fatal('No registry specified')
-    }
-
     if (!template) {
       template = 'react'
     }
@@ -46,7 +42,7 @@ const handlers = {
     // TODO: Somehow write name to `manifest.json` in template?
     const basename = name.split('.')[0]
     clone(`https://github.com/${template}`, basename, { shallow: true }, () => {
-      reporter.info(`Created new module ${appName} in ${basename}`)
+      reporter.info(`Created new module ${name} in ${basename}`)
     })
   },
   versions (_, flags) {
@@ -54,7 +50,8 @@ const handlers = {
       .then(async ({ appName }) => {
         const eth = new Web3Eth(flags.rpc)
 
-        const repoAddress = await ens.resolve(appName, eth, flags.chainId)
+        const ensAddress = flags.ensRegistry || ens.chainRegistry(flags.chainId)
+        const repoAddress = await ens.resolve(appName, eth, ensAddress)
         if (repoAddress === consts.NULL_ADDRESS) {
           return []
         }
@@ -210,11 +207,12 @@ const handlers = {
       .then(async ({ appName, version, hash }) => {
         const eth = new Web3Eth(flags.rpc)
 
-        let repoAddress = await ens.resolve(appName, eth, flags.chainId)
+        const ensAddress = flags.ensRegistry || ens.chainRegistry(flags.chainId)
+        let repoAddress = await ens.resolve(appName, eth, ensAddress)
         if (repoAddress === consts.NULL_ADDRESS) {
           // Create new repo
           const registryName = appName.split('.').splice(-2).join('.')
-          const registryAddress = await ens.resolve(registryName, eth, flags.chainId)
+          const registryAddress = await ens.resolve(registryName, eth, ensAddress)
           if (registryAddress === consts.NULL_ADDRESS) {
             reporter.error(`Registry ${registryName} does not exist.`)
             return
