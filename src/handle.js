@@ -41,6 +41,7 @@ const handlers = {
 
     // Clone the template into the directory
     // TODO: Somehow write name to `manifest.json` in template?
+    // TODO: Write human-readable app name to `module.json`
     const basename = name.split('.')[0]
     reporter.info(`Cloning ${template} into ${basename}...`)
     clone(`https://github.com/${template}`, basename, { shallow: true }, () => {
