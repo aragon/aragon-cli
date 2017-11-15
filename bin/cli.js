@@ -7,7 +7,7 @@ const cli = meow(`
     $ aragon-dev-cli <subcommand>
 
   Commands
-    init <name>                   Initialize a new Aragon application (e.g. test.aragonpm.eth)
+    init <name> [template]        Initialize a new Aragon module from a template (default template: react). The name must be a valid ENS name.
     version <major|minor|patch>   Bump the application version
     versions                      List the published versions of this application
     publish                       Publish a new version of the application
