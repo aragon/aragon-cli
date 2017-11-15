@@ -37,10 +37,12 @@ const handlers = {
       react: 'aragon/aragon-react-boilerplate'
     }
     if (aliasedTemplates[template]) template = aliasedTemplates[template]
+    
 
     // Clone the template into the directory
     // TODO: Somehow write name to `manifest.json` in template?
     const basename = name.split('.')[0]
+    reporter.info(`Cloning ${template} into ${basename}...`)
     clone(`https://github.com/${template}`, basename, { shallow: true }, () => {
       reporter.info(`Created new module ${name} in ${basename}`)
     })
