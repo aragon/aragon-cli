@@ -1,6 +1,6 @@
 # Aragon CLI
 
-CLI tool for creating, testing and publishing Aragon modules.
+CLI tool for creating, testing and publishing Aragon applications.
 
 ## Installation
 
@@ -11,7 +11,7 @@ npm install -g @aragon/cli
 ## Usage
 
 ```
-➜ aragon-example-module aragon-dev-cli --help
+➜ aragon-example-application aragon-dev-cli --help
 
   Aragon command-line tools
 
@@ -19,11 +19,11 @@ npm install -g @aragon/cli
     $ aragon-dev-cli <subcommand>
 
   Commands
-    init <name>                   Initialize a new Aragon module
-    version <major|minor|patch>   Bump the module version
-    versions                      List the published versions of this module
-    publish                       Publish a new version of the module
-    playground                    Inject module into local Aragon application
+    init <name>                   Initialize a new Aragon application
+    version <major|minor|patch>   Bump the application version
+    versions                      List the published versions of this application
+    publish                       Publish a new version of the application
+    playground                    Inject application into local Aragon application
 
   Options
     --key <privkey>               The Ethereum private key to sign transactions with. Raw transaction will be dumped to stdout if no key is provided.
@@ -35,16 +35,16 @@ npm install -g @aragon/cli
     $ aragon-dev-cli version major
     New version is 2.0.0
 
-    $ aragon-dev-cli init poll --registry=module-corp.eth
-    Created new module poll.module-corp.eth
+    $ aragon-dev-cli init poll --registry=application-corp.eth
+    Created new application poll.application-corp.eth
 
     $ aragon-dev-cli init cool-app
-    Created new module cool-app.aragonpm.eth
+    Created new application cool-app.aragonpm.eth
 ```
 
 ## Recipes
 
-### Creating and publishing a module
+### Creating and publishing an application
 
 ```bash
 mkdir polls-app

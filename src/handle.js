@@ -32,7 +32,7 @@ const handlers = {
       roles: [],
       path: 'src/App.sol'
     }).then(({ appName }) => {
-      reporter.info(`Created new module ${appName}`)
+      reporter.info(`Created new application ${appName}`)
     })
   },
   versions (_, flags) {
@@ -185,7 +185,7 @@ const handlers = {
               )).pop().hash
 
               // Next!
-              reporter.info(`Published module to IPFS: ${hash}`)
+              reporter.info(`Published application to IPFS: ${hash}`)
               resolve(hash)
             })
         })
@@ -208,7 +208,7 @@ const handlers = {
             return
           }
 
-          reporter.info('This is the first time you are publishing this module')
+          reporter.info('This is the first time you are publishing this application')
           const registry = new eth.Contract(
             require('../abi/apm/RepoRegistry.json'),
             registryAddress
@@ -241,7 +241,7 @@ const handlers = {
               .then((tx) => {
                 return eth.sendSignedTransaction(tx.rawTransaction)
                   .then(({ transactionHash }) => {
-                    reporter.info(`Created module ${appName}@${version} in transaction ${transactionHash}`)
+                    reporter.info(`Created application ${appName}@${version} in transaction ${transactionHash}`)
                   }, (err) => {
                     reporter.error(err)
                   })
