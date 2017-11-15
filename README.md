@@ -13,32 +13,27 @@ npm install -g @aragon/cli
 ```
 ➜ aragon-example-application aragon-dev-cli --help
 
-  Aragon command-line tools
-
   Usage
     $ aragon-dev-cli <subcommand>
 
   Commands
-    init <name>                   Initialize a new Aragon application
+    init <name>                   Initialize a new Aragon application (e.g. test.aragonpm.eth)
     version <major|minor|patch>   Bump the application version
     versions                      List the published versions of this application
     publish                       Publish a new version of the application
-    playground                    Inject application into local Aragon application
+    playground                    Inject application into local Aragon client
 
   Options
     --key <privkey>               The Ethereum private key to sign transactions with. Raw transaction will be dumped to stdout if no key is provided.
-    --registry <registry>         The repository registry to use for creating and publishing packages (default: aragonpm.eth)
     --rpc                         A URI to the Ethereum node used for RPC calls (default: https://ropsten.infura.io)
     --chain-id                    The ID of the chain to interact with (default: 3)
+    --ens-registry                Address for the ENS registry (default: canonical ENS for chainId)
 
   Examples
     $ aragon-dev-cli version major
     New version is 2.0.0
 
-    $ aragon-dev-cli init poll --registry=application-corp.eth
-    Created new application poll.application-corp.eth
-
-    $ aragon-dev-cli init cool-app
+    $ aragon-dev-cli init cool-app.aragonpm.eth
     Created new application cool-app.aragonpm.eth
 ```
 

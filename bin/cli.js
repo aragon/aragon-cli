@@ -11,7 +11,7 @@ const cli = meow(`
     version <major|minor|patch>   Bump the application version
     versions                      List the published versions of this application
     publish                       Publish a new version of the application
-    playground                    Inject application into local Aragon instance
+    playground                    Inject application into local Aragon client
 
   Options
     --key <privkey>               The Ethereum private key to sign transactions with. Raw transaction will be dumped to stdout if no key is provided.
