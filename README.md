@@ -42,9 +42,8 @@ npm install -g @aragon/cli
 ### Creating and publishing an application
 
 ```bash
-mkdir polls-app
-cd polls-app
-aragon-dev-cli init polls
+aragon-dev-cli init polls.aragonpm.test
+cd polls
 aragon-dev-cli publish
 ```
 
@@ -53,4 +52,9 @@ aragon-dev-cli publish
 ```bash
 aragon-dev-cli version minor
 aragon-dev-cli publish
+```
+
+### Scaffolding from a custom template
+```
+aragon-dev-cli init polls.aragonpm.test username/gh-repo
 ```
