@@ -1,6 +1,6 @@
 # Aragon CLI
 
-CLI tool for creating, testing and publishing Aragon modules.
+CLI tool for creating, testing and publishing Aragon applications.
 
 ## Installation
 
@@ -11,40 +11,35 @@ npm install -g @aragon/cli
 ## Usage
 
 ```
-➜ aragon-example-module aragon-dev-cli --help
-
-  Aragon command-line tools
+➜ aragon-example-application aragon-dev-cli --help
 
   Usage
     $ aragon-dev-cli <subcommand>
 
   Commands
-    init <name>                   Initialize a new Aragon module
-    version <major|minor|patch>   Bump the module version
-    versions                      List the published versions of this module
-    publish                       Publish a new version of the module
-    playground                    Inject module into local Aragon application
+    init <name>                   Initialize a new Aragon application (e.g. test.aragonpm.eth)
+    version <major|minor|patch>   Bump the application version
+    versions                      List the published versions of this application
+    publish                       Publish a new version of the application
+    playground                    Inject application into local Aragon client
 
   Options
     --key <privkey>               The Ethereum private key to sign transactions with. Raw transaction will be dumped to stdout if no key is provided.
-    --registry <registry>         The repository registry to use for creating and publishing packages (default: aragonpm.eth)
     --rpc                         A URI to the Ethereum node used for RPC calls (default: https://ropsten.infura.io)
     --chain-id                    The ID of the chain to interact with (default: 3)
+    --ens-registry                Address for the ENS registry (default: canonical ENS for chainId)
 
   Examples
     $ aragon-dev-cli version major
     New version is 2.0.0
 
-    $ aragon-dev-cli init poll --registry=module-corp.eth
-    Created new module poll.module-corp.eth
-
-    $ aragon-dev-cli init cool-app
-    Created new module cool-app.aragonpm.eth
+    $ aragon-dev-cli init cool-app.aragonpm.eth
+    Created new application cool-app.aragonpm.eth
 ```
 
 ## Recipes
 
-### Creating and publishing a module
+### Creating and publishing an application
 
 ```bash
 mkdir polls-app

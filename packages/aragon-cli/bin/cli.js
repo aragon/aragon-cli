@@ -8,10 +8,10 @@ const cli = meow(`
 
   Commands
     init <name> [template]        Initialize a new Aragon module from a template (default template: react). The name must be a valid ENS name.
-    version <major|minor|patch>   Bump the module version
-    versions                      List the published versions of this module
-    publish                       Publish a new version of the module
-    playground                    Inject module into local Aragon application
+    version <major|minor|patch>   Bump the application version
+    versions                      List the published versions of this application
+    publish                       Publish a new version of the application
+    playground                    Inject application into local Aragon client
 
   Options
     --key <privkey>               The Ethereum private key to sign transactions with. Raw transaction will be dumped to stdout if no key is provided.
@@ -24,7 +24,7 @@ const cli = meow(`
     New version is 2.0.0
 
     $ aragon-dev-cli init cool-app.aragonpm.eth
-    Created new module cool-app.aragonpm.eth
+    Created new application cool-app.aragonpm.eth
 `, {
   default: {
     rpc: 'https://ropsten.infura.io',
