@@ -18,7 +18,7 @@ exports.builder = (yargs) => {
     .positional('template', {
       description: 'The template to scaffold from',
       default: 'react',
-      coerce: (tmpl) => {
+      coerce: function resolveTemplateName (tmpl) {
         const aliases = {
           bare: 'aragon/aragon-bare-boilerplate',
           react: 'aragon/aragon-react-boilerplate'
@@ -34,9 +34,9 @@ exports.builder = (yargs) => {
         return `https://github.com/${tmpl}`
       }
     })
-    .check(({ name }) => {
-      const isValidPackageName = name.split('.').length >= 2
-      if (!isValidPackageName) {
+    .check(function validateApplicationName ({ name }) {
+      const isValidAppName = name.split('.').length >= 2
+      if (!isValidAppName) {
         throw new MessageError(`${name} is not a valid application name`, 'ERR_INVALID_APP_NAME')
       }
 

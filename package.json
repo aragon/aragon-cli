@@ -2,9 +2,9 @@
   "name": "@aragon/cli",
   "version": "1.2.1",
   "description": "Aragon command-line tools",
-  "main": "bin/cli.js",
+  "main": "src/cli.js",
   "bin": {
-    "aragon-dev-cli": "./bin/cli.js"
+    "aragon-dev-cli": "./src/cli.js"
   },
   "scripts": {
     "test": "ava"
