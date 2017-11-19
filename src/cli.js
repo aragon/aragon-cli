@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 const ConsoleReporter = require('./reporters/ConsoleReporter')
+const findUp = require('find-up')
+
+const findProjectRoot = () =>
+  findUp.sync('manifest.json')
 
 require('yargs')
   .commandDir('./commands', {
@@ -24,7 +28,7 @@ require('yargs')
       // Add `cwd`
       const __handler = cmd.handler
       cmd.handler = (argv) => {
-        argv.cwd = cmd.shouldRunInCwd ? 'cwd' : 'root'
+        argv.cwd = cmd.shouldRunInCwd ? process.cwd() : 'root'
 
         return __handler(argv)
       }

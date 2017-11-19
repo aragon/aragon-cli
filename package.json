@@ -32,6 +32,7 @@
     "chalk": "^2.1.0",
     "decamelize": "^1.2.0",
     "eth-ens-namehash": "^2.0.0",
+    "find-up": "^2.1.0",
     "git-clone": "^0.1.0",
     "ipfs-api": "^14.3.5",
     "npm-run": "^4.1.2",
