@@ -21,6 +21,14 @@ require('yargs')
       cmd.handler = (argv) =>
         _handler(new ConsoleReporter(), argv)
 
+      // Add `cwd`
+      const __handler = cmd.handler
+      cmd.handler = (argv) => {
+        argv.cwd = cmd.shouldRunInCwd ? 'cwd' : 'root'
+
+        return __handler(argv)
+      }
+
       return cmd
     }
   })
