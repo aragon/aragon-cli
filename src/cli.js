@@ -5,7 +5,8 @@ const findUp = require('find-up')
 const findProjectRoot = () =>
   findUp.sync('manifest.json')
 
-require('yargs')
+// Set up commands
+const cmd = require('yargs')
   .commandDir('./commands', {
     visit: (cmd) => {
       // Add examples
@@ -28,7 +29,7 @@ require('yargs')
       // Add `cwd`
       const __handler = cmd.handler
       cmd.handler = (argv) => {
-        argv.cwd = cmd.shouldRunInCwd ? process.cwd() : 'root'
+        argv.cwd = cmd.shouldRunInCwd ? process.cwd() : findProjectRoot()
 
         return __handler(argv)
       }
@@ -36,10 +37,18 @@ require('yargs')
       return cmd
     }
   })
-  .demandCommand()
-  .showHelpOnFail(false, 'Specify --help for available options')
-  .option('silent', {
-    default: false
-  })
-  .epilogue('For more information, check out https://wiki.aragon.one')
-  .argv
+
+// Configure CLI behaviour
+cmd.demandCommand()
+cmd.showHelpOnFail(false, 'Specify --help for available options')
+
+// Set global options
+cmd.option('silent', {
+  default: false
+})
+
+// Add epilogue
+cmd.epilogue('For more information, check out https://wiki.aragon.one')
+
+// Run
+cmd.argv // eslint-disable-line
