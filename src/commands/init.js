@@ -1,6 +1,8 @@
 const { MessageError } = require('../errors')
 const clone = require('git-clone')
 
+exports.shouldRunInCwd = true
+
 exports.command = 'init <name> [template]'
 
 exports.describe = 'Initialise a new application'
