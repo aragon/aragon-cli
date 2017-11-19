@@ -13,7 +13,6 @@ const namehash = require('eth-ens-namehash')
 const inspector = require('solidity-inspector')
 const config = require('./config')()
 const pkgDir = require('pkg-dir')
-const clone = require('git-clone')
 
 const prettyKey = (key) => {
   let str = decamelize(key, ' ')
@@ -22,32 +21,6 @@ const prettyKey = (key) => {
 }
 
 const handlers = {
-  init ([name, template], flags) {
-    if (!name) {
-      reporter.fatal('No name specified')
-    }
-
-    if (!template) {
-      template = 'react'
-    }
-
-    // Determine template repository name
-    const aliasedTemplates = {
-      bare: 'aragon/aragon-bare-boilerplate',
-      react: 'aragon/aragon-react-boilerplate'
-    }
-    if (aliasedTemplates[template]) template = aliasedTemplates[template]
-    
-
-    // Clone the template into the directory
-    // TODO: Somehow write name to `manifest.json` in template?
-    // TODO: Write human-readable app name to `module.json`
-    const basename = name.split('.')[0]
-    reporter.info(`Cloning ${template} into ${basename}...`)
-    clone(`https://github.com/${template}`, basename, { shallow: true }, () => {
-      reporter.info(`Created new application ${name} in ${basename}`)
-    })
-  },
   versions (_, flags) {
     pkg.read()
       .then(async ({ appName }) => {

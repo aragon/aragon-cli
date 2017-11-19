@@ -1,0 +1,55 @@
+const { MessageError } = require('../errors')
+const clone = require('git-clone')
+
+exports.command = 'init <name> [template]'
+
+exports.describe = 'Initialise a new application'
+
+exports.examples = [
+  ['$0 init poll.aragonpm.eth', `Create a new app called "poll.aragonpm.eth" in the directory "poll"`]
+]
+
+exports.builder = (yargs) => {
+  return yargs.positional('name', {
+    description: 'The application name'
+  })
+    .positional('template', {
+      description: 'The template to scaffold from',
+      default: 'react',
+      coerce: (tmpl) => {
+        const aliases = {
+          bare: 'aragon/aragon-bare-boilerplate',
+          react: 'aragon/aragon-react-boilerplate'
+        }
+
+        if (!tmpl.includes('/')) {
+          if (!aliases[tmpl]) {
+            throw new MessageError(`No template named ${tmpl} exists`)
+          }
+          tmpl = aliases[tmpl]
+        }
+
+        return `https://github.com/${tmpl}`
+      }
+    })
+    .check(({ name }) => {
+      const isValidPackageName = name.split('.').length >= 2
+      if (!isValidPackageName) {
+        throw new MessageError(`${name} is not a valid application name`, 'ERR_INVALID_APP_NAME')
+      }
+
+      return true
+    })
+}
+
+exports.handler = function (reporter, { name, template }) {
+  // Clone the template into the directory
+  // TODO: Somehow write name to `manifest.json` in template?
+  // TODO: Write human-readable app name to `module.json`
+  const basename = name.split('.')[0]
+  reporter.info(`Cloning ${template} into ${basename}...`)
+
+  clone(template, basename, { shallow: true }, () => {
+    reporter.success(`Created new application ${name} in ${basename}`)
+  })
+}
