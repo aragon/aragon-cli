@@ -1,5 +1,6 @@
 const { MessageError } = require('../errors')
-const clone = require('git-clone')
+const { promisify } = require('util')
+const clone = promisify(require('git-clone'))
 
 exports.shouldRunInCwd = true
 
@@ -44,14 +45,15 @@ exports.builder = (yargs) => {
     })
 }
 
-exports.handler = function (reporter, { name, template }) {
+exports.handler = async function (reporter, { name, template }) {
   // Clone the template into the directory
   // TODO: Somehow write name to `manifest.json` in template?
   // TODO: Write human-readable app name to `module.json`
   const basename = name.split('.')[0]
   reporter.info(`Cloning ${template} into ${basename}...`)
 
-  clone(template, basename, { shallow: true }, () => {
-    reporter.success(`Created new application ${name} in ${basename}`)
-  })
+  return clone(template, basename, { shallow: true })
+    .then(() => {
+      reporter.success(`Created new application ${name} in ${basename}`)
+    })
 }
