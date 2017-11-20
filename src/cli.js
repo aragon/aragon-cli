@@ -32,6 +32,9 @@ const cmd = require('yargs')
 
         // Handle errors
         _handler(reporter, argv)
+          .then((exitCode = 0) => {
+            process.exitCode = exitCode
+          })
           .catch((err) => {
             reporter.error(err.message)
           })
