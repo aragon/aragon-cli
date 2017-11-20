@@ -21,17 +21,20 @@ const cmd = require('yargs')
         }
       }
 
-      // Add reporter
+      // Wrap command handler
       const _handler = cmd.handler
-      cmd.handler = (argv) =>
-        _handler(new ConsoleReporter(), argv)
-
-      // Add `cwd`
-      const __handler = cmd.handler
       cmd.handler = (argv) => {
+        // Set `cwd`
         argv.cwd = cmd.shouldRunInCwd ? process.cwd() : findProjectRoot()
 
-        return __handler(argv)
+        // Add reporter
+        const reporter = new ConsoleReporter()
+
+        // Handle errors
+        _handler(reporter, argv)
+          .catch((err) => {
+            reporter.error(err.message)
+          })
       }
 
       return cmd
@@ -40,7 +43,6 @@ const cmd = require('yargs')
 
 // Configure CLI behaviour
 cmd.demandCommand()
-cmd.showHelpOnFail(false, 'Specify --help for available options')
 
 // Set global options
 cmd.option('silent', {
