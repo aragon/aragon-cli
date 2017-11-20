@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const ConsoleReporter = require('./reporters/ConsoleReporter')
+const Web3 = require('web3')
 const findUp = require('find-up')
 
 const findProjectRoot = () =>
@@ -51,6 +52,12 @@ cmd.demandCommand()
 // Set global options
 cmd.option('silent', {
   default: false
+})
+cmd.option('eth-rpc', {
+  default: 'http://localhost:8545',
+  coerce: (rpc) => {
+    return new Web3(rpc)
+  }
 })
 
 // Add epilogue
