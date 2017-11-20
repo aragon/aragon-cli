@@ -1,6 +1,5 @@
 const reporter = require('./reporter')
 const fs = require('fs')
-const semver = require('semver')
 const pkg = require('./pkg')
 const lifecycle = require('./lifecycle')
 const ipfsAPI = require('ipfs-api')
@@ -59,22 +58,6 @@ const handlers = {
         versions.forEach((version) => {
           reporter.info(`${version.semanticVersion.join('.')}: ${version.contractAddress} / ${Buffer.from(version.contentURI.substring(2), 'hex').toString('ascii')}`)
         })
-      })
-  },
-  version ([bumpType]) {
-    if (!bumpType) {
-      reporter.fatal(`No bump type provided`)
-    }
-
-    pkg.read()
-      .then((metadata) => {
-        metadata.version = semver.inc(metadata.version, bumpType)
-
-        return metadata
-      })
-      .then(pkg.write)
-      .then(({ version }) => {
-        reporter.info(`New version: ${version}`)
       })
   },
   publish (_, flags) {
