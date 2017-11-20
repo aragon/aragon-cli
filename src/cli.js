@@ -37,6 +37,7 @@ const cmd = require('yargs')
           })
           .catch((err) => {
             reporter.error(err.message)
+            process.exitCode = 1
           })
       }
 
