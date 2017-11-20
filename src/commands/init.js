@@ -45,7 +45,7 @@ exports.builder = (yargs) => {
     })
 }
 
-exports.handler = async function (reporter, { name, template }) {
+exports.handler = function (reporter, { name, template }) {
   // Clone the template into the directory
   // TODO: Somehow write name to `manifest.json` in template?
   // TODO: Write human-readable app name to `module.json`
