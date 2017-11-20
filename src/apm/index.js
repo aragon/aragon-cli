@@ -44,9 +44,9 @@ const getApplicationInfo = (contentURI) => {
     )
 }
 
-module.exports = (web3) => ({
+module.exports = (web3, ensRegistryAddress = null) => ({
   getRepository (appId) {
-    return ens.resolve(appId, web3)
+    return ens.resolve(appId, web3, ensRegistryAddress)
       .then(
         (address) => new web3.eth.Contract(
           require('../../abi/apm/Repo.json'),

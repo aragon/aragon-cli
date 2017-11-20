@@ -51,9 +51,14 @@ cmd.demandCommand()
 
 // Set global options
 cmd.option('silent', {
+  description: 'Silence output to terminal',
   default: false
 })
+cmd.option('ens-registry', {
+  description: 'Address of the ENS registry'
+})
 cmd.option('eth-rpc', {
+  description: 'An URI to the Ethereum node used for RPC calls',
   default: 'http://localhost:8545',
   coerce: (rpc) => {
     return new Web3(rpc)
