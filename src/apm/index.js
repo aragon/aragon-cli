@@ -63,6 +63,15 @@ module.exports = (web3) => ({
         getApplicationInfo(web3.utils.hexToAscii(contentURI))
       )
   },
+  getVersionById (appId, versionId) {
+    return this.getRepository(appId)
+      .then((repository) =>
+        repository.methods.getByVersionId(versionId).call()
+      )
+      .then(({ contentURI }) =>
+        getApplicationInfo(web3.utils.hexToAscii(contentURI))
+      )
+  },
   getLatestVersion (appId) {
     return this.getRepository(appId)
       .then((repository) =>
@@ -80,5 +89,15 @@ module.exports = (web3) => ({
       .then(({ contentURI }) =>
         getApplicationInfo(web3.utils.hexToAscii(contentURI))
       )
+  },
+  getAllVersions (appId) {
+    return this.getRepository(appId)
+      .then((repository) =>
+        repository.getPastEvents('NewVersion', { fromBlock: 0 })
+      )
+      .then((events) => Promise.all(
+          events.map((event) =>
+            this.getVersionById(appId, event.returnValues.versionId).call())
+      ))
   }
 })

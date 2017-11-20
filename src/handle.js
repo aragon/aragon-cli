@@ -20,46 +20,6 @@ const prettyKey = (key) => {
 }
 
 const handlers = {
-  versions (_, flags) {
-    pkg.read()
-      .then(async ({ appName }) => {
-        const eth = new Web3Eth(flags.rpc)
-
-        const ensAddress = flags.ensRegistry || ens.chainRegistry(flags.chainId)
-        const repoAddress = await ens.resolve(appName, eth, ensAddress)
-        if (repoAddress === consts.NULL_ADDRESS) {
-          return []
-        }
-
-        const repo = new eth.Contract(
-          require('../abi/apm/Repo.json'),
-          repoAddress
-        )
-
-        return repo.getPastEvents('NewVersion', {
-          fromBlock: 0
-        }).then((events) => {
-          return [repo, events]
-        })
-      })
-      .then(([repo, events]) => {
-        if (events.length === 0) {
-          reporter.info('This package has no versions.')
-          return
-        }
-
-        return Promise.all(
-          events.map((event) =>
-            repo.methods.getByVersionId(event.returnValues.versionId).call()
-          )
-        )
-      })
-      .then((versions) => {
-        versions.forEach((version) => {
-          reporter.info(`${version.semanticVersion.join('.')}: ${version.contractAddress} / ${Buffer.from(version.contentURI.substring(2), 'hex').toString('ascii')}`)
-        })
-      })
-  },
   publish (_, flags) {
     lifecycle.run('prepublish')
       .then(() => {
