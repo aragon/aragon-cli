@@ -2,7 +2,8 @@ const ipfs = require('./storage/ipfs')
 const ens = require('../ens')
 
 const providers = {
-  ipfs
+  ipfs,
+  fs
 }
 
 const readFileFromApplication = (contentURI, path) => {
