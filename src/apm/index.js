@@ -7,24 +7,18 @@ const providers = {
   fs
 }
 
-const readFileFromApplication = (contentURI, path) => {
-  return new Promise((resolve, reject) => {
-    const [contentProvider, contentLocation] = contentURI.split(':')
+const readFileFromApplication = async (contentURI, path) => {
+  const [contentProvider, contentLocation] = contentURI.split(':')
 
-    if (!contentProvider || !contentLocation) {
-      reject(new Error(`Invalid content URI (expected format was "<provider>:<identifier>")`))
-      return
-    }
+  if (!contentProvider || !contentLocation) {
+    throw new Error(`Invalid content URI (expected format was "<provider>:<identifier>")`)
+  }
 
-    if (!providers[contentProvider]) {
-      reject(new Error(`The storage provider "${contentProvider}" is not supported`))
-      return
-    }
+  if (!providers[contentProvider]) {
+    throw new Error(`The storage provider "${contentProvider}" is not supported`)
+  }
 
-    resolve(
-      providers[contentProvider].getFile(contentLocation, path)
-    )
-  })
+  return providers[contentProvider].getFile(contentLocation, path)
 }
 
 const getApplicationInfo = (contentURI) => {
