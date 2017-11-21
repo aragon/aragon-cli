@@ -20,7 +20,7 @@ const readFileFromApplication = (contentURI, path) => {
     }
 
     resolve(
-      providers[contentProvider](contentLocation, path)
+      providers[contentProvider].getFile(contentLocation, path)
     )
   })
 }

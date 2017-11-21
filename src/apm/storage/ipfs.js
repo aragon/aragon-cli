@@ -2,15 +2,28 @@ const ipfsAPI = require('ipfs-api')
 const streamToString = require('stream-to-string')
 
 const ipfs = ipfsAPI()
-module.exports = (hash, path) => {
-  return new Promise((resolve, reject) => {
-    ipfs.files.cat(`${hash}/${path}`, (err, file) => {
-      if (err) {
-        reject(err)
-        return
-      }
+module.exports = {
+  /**
+   * Gets the file at `path` from the content URI `hash`.
+   *
+   * @param {string} hash The content URI hash
+   * @param {string} path The path to the file
+   * @return {Promise} A promise that resolves to the contents of the file
+   */
+  getFile (hash, path) {
+    return ipfs.files.cat(`${hash}/${path}`)
+      .then((file) => streamToString(file))
+  },
+  /**
+   * Uploads all files from `path` and returns the content URI for those files.
+   *
+   * @param {string} path The path that contains files to upload
+   * @return {Promise} A promise that resolves to the content URI of the files
+   */
+  async uploadFiles (path) {
+    const hashes = await ipfs.util.addFromFs(path, { recursive: true })
+    const { hash } = hashes.pop()
 
-      resolve(streamToString(file))
-    })
-  })
+    return `ipfs:${hash}`
+  }
 }
