@@ -1,4 +1,5 @@
 const ipfs = require('./storage/ipfs')
+const fs = require('./storage/fs')
 const ens = require('../ens')
 
 const providers = {
