@@ -7,7 +7,8 @@
     "aragon-dev-cli": "./src/cli.js"
   },
   "scripts": {
-    "test": "ava"
+    "test": "ava",
+    "lint": "standard src"
   },
   "repository": {
     "type": "git",
