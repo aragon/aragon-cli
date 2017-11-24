@@ -31,21 +31,17 @@
   "homepage": "https://github.com/aragon/aragon-dev-cli#readme",
   "dependencies": {
     "chalk": "^2.1.0",
-    "decamelize": "^1.2.0",
     "eth-ens-namehash": "^2.0.0",
     "ethereum-ens": "^0.7.1",
     "find-up": "^2.1.0",
     "fs-extra": "^4.0.2",
     "git-clone": "^0.1.0",
     "ipfs-api": "^14.3.7",
-    "npm-run": "^4.1.2",
-    "pkg-dir": "^2.0.0",
     "semver": "^5.4.1",
     "solidity-inspector": "^0.2.3",
     "stream-to-string": "^1.1.0",
     "tmp-promise": "^1.0.4",
     "web3": "^1.0.0-beta.18",
-    "web3-eth": "^1.0.0-beta.23",
     "yargs": "^10.0.3"
   },
   "devDependencies": {
