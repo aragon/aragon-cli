@@ -51,6 +51,23 @@ function returnVersion (web3) {
 
 module.exports = (web3, ensRegistryAddress = null) => ({
   /**
+   * Get the APM repository registry contract for `appId`.
+   *
+   * @param {string} appId
+   * @return {Promise} A promise that resolves to the Web3 contract
+   */
+  getRepoRegistry (appId) {
+    const repoId = appId.split('.').slice(1).join('.')
+
+    return ens.resolve(repoId, web3, ensRegistryAddress)
+      .then(
+        (address) => new web3.eth.Contract(
+          require('../../abi/apm/RepoRegistry.json'),
+          address
+        )
+      )
+  },
+  /**
    * Get the APM repository contract for `appId`.
    *
    * @param {string} appId
