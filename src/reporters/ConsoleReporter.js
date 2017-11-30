@@ -13,7 +13,7 @@ module.exports = class ConsoleReporter {
   }
 
   debug (message) {
-    this.message('debug', message)
+    if (process.env.DEBUG) this.message('debug', message)
   }
 
   info (message) {
