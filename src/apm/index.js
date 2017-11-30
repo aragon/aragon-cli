@@ -7,7 +7,7 @@ const providers = {
   fs
 }
 
-const readFileFromApplication = async (contentURI, path) => {
+const readFileFromApplication = (contentURI, path) => {
   const [contentProvider, contentLocation] = contentURI.split(':')
 
   if (!contentProvider || !contentLocation) {
@@ -40,7 +40,22 @@ const getApplicationInfo = (contentURI) => {
     )
 }
 
+function returnVersion (web3) {
+  return (version) =>
+    getApplicationInfo(web3.utils.hexToAscii(version.contentURI))
+      .then((info) =>
+        Object.assign(info, {
+          contractAddress: version.contractAddress
+        }))
+}
+
 module.exports = (web3, ensRegistryAddress = null) => ({
+  /**
+   * Get the APM repository contract for `appId`.
+   *
+   * @param {string} appId
+   * @return {Promise} A promise that resolves to the Web3 contract
+   */
   getRepository (appId) {
     return ens.resolve(appId, web3, ensRegistryAddress)
       .then(
@@ -55,36 +70,28 @@ module.exports = (web3, ensRegistryAddress = null) => ({
       .then((repository) =>
         repository.methods.getBySemanticVersion(version).call()
       )
-      .then(({ contentURI }) =>
-        getApplicationInfo(web3.utils.hexToAscii(contentURI))
-      )
+      .then(returnVersion(web3))
   },
   getVersionById (appId, versionId) {
     return this.getRepository(appId)
       .then((repository) =>
         repository.methods.getByVersionId(versionId).call()
       )
-      .then(({ contentURI }) =>
-        getApplicationInfo(web3.utils.hexToAscii(contentURI))
-      )
+      .then(returnVersion(web3))
   },
   getLatestVersion (appId) {
     return this.getRepository(appId)
       .then((repository) =>
         repository.methods.getLatest().call()
       )
-      .then(({ contentURI }) =>
-        getApplicationInfo(web3.utils.hexToAscii(contentURI))
-      )
+      .then(returnVersion(web3))
   },
   getLatestVersionForContract (appId, address) {
     return this.getRepository(appId)
       .then((repository) =>
         repository.methods.getLatestForContractAddress(address).call()
       )
-      .then(({ contentURI }) =>
-        getApplicationInfo(web3.utils.hexToAscii(contentURI))
-      )
+      .then(returnVersion(web3))
   },
   getAllVersions (appId) {
     return this.getRepository(appId)
