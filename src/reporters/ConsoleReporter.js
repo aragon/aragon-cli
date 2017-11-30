@@ -3,7 +3,7 @@ const chalk = require('chalk')
 module.exports = class ConsoleReporter {
   message (category = 'info', message) {
     const colors = {
-      debug: 'purple',
+      debug: 'magenta',
       info: 'blue',
       warning: 'yellow',
       error: 'red',
