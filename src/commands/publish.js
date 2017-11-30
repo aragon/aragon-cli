@@ -1,4 +1,5 @@
 const fs = require('fs')
+const fsExtra = require('fs-extra')
 const tmp = require('tmp-promise')
 const path = require('path')
 const { promisify } = require('util')
@@ -9,6 +10,7 @@ const semver = require('semver')
 const EthereumTx = require('ethereumjs-tx')
 const namehash = require('eth-ens-namehash')
 const multimatch = require('multimatch')
+const inspector = require('solidity-inspector')
 
 exports.command = 'publish [contract]'
 
@@ -34,20 +36,73 @@ exports.builder = function (yargs) {
   })
 }
 
-function generateApplicationArtifact (outputPath, module) {
+async function generateApplicationArtifact (web3, outputPath, module, contract) {
   let artifact = module
+  const contractPath = module.path
+  const contractInterfacePath = path.resolve(
+    outputPath, 'build/contracts', path.basename(
+      contractPath, '.sol'
+    ) + '.json'
+  )
 
   // Set `appId`
   artifact.appId = namehash.hash(module.appName)
   delete module.appName
 
-  // TODO Set ABI
-  artifact.abi = []
+  // Set ABI
+  // TODO This relies heavily on the Truffle way of doing things, we should make it more flexible
+  artifact.abi = await fsExtra.readJson(contractInterfacePath).abi
 
-  // TODO Analyse contract
-  // TODO Add role bytes
-  // TODO Add functions object
-  // TODO Save artifact
+  // Analyse contract functions
+  const functions = inspector.parseFile(contractPath).toJSON().functions
+  const externalFunctions = Object.keys(functions)
+    .map(key => functions[key])
+    .filter(fn => fn.accessModifier !== 'internal' &&
+      fn.accessModifier !== 'private')
+
+  // Add functions to artifact
+  artifact.functions = externalFunctions.map((fn) => {
+    // Get role
+    const authModifier = fn.modifiers.filter(m => m.name === 'auth')[0]
+    const roleNeeded = authModifier ? authModifier.params[0] : null
+
+    // Get parameters
+    let params = Object.values(fn.params)
+    params.forEach((param) => delete param.typeHint)
+
+    return {
+      name: fn.name,
+      notice: fn.notice,
+      params,
+      roleNeeded
+    }
+  })
+
+  // Add role bytes
+  function getRoleBytesCall (contract, roleId) {
+    return web3.eth.call({
+      to: contract,
+      data: web3.eth.abi.encodeFunctionCall({
+        name: roleId,
+        type: 'function'
+      })
+    })
+      .then((data) =>
+        web3.eth.abi.decodeParameter('bytes32', data))
+  }
+
+  artifact.roles = await Promise.all(
+    artifact.roles.map(
+      (role) => getRoleBytesCall(contract, role.id)
+        .then((bytes) => Object.assign(role, { bytes }))
+    )
+  )
+
+  // Save artifact
+  await fs.writeJson(
+    path.resolve(outputPath, 'artifact.json'),
+    artifact
+  )
 
   return artifact
 }
@@ -131,7 +186,7 @@ exports.handler = async function (reporter, {
 
   // Generate the artifact
   reporter.info('Generating application artifact...')
-  const artifact = await generateApplicationArtifact(pathToPublish, module)
+  const artifact = await generateApplicationArtifact(ethRpc, pathToPublish, module, contract)
   reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
 
   // Save artifact
