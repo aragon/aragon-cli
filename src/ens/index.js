@@ -10,7 +10,11 @@ module.exports = {
    * @return {string}
    */
   resolve (name, web3, registryAddress = null) {
-    const ens = new ENS(web3, registryAddress)
+    // Monkey patch for Web3 1.0 -> Web3 0.x
+    let provider = web3.currentProvider
+    provider.sendAsync = provider.send
+
+    const ens = new ENS(provider, registryAddress)
 
     return ens.resolver(name).addr()
   }
