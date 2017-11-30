@@ -2,6 +2,8 @@
 const ConsoleReporter = require('./reporters/ConsoleReporter')
 const Web3 = require('web3')
 const findUp = require('find-up')
+const path = require('path')
+const fs = require('fs-extra')
 
 const findProjectRoot = () =>
   findUp.sync('manifest.json')
@@ -30,6 +32,30 @@ const cmd = require('yargs')
 
         // Add reporter
         const reporter = new ConsoleReporter()
+
+        // Resolve `manifest.json`
+        let manifest = {}
+        if (!cmd.shouldRunInCwd) {
+          try {
+            const manifestPath = path.resolve(findProjectRoot(), 'manifest.json')
+            manifest = fs.readJsonSync(manifestPath)
+          } catch (err) {
+            reporter.debug(err)
+          }
+        }
+        argv.manifest = manifest
+
+        // Resolve `module.json`
+        let module = {}
+        if (!cmd.shouldRunInCwd) {
+          try {
+            const modulePath = path.resolve(findProjectRoot(), 'module.json')
+            module = fs.readJsonSync(modulePath)
+          } catch (err) {
+            reporter.debug(err)
+          }
+        }
+        argv.module = module
 
         // Handle errors
         _handler(reporter, argv)
