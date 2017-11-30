@@ -6,7 +6,7 @@ const path = require('path')
 const fs = require('fs-extra')
 
 const findProjectRoot = () =>
-  findUp.sync('manifest.json')
+  path.dirname(findUp.sync('manifest.json'))
 
 // Set up commands
 const cmd = require('yargs')
