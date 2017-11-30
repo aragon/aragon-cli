@@ -1,6 +1,7 @@
 const ipfs = require('./storage/ipfs')
 const fs = require('./storage/fs')
 const ens = require('../ens')
+const semver = require('semver')
 
 const providers = {
   ipfs,
@@ -119,5 +120,70 @@ module.exports = (web3, ensRegistryAddress = null) => ({
           events.map((event) =>
             this.getVersionById(appId, event.returnValues.versionId).call())
       ))
+  },
+  /**
+   * Publishes a new version (`version`) of `appId` using storage provider `provider`.
+   *
+   * If the destination repository does not exist, it falls back to creating a new
+   * repository with an initial version.
+   *
+   * Returns the raw transaction to sign.
+   *
+   * @param {string} appId The ENS name for the application repository.
+   * @param {string} version A valid semantic version for this version.
+   * @param {string} provider The name of an APM storage provider.
+   * @param {string} directory The directory that contains files to publish.
+   * @param {string} contract The new contract address for this version.
+   * @return {Promise} A promise that resolves to a raw transaction
+   */
+  async publishVersion (appId, version, provider, directory, contract) {
+    if (!semver.valid(version)) {
+      throw new Error(`${version} is not a valid semantic version`)
+    }
+
+    if (!providers[provider]) {
+      throw new Error(`The storage provider "${provider}" is not supported`)
+    }
+
+    // Upload files to storage provider
+    const contentURI = Buffer.from(
+      await providers[provider].uploadFiles(directory)
+    ).toString('hex')
+
+    // Resolve application repository
+    const repo = await this.getRepository(appId)
+      .catch(() => null)
+
+    // Default call creates a new repository and publishes the initial version
+    const repoRegistry = await this.getRepoRegistry(appId)
+      .catch(() => {
+        throw new Error(`Repository ${appId} does not exist and it's registry does not exist`)
+      })
+
+    let transactionDestination = repoRegistry.options.address
+    let call = repoRegistry.methods.newRepoWithVersion(
+      appId.split('.')[0],
+      version.split('.').map((part) => parseInt(part)),
+      contract,
+      `0x${contentURI}`
+    )
+
+    // If the repository already exists, the call publishes a new version
+    if (repo !== null) {
+      transactionDestination = repo.options.address
+      call = repo.methods.newVersion(
+        version.split('.').map((part) => parseInt(part)),
+        contract,
+        `0x${contentURI}`
+      )
+    }
+
+    // Return transaction to sign
+    return {
+      to: transactionDestination,
+      data: call.encodeABI(),
+      gas: await call.estimateGas(),
+      gasPrice: await web3.eth.getGasPrice()
+    }
   }
 })
