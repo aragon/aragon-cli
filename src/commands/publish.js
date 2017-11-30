@@ -7,6 +7,8 @@ const { MessageError } = require('../errors')
 const apm = require('../apm')
 const semver = require('semver')
 const EthereumTx = require('ethereumjs-tx')
+const namehash = require('eth-ens-namehash')
+const multimatch = require('multimatch')
 
 exports.command = 'publish [contract]'
 
@@ -21,32 +23,55 @@ exports.builder = function (yargs) {
     description: 'The APM storage provider to publish files to',
     default: 'ipfs',
     choices: ['ipfs', 'fs']
+  }).option('files', {
+    description: 'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
+    default: ['./app'],
+    array: true
+  }).option('ignore', {
+    description: 'A glob-like pattern of files to ignore. Specify multiple times to add multiple patterns.',
+    array: true,
+    default: ['node_modules/', '.git/']
   })
 }
 
 function generateApplicationArtifact (outputPath, module) {
-  // dep: manifest.json
-  // dep: module.json
-  // dep: contract address
-  // dep: web3
-  //
-  // behavior:
-  // - will try to find nearest manifest.json from `cwd` by going up (i.e. `..`)
-  // - will bundle files specified in `cfg.files` with manifest files and publish that bundled directory
-  // - `cfg.files` defaults to `cwd`
-  return {}
+  let artifact = module
+
+  // Set `appId`
+  artifact.appId = namehash.hash(module.appName)
+  delete module.appName
+
+  // TODO Set ABI
+  artifact.abi = []
+
+  // TODO Analyse contract
+  // TODO Add role bytes
+  // TODO Add functions object
+  // TODO Save artifact
+
+  return artifact
 }
 
 /**
  * Moves the specified files to a temporary directory and returns the path to
  * the temporary directory.
  *
+ * @param {Array<string>} files An array of file paths to include
+ * @param {string} ignorePatterns An array of glob-like pattern of files to ignore
  * @return {string} The path to the temporary directory
  */
-async function prepareFilesForPublishing (files = []) {
-  // TODO: Ignore some files
+async function prepareFilesForPublishing (files = [], ignorePatterns = null) {
   // Create temporary directory
   const { path: tmpDir } = await tmp.dir()
+
+  // Ignored files filter
+  function filterIgnoredFiles (src, dest) {
+    if (ignorePatterns === null) {
+      return true
+    }
+
+    return !multimatch(src, ignorePatterns, { matchBase: true })
+  }
 
   // Copy files
   await Promise.all(
@@ -58,14 +83,28 @@ async function prepareFilesForPublishing (files = []) {
         destination = path.resolve(tmpDir, file)
       }
 
-      return copy(file, destination)
+      return copy(file, destination, {
+        filter: filterIgnoredFiles
+      })
     })
   )
 
   return tmpDir
 }
 
-exports.handler = async function (reporter, { cwd, ethRpc, module, contract, provider, key }) {
+exports.handler = async function (reporter, {
+  // Globals
+  cwd,
+  ethRpc,
+  module,
+
+  // Arguments
+  contract,
+  provider,
+  key,
+  files,
+  ignore
+}) {
   if (!Object.keys(module).length) {
     throw new MessageError('This directory is not an Aragon project',
       'ERR_NOT_A_PROJECT')
@@ -87,7 +126,7 @@ exports.handler = async function (reporter, { cwd, ethRpc, module, contract, pro
 
   // Prepare files for publishing
   reporter.info('Preparing files for publishing...')
-  const pathToPublish = await prepareFilesForPublishing(['./app'])
+  const pathToPublish = await prepareFilesForPublishing(files, ignore)
   reporter.debug(`Files copied to temporary directory: ${pathToPublish}`)
 
   // Generate the artifact
@@ -104,11 +143,12 @@ exports.handler = async function (reporter, { cwd, ethRpc, module, contract, pro
   const transaction = await apm(ethRpc)
     .publishVersion(module.appName, module.version, provider, pathToPublish, contract)
 
-  // TODO: Sign or output transaction
   if (!key) {
+    // Output transaction for signing if no key is provided
     reporter.info('Sign and broadcast this transaction')
     reporter.success(JSON.stringify(transaction))
   } else {
+    // Sign and broadcast transaction
     reporter.debug('Signing transaction with passed private key...')
     const tx = new EthereumTx(transaction)
     tx.sign(key)

@@ -39,6 +39,7 @@
     "ganache-core": "^2.0.2",
     "git-clone": "^0.1.0",
     "ipfs-api": "^14.3.7",
+    "multimatch": "^2.1.0",
     "rimraf": "^2.6.2",
     "semver": "^5.4.1",
     "solidity-inspector": "^0.2.3",
