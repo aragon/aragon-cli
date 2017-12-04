@@ -1,9 +1,8 @@
 const fs = require('fs')
-const fsExtra = require('fs-extra')
 const tmp = require('tmp-promise')
 const path = require('path')
 const { promisify } = require('util')
-const { copy } = require('fs-extra')
+const { copy, readJson } = require('fs-extra')
 const { MessageError } = require('../errors')
 const apm = require('../apm')
 const semver = require('semver')
@@ -51,7 +50,7 @@ async function generateApplicationArtifact (web3, outputPath, module, contract) 
 
   // Set ABI
   // TODO This relies heavily on the Truffle way of doing things, we should make it more flexible
-  artifact.abi = await fsExtra.readJson(contractInterfacePath).abi
+  artifact.abi = await readJson(contractInterfacePath).abi
 
   // Analyse contract functions
   const functions = inspector.parseFile(contractPath).toJSON().functions
