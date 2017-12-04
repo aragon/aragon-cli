@@ -204,11 +204,10 @@ exports.handler = async function (reporter, {
   } else {
     // Sign and broadcast transaction
     reporter.debug('Signing transaction with passed private key...')
-    const tx = new EthereumTx(transaction)
-    tx.sign(key)
 
+    const tx = await ethRpc.eth.accounts.signTransaction(transaction, key)
     const receipt = await ethRpc.eth.sendSignedTransaction(
-      tx.serialize()
+      tx
     )
     reporter.success(`Sent transaction ${receipt.transactionHash}`)
   }
