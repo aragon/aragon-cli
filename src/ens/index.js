@@ -7,7 +7,7 @@ module.exports = {
    * @param  {string} name
    * @param  {object} web3
    * @param  {string} [registryAddress=null]
-   * @return {string}
+   * @return {Promise<string>} The resolved address
    */
   resolve (name, web3, registryAddress = null) {
     // Monkey patch for Web3 1.0 -> Web3 0.x
