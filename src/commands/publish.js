@@ -36,8 +36,8 @@ exports.builder = function (yargs) {
 }
 
 async function generateApplicationArtifact (web3, outputPath, module, contract) {
-  let artifact = module
-  const contractPath = module.path
+  let artifact = Object.assign({}, module)
+  const contractPath = artifact.path
   const contractInterfacePath = path.resolve(
     outputPath, 'build/contracts', path.basename(
       contractPath, '.sol'
@@ -45,8 +45,8 @@ async function generateApplicationArtifact (web3, outputPath, module, contract) 
   )
 
   // Set `appId`
-  artifact.appId = namehash.hash(module.appName)
-  delete module.appName
+  artifact.appId = namehash.hash(artifact.appName)
+  delete artifact.appName
 
   // Set ABI
   // TODO This relies heavily on the Truffle way of doing things, we should make it more flexible
