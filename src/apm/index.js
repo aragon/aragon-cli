@@ -178,12 +178,19 @@ module.exports = (web3, ensRegistryAddress = null) => ({
       )
     }
 
-    // Return transaction to sign
-    return {
-      to: transactionDestination,
-      data: call.encodeABI(),
-      gas: await call.estimateGas(),
-      gasPrice: await web3.eth.getGasPrice()
+    try {
+      // Test that the call would actually succeed
+      call.call()
+
+      // Return transaction to sign
+      return {
+        to: transactionDestination,
+        data: call.encodeABI(),
+        gas: await call.estimateGas(),
+        gasPrice: await web3.eth.getGasPrice()
+      }
+    } catch (err) {
+      throw new Error(`Transaction would not succeed ("${err.message}")`)
     }
   }
 })
