@@ -59,30 +59,35 @@ npm install -g @aragon/cli
 ## Usage
 
 ```
-➜ aragon-example-application aragon-dev-cli --help
+➜ aragon-example-application aragon-dev-cli help
+aragon-dev-cli <command>
 
-  Usage
-    $ aragon-dev-cli <subcommand>
+Commands:
+  aragon-dev-cli bootstrap               Set up a development chain and deploy
+                                         an Aragon organisation
+  aragon-dev-cli init <name> [template]  Initialise a new application
+  aragon-dev-cli playground              Set up a dev chain, deploy an Aragon
+                                         organisation and install your app
+  aragon-dev-cli publish [contract]      Publish a new version of the
+                                         application
+  aragon-dev-cli version <bump>          Bump the application version
+  aragon-dev-cli versions                List all versions of the package
 
-  Commands
-    init <name>                   Initialize a new Aragon application (e.g. test.aragonpm.eth)
-    version <major|minor|patch>   Bump the application version
-    versions                      List the published versions of this application
-    publish                       Publish a new version of the application
-    playground                    Inject application into local Aragon client
+APM:
+  --apm.ens-registry  Address of the ENS registry
+  --eth-rpc           An URI to the Ethereum node used for RPC calls
+                                              [default: "http://localhost:8545"]
 
-  Options
-    --key <privkey>               The Ethereum private key to sign transactions with. Raw transaction will be dumped to stdout if no key is provided.
-    --rpc                         A URI to the Ethereum node used for RPC calls (default: https://ropsten.infura.io)
-    --chain-id                    The ID of the chain to interact with (default: 3)
-    --ens-registry                Address for the ENS registry (default: canonical ENS for chainId)
+APM providers:
+  --apm.ipfs.rpc  An URI to the IPFS node used to publish files
+                   [default: {"host":"localhost","protocol":"http","port":5001}]
 
-  Examples
-    $ aragon-dev-cli version major
-    New version is 2.0.0
+Options:
+  --help     Show help                                                 [boolean]
+  --version  Show version number                                       [boolean]
+  --silent   Silence output to terminal                         [default: false]
 
-    $ aragon-dev-cli init cool-app.aragonpm.eth
-    Created new application cool-app.aragonpm.eth
+For more information, check out https://wiki.aragon.one
 ```
 
 ## Recipes
