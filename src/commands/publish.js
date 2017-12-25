@@ -50,7 +50,12 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, contr
 
   // Set ABI
   // TODO This relies heavily on the Truffle way of doing things, we should make it more flexible
-  artifact.abi = await readJson(contractInterfacePath).abi
+  try {
+    const contractInterface = await readJson(contractInterfacePath)
+    artifact.abi = contractInterface.abi
+  } catch (err) {
+    throw new Error(`Could not read contract interface (at ${contractInterfacePath}). Did you remember to compile your contracts?`)
+  }
 
   // Analyse contract functions
   const functions = inspector.parseFile(contractPath).toJSON().functions
