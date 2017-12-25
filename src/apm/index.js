@@ -114,11 +114,11 @@ module.exports = (web3, ensRegistryAddress = null) => ({
   getAllVersions (appId) {
     return this.getRepository(appId)
       .then((repository) =>
-        repository.getPastEvents('NewVersion', { fromBlock: 0 })
+        repository.methods.getVersionsCount().call()
       )
-      .then((events) => Promise.all(
-          events.map((event) =>
-            this.getVersionById(appId, event.returnValues.versionId).call())
+      .then((versionCount) => Promise.all(
+        Array(versionCount).fill().map((_, versionId) =>
+          this.getVersionById(appId, versionId))
       ))
   },
   /**
