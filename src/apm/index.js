@@ -180,7 +180,7 @@ module.exports = (web3, ensRegistryAddress = null) => ({
 
     try {
       // Test that the call would actually succeed
-      call.call()
+      await call.call()
 
       // Return transaction to sign
       return {
