@@ -103,6 +103,7 @@ aragon-dev-cli publish
 ```
 
 ### Scaffolding from a custom template
-```
+
+```bash
 aragon-dev-cli init polls.aragonpm.test username/gh-repo
 ```
