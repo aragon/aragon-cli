@@ -2,7 +2,7 @@ const fs = require('fs')
 const tmp = require('tmp-promise')
 const path = require('path')
 const { promisify } = require('util')
-const { copy, readJson } = require('fs-extra')
+const { copy, readJson, writeJson } = require('fs-extra')
 const { MessageError } = require('../errors')
 const apm = require('../apm')
 const semver = require('semver')
@@ -35,11 +35,11 @@ exports.builder = function (yargs) {
   })
 }
 
-async function generateApplicationArtifact (web3, outputPath, module, contract) {
+async function generateApplicationArtifact (web3, cwd, outputPath, module, contract) {
   let artifact = Object.assign({}, module)
   const contractPath = artifact.path
   const contractInterfacePath = path.resolve(
-    outputPath, 'build/contracts', path.basename(
+    cwd, 'build/contracts', path.basename(
       contractPath, '.sol'
     ) + '.json'
   )
@@ -98,7 +98,7 @@ async function generateApplicationArtifact (web3, outputPath, module, contract) 
   )
 
   // Save artifact
-  await fs.writeJson(
+  await writeJson(
     path.resolve(outputPath, 'artifact.json'),
     artifact
   )
@@ -124,7 +124,7 @@ async function prepareFilesForPublishing (files = [], ignorePatterns = null) {
       return true
     }
 
-    return !multimatch(src, ignorePatterns, { matchBase: true })
+    return multimatch(src, ignorePatterns, { matchBase: true }).length === 0
   }
 
   // Copy files
@@ -151,6 +151,7 @@ exports.handler = async function (reporter, {
   cwd,
   ethRpc,
   module,
+  apm: apmOptions,
 
   // Arguments
   contract,
@@ -173,7 +174,7 @@ exports.handler = async function (reporter, {
   // Default to last published contract address if no address was passed
   if (!contract && module.version !== '1.0.0') {
     reporter.debug('No contract address provided, defaulting to previous one...')
-    const { contractAddress } = await apm(ethRpc)
+    const { contractAddress } = await apm(ethRpc, apmOptions)
       .getLatestVersion(module.appName)
     contract = contractAddress
   }
@@ -185,7 +186,7 @@ exports.handler = async function (reporter, {
 
   // Generate the artifact
   reporter.info('Generating application artifact...')
-  const artifact = await generateApplicationArtifact(ethRpc, pathToPublish, module, contract)
+  const artifact = await generateApplicationArtifact(ethRpc, cwd, pathToPublish, module, contract)
   reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
 
   // Save artifact
@@ -194,7 +195,7 @@ exports.handler = async function (reporter, {
   reporter.info(`Publishing version ${module.version}...`)
   reporter.debug(`Publishing "${pathToPublish}" with ${provider}`)
   reporter.debug(`Contract address: ${contract}`)
-  const transaction = await apm(ethRpc)
+  const transaction = await apm(ethRpc, apmOptions)
     .publishVersion(module.appName, module.version, provider, pathToPublish, contract)
 
   if (!key) {

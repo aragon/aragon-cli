@@ -64,7 +64,7 @@ module.exports = (web3, opts = {
     getRepoRegistry (appId) {
       const repoId = appId.split('.').slice(1).join('.')
 
-      return ens.resolve(repoId, web3, ensRegistryAddress)
+      return ens.resolve(repoId, web3, opts.ensRegistryAddress)
         .then(
           (address) => new web3.eth.Contract(
             require('../../abi/apm/RepoRegistry.json'),
@@ -79,7 +79,7 @@ module.exports = (web3, opts = {
      * @return {Promise} A promise that resolves to the Web3 contract
      */
     getRepository (appId) {
-      return ens.resolve(appId, web3, ensRegistryAddress)
+      return ens.resolve(appId, web3, opts.ensRegistryAddress)
         .then(
           (address) => new web3.eth.Contract(
             require('../../abi/apm/Repo.json'),

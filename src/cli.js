@@ -82,7 +82,7 @@ cmd.option('silent', {
   default: false
 })
 
-cmd.option('ens-registry', {
+cmd.option('apm.ens-registry', {
   description: 'Address of the ENS registry'
 })
 cmd.option('eth-rpc', {
@@ -92,11 +92,15 @@ cmd.option('eth-rpc', {
     return new Web3(rpc)
   }
 })
-cmd.group(['ens-registry', 'eth-rpc'], 'APM:')
+cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
 
 cmd.option('apm.ipfs.rpc', {
   description: 'An URI to the IPFS node used to publish files',
-  default: 'http://localhost:5001'
+  default: {
+    host: 'localhost',
+    protocol: 'http',
+    port: 5001
+  }
 })
 cmd.group('apm.ipfs.rpc', 'APM providers:')
 // Add epilogue

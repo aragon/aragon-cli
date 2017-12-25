@@ -1,9 +1,7 @@
 const ipfsAPI = require('ipfs-api')
 const streamToString = require('stream-to-string')
 
-module.exports = (opts = {
-  rpc: 'http://localhost:5001'
-}) => {
+module.exports = (opts = {}) => {
   const ipfs = ipfsAPI(opts.rpc)
 
   return {
