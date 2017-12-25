@@ -1,4 +1,52 @@
-# Aragon CLI
+<h1 align="center">Aragon CLI</h1>
+
+<div align="center">
+  <!-- NPM version -->
+  <a href="https://npmjs.org/package/@aragon/cli">
+    <img src="https://img.shields.io/npm/v/@aragon/cli.svg?style=flat-square"
+      alt="NPM version" />
+  </a>
+  <!-- Build Status -->
+  <a href="https://travis-ci.org/aragon/aragon-dev-cli">
+    <img src="https://img.shields.io/travis/aragon/aragon-dev-cli/master.svg?style=flat-square"
+      alt="Build Status" />
+  </a>
+  <!-- Test Coverage -->
+  <a href="https://coveralls.io/github/aragon/aragon-dev-cli">
+    <img src="https://img.shields.io/coveralls/aragon/aragon-dev-cli.svg?style=flat-square"
+      alt="Test Coverage" />
+  </a>
+  <!-- Downloads -->
+  <a href="https://npmjs.org/package/@aragon/cli">
+    <img src="https://img.shields.io/npm/dm/@aragon/cli.svg?style=flat-square"
+      alt="Downloads" />
+  </a>
+  <!-- Standard -->
+  <a href="https://standardjs.com">
+    <img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square"
+      alt="Standard" />
+  </a>
+</div>
+
+<div align="center">
+  <h4>
+    <a href="https://aragon.one">
+      Website
+    </a>
+    <span> | </span>
+    <a href="https://github.com/aragon/aragon-dev-cli/tree/master/docs">
+      Documentation
+    </a>
+    <span> | </span>
+    <a href="https://github.com/aragon/aragon-dev-cli/blob/master/.github/CONTRIBUTING.md">
+      Contributing
+    </a>
+    <span> | </span>
+    <a href="https://aragon.chat">
+      Chat
+    </a>
+  </h4>
+</div>
 
 CLI tool for creating, testing and publishing Aragon applications.
 
@@ -55,6 +103,7 @@ aragon-dev-cli publish
 ```
 
 ### Scaffolding from a custom template
-```
+
+```bash
 aragon-dev-cli init polls.aragonpm.test username/gh-repo
 ```
