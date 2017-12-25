@@ -31,7 +31,9 @@ const cmd = require('yargs')
         argv.cwd = cmd.shouldRunInCwd ? process.cwd() : findProjectRoot()
 
         // Add reporter
-        const reporter = new ConsoleReporter()
+        const reporter = new ConsoleReporter({
+          silent: argv.silent
+        })
 
         // Resolve `manifest.json`
         let manifest = {}

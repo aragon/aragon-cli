@@ -1,7 +1,13 @@
 const chalk = require('chalk')
 
 module.exports = class ConsoleReporter {
+  constructor (opts = { silent: false }) {
+    this.silent = opts.silent
+  }
+
   message (category = 'info', message) {
+    if (this.silent) return
+
     const colors = {
       debug: 'magenta',
       info: 'blue',
