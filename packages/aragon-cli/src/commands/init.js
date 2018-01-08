@@ -2,8 +2,6 @@ const { MessageError } = require('../errors')
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 
-exports.shouldRunInCwd = true
-
 exports.command = 'init <name> [template]'
 
 exports.describe = 'Initialise a new application'
@@ -16,6 +14,10 @@ exports.builder = (yargs) => {
   return yargs.positional('name', {
     description: 'The application name'
   })
+    .option('cwd', {
+      description: 'The current working directory',
+      default: process.cwd()
+    })
     .positional('template', {
       description: 'The template to scaffold from',
       default: 'react',
