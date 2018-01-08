@@ -1,72 +1,50 @@
 #!/usr/bin/env node
-const ConsoleReporter = require('./reporters/ConsoleReporter')
 const Web3 = require('web3')
-const findUp = require('find-up')
-const path = require('path')
-const fs = require('fs-extra')
+const {
+  examplesDecorator,
+  middlewaresDecorator
+} = require('./decorators')
+const {
+  reporterMiddleware,
+  manifestMiddleware,
+  moduleMiddleware
+} = require('./middleware')
+const {
+  findProjectRoot
+} = require('./util')
 
-const findProjectRoot = () =>
-  path.dirname(findUp.sync('manifest.json'))
+const MIDDLEWARES = [
+  reporterMiddleware,
+  manifestMiddleware,
+  moduleMiddleware
+]
+
+const DECORATORS = [
+  examplesDecorator,
+  middlewaresDecorator(MIDDLEWARES)
+]
 
 // Set up commands
 const cmd = require('yargs')
   .commandDir('./commands', {
     visit: (cmd) => {
-      // Add examples
-      if (cmd.examples) {
-        const _builder = cmd.builder
-        cmd.builder = (yargs) => {
-          const builder = _builder(yargs)
-          cmd.examples.forEach((example) =>
-            builder.example(...example))
-
-          return yargs
-        }
-      }
+      // Decorates the command with new aspects (does not touch `argv`)
+      cmd = DECORATORS.reduce(
+        (innerCmd, decorator) => decorator(innerCmd),
+        cmd
+      )
 
       // Wrap command handler
       const _handler = cmd.handler
       cmd.handler = (argv) => {
-        // Set `cwd`
-        argv.cwd = cmd.shouldRunInCwd ? process.cwd() : findProjectRoot()
-
-        // Add reporter
-        const reporter = new ConsoleReporter({
-          silent: argv.silent
-        })
-
-        // Resolve `manifest.json`
-        let manifest = {}
-        if (!cmd.shouldRunInCwd) {
-          try {
-            const manifestPath = path.resolve(findProjectRoot(), 'manifest.json')
-            manifest = fs.readJsonSync(manifestPath)
-          } catch (err) {
-            reporter.debug(err)
-          }
-        }
-        argv.manifest = manifest
-
-        // Resolve `module.json`
-        let module = {}
-        if (!cmd.shouldRunInCwd) {
-          try {
-            const modulePath = path.resolve(findProjectRoot(), 'module.json')
-            module = fs.readJsonSync(modulePath)
-          } catch (err) {
-            reporter.debug(err)
-          }
-        }
-        argv.module = module
-
         // Handle errors
-        _handler(reporter, argv)
+        _handler(argv.reporter, argv)
           .then((exitCode = 0) => {
             process.exitCode = exitCode
           })
           .catch((err) => {
-            reporter.error(err.message)
-            reporter.debug(err.stack)
+            argv.reporter.error(err.message)
+            argv.reporter.debug(err.stack)
             process.exitCode = 1
           })
       }
@@ -83,16 +61,20 @@ cmd.option('silent', {
   description: 'Silence output to terminal',
   default: false
 })
+cmd.option('cwd', {
+  description: 'The project working directory',
+  default: () => {
+    try {
+      return findProjectRoot()
+    } catch (_) {
+      return process.cwd()
+    }
+  }
+})
 
+// APM
 cmd.option('apm.ens-registry', {
   description: 'Address of the ENS registry'
-})
-cmd.option('eth-rpc', {
-  description: 'An URI to the Ethereum node used for RPC calls',
-  default: 'http://localhost:8545',
-  coerce: (rpc) => {
-    return new Web3(rpc)
-  }
 })
 cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
 
@@ -105,6 +87,17 @@ cmd.option('apm.ipfs.rpc', {
   }
 })
 cmd.group('apm.ipfs.rpc', 'APM providers:')
+
+// Ethereum
+cmd.option('eth-rpc', {
+  description: 'An URI to the Ethereum node used for RPC calls',
+  default: 'http://localhost:8545',
+  coerce: (rpc) => {
+    return new Web3(rpc)
+  }
+})
+
+
 // Add epilogue
 cmd.epilogue('For more information, check out https://wiki.aragon.one')
 
