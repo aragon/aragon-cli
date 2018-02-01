@@ -14,7 +14,7 @@ const typeOrAddress = type => {
 
   // check if the type starts with any of the above types, otherwise it is probably
   // a typed contract, so we need to return address for the signature
-  return types.filter(t => types.indexOf(t) == 0).length > 0 ? type : 'address'
+  return types.filter(t => type.indexOf(t) == 0).length > 0 ? type : 'address'
 }
 
 // extracts function signature from function declaration
@@ -31,6 +31,17 @@ const getSignature = de => {
   return name + params + ')'
 }
 
+const getNotice = de => {
+  // capture from @notice to either next '* @' or end of comment '*/'
+  const notices = de.match(/(@notice)([^]*?)(\* @|\*\/)/m)
+  if (!notices || notices.length == 0) return null
+
+  return notices[0]
+    .replace('*/', '').replace('* @', '').replace('@notice ', '')
+    .replace(/\n/gm, '').replace(/\t/gm, '')
+    .split(' ').filter(x => x.length > 0).join(' ')
+}
+
 // extracts required role from function declaration
 const getRoles = de => {
   const auths = de.match(/auth.?\(([^]*?)\)/gm)
@@ -44,10 +55,12 @@ const getRoles = de => {
 module.exports = async sourceCodePath => {
   const sourceCode = await readFile(sourceCodePath, 'utf8')
 
-  // everything between every 'function' and '{'
-  const funcDeclarations = sourceCode.match(/function([^]*?){/gm)
+  // everything between every 'function' and '{' and its @notice
+  const funcDec = sourceCode.match(/(@notice|function)(?:[^]*?){/gm)
 
-  return funcDeclarations
+  if (!funcDec) return []
+
+  return funcDec
     .filter(d => modifiesStateAndIsPublic(d))
-    .map(d => ({ sig: getSignature(d), roles: getRoles(d) }))
+    .map(d => ({ sig: getSignature(d), roles: getRoles(d), notice: getNotice(d) }))
 }
