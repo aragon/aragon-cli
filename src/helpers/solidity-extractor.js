@@ -50,8 +50,8 @@ const getRoles = de => {
   return auths.map(s => s.split('(')[1].split(',')[0].split(')')[0])
 }
 
-// Takes the path to a solidity file and extracts public function signatures
-// and its auth role if any
+// Takes the path to a solidity file and extracts public function signatures,
+// its auth role if any and its notice statement
 module.exports = async sourceCodePath => {
   const sourceCode = await readFile(sourceCodePath, 'utf8')
 

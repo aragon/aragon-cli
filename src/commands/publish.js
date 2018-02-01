@@ -4,7 +4,7 @@ const path = require('path')
 const { promisify } = require('util')
 const { copy, readJson, writeJson } = require('fs-extra')
 const { MessageError } = require('../errors')
-const authExtractor = require('../helpers/auth-extractor')
+const extract = require('../helpers/solidity-extractor')
 const apm = require('../apm')
 const semver = require('semver')
 const EthereumTx = require('ethereumjs-tx')
@@ -21,7 +21,7 @@ exports.builder = function (yargs) {
     description: 'The address of the contract to publish in this version'
   }).option('key', {
     description: 'The private key to sign transactions with'
-  }).option('onlyArtifacts', {
+  }).option('only-artifacts', {
     description: 'Whether just generate artifacts file without publishing',
     default: false,
     boolean: true,
@@ -62,8 +62,9 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, contr
     throw new Error(`Could not read contract interface (at ${contractInterfacePath}). Did you remember to compile your contracts?`)
   }
 
-  // Analyse contract functions
-  artifact.functions = await authExtractor(artifact.path)
+  // Analyse contract functions and returns an array
+  // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
+  artifact.functions = await extract(artifact.path)
 
   artifact.roles = artifact.roles
     .map(role => Object.assign(role, { bytes: '0x'+keccak256(role.id) }))
