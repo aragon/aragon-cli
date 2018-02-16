@@ -1,5 +1,5 @@
 const test = require('ava')
-const fsStorageProvider = require('../../../src/apm/storage/fs')
+const fsStorageProvider = require('../../../src/apm/storage/fs')()
 
 test('apm.storage.fs#getFile', (t) => {
   return fsStorageProvider.getFile('./test/fixtures/single-file', 'foo.txt')

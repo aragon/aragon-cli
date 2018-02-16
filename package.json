@@ -52,5 +52,7 @@
     "coveralls": "^3.0.0",
     "standard": "^10.0.3"
   },
-  "engines" : { "node" : ">=8.9.1" }
+  "engines": {
+    "node": ">=8.9.1"
+  }
 }
