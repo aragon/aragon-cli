@@ -7,11 +7,11 @@ module.exports = function moduleMiddleware (argv) {
   if (!runsInCwd) {
     try {
       const modulePath = path.resolve(findProjectRoot(), 'module.json')
-      module = fs.readJsonSync(modulePath)
+      const module = fs.readJsonSync(modulePath)
 
       return { module }
     } catch (err) {
-      argv.reporter.debug(err)
+      argv.reporter && argv.reporter.debug(err)
     }
   }
 
