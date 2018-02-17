@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "description": "Aragon command-line tools",
   "main": "src/cli.js",
   "bin": {
@@ -52,5 +52,7 @@
     "coveralls": "^3.0.0",
     "standard": "^10.0.3"
   },
-  "engines" : { "node" : ">=8.9.1" }
+  "engines": {
+    "node": ">=8.9.1"
+  }
 }
