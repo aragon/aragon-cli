@@ -11,7 +11,7 @@ module.exports = function moduleMiddleware (argv) {
 
       return { module }
     } catch (err) {
-      argv.reporter.debug(err)
+      // argv.reporter.debug(err)
     }
   }
 

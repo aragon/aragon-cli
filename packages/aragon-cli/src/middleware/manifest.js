@@ -11,7 +11,7 @@ module.exports = function manifestMiddleware (argv) {
 
       return { manifest }
     } catch (err) {
-      argv.reporter.debug(err)
+      // argv.reporter.debug(err)
     }
   }
 
