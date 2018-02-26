@@ -4,12 +4,13 @@ const path = require('path')
 const { promisify } = require('util')
 const { copy, readJson, writeJson } = require('fs-extra')
 const { MessageError } = require('../errors')
+const extract = require('../helpers/solidity-extractor')
 const apm = require('../apm')
 const semver = require('semver')
 const EthereumTx = require('ethereumjs-tx')
 const namehash = require('eth-ens-namehash')
 const multimatch = require('multimatch')
-const inspector = require('solidity-inspector')
+const { keccak256 } = require('js-sha3')
 
 exports.command = 'publish [contract]'
 
@@ -20,6 +21,10 @@ exports.builder = function (yargs) {
     description: 'The address of the contract to publish in this version'
   }).option('key', {
     description: 'The private key to sign transactions with'
+  }).option('only-artifacts', {
+    description: 'Whether just generate artifacts file without publishing',
+    default: false,
+    boolean: true,
   }).option('provider', {
     description: 'The APM storage provider to publish files to',
     default: 'ipfs',
@@ -35,7 +40,7 @@ exports.builder = function (yargs) {
   })
 }
 
-async function generateApplicationArtifact (web3, cwd, outputPath, module, contract) {
+async function generateApplicationArtifact (web3, cwd, outputPath, module, contract, reporter) {
   let artifact = Object.assign({}, module)
   const contractPath = artifact.path
   const contractInterfacePath = path.resolve(
@@ -57,55 +62,18 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, contr
     throw new Error(`Could not read contract interface (at ${contractInterfacePath}). Did you remember to compile your contracts?`)
   }
 
-  // Analyse contract functions
-  const functions = inspector.parseFile(contractPath).toJSON().functions
-  const externalFunctions = Object.keys(functions)
-    .map(key => functions[key])
-    .filter(fn => fn.accessModifier !== 'internal' &&
-      fn.accessModifier !== 'private')
+  // Analyse contract functions and returns an array
+  // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
+  artifact.functions = await extract(artifact.path)
 
-  // Add functions to artifact
-  artifact.functions = externalFunctions.map((fn) => {
-    // Get role
-    const authModifier = fn.modifiers.filter(m => m.name === 'auth')[0]
-    const roleNeeded = authModifier ? authModifier.params[0] : null
-
-    // Get parameters
-    let params = Object.values(fn.params)
-    params.forEach((param) => delete param.typeHint)
-
-    return {
-      name: fn.name,
-      notice: fn.notice,
-      params,
-      roleNeeded
-    }
-  })
-
-  // Add role bytes
-  function getRoleBytesCall (contract, roleId) {
-    return web3.eth.call({
-      to: contract,
-      data: web3.eth.abi.encodeFunctionCall({
-        name: roleId,
-        type: 'function'
-      })
-    })
-      .then((data) =>
-        web3.eth.abi.decodeParameter('bytes32', data))
-  }
-
-  artifact.roles = await Promise.all(
-    artifact.roles.map(
-      (role) => getRoleBytesCall(contract, role.id)
-        .then((bytes) => Object.assign(role, { bytes }))
-    )
-  )
+  artifact.roles = artifact.roles
+    .map(role => Object.assign(role, { bytes: '0x'+keccak256(role.id) }))
 
   // Save artifact
   await writeJson(
     path.resolve(outputPath, 'artifact.json'),
-    artifact
+    artifact,
+    { spaces: '\t' }
   )
 
   return artifact
@@ -160,6 +128,7 @@ exports.handler = async function (reporter, {
 
   // Arguments
   contract,
+  onlyArtifacts,
   provider,
   key,
   files,
@@ -176,12 +145,14 @@ exports.handler = async function (reporter, {
       'ERR_INVALID_VERSION')
   }
 
-  // Default to last published contract address if no address was passed
-  if (!contract && module.version !== '1.0.0') {
-    reporter.debug('No contract address provided, defaulting to previous one...')
-    const { contractAddress } = await apm(ethRpc, apmOptions)
-      .getLatestVersion(module.appName)
-    contract = contractAddress
+  if (!onlyArtifacts) {
+    // Default to last published contract address if no address was passed
+    if (!contract && module.version !== '1.0.0') {
+      reporter.debug('No contract address provided, defaulting to previous one...')
+      const { contractAddress } = await apm(ethRpc, apmOptions)
+        .getLatestVersion(module.appName)
+      contract = contractAddress
+    }
   }
 
   // Prepare files for publishing
@@ -191,11 +162,14 @@ exports.handler = async function (reporter, {
 
   // Generate the artifact
   reporter.info('Generating application artifact...')
-  const artifact = await generateApplicationArtifact(ethRpc, cwd, pathToPublish, module, contract)
+  const dir = onlyArtifacts ? cwd : pathToPublish
+  const artifact = await generateApplicationArtifact(ethRpc, cwd, dir, module, contract, reporter)
   reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
 
   // Save artifact
-  reporter.debug(`Saved artifact in ${pathToPublish}/artifact.json`)
+  reporter.info(`Saved artifact in ${dir}/artifact.json`)
+
+  if (onlyArtifacts) return
 
   reporter.info(`Publishing version ${module.version}...`)
   reporter.debug(`Publishing "${pathToPublish}" with ${provider}`)
