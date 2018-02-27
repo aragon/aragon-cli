@@ -4,6 +4,9 @@ const streamToString = require('stream-to-string')
 module.exports = (opts = {}) => {
   const ipfs = ipfsAPI(opts.rpc)
 
+  // TODO: Read from .apm-ignore file
+  const ignore = ['node_modules/*', 'build/*']
+
   return {
     /**
      * Gets the file at `path` from the content URI `hash`.
@@ -23,7 +26,7 @@ module.exports = (opts = {}) => {
      * @return {Promise} A promise that resolves to the content URI of the files
      */
     async uploadFiles (path) {
-      const hashes = await ipfs.util.addFromFs(path, { recursive: true })
+      const hashes = await ipfs.util.addFromFs(path, { recursive: true, ignore })
       const { hash } = hashes.pop()
 
       return `ipfs:${hash}`
