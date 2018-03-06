@@ -4,7 +4,7 @@ const ens = require('../ens')
 const semver = require('semver')
 
 module.exports = (web3, opts = {
-  ensRegistryAddress: null
+  ensRegistry: null
 }) => {
   // Set up providers
   const providers = {
@@ -64,7 +64,7 @@ module.exports = (web3, opts = {
     getRepoRegistry (appId) {
       const registry = appId.split('.').slice(1).join('.')
 
-      return ens.resolve(registry, web3, opts.ensRegistryAddress)
+      return ens.resolve(registry, web3, opts.ensRegistry)
         .then(
           (address) => new web3.eth.Contract(
             require('../../abi/apm/RepoRegistry.json'),
@@ -79,7 +79,7 @@ module.exports = (web3, opts = {
      * @return {Promise} A promise that resolves to the Web3 contract
      */
     getRepository (appId) {
-      return ens.resolve(appId, web3, opts.ensRegistryAddress)
+      return ens.resolve(appId, web3, opts.ensRegistry)
         .then(
           (address) => new web3.eth.Contract(
             require('../../abi/apm/Repo.json'),
@@ -121,8 +121,8 @@ module.exports = (web3, opts = {
           repository.methods.getVersionsCount().call()
         )
         .then((versionCount) => Promise.all(
-          Array(versionCount).fill().map((_, versionId) =>
-            this.getVersionById(appId, versionId))
+          Array(parseInt(versionCount)).fill().map((_, versionId) =>
+            this.getVersionById(appId, versionId + 1))
         ))
     },
     /**

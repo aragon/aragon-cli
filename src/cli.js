@@ -72,7 +72,7 @@ cmd.option('cwd', {
 })
 
 // APM
-cmd.option('apm.ens-registry', {
+cmd.option('apm.ensRegistry', {
   description: 'Address of the ENS registry',
   default: '0x2e0ecaae14bc77001ba0c0c2500c60af1e12c980'
 })

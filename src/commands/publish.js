@@ -138,8 +138,8 @@ exports.handler = async function (reporter, {
 }) {
   const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
   const privateKey = keyfile.key ? keyfile.key : key
+
   const apm = await APM(web3, apmOptions)
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   if (!Object.keys(module).length) {
     throw new MessageError('This directory is not an Aragon project',
@@ -173,7 +173,7 @@ exports.handler = async function (reporter, {
   reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
 
   // Save artifact
-  reporter.info(`Saved artifact in ${dir}/artifact.json`)
+  reporter.debug(`Saved artifact in ${dir}/artifact.json`)
 
   if (onlyArtifacts) return
 
