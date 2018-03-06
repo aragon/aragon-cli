@@ -1,13 +1,50 @@
 [
   {
-    "constant": false,
-    "inputs": [
+    "constant": true,
+    "inputs": [],
+    "name": "REPO_APP_NAME",
+    "outputs": [
       {
-        "name": "name",
+        "name": "",
         "type": "string"
       }
     ],
-    "name": "newRepo",
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "APM_APP_NAME",
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "ENS_SUB_APP_NAME",
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "registrar",
     "outputs": [
       {
         "name": "",
@@ -15,14 +52,19 @@
       }
     ],
     "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
     "constant": false,
     "inputs": [
       {
-        "name": "name",
+        "name": "_name",
         "type": "string"
+      },
+      {
+        "name": "_dev",
+        "type": "address"
       },
       {
         "name": "_initialSemanticVersion",
@@ -45,48 +87,119 @@
       }
     ],
     "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "CREATE_REPO_ROLE",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "EVMSCRIPT_REGISTRY_APP_ID",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "appId",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getInitializationBlock",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "EVMSCRIPT_REGISTRY_APP",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
     "constant": true,
     "inputs": [
       {
-        "name": "node",
+        "name": "_sender",
+        "type": "address"
+      },
+      {
+        "name": "_role",
         "type": "bytes32"
+      },
+      {
+        "name": "params",
+        "type": "uint256[]"
       }
     ],
-    "name": "addr",
+    "name": "canPerform",
     "outputs": [
       {
         "name": "",
-        "type": "address"
+        "type": "bool"
       }
     ],
     "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
     "constant": false,
     "inputs": [
       {
-        "name": "_newOwner",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "name": "_dev",
         "type": "address"
       }
     ],
-    "name": "setRootOwner",
-    "outputs": [],
-    "payable": false,
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "name": "registeredRepos",
+    "name": "newRepo",
     "outputs": [
       {
         "name": "",
@@ -94,68 +207,155 @@
       }
     ],
     "payable": false,
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "constant": false,
     "inputs": [
       {
-        "name": "newOwner",
+        "name": "_registrar",
         "type": "address"
       }
     ],
-    "name": "transferOwnership",
+    "name": "initialize",
     "outputs": [],
     "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_kernel",
+        "type": "address"
+      },
+      {
+        "name": "_appId",
+        "type": "bytes32"
+      },
+      {
+        "name": "_initializePayload",
+        "type": "bytes"
+      }
+    ],
+    "name": "newAppProxyPinned",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "constant": true,
     "inputs": [],
-    "name": "rootNode",
+    "name": "kernel",
     "outputs": [
       {
         "name": "",
-        "type": "bytes32"
+        "type": "address"
       }
     ],
     "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
+    "constant": false,
     "inputs": [
       {
-        "name": "_ens",
+        "name": "_kernel",
         "type": "address"
       },
       {
-        "name": "_rootNode",
+        "name": "_appId",
         "type": "bytes32"
-      },
+      }
+    ],
+    "name": "newAppProxy",
+    "outputs": [
       {
-        "name": "_masterRepo",
-        "type": "address"
-      },
-      {
-        "name": "_forwarderFactory",
+        "name": "",
         "type": "address"
       }
     ],
     "payable": false,
-    "type": "constructor"
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_kernel",
+        "type": "address"
+      },
+      {
+        "name": "_appId",
+        "type": "bytes32"
+      },
+      {
+        "name": "_initializePayload",
+        "type": "bytes"
+      }
+    ],
+    "name": "newAppProxy",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_script",
+        "type": "bytes"
+      }
+    ],
+    "name": "getExecutor",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_kernel",
+        "type": "address"
+      },
+      {
+        "name": "_appId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "newAppProxyPinned",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
     "anonymous": false,
@@ -177,6 +377,18 @@
       }
     ],
     "name": "NewRepo",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "proxy",
+        "type": "address"
+      }
+    ],
+    "name": "NewAppProxy",
     "type": "event"
   }
 ]
