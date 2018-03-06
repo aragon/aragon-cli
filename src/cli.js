@@ -71,10 +71,11 @@ cmd.option('cwd', {
   }
 })
 
+
 // APM
-cmd.option('apm.ensRegistry', {
+cmd.option('apm.ens-registry', {
   description: 'Address of the ENS registry',
-  default: '0x2e0ecaae14bc77001ba0c0c2500c60af1e12c980'
+  default: process.env.ENS
 })
 cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
 
@@ -95,13 +96,13 @@ cmd.option('eth-rpc', {
 })
 
 cmd.option('keyfile', {
-  description: 'Path to a local file containing a private key and rpc node',
+  description: 'Path to a local file containing a private key, rpc node and ENS. If provided it will overrite eth-rpc and apm.ens-registry',
   default: require('homedir')()+'/.localkey.json',
   coerce: (file) => {
     try {
       return require(file)
     } catch (e) {
-      return null
+      return {}
     }
   }
 })

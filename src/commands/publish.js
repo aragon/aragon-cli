@@ -139,6 +139,8 @@ exports.handler = async function (reporter, {
   const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
   const privateKey = keyfile.key ? keyfile.key : key
 
+  apmOptions.ensRegistry = keyfile.ens ? keyfile.ens : apmOptions.ensRegistry
+
   const apm = await APM(web3, apmOptions)
 
   if (!Object.keys(module).length) {
@@ -155,7 +157,7 @@ exports.handler = async function (reporter, {
   if (!onlyArtifacts) {
     // Default to last published contract address if no address was passed
     if (!contract && module.version !== '1.0.0') {
-      reporter.debug('No contract address provided, defaulting to previous one...')
+      reporter.info('No contract address provided, defaulting to previous one...')
       const { contractAddress } = await apm.getLatestVersion(module.appName)
       contract = contractAddress
     }
