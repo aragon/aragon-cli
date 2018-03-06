@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const Web3 = require('web3')
+
 const {
   examplesDecorator,
   middlewaresDecorator
@@ -92,8 +93,17 @@ cmd.group('apm.ipfs.rpc', 'APM providers:')
 cmd.option('eth-rpc', {
   description: 'An URI to the Ethereum node used for RPC calls',
   default: 'http://localhost:8545',
-  coerce: (rpc) => {
-    return new Web3(rpc)
+})
+
+cmd.option('keyfile', {
+  description: 'Path to a local file containing a mnemonic and rpc node describing a wallet HD provider',
+  default: require('homedir')()+'/.aragon-key.json',
+  coerce: (file) => {
+    try {
+      return require(file)
+    } catch (e) {
+      return null
+    }
   }
 })
 

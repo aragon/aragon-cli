@@ -37,6 +37,7 @@
     "fs-extra": "^4.0.2",
     "ganache-core": "^2.0.2",
     "git-clone": "^0.1.0",
+    "homedir": "^0.6.0",
     "ipfs-api": "^14.3.7",
     "js-sha3": "^0.7.0",
     "multimatch": "^2.1.0",
