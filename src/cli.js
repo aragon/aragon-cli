@@ -100,7 +100,7 @@ cmd.option('keyfile', {
   default: require('homedir')()+'/.localkey.json',
   coerce: (file) => {
     try {
-      return require(file)
+      return require(require('path').resolve(file))
     } catch (e) {
       return {}
     }

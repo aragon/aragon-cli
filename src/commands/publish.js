@@ -38,6 +38,9 @@ exports.builder = function (yargs) {
     description: 'A glob-like pattern of files to ignore. Specify multiple times to add multiple patterns.',
     array: true,
     default: ['node_modules/', '.git/']
+  }).option('no-confirm', {
+    description: 'Exit as soon as transaction is sent, no wait for confirmation',
+    default: false
   })
 }
 
@@ -134,12 +137,14 @@ exports.handler = async function (reporter, {
   provider,
   key,
   files,
-  ignore
+  ignore,
+  noConfirm
 }) {
   const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
   const privateKey = keyfile.key ? keyfile.key : key
 
   apmOptions.ensRegistry = keyfile.ens ? keyfile.ens : apmOptions.ensRegistry
+  console.log(keyfile, apmOptions)
 
   const apm = await APM(web3, apmOptions)
 
@@ -198,7 +203,11 @@ exports.handler = async function (reporter, {
     tx.sign(Buffer.from(privateKey, 'hex'))
     const signed = '0x' + tx.serialize().toString('hex')
 
-    const receipt = await web3.eth.sendSignedTransaction(signed)
+    const promisedReceipt = web3.eth.sendSignedTransaction(signed)
+    if (noConfirm) return reporter.success('Transaction sent')
+
+    const receipt = await promisedReceipt
+
     reporter.debug(JSON.stringify(receipt))
     if (receipt.status == '0x1') {
       reporter.success(`Successful transaction ${receipt.transactionHash}`)
