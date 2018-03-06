@@ -4,6 +4,7 @@
   "description": "Aragon command-line tools",
   "main": "src/cli.js",
   "bin": {
+    "aragon": "./src/cli.js",
     "aragon-dev-cli": "./src/cli.js"
   },
   "scripts": {
