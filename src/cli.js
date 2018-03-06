@@ -96,7 +96,7 @@ cmd.option('eth-rpc', {
 })
 
 cmd.option('keyfile', {
-  description: 'Path to a local file containing a private key, rpc node and ENS. If provided it will overrite eth-rpc and apm.ens-registry',
+  description: 'Path to a local file containing a private key, rpc node and ENS. If provided it will overwrite eth-rpc (but not apm.ens-registry)',
   default: require('homedir')()+'/.localkey.json',
   coerce: (file) => {
     try {

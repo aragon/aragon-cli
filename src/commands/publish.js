@@ -143,12 +143,11 @@ exports.handler = async function (reporter, {
   const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
   const privateKey = keyfile.key ? keyfile.key : key
 
-  apmOptions.ensRegistry = keyfile.ens ? keyfile.ens : apmOptions.ensRegistry
-  console.log(keyfile, apmOptions)
+  apmOptions.ensRegistry = !apmOptions.ensRegistry ? keyfile.ens : apmOptions.ensRegistry
 
   const apm = await APM(web3, apmOptions)
 
-  if (!Object.keys(module).length) {
+  if (!module || !Object.keys(module).length) {
     throw new MessageError('This directory is not an Aragon project',
       'ERR_NOT_A_PROJECT')
   }
