@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-const Web3 = require('web3')
-
 const {
   examplesDecorator,
   middlewaresDecorator
@@ -75,7 +73,8 @@ cmd.option('cwd', {
 
 // APM
 cmd.option('apm.ens-registry', {
-  description: 'Address of the ENS registry'
+  description: 'Address of the ENS registry',
+  default: '0x2e0ecaae14bc77001ba0c0c2500c60af1e12c980'
 })
 cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
 
@@ -96,8 +95,8 @@ cmd.option('eth-rpc', {
 })
 
 cmd.option('keyfile', {
-  description: 'Path to a local file containing a mnemonic and rpc node describing a wallet HD provider',
-  default: require('homedir')()+'/.aragon-key.json',
+  description: 'Path to a local file containing a private key and rpc node',
+  default: require('homedir')()+'/.localkey.json',
   coerce: (file) => {
     try {
       return require(file)
