@@ -7,7 +7,7 @@ exports.command = 'versions'
 exports.describe = 'List all versions of the package'
 
 exports.handler = async function (reporter, { bump, cwd, ethRpc, apm: apmOptions }) {
-  const moduleLocation = await findUp('module.json', { cwd })
+  const moduleLocation = await findUp('arapp.json', { cwd })
   if (!moduleLocation) {
     throw new MessageError('This directory is not an Aragon project',
   'ERR_NOT_A_PROJECT')
