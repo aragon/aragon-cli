@@ -64,10 +64,10 @@ aragon-dev-cli <command>
 
 Commands:
   aragon-dev-cli bootstrap               Set up a development chain and deploy
-                                         an Aragon organisation
+                                         an Aragon organization
   aragon-dev-cli init <name> [template]  Initialise a new application
   aragon-dev-cli playground              Set up a dev chain, deploy an Aragon
-                                         organisation and install your app
+                                         organization and install your app
   aragon-dev-cli publish [contract]      Publish a new version of the
                                          application
   aragon-dev-cli version <bump>          Bump the application version
