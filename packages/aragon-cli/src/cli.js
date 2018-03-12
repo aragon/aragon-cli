@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const Web3 = require('web3')
 const {
   examplesDecorator,
   middlewaresDecorator
@@ -72,9 +71,11 @@ cmd.option('cwd', {
   }
 })
 
+
 // APM
 cmd.option('apm.ens-registry', {
-  description: 'Address of the ENS registry'
+  description: 'Address of the ENS registry',
+  default: process.env.ENS
 })
 cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
 
@@ -92,8 +93,17 @@ cmd.group('apm.ipfs.rpc', 'APM providers:')
 cmd.option('eth-rpc', {
   description: 'An URI to the Ethereum node used for RPC calls',
   default: 'http://localhost:8545',
-  coerce: (rpc) => {
-    return new Web3(rpc)
+})
+
+cmd.option('keyfile', {
+  description: 'Path to a local file containing a private key, rpc node and ENS. If provided it will overwrite eth-rpc (but not apm.ens-registry)',
+  default: require('homedir')()+'/.localkey.json',
+  coerce: (file) => {
+    try {
+      return require(require('path').resolve(file))
+    } catch (e) {
+      return {}
+    }
   }
 })
 
