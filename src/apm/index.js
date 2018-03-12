@@ -4,7 +4,7 @@ const ens = require('../ens')
 const semver = require('semver')
 
 module.exports = (web3, opts = {
-  ensRegistryAddress: null
+  ensRegistry: null
 }) => {
   // Set up providers
   const providers = {
@@ -62,9 +62,9 @@ module.exports = (web3, opts = {
      * @return {Promise} A promise that resolves to the Web3 contract
      */
     getRepoRegistry (appId) {
-      const repoId = appId.split('.').slice(1).join('.')
+      const registry = appId.split('.').slice(1).join('.')
 
-      return ens.resolve(repoId, web3, opts.ensRegistryAddress)
+      return ens.resolve(registry, web3, opts.ensRegistry)
         .then(
           (address) => new web3.eth.Contract(
             require('../../abi/apm/RepoRegistry.json'),
@@ -79,7 +79,7 @@ module.exports = (web3, opts = {
      * @return {Promise} A promise that resolves to the Web3 contract
      */
     getRepository (appId) {
-      return ens.resolve(appId, web3, opts.ensRegistryAddress)
+      return ens.resolve(appId, web3, opts.ensRegistry)
         .then(
           (address) => new web3.eth.Contract(
             require('../../abi/apm/Repo.json'),
@@ -121,8 +121,8 @@ module.exports = (web3, opts = {
           repository.methods.getVersionsCount().call()
         )
         .then((versionCount) => Promise.all(
-          Array(versionCount).fill().map((_, versionId) =>
-            this.getVersionById(appId, versionId))
+          Array(parseInt(versionCount)).fill().map((_, versionId) =>
+            this.getVersionById(appId, versionId + 1))
         ))
     },
     /**
@@ -140,7 +140,7 @@ module.exports = (web3, opts = {
      * @param {string} contract The new contract address for this version.
      * @return {Promise} A promise that resolves to a raw transaction
      */
-    async publishVersion (appId, version, provider, directory, contract) {
+    async publishVersion (appId, version, provider, directory, contract, from) {
       if (!semver.valid(version)) {
         throw new Error(`${version} is not a valid semantic version`)
       }
@@ -160,13 +160,16 @@ module.exports = (web3, opts = {
 
       // Default call creates a new repository and publishes the initial version
       const repoRegistry = await this.getRepoRegistry(appId)
-        .catch(() => {
+        .catch(err => {
+          throw err
           throw new Error(`Repository ${appId} does not exist and it's registry does not exist`)
         })
 
       let transactionDestination = repoRegistry.options.address
+
       let call = repoRegistry.methods.newRepoWithVersion(
         appId.split('.')[0],
+        from,
         version.split('.').map((part) => parseInt(part)),
         contract,
         `0x${contentURI}`
@@ -175,6 +178,7 @@ module.exports = (web3, opts = {
       // If the repository already exists, the call publishes a new version
       if (repo !== null) {
         transactionDestination = repo.options.address
+
         call = repo.methods.newVersion(
           version.split('.').map((part) => parseInt(part)),
           contract,
@@ -182,16 +186,26 @@ module.exports = (web3, opts = {
         )
       }
 
+      const params = { gasPrice: web3.utils.toHex(web3.utils.toWei('3', 'gwei')) }
+      if (from) {
+        params.from = from
+        params.nonce = await web3.eth.getTransactionCount(from)
+      }
+
+      params.gas = web3.utils.toHex(1500000)
+
       try {
-        // Test that the call would actually succeed
-        await call.call()
+
+        if (params.from) {
+          // If there is no from we cannot estimate gas as it would fail for lack of from address
+          params.gas = await call.estimateGas(params) // Implicit test that the call would actually succeed
+        }
 
         // Return transaction to sign
         return {
           to: transactionDestination,
           data: call.encodeABI(),
-          gas: await call.estimateGas(),
-          gasPrice: await web3.eth.getGasPrice()
+          ...params
         }
       } catch (err) {
         throw new Error(`Transaction would not succeed ("${err.message}")`)

@@ -1,3 +1,4 @@
+const Web3 = require('web3')
 const fs = require('fs')
 const tmp = require('tmp-promise')
 const path = require('path')
@@ -5,7 +6,7 @@ const { promisify } = require('util')
 const { copy, readJson, writeJson } = require('fs-extra')
 const { MessageError } = require('../errors')
 const extract = require('../helpers/solidity-extractor')
-const apm = require('../apm')
+const APM = require('../apm')
 const semver = require('semver')
 const EthereumTx = require('ethereumjs-tx')
 const namehash = require('eth-ens-namehash')
@@ -31,12 +32,15 @@ exports.builder = function (yargs) {
     choices: ['ipfs', 'fs']
   }).option('files', {
     description: 'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
-    default: ['./app'],
+    default: ['.'],
     array: true
   }).option('ignore', {
     description: 'A glob-like pattern of files to ignore. Specify multiple times to add multiple patterns.',
     array: true,
     default: ['node_modules/', '.git/']
+  }).option('no-confirm', {
+    description: 'Exit as soon as transaction is sent, no wait for confirmation',
+    default: false
   })
 }
 
@@ -123,6 +127,7 @@ exports.handler = async function (reporter, {
   // Globals
   cwd,
   ethRpc,
+  keyfile,
   module,
   apm: apmOptions,
 
@@ -132,9 +137,17 @@ exports.handler = async function (reporter, {
   provider,
   key,
   files,
-  ignore
+  ignore,
+  noConfirm
 }) {
-  if (!Object.keys(module).length) {
+  const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
+  const privateKey = keyfile.key ? keyfile.key : key
+
+  apmOptions.ensRegistry = !apmOptions.ensRegistry ? keyfile.ens : apmOptions.ensRegistry
+
+  const apm = await APM(web3, apmOptions)
+
+  if (!module || !Object.keys(module).length) {
     throw new MessageError('This directory is not an Aragon project',
       'ERR_NOT_A_PROJECT')
   }
@@ -148,9 +161,8 @@ exports.handler = async function (reporter, {
   if (!onlyArtifacts) {
     // Default to last published contract address if no address was passed
     if (!contract && module.version !== '1.0.0') {
-      reporter.debug('No contract address provided, defaulting to previous one...')
-      const { contractAddress } = await apm(ethRpc, apmOptions)
-        .getLatestVersion(module.appName)
+      reporter.info('No contract address provided, defaulting to previous one...')
+      const { contractAddress } = await apm.getLatestVersion(module.appName)
       contract = contractAddress
     }
   }
@@ -163,21 +175,22 @@ exports.handler = async function (reporter, {
   // Generate the artifact
   reporter.info('Generating application artifact...')
   const dir = onlyArtifacts ? cwd : pathToPublish
-  const artifact = await generateApplicationArtifact(ethRpc, cwd, dir, module, contract, reporter)
+  const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
   reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
 
   // Save artifact
-  reporter.info(`Saved artifact in ${dir}/artifact.json`)
+  reporter.debug(`Saved artifact in ${dir}/artifact.json`)
 
   if (onlyArtifacts) return
 
-  reporter.info(`Publishing version ${module.version}...`)
+  reporter.info(`Publishing ${module.appName} v${module.version}...`)
   reporter.debug(`Publishing "${pathToPublish}" with ${provider}`)
   reporter.debug(`Contract address: ${contract}`)
-  const transaction = await apm(ethRpc, apmOptions)
-    .publishVersion(module.appName, module.version, provider, pathToPublish, contract)
 
-  if (!key) {
+  const from = privateKey ? web3.eth.accounts.privateKeyToAccount('0x'+privateKey).address : null
+  const transaction = await apm.publishVersion(module.appName, module.version, provider, pathToPublish, contract, from)
+
+  if (!privateKey) {
     // Output transaction for signing if no key is provided
     reporter.info('Sign and broadcast this transaction')
     reporter.success(JSON.stringify(transaction))
@@ -185,10 +198,20 @@ exports.handler = async function (reporter, {
     // Sign and broadcast transaction
     reporter.debug('Signing transaction with passed private key...')
 
-    const tx = await ethRpc.eth.accounts.signTransaction(transaction, key)
-    const receipt = await ethRpc.eth.sendSignedTransaction(
-      tx
-    )
-    reporter.success(`Sent transaction ${receipt.transactionHash}`)
+    const tx = new EthereumTx(transaction)
+    tx.sign(Buffer.from(privateKey, 'hex'))
+    const signed = '0x' + tx.serialize().toString('hex')
+
+    const promisedReceipt = web3.eth.sendSignedTransaction(signed)
+    if (noConfirm) return reporter.success('Transaction sent')
+
+    const receipt = await promisedReceipt
+
+    reporter.debug(JSON.stringify(receipt))
+    if (receipt.status == '0x1') {
+      reporter.success(`Successful transaction ${receipt.transactionHash}`)
+    } else {
+      reporter.error(`Transaction reverted ${receipt.transactionHash}`)
+    }
   }
 }
