@@ -56,7 +56,7 @@ module.exports = async (sourceCodePath) => {
   const sourceCode = await readFile(sourceCodePath, 'utf8')
 
   // everything between every 'function' and '{' and its @notice
-  const funcDecs = sourceCode.match(/(@notice|function)(?:[^]*?){/gm)
+  const funcDecs = sourceCode.match(/(@notice|^\s*function)(?:[^]*?){/gm)
 
   if (!funcDecs) return []
 
