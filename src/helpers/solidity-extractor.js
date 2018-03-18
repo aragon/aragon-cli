@@ -20,13 +20,17 @@ const typeOrAddress = type => {
 // extracts function signature from function declaration
 const getSignature = (declaration) => {
   const name = declaration.match(/function ([^]*?)\(/)[0].replace('function ', '')
-  const params = declaration.match(/\(([^]*?)\)/)[0].replace('(', '').replace(')', '')
-    .replace(/\n/gm, '')
-    .replace(/\t/gm, '')
-    .split(',')
-    .map((param) => param.split(' ').filter(s => s.length > 0)[0])
-    .map((type) => typeOrAddress(type))
-    .join(',')
+  let params = declaration.match(/\(([^]*?)\)/)[0].replace('(', '').replace(')', '')
+  if (params) {
+    // Has parameters
+    params = params
+      .replace(/\n/gm, '')
+      .replace(/\t/gm, '')
+      .split(',')
+      .map((param) => param.split(' ').filter(s => s.length > 0)[0])
+      .map((type) => typeOrAddress(type))
+      .join(',')
+  }
 
   return name + params + ')'
 }
