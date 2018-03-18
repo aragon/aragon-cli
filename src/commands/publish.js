@@ -42,6 +42,10 @@ exports.builder = function (yargs) {
     description: 'Exit as soon as transaction is sent, no wait for confirmation',
     default: false
   })
+  .option('no-contract', {
+    description: 'Only upload content without generating artifacts',
+    default: false
+  })
 }
 
 async function generateApplicationArtifact (web3, cwd, outputPath, module, contract, reporter) {
@@ -138,7 +142,8 @@ exports.handler = async function (reporter, {
   key,
   files,
   ignore,
-  noConfirm
+  noConfirm,
+  noContract
 }) {
   const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
   const privateKey = keyfile.key ? keyfile.key : key
@@ -175,13 +180,16 @@ exports.handler = async function (reporter, {
   // Generate the artifact
   reporter.info('Generating application artifact...')
   const dir = onlyArtifacts ? cwd : pathToPublish
-  const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
-  reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
 
-  // Save artifact
-  reporter.debug(`Saved artifact in ${dir}/artifact.json`)
+  if (!noContract) {
+    const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
+    reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
 
-  if (onlyArtifacts) return
+    // Save artifact
+    reporter.debug(`Saved artifact in ${dir}/artifact.json`)
+
+    if (onlyArtifacts) return
+  }
 
   reporter.info(`Publishing ${module.appName} v${module.version}...`)
   reporter.debug(`Publishing "${pathToPublish}" with ${provider}`)
