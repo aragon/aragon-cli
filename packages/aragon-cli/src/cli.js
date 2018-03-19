@@ -82,7 +82,7 @@ cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
 cmd.option('apm.ipfs.rpc', {
   description: 'An URI to the IPFS node used to publish files',
   default: {
-    host: 'localhost',
+    host: 'ipfs.aragon.network',
     protocol: 'http',
     port: 5001
   }
