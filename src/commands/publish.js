@@ -25,7 +25,7 @@ exports.builder = function (yargs) {
   }).option('only-artifacts', {
     description: 'Whether just generate artifacts file without publishing',
     default: false,
-    boolean: true,
+    boolean: true
   }).option('provider', {
     description: 'The APM storage provider to publish files to',
     default: 'ipfs',
