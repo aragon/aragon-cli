@@ -17,7 +17,7 @@ module.exports = (web3) => {
       return {
         to: repoAddr,
         data: acl.methods.grantPermission(grantee, repoAddr, keccak256('NEW_VERSION_ROLE')).encodeABI(),
-        gas: web3.utils.toHex(1500000),
+        gas: web3.utils.toHex(500000),
         gasPrice: web3.utils.toHex(web3.utils.toWei('3', 'gwei'))
       }
     }
