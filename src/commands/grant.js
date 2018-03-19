@@ -7,6 +7,15 @@ const ACL = require('../acl')
 exports.command = 'grant [address]'
 exports.describe = 'Grant an address permission to create new versions in this package'
 
+exports.builder = function (yargs) {
+  return yargs.positional('address', {
+    description: 'The address being granted the permission to publish to the repo'
+  }).option('no-confirm', {
+    description: 'Exit as soon as transaction is sent, no wait for confirmation',
+    default: false
+  })
+}
+
 exports.handler = async function (reporter, {
   // Globals
   cwd,
