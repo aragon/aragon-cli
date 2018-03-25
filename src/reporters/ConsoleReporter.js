@@ -1,4 +1,5 @@
 const chalk = require('chalk')
+const figures = require('figures')
 
 module.exports = class ConsoleReporter {
   constructor (opts = { silent: false }) {
@@ -16,14 +17,14 @@ module.exports = class ConsoleReporter {
       success: 'green'
     }[category]
     const symbol = {
-      debug: '-',
-      info: 'i',
-      warning: '~',
-      error: '!',
-      success: '='
+      debug: figures.pointer,
+      info: figures.info,
+      warning: figures.warning,
+      error: figures.cross,
+      success: figures.tick
     }[category]
-    const icon = chalk[color](`[${symbol}]`)
-    console.log(`${icon} ${message}`)
+    const icon = chalk[color](symbol)
+    console.log(` ${icon} ${message}`)
   }
 
   debug (message) {
