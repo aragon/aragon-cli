@@ -61,7 +61,9 @@ exports.handler = function ({ reporter, name, template }) {
 
         return clone(template, basename, { shallow: true })
           .then(() => `Template cloned to ${basename}`)
-          .catch((err) => `Failed to clone template ${template} (${err.message})`)
+          .catch((err) => {
+            throw new Error(`Failed to clone template ${template} (${err.message})`)
+          })
       }
     },
     {
@@ -77,7 +79,9 @@ exports.handler = function ({ reporter, name, template }) {
       title: 'Install package dependencies with npm',
       enabled: ctx => ctx.yarn === false,
       task: () => execa('npm', ['install'], { cwd: basename })
-        .catch(() => 'Could not install dependencies')
+        .catch(() => {
+          throw new Error('Could not install dependencies')
+        })
     }
   ])
 
