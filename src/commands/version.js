@@ -13,7 +13,7 @@ exports.builder = function (yargs) {
   })
 }
 
-exports.handler = async function (reporter, { bump, cwd }) {
+exports.handler = async function ({ reporter, bump, cwd }) {
   const manifestLocation = await findUp('arapp.json', { cwd })
   if (!manifestLocation) {
     throw new MessageError('This directory is not an Aragon project',

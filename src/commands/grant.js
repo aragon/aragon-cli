@@ -16,8 +16,9 @@ exports.builder = function (yargs) {
   })
 }
 
-exports.handler = async function (reporter, {
+exports.handler = async function ({
   // Globals
+  reporter,
   cwd,
   ethRpc,
   keyfile,

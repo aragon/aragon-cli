@@ -11,7 +11,7 @@ const semver = require('semver')
 const EthereumTx = require('ethereumjs-tx')
 const namehash = require('eth-ens-namehash')
 const multimatch = require('multimatch')
-const { keccak256 } = require('js-sha3')
+const { keccak256 } = require('js-sha3')
 
 exports.command = 'publish [contract]'
 
@@ -127,7 +127,9 @@ async function prepareFilesForPublishing (files = [], ignorePatterns = null) {
   return tmpDir
 }
 
-exports.handler = async function (reporter, {
+exports.handler = async function ({
+  reporter,
+
   // Globals
   cwd,
   ethRpc,

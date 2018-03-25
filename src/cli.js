@@ -4,16 +4,15 @@ const {
   middlewaresDecorator
 } = require('./decorators')
 const {
-  reporterMiddleware,
   manifestMiddleware,
   moduleMiddleware
 } = require('./middleware')
 const {
   findProjectRoot
 } = require('./util')
+const ConsoleReporter = require('./reporters/ConsoleReporter')
 
 const MIDDLEWARES = [
-  reporterMiddleware,
   manifestMiddleware,
   moduleMiddleware
 ]
@@ -32,21 +31,6 @@ const cmd = require('yargs')
         (innerCmd, decorator) => decorator(innerCmd),
         cmd
       )
-
-      // Wrap command handler
-      const _handler = cmd.handler
-      cmd.handler = (argv) => {
-        // Handle errors
-        _handler(argv.reporter, argv)
-          .then((exitCode = 0) => {
-            process.exitCode = exitCode
-          })
-          .catch((err) => {
-            argv.reporter.error(err.message)
-            argv.reporter.debug(err.stack)
-            process.exitCode = 1
-          })
-      }
 
       return cmd
     }
@@ -71,7 +55,6 @@ cmd.option('cwd', {
   }
 })
 
-
 // APM
 cmd.option('apm.ens-registry', {
   description: 'Address of the ENS registry',
@@ -92,24 +75,30 @@ cmd.group('apm.ipfs.rpc', 'APM providers:')
 // Ethereum
 cmd.option('eth-rpc', {
   description: 'An URI to the Ethereum node used for RPC calls',
-  default: 'http://localhost:8545',
+  default: 'http://localhost:8545'
 })
 
 cmd.option('keyfile', {
   description: 'Path to a local file containing a private key, rpc node and ENS. If provided it will overwrite eth-rpc (but not apm.ens-registry)',
-  default: require('homedir')()+'/.localkey.json',
+  default: require('homedir')() + '/.localkey.json',
   coerce: (file) => {
     try {
       return require(require('path').resolve(file))
-    } catch (e) {
+    } catch (e) {
       return {}
     }
   }
 })
 
-
 // Add epilogue
 cmd.epilogue('For more information, check out https://wiki.aragon.one')
 
 // Run
-cmd.argv // eslint-disable-line
+const reporter = new ConsoleReporter()
+cmd.fail((msg, err, a) => {
+  reporter.error(err.message || msg || 'An error occurred')
+  reporter.debug(err.stack)
+  process.exit(1)
+}).parse(process.argv.slice(2), {
+  reporter
+})
