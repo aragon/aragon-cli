@@ -77,6 +77,7 @@ exports.handler = function ({ reporter, name, template }) {
       title: 'Install package dependencies with npm',
       enabled: ctx => ctx.yarn === false,
       task: () => execa('npm', ['install'], { cwd: basename })
+        .catch(() => 'Could not install dependencies')
     }
   ])
 
