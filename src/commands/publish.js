@@ -284,7 +284,7 @@ exports.handler = async function ({
           reject(err)
         })
       }),
-      enabled: () => !noConfirm
+      enabled: () => !onlyArtifacts && !noConfirm
     }
   ])
 
