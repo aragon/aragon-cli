@@ -39,11 +39,11 @@ exports.builder = function (yargs) {
     description: 'A glob-like pattern of files to ignore. Specify multiple times to add multiple patterns.',
     array: true,
     default: ['node_modules/', '.git/']
-  }).option('no-confirm', {
-    description: 'Exit as soon as transaction is sent, no wait for confirmation',
+  }).option('skip-confirm', {
+    description: 'Exit as soon as transaction is sent, do not wait for confirmation',
     default: false
   })
-  .option('no-contract', {
+  .option('skip-contract', {
     description: 'Only upload content without generating artifacts',
     default: false
   })
@@ -145,8 +145,8 @@ exports.handler = async function ({
   key,
   files,
   ignore,
-  noConfirm,
-  noContract
+  skipArtifact,
+  skipContract
 }) {
   // TODO: Clean up
   const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
@@ -236,7 +236,7 @@ exports.handler = async function ({
             reporter.debug(`Saved artifact in ${dir}/artifact.json`)
           })
       },
-      enabled: () => !noContract
+      enabled: () => !skipContract
     },
     {
       title: `Publish ${module.appName} v${module.version}`,
@@ -284,7 +284,7 @@ exports.handler = async function ({
           reject(err)
         })
       }),
-      enabled: () => !onlyArtifacts && !noConfirm
+      enabled: () => !onlyArtifacts && !skipArtifact
     }
   ])
 
