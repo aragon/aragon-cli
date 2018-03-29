@@ -214,7 +214,7 @@ exports.handler = async function ({
 
         return `Using ${contract}`
       },
-      enabled: () => !onlyArtifacts
+      enabled: () => !skipArtifact || skipContract
     },
     {
       title: 'Prepare files for publishing',
