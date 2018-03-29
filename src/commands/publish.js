@@ -281,7 +281,8 @@ exports.handler = async function ({
         }).on('receipt', (receipt) => {
           resolve(`Successfully published ${module.appName} v${module.version}`)
         }).on('error', (err) => {
-          reject(err)
+          reject(new Error('Failed to check transaction receipt. This does not mean your transaction was unsuccessful.'))
+          reporter.debug(err)
         })
       }),
       enabled: () => !onlyArtifacts && !skipArtifact
