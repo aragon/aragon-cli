@@ -214,7 +214,7 @@ exports.handler = async function ({
 
         return `Using ${contract}`
       },
-      enabled: () => !skipArtifact || skipContract
+      enabled: () => !onlyArtifacts
     },
     {
       title: 'Prepare files for publishing',
@@ -236,7 +236,7 @@ exports.handler = async function ({
             reporter.debug(`Saved artifact in ${dir}/artifact.json`)
           })
       },
-      enabled: () => !skipContract
+      enabled: () => !skipArtifact
     },
     {
       title: `Publish ${module.appName} v${module.version}`,
