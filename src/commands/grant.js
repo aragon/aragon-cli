@@ -1,6 +1,6 @@
 const Web3 = require('web3')
 const EthereumTx = require('ethereumjs-tx')
-const APM = require('../apm')
+const APM = require('@aragon/apm')
 const ACL = require('../acl')
 
 exports.command = 'grant [address]'
