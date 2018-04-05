@@ -3,15 +3,16 @@ const fs = require('fs')
 const tmp = require('tmp-promise')
 const path = require('path')
 const { promisify } = require('util')
-const { copy, readJson, writeJson } = require('fs-extra')
+const { copy, readJson, writeJson, pathExistsSync } = require('fs-extra')
 const extract = require('../helpers/solidity-extractor')
 const APM = require('@aragon/apm')
 const semver = require('semver')
 const EthereumTx = require('ethereumjs-tx')
 const namehash = require('eth-ens-namehash')
-const multimatch = require('multimatch')
 const { keccak256 } = require('js-sha3')
 const TaskList = require('listr')
+const { findProjectRoot } = require('../util')
+const ignore = require('ignore')
 
 exports.command = 'publish [contract]'
 
@@ -35,7 +36,7 @@ exports.builder = function (yargs) {
     default: ['.'],
     array: true
   }).option('ignore', {
-    description: 'A glob-like pattern of files to ignore. Specify multiple times to add multiple patterns.',
+    description: 'A gitignore pattern of files to ignore. Specify multiple times to add multiple patterns.',
     array: true,
     default: ['node_modules/', '.git/']
   }).option('skip-confirm', {
@@ -100,12 +101,21 @@ async function prepareFilesForPublishing (files = [], ignorePatterns = null) {
   const { path: tmpDir } = await tmp.dir()
 
   // Ignored files filter
-  function filterIgnoredFiles (src, dest) {
-    if (ignorePatterns === null) {
-      return true
-    }
+  const filter = ignore()
+    .add(ignorePatterns)
+  
+  const gitignorePath = path.resolve(
+    findProjectRoot(),
+    '.gitignore'
+  )
 
-    return multimatch(src, ignorePatterns, { matchBase: true }).length === 0
+  if (pathExistsSync(gitignorePath)) {
+    filter
+      .add(fs.readFileSync(gitignorePath).toString())
+  }
+
+  function filterIgnoredFiles (src) {
+    return !filter.ignores(src)
   }
 
   // Copy files
