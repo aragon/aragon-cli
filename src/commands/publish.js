@@ -4,7 +4,6 @@ const tmp = require('tmp-promise')
 const path = require('path')
 const { promisify } = require('util')
 const { copy, readJson, writeJson } = require('fs-extra')
-const { MessageError } = require('../errors')
 const extract = require('../helpers/solidity-extractor')
 const APM = require('../apm')
 const semver = require('semver')
@@ -155,14 +154,12 @@ exports.handler = async function ({
   const apm = await APM(web3, apmOptions)
 
   if (!module || !Object.keys(module).length) {
-    throw new MessageError('This directory is not an Aragon project',
-      'ERR_NOT_A_PROJECT')
+    throw new Error('This directory is not an Aragon project')
   }
 
   // Validate version
   if (!semver.valid(module.version)) {
-    throw new MessageError(`${module.version} is not a valid semantic version`,
-      'ERR_INVALID_VERSION')
+    throw new Error(`${module.version} is not a valid semantic version`)
   }
 
   if (!onlyArtifacts) {

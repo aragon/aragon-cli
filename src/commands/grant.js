@@ -1,5 +1,4 @@
 const Web3 = require('web3')
-const { MessageError } = require('../errors')
 const EthereumTx = require('ethereumjs-tx')
 const APM = require('../apm')
 const ACL = require('../acl')
@@ -39,14 +38,13 @@ exports.handler = async function ({
   const acl = ACL(web3)
 
   if (!module || !Object.keys(module).length) {
-    throw new MessageError('This directory is not an Aragon project',
-      'ERR_NOT_A_PROJECT')
+    throw new Error('This directory is not an Aragon project')
   }
 
   const repo = await apm.getRepository(module.appName)
     .catch(() => null)
   if (repo === null) {
-    throw new MessageError(`Repository ${module.appName} does not exist and it's registry does not exist`)
+    throw new Error(`Repository ${module.appName} does not exist and it's registry does not exist`)
   }
 
   reporter.info(`Granting permission to publish on ${module.appName} for ${address}`)
