@@ -4,6 +4,9 @@ const Web3 = require('web3')
 const namehash = require('eth-ens-namehash')
 const { keccak256 } = require('js-sha3')
 const chalk = require('chalk')
+const path = require('path')
+const publish = require('./publish')
+const APM = require('../apm')
 
 const BLOCK_GAS_LIMIT = 50e6
 const TX_MIN_GAS = 10e6
@@ -37,7 +40,31 @@ function deployContract (web3, sender, { abi, bytecode }, args = []) {
   })
 }
 
-exports.handler = function ({ reporter, port }) {
+async function setPermissions (web3, sender, aclAddress, permissions) {
+  const acl = new web3.eth.Contract(
+    getContract('@aragon/os', 'ACL').abi,
+    aclAddress
+  )
+  return Promise.all(
+    permissions.map(([who, where, what]) =>
+      acl.methods.createPermission(who, where, '0x' + keccak256(what), who).send({
+        from: sender,
+        gasLimit: TX_MIN_GAS
+      })
+    )
+  )
+}
+
+exports.handler = function (args) {
+  const {
+    // Globals
+    reporter,
+    cwd,
+    module,
+
+    // Arguments
+    port
+  } = args
   const tasks = new TaskList([
     {
       title: 'Start local chain',
@@ -61,6 +88,7 @@ exports.handler = function ({ reporter, port }) {
 
           // Grab the accounts
           ctx.accounts = await ctx.web3.eth.getAccounts()
+          ctx.privateKeys = server.provider.manager.state.accounts
         })
       }
     },
@@ -96,7 +124,7 @@ exports.handler = function ({ reporter, port }) {
         {
           title: 'Deploy base DAO factory',
           task: (ctx) => {
-            // 0x0 should be address to EVMScriptRegistryFactory
+            // TODO: 0x0 should be address to EVMScriptRegistryFactory
             return deployContract(
               ctx.web3, ctx.accounts[0], getContract('@aragon/os', 'DAOFactory'), [
                 ctx.contracts['Kernel'], ctx.contracts['ACL'], '0x0'
@@ -176,14 +204,89 @@ exports.handler = function ({ reporter, port }) {
           gas: TX_MIN_GAS
         }).then(({ events }) => {
           ctx.daoAddress = events['DeployDAO'].returnValues.dao
+
+          const kernel = new ctx.web3.eth.Contract(
+          getContract('@aragon/os', 'Kernel').abi,
+            ctx.daoAddress
+          )
+          return kernel.methods.acl().call()
+        }).then((aclAddress) => {
+          ctx.aclAddress = aclAddress
         })
       }
     },
     {
-      title: 'Starting APM HTTP provider',
-      task: (ctx, task) => {
-        task.title = 'Started APM HTTP provider on :1337'
+      title: 'Set DAO permissions',
+      task: (ctx, task) =>
+        setPermissions(ctx.web3, ctx.accounts[0], ctx.aclAddress, [
+          [ctx.accounts[0], ctx.daoAddress, 'APP_MANAGER_ROLE']
+        ])
+    },
+    {
+      title: 'Deploy app code',
+      task: (ctx, task) => deployContract(
+        ctx.web3, ctx.accounts[0], getContract(cwd, path.basename(module.path, '.sol'))
+      ).then((appCodeAddress) => {
+        ctx.contracts['AppCode'] = appCodeAddress
+      })
+    },
+    // TODO: Clean this up
+    {
+      title: 'Publish app',
+      task: (ctx) => {
+        ctx.apm = APM(ctx.web3, {
+          ipfs: { host: 'localhost', port: 5001, protocol: 'http' },
+          ensRegistry: ctx.ensAddress
+        })
+        ctx.privateKey = ctx.privateKeys[ctx.accounts[0].toLowerCase()].secretKey.toString('hex')
+        return publish.task(Object.assign(args, {
+          contract: ctx.contracts['AppCode'],
+          provider: 'ipfs',
+          files: ['.'],
+          ignore: ['node_modules']
+        }))
       }
+    },
+    {
+      title: 'Install app',
+      task: () => new TaskList([
+        {
+          title: 'Deploy proxy',
+          task: (ctx) => {
+            const kernel = new ctx.web3.eth.Contract(
+              getContract('@aragon/os', 'Kernel').abi,
+              ctx.daoAddress
+            )
+
+            return kernel.methods.newAppInstance(
+              namehash.hash(module.appName),
+              ctx.contracts['AppCode']
+            ).send({
+              from: ctx.accounts[0],
+              gasLimit: TX_MIN_GAS
+            }).then(({ events }) => {
+              ctx.appAddress = events['NewAppProxy'].returnValues.proxy
+            })
+          }
+        },
+        // NOTE Temporary because permissions app does not exist
+        {
+          title: 'Set permissions',
+          task: async (ctx, task) => {
+            const permissions = [
+              [ctx.accounts[0], ctx.appAddress, 'INCREMENT_ROLE'],
+              [ctx.accounts[0], ctx.appAddress, 'DECREMENT_ROLE']
+            ]
+
+            return setPermissions(
+              ctx.web3,
+              ctx.accounts[0],
+              ctx.aclAddress,
+              permissions
+            )
+          }
+        }
+      ])
     }
   ])
 
@@ -191,12 +294,17 @@ exports.handler = function ({ reporter, port }) {
     reporter.info(`You are now ready to open your app in Aragon.
 
    This is the configuration for your development deployment:
-
    ${chalk.bold('Ethereum Node')}: ws://localhost:${port}
    ${chalk.bold('APM registry')}: ${ctx.registryAddress}
    ${chalk.bold('ENS registry')}: ${ctx.ensAddress}
    ${chalk.bold('DAO address')}: ${ctx.daoAddress}
 
-   Open up https://beta.aragon.com and enter this configuration in the settings!`)
+   Here are some accounts you can use.
+   The first one was used to create everything.
+
+   ${Object.keys(ctx.privateKeys).map((address) =>
+      chalk.bold(`${address}: `) + ctx.privateKeys[address].secretKey.toString('hex')).join('\n   ')}
+
+   Open up https://app.aragon.com and enter this configuration in the settings!`)
   })
 }
