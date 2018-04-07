@@ -1,7 +1,6 @@
 const fs = require('fs')
 const findUp = require('find-up')
 const semver = require('semver')
-const { MessageError } = require('../errors')
 
 exports.command = 'version <bump>'
 
@@ -13,11 +12,10 @@ exports.builder = function (yargs) {
   })
 }
 
-exports.handler = async function (reporter, { bump, cwd }) {
+exports.handler = async function ({ reporter, bump, cwd }) {
   const manifestLocation = await findUp('arapp.json', { cwd })
   if (!manifestLocation) {
-    throw new MessageError('This directory is not an Aragon project',
-  'ERR_NOT_A_PROJECT')
+    throw new Error('This directory is not an Aragon project')
   }
 
   let manifest = JSON.parse(fs.readFileSync(manifestLocation))

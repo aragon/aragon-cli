@@ -1,4 +1,3 @@
-const { MessageError } = require('../errors')
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 
@@ -29,7 +28,7 @@ exports.builder = (yargs) => {
 
         if (!tmpl.includes('/')) {
           if (!aliases[tmpl]) {
-            throw new MessageError(`No template named ${tmpl} exists`)
+            throw new Error(`No template named ${tmpl} exists`)
           }
           tmpl = aliases[tmpl]
         }
@@ -40,14 +39,14 @@ exports.builder = (yargs) => {
     .check(function validateApplicationName ({ name }) {
       const isValidAppName = name.split('.').length >= 2
       if (!isValidAppName) {
-        throw new MessageError(`${name} is not a valid application name (should be e.g. "foo.aragonpm.eth")`, 'ERR_INVALID_APP_NAME')
+        throw new Error(`${name} is not a valid application name (should be e.g. "foo.aragonpm.eth")`)
       }
 
       return true
     })
 }
 
-exports.handler = function (reporter, { name, template }) {
+exports.handler = function ({ reporter, name, template }) {
   // Clone the template into the directory
   // TODO: Somehow write name to `manifest.json` in template?
   // TODO: Write human-readable app name to `arapp.json`
