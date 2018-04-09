@@ -160,6 +160,7 @@ exports.handler = function (args) {
               ctx.contracts['APMRegistryFactory']
             )
 
+            // TODO: Create repo from appName repository
             return contract.methods.newAPM(
               namehash.hash('eth'),
               '0x' + keccak256('aragonpm'),
@@ -269,14 +270,16 @@ exports.handler = function (args) {
             })
           }
         },
-        // NOTE Temporary because permissions app does not exist
         {
           title: 'Set permissions',
           task: async (ctx, task) => {
-            const permissions = [
-              [ctx.accounts[0], ctx.appAddress, 'INCREMENT_ROLE'],
-              [ctx.accounts[0], ctx.appAddress, 'DECREMENT_ROLE']
-            ]
+            if (!module.roles || module.roles.length === 0) {
+              task.skip('No permissions defined in app')
+              return
+            }
+
+            const permissions = module.roles
+              .map((role) => [ctx.accounts[0], ctx.appAddress, role.id])
 
             return setPermissions(
               ctx.web3,
