@@ -1,4 +1,3 @@
-const { MessageError } = require('../errors')
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const TaskList = require('listr')
@@ -31,7 +30,7 @@ exports.builder = (yargs) => {
 
         if (!tmpl.includes('/')) {
           if (!aliases[tmpl]) {
-            throw new MessageError(`No template named ${tmpl} exists`)
+            throw new Error(`No template named ${tmpl} exists`)
           }
           tmpl = aliases[tmpl]
         }
@@ -42,7 +41,7 @@ exports.builder = (yargs) => {
     .check(function validateApplicationName ({ name }) {
       const isValidAppName = name.split('.').length >= 2
       if (!isValidAppName) {
-        throw new MessageError(`${name} is not a valid application name (should be e.g. "foo.aragonpm.eth")`, 'ERR_INVALID_APP_NAME')
+        throw new Error(`${name} is not a valid application name (should be e.g. "foo.aragonpm.eth")`)
       }
 
       return true
