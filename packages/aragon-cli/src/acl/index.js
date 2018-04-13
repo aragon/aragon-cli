@@ -1,13 +1,11 @@
-const { keccak256 } = require('js-sha3')
-
 module.exports = (web3) => {
   const getACL = async (repoAddr) => {
-    const repo = new web3.eth.Contract(require('../../abi/apm/Repo'), repoAddr)
+    const repo = new web3.eth.Contract(require('@aragon/os/build/contracts/AragonApp'), repoAddr)
     const daoAddr = await repo.methods.kernel().call()
-    const dao = new web3.eth.Contract(require('../../abi/aragonOS/Kernel'), daoAddr)
+    const dao = new web3.eth.Contract(require('@aragon/os/build/contracts/Kernel'), daoAddr)
     const aclAddr = await dao.methods.acl().call()
 
-    return new web3.eth.Contract(require('../../abi/aragonOS/ACL'), aclAddr)
+    return new web3.eth.Contract(require('@aragon/os/build/contracts/ACL'), aclAddr)
   }
 
   return {
