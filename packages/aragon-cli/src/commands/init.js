@@ -1,5 +1,7 @@
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
+const TaskList = require('listr')
+const execa = require('execa')
 
 exports.command = 'init <name> [template]'
 
@@ -47,14 +49,41 @@ exports.builder = (yargs) => {
 }
 
 exports.handler = function ({ reporter, name, template }) {
-  // Clone the template into the directory
   // TODO: Somehow write name to `manifest.json` in template?
   // TODO: Write human-readable app name to `arapp.json`
   const basename = name.split('.')[0]
-  reporter.info(`Cloning ${template} into ${basename}...`)
+  const tasks = new TaskList([
+    {
+      title: 'Clone template',
+      task: (ctx, task) => {
+        task.output = `Cloning ${template} into ${basename}...`
 
-  return clone(template, basename, { shallow: true })
-    .then(() => {
-      reporter.success(`Created new application ${name} in ${basename}`)
-    })
+        return clone(template, basename, { shallow: true })
+          .then(() => `Template cloned to ${basename}`)
+          .catch((err) => {
+            throw new Error(`Failed to clone template ${template} (${err.message})`)
+          })
+      }
+    },
+    {
+      title: 'Install package dependencies with Yarn',
+      task: (ctx, task) => execa('yarn', { cwd: basename })
+        .catch(() => {
+          ctx.yarn = false
+
+          task.skip('Yarn not available, install it via `npm install -g yarn`')
+        })
+    },
+    {
+      title: 'Install package dependencies with npm',
+      enabled: ctx => ctx.yarn === false,
+      task: () => execa('npm', ['install'], { cwd: basename })
+        .catch(() => {
+          throw new Error('Could not install dependencies')
+        })
+    }
+  ])
+
+  return tasks.run()
+    .then(() => reporter.success(`Created new application ${name} in ${basename}`))
 }

@@ -11,6 +11,7 @@ const EthereumTx = require('ethereumjs-tx')
 const namehash = require('eth-ens-namehash')
 const multimatch = require('multimatch')
 const { keccak256 } = require('js-sha3')
+const TaskList = require('listr')
 
 exports.command = 'publish [contract]'
 
@@ -37,11 +38,11 @@ exports.builder = function (yargs) {
     description: 'A glob-like pattern of files to ignore. Specify multiple times to add multiple patterns.',
     array: true,
     default: ['node_modules/', '.git/']
-  }).option('no-confirm', {
-    description: 'Exit as soon as transaction is sent, no wait for confirmation',
+  }).option('skip-confirm', {
+    description: 'Exit as soon as transaction is sent, do not wait for confirmation',
     default: false
   })
-  .option('no-contract', {
+  .option('skip-contract', {
     description: 'Only upload content without generating artifacts',
     default: false
   })
@@ -66,7 +67,7 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, contr
     const contractInterface = await readJson(contractInterfacePath)
     artifact.abi = contractInterface.abi
   } catch (err) {
-    throw new Error(`Could not read contract interface (at ${contractInterfacePath}). Did you remember to compile your contracts?`)
+    throw new Error(`Could not read contract interface. Did you remember to compile your contracts?`)
   }
 
   // Analyse contract functions and returns an array
@@ -143,9 +144,10 @@ exports.handler = async function ({
   key,
   files,
   ignore,
-  noConfirm,
-  noContract
+  skipArtifact,
+  skipContract
 }) {
+  // TODO: Clean up
   const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
   const privateKey = keyfile.key ? keyfile.key : key
 
@@ -153,72 +155,138 @@ exports.handler = async function ({
 
   const apm = await APM(web3, apmOptions)
 
-  if (!module || !Object.keys(module).length) {
-    throw new Error('This directory is not an Aragon project')
-  }
+  const tasks = new TaskList([
+    // TODO: Move this in to own file for reuse
+    {
+      title: 'Check project',
+      task: () => new TaskList([
+        {
+          title: 'Check if directory is an Aragon app',
+          task: () => {
+            if (!module || !Object.keys(module).length) {
+              throw new MessageError('This directory is not an Aragon app',
+                'ERR_NOT_A_PROJECT')
+            }
 
-  // Validate version
-  if (!semver.valid(module.version)) {
-    throw new Error(`${module.version} is not a valid semantic version`)
-  }
+            return 'Directory is an Aragon app'
+          }
+        },
+        {
+          title: 'Check version is valid',
+          task: () => {
+            if (module && semver.valid(module.version)) {
+              return `${module.version} is a valid version`
+            }
 
-  if (!onlyArtifacts) {
-    // Default to last published contract address if no address was passed
-    if (!contract && module.version !== '1.0.0') {
-      reporter.info('No contract address provided, defaulting to previous one...')
-      const { contractAddress } = await apm.getLatestVersion(module.appName)
-      contract = contractAddress
+            throw new MessageError(module
+              ? `${module.version} is not a valid semantic version`
+              : 'Could not determine version',
+              'ERR_INVALID_VERSION')
+          }
+        }
+      ], { concurrent: true })
+    },
+    {
+      title: 'Determine contract address for version',
+      task: (ctx, task) => {
+        ctx.contract = contract
+
+        // Check if we can fall back to a previous contract address
+        if (!contract && module.version !== '1.0.0') {
+          task.output = 'No contract address provided, using previous one'
+
+          return apm.getLatestVersion(module.appName)
+            .then(({ contract }) => {
+              ctx.contract = contract
+
+              return `Using ${contract}`
+            })
+            .catch(() => {
+              throw new Error('Could not determine previous contract')
+            })
+        }
+
+        // Contract address required for initial version
+        if (!contract) {
+          throw new Error('No contract address supplied for initial version')
+        }
+
+        return `Using ${contract}`
+      },
+      enabled: () => !onlyArtifacts
+    },
+    {
+      title: 'Prepare files for publishing',
+      task: (ctx, task) => prepareFilesForPublishing(files, ignore)
+        .then((pathToPublish) => {
+          ctx.pathToPublish = pathToPublish
+
+          return `Files copied to temporary directory: ${pathToPublish}`
+        })
+    },
+    {
+      title: 'Generate application artifact',
+      task: (ctx, task) => {
+        const dir = onlyArtifacts ? cwd : ctx.pathToPublish
+
+        return generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
+          .then((artifact) => {
+            reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
+            reporter.debug(`Saved artifact in ${dir}/artifact.json`)
+          })
+      },
+      enabled: () => !skipArtifact
+    },
+    {
+      title: `Publish ${module.appName} v${module.version}`,
+      task: (ctx, task) => {
+        task.output = privateKey
+          ? 'Generating transaction to sign'
+          : 'Signing transaction...'
+        const from = privateKey
+          ? web3.eth.accounts.privateKeyToAccount('0x' + privateKey).address
+          : null
+
+        return apm.publishVersion(
+          module.appName,
+          module.version,
+          provider,
+          ctx.pathToPublish,
+          contract,
+          from
+        ).then((transaction) => {
+          if (!privateKey) {
+            return `Sign and broadcast this transaction:\n${JSON.stringify(transaction)}`
+          }
+
+          // Sign transaction
+          const tx = new EthereumTx(transaction)
+          tx.sign(Buffer.from(privateKey, 'hex'))
+          const signed = '0x' + tx.serialize().toString('hex')
+
+          ctx.transactionStatus = web3.eth.sendSignedTransaction(signed)
+
+          return 'Signed transaction to publish app'
+        })
+      },
+      enabled: () => !onlyArtifacts
+    },
+    // TODO: Move this in to own file for reuse
+    {
+      title: 'Wait for confirmation',
+      task: (ctx, task) => new Promise((resolve, reject) => {
+        ctx.transactionStatus.on('transactionHash', (transactionHash) => {
+          task.output = `Awaiting receipt for ${transactionHash}`
+        }).on('receipt', (receipt) => {
+          resolve(`Successfully published ${module.appName} v${module.version}`)
+        }).on('error', (err) => {
+          reject(new Error('Failed to check transaction receipt. This does not mean your transaction was unsuccessful.'))
+          reporter.debug(err)
+        })
+      }),
+      enabled: () => !onlyArtifacts && !skipArtifact
     }
-  }
+  ])
 
-  // Prepare files for publishing
-  reporter.info('Preparing files for publishing...')
-  const pathToPublish = await prepareFilesForPublishing(files, ignore)
-  reporter.debug(`Files copied to temporary directory: ${pathToPublish}`)
-
-  // Generate the artifact
-  reporter.info('Generating application artifact...')
-  const dir = onlyArtifacts ? cwd : pathToPublish
-
-  if (!noContract) {
-    const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
-    reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
-
-    // Save artifact
-    reporter.debug(`Saved artifact in ${dir}/artifact.json`)
-
-    if (onlyArtifacts) return
-  }
-
-  reporter.info(`Publishing ${module.appName} v${module.version}...`)
-  reporter.debug(`Publishing "${pathToPublish}" with ${provider}`)
-  reporter.debug(`Contract address: ${contract}`)
-
-  const from = privateKey ? web3.eth.accounts.privateKeyToAccount('0x'+privateKey).address : null
-  const transaction = await apm.publishVersion(module.appName, module.version, provider, pathToPublish, contract, from)
-
-  if (!privateKey) {
-    // Output transaction for signing if no key is provided
-    reporter.info('Sign and broadcast this transaction')
-    reporter.success(JSON.stringify(transaction))
-  } else {
-    // Sign and broadcast transaction
-    reporter.debug('Signing transaction with passed private key...')
-
-    const tx = new EthereumTx(transaction)
-    tx.sign(Buffer.from(privateKey, 'hex'))
-    const signed = '0x' + tx.serialize().toString('hex')
-
-    const promisedReceipt = web3.eth.sendSignedTransaction(signed)
-    if (noConfirm) return reporter.success('Transaction sent')
-
-    const receipt = await promisedReceipt
-
-    reporter.debug(JSON.stringify(receipt))
-    if (receipt.status == '0x1') {
-      reporter.success(`Successful transaction ${receipt.transactionHash}`)
-    } else {
-      reporter.error(`Transaction reverted ${receipt.transactionHash}`)
-    }
-  }
+  return tasks.run()
 }
