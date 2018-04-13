@@ -1,6 +1,6 @@
 const Web3 = require('web3')
 const findUp = require('find-up')
-const apm = require('../apm')
+const APM = require('@aragon/apm')
 
 exports.command = 'versions'
 
@@ -16,7 +16,7 @@ exports.handler = async function ({ reporter, module, bump, cwd, keyfile, ethRpc
     throw new Error('This directory is not an Aragon project')
   }
 
-  return apm(web3, apmOptions).getAllVersions(module.appName)
+  return APM(web3, apmOptions).getAllVersions(module.appName)
     .then((versions) => {
       reporter.info(`${module.appName} has ${versions.length} published versions`)
       versions.forEach((version) => {
