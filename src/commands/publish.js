@@ -302,5 +302,5 @@ exports.handler = function (args) {
 
   const apm = APM(web3, apmOptions)
 
-  return exports.task.run({ web3, apm, privateKey })
+  return exports.task(args).run({ web3, apm, privateKey })
 }
