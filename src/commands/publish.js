@@ -250,12 +250,12 @@ exports.task = function ({
           : null
 
         return ctx.apm.publishVersion(
+          from,
           module.appName,
           module.version,
           provider,
           ctx.pathToPublish,
-          contract,
-          from
+          contract
         ).then((transaction) => {
           if (!ctx.privateKey) {
             return `Sign and broadcast this transaction:\n${JSON.stringify(transaction)}`
@@ -282,7 +282,7 @@ exports.task = function ({
         }).on('receipt', (receipt) => {
           resolve(`Successfully published ${module.appName} v${module.version}`)
         }).on('error', (err) => {
-          reject(new Error('Failed to check transaction receipt. This does not mean your transaction was unsuccessful.'))
+          reject(err)
           reporter.debug(err)
         })
       }),
