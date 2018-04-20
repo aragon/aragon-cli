@@ -6,7 +6,6 @@ const { keccak256 } = require('js-sha3')
 const chalk = require('chalk')
 const path = require('path')
 const publish = require('./publish')
-const APM = require('../apm')
 
 const BLOCK_GAS_LIMIT = 50e6
 const TX_MIN_GAS = 10e6
