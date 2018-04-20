@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "3.0.0-beta.3",
+  "version": "3.0.0-beta.4",
   "description": "Aragon command-line tools",
   "main": "src/cli.js",
   "bin": {
