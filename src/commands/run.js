@@ -237,7 +237,7 @@ exports.handler = function (args) {
       task: (ctx) => {
         ctx.apm = APM(ctx.web3, {
           ipfs: { host: 'localhost', port: 5001, protocol: 'http' },
-          ensRegistry: ctx.ensAddress
+          ensRegistryAddress: ctx.ensAddress
         })
         ctx.privateKey = ctx.privateKeys[ctx.accounts[0].toLowerCase()].secretKey.toString('hex')
         return publish.task(Object.assign(args, {

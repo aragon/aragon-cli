@@ -298,7 +298,7 @@ exports.handler = function (args) {
   const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
   const privateKey = keyfile.key ? keyfile.key : key
 
-  apmOptions.ensRegistry = !apmOptions.ensRegistry ? keyfile.ens : apmOptions.ensRegistry
+  apmOptions.ensRegistryAddress = !apmOptions.ensRegistry ? keyfile.ens : apmOptions.ensRegistry
 
   const apm = APM(web3, apmOptions)
 
