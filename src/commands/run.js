@@ -5,6 +5,7 @@ const namehash = require('eth-ens-namehash')
 const { keccak256 } = require('js-sha3')
 const chalk = require('chalk')
 const path = require('path')
+const APM = require('@aragon/apm')
 const publish = require('./publish')
 
 const BLOCK_GAS_LIMIT = 50e6

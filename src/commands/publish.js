@@ -300,6 +300,7 @@ exports.handler = function (args) {
 
   apmOptions.ensRegistry = !apmOptions.ensRegistry ? keyfile.ens : apmOptions.ensRegistry
 
-  return APM(web3, apmOptions)
-    .then((apm) => exports.task.run({ web3, apm, privateKey }))
+  const apm = APM(web3, apmOptions)
+
+  return exports.task.run({ web3, apm, privateKey })
 }
