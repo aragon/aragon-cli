@@ -37,7 +37,7 @@ const cmd = require('yargs')
   })
 
 // Configure CLI behaviour
-cmd.demandCommand()
+cmd.demandCommand(1, 'You need to specify a command')
 
 // Set global options
 cmd.option('silent', {
@@ -95,10 +95,10 @@ cmd.epilogue('For more information, check out https://wiki.aragon.one')
 
 // Run
 const reporter = new ConsoleReporter()
-cmd.fail((msg, err, a) => {
-  reporter.error(err.message || msg || 'An error occurred')
-  reporter.debug(err.stack)
-  process.exit(1)
+cmd.fail((msg, err, yargs) => {
+  if (!err) yargs.showHelp()
+  reporter.error(msg || err.message || 'An error occurred')
+  reporter.debug(err && err.stack)
 }).parse(process.argv.slice(2), {
   reporter
 })
