@@ -163,10 +163,16 @@ exports.task = function ({
       task: () => new TaskList([
         {
           title: 'Check if directory is an Aragon app',
-          task: () => {
+          task: (task) => {
             if (!module || !Object.keys(module).length) {
               throw new MessageError('This directory is not an Aragon app',
                 'ERR_NOT_A_PROJECT')
+            }
+
+            if (!manifest) {
+              task.title = 'No front-end detected (no manifest.json)'
+            } else if (!manifest.start_url) {
+              task.title = 'No front-end detected (no start_url defined)'
             }
 
             return 'Directory is an Aragon app'
