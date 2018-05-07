@@ -70,7 +70,8 @@ exports.handler = function (args) {
       title: 'Start local chain',
       task: (ctx, task) => {
         const server = ganache.server({
-          gasLimit: BLOCK_GAS_LIMIT
+          gasLimit: BLOCK_GAS_LIMIT,
+          mnemonic: "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat"
         })
 
         return new Promise((resolve, reject) => {
