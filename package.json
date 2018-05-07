@@ -52,11 +52,21 @@
     "yargs": "^10.1.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0-beta.46",
+    "@babel/node": "^7.0.0-beta.46",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.46",
+    "@babel/preset-env": "^7.0.0-beta.46",
+    "@babel/register": "^7.0.0-beta.46",
     "ava": "^0.22.0",
     "coveralls": "^3.0.0",
     "standard": "^10.0.3"
   },
   "engines": {
     "node": ">=8.9.1"
+  },
+  "ava": {
+    "require": [
+      "@babel/register"
+    ]
   }
 }
