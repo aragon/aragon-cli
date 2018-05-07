@@ -30,15 +30,14 @@ exports.builder = function (yargs) {
   }).option('provider', {
     description: 'The APM storage provider to publish files to',
     default: 'ipfs',
-    choices: ['ipfs', 'fs']
+    choices: ['ipfs']
   }).option('files', {
     description: 'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
     default: ['.'],
     array: true
   }).option('ignore', {
     description: 'A gitignore pattern of files to ignore. Specify multiple times to add multiple patterns.',
-    array: true,
-    default: ['node_modules/', '.git/']
+    array: true
   }).option('skip-confirm', {
     description: 'Exit as soon as transaction is sent, do not wait for confirmation',
     default: false
