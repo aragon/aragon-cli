@@ -51,6 +51,8 @@
 CLI tool for creating, testing and publishing Aragon applications.
 
 ## Installation
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Faragon%2Faragon-dev-cli.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Faragon%2Faragon-dev-cli?ref=badge_shield)
+
 
 ```bash
 npm install -g @aragon/cli
@@ -112,3 +114,7 @@ aragon-dev-cli publish
 ```bash
 aragon-dev-cli init polls.aragonpm.test username/gh-repo
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Faragon%2Faragon-dev-cli.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Faragon%2Faragon-dev-cli?ref=badge_large)
