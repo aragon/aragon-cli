@@ -7,10 +7,6 @@ exports.command = 'init <name> [template]'
 
 exports.describe = 'Initialise a new application'
 
-exports.examples = [
-  ['$0 init poll.aragonpm.eth', `Create a new app called "poll.aragonpm.eth" in the directory "poll"`]
-]
-
 exports.builder = (yargs) => {
   return yargs.positional('name', {
     description: 'The application name'
