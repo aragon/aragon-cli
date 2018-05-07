@@ -1,9 +1,5 @@
 #!/usr/bin/env node
 const {
-  examplesDecorator,
-  middlewaresDecorator
-} = require('./decorators')
-const {
   manifestMiddleware,
   moduleMiddleware
 } = require('./middleware')
@@ -17,21 +13,12 @@ const MIDDLEWARES = [
   moduleMiddleware
 ]
 
-const DECORATORS = [
-  examplesDecorator,
-  middlewaresDecorator(MIDDLEWARES)
-]
-
 // Set up commands
 const cmd = require('yargs')
   .commandDir('./commands', {
     visit: (cmd) => {
-      // Decorates the command with new aspects (does not touch `argv`)
-      cmd = DECORATORS.reduce(
-        (innerCmd, decorator) => decorator(innerCmd),
-        cmd
-      )
-
+      // Add middlewares
+      cmd.middlewares = MIDDLEWARES
       return cmd
     }
   })
