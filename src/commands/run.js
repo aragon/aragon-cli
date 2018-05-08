@@ -71,7 +71,7 @@ exports.handler = function (args) {
       task: (ctx, task) => {
         const server = ganache.server({
           gasLimit: BLOCK_GAS_LIMIT,
-          mnemonic: "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat"
+          mnemonic: 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat'
         })
 
         return new Promise((resolve, reject) => {
