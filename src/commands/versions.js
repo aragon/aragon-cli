@@ -9,7 +9,7 @@ exports.describe = 'List all versions of the package'
 exports.handler = async function ({ reporter, module, bump, cwd, keyfile, ethRpc, apm: apmOptions }) {
   const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
 
-  apmOptions.ensRegistryAddress = !apmOptions.ensRegistry ? keyfile.ens : apmOptions.ensRegistry
+  apmOptions.ensRegistryAddress = !apmOptions['ens-registry'] ? keyfile.ens : apmOptions['ens-registry']
 
   const moduleLocation = await findUp('arapp.json', { cwd })
   if (!moduleLocation) {
