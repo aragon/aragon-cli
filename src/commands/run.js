@@ -393,7 +393,7 @@ exports.handler = function (args) {
    The first one was used to create everything.
 
    ${Object.keys(ctx.privateKeys).map((address) =>
-      chalk.bold(`Address: ${address}\nKey:   `) + ctx.privateKeys[address].secretKey.toString('hex')).join('\n   ')}
+      chalk.bold(`Address: ${address}\n   Key:   `) + ctx.privateKeys[address].secretKey.toString('hex')).join('\n   ')}
 
    Open up http://localhost:3000/#/${ctx.daoAddress} to view your DAO!`)
     if (!manifest) {
