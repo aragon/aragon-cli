@@ -36,7 +36,7 @@ async function startIPFS () {
       Please install it by going to https://ipfs.io/docs/install`)
   }
 
-  return exec('ipfs', ['daemon'])
+  return execa('ipfs', ['daemon'])
 }
 
 function getContract (pkg, contract) {
