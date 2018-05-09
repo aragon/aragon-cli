@@ -3,7 +3,7 @@ const fs = require('fs')
 const tmp = require('tmp-promise')
 const path = require('path')
 const { promisify } = require('util')
-const { copy, readJson, writeJson, pathExistsSync } = require('fs-extra')
+const { copy, readJson, writeJson, pathExistsSync, existsSync } = require('fs-extra')
 const extract = require('../helpers/solidity-extractor')
 const APM = require('@aragon/apm')
 const semver = require('semver')
@@ -13,6 +13,7 @@ const { keccak256 } = require('js-sha3')
 const TaskList = require('listr')
 const { findProjectRoot } = require('../util')
 const ignore = require('ignore')
+const execa = require('execa')
 
 exports.command = 'publish [contract]'
 
@@ -215,6 +216,27 @@ exports.task = function ({
         return `Using ${contract}`
       },
       enabled: () => !onlyArtifacts
+    },
+    {
+      title: 'Build',
+      task: async (ctx, task) => {
+        if (!fs.existsSync('package.json')) {
+          task.skip('No package.json found')
+          return
+        }
+
+        const packageJson = await readJson('package.json')
+        const scripts = packageJson.scripts || {}
+        if (!scripts.build) {
+          task.skip('No build script defined in package.json')
+          return
+        }
+
+        return execa('npm', ['run', 'build'])
+          .catch((err) => {
+            throw new Error(`${err.message}\n${err.stderr}\n\nFailed to build. See above output.`)
+          })
+      }
     },
     {
       title: 'Prepare files for publishing',
