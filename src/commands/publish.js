@@ -169,12 +169,6 @@ exports.task = function ({
                 'ERR_NOT_A_PROJECT')
             }
 
-            if (!manifest) {
-              task.title = 'No front-end detected (no manifest.json)'
-            } else if (!manifest.start_url) {
-              task.title = 'No front-end detected (no start_url defined)'
-            }
-
             return 'Directory is an Aragon app'
           }
         },

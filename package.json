@@ -2,12 +2,14 @@
   "name": "@aragon/cli",
   "version": "3.0.0-beta.6",
   "description": "Aragon command-line tools",
-  "main": "src/cli.js",
+  "main": "dist/cli.js",
   "bin": {
-    "aragon": "./src/cli.js",
-    "aragon-dev-cli": "./src/cli.js"
+    "aragon": "./dist/cli.js",
+    "aragon-dev-cli": "./dist/cli.js"
   },
   "scripts": {
+    "build": "babel -d dist src",
+    "prepare": "npm run build",
     "test": "ava",
     "lint": "standard src"
   },
@@ -41,17 +43,21 @@
     "fs-extra": "^4.0.2",
     "ganache-core": "^2.1.0",
     "git-clone": "^0.1.0",
+    "hasbin": "^1.2.3",
     "homedir": "^0.6.0",
     "ignore": "^3.3.7",
     "ipfs-api": "^14.3.7",
     "js-sha3": "^0.7.0",
     "listr": "^0.13.0",
+    "opn": "^5.3.0",
     "semver": "^5.4.1",
+    "solidity-parser": "^0.4.0",
     "tmp-promise": "^1.0.4",
     "web3": "^1.0.0-beta.26",
     "yargs": "^10.1.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.46",
     "@babel/core": "^7.0.0-beta.46",
     "@babel/node": "^7.0.0-beta.46",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.46",

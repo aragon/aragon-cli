@@ -7,6 +7,13 @@ const chalk = require('chalk')
 const path = require('path')
 const APM = require('@aragon/apm')
 const publish = require('./publish')
+const { hasBin } = require('../util')
+const { promisify } = require('util')
+const clone = promisify(require('git-clone'))
+const os = require('os')
+const fs = require('fs-extra')
+const openUrl = require('opn')
+const execa = require('execa')
 
 const BLOCK_GAS_LIMIT = 50e6
 const TX_MIN_GAS = 10e6
@@ -20,6 +27,16 @@ exports.builder = {
     description: 'The port to run the local chain on',
     default: 8545
   }
+}
+
+async function startIPFS () {
+  const hasIPFS = hasBin('ipfs')
+  if (!hasIPFS) {
+    throw new Error(`Running your app locally requires IPFS.
+      Please install it by going to https://ipfs.io/docs/install`)
+  }
+
+  return exec('ipfs', ['daemon'])
 }
 
 function getContract (pkg, contract) {
@@ -90,6 +107,12 @@ exports.handler = function (args) {
           ctx.accounts = await ctx.web3.eth.getAccounts()
           ctx.privateKeys = server.provider.manager.state.accounts
         })
+      }
+    },
+    {
+      title: 'Start IPFS',
+      task: () => {
+        startIPFS()
       }
     },
     {
@@ -290,6 +313,69 @@ exports.handler = function (args) {
           }
         }
       ])
+    },
+    {
+      title: 'Open DAO',
+      task: (ctx, task) => new TaskList([
+        {
+          title: 'Download wrapper',
+          task: (ctx, task) => {
+            const WRAPPER_COMMIT = '9a5ccf943548b41f932fb4f5dbf6e29f5befb501'
+            const WRAPPER_PATH = `${os.homedir()}/.aragon/wrapper-${WRAPPER_COMMIT}`
+            ctx.wrapperPath = WRAPPER_PATH
+
+            // Make sure we haven't already downloaded the wrapper
+            if (fs.existsSync(path.resolve(WRAPPER_PATH))) {
+              task.skip('Wrapper already downloaded')
+              ctx.wrapperAvailable = true
+              return
+            }
+
+            // Ensure folder exists
+            fs.ensureDirSync(WRAPPER_PATH)
+
+            // Clone wrapper
+            return clone(
+              'https://github.com/aragon/aragon',
+              WRAPPER_PATH,
+              { checkout: WRAPPER_COMMIT }
+            )
+          }
+        },
+        {
+          title: 'Install wrapper dependencies with npm',
+          task: () => execa('npm', ['install'], { cwd: ctx.wrapperPath })
+            .catch(() => {
+              throw new Error('Could not install dependencies')
+            }),
+          enabled: (ctx) => !ctx.wrapperAvailable
+        },
+        {
+          title: 'Start wrapper',
+          task: (ctx, task) => {
+            execa(
+              'npm',
+              ['start'],
+              {
+                cwd: ctx.wrapperPath,
+                env: {
+                  BROWSER: 'none',
+                  REACT_APP_IPFS_GATEWAY: 'http://localhost:5001',
+                  REACT_APP_DEFAULT_ETH_NODE: `ws://localhost:${port}`
+                }
+              }
+            ).catch((err) => {
+              throw new Error('Could not start wrapper')
+            })
+          }
+        },
+        {
+          title: 'Open wrapper',
+          task: (ctx) => {
+            openUrl(`http://localhost:3000/#/${ctx.daoAddress}`)
+          }
+        }
+      ])
     }
   ])
 
@@ -306,8 +392,13 @@ exports.handler = function (args) {
    The first one was used to create everything.
 
    ${Object.keys(ctx.privateKeys).map((address) =>
-      chalk.bold(`${address}: `) + ctx.privateKeys[address].secretKey.toString('hex')).join('\n   ')}
+      chalk.bold(`Address: ${address}\nKey:   `) + ctx.privateKeys[address].secretKey.toString('hex')).join('\n   ')}
 
-   Open up https://app.aragon.com and enter this configuration in the settings!`)
+   Open up http://localhost:3000/#/${ctx.daoAddress} to view your DAO!`)
+    if (!manifest) {
+      reporter.warning('No front-end detected (no manifest.json)')
+    } else if (!manifest.start_url) {
+      reporter.warning('No front-end detected (no start_url defined)')
+    }
   })
 }

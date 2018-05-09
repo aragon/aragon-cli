@@ -1,93 +1,18 @@
-<h1 align="center">Aragon CLI</h1>
+# Aragon CLI
 
-<div align="center">
-  <!-- NPM version -->
-  <a href="https://npmjs.org/package/@aragon/cli">
-    <img src="https://img.shields.io/npm/v/@aragon/cli.svg?style=flat-square"
-      alt="NPM version" />
-  </a>
-  <!-- Build Status -->
-  <a href="https://travis-ci.org/aragon/aragon-dev-cli">
-    <img src="https://img.shields.io/travis/aragon/aragon-dev-cli/master.svg?style=flat-square"
-      alt="Build Status" />
-  </a>
-  <!-- Test Coverage -->
-  <a href="https://coveralls.io/github/aragon/aragon-dev-cli">
-    <img src="https://img.shields.io/coveralls/aragon/aragon-dev-cli.svg?style=flat-square"
-      alt="Test Coverage" />
-  </a>
-  <!-- Downloads -->
-  <a href="https://npmjs.org/package/@aragon/cli">
-    <img src="https://img.shields.io/npm/dm/@aragon/cli.svg?style=flat-square"
-      alt="Downloads" />
-  </a>
-  <!-- Standard -->
-  <a href="https://standardjs.com">
-    <img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square"
-      alt="Standard" />
-  </a>
-</div>
+[![Build Status](https://img.shields.io/travis/aragon/aragon-dev-cli/master.svg?style=flat-square)](https://travis-ci.org/aragon/aragon-dev-cli)
+[![Test Coverage](https://img.shields.io/coveralls/aragon/aragon-dev-cli.svg?style=flat-square)](https://coveralls.io/github/aragon/aragon-dev-cli)
+[![NPM version](https://img.shields.io/npm/v/@aragon/cli.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli)
+[![Downloads](https://img.shields.io/npm/dm/@aragon/cli.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli)
 
-<div align="center">
-  <h4>
-    <a href="https://aragon.one">
-      Website
-    </a>
-    <span> | </span>
-    <a href="https://github.com/aragon/aragon-dev-cli/tree/master/docs">
-      Documentation
-    </a>
-    <span> | </span>
-    <a href="https://github.com/aragon/aragon-dev-cli/blob/master/.github/CONTRIBUTING.md">
-      Contributing
-    </a>
-    <span> | </span>
-    <a href="https://aragon.chat">
-      Chat
-    </a>
-  </h4>
-</div>
-
-CLI tool for creating, testing and publishing Aragon applications.
+Aragon CLI is a tool for creating, testing and publishing Aragon applications.
 
 ## Installation
 
+Install Aragon CLI by running
+
 ```bash
 npm install -g @aragon/cli
-```
-
-## Usage
-
-```
-➜ aragon-example-application aragon-dev-cli help
-aragon-dev-cli <command>
-
-Commands:
-  aragon-dev-cli bootstrap               Set up a development chain and deploy
-                                         an Aragon organisation
-  aragon-dev-cli init <name> [template]  Initialise a new application
-  aragon-dev-cli playground              Set up a dev chain, deploy an Aragon
-                                         organisation and install your app
-  aragon-dev-cli publish [contract]      Publish a new version of the
-                                         application
-  aragon-dev-cli version <bump>          Bump the application version
-  aragon-dev-cli versions                List all versions of the package
-
-APM:
-  --apm.ens-registry  Address of the ENS registry
-  --eth-rpc           An URI to the Ethereum node used for RPC calls
-                                              [default: "http://localhost:8545"]
-
-APM providers:
-  --apm.ipfs.rpc  An URI to the IPFS node used to publish files
-                   [default: {"host":"localhost","protocol":"http","port":5001}]
-
-Options:
-  --help     Show help                                                 [boolean]
-  --version  Show version number                                       [boolean]
-  --silent   Silence output to terminal                         [default: false]
-
-For more information, check out https://wiki.aragon.one
 ```
 
 ## Recipes
