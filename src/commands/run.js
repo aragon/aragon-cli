@@ -40,7 +40,14 @@ async function startIPFS () {
 }
 
 function getContract (pkg, contract) {
-  return require(`${pkg}/build/contracts/${contract}.json`)
+  let artifact
+  try {
+    artifact = require(`${pkg}/build/contracts/${contract}.json`)
+  } catch (err) {
+    throw new Error(`Could not read contract interface for ${contract}. Did you remember to compile your contracts?`)
+  }
+
+  return artifact
 }
 
 function deployContract (web3, sender, { abi, bytecode }, args = []) {
