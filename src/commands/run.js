@@ -362,7 +362,8 @@ exports.handler = function (args) {
                 env: {
                   BROWSER: 'none',
                   REACT_APP_IPFS_GATEWAY: 'http://localhost:5001',
-                  REACT_APP_DEFAULT_ETH_NODE: `ws://localhost:${port}`
+                  REACT_APP_DEFAULT_ETH_NODE: `ws://localhost:${port}`,
+                  REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ensAddress
                 }
               }
             ).catch((err) => {
