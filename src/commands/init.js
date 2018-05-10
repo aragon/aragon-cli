@@ -41,7 +41,7 @@ exports.builder = (yargs) => {
       }
 
       return true
-    })
+    }, true)
 }
 
 exports.handler = function ({ reporter, name, template }) {
