@@ -66,21 +66,26 @@ cmd.option('network', {
   description: 'The network in your truffle.js that you want to use',
   default: 'development',
   coerce: (network) => {
-    if (fs.existsSync(`${findProjectRoot()}/truffle.js`)) {
-      const truffleConfig = require(`${findProjectRoot()}/truffle.js`)
-      const truffleNetwork = truffleConfig.networks[network]
-      let provider
-      if (truffleNetwork.provider) {
-        provider = truffleNetwork.provider
-      } else if (truffleNetwork.host && truffleNetwork.port) {
-        provider = new Web3.providers.HttpProvider(`http://${truffleNetwork.host}:${truffleNetwork.port}`)
+    try {
+      if (fs.existsSync(`${findProjectRoot()}/truffle.js`)) {
+        const truffleConfig = require(`${findProjectRoot()}/truffle.js`)
+        const truffleNetwork = truffleConfig.networks[network]
+        let provider
+        if (truffleNetwork.provider) {
+          provider = truffleNetwork.provider
+        } else if (truffleNetwork.host && truffleNetwork.port) {
+          provider = new Web3.providers.HttpProvider(`http://${truffleNetwork.host}:${truffleNetwork.port}`)
+        } else {
+          provider = new Web3.providers.HttpProvider(`http://localhost:8545`)
+        }
+        truffleNetwork.provider = provider
+        return truffleNetwork
       } else {
-        provider = new Web3.providers.HttpProvider(`http://localhost:8545`)
+        throw new Error(`Didn't found any truffle.js file`)
       }
-      truffleNetwork.provider = provider
-      return truffleNetwork
-    } else {
-      throw new Error(`Didn't found any truffle.js file`)
+    } catch (_) {
+      // This means you are running init
+      return {}
     }
   }
 })

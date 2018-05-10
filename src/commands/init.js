@@ -2,6 +2,7 @@ const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const TaskList = require('listr')
 const execa = require('execa')
+const fs = require('fs')
 
 exports.command = 'init <name> [template]'
 
@@ -51,16 +52,14 @@ exports.handler = function ({ reporter, name, template }) {
   const tasks = new TaskList([
     {
       title: 'Clone template',
-      task: (ctx, task) => {
-        // const indexFile = 'module.exports = ' + JSON.stringify(indexObj, null, 2)
-        // fs.writeFileSync('index.js', indexFile)
+      task: async (ctx, task) => {
         task.output = `Cloning ${template} into ${basename}...`
 
-        return clone(template, basename, { shallow: true })
-          .then(() => `Template cloned to ${basename}`)
-          .catch((err) => {
-            throw new Error(`Failed to clone template ${template} (${err.message})`)
-          })
+        const repo = await clone(template, basename, { shallow: true })
+        console.log(`Template cloned to ${basename}`)
+        const arapp = JSON.parse(fs.readFileSync(`./${basename}/arapp.json`))
+        arapp.appName = arapp.appName.replace('app', basename)
+        fs.writeFileSync(`./${basename}/arapp.json`, JSON.stringify(arapp, null, 2))
       }
     },
     {
