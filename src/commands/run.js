@@ -79,6 +79,8 @@ async function setPermissions (web3, sender, aclAddress, permissions) {
   )
 }
 
+const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
+
 exports.handler = function (args) {
   const {
     // Globals
@@ -186,7 +188,7 @@ exports.handler = function (args) {
         {
           title: 'Create APM registry',
           task: (ctx) => {
-            const root = '0xffffffffffffffffffffffffffffffffffffffff'
+            const root = ANY_ENTITY
             const contract = new ctx.web3.eth.Contract(
               getContract('@aragon/os', 'APMRegistryFactory').abi,
               ctx.contracts['APMRegistryFactory']
@@ -252,7 +254,7 @@ exports.handler = function (args) {
       title: 'Set DAO permissions',
       task: (ctx, task) =>
         setPermissions(ctx.web3, ctx.accounts[0], ctx.aclAddress, [
-          [ctx.accounts[0], ctx.daoAddress, 'APP_MANAGER_ROLE']
+          [ANY_ENTITY, ctx.daoAddress, 'APP_MANAGER_ROLE']
         ])
     },
     {
@@ -311,7 +313,7 @@ exports.handler = function (args) {
             }
 
             const permissions = module.roles
-              .map((role) => [ctx.accounts[0], ctx.appAddress, role.id])
+              .map((role) => [ANY_ENTITY, ctx.appAddress, role.id])
 
             return setPermissions(
               ctx.web3,
