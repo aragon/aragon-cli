@@ -25,7 +25,6 @@ exports.task = async function ({ reporter, cwd, port = 8545 }) {
     
       return new Promise((resolve, reject) => {
         server.listen(port, (err) => {
-          console.log(err)
           if (err) return reject(err)
     
           task.title = `Local chain started at :${port}`

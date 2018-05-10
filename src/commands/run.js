@@ -12,9 +12,8 @@ const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const os = require('os')
 const fs = require('fs-extra')
-const openUrl = require('opn')
-const execa = require('execa')
 const opn = require('opn')
+const execa = require('execa')
 const { runTruffle } = require('../helpers/truffle-runner')
 const { isIPFSRunning, isIPFSInstalled, startIPFSDaemon } = require('../helpers/ipfs-daemon')
 
@@ -374,7 +373,7 @@ exports.handler = function (args) {
         {
           title: 'Open wrapper',
           task: (ctx) => {
-            openUrl(`http://localhost:3000/#/${ctx.daoAddress}`)
+            setTimeout(() => opn(`http://localhost:3000/#/${ctx.daoAddress}`), 2500)  
           }
         }
       ])
@@ -393,8 +392,7 @@ exports.handler = function (args) {
    Here are some accounts you can use.
    The first one was used to create everything.
 
-   ${Object.keys(ctx.accounts).map((account) =>
-      chalk.bold(`Address: ${address}\n   Key:   `))}
+   ${ctx.accounts.map((account) => chalk.bold(`Address: ${account}\n  `))}
 
    Open up http://localhost:3000/#/${ctx.daoAddress} to view your DAO!`)
     if (!manifest) {
