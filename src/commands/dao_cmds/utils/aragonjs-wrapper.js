@@ -29,18 +29,17 @@ const appSrc = (app, gateway = ipfsDefaultConf.gateway) => {
 // Subscribe to wrapper's observables
 const subscribe = (
   wrapper,
-  { onApps, onForwarders, onTransaction },
+  { onApps, onForwarders, onTransaction, onPermissions },
   { ipfsConf }
 ) => {
-  const { apps, forwarders, transactions } = wrapper
+  const { apps, forwarders, transactions, permissions } = wrapper
 
   const subscriptions = {
-    apps: apps.subscribe(apps => {
-      onApps(apps)
-    }),
+    apps: apps.subscribe(onApps),
     connectedApp: null,
     forwarders: forwarders.subscribe(onForwarders),
     transactions: transactions.subscribe(onTransaction),
+    permissions: permissions.subscribe(onPermissions)
   }
 
   return subscriptions
@@ -69,9 +68,10 @@ const initWrapper = async (
     onForwarders = noop,
     onTransaction = noop,
     onDaoAddress = noop,
+    onPermissions = noop,
   } = {}
 ) => {
-  const isDomain = /[a-z0-9]+\.aragonid\.eth/.test(dao)
+  const isDomain = /[a-z0-9]+\.eth/.test(dao)
 
   const daoAddress = isDomain
     ? await resolveEnsDomain(dao, {
@@ -110,7 +110,7 @@ const initWrapper = async (
 
   const subscriptions = subscribe(
     wrapper,
-    { onApps, onForwarders, onTransaction },
+    { onApps, onForwarders, onTransaction, onPermissions },
     { ipfsConf }
   )
 
