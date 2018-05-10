@@ -7,6 +7,7 @@ const chalk = require('chalk')
 const path = require('path')
 const APM = require('@aragon/apm')
 const publish = require('./publish')
+const devchain = require('./devchain')
 const { hasBin } = require('../util')
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
@@ -16,7 +17,6 @@ const openUrl = require('opn')
 const execa = require('execa')
 const { runTruffle } = require('../helpers/truffle-runner')
 
-const BLOCK_GAS_LIMIT = 50e6
 const TX_MIN_GAS = 10e6
 
 exports.command = 'run'
@@ -92,30 +92,21 @@ exports.handler = function (args) {
       }
     },
     {
-      title: 'Start local chain',
-      task: (ctx, task) => {
-        const server = ganache.server({
-          gasLimit: BLOCK_GAS_LIMIT,
-          mnemonic: 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat'
-        })
+      title: 'Connect to the local chain',
+      task: async (ctx, task) => {
+        const getWeb3 = () => new Web3(
+          new Web3.providers.WebsocketProvider(`ws://localhost:8545`)
+        )
 
-        return new Promise((resolve, reject) => {
-          server.listen(port, (err) => {
-            if (err) return reject(err)
-
-            task.title = `Local chain started at :${port}`
-            resolve()
+        try {
+          ctx.web3 = getWeb3()
+          const connected = await ctx.web3.eth.net.isListening()
+          return connected
+        } catch (err) {
+          await devchain.task({}).then(() => {
+            ctx.web3 = getWeb3()
           })
-        }).then(async () => {
-          // Set a temporary provider for deployments
-          ctx.web3 = new Web3(
-            new Web3.providers.WebsocketProvider(`ws://localhost:${port}`)
-          )
-
-          // Grab the accounts
-          ctx.accounts = await ctx.web3.eth.getAccounts()
-          ctx.privateKeys = server.provider.manager.state.accounts
-        })
+        }
       }
     },
     {
@@ -257,8 +248,7 @@ exports.handler = function (args) {
     },
     {
       title: 'Deploy app code',
-      task: (ctx, task) => deployContract(
-        ctx.web3, ctx.accounts[0], getContract(cwd, path.basename(module.path, '.sol'))
+      task: (ctx, task) => deployContract(ctx.web3, ctx.accounts[0], getContract(cwd, path.basename(module.path, '.sol'))
       ).then((appCodeAddress) => {
         ctx.contracts['AppCode'] = appCodeAddress
       })
