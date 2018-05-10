@@ -2,6 +2,8 @@ const Web3 = require('web3')
 const EthereumTx = require('ethereumjs-tx')
 const APM = require('@aragon/apm')
 const ACL = require('../acl')
+const { ensureWeb3 } = require('../helpers/web3-fallback')
+const { getENSAddress } = require('../helpers/truffle-config')
 
 exports.command = 'grant [address]'
 exports.describe = 'Grant an address permission to create new versions in this package'
@@ -19,9 +21,7 @@ exports.handler = async function ({
   // Globals
   reporter,
   cwd,
-  ethRpc,
-  keyfile,
-  key,
+  network,
   module,
   apm: apmOptions,
 
@@ -29,10 +29,10 @@ exports.handler = async function ({
   address,
   noConfirm
 }) {
-  const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
-  const privateKey = keyfile.key ? keyfile.key : key
-
-  apmOptions.ensRegistry = !apmOptions.ensRegistry ? keyfile.ens : apmOptions.ensRegistry
+  console.log(network)
+  const web3 = await ensureWeb3(network)
+  console.log(web3)
+  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   const apm = await APM(web3, apmOptions)
   const acl = ACL(web3)
@@ -41,6 +41,7 @@ exports.handler = async function ({
     throw new Error('This directory is not an Aragon project')
   }
 
+  console.log(module.appName)
   const repo = await apm.getRepository(module.appName)
     .catch(() => null)
   if (repo === null) {
@@ -50,7 +51,7 @@ exports.handler = async function ({
   reporter.info(`Granting permission to publish on ${module.appName} for ${address}`)
 
   // Decode sender
-  const from = privateKey ? web3.eth.accounts.privateKeyToAccount('0x' + privateKey).address : null
+  const from = ctx.accounts[0]
 
   // Build transaction
   const transaction = await acl.grant(repo.options.address, address)
@@ -60,27 +61,18 @@ exports.handler = async function ({
     transaction.from = from
   }
 
-  if (!privateKey) {
-    reporter.info('Sign and broadcast this transaction')
-    reporter.success(JSON.stringify(transaction))
+  // Sign and broadcast transaction
+  reporter.debug('Signing transaction...')
+
+  const promisedReceipt = web3.eth.sendTransaction(transaction)
+  if (noConfirm) return reporter.success('Transaction sent')
+
+  const receipt = await promisedReceipt
+
+  reporter.debug(JSON.stringify(receipt))
+  if (receipt.status === '0x1') {
+    reporter.success(`Successful transaction ${receipt.transactionHash}`)
   } else {
-    // Sign and broadcast transaction
-    reporter.debug('Signing transaction with passed private key...')
-
-    const tx = new EthereumTx(transaction)
-    tx.sign(Buffer.from(privateKey, 'hex'))
-    const signed = '0x' + tx.serialize().toString('hex')
-
-    const promisedReceipt = web3.eth.sendSignedTransaction(signed)
-    if (noConfirm) return reporter.success('Transaction sent')
-
-    const receipt = await promisedReceipt
-
-    reporter.debug(JSON.stringify(receipt))
-    if (receipt.status === '0x1') {
-      reporter.success(`Successful transaction ${receipt.transactionHash}`)
-    } else {
-      reporter.error(`Transaction reverted ${receipt.transactionHash}`)
-    }
+    reporter.error(`Transaction reverted ${receipt.transactionHash}`)
   }
 }

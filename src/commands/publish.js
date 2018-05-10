@@ -136,8 +136,7 @@ exports.task = function ({
 
   // Globals
   cwd,
-  ethRpc,
-  keyfile,
+  network,
   module,
   apm: apmOptions,
 
@@ -311,12 +310,11 @@ exports.task = function ({
 }
 
 exports.handler = function (args) {
-  const { apm: apmOptions, keyfile, key, ethRpc } = args
+  const { apm: apmOptions } = args
 
-  // TODO: Clean up
-  const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
+  const web3 = new Web3(network)
 
-  apmOptions.ensRegistryAddress = !apmOptions.ensRegistry ? keyfile.ens : apmOptions.ensRegistry
+  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   const apm = APM(web3, apmOptions)
 

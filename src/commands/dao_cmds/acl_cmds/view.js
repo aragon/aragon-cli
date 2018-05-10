@@ -42,8 +42,8 @@ const formatRow = ({ to, role, allowed }, apps) => {
   return [formattedTo, formattedRole, formattedAllowed]
 } 
 
-exports.handler = function ({ reporter, dao, keyfile, ethRpc }) {
-  const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
+exports.handler = function ({ reporter, dao, network, apm }) {
+  const web3 = new Web3(network)
 
   const tasks = new TaskList([
     {
@@ -58,7 +58,7 @@ exports.handler = function ({ reporter, dao, keyfile, ethRpc }) {
             }
           }
 
-          initAragonJS(dao, keyfile.ens, {
+          initAragonJS(dao, apm['ens-registry'], {
             provider: web3.currentProvider,
             onPermissions: permissions => {
               ctx.acl = permissions

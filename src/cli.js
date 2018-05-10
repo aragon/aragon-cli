@@ -9,6 +9,7 @@ const {
 const ConsoleReporter = require('./reporters/ConsoleReporter')
 const fs = require('fs')
 const Web3 = require('web3')
+const { getTruffleConfig, getENSAddress } = require('./helpers/truffle-config')
 
 const MIDDLEWARES = [
   manifestMiddleware,
@@ -47,7 +48,7 @@ cmd.option('cwd', {
 // APM
 cmd.option('apm.ens-registry', {
   description: 'Address of the ENS registry',
-  default: process.env.ENS
+  default: () => process.env.ENS || getENSAddress()
 })
 cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
 
@@ -66,37 +67,21 @@ cmd.option('network', {
   description: 'The network in your truffle.js that you want to use',
   default: 'development',
   coerce: (network) => {
-    try {
-      if (fs.existsSync(`${findProjectRoot()}/truffle.js`)) {
-        const truffleConfig = require(`${findProjectRoot()}/truffle.js`)
-        const truffleNetwork = truffleConfig.networks[network]
-        let provider
-        if (truffleNetwork.provider) {
-          provider = truffleNetwork.provider
-        } else if (truffleNetwork.host && truffleNetwork.port) {
-          provider = new Web3.providers.HttpProvider(`http://${truffleNetwork.host}:${truffleNetwork.port}`)
-        } else {
-          provider = new Web3.providers.HttpProvider(`http://localhost:8545`)
-        }
-        truffleNetwork.provider = provider
-        return truffleNetwork
+    const truffleConfig = getTruffleConfig()
+    if (truffleConfig) {
+      const truffleNetwork = truffleConfig.networks[network]
+      let provider
+      if (truffleNetwork.provider) {
+        provider = truffleNetwork.provider
+      } else if (truffleNetwork.host && truffleNetwork.port) {
+        provider = new Web3.providers.HttpProvider(`http://${truffleNetwork.host}:${truffleNetwork.port}`)
       } else {
-        throw new Error(`Didn't found any truffle.js file`)
+        provider = new Web3.providers.HttpProvider(`http://localhost:8545`)
       }
-    } catch (_) {
+      truffleNetwork.provider = provider
+      return truffleNetwork
+    } else {
       // This means you are running init
-      return {}
-    }
-  }
-})
-
-cmd.option('keyfile', {
-  description: 'Path to a local file containing a private key, rpc node and ENS. If provided it will overwrite eth-rpc (but not apm.ens-registry)',
-  default: require('homedir')() + '/.rinkebykey.json',
-  coerce: (file) => {
-    try {
-      return require(require('path').resolve(file))
-    } catch (e) {
       return {}
     }
   }

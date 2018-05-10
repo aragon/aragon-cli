@@ -26,8 +26,8 @@ const printContent = (content) => {
   return `${content.provider}:${content.location}`.slice(0,25) + '...'
 }
 
-exports.handler = function ({ reporter, dao, keyfile, ethRpc }) {
-  const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
+exports.handler = function ({ reporter, dao, network }) {
+  const web3 = new Web3(network)
 
   const tasks = new TaskList([
     {
@@ -36,7 +36,7 @@ exports.handler = function ({ reporter, dao, keyfile, ethRpc }) {
         task.output = `Fetching apps for ${dao}...`
 
         return new Promise((resolve, reject) => {
-          initAragonJS(dao, keyfile.ens, {
+          initAragonJS(dao, apm['ens-registry'], {
             provider: web3.currentProvider,
             onApps: apps => {
               ctx.apps = apps
