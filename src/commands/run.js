@@ -64,6 +64,8 @@ async function setPermissions (web3, sender, aclAddress, permissions) {
   )
 }
 
+const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
+
 exports.handler = function (args) {
   const {
     // Globals
@@ -71,6 +73,7 @@ exports.handler = function (args) {
     cwd,
     network,
     module,
+    manifest,
 
     // Arguments
     port
@@ -178,7 +181,7 @@ exports.handler = function (args) {
         {
           title: 'Create APM registry',
           task: (ctx) => {
-            const root = '0xffffffffffffffffffffffffffffffffffffffff'
+            const root = ANY_ENTITY
             const contract = new ctx.web3.eth.Contract(
               getContract('@aragon/os', 'APMRegistryFactory').abi,
               ctx.contracts['APMRegistryFactory']
@@ -244,7 +247,7 @@ exports.handler = function (args) {
       title: 'Set DAO permissions',
       task: (ctx, task) =>
         setPermissions(ctx.web3, ctx.accounts[0], ctx.aclAddress, [
-          [ctx.accounts[0], ctx.daoAddress, 'APP_MANAGER_ROLE']
+          [ANY_ENTITY, ctx.daoAddress, 'APP_MANAGER_ROLE']
         ])
     },
     {
@@ -297,12 +300,12 @@ exports.handler = function (args) {
           title: 'Set permissions',
           task: async (ctx, task) => {
             if (!module.roles || module.roles.length === 0) {
-              task.skip('No permissions defined in app')
+              throw new Error('You have no permissions defined in your arapp.json\nThis is required for your app to properly show up.')
               return
             }
 
             const permissions = module.roles
-              .map((role) => [ctx.accounts[0], ctx.appAddress, role.id])
+              .map((role) => [ANY_ENTITY, ctx.appAddress, role.id])
 
             return setPermissions(
               ctx.web3,
@@ -320,7 +323,7 @@ exports.handler = function (args) {
         {
           title: 'Download wrapper',
           task: (ctx, task) => {
-            const WRAPPER_COMMIT = 'ddecab6aa3c9d345ee22fc70395be68b99dba6e7'
+            const WRAPPER_COMMIT = 'a21100bc14daaea72d79c6eb3ecaaf5877791e09'
             const WRAPPER_PATH = `${os.homedir()}/.aragon/wrapper-${WRAPPER_COMMIT}`
             ctx.wrapperPath = WRAPPER_PATH
 
@@ -360,7 +363,8 @@ exports.handler = function (args) {
                 cwd: ctx.wrapperPath,
                 env: {
                   BROWSER: 'none',
-                  REACT_APP_IPFS_GATEWAY: 'http://localhost:5001',
+                  REACT_APP_IPFS_GATEWAY: 'http://localhost:8080/ipfs',
+                  REACT_APP_IPFS_RPC: 'http://localhost:5001',
                   REACT_APP_DEFAULT_ETH_NODE: `ws://localhost:${port}`,
                   REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ensAddress
                 }

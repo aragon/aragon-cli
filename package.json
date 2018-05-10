@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "3.0.0-beta.6",
+  "version": "3.0.0-beta.7",
   "description": "Aragon command-line tools",
   "main": "dist/cli.js",
   "bin": {
@@ -35,8 +35,11 @@
   "dependencies": {
     "@aragon/apm": "^1.0.0-beta.11",
     "@aragon/os": "^3.1.2",
+    "@aragon/wrapper": "^2.0.0-beta.33",
     "chalk": "^2.1.0",
-    "eth-ens-namehash": "^2.0.0",
+    "cli-table": "^0.3.1",
+    "colors": "^1.2.4",
+    "eth-ens-namehash": "^2.0.8",
     "execa": "^0.10.0",
     "figures": "^2.0.0",
     "find-up": "^2.1.0",
