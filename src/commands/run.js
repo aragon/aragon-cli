@@ -8,14 +8,15 @@ const path = require('path')
 const APM = require('@aragon/apm')
 const publish = require('./publish')
 const devchain = require('./devchain')
-const { hasBin } = require('../util')
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const os = require('os')
 const fs = require('fs-extra')
 const openUrl = require('opn')
 const execa = require('execa')
+const opn = require('opn')
 const { runTruffle } = require('../helpers/truffle-runner')
+const { isIPFSRunning, isIPFSInstalled, startIPFSDaemon } = require('../helpers/ipfs-daemon')
 
 const TX_MIN_GAS = 10e6
 
@@ -28,16 +29,6 @@ exports.builder = {
     description: 'The port to run the local chain on',
     default: 8545
   }
-}
-
-async function startIPFS () {
-  const hasIPFS = hasBin('ipfs')
-  if (!hasIPFS) {
-    throw new Error(`Running your app locally requires IPFS.
-      Please install it by going to https://ipfs.io/docs/install`)
-  }
-
-  return execa('ipfs', ['daemon'])
 }
 
 function getContract (pkg, contract) {
@@ -92,7 +83,7 @@ exports.handler = function (args) {
       }
     },
     {
-      title: 'Connect to the local chain',
+      title: 'Connect to the development chain',
       task: async (ctx, task) => {
         const getWeb3 = () => new Web3(
           new Web3.providers.WebsocketProvider(`ws://localhost:8545`)
@@ -111,8 +102,20 @@ exports.handler = function (args) {
     },
     {
       title: 'Start IPFS',
-      task: () => {
-        startIPFS()
+      skip: async () => {
+        const running = await isIPFSRunning()
+        if (running) return 'IPFS daemon already running'
+      },
+      task: async () => {
+        const installed = await isIPFSInstalled()
+        if (!installed) {
+          setTimeout(() => opn('https://ipfs.io/docs/install'), 3000)
+          throw new Error(`
+            Running your app requires IPFS. Opening install instructions in your browser`
+          )
+        } else {
+          startIPFSDaemon()
+        }
       }
     },
     {
