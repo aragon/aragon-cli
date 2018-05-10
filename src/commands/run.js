@@ -70,6 +70,7 @@ exports.handler = function (args) {
     // Globals
     reporter,
     cwd,
+    network,
     module,
 
     // Arguments
@@ -83,21 +84,19 @@ exports.handler = function (args) {
       }
     },
     {
-      title: 'Connect to the development chain',
+      title: 'Connect to the provided Ethereum network',
       task: async (ctx, task) => {
-        const getWeb3 = () => new Web3(
-          new Web3.providers.WebsocketProvider(`ws://localhost:8545`)
-        )
+        const getWeb3 = () => new Web3(network.provider)
 
         try {
           ctx.web3 = getWeb3()
           const connected = await ctx.web3.eth.net.isListening()
-          return connected
         } catch (err) {
           await devchain.task({}).then(() => {
             ctx.web3 = getWeb3()
           })
         }
+        ctx.accounts = await ctx.web3.eth.getAccounts()
       }
     },
     {
@@ -114,7 +113,7 @@ exports.handler = function (args) {
             Running your app requires IPFS. Opening install instructions in your browser`
           )
         } else {
-          startIPFSDaemon()
+          await startIPFSDaemon()
         }
       }
     },
@@ -264,7 +263,6 @@ exports.handler = function (args) {
           ipfs: { host: 'localhost', port: 5001, protocol: 'http' },
           ensRegistryAddress: ctx.ensAddress
         })
-        ctx.privateKey = ctx.privateKeys[ctx.accounts[0].toLowerCase()].secretKey.toString('hex')
         return publish.task(Object.assign(args, {
           alreadyCompiled: true,
           contract: ctx.contracts['AppCode'],
@@ -395,8 +393,8 @@ exports.handler = function (args) {
    Here are some accounts you can use.
    The first one was used to create everything.
 
-   ${Object.keys(ctx.privateKeys).map((address) =>
-      chalk.bold(`Address: ${address}\n   Key:   `) + ctx.privateKeys[address].secretKey.toString('hex')).join('\n   ')}
+   ${Object.keys(ctx.accounts).map((account) =>
+      chalk.bold(`Address: ${address}\n   Key:   `))}
 
    Open up http://localhost:3000/#/${ctx.daoAddress} to view your DAO!`)
     if (!manifest) {

@@ -7,6 +7,8 @@ const {
   findProjectRoot
 } = require('./util')
 const ConsoleReporter = require('./reporters/ConsoleReporter')
+const fs = require('fs')
+const Web3 = require('web3')
 
 const MIDDLEWARES = [
   manifestMiddleware,
@@ -60,9 +62,26 @@ cmd.option('apm.ipfs.rpc', {
 cmd.group('apm.ipfs.rpc', 'APM providers:')
 
 // Ethereum
-cmd.option('eth-rpc', {
-  description: 'An URI to the Ethereum node used for RPC calls',
-  default: 'http://localhost:8545'
+cmd.option('network', {
+  description: 'The network in your truffle.js that you want to use',
+  default: 'development',
+  coerce: (network) => {
+    if (fs.existsSync(`${findProjectRoot()}/truffle.js`)) {
+      const truffleConfig = require(`${findProjectRoot()}/truffle.js`)
+      let truffleNetwork = truffleConfig.networks[network]
+      if (truffleNetwork.provider) {
+        provider = truffleNetwork.provider
+      } else if (truffleNetwork.host && truffleNetwork.port) {
+        provider = new Web3.providers.HttpProvider(`http://${truffleNetwork.host}:${truffleNetwork.port}`)
+      } else {
+        provider = new Web3.providers.HttpProvider(`http://localhost:8545`)
+      }
+      truffleNetwork.provider = provider
+      return truffleNetwork
+    } else {
+      throw new Error(`Didn't found any truffle.js file`)
+    }
+  }
 })
 
 cmd.option('keyfile', {

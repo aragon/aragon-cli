@@ -52,6 +52,8 @@ exports.handler = function ({ reporter, name, template }) {
     {
       title: 'Clone template',
       task: (ctx, task) => {
+        // const indexFile = 'module.exports = ' + JSON.stringify(indexObj, null, 2)
+        // fs.writeFileSync('index.js', indexFile)
         task.output = `Cloning ${template} into ${basename}...`
 
         return clone(template, basename, { shallow: true })

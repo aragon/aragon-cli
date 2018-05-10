@@ -23,8 +23,6 @@ exports.describe = 'Publish a new version of the application'
 exports.builder = function (yargs) {
   return yargs.positional('contract', {
     description: 'The address of the contract to publish in this version'
-  }).option('key', {
-    description: 'The private key to sign transactions with'
   }).option('only-artifacts', {
     description: 'Whether just generate artifacts file without publishing',
     default: false,
@@ -268,12 +266,9 @@ exports.task = function ({
     {
       title: `Publish ${module.appName} v${module.version}`,
       task: (ctx, task) => {
-        task.output = ctx.privateKey
-          ? 'Generating transaction to sign'
-          : 'Signing transaction...'
-        const from = ctx.privateKey
-          ? ctx.web3.eth.accounts.privateKeyToAccount('0x' + ctx.privateKey).address
-          : null
+        task.output = 'Generating transaction to sign'
+        const from = ctx.accounts[0]
+        console.log(from)
 
         return ctx.apm.publishVersion(
           from,
@@ -283,16 +278,7 @@ exports.task = function ({
           ctx.pathToPublish,
           contract
         ).then((transaction) => {
-          if (!ctx.privateKey) {
-            return `Sign and broadcast this transaction:\n${JSON.stringify(transaction)}`
-          }
-
-          // Sign transaction
-          const tx = new EthereumTx(transaction)
-          tx.sign(Buffer.from(ctx.privateKey, 'hex'))
-          const signed = '0x' + tx.serialize().toString('hex')
-
-          ctx.transactionStatus = ctx.web3.eth.sendSignedTransaction(signed)
+          ctx.transactionStatus = ctx.web3.eth.sendTransaction(transaction)
 
           return 'Signed transaction to publish app'
         })
@@ -322,11 +308,10 @@ exports.handler = function (args) {
 
   // TODO: Clean up
   const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
-  const privateKey = keyfile.key ? keyfile.key : key
 
   apmOptions.ensRegistryAddress = !apmOptions.ensRegistry ? keyfile.ens : apmOptions.ensRegistry
 
   const apm = APM(web3, apmOptions)
 
-  return exports.task(args).run({ web3, apm, privateKey })
+  return exports.task(args).run({ web3, apm })
 }
