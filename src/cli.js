@@ -65,7 +65,7 @@ cmd.group('apm.ipfs.rpc', 'APM providers:')
 // Ethereum
 cmd.option('network', {
   description: 'The network in your truffle.js that you want to use',
-  default: 'development',
+  default: 'rpc',
   coerce: (network) => {
     const truffleConfig = getTruffleConfig()
     if (truffleConfig) {
