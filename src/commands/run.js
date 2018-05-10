@@ -17,7 +17,6 @@ const execa = require('execa')
 const { runTruffle } = require('../helpers/truffle-runner')
 const { isIPFSRunning, isIPFSInstalled, startIPFSDaemon } = require('../helpers/ipfs-daemon')
 const { findProjectRoot } = require('../util')
-const { writeTruffleConfig } = require('../helpers/truffle-config')
 
 const TX_MIN_GAS = 10e6
 

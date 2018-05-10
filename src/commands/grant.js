@@ -3,7 +3,6 @@ const EthereumTx = require('ethereumjs-tx')
 const APM = require('@aragon/apm')
 const ACL = require('../acl')
 const { ensureWeb3 } = require('../helpers/web3-fallback')
-const { getENSAddress } = require('../helpers/truffle-config')
 
 exports.command = 'grant [address]'
 exports.describe = 'Grant an address permission to create new versions in this package'
