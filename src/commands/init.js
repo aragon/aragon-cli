@@ -2,6 +2,8 @@ const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const TaskList = require('listr')
 const execa = require('execa')
+const path = require('path')
+const fs = require('fs-extra')
 
 exports.command = 'init <name> [template]'
 
@@ -59,6 +61,29 @@ exports.handler = function ({ reporter, name, template }) {
           .catch((err) => {
             throw new Error(`Failed to clone template ${template} (${err.message})`)
           })
+      }
+    },
+    {
+      title: 'Preparing template',
+      task: async (ctx, task) => {
+        // Set `appName` in arapp
+        const arappPath = path.resolve(
+          basename,
+          'arapp.json'
+        )
+        const arapp = await fs.readJson(arappPath)
+        arapp.appName = name
+
+        // Delete .git folder
+        const gitFolderPath = path.resolve(
+          basename,
+          '.git'
+        )
+
+        return Promise.all([
+          fs.writeJson(arappPath, arapp, { spaces: 2 }),
+          fs.remove(gitFolderPath)
+        ])
       }
     },
     {
