@@ -128,7 +128,13 @@ exports.handler = function (args) {
           ensRegistryAddress: ctx.ens
         })
 
-        return apm.getLatest('democracy-template.aragonpm.eth').then(console.log)
+        return apm.getLatestVersionContract('democracy-template.aragonpm.eth')
+          .then(demTemplate => {
+            new ctx.web3.eth.Contract(
+              getContract('@aragon/templates-beta', 'DemocracyTemplate').abi,
+              demTemplate
+          ).methods.fac.call().then(DAOFactory => ctx.contracts = { DAOFactory })
+        }
       },
     },
     {
