@@ -74,7 +74,7 @@ cmd.option('network', {
       if (truffleNetwork.provider) {
         provider = truffleNetwork.provider
       } else if (truffleNetwork.host && truffleNetwork.port) {
-        provider = new Web3.providers.HttpProvider(`http://${truffleNetwork.host}:${truffleNetwork.port}`)
+        provider = new Web3.providers.WebsocketProvider(`ws://${truffleNetwork.host}:${truffleNetwork.port}`)
       } else {
         provider = new Web3.providers.HttpProvider(`http://localhost:8545`)
       }

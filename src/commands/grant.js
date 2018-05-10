@@ -29,9 +29,7 @@ exports.handler = async function ({
   address,
   noConfirm
 }) {
-  console.log(network)
   const web3 = await ensureWeb3(network)
-  console.log(web3)
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   const apm = await APM(web3, apmOptions)
@@ -41,9 +39,7 @@ exports.handler = async function ({
     throw new Error('This directory is not an Aragon project')
   }
 
-  console.log(module.appName)
-  const repo = await apm.getRepository(module.appName)
-    .catch(() => null)
+  const repo = await apm.getRepository(module.appName).catch(() => null)
   if (repo === null) {
     throw new Error(`Repository ${module.appName} does not exist and it's registry does not exist`)
   }
@@ -51,15 +47,14 @@ exports.handler = async function ({
   reporter.info(`Granting permission to publish on ${module.appName} for ${address}`)
 
   // Decode sender
-  const from = ctx.accounts[0]
+  const accounts = await web3.eth.getAccounts()
+  const from = accounts[0]
 
   // Build transaction
   const transaction = await acl.grant(repo.options.address, address)
 
-  if (from) {
-    transaction.nonce = await web3.eth.getTransactionCount(from)
-    transaction.from = from
-  }
+  transaction.nonce = await web3.eth.getTransactionCount(from)
+  transaction.from = from
 
   // Sign and broadcast transaction
   reporter.debug('Signing transaction...')

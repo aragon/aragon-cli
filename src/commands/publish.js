@@ -1,4 +1,4 @@
-const Web3 = require('web3')
+const { ensureWeb3 } = require('../helpers/web3-fallback')
 const fs = require('fs')
 const tmp = require('tmp-promise')
 const path = require('path')
@@ -136,6 +136,7 @@ exports.task = function ({
 
   // Globals
   cwd,
+  web3,
   network,
   module,
   apm: apmOptions,
@@ -254,7 +255,7 @@ exports.task = function ({
       task: (ctx, task) => {
         const dir = onlyArtifacts ? cwd : ctx.pathToPublish
 
-        return generateApplicationArtifact(ctx.web3, cwd, dir, module, contract, reporter)
+        return generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
           .then((artifact) => {
             reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
             reporter.debug(`Saved artifact in ${dir}/artifact.json`)
@@ -266,7 +267,7 @@ exports.task = function ({
       title: `Publish ${module.appName} v${module.version}`,
       task: (ctx, task) => {
         task.output = 'Generating transaction to sign'
-        const from = ctx.accounts[0]
+        const from = web3.eth.defaultAccount
 
         try {
           return ctx.apm.publishVersion(
@@ -280,7 +281,7 @@ exports.task = function ({
             // Fix because APM.js gas comes with decimals and from doesn't work
             transaction.from = from
             transaction.gas = Math.round(transaction.gas)
-            ctx.transactionStatus = ctx.web3.eth.sendTransaction(transaction)
+            ctx.transactionStatus = web3.eth.sendTransaction(transaction)
 
             return 'Signed transaction to publish app'
           })
@@ -309,14 +310,14 @@ exports.task = function ({
   ])
 }
 
-exports.handler = function (args) {
-  const { apm: apmOptions } = args
+exports.handler = async (args) => {
+  const { apm: apmOptions, network } = args
 
-  const web3 = new Web3(network)
+  const web3 = await ensureWeb3(network)
 
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   const apm = APM(web3, apmOptions)
 
-  return exports.task(args).run({ web3, apm })
+  return exports.task({ ...args, web3 }).run({ web3, apm })
 }
