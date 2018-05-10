@@ -3,6 +3,7 @@ const Web3 = require('web3')
 const daoArg = require('./utils/daoArg')
 import initAragonJS from './utils/aragonjs-wrapper'
 const { appIds } = require('./utils/knownApps')
+const { ensureWeb3 } = require('../../helpers/web3-fallback')
 
 const Table = require('cli-table')
 const colors = require('colors')
@@ -26,8 +27,8 @@ const printContent = (content) => {
   return `${content.provider}:${content.location}`.slice(0,25) + '...'
 }
 
-exports.handler = function ({ reporter, dao, network }) {
-  const web3 = new Web3(network)
+exports.handler = async function ({ reporter, dao, network, apm }) {
+  const web3 = await ensureWeb3(network)
 
   const tasks = new TaskList([
     {
