@@ -32,6 +32,9 @@ const writeTruffleConfig = ({ ensAddress }) => {
 
 const getENSAddress = (network = 'development') => {
   const truffleConfig = getTruffleConfig()
+  if (!truffleConfig) {
+    return ''
+  }
   if (truffleConfig.networks[network].ens) {
     return truffleConfig.networks[network].ens
   } else {
