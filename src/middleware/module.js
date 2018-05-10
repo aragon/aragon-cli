@@ -7,7 +7,7 @@ module.exports = function moduleMiddleware (argv) {
   if (!runsInCwd) {
     try {
       const modulePath = path.resolve(findProjectRoot(), 'arapp.json')
-      module = fs.readJsonSync(modulePath)
+      const module = fs.readJsonSync(modulePath)
 
       return { module }
     } catch (err) {
