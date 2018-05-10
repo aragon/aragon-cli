@@ -14,6 +14,7 @@ const TaskList = require('listr')
 const { findProjectRoot } = require('../util')
 const ignore = require('ignore')
 const execa = require('execa')
+const { runTruffle } = require('../helpers/truffle-runner')
 
 exports.command = 'publish [contract]'
 
@@ -63,13 +64,8 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, contr
   delete artifact.appName
 
   // Set ABI
-  // TODO This relies heavily on the Truffle way of doing things, we should make it more flexible
-  try {
-    const contractInterface = await readJson(contractInterfacePath)
-    artifact.abi = contractInterface.abi
-  } catch (err) {
-    throw new Error(`Could not read contract interface. Did you remember to compile your contracts?`)
-  }
+  const contractInterface = await readJson(contractInterfacePath)
+  artifact.abi = contractInterface.abi
 
   // Analyse contract functions and returns an array
   // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
@@ -148,8 +144,10 @@ exports.task = function ({
   apm: apmOptions,
 
   // Arguments
+
   contract,
   onlyArtifacts,
+  alreadyCompiled,
   provider,
   key,
   files,
@@ -159,6 +157,13 @@ exports.task = function ({
 }) {
   return new TaskList([
     // TODO: Move this in to own file for reuse
+    {
+      title: 'Compile contracts',
+      task: async () => {
+        await runTruffle(['compile'], { stdout: null })
+      },
+      enabled: () => !alreadyCompiled
+    },
     {
       title: 'Check project',
       task: () => new TaskList([

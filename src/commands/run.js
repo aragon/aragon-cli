@@ -14,6 +14,7 @@ const os = require('os')
 const fs = require('fs-extra')
 const openUrl = require('opn')
 const execa = require('execa')
+const { runTruffle } = require('../helpers/truffle-runner')
 
 const BLOCK_GAS_LIMIT = 50e6
 const TX_MIN_GAS = 10e6
@@ -40,13 +41,7 @@ async function startIPFS () {
 }
 
 function getContract (pkg, contract) {
-  let artifact
-  try {
-    artifact = require(`${pkg}/build/contracts/${contract}.json`)
-  } catch (err) {
-    throw new Error(`Could not read contract interface for ${contract}. Did you remember to compile your contracts?`)
-  }
-
+  const artifact = require(`${pkg}/build/contracts/${contract}.json`)
   return artifact
 }
 
@@ -90,6 +85,12 @@ exports.handler = function (args) {
     port
   } = args
   const tasks = new TaskList([
+    {
+      title: 'Compile contracts',
+      task: async () => {
+        await runTruffle(['compile'], { stdout: null })
+      }
+    },
     {
       title: 'Start local chain',
       task: (ctx, task) => {
@@ -272,6 +273,7 @@ exports.handler = function (args) {
         })
         ctx.privateKey = ctx.privateKeys[ctx.accounts[0].toLowerCase()].secretKey.toString('hex')
         return publish.task(Object.assign(args, {
+          alreadyCompiled: true,
           contract: ctx.contracts['AppCode'],
           provider: 'ipfs',
           files: ['.'],

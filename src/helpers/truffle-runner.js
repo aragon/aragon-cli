@@ -1,12 +1,18 @@
 const util = require('util')
 const { spawn, exec } = require('child_process')
 
-const runTruffle = (args) => {
-  const truffle = spawn('truffle', args)
-  truffle.stdout.pipe(process.stdout)
-  truffle.stderr.pipe(process.stderr)
-  process.stdin.pipe(truffle.stdin)
+const runTruffle = async (args, { stdout, stderr, stdin }) => {
+  return new Promise((resolve, reject) => {
+    const truffle = spawn('truffle', args)
+    truffle.stdout.pipe(stdout || process.stdout)
+    truffle.stderr.pipe(stderr || process.stderr)
+    process.stdin.pipe(stdin || truffle.stdin)
+    truffle.on('close', resolve)
+  })
 }
 
-module.exports = { runTruffle }
+const compileContracts = async () => {
+  await runTruffle(['compile'])
+}
 
+module.exports = { runTruffle, compileContracts }
