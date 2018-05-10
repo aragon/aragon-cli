@@ -85,6 +85,7 @@ exports.handler = function (args) {
     reporter,
     cwd,
     module,
+    manifest,
 
     // Arguments
     port
@@ -328,7 +329,7 @@ exports.handler = function (args) {
         {
           title: 'Download wrapper',
           task: (ctx, task) => {
-            const WRAPPER_COMMIT = 'ddecab6aa3c9d345ee22fc70395be68b99dba6e7'
+            const WRAPPER_COMMIT = 'a21100bc14daaea72d79c6eb3ecaaf5877791e09'
             const WRAPPER_PATH = `${os.homedir()}/.aragon/wrapper-${WRAPPER_COMMIT}`
             ctx.wrapperPath = WRAPPER_PATH
 
@@ -368,7 +369,8 @@ exports.handler = function (args) {
                 cwd: ctx.wrapperPath,
                 env: {
                   BROWSER: 'none',
-                  REACT_APP_IPFS_GATEWAY: 'http://localhost:5001',
+                  REACT_APP_IPFS_GATEWAY: 'http://localhost:8080/ipfs',
+                  REACT_APP_IPFS_RPC: 'http://localhost:5001',
                   REACT_APP_DEFAULT_ETH_NODE: `ws://localhost:${port}`,
                   REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ensAddress
                 }
