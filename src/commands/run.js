@@ -17,7 +17,6 @@ const execa = require('execa')
 const { runTruffle } = require('../helpers/truffle-runner')
 const { isIPFSRunning, isIPFSInstalled, startIPFSDaemon } = require('../helpers/ipfs-daemon')
 const { findProjectRoot } = require('../util')
-const { writeTruffleConfig } = require('../helpers/truffle-config')
 
 const TX_MIN_GAS = 10e6
 
@@ -213,9 +212,6 @@ exports.handler = function (args) {
               return registrar.methods.ens().call()
             }).then((ensAddress) => {
               ctx.ensAddress = ensAddress
-
-              // Save ENS address to truffle.js so the dev doesn't have to write it manually each time
-              writeTruffleConfig({ ensAddress })
             })
           }
         }
