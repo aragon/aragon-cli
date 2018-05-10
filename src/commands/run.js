@@ -16,6 +16,7 @@ const opn = require('opn')
 const execa = require('execa')
 const { runTruffle } = require('../helpers/truffle-runner')
 const { isIPFSRunning, isIPFSInstalled, startIPFSDaemon } = require('../helpers/ipfs-daemon')
+const { findProjectRoot } = require('../util')
 
 const TX_MIN_GAS = 10e6
 
@@ -73,8 +74,7 @@ exports.handler = function (args) {
     cwd,
     network,
     module,
-    manifest,
-
+  
     // Arguments
     port
   } = args
@@ -383,6 +383,12 @@ exports.handler = function (args) {
       ])
     }
   ])
+
+  const manifestPath = path.resolve(findProjectRoot(), 'manifest.json')
+  let manifest
+  if (fs.existsSync(manifestPath)) {
+    manifest = fs.readJsonSync(manifestPath)
+  }
 
   return tasks.run().then((ctx) => {
     reporter.info(`You are now ready to open your app in Aragon.

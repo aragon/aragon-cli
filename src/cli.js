@@ -68,7 +68,8 @@ cmd.option('network', {
   coerce: (network) => {
     if (fs.existsSync(`${findProjectRoot()}/truffle.js`)) {
       const truffleConfig = require(`${findProjectRoot()}/truffle.js`)
-      let truffleNetwork = truffleConfig.networks[network]
+      const truffleNetwork = truffleConfig.networks[network]
+      let provider
       if (truffleNetwork.provider) {
         provider = truffleNetwork.provider
       } else if (truffleNetwork.host && truffleNetwork.port) {

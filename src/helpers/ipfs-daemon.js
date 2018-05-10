@@ -31,7 +31,7 @@ const startIPFSDaemon = async () => {
   // Sometimes IPFS node takes too long to start and the CLI fails to connect
   return new Promise((resolve) => {
     execa('ipfs', ['daemon'])
-    setTimeout(resolve, 1000)
+    setTimeout(resolve, 2500)
   })
 }
 
