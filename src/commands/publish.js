@@ -268,20 +268,27 @@ exports.task = function ({
       task: (ctx, task) => {
         task.output = 'Generating transaction to sign'
         const from = ctx.accounts[0]
-        console.log(from)
 
-        return ctx.apm.publishVersion(
-          from,
-          module.appName,
-          module.version,
-          provider,
-          ctx.pathToPublish,
-          contract
-        ).then((transaction) => {
-          ctx.transactionStatus = ctx.web3.eth.sendTransaction(transaction)
+        try {
+          return ctx.apm.publishVersion(
+            from,
+            module.appName,
+            module.version,
+            provider,
+            ctx.pathToPublish,
+            contract
+          ).then((transaction) => {
+            // Fix because APM.js gas comes with decimals and from doesn't work
+            transaction.from = from
+            transaction.gas = Math.round(transaction.gas)
+            ctx.transactionStatus = ctx.web3.eth.sendTransaction(transaction)
 
-          return 'Signed transaction to publish app'
-        })
+            return 'Signed transaction to publish app'
+          })
+        } catch (e) {
+          reporter.error(e)
+          throw new Error(e)
+        } 
       },
       enabled: () => !onlyArtifacts
     },
