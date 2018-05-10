@@ -306,7 +306,7 @@ exports.handler = function (args) {
           title: 'Set permissions',
           task: async (ctx, task) => {
             if (!module.roles || module.roles.length === 0) {
-              task.skip('No permissions defined in app')
+              throw new Error('You have no permissions defined in your arapp.json\nThis is required for your app to properly show up.')
               return
             }
 
