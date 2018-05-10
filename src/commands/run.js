@@ -121,105 +121,16 @@ exports.handler = function (args) {
       }
     },
     {
-      title: 'Deploy APM and ENS',
-      task: (ctx, task) => new TaskList([
-        {
-          title: 'Deploy base contracts',
-          task: (ctx, task) => {
-            ctx.contracts = {}
-            const apmBaseContracts = [
-              ['@aragon/os', 'APMRegistry'],
-              ['@aragon/os', 'Repo'],
-              ['@aragon/os', 'ENSSubdomainRegistrar'],
-              ['@aragon/os', 'ENSFactory'],
-              ['@aragon/os', 'Kernel'],
-              ['@aragon/os', 'ACL']
-            ]
-              .map(([pkg, contractName]) => getContract(pkg, contractName))
-              .map((artifact) =>
-                deployContract(ctx.web3, ctx.accounts[0], artifact).then((contractAddress) => {
-                  task.title = `Deployed ${artifact.contractName} to ${contractAddress}`
+      title: 'Fetching DAOFactory from on-chain templates',
+      task: (ctx, task) => {
+        ctx.ens = require('@aragon/aragen').ens
+        const apm = APM(ctx.web3, {
+          ipfs: { host: 'localhost', port: 5001, protocol: 'http' },
+          ensRegistryAddress: ctx.ens
+        })
 
-                  ctx.contracts[artifact.contractName] = contractAddress
-                })
-              )
-
-            return Promise.all(
-              apmBaseContracts
-            )
-          }
-        },
-        {
-          title: 'Deploy base DAO factory',
-          task: (ctx) => {
-            // TODO: 0x0 should be address to EVMScriptRegistryFactory
-            return deployContract(
-              ctx.web3, ctx.accounts[0], getContract('@aragon/os', 'DAOFactory'), [
-                ctx.contracts['Kernel'], ctx.contracts['ACL'], '0x0'
-              ]
-            ).then((daoFactoryAddress) => {
-              ctx.contracts['DAOFactory'] = daoFactoryAddress
-            })
-          }
-        },
-        {
-          title: 'Deploy APM registry factory',
-          task: (ctx, task) => {
-            return deployContract(
-              ctx.web3, ctx.accounts[0], getContract('@aragon/os', 'APMRegistryFactory'), [
-                ctx.contracts['DAOFactory'],
-                ctx.contracts['APMRegistry'],
-                ctx.contracts['Repo'],
-                ctx.contracts['ENSSubdomainRegistrar'],
-                '0x0',
-                ctx.contracts['ENSFactory']
-              ]
-            ).then((apmRegistryAddress) => {
-              ctx.contracts['APMRegistryFactory'] = apmRegistryAddress
-            })
-          }
-        },
-        {
-          title: 'Create APM registry',
-          task: (ctx) => {
-            const root = ANY_ENTITY
-            const contract = new ctx.web3.eth.Contract(
-              getContract('@aragon/os', 'APMRegistryFactory').abi,
-              ctx.contracts['APMRegistryFactory']
-            )
-
-            // TODO: Create repo from appName repository
-            return contract.methods.newAPM(
-              namehash.hash('eth'),
-              '0x' + keccak256('aragonpm'),
-              root
-            ).send({
-              from: ctx.accounts[0],
-              gas: TX_MIN_GAS
-            }).then(({ events }) => {
-              ctx.registryAddress = events['DeployAPM'].returnValues.apm
-
-              const registry = new ctx.web3.eth.Contract(
-                getContract('@aragon/os', 'APMRegistry').abi,
-                ctx.registryAddress
-              )
-              return registry.methods.registrar().call()
-            }).then((registrarAddress) => {
-              const registrar = new ctx.web3.eth.Contract(
-                getContract('@aragon/os', 'ENSSubdomainRegistrar').abi,
-                registrarAddress
-              )
-
-              return registrar.methods.ens().call()
-            }).then((ensAddress) => {
-              ctx.ensAddress = ensAddress
-
-              // Save ENS address to truffle.js so the dev doesn't have to write it manually each time
-              writeTruffleConfig({ ensAddress })
-            })
-          }
-        }
-      ])
+        return apm.getLatest('democracy-template.aragonpm.eth').then(console.log)
+      },
     },
     {
       title: 'Create DAO',

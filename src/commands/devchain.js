@@ -25,7 +25,6 @@ exports.task = async function ({ reporter, cwd, port = 8545 }) {
   {
     title: 'Setting up latest Aragon snapshot',
     task: async (ctx, task) => {
-      reporter.debug(`Cleaning ${snapshotPath}`)
       return new Promise((resolve, reject) => {
         rimraf(snapshotPath, err => {
           if (err) return reject(err)
