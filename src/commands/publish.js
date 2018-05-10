@@ -232,8 +232,13 @@ exports.task = function ({
           return
         }
 
-        return execa('npm', ['run', 'build'])
-          .catch((err) => {
+        const buildTask = execa('npm', ['run', 'build'])
+        buildTask.stdout.on('data', (log) => {
+          if (!log) return
+          task.output = log
+        })
+
+        return buildTask.catch((err) => {
             throw new Error(`${err.message}\n${err.stderr}\n\nFailed to build. See above output.`)
           })
       }
