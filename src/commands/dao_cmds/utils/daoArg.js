@@ -7,7 +7,7 @@ module.exports = (yargs) => {
 	      type: 'string'
 	    })
     .check(({ dao }) => {
-      const isValidAragonID = /[a-z0-9]+\.aragonid\.eth/.test(dao)
+      const isValidAragonID = /[a-z0-9]+\.eth/.test(dao)
 
       if (!(isValidAragonID || web3Utils.isAddress(dao))) {
         throw new Error(`${dao} is not a valid DAO address or ENS name`)

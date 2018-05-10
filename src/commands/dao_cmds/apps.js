@@ -46,7 +46,12 @@ exports.handler = function ({ reporter, dao, keyfile, ethRpc }) {
                 resolve()
               },
               onDaoAddress: addr => ctx.daoAddress = addr,
-            })
+              onError: err => reject(err) 
+            }).catch(err => { 
+                reporter.error('Error inspecting DAO apps')
+                reporter.debug(err)
+                process.exit(1)
+              })
           })
         }
       },

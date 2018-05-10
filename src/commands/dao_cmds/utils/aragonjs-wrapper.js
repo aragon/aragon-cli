@@ -71,7 +71,7 @@ const initWrapper = async (
     onDaoAddress = noop,
   } = {}
 ) => {
-  const isDomain = /[a-z0-9]+\.aragonid\.eth/.test(dao)
+  const isDomain = /[a-z0-9]+\.eth/.test(dao)
 
   const daoAddress = isDomain
     ? await resolveEnsDomain(dao, {
