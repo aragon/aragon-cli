@@ -2,11 +2,14 @@ const TaskList = require('listr')
 const Web3 = require('web3')
 const daoArg = require('./utils/daoArg')
 import initAragonJS from './utils/aragonjs-wrapper'
-const { appIds } = require('./utils/knownApps')
+const KnownApps = require('./utils/knownApps')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const path = require('path')
 
 const Table = require('cli-table')
 const colors = require('colors')
+
+const knownApps = KnownApps()
 
 exports.command = 'apps <dao>'
 
@@ -17,7 +20,7 @@ exports.builder = function (yargs) {
 }
 
 const printAppName = (appId) => {
-  return appIds[appId] ? appIds[appId] : appId.slice(0,10) + '...'
+  return knownApps[appId] ? knownApps[appId] : appId.slice(0,10) + '...'
 }
 
 const printContent = (content) => {

@@ -1,5 +1,8 @@
 const namehash = require('eth-ens-namehash').hash
 const sha3 = require('js-sha3')
+const { findProjectRoot } = require('../../../util')
+
+const path = require('path')
 
 const keccak256 = x => '0x'+sha3.keccak_256(x)
 
@@ -18,12 +21,18 @@ const knownAppNames = [
 
 const knownAPMRegistries = ['aragonpm.eth', 'open.aragonpm.eth']
 
-const appNames = knownAppNames.reduce((acc, appName) => (
-	acc.concat(knownAPMRegistries.map(apm => appName + '.' + apm))
-), [])
+const currentAppName = () => {
+	const arappPath = path.resolve(findProjectRoot(), 'arapp.json')
+  	return require(arappPath).appName
+}
 
-let appIds = appNames.reduce((acc, app) => Object.assign(acc, { [namehash(app)]: app}), {})
-// because of a current issue in the deployed apps, we need to calculate with just the keccak too (otherwise acl and evmreg dont show up)
-appIds = appNames.reduce((acc, app) => Object.assign(acc, { [keccak256(app)]: app}), appIds)
+module.exports = (userApps = [currentAppName()]) => {
+	const appNames = knownAppNames.reduce((acc, appName) => (
+		acc.concat(knownAPMRegistries.map(apm => appName + '.' + apm))
+	), []).concat(userApps)
 
-module.exports = { appNames, appIds }
+	let appIds = appNames.reduce((acc, app) => Object.assign(acc, { [namehash(app)]: app}), {})
+	// because of a current issue in the deployed apps, we need to calculate with just the keccak too (otherwise acl and evmreg dont show up)
+	return appNames.reduce((acc, app) => Object.assign(acc, { [keccak256(app)]: app}), appIds)
+}
+
