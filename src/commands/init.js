@@ -9,9 +9,10 @@ exports.command = 'init <name> [template]'
 exports.describe = 'Initialise a new application'
 
 exports.builder = (yargs) => {
-  return yargs.positional('name', {
-    description: 'The application name (appnamehere.aragonpm.eth)'
-  })
+  return yargs
+    .positional('name', {
+      description: 'The application name (appnamehere.aragonpm.eth)'
+    })
     .option('cwd', {
       description: 'The current working directory',
       default: process.cwd()
@@ -38,7 +39,7 @@ exports.builder = (yargs) => {
     .check(function validateApplicationName ({ name }) {
       const isValidAppName = name.split('.').length >= 2
       if (!isValidAppName) {
-        throw new Error(`${name} is not a valid application name (should be e.g. "foo.aragonpm.eth")`)
+        throw new Error(`${name} is not a valid application name (should be e.g. "appname.aragonpm.eth")`)
       }
 
       return true
@@ -46,8 +47,6 @@ exports.builder = (yargs) => {
 }
 
 exports.handler = function ({ reporter, name, template }) {
-  // TODO: Somehow write name to `manifest.json` in template?
-  // TODO: Write human-readable app name to `arapp.json`
   const basename = name.split('.')[0]
   const tasks = new TaskList([
     {

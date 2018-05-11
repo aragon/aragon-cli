@@ -34,6 +34,7 @@ cmd.option('silent', {
   description: 'Silence output to terminal',
   default: false
 })
+
 cmd.option('cwd', {
   description: 'The project working directory',
   default: () => {
@@ -71,14 +72,14 @@ cmd.option('network', {
       // This means you are running init
       return {}
     }
-  },
-  conflicts: 'init'
+  }
+  // conflicts: 'init'
 })
 
 // APM
 cmd.option('apm.ens-registry', {
   description: 'Address of the ENS registry',
-  default: () => process.env.ENS || getENSAddress(cmd.argv.network.name)
+  default: require('@aragon/aragen').ens
 })
 cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
 
