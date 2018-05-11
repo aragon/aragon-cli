@@ -1,5 +1,4 @@
-const util = require('util')
-const { spawn, exec } = require('child_process')
+const { spawn } = require('child_process')
 
 const runTruffle = async (args, { stdout, stderr, stdin }) => {
   return new Promise((resolve, reject) => {

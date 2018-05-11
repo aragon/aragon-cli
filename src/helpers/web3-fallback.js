@@ -1,4 +1,3 @@
-const devchain = require('../commands/devchain')
 const Web3 = require('web3')
 
 const ensureWeb3 = async (network) => {
