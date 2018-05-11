@@ -9,7 +9,7 @@ exports.describe = 'Grant an address permission to create new versions in this p
 exports.builder = function (yargs) {
   return yargs.positional('address', {
     description: 'The address being granted the permission to publish to the repo'
-  }).option('no-confirm', {
+  }).option('skip-confirm', {
     description: 'Exit as soon as transaction is sent, no wait for confirmation',
     default: false
   })
@@ -27,7 +27,7 @@ exports.handler = async function ({
 
   // Arguments
   address,
-  noConfirm
+  skipConfirm
 }) {
   const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
   const privateKey = keyfile.key ? keyfile.key : key
@@ -72,7 +72,7 @@ exports.handler = async function ({
     const signed = '0x' + tx.serialize().toString('hex')
 
     const promisedReceipt = web3.eth.sendSignedTransaction(signed)
-    if (noConfirm) return reporter.success('Transaction sent')
+    if (skipConfirm) return reporter.success('Transaction sent')
 
     const receipt = await promisedReceipt
 
