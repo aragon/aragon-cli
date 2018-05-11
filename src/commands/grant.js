@@ -32,7 +32,7 @@ exports.handler = async function ({
   const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
   const privateKey = keyfile.key ? keyfile.key : key
 
-  apmOptions.ensRegistry = !apmOptions.ensRegistry ? keyfile.ens : apmOptions.ensRegistry
+  apmOptions.ensRegistryAddress = !apmOptions['ens-registry'] ? keyfile.ens : apmOptions['ens-registry']
 
   const apm = await APM(web3, apmOptions)
   const acl = ACL(web3)
