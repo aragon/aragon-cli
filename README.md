@@ -15,6 +15,26 @@ Install Aragon CLI by running
 npm install -g @aragon/cli
 ```
 
+## Configuration
+
+In order to publish apps you need to create a keyfile in your home directory with the following values:
+
+```js
+{
+  "key": "<snip>"
+  "rpc": "wss://rinkeby.infura.io/ws",
+  "ens": "0xfbae32d1cde628bc45f51efc8cc4fa1415447e"
+}
+```
+
+> Note that the ENS registry address is an Aragon deployment
+
+Please note that you need to replace `<snip>` with private key with **no password**. This is a temporary measure and will be changed in the near future. **Please only use this on testnets for development**.
+
+Save the file as `.localkey.json` in your home directory. You can now publish apps.
+
+To use other networks, you can change the `rpc` and `ens` keys.
+
 ## Usage
 
 ### Apps
