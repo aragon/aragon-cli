@@ -78,7 +78,7 @@ cmd.option('network', {
 // APM
 cmd.option('apm.ens-registry', {
   description: 'Address of the ENS registry',
-  default: () => process.env.ENS || getENSAddress(cmd.argv.network.name)
+  default: require('@aragon/aragen').ens
 })
 cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
 
