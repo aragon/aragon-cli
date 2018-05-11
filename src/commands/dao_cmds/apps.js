@@ -2,14 +2,14 @@ const TaskList = require('listr')
 const Web3 = require('web3')
 const daoArg = require('./utils/daoArg')
 import initAragonJS from './utils/aragonjs-wrapper'
-const KnownApps = require('./utils/knownApps')
+const { listApps } = require('./utils/knownApps')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const path = require('path')
 
 const Table = require('cli-table')
 const colors = require('colors')
 
-const knownApps = KnownApps()
+let knownApps
 
 exports.command = 'apps <dao>'
 
@@ -31,6 +31,7 @@ const printContent = (content) => {
 }
 
 exports.handler = async function ({ reporter, dao, network, apm }) {
+  knownApps = listApps()
   const web3 = await ensureWeb3(network)
 
   const tasks = new TaskList([

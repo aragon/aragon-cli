@@ -7,26 +7,26 @@ const path = require('path')
 const keccak256 = x => '0x'+sha3.keccak_256(x)
 
 const knownAppNames = [
-	'voting',
-	'token-manager',
-	'finance',
-	'vault',
-	'kernel',
-	'acl',
-	'evmreg',
-	'apm-registry',
-	'apm-repo',
-	'apm-enssub',
+  'voting',
+  'token-manager',
+  'finance',
+  'vault',
+  'kernel',
+  'acl',
+  'evmreg',
+  'apm-registry',
+  'apm-repo',
+  'apm-enssub',
 ]
 
 const knownAPMRegistries = ['aragonpm.eth', 'open.aragonpm.eth']
 
 const currentAppName = () => {
-	const arappPath = path.resolve(findProjectRoot(), 'arapp.json')
-  	return require(arappPath).appName
+  const arappPath = path.resolve(findProjectRoot(), 'arapp.json')
+  return require(arappPath).appName
 }
 
-module.exports = (userApps = [currentAppName()]) => {
+const listApps = (userApps = [currentAppName()]) => {
 	const appNames = knownAppNames.reduce((acc, appName) => (
 		acc.concat(knownAPMRegistries.map(apm => appName + '.' + apm))
 	), []).concat(userApps)
@@ -36,3 +36,4 @@ module.exports = (userApps = [currentAppName()]) => {
 	return appNames.reduce((acc, app) => Object.assign(acc, { [keccak256(app)]: app}), appIds)
 }
 
+module.exports = { listApps }

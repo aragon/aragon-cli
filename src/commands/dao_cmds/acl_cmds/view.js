@@ -2,7 +2,7 @@ const TaskList = require('listr')
 const Web3 = require('web3')
 const daoArg = require('../utils/daoArg')
 import initAragonJS from '../utils/aragonjs-wrapper'
-const KnownApps = require('../utils/knownApps')
+const { listApps } = require('../utils/knownApps')
 const { rolesForApps } = require('./utils/knownRoles')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 
@@ -14,7 +14,7 @@ const ANY_ENTITY = '0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF'
 const ANY_ENTITY_TEXT = 'Any entity'
 
 const path = require('path')
-const knownApps = KnownApps()
+let knownApps
 
 exports.command = 'view <dao>'
 
@@ -47,6 +47,7 @@ const formatRow = ({ to, role, allowed }, apps) => {
 } 
 
 exports.handler = async function ({ reporter, dao, network, apm }) {
+  knownApps = listApps()
   const web3 = await ensureWeb3(network)
 
   const tasks = new TaskList([

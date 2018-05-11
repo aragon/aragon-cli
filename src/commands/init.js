@@ -11,7 +11,7 @@ exports.describe = 'Initialise a new application'
 exports.builder = (yargs) => {
   return yargs
     .positional('name', {
-      description: 'The application name (appnamehere.aragonpm.eth)'
+      description: 'The application name (appname.aragonpm.eth)'
     })
     .option('cwd', {
       description: 'The current working directory',
