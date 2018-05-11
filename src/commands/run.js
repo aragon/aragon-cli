@@ -89,16 +89,16 @@ exports.handler = function (args) {
       title: 'Connect to the provided Ethereum network',
       task: async (ctx, task) => {
         const getWeb3 = () => new Web3(network.provider)
-
         try {
           ctx.web3 = getWeb3()
           const connected = await ctx.web3.eth.net.isListening()
+          console.log(connected)
         } catch (err) {
-          await devchain.task({}).then(() => {
+          await devchain.task({ reporter }).then(() => {
             ctx.web3 = getWeb3()
           })
         }
-        ctx.accounts = await ctx.web3.eth.getAccounts()
+        // ctx.accounts = await ctx.web3.eth.getAccounts()
       }
     },
     {

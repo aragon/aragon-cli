@@ -14,7 +14,7 @@ exports.builder = {
   }
 }
 
-exports.task = async function ({ reporter, cwd, port = 8545 }) {
+exports.task = async function ({ reporter, port = 8545 }) {
   const tasks = new TaskList([{
     title: 'Starting a local chain',
     task: async (ctx, task) => {
@@ -27,8 +27,8 @@ exports.task = async function ({ reporter, cwd, port = 8545 }) {
         server.listen(port, (err) => {
           if (err) return reject(err)
     
-          task.title = `Local chain started at :${port}`
-          resolve()
+          task.title = `Local chain started at port ${port}`
+          resolve(true)
         })
       }).then(async () => {
         // Set a temporary provider for deployments
