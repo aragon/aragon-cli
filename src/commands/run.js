@@ -331,7 +331,7 @@ exports.handler = function (args) {
         {
           title: 'Download wrapper',
           task: (ctx, task) => {
-            const WRAPPER_COMMIT = 'a21100bc14daaea72d79c6eb3ecaaf5877791e09'
+            const WRAPPER_COMMIT = '18f46c83cbde07da625a6d75fd5b6ca449158c7f'
             const WRAPPER_PATH = `${os.homedir()}/.aragon/wrapper-${WRAPPER_COMMIT}`
             ctx.wrapperPath = WRAPPER_PATH
 
