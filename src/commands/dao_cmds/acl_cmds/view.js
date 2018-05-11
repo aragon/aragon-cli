@@ -2,7 +2,7 @@ const TaskList = require('listr')
 const Web3 = require('web3')
 const daoArg = require('../utils/daoArg')
 import initAragonJS from '../utils/aragonjs-wrapper'
-const { appIds } = require('../utils/knownApps')
+const KnownApps = require('../utils/knownApps')
 const { rolesForApps } = require('./utils/knownRoles')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 
@@ -12,6 +12,9 @@ const colors = require('colors')
 const knownRoles = rolesForApps()
 const ANY_ENTITY = '0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF'
 const ANY_ENTITY_TEXT = 'Any entity'
+
+const path = require('path')
+const knownApps = KnownApps()
 
 exports.command = 'view <dao>'
 
@@ -23,7 +26,7 @@ exports.builder = function (yargs) {
 
 const printAppName = (appId, addr) => {
   if (addr == ANY_ENTITY) return ANY_ENTITY_TEXT
-  return appIds[appId] ? `${appIds[appId].split('.')[0]} (${appId.slice(0,6)})` : addr.slice(0, 16) + '...'
+  return knownApps[appId] ? `${knownApps[appId].split('.')[0]} (${appId.slice(0,6)})` : addr.slice(0, 16) + '...'
 }
 
 const appFromProxyAddress = (proxyAddress, apps) => {
