@@ -221,7 +221,7 @@ exports.task = function ({
       enabled: () => !onlyArtifacts
     },
     {
-      title: 'Build',
+      title: 'Building frontend',
       task: async (ctx, task) => {
         if (!fs.existsSync('package.json')) {
           task.skip('No package.json found')
@@ -257,17 +257,18 @@ exports.task = function ({
 
         return generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
           .then((artifact) => {
-            reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
-            reporter.debug(`Saved artifact in ${dir}/artifact.json`)
+            // reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
+            // reporter.debug(`Saved artifact in ${dir}/artifact.json`)
           })
       },
       enabled: () => !skipArtifact
     },
     {
       title: `Publish ${module.appName} v${module.version}`,
-      task: (ctx, task) => {
+      task: async (ctx, task) => {
         task.output = 'Generating transaction to sign'
-        const from = web3.eth.defaultAccount
+        const accounts = await web3.eth.getAccounts()
+        const from = accounts[0]
 
         try {
           return ctx.apm.publishVersion(
@@ -286,7 +287,7 @@ exports.task = function ({
             return 'Signed transaction to publish app'
           })
         } catch (e) {
-          reporter.error(e)
+          // reporter.error(e)
           throw new Error(e)
         } 
       },
@@ -302,7 +303,7 @@ exports.task = function ({
           resolve(`Successfully published ${module.appName} v${module.version}`)
         }).on('error', (err) => {
           reject(err)
-          reporter.debug(err)
+          // reporter.debug(err)
         })
       }),
       enabled: () => !onlyArtifacts && !skipArtifact

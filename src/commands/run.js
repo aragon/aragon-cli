@@ -67,17 +67,17 @@ async function setPermissions (web3, sender, aclAddress, permissions) {
 
 const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
 
-exports.handler = function (args) {
-  const {
+exports.handler = function ({
     // Globals
     reporter,
     cwd,
+    apm: apmOptions,
     network,
     module,
   
     // Arguments
     port
-  } = args
+  }) {
   const tasks = new TaskList([
     {
       title: 'Compile contracts',
@@ -128,13 +128,14 @@ exports.handler = function (args) {
           ensRegistryAddress: ctx.ens
         })
 
+        ctx.contracts = {}
         return apm.getLatestVersionContract('democracy-template.aragonpm.eth')
           .then(demTemplate => {
-            new ctx.web3.eth.Contract(
+            return new ctx.web3.eth.Contract(
               getContract('@aragon/templates-beta', 'DemocracyTemplate').abi,
               demTemplate
-          ).methods.fac.call().then(DAOFactory => ctx.contracts = { DAOFactory })
-        }
+          ).methods.fac().call().then(fac => { ctx.contracts['DAOFactory'] = fac })
+        })
       },
     },
     {
@@ -183,15 +184,24 @@ exports.handler = function (args) {
       task: (ctx) => {
         ctx.apm = APM(ctx.web3, {
           ipfs: { host: 'localhost', port: 5001, protocol: 'http' },
-          ensRegistryAddress: ctx.ensAddress
+          ensRegistryAddress: ctx.ens
         })
-        return publish.task(Object.assign(args, {
+        return publish.task({
           alreadyCompiled: true,
           contract: ctx.contracts['AppCode'],
           provider: 'ipfs',
           files: ['.'],
-          ignore: ['node_modules']
-        }))
+          ignore: ['node_modules'],
+          reporter,
+          cwd,
+          network,
+          module,
+          web3: ctx.web3,
+          apm: apmOptions,
+        
+          // Arguments
+          port
+        })
       }
     },
     {
