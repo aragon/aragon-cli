@@ -43,10 +43,6 @@ exports.builder = function (yargs) {
     description: 'Exit as soon as transaction is sent, do not wait for confirmation',
     default: false
   })
-  .option('skip-contract', {
-    description: 'Only upload content without generating artifacts',
-    default: false
-  })
 }
 
 async function generateApplicationArtifact (web3, cwd, outputPath, module, contract, reporter) {
@@ -154,8 +150,7 @@ exports.task = function ({
   key,
   files,
   ignore,
-  skipArtifact,
-  skipContract
+  skipArtifact
 }) {
   return new TaskList([
     // TODO: Move this in to own file for reuse
