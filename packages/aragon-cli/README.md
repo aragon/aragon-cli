@@ -1,56 +1,15 @@
-<h1 align="center">Aragon CLI</h1>
+# Aragon CLI
 
-<div align="center">
-  <!-- NPM version -->
-  <a href="https://npmjs.org/package/@aragon/cli">
-    <img src="https://img.shields.io/npm/v/@aragon/cli.svg?style=flat-square"
-      alt="NPM version" />
-  </a>
-  <!-- Build Status -->
-  <a href="https://travis-ci.org/aragon/aragon-dev-cli">
-    <img src="https://img.shields.io/travis/aragon/aragon-dev-cli/master.svg?style=flat-square"
-      alt="Build Status" />
-  </a>
-  <!-- Test Coverage -->
-  <a href="https://coveralls.io/github/aragon/aragon-dev-cli">
-    <img src="https://img.shields.io/coveralls/aragon/aragon-dev-cli.svg?style=flat-square"
-      alt="Test Coverage" />
-  </a>
-  <!-- Downloads -->
-  <a href="https://npmjs.org/package/@aragon/cli">
-    <img src="https://img.shields.io/npm/dm/@aragon/cli.svg?style=flat-square"
-      alt="Downloads" />
-  </a>
-  <!-- Standard -->
-  <a href="https://standardjs.com">
-    <img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square"
-      alt="Standard" />
-  </a>
-</div>
+[![Build Status](https://img.shields.io/travis/aragon/aragon-dev-cli/master.svg?style=flat-square)](https://travis-ci.org/aragon/aragon-dev-cli)
+[![Test Coverage](https://img.shields.io/coveralls/aragon/aragon-dev-cli.svg?style=flat-square)](https://coveralls.io/github/aragon/aragon-dev-cli)
+[![NPM version](https://img.shields.io/npm/v/@aragon/cli.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli)
+[![Downloads](https://img.shields.io/npm/dm/@aragon/cli.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli)
 
-<div align="center">
-  <h4>
-    <a href="https://aragon.one">
-      Website
-    </a>
-    <span> | </span>
-    <a href="https://github.com/aragon/aragon-dev-cli/tree/master/docs">
-      Documentation
-    </a>
-    <span> | </span>
-    <a href="https://github.com/aragon/aragon-dev-cli/blob/master/.github/CONTRIBUTING.md">
-      Contributing
-    </a>
-    <span> | </span>
-    <a href="https://aragon.chat">
-      Chat
-    </a>
-  </h4>
-</div>
-
-CLI tool for creating, testing and publishing Aragon applications.
+Aragon CLI is a tool for creating, testing and publishing Aragon applications.
 
 ## Installation
+
+Install Aragon CLI by running
 
 ```bash
 npm install -g @aragon/cli
@@ -58,57 +17,112 @@ npm install -g @aragon/cli
 
 ## Usage
 
+### Apps
+
+#### `aragon init`
+
 ```
-➜ aragon-example-application aragon-dev-cli help
-aragon-dev-cli <command>
-
-Commands:
-  aragon-dev-cli bootstrap               Set up a development chain and deploy
-                                         an Aragon organisation
-  aragon-dev-cli init <name> [template]  Initialise a new application
-  aragon-dev-cli playground              Set up a dev chain, deploy an Aragon
-                                         organisation and install your app
-  aragon-dev-cli publish [contract]      Publish a new version of the
-                                         application
-  aragon-dev-cli version <bump>          Bump the application version
-  aragon-dev-cli versions                List all versions of the package
-
-APM:
-  --apm.ens-registry  Address of the ENS registry
-  --eth-rpc           An URI to the Ethereum node used for RPC calls
-                                              [default: "http://localhost:8545"]
-
-APM providers:
-  --apm.ipfs.rpc  An URI to the IPFS node used to publish files
-                   [default: {"host":"localhost","protocol":"http","port":5001}]
-
-Options:
-  --help     Show help                                                 [boolean]
-  --version  Show version number                                       [boolean]
-  --silent   Silence output to terminal                         [default: false]
-
-For more information, check out https://wiki.aragon.one
+$ aragon init <APP_NAME> [TEMPLATE]
 ```
+
+Creates a new directory pre-populated with files from a template. `APP_NAME` must be a full ENS name, such as `foo.aragonpm.eth`, where the top-level name is an APM registry.
+
+`TEMPLATE` defaults to [`react`](https://github.com/aragon/aragon-react-boilerplate), but it can be any valid name of a GitHub repository in the format of `<AUTHOR>/<REPOSITORY>`.
+
+Finally, templates with a single short name (such as `react` or `bare`) are treated as official Aragon templates. These can always be found at `https://github.com/aragon/aragon-<TEMPLATE>-boilerplate`.
+
+#### `aragon run`
+
+```
+$ aragon run [--port PORT]
+```
+
+Run the app in the current directory locally.
+
+This command does the following:
+
+- Starts a local chain
+- Starts IPFS
+- Deploys all of the base smart contracts needed for aragonOS to work (ENS, APM, DAO templates, ...)
+- Creates a DAO
+- Runs the build script of the app (if specified in `package.json`)
+- Publishes the app locally
+- Installs it on your freshly created local DAO
+- Starts the wrapper and opens up your DAO in your browser
+
+The local chain is started at `PORT`, which defaults to 8545.
+
+The publish step of the app works exactly as `aragon publish`, described below.
+
+#### `aragon publish`
+
+```
+$ aragon publish [CONTRACT_ADDRESS] [--files PATTERN] [--ignore PATTERN] [--skip-confirm] [--only-artifacts]
+```
+
+Publishes a new (or the first!) version of your app.
+
+If the APM repository does not exist at your app's full name, then we try to create a new repository for you at the APM registry from the app name. This usually happens the first time you publish, unless you create your repository manually beforehand.
+
+The files specified by `--files` (defaults to `.`, i.e. all files in the current directory) will be published to IPFS for publishing. Specify `--files` multiple times to include multiple files or directories.
+
+All files in your `.gitignore` (if any) will be ignored, along with all gitignore-like patterns specified by `--ignore` (which can be specified multiple times for multiple patterns).
+
+Before publishing, your smart contract source code is scanned to generate an artifact containing additional metadata about it, such as the different methods of your contract, their Radspec descriptions (if any) and what roles they are guarded by. Specify `--only-artifacts` if you only want this artifact.
+
+If `--skip-confirm` is specified the command will not wait for the transaction to receive confirmations.
+
+#### `aragon version`
+
+```
+$ aragon version <BUMP>
+```
+
+Bumps the version of your Aragon app, where a valid `BUMP` is either *major*, *minor* or *patch*.
+
+Note that you are only allowed to release a version with a new smart contract address if the bump specified is major.
+
+#### `aragon versions`
+
+```
+$ aragon versions
+```
+
+View a list of published versions for the app in the current directory.
+
+### DAOs
+
+#### `aragon grant`
+
+**Note: This command is deprecated and will be replaced with a new one in the near future**
+
+```
+$ aragon grant <ADDRESS> [--skip-confirm]
+```
+
+Grants permission for `ADDRESS` to interact with the APM repository of the app in the current directory.
+
+If `--skip-confirm` is specified the command will not wait for the transaction to receive confirmations.
 
 ## Recipes
 
 ### Creating and publishing an application
 
 ```bash
-aragon-dev-cli init polls.aragonpm.test
+aragon init polls.aragonpm.test
 cd polls
-aragon-dev-cli publish
+aragon publish
 ```
 
 ### Publishing a new version
 
 ```bash
-aragon-dev-cli version minor
-aragon-dev-cli publish
+aragon version minor
+aragon publish
 ```
 
 ### Scaffolding from a custom template
 
 ```bash
-aragon-dev-cli init polls.aragonpm.test username/gh-repo
+aragon init polls.aragonpm.test username/gh-repo
 ```
