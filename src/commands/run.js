@@ -296,7 +296,7 @@ exports.handler = function ({
                   REACT_APP_IPFS_GATEWAY: 'http://localhost:8080/ipfs',
                   REACT_APP_IPFS_RPC: 'http://localhost:5001',
                   REACT_APP_DEFAULT_ETH_NODE: `ws://localhost:${port}`,
-                  REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ensAddress
+                  REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens
                 }
               }
             ).catch((err) => {
@@ -326,7 +326,7 @@ exports.handler = function ({
    This is the configuration for your development deployment:
    ${chalk.bold('Ethereum Node')}: ws://localhost:${port}
    ${chalk.bold('APM registry')}: ${ctx.registryAddress}
-   ${chalk.bold('ENS registry')}: ${ctx.ensAddress}
+   ${chalk.bold('ENS registry')}: ${ctx.ens}
    ${chalk.bold('DAO address')}: ${ctx.daoAddress}
 
    Here are some accounts you can use.

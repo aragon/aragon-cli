@@ -24,7 +24,7 @@ const printContent = (content) => {
   if (!content)
     return '(No UI available)'
 
-  return `${content.provider}:${content.location}`.slice(0,25) + '...'
+  return `${content.provider}:${content.location}`//.slice(0,25) + '...'
 }
 
 exports.handler = async function ({ reporter, dao, network, apm }) {
