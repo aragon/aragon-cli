@@ -8,6 +8,6 @@ exports.handler = async function ({ reporter, cwd }) {
   const truffleArgs = process.argv.slice(process.argv.indexOf('contracts') + 1, process.argv.length)
 
   reporter.info('Passing the command to Truffle')
-  await runTruffle(truffleArgs)
+  await runTruffle(truffleArgs, {})
   process.exit(0)
 }
