@@ -20,7 +20,7 @@ exports.builder = {
   }
 }
 
-exports.task = async function ({ reporter, port = 8545 }) {
+exports.task = async function ({ port = 8545 }) {
   const tasks = new TaskList([
   {
     title: 'Setting up latest Aragon snapshot',
@@ -58,28 +58,27 @@ exports.task = async function ({ reporter, port = 8545 }) {
         mnemonic: MNEMONIC,
         db_path: snapshotPath
       })
-    
       return new Promise((resolve, reject) => {
         server.listen(port, (err) => {
           if (err) return reject(err)
     
           task.title = `Local chain started at port ${port}`
-          resolve(true)
+          resolve()
         })
       }).then(async () => {
-        // Set a temporary provider for deployments
-        ctx.web3 = new Web3(
-          new Web3.providers.WebsocketProvider(`ws://localhost:${port}`)
-        )
-    
-        // Grab the accounts
-        ctx.accounts = await ctx.web3.eth.getAccounts()
+        return new Promise(async (resolve, reject) => {
+          ctx.web3 = new Web3(
+            new Web3.providers.WebsocketProvider(`ws://localhost:${port}`)
+          )
+          ctx.accounts = await ctx.web3.eth.getAccounts()
+          resolve()
+        })
       })
     }
   }])
 
   return tasks.run().then((ctx) => {
-
+    return ctx
   })
 }
 

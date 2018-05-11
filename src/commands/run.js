@@ -86,19 +86,20 @@ exports.handler = function ({
       }
     },
     {
-      title: 'Connect to the provided Ethereum network',
-      task: async (ctx, task) => {
-        const getWeb3 = () => new Web3(network.provider)
+      title: 'Start a local Ethereum network',
+      skip: async () => {
         try {
-          ctx.web3 = getWeb3()
-          const connected = await ctx.web3.eth.net.isListening()
-          console.log(connected)
+          const web3 = new Web3(network.provider)
+          const listening = await web3.eth.net.isListening()
+          return 'Connected to the provided Ethereum network'
         } catch (err) {
-          await devchain.task({ reporter }).then(() => {
-            ctx.web3 = getWeb3()
-          })
+          return false
         }
-        // ctx.accounts = await ctx.web3.eth.getAccounts()
+      },
+      task: async (ctx, task) => {
+        const { web3, accounts } = await devchain.task({})
+        ctx.web3 = web3
+        ctx.accounts = accounts
       }
     },
     {
@@ -296,7 +297,7 @@ exports.handler = function ({
                   REACT_APP_IPFS_GATEWAY: 'http://localhost:8080/ipfs',
                   REACT_APP_IPFS_RPC: 'http://localhost:5001',
                   REACT_APP_DEFAULT_ETH_NODE: `ws://localhost:${port}`,
-                  REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ensAddress
+                  REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens
                 }
               }
             ).catch((err) => {
@@ -326,7 +327,7 @@ exports.handler = function ({
    This is the configuration for your development deployment:
    ${chalk.bold('Ethereum Node')}: ws://localhost:${port}
    ${chalk.bold('APM registry')}: ${ctx.registryAddress}
-   ${chalk.bold('ENS registry')}: ${ctx.ensAddress}
+   ${chalk.bold('ENS registry')}: ${ctx.ens}
    ${chalk.bold('DAO address')}: ${ctx.daoAddress}
 
    Here are some accounts you can use.
