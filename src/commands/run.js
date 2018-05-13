@@ -405,6 +405,13 @@ exports.handler = function (args) {
    ${chalk.bold('APM registry')}: ${ctx.registryAddress}
    ${chalk.bold('ENS registry')}: ${ctx.ensAddress}
    ${chalk.bold('DAO address')}: ${ctx.daoAddress}
+   ${chalk.bold('ACL address')}: ${ctx.aclAddress}
+
+   ${Object.keys(ctx.contracts).map((name) => name + ': ' + ctx.contracts[name]).join('\n   ')}
+
+   App name: ${module.appName}
+   App name hash: ${namehash.hash(module.appName)}
+   App address: ${ctx.appAddress}
 
    Here are some accounts you can use.
    The first one was used to create everything.
