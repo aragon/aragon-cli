@@ -137,7 +137,7 @@ async function prepareFilesForPublishing (files = [], ignorePatterns = null) {
   return tmpDir
 }
 
-exports.handler = async function ({
+exports.task = function ({
   reporter,
 
   // Globals
@@ -157,15 +157,7 @@ exports.handler = async function ({
   skipArtifact,
   skipContract
 }) {
-  // TODO: Clean up
-  const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
-  const privateKey = keyfile.key ? keyfile.key : key
-
-  apmOptions.ensRegistry = !apmOptions.ensRegistry ? keyfile.ens : apmOptions.ensRegistry
-
-  const apm = await APM(web3, apmOptions)
-
-  const tasks = new TaskList([
+  return new TaskList([
     // TODO: Move this in to own file for reuse
     {
       title: 'Check project',
@@ -205,7 +197,7 @@ exports.handler = async function ({
         if (!contract && module.version !== '1.0.0') {
           task.output = 'No contract address provided, using previous one'
 
-          return apm.getLatestVersion(module.appName)
+          return ctx.apm.getLatestVersion(module.appName)
             .then(({ contract }) => {
               ctx.contract = contract
 
@@ -239,7 +231,7 @@ exports.handler = async function ({
       task: (ctx, task) => {
         const dir = onlyArtifacts ? cwd : ctx.pathToPublish
 
-        return generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
+        return generateApplicationArtifact(ctx.web3, cwd, dir, module, contract, reporter)
           .then((artifact) => {
             reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
             reporter.debug(`Saved artifact in ${dir}/artifact.json`)
@@ -250,14 +242,14 @@ exports.handler = async function ({
     {
       title: `Publish ${module.appName} v${module.version}`,
       task: (ctx, task) => {
-        task.output = privateKey
+        task.output = ctx.privateKey
           ? 'Generating transaction to sign'
           : 'Signing transaction...'
-        const from = privateKey
-          ? web3.eth.accounts.privateKeyToAccount('0x' + privateKey).address
+        const from = ctx.privateKey
+          ? ctx.web3.eth.accounts.privateKeyToAccount('0x' + ctx.privateKey).address
           : null
 
-        return apm.publishVersion(
+        return ctx.apm.publishVersion(
           module.appName,
           module.version,
           provider,
@@ -265,16 +257,16 @@ exports.handler = async function ({
           contract,
           from
         ).then((transaction) => {
-          if (!privateKey) {
+          if (!ctx.privateKey) {
             return `Sign and broadcast this transaction:\n${JSON.stringify(transaction)}`
           }
 
           // Sign transaction
           const tx = new EthereumTx(transaction)
-          tx.sign(Buffer.from(privateKey, 'hex'))
+          tx.sign(Buffer.from(ctx.privateKey, 'hex'))
           const signed = '0x' + tx.serialize().toString('hex')
 
-          ctx.transactionStatus = web3.eth.sendSignedTransaction(signed)
+          ctx.transactionStatus = ctx.web3.eth.sendSignedTransaction(signed)
 
           return 'Signed transaction to publish app'
         })
@@ -297,6 +289,17 @@ exports.handler = async function ({
       enabled: () => !onlyArtifacts && !skipArtifact
     }
   ])
+}
 
-  return tasks.run()
+exports.handler = function (args) {
+  const { apm: apmOptions, keyfile, key, ethRpc } = args
+
+  // TODO: Clean up
+  const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
+  const privateKey = keyfile.key ? keyfile.key : key
+
+  apmOptions.ensRegistry = !apmOptions.ensRegistry ? keyfile.ens : apmOptions.ensRegistry
+
+  return APM(web3, apmOptions)
+    .then((apm) => exports.task.run({ web3, apm, privateKey }))
 }
