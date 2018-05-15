@@ -11,7 +11,7 @@ const EthereumTx = require('ethereumjs-tx')
 const namehash = require('eth-ens-namehash')
 const { keccak256 } = require('js-sha3')
 const TaskList = require('listr')
-const { findProjectRoot } = require('../util')
+const { findProjectRoot, getNodePackageManager } = require('../util')
 const ignore = require('ignore')
 const execa = require('execa')
 const { compileContracts } = require('../helpers/truffle-runner')
@@ -228,7 +228,8 @@ exports.task = function ({
           return
         }
 
-        const buildTask = execa('npm', ['run', 'build'])
+        const bin = await getNodePackageManager()
+        const buildTask = execa(bin, ['run', 'build'])
         buildTask.stdout.on('data', (log) => {
           if (!log) return
           task.output = log

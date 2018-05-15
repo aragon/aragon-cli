@@ -16,7 +16,7 @@ const opn = require('opn')
 const execa = require('execa')
 const { compileContracts } = require('../helpers/truffle-runner')
 const { isIPFSRunning, isIPFSInstalled, startIPFSDaemon } = require('../helpers/ipfs-daemon')
-const { findProjectRoot, isPortTaken, installDeps } = require('../util')
+const { findProjectRoot, isPortTaken, installDeps, getNodePackageManager } = require('../util')
 const { Writable } = require('stream')
 
 const TX_MIN_GAS = 10e6
@@ -180,7 +180,6 @@ exports.handler = function ({
         ctx.contracts['AppCode'] = appCodeAddress
       })
     },
-    // TODO: Clean this up
     {
       title: 'Publish app',
       task: (ctx) => {
@@ -281,16 +280,25 @@ exports.handler = function ({
         },
         {
           title: 'Install wrapper dependencies',
-          task: async () => {
-            await installDeps(ctx.wrapperPath)
+          task: async (ctx, task) => {
+            const installTask = await installDeps(ctx.wrapperPath)
+            installTask.stdout.on('data', (log) => {
+              if (!log) return
+              task.output = log
+            })
+
+            return installTask.catch((err) => {
+              throw new Error(`${err.message}\n${err.stderr}\n\nFailed to install dependencies. See above output.`)
+            })
           },
           enabled: (ctx) => !ctx.wrapperAvailable
         },
         {
-          title: 'Start wrapper',
-          task: (ctx, task) => {
+          title: 'Start Aragon client',
+          task: async (ctx, task) => {
+            const bin = await getNodePackageManager()
             execa(
-              'npm',
+              bin,
               ['start'],
               {
                 cwd: ctx.wrapperPath,
@@ -303,7 +311,7 @@ exports.handler = function ({
                 }
               }
             ).catch((err) => {
-              throw new Error('Could not start wrapper')
+              throw new Error(err)
             })
           }
         },

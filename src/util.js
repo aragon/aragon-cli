@@ -6,6 +6,7 @@ const execa = require('execa')
 const net = require('net')
 
 let cachedProjectRoot
+let cachedNodePackageManager
 
 const findProjectRoot = () => {
   if (!cachedProjectRoot) {
@@ -33,9 +34,16 @@ const isPortTaken = async (port) => {
   })
 }
 
+const getNodePackageManager = async () => {
+  if (!cachedNodePackageManager) {
+    const hasYarn = await hasBin('yarn')
+    cachedNodePackageManager = (hasYarn) ? 'yarn' : 'npm'
+  }
+  return cachedNodePackageManager
+}
+
 const installDeps = async (cwd) => {
-  const hasYarn = await hasBin('yarn')
-  const bin = (hasYarn) ? 'yarn' : 'npm'
+  const bin = await getNodePackageManager()
   try {
     return execa(bin, ['install'], { cwd })
   } catch (_) {
@@ -43,4 +51,4 @@ const installDeps = async (cwd) => {
   }
 }
 
-module.exports = { findProjectRoot, hasBin, isPortTaken, installDeps }
+module.exports = { findProjectRoot, hasBin, isPortTaken, installDeps, getNodePackageManager }
