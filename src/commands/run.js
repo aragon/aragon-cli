@@ -17,6 +17,7 @@ const execa = require('execa')
 const { runTruffle } = require('../helpers/truffle-runner')
 const { isIPFSRunning, isIPFSInstalled, startIPFSDaemon } = require('../helpers/ipfs-daemon')
 const { findProjectRoot, isPortTaken, installDeps } = require('../util')
+const { Writable } = require('stream')
 
 const TX_MIN_GAS = 10e6
 
@@ -82,7 +83,7 @@ exports.handler = function ({
     {
       title: 'Compile contracts',
       task: async () => {
-        await runTruffle(['compile'], { stdout: false })
+        await runTruffle(['compile'], { stdout: new Writable() })
       }
     },
     {
