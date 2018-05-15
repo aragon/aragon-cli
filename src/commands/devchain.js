@@ -31,14 +31,9 @@ exports.task = async function ({ port = 8545 }) {
     title: 'Setting up latest Aragon snapshot',
     task: async (ctx, task) => {
       await removeDir(snapshotPath)
-      console.log('Removed last snapshot')
       await mkDir(path.resolve(snapshotPath, '..'))
-      console.log('Mkdir')
       const aragen = path.resolve(require.resolve('@aragon/aragen'), '../aragon-ganache')
-      console.log(aragen)
-      console.log(snapshotPath)
       await recursiveCopy(aragen, snapshotPath)
-      console.log('copied')
     }
   },
   {
