@@ -15,7 +15,7 @@ const fs = require('fs-extra')
 const opn = require('opn')
 const execa = require('execa')
 const { compileContracts } = require('../helpers/truffle-runner')
-const { isIPFSRunning, isIPFSInstalled, startIPFSDaemon } = require('../helpers/ipfs-daemon')
+const { isIPFSRunning, isIPFSInstalled, startIPFSDaemon, setIPFSCORS } = require('../helpers/ipfs-daemon')
 const { findProjectRoot, isPortTaken, installDeps, getNodePackageManager } = require('../util')
 const { Writable } = require('stream')
 
@@ -105,19 +105,22 @@ exports.handler = function ({
     },
     {
       title: 'Start IPFS',
-      skip: async () => {
-        const running = await isIPFSRunning()
-        if (running) return 'IPFS daemon already running'
-      },
-      task: async () => {
+      task: async (ctx, task) => {
         const installed = await isIPFSInstalled()
         if (!installed) {
-          setTimeout(() => opn('https://ipfs.io/docs/install'), 3000)
+          setTimeout(() => opn('https://ipfs.io/docs/install'), 2500)
           throw new Error(`
             Running your app requires IPFS. Opening install instructions in your browser`
           )
         } else {
-          await startIPFSDaemon()
+          const running = await isIPFSRunning()
+          if (!running) {
+            await startIPFSDaemon()
+            await setIPFSCORS()
+          } else {
+            await setIPFSCORS()
+            task.skip('IPFS daemon already running')
+          }
         }
       }
     },
