@@ -14,7 +14,7 @@ const os = require('os')
 const fs = require('fs-extra')
 const opn = require('opn')
 const execa = require('execa')
-const { runTruffle } = require('../helpers/truffle-runner')
+const { compileContracts } = require('../helpers/truffle-runner')
 const { isIPFSRunning, isIPFSInstalled, startIPFSDaemon } = require('../helpers/ipfs-daemon')
 const { findProjectRoot, isPortTaken, installDeps } = require('../util')
 const { Writable } = require('stream')
@@ -82,9 +82,7 @@ exports.handler = function ({
   const tasks = new TaskList([
     {
       title: 'Compile contracts',
-      task: async () => {
-        await runTruffle(['compile'], { stdout: new Writable() })
-      }
+      task: async () => (await compileContracts())
     },
     {
       title: 'Start a local Ethereum network',

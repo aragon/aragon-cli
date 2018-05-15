@@ -1,17 +1,31 @@
 const execa = require('execa')
+const { Writable } = require('stream')
+const devnull = require('dev-null')
 
-const runTruffle = async (args, { stdout, stderr, stdin }) => {
+const runTruffle = (args, { stdout, stderr, stdin }) => {
   return new Promise((resolve, reject) => {
     const truffle = execa('truffle', args)
+    let errMsg = ''
+    truffle.on('exit', (code) => {
+      (code === 0) ? resolve() : reject(errMsg)
+    })
+    // errMsg is only used if the process fails
+    truffle.stdout.on('data', (err) => {
+      errMsg += err
+    })
     truffle.stdout.pipe(stdout || process.stdout)
     truffle.stderr.pipe(stderr || process.stderr)
     process.stdin.pipe(stdin || truffle.stdin)
-    truffle.on('close', resolve)
   })
 }
 
 const compileContracts = async () => {
-  await runTruffle(['compile'])
+  try {
+    const truffle = await runTruffle(['compile'], { stdout: devnull() })
+  } catch (err) {
+    console.log(err)
+    process.exit(1)
+  }
 }
 
 module.exports = { runTruffle, compileContracts }

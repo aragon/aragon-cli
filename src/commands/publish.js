@@ -14,8 +14,7 @@ const TaskList = require('listr')
 const { findProjectRoot } = require('../util')
 const ignore = require('ignore')
 const execa = require('execa')
-const { runTruffle } = require('../helpers/truffle-runner')
-const { Writable } = require('stream')
+const { compileContracts } = require('../helpers/truffle-runner')
 
 exports.command = 'publish [contract]'
 
@@ -153,9 +152,7 @@ exports.task = function ({
     // TODO: Move this in to own file for reuse
     {
       title: 'Compile contracts',
-      task: async () => {
-        await runTruffle(['compile'], { stdout: new Writable() })
-      },
+      task: async () => (await compileContracts())
       enabled: () => !alreadyCompiled
     },
     {
