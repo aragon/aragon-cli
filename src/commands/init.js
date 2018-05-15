@@ -85,9 +85,7 @@ exports.handler = function ({ reporter, name, template }) {
     },
     {
       title: 'Install package dependencies',
-      task: async (ctx, task) => {
-        await installDeps(basename)
-      }
+      task: async (ctx, task) => (await installDeps(basename, task)),
     }
   ])
 

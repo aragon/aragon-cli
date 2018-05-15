@@ -47,13 +47,17 @@ const getNodePackageManager = async () => {
   return cachedNodePackageManager
 }
 
-const installDeps = async (cwd) => {
+const installDeps = async (cwd, task) => {
   const bin = await getNodePackageManager()
-  try {
-    return execa(bin, ['install'], { cwd })
-  } catch (_) {
-    throw new Error('Could not install dependencies')
-  }
+  const installTask = execa(bin, ['install'], { cwd })
+  installTask.stdout.on('data', (log) => {
+    if (!log) return
+    task.output = log
+  })
+
+  return installTask.catch((err) => {
+    throw new Error(`${err.message}\n${err.stderr}\n\nFailed to install dependencies. See above output.`)
+  })
 }
 
 module.exports = { findProjectRoot, hasBin, isPortTaken, installDeps, getNodePackageManager }

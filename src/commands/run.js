@@ -283,17 +283,7 @@ exports.handler = function ({
         },
         {
           title: 'Install wrapper dependencies',
-          task: async (ctx, task) => {
-            const installTask = await installDeps(ctx.wrapperPath)
-            installTask.stdout.on('data', (log) => {
-              if (!log) return
-              task.output = log
-            })
-
-            return installTask.catch((err) => {
-              throw new Error(`${err.message}\n${err.stderr}\n\nFailed to install dependencies. See above output.`)
-            })
-          },
+          task: async (ctx, task) => (await installDeps(ctx.wrapperPath, task)),
           enabled: (ctx) => !ctx.wrapperAvailable
         },
         {
