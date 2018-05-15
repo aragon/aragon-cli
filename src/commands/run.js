@@ -255,7 +255,9 @@ exports.handler = function ({
         {
           title: 'Download wrapper',
           task: (ctx, task) => {
+            // TODO: Clean when https://github.com/aragon/aragon/pull/237 is merged
             const WRAPPER_COMMIT = '18f46c83cbde07da625a6d75fd5b6ca449158c7f'
+            const TEMP_WRAPPER_BRANCH = 'remotes/origin/start-url-2'
             const WRAPPER_PATH = `${os.homedir()}/.aragon/wrapper-${WRAPPER_COMMIT}`
             ctx.wrapperPath = WRAPPER_PATH
 
@@ -273,7 +275,7 @@ exports.handler = function ({
             return clone(
               'https://github.com/aragon/aragon',
               WRAPPER_PATH,
-              { checkout: WRAPPER_COMMIT }
+              { checkout: TEMP_WRAPPER_BRANCH }
             )
           }
         },
