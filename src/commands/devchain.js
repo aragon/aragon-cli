@@ -2,14 +2,13 @@ const TaskList = require('listr')
 const ncp = require('ncp')
 const ganache = require('ganache-core')
 const Web3 = require('web3')
-const { BLOCK_GAS_LIMIT, MNEMONIC } = require('../helpers/ganache-vars')
-
+const util = require('util')
 const homedir = require('homedir')()
 const path = require('path')
 const rimraf = require('rimraf')
 const mkdirp = require('mkdirp')
 
-const snapshotPath = path.join(homedir, '.aragon/ganache-db')
+const { BLOCK_GAS_LIMIT, MNEMONIC } = require('../helpers/ganache-vars')
 
 exports.command = 'devchain'
 exports.describe = 'Open a test chain for development and pass arguments to ganache'
@@ -21,33 +20,25 @@ exports.builder = {
 }
 
 exports.task = async function ({ port = 8545 }) {
+  const removeDir = util.promisify(rimraf)
+  const mkDir = util.promisify(mkdirp)
+  const recursiveCopy = util.promisify(ncp)
+
+  const snapshotPath = path.join(homedir, '.aragon/ganache-db')
+
   const tasks = new TaskList([
   {
     title: 'Setting up latest Aragon snapshot',
     task: async (ctx, task) => {
-      return new Promise((resolve, reject) => {
-        rimraf(snapshotPath, err => {
-          if (err) return reject(err)
-          resolve()
-        })
-      })
-      .then(() => {
-        return new Promise((resolve, reject) => {
-          mkdirp(path.resolve(snapshotPath, '..'), err => {
-            if (err) return reject(err)
-            resolve()
-          })
-        })
-      })
-      .then(() => {
-        return new Promise((resolve, reject) => {
-          const aragen = path.resolve(require.resolve('@aragon/aragen'), '../aragon-ganache')
-          ncp(aragen, snapshotPath, err => {
-            if (err) return reject(err)
-            resolve()
-          })
-        })
-      })
+      await removeDir(snapshotPath)
+      console.log('Removed last snapshot')
+      await mkDir(path.resolve(snapshotPath, '..'))
+      console.log('Mkdir')
+      const aragen = path.resolve(require.resolve('@aragon/aragen'), '../aragon-ganache')
+      console.log(aragen)
+      console.log(snapshotPath)
+      await recursiveCopy(aragen, snapshotPath)
+      console.log('copied')
     }
   },
   {

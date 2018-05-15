@@ -153,7 +153,7 @@ exports.task = function ({
     {
       title: 'Compile contracts',
       task: async () => {
-        await runTruffle(['compile'], { stdout: null })
+        await runTruffle(['compile'], { stdout: false })
       },
       enabled: () => !alreadyCompiled
     },
