@@ -7,6 +7,9 @@ const {
   findProjectRoot
 } = require('./util')
 const ConsoleReporter = require('./reporters/ConsoleReporter')
+const fs = require('fs')
+const Web3 = require('web3')
+const { getTruffleConfig, getENSAddress } = require('./helpers/truffle-config')
 
 const MIDDLEWARES = [
   manifestMiddleware,
@@ -31,6 +34,7 @@ cmd.option('silent', {
   description: 'Silence output to terminal',
   default: false
 })
+
 cmd.option('cwd', {
   description: 'The project working directory',
   default: () => {
@@ -42,10 +46,40 @@ cmd.option('cwd', {
   }
 })
 
+// Ethereum
+cmd.option('network', {
+  description: 'The network in your truffle.js that you want to use',
+  default: 'development',
+  coerce: (network) => {
+    const truffleConfig = getTruffleConfig()
+    if (truffleConfig) {
+      const truffleNetwork = truffleConfig.networks[network]
+      if (!truffleNetwork) {
+        throw new Error(`Didn't find network ${network} in your truffle.js`)
+      }
+      let provider
+      if (truffleNetwork.provider) {
+        provider = truffleNetwork.provider
+      } else if (truffleNetwork.host && truffleNetwork.port) {
+        provider = new Web3.providers.WebsocketProvider(`ws://${truffleNetwork.host}:${truffleNetwork.port}`)
+      } else {
+        provider = new Web3.providers.HttpProvider(`http://localhost:8545`)
+      }
+      truffleNetwork.provider = provider
+      truffleNetwork.name = network
+      return truffleNetwork
+    } else {
+      // This means you are running init
+      return {}
+    }
+  }
+  // conflicts: 'init'
+})
+
 // APM
 cmd.option('apm.ens-registry', {
   description: 'Address of the ENS registry',
-  default: process.env.ENS
+  default: require('@aragon/aragen').ens
 })
 cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
 
@@ -59,23 +93,6 @@ cmd.option('apm.ipfs.rpc', {
 })
 cmd.group('apm.ipfs.rpc', 'APM providers:')
 
-// Ethereum
-cmd.option('eth-rpc', {
-  description: 'An URI to the Ethereum node used for RPC calls',
-  default: 'http://localhost:8545'
-})
-
-cmd.option('keyfile', {
-  description: 'Path to a local file containing a private key, rpc node and ENS. If provided it will overwrite eth-rpc (but not apm.ens-registry)',
-  default: require('homedir')() + '/.localkey.json',
-  coerce: (file) => {
-    try {
-      return require(require('path').resolve(file))
-    } catch (e) {
-      return {}
-    }
-  }
-})
 
 // Add epilogue
 cmd.epilogue('For more information, check out https://wiki.aragon.one')

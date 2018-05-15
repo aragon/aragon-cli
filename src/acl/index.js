@@ -1,11 +1,11 @@
 module.exports = (web3) => {
   const getACL = async (repoAddr) => {
-    const repo = new web3.eth.Contract(require('@aragon/os/build/contracts/AragonApp'), repoAddr)
+    const repo = new web3.eth.Contract(require('@aragon/os/build/contracts/AragonApp').abi, repoAddr)
     const daoAddr = await repo.methods.kernel().call()
-    const dao = new web3.eth.Contract(require('@aragon/os/build/contracts/Kernel'), daoAddr)
+    const dao = new web3.eth.Contract(require('@aragon/os/build/contracts/Kernel').abi, daoAddr)
     const aclAddr = await dao.methods.acl().call()
 
-    return new web3.eth.Contract(require('@aragon/os/build/contracts/ACL'), aclAddr)
+    return new web3.eth.Contract(require('@aragon/os/build/contracts/ACL').abi, aclAddr)
   }
 
   return {

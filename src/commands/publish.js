@@ -1,4 +1,4 @@
-const Web3 = require('web3')
+const { ensureWeb3 } = require('../helpers/web3-fallback')
 const fs = require('fs')
 const tmp = require('tmp-promise')
 const path = require('path')
@@ -14,6 +14,7 @@ const TaskList = require('listr')
 const { findProjectRoot } = require('../util')
 const ignore = require('ignore')
 const execa = require('execa')
+const { runTruffle } = require('../helpers/truffle-runner')
 
 exports.command = 'publish [contract]'
 
@@ -22,8 +23,6 @@ exports.describe = 'Publish a new version of the application'
 exports.builder = function (yargs) {
   return yargs.positional('contract', {
     description: 'The address of the contract to publish in this version'
-  }).option('key', {
-    description: 'The private key to sign transactions with'
   }).option('only-artifacts', {
     description: 'Whether just generate artifacts file without publishing',
     default: false,
@@ -59,13 +58,8 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, contr
   delete artifact.appName
 
   // Set ABI
-  // TODO This relies heavily on the Truffle way of doing things, we should make it more flexible
-  try {
-    const contractInterface = await readJson(contractInterfacePath)
-    artifact.abi = contractInterface.abi
-  } catch (err) {
-    throw new Error(`Could not read contract interface. Did you remember to compile your contracts?`)
-  }
+  const contractInterface = await readJson(contractInterfacePath)
+  artifact.abi = contractInterface.abi
 
   // Analyse contract functions and returns an array
   // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
@@ -138,14 +132,16 @@ exports.task = function ({
 
   // Globals
   cwd,
-  ethRpc,
-  keyfile,
+  web3,
+  network,
   module,
   apm: apmOptions,
 
   // Arguments
+
   contract,
   onlyArtifacts,
+  alreadyCompiled,
   provider,
   key,
   files,
@@ -154,6 +150,13 @@ exports.task = function ({
 }) {
   return new TaskList([
     // TODO: Move this in to own file for reuse
+    {
+      title: 'Compile contracts',
+      task: async () => {
+        await runTruffle(['compile'], { stdout: null })
+      },
+      enabled: () => !alreadyCompiled
+    },
     {
       title: 'Check project',
       task: () => new TaskList([
@@ -213,7 +216,7 @@ exports.task = function ({
       enabled: () => !onlyArtifacts
     },
     {
-      title: 'Build',
+      title: 'Building frontend',
       task: async (ctx, task) => {
         if (!fs.existsSync('package.json')) {
           task.skip('No package.json found')
@@ -252,45 +255,41 @@ exports.task = function ({
       task: (ctx, task) => {
         const dir = onlyArtifacts ? cwd : ctx.pathToPublish
 
-        return generateApplicationArtifact(ctx.web3, cwd, dir, module, contract, reporter)
+        return generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
           .then((artifact) => {
-            reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
-            reporter.debug(`Saved artifact in ${dir}/artifact.json`)
+            // reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
+            // reporter.debug(`Saved artifact in ${dir}/artifact.json`)
           })
       },
       enabled: () => !skipArtifact
     },
     {
       title: `Publish ${module.appName} v${module.version}`,
-      task: (ctx, task) => {
-        task.output = ctx.privateKey
-          ? 'Generating transaction to sign'
-          : 'Signing transaction...'
-        const from = ctx.privateKey
-          ? ctx.web3.eth.accounts.privateKeyToAccount('0x' + ctx.privateKey).address
-          : null
+      task: async (ctx, task) => {
+        task.output = 'Generating transaction to sign'
+        const accounts = await web3.eth.getAccounts()
+        const from = accounts[0]
 
-        return ctx.apm.publishVersion(
-          from,
-          module.appName,
-          module.version,
-          provider,
-          ctx.pathToPublish,
-          contract
-        ).then((transaction) => {
-          if (!ctx.privateKey) {
-            return `Sign and broadcast this transaction:\n${JSON.stringify(transaction)}`
-          }
+        try {
+          return ctx.apm.publishVersion(
+            from,
+            module.appName,
+            module.version,
+            provider,
+            ctx.pathToPublish,
+            contract
+          ).then((transaction) => {
+            // Fix because APM.js gas comes with decimals and from doesn't work
+            transaction.from = from
+            transaction.gas = Math.round(transaction.gas)
+            ctx.transactionStatus = web3.eth.sendTransaction(transaction)
 
-          // Sign transaction
-          const tx = new EthereumTx(transaction)
-          tx.sign(Buffer.from(ctx.privateKey, 'hex'))
-          const signed = '0x' + tx.serialize().toString('hex')
-
-          ctx.transactionStatus = ctx.web3.eth.sendSignedTransaction(signed)
-
-          return 'Signed transaction to publish app'
-        })
+            return 'Signed transaction to publish app'
+          })
+        } catch (e) {
+          // reporter.error(e)
+          throw new Error(e)
+        } 
       },
       enabled: () => !onlyArtifacts
     },
@@ -304,7 +303,7 @@ exports.task = function ({
           resolve(`Successfully published ${module.appName} v${module.version}`)
         }).on('error', (err) => {
           reject(err)
-          reporter.debug(err)
+          // reporter.debug(err)
         })
       }),
       enabled: () => !onlyArtifacts && !skipArtifact
@@ -312,16 +311,14 @@ exports.task = function ({
   ])
 }
 
-exports.handler = function (args) {
-  const { apm: apmOptions, keyfile, key, ethRpc } = args
+exports.handler = async (args) => {
+  const { apm: apmOptions, network } = args
 
-  // TODO: Clean up
-  const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
-  const privateKey = keyfile.key ? keyfile.key : key
+  const web3 = await ensureWeb3(network)
 
-  apmOptions.ensRegistryAddress = !apmOptions['ens-registry'] ? keyfile.ens : apmOptions['ens-registry']
+  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   const apm = APM(web3, apmOptions)
 
-  return exports.task(args).run({ web3, apm, privateKey })
+  return exports.task({ ...args, web3 }).run({ web3, apm })
 }

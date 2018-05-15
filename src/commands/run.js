@@ -7,15 +7,17 @@ const chalk = require('chalk')
 const path = require('path')
 const APM = require('@aragon/apm')
 const publish = require('./publish')
-const { hasBin } = require('../util')
+const devchain = require('./devchain')
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const os = require('os')
 const fs = require('fs-extra')
-const openUrl = require('opn')
+const opn = require('opn')
 const execa = require('execa')
+const { runTruffle } = require('../helpers/truffle-runner')
+const { isIPFSRunning, isIPFSInstalled, startIPFSDaemon } = require('../helpers/ipfs-daemon')
+const { findProjectRoot } = require('../util')
 
-const BLOCK_GAS_LIMIT = 50e6
 const TX_MIN_GAS = 10e6
 
 exports.command = 'run'
@@ -29,24 +31,8 @@ exports.builder = {
   }
 }
 
-async function startIPFS () {
-  const hasIPFS = hasBin('ipfs')
-  if (!hasIPFS) {
-    throw new Error(`Running your app locally requires IPFS.
-      Please install it by going to https://ipfs.io/docs/install`)
-  }
-
-  return execa('ipfs', ['daemon'])
-}
-
 function getContract (pkg, contract) {
-  let artifact
-  try {
-    artifact = require(`${pkg}/build/contracts/${contract}.json`)
-  } catch (err) {
-    throw new Error(`Could not read contract interface for ${contract}. Did you remember to compile your contracts?`)
-  }
-
+  const artifact = require(`${pkg}/build/contracts/${contract}.json`)
   return artifact
 }
 
@@ -81,148 +67,79 @@ async function setPermissions (web3, sender, aclAddress, permissions) {
 
 const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
 
-exports.handler = function (args) {
-  const {
+exports.handler = function ({
     // Globals
     reporter,
     cwd,
+    apm: apmOptions,
+    network,
     module,
-    manifest,
-
+  
     // Arguments
     port
-  } = args
+  }) {
   const tasks = new TaskList([
     {
-      title: 'Start local chain',
-      task: (ctx, task) => {
-        const server = ganache.server({
-          gasLimit: BLOCK_GAS_LIMIT,
-          mnemonic: 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat'
-        })
-
-        return new Promise((resolve, reject) => {
-          server.listen(port, (err) => {
-            if (err) return reject(err)
-
-            task.title = `Local chain started at :${port}`
-            resolve()
-          })
-        }).then(async () => {
-          // Set a temporary provider for deployments
-          ctx.web3 = new Web3(
-            new Web3.providers.WebsocketProvider(`ws://localhost:${port}`)
-          )
-
-          // Grab the accounts
-          ctx.accounts = await ctx.web3.eth.getAccounts()
-          ctx.privateKeys = server.provider.manager.state.accounts
-        })
+      title: 'Compile contracts',
+      task: async () => {
+        await runTruffle(['compile'], { stdout: null })
+      }
+    },
+    {
+      title: 'Start a local Ethereum network',
+      skip: async (ctx) => {
+        try {
+          const web3 = new Web3(network.provider)
+          ctx.web3 = web3
+          const listening = await web3.eth.net.isListening()
+          ctx.accounts = await web3.eth.getAccounts()
+          return 'Connected to the provided Ethereum network'
+        } catch (err) {
+          return false
+        }
+      },
+      task: async (ctx, task) => {
+        const { web3, accounts } = await devchain.task({})
+        ctx.web3 = web3
+        ctx.accounts = accounts
       }
     },
     {
       title: 'Start IPFS',
-      task: () => {
-        startIPFS()
+      skip: async () => {
+        const running = await isIPFSRunning()
+        if (running) return 'IPFS daemon already running'
+      },
+      task: async () => {
+        const installed = await isIPFSInstalled()
+        if (!installed) {
+          setTimeout(() => opn('https://ipfs.io/docs/install'), 3000)
+          throw new Error(`
+            Running your app requires IPFS. Opening install instructions in your browser`
+          )
+        } else {
+          await startIPFSDaemon()
+        }
       }
     },
     {
-      title: 'Deploy APM and ENS',
-      task: (ctx, task) => new TaskList([
-        {
-          title: 'Deploy base contracts',
-          task: (ctx, task) => {
-            ctx.contracts = {}
-            const apmBaseContracts = [
-              ['@aragon/os', 'APMRegistry'],
-              ['@aragon/os', 'Repo'],
-              ['@aragon/os', 'ENSSubdomainRegistrar'],
-              ['@aragon/os', 'ENSFactory'],
-              ['@aragon/os', 'Kernel'],
-              ['@aragon/os', 'ACL']
-            ]
-              .map(([pkg, contractName]) => getContract(pkg, contractName))
-              .map((artifact) =>
-                deployContract(ctx.web3, ctx.accounts[0], artifact).then((contractAddress) => {
-                  task.title = `Deployed ${artifact.contractName} to ${contractAddress}`
+      title: 'Fetching DAOFactory from on-chain templates',
+      task: (ctx, task) => {
+        ctx.ens = require('@aragon/aragen').ens
+        const apm = APM(ctx.web3, {
+          ipfs: { host: 'localhost', port: 5001, protocol: 'http' },
+          ensRegistryAddress: ctx.ens
+        })
 
-                  ctx.contracts[artifact.contractName] = contractAddress
-                })
-              )
-
-            return Promise.all(
-              apmBaseContracts
-            )
-          }
-        },
-        {
-          title: 'Deploy base DAO factory',
-          task: (ctx) => {
-            // TODO: 0x0 should be address to EVMScriptRegistryFactory
-            return deployContract(
-              ctx.web3, ctx.accounts[0], getContract('@aragon/os', 'DAOFactory'), [
-                ctx.contracts['Kernel'], ctx.contracts['ACL'], '0x0'
-              ]
-            ).then((daoFactoryAddress) => {
-              ctx.contracts['DAOFactory'] = daoFactoryAddress
-            })
-          }
-        },
-        {
-          title: 'Deploy APM registry factory',
-          task: (ctx, task) => {
-            return deployContract(
-              ctx.web3, ctx.accounts[0], getContract('@aragon/os', 'APMRegistryFactory'), [
-                ctx.contracts['DAOFactory'],
-                ctx.contracts['APMRegistry'],
-                ctx.contracts['Repo'],
-                ctx.contracts['ENSSubdomainRegistrar'],
-                '0x0',
-                ctx.contracts['ENSFactory']
-              ]
-            ).then((apmRegistryAddress) => {
-              ctx.contracts['APMRegistryFactory'] = apmRegistryAddress
-            })
-          }
-        },
-        {
-          title: 'Create APM registry',
-          task: (ctx) => {
-            const root = ANY_ENTITY
-            const contract = new ctx.web3.eth.Contract(
-              getContract('@aragon/os', 'APMRegistryFactory').abi,
-              ctx.contracts['APMRegistryFactory']
-            )
-
-            // TODO: Create repo from appName repository
-            return contract.methods.newAPM(
-              namehash.hash('eth'),
-              '0x' + keccak256('aragonpm'),
-              root
-            ).send({
-              from: ctx.accounts[0],
-              gas: TX_MIN_GAS
-            }).then(({ events }) => {
-              ctx.registryAddress = events['DeployAPM'].returnValues.apm
-
-              const registry = new ctx.web3.eth.Contract(
-                getContract('@aragon/os', 'APMRegistry').abi,
-                ctx.registryAddress
-              )
-              return registry.methods.registrar().call()
-            }).then((registrarAddress) => {
-              const registrar = new ctx.web3.eth.Contract(
-                getContract('@aragon/os', 'ENSSubdomainRegistrar').abi,
-                registrarAddress
-              )
-
-              return registrar.methods.ens().call()
-            }).then((ensAddress) => {
-              ctx.ensAddress = ensAddress
-            })
-          }
-        }
-      ])
+        ctx.contracts = {}
+        return apm.getLatestVersionContract('democracy-template.aragonpm.eth')
+          .then(demTemplate => {
+            return new ctx.web3.eth.Contract(
+              getContract('@aragon/templates-beta', 'DemocracyTemplate').abi,
+              demTemplate
+          ).methods.fac().call().then(fac => { ctx.contracts['DAOFactory'] = fac })
+        })
+      },
     },
     {
       title: 'Create DAO',
@@ -259,8 +176,7 @@ exports.handler = function (args) {
     },
     {
       title: 'Deploy app code',
-      task: (ctx, task) => deployContract(
-        ctx.web3, ctx.accounts[0], getContract(cwd, path.basename(module.path, '.sol'))
+      task: (ctx, task) => deployContract(ctx.web3, ctx.accounts[0], getContract(cwd, path.basename(module.path, '.sol'))
       ).then((appCodeAddress) => {
         ctx.contracts['AppCode'] = appCodeAddress
       })
@@ -271,15 +187,24 @@ exports.handler = function (args) {
       task: (ctx) => {
         ctx.apm = APM(ctx.web3, {
           ipfs: { host: 'localhost', port: 5001, protocol: 'http' },
-          ensRegistryAddress: ctx.ensAddress
+          ensRegistryAddress: ctx.ens
         })
-        ctx.privateKey = ctx.privateKeys[ctx.accounts[0].toLowerCase()].secretKey.toString('hex')
-        return publish.task(Object.assign(args, {
+        return publish.task({
+          alreadyCompiled: true,
           contract: ctx.contracts['AppCode'],
           provider: 'ipfs',
           files: ['.'],
-          ignore: ['node_modules']
-        }))
+          ignore: ['node_modules'],
+          reporter,
+          cwd,
+          network,
+          module,
+          web3: ctx.web3,
+          apm: apmOptions,
+        
+          // Arguments
+          port
+        })
       }
     },
     {
@@ -374,7 +299,7 @@ exports.handler = function (args) {
                   REACT_APP_IPFS_GATEWAY: 'http://localhost:8080/ipfs',
                   REACT_APP_IPFS_RPC: 'http://localhost:5001',
                   REACT_APP_DEFAULT_ETH_NODE: `ws://localhost:${port}`,
-                  REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ensAddress
+                  REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens
                 }
               }
             ).catch((err) => {
@@ -387,15 +312,18 @@ exports.handler = function (args) {
           task: (ctx) => {
             // Wait a little bit before opening because the wrapper needs
             // to be ready first
-            setTimeout(
-              () => openUrl(`http://localhost:3000/#/${ctx.daoAddress}`),
-              1000
-            )
+            setTimeout(() => opn(`http://localhost:3000/#/${ctx.daoAddress}`), 2500)  
           }
         }
       ])
     }
   ])
+
+  const manifestPath = path.resolve(findProjectRoot(), 'manifest.json')
+  let manifest
+  if (fs.existsSync(manifestPath)) {
+    manifest = fs.readJsonSync(manifestPath)
+  }
 
   return tasks.run().then((ctx) => {
     reporter.info(`You are now ready to open your app in Aragon.
@@ -403,14 +331,13 @@ exports.handler = function (args) {
    This is the configuration for your development deployment:
    ${chalk.bold('Ethereum Node')}: ws://localhost:${port}
    ${chalk.bold('APM registry')}: ${ctx.registryAddress}
-   ${chalk.bold('ENS registry')}: ${ctx.ensAddress}
+   ${chalk.bold('ENS registry')}: ${ctx.ens}
    ${chalk.bold('DAO address')}: ${ctx.daoAddress}
 
    Here are some accounts you can use.
    The first one was used to create everything.
 
-   ${Object.keys(ctx.privateKeys).map((address) =>
-      chalk.bold(`Address: ${address}\n   Key:     `) + ctx.privateKeys[address].secretKey.toString('hex')).join('\n   ')}
+   ${ctx.accounts.map((account) => chalk.bold(`Address: ${account}\n  `))}
 
    Open up http://localhost:3000/#/${ctx.daoAddress} to view your DAO!`)
     if (!manifest) {
