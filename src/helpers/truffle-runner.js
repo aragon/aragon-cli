@@ -1,8 +1,8 @@
-const { spawn } = require('child_process')
+const execa = require('execa')
 
 const runTruffle = async (args, { stdout, stderr, stdin }) => {
   return new Promise((resolve, reject) => {
-    const truffle = spawn('truffle', args)
+    const truffle = execa('truffle', args)
     truffle.stdout.pipe(stdout || process.stdout)
     truffle.stderr.pipe(stderr || process.stderr)
     process.stdin.pipe(stdin || truffle.stdin)
