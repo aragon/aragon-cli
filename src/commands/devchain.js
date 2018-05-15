@@ -2,7 +2,7 @@ const TaskList = require('listr')
 const ncp = require('ncp')
 const ganache = require('ganache-core')
 const Web3 = require('web3')
-const util = require('util')
+const { promisify } = require('util')
 const homedir = require('homedir')()
 const path = require('path')
 const rimraf = require('rimraf')
@@ -20,9 +20,9 @@ exports.builder = {
 }
 
 exports.task = async function ({ port = 8545 }) {
-  const removeDir = util.promisify(rimraf)
-  const mkDir = util.promisify(mkdirp)
-  const recursiveCopy = util.promisify(ncp)
+  const removeDir = promisify(rimraf)
+  const mkDir = promisify(mkdirp)
+  const recursiveCopy = promisify(ncp)
 
   const snapshotPath = path.join(homedir, '.aragon/ganache-db')
 

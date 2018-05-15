@@ -15,6 +15,7 @@ const { findProjectRoot } = require('../util')
 const ignore = require('ignore')
 const execa = require('execa')
 const { runTruffle } = require('../helpers/truffle-runner')
+const { Writable } = require('stream')
 
 exports.command = 'publish [contract]'
 
@@ -153,7 +154,7 @@ exports.task = function ({
     {
       title: 'Compile contracts',
       task: async () => {
-        await runTruffle(['compile'], { stdout: false })
+        await runTruffle(['compile'], { stdout: new Writable() })
       },
       enabled: () => !alreadyCompiled
     },

@@ -16,7 +16,8 @@ const opn = require('opn')
 const execa = require('execa')
 const { runTruffle } = require('../helpers/truffle-runner')
 const { isIPFSRunning, isIPFSInstalled, startIPFSDaemon } = require('../helpers/ipfs-daemon')
-const { findProjectRoot } = require('../util')
+const { findProjectRoot, isPortTaken, installDeps } = require('../util')
+const { Writable } = require('stream')
 
 const TX_MIN_GAS = 10e6
 
@@ -82,7 +83,7 @@ exports.handler = function ({
     {
       title: 'Compile contracts',
       task: async () => {
-        await runTruffle(['compile'], { stdout: false })
+        await runTruffle(['compile'], { stdout: new Writable() })
       }
     },
     {
@@ -281,11 +282,10 @@ exports.handler = function ({
           }
         },
         {
-          title: 'Install wrapper dependencies with npm',
-          task: () => execa('npm', ['install'], { cwd: ctx.wrapperPath })
-            .catch(() => {
-              throw new Error('Could not install dependencies')
-            }),
+          title: 'Install wrapper dependencies',
+          task: async () => {
+            await installDeps(ctx.wrapperPath)
+          },
           enabled: (ctx) => !ctx.wrapperAvailable
         },
         {
@@ -314,7 +314,18 @@ exports.handler = function ({
           task: (ctx) => {
             // Wait a little bit before opening because the wrapper needs
             // to be ready first
-            setTimeout(() => opn(`http://localhost:3000/#/${ctx.daoAddress}`), 2500)  
+            const checkWrapperReady = () => {
+              setTimeout(async () => {
+                const portTaken = await isPortTaken(3000)
+                if (portTaken) {
+                  opn(`http://localhost:3000/#/${ctx.daoAddress}`)
+                } else {
+                  checkWrapperReady()
+                }
+              }, 500)
+            }
+            
+            // setTimeout(() => opn(`http://localhost:3000/#/${ctx.daoAddress}`), 2500)  
           }
         }
       ])
