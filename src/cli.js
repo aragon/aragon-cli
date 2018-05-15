@@ -26,6 +26,9 @@ const cmd = require('yargs')
     }
   })
 
+cmd.alias('h', 'help')
+cmd.alias('v', 'version')
+
 // Configure CLI behaviour
 cmd.demandCommand(1, 'You need to specify a command')
 
@@ -95,7 +98,7 @@ cmd.group('apm.ipfs.rpc', 'APM providers:')
 
 
 // Add epilogue
-cmd.epilogue('For more information, check out https://wiki.aragon.one')
+cmd.epilogue('For more information, check out https://hack.aragon.one')
 
 // Run
 const reporter = new ConsoleReporter()

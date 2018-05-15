@@ -25,6 +25,7 @@
   "author": "Aragon Institution MTU <contact@aragon.one>",
   "contributors": [
     "Jorge Izquierdo <jorge@aragon.one>",
+    "Luis Cuende <luis@aragon.one>",
     "Oliver Nordbjerg <oliver@aragon.one>"
   ],
   "license": "GPL-3.0",
@@ -55,7 +56,6 @@
     "hasbin": "^1.2.3",
     "homedir": "^0.6.0",
     "ignore": "^3.3.7",
-    "ipfs-api": "^14.3.7",
     "js-sha3": "^0.7.0",
     "listr": "^0.13.0",
     "mkdirp": "^0.5.1",
@@ -63,7 +63,6 @@
     "opn": "^5.3.0",
     "rimraf": "^2.6.2",
     "semver": "^5.4.1",
-    "solidity-parser": "^0.4.0",
     "tmp-promise": "^1.0.4",
     "truffle": "^4.1.8",
     "web3": "^1.0.0-beta.26",
