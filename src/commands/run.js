@@ -317,9 +317,8 @@ exports.handler = function ({
         },
         {
           title: 'Open wrapper',
-          task: (ctx) => {
-            // Wait a little bit before opening because the wrapper needs
-            // to be ready first
+          task: (ctx, task) => {
+            // Check until the wrapper is served
             const checkWrapperReady = () => {
               setTimeout(async () => {
                 const portTaken = await isPortTaken(3000)
@@ -328,10 +327,9 @@ exports.handler = function ({
                 } else {
                   checkWrapperReady()
                 }
-              }, 500)
+              }, 250)
             }
-            
-            // setTimeout(() => opn(`http://localhost:3000/#/${ctx.daoAddress}`), 2500)  
+            checkWrapperReady()
           }
         }
       ])
