@@ -152,7 +152,7 @@ exports.task = function ({
     // TODO: Move this in to own file for reuse
     {
       title: 'Compile contracts',
-      task: async () => (await compileContracts())
+      task: async () => (await compileContracts()),
       enabled: () => !alreadyCompiled
     },
     {
