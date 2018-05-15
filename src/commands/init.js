@@ -4,6 +4,7 @@ const TaskList = require('listr')
 const execa = require('execa')
 const path = require('path')
 const fs = require('fs-extra')
+const { installDeps } = require('../util')
 
 exports.command = 'init <name> [template]'
 
@@ -83,21 +84,10 @@ exports.handler = function ({ reporter, name, template }) {
       }
     },
     {
-      title: 'Install package dependencies with Yarn',
-      task: (ctx, task) => execa('yarn', { cwd: basename })
-        .catch(() => {
-          ctx.yarn = false
-
-          task.skip('Yarn not available, install it via `npm install -g yarn`')
-        })
-    },
-    {
-      title: 'Install package dependencies with npm',
-      enabled: ctx => ctx.yarn === false,
-      task: () => execa('npm', ['install'], { cwd: basename })
-        .catch(() => {
-          throw new Error('Could not install dependencies')
-        })
+      title: 'Install package dependencies',
+      task: async (ctx, task) => {
+        await installDeps(basename)
+      }
     }
   ])
 
