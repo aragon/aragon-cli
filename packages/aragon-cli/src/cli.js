@@ -100,7 +100,7 @@ cmd.option('apm', {
       apm.ipfs.rpc = {
         protocol: uri.protocol.replace(':', ''),
         host: uri.hostname,
-        port: uri.port
+        port: parseInt(uri.port)
       }
       if (uri.hash === '#default') {
         apm.ipfs.rpc.default = true
