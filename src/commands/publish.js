@@ -254,11 +254,12 @@ exports.task = function ({
             module.version,
             provider,
             ctx.pathToPublish,
-            contract
+            ctx.contract
           )
           // Fix because APM.js gas comes with decimals and from doesn't work
           transaction.from = from
           transaction.gas = Math.round(transaction.gas)
+          
           return await web3.eth.sendTransaction(transaction)
         } catch (e) {
           const errMsg = `${e}\nMaybe an existing version of this package was already deployed, try running 'aragon version' to bump it`
