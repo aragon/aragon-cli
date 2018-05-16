@@ -51,15 +51,13 @@ exports.handler = async function ({
   transaction.nonce = await web3.eth.getTransactionCount(from)
   transaction.from = from
 
-  // Sign and broadcast transaction
-  reporter.debug('Signing transaction...')
-
-  const receipt = await web3.eth.sendTransaction(transaction)
-
-  reporter.debug(JSON.stringify(receipt))
-  if (receipt.status === '0x1') {
-    reporter.success(`Successful transaction ${receipt.transactionHash}`)
-  } else {
-    reporter.error(`Transaction reverted ${receipt.transactionHash}`)
+  try {
+    const receipt = await web3.eth.sendTransaction(transaction)
+    reporter.success(`Successful transaction (${receipt.transactionHash})`)
+  } catch (e) {
+    reporter.error(`${e}\nTransaction failed (${receipt.transactionHash})`)
   }
+  process.exit()
+
+  // reporter.debug(JSON.stringify(receipt))
 }
