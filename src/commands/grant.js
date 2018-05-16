@@ -10,9 +10,6 @@ exports.describe = 'Grant an address permission to create new versions in this p
 exports.builder = function (yargs) {
   return yargs.positional('address', {
     description: 'The address being granted the permission to publish to the repo'
-  }).option('skip-confirm', {
-    description: 'Exit as soon as transaction is sent, no wait for confirmation',
-    default: false
   })
 }
 
@@ -25,8 +22,7 @@ exports.handler = async function ({
   apm: apmOptions,
 
   // Arguments
-  address,
-  skipConfirm
+  address
 }) {
   const web3 = await ensureWeb3(network)
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
@@ -58,10 +54,7 @@ exports.handler = async function ({
   // Sign and broadcast transaction
   reporter.debug('Signing transaction...')
 
-  const promisedReceipt = web3.eth.sendTransaction(transaction)
-  if (noConfirm) return reporter.success('Transaction sent')
-
-  const receipt = await promisedReceipt
+  const receipt = await web3.eth.sendTransaction(transaction)
 
   reporter.debug(JSON.stringify(receipt))
   if (receipt.status === '0x1') {

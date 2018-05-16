@@ -38,9 +38,6 @@ exports.builder = function (yargs) {
   }).option('ignore', {
     description: 'A gitignore pattern of files to ignore. Specify multiple times to add multiple patterns.',
     array: true
-  }).option('skip-confirm', {
-    description: 'Exit as soon as transaction is sent, do not wait for confirmation',
-    default: false
   })
 }
 
@@ -145,8 +142,7 @@ exports.task = function ({
   provider,
   key,
   files,
-  ignore,
-  skipArtifact
+  ignore
 }) {
   return new TaskList([
     // TODO: Move this in to own file for reuse
@@ -259,59 +255,40 @@ exports.task = function ({
             // reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
             // reporter.debug(`Saved artifact in ${dir}/artifact.json`)
           })
-      },
-      enabled: () => !skipArtifact
+      }
     },
     {
       title: `Publish ${module.appName} v${module.version}`,
       task: async (ctx, task) => {
-        task.output = 'Generating transaction to sign'
+        task.output = 'Generating transaction and waiting for confirmation'
         const accounts = await web3.eth.getAccounts()
         const from = accounts[0]
 
         try {
-          return ctx.apm.publishVersion(
+          const transaction = await ctx.apm.publishVersion(
             from,
             module.appName,
             module.version,
             provider,
             ctx.pathToPublish,
             contract
-          ).then((transaction) => {
-            // Fix because APM.js gas comes with decimals and from doesn't work
-            transaction.from = from
-            transaction.gas = Math.round(transaction.gas)
-            ctx.transactionStatus = web3.eth.sendTransaction(transaction)
-
-            return 'Signed transaction to publish app'
-          })
+          )
+          // Fix because APM.js gas comes with decimals and from doesn't work
+          transaction.from = from
+          transaction.gas = Math.round(transaction.gas)
+          return await web3.eth.sendTransaction(transaction)
         } catch (e) {
-          // reporter.error(e)
-          throw new Error(e)
+          const errMsg = `${e}\nMaybe a version of this package was already deployed to the chain, try restating your local Ethereum chain`
+          throw new Error(errMsg)
         } 
       },
       enabled: () => !onlyArtifacts
-    },
-    // TODO: Move this in to own file for reuse
-    {
-      title: 'Wait for confirmation',
-      task: (ctx, task) => new Promise((resolve, reject) => {
-        ctx.transactionStatus.on('transactionHash', (transactionHash) => {
-          task.output = `Awaiting receipt for ${transactionHash}`
-        }).on('receipt', (receipt) => {
-          resolve(`Successfully published ${module.appName} v${module.version}`)
-        }).on('error', (err) => {
-          reject(err)
-          // reporter.debug(err)
-        })
-      }),
-      enabled: () => !onlyArtifacts && !skipArtifact
     }
   ])
 }
 
 exports.handler = async (args) => {
-  const { apm: apmOptions, network } = args
+  const { apm: apmOptions, network, reporter, module } = args
 
   const web3 = await ensureWeb3(network)
 
@@ -319,5 +296,5 @@ exports.handler = async (args) => {
 
   const apm = APM(web3, apmOptions)
 
-  return exports.task({ ...args, web3 }).run({ web3, apm })
+  return exports.task({ ...args, web3 }).run({ web3, apm }).then(() => { process.exit() }).catch(() => { process.exit() })
 }
