@@ -7,6 +7,7 @@ const homedir = require('homedir')()
 const path = require('path')
 const rimraf = require('rimraf')
 const mkdirp = require('mkdirp')
+const chalk = require('chalk')
 
 const { BLOCK_GAS_LIMIT, MNEMONIC } = require('../helpers/ganache-vars')
 
@@ -44,28 +45,34 @@ exports.task = async function ({ port = 8545 }) {
         mnemonic: MNEMONIC,
         db_path: snapshotPath
       })
-      return new Promise((resolve, reject) => {
-        server.listen(port, (err) => {
-          if (err) return reject(err)
-    
-          task.title = `Local chain started at port ${port}`
-          resolve()
+      const listen = () => (
+        new Promise((resolve, reject) => {
+          server.listen(port, (err) => {
+            if (err) return reject(err)
+      
+            task.title = `Local chain started at port ${port}`
+            resolve()
+          })
         })
-      }).then(async () => {
-        return new Promise(async (resolve, reject) => {
-          ctx.web3 = new Web3(
-            new Web3.providers.WebsocketProvider(`ws://localhost:${port}`)
-          )
-          ctx.accounts = await ctx.web3.eth.getAccounts()
-          resolve()
-        })
-      })
+      )
+      await listen()
+      ctx.web3 = new Web3(
+        new Web3.providers.WebsocketProvider(`ws://localhost:${port}`)
+      )
+      ctx.accounts = await ctx.web3.eth.getAccounts()
+      ctx.privateKeys = server.provider.manager.state.accounts
     }
   }])
 
-  return tasks.run().then((ctx) => {
-    return ctx
-  })
+  return tasks.run()
 }
 
-exports.handler = exports.task
+exports.handler = async ({ reporter, port }) => {
+  const ctx = await exports.task({ port })
+  reporter.info(`Here are some accounts you can use.
+  The first one will use for all the actions the CLI performs.
+
+  ${Object.keys(ctx.privateKeys).map((address) =>
+    chalk.bold(`Address: ${address}\n  Key: `) + ctx.privateKeys[address].secretKey.toString('hex')).join('\n  ')}
+  `)
+}

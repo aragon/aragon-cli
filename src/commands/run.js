@@ -102,9 +102,10 @@ exports.handler = function ({
         }
       },
       task: async (ctx, task) => {
-        const { web3, accounts } = await devchain.task({})
+        const { web3, accounts, privateKeys } = await devchain.task({})
         ctx.web3 = web3
         ctx.accounts = accounts
+        ctx.privateKeys = privateKeys
       }
     },
     {
@@ -149,28 +150,23 @@ exports.handler = function ({
     },
     {
       title: 'Create DAO',
-      task: (ctx, task) => {
+      task: async (ctx, task) => {
         const factory = new ctx.web3.eth.Contract(
           getContract('@aragon/os', 'DAOFactory').abi,
           ctx.contracts['DAOFactory']
         )
 
-        return factory.methods.newDAO(
-          ctx.accounts[0]
-        ).send({
+        const { events } = await factory.methods.newDAO(ctx.accounts[0]).send({
           from: ctx.accounts[0],
           gas: TX_MIN_GAS
-        }).then(({ events }) => {
-          ctx.daoAddress = events['DeployDAO'].returnValues.dao
-
-          const kernel = new ctx.web3.eth.Contract(
-          getContract('@aragon/os', 'Kernel').abi,
-            ctx.daoAddress
-          )
-          return kernel.methods.acl().call()
-        }).then((aclAddress) => {
-          ctx.aclAddress = aclAddress
         })
+        ctx.daoAddress = events['DeployDAO'].returnValues.dao
+
+        const kernel = new ctx.web3.eth.Contract(
+          getContract('@aragon/os', 'Kernel').abi, ctx.daoAddress
+        )
+        const aclAddress = await kernel.methods.acl().call()
+        ctx.aclAddress = aclAddress
       }
     },
     {
@@ -182,10 +178,14 @@ exports.handler = function ({
     },
     {
       title: 'Deploy app code',
-      task: (ctx, task) => deployContract(ctx.web3, ctx.accounts[0], getContract(cwd, path.basename(module.path, '.sol'))
-      ).then((appCodeAddress) => {
+      task: async (ctx, task) => {
+        const appCodeAddress = await deployContract(
+          ctx.web3,
+          ctx.accounts[0],
+          getContract(cwd, path.basename(module.path, '.sol'))
+        )
         ctx.contracts['AppCode'] = appCodeAddress
-      })
+      }
     },
     {
       title: 'Publish app',
@@ -214,21 +214,21 @@ exports.handler = function ({
       task: () => new TaskList([
         {
           title: 'Deploy proxy',
-          task: (ctx) => {
+          task: async (ctx) => {
             const kernel = new ctx.web3.eth.Contract(
               getContract('@aragon/os', 'Kernel').abi,
               ctx.daoAddress
             )
 
-            return kernel.methods.newAppInstance(
+            const { events } = await kernel.methods.newAppInstance(
               namehash.hash(module.appName),
               ctx.contracts['AppCode']
             ).send({
               from: ctx.accounts[0],
               gasLimit: TX_MIN_GAS
-            }).then(({ events }) => {
-              ctx.appAddress = events['NewAppProxy'].returnValues.proxy
             })
+            
+            ctx.appAddress = events['NewAppProxy'].returnValues.proxy
           }
         },
         {
@@ -348,7 +348,11 @@ exports.handler = function ({
     Here are some accounts you can use.
     The first one was used to create everything.
 
-    ${chalk.bold(ctx.accounts.join(`\n    `))}
+    ${(ctx.privateKeys) ?
+      Object.keys(ctx.privateKeys).map((address) =>
+        chalk.bold(`Address: ${address}\n  Key: `) + ctx.privateKeys[address].secretKey.toString('hex')).join('\n  ') :
+      chalk.bold(ctx.accounts.join(`\n    `))
+    }
 
     ${(client !== false) ?
       `Opening http://localhost:3000/#/${ctx.daoAddress} to view your DAO` :
