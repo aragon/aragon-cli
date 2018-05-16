@@ -222,6 +222,7 @@ exports.handler = function ({
           module,
           web3: ctx.web3,
           apm: apmOptions,
+          automaticallyBump: true
         })
       }
     },
