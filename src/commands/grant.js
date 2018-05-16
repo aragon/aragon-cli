@@ -30,10 +30,6 @@ exports.handler = async function ({
   const apm = await APM(web3, apmOptions)
   const acl = ACL(web3)
 
-  if (!module || !Object.keys(module).length) {
-    throw new Error('This directory is not an Aragon project')
-  }
-
   const repo = await apm.getRepository(module.appName).catch(() => null)
   if (repo === null) {
     throw new Error(`Repository ${module.appName} does not exist and it's registry does not exist`)

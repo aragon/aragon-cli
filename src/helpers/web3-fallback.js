@@ -8,7 +8,7 @@ const ensureWeb3 = async (network) => {
     const connected = await web3.eth.net.isListening()
     if (connected) return web3
   } catch (err) {
-    throw new Error(`Please execute aragon run before running this`)
+    throw new Error(`Please execute aragon run or aragon devchain before running this`)
   }
 }
 

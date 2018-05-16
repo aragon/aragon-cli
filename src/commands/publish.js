@@ -155,17 +155,6 @@ exports.task = function ({
       title: 'Check project',
       task: () => new TaskList([
         {
-          title: 'Check if directory is an Aragon app',
-          task: (task) => {
-            if (!module || !Object.keys(module).length) {
-              throw new MessageError('This directory is not an Aragon app',
-                'ERR_NOT_A_PROJECT')
-            }
-
-            return 'Directory is an Aragon app'
-          }
-        },
-        {
           title: 'Check version is valid',
           task: () => {
             if (module && semver.valid(module.version)) {

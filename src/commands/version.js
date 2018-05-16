@@ -14,9 +14,6 @@ exports.builder = function (yargs) {
 
 exports.handler = async function ({ reporter, bump, cwd }) {
   const manifestLocation = await findUp('arapp.json', { cwd })
-  if (!manifestLocation) {
-    throw new Error('This directory is not an Aragon project')
-  }
 
   let manifest = JSON.parse(fs.readFileSync(manifestLocation))
   manifest.version = semver.inc(manifest.version, bump)
