@@ -1,9 +1,5 @@
 #!/usr/bin/env node
 const {
-  examplesDecorator,
-  middlewaresDecorator
-} = require('./decorators')
-const {
   manifestMiddleware,
   moduleMiddleware
 } = require('./middleware')
@@ -11,39 +7,38 @@ const {
   findProjectRoot
 } = require('./util')
 const ConsoleReporter = require('./reporters/ConsoleReporter')
+const fs = require('fs')
+const Web3 = require('web3')
+const { getTruffleConfig, getENSAddress } = require('./helpers/truffle-config')
+const url = require('url')
 
 const MIDDLEWARES = [
   manifestMiddleware,
   moduleMiddleware
 ]
 
-const DECORATORS = [
-  examplesDecorator,
-  middlewaresDecorator(MIDDLEWARES)
-]
-
 // Set up commands
 const cmd = require('yargs')
   .commandDir('./commands', {
     visit: (cmd) => {
-      // Decorates the command with new aspects (does not touch `argv`)
-      cmd = DECORATORS.reduce(
-        (innerCmd, decorator) => decorator(innerCmd),
-        cmd
-      )
-
+      // Add middlewares
+      cmd.middlewares = MIDDLEWARES
       return cmd
     }
   })
 
+cmd.alias('h', 'help')
+cmd.alias('v', 'version')
+
 // Configure CLI behaviour
-cmd.demandCommand()
+cmd.demandCommand(1, 'You need to specify a command')
 
 // Set global options
 cmd.option('silent', {
   description: 'Silence output to terminal',
   default: false
 })
+
 cmd.option('cwd', {
   description: 'The project working directory',
   default: () => {
@@ -55,50 +50,75 @@ cmd.option('cwd', {
   }
 })
 
+// Ethereum
+cmd.option('network', {
+  description: 'The network in your truffle.js that you want to use',
+  default: 'development',
+  coerce: (network) => {
+    const truffleConfig = getTruffleConfig()
+    if (truffleConfig) {
+      const truffleNetwork = truffleConfig.networks[network]
+      if (!truffleNetwork) {
+        throw new Error(`Didn't find network ${network} in your truffle.js`)
+      }
+      let provider
+      if (truffleNetwork.provider) {
+        provider = truffleNetwork.provider
+      } else if (truffleNetwork.host && truffleNetwork.port) {
+        provider = new Web3.providers.WebsocketProvider(`ws://${truffleNetwork.host}:${truffleNetwork.port}`)
+      } else {
+        provider = new Web3.providers.HttpProvider(`http://localhost:8545`)
+      }
+      truffleNetwork.provider = provider
+      truffleNetwork.name = network
+      return truffleNetwork
+    } else {
+      // This means you are running init
+      return {}
+    }
+  }
+  // conflicts: 'init'
+})
+
 // APM
 cmd.option('apm.ens-registry', {
   description: 'Address of the ENS registry',
-  default: process.env.ENS
+  default: require('@aragon/aragen').ens
 })
 cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
 
 cmd.option('apm.ipfs.rpc', {
   description: 'An URI to the IPFS node used to publish files',
-  default: {
-    host: 'ipfs.aragon.network',
-    protocol: 'http',
-    port: 5001
-  }
+  default: 'http://localhost:5001#default'
 })
 cmd.group('apm.ipfs.rpc', 'APM providers:')
 
-// Ethereum
-cmd.option('eth-rpc', {
-  description: 'An URI to the Ethereum node used for RPC calls',
-  default: 'http://localhost:8545'
-})
-
-cmd.option('keyfile', {
-  description: 'Path to a local file containing a private key, rpc node and ENS. If provided it will overwrite eth-rpc (but not apm.ens-registry)',
-  default: require('homedir')() + '/.localkey.json',
-  coerce: (file) => {
-    try {
-      return require(require('path').resolve(file))
-    } catch (e) {
-      return {}
+cmd.option('apm', {
+  coerce: (apm) => {
+    if (apm.ipfs && apm.ipfs.rpc) {
+      const uri = url.parse(apm.ipfs.rpc)
+      apm.ipfs.rpc = {
+        protocol: uri.protocol.replace(':', ''),
+        host: uri.hostname,
+        port: uri.port
+      }
+      if (uri.hash === '#default') {
+        apm.ipfs.rpc.default = true
+      }
     }
+    return apm
   }
 })
 
 // Add epilogue
-cmd.epilogue('For more information, check out https://wiki.aragon.one')
+cmd.epilogue('For more information, check out https://hack.aragon.one')
 
 // Run
 const reporter = new ConsoleReporter()
-cmd.fail((msg, err, a) => {
-  reporter.error(err.message || msg || 'An error occurred')
-  reporter.debug(err.stack)
-  process.exit(1)
+cmd.fail((msg, err, yargs) => {
+  if (!err) yargs.showHelp()
+  reporter.error(msg || err.message || 'An error occurred')
+  reporter.debug(err && err.stack)
 }).parse(process.argv.slice(2), {
   reporter
 })

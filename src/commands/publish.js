@@ -1,9 +1,9 @@
-const Web3 = require('web3')
+const { ensureWeb3 } = require('../helpers/web3-fallback')
 const fs = require('fs')
 const tmp = require('tmp-promise')
 const path = require('path')
 const { promisify } = require('util')
-const { copy, readJson, writeJson, pathExistsSync } = require('fs-extra')
+const { copy, readJson, writeJson, pathExistsSync, existsSync } = require('fs-extra')
 const extract = require('../helpers/solidity-extractor')
 const APM = require('@aragon/apm')
 const semver = require('semver')
@@ -11,8 +11,10 @@ const EthereumTx = require('ethereumjs-tx')
 const namehash = require('eth-ens-namehash')
 const { keccak256 } = require('js-sha3')
 const TaskList = require('listr')
-const { findProjectRoot } = require('../util')
+const { findProjectRoot, getNodePackageManager } = require('../util')
 const ignore = require('ignore')
+const execa = require('execa')
+const { compileContracts } = require('../helpers/truffle-runner')
 
 exports.command = 'publish [contract]'
 
@@ -21,8 +23,6 @@ exports.describe = 'Publish a new version of the application'
 exports.builder = function (yargs) {
   return yargs.positional('contract', {
     description: 'The address of the contract to publish in this version'
-  }).option('key', {
-    description: 'The private key to sign transactions with'
   }).option('only-artifacts', {
     description: 'Whether just generate artifacts file without publishing',
     default: false,
@@ -30,22 +30,14 @@ exports.builder = function (yargs) {
   }).option('provider', {
     description: 'The APM storage provider to publish files to',
     default: 'ipfs',
-    choices: ['ipfs', 'fs']
+    choices: ['ipfs']
   }).option('files', {
     description: 'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
     default: ['.'],
     array: true
   }).option('ignore', {
     description: 'A gitignore pattern of files to ignore. Specify multiple times to add multiple patterns.',
-    array: true,
-    default: ['node_modules/', '.git/']
-  }).option('skip-confirm', {
-    description: 'Exit as soon as transaction is sent, do not wait for confirmation',
-    default: false
-  })
-  .option('skip-contract', {
-    description: 'Only upload content without generating artifacts',
-    default: false
+    array: true
   })
 }
 
@@ -63,13 +55,8 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, contr
   delete artifact.appName
 
   // Set ABI
-  // TODO This relies heavily on the Truffle way of doing things, we should make it more flexible
-  try {
-    const contractInterface = await readJson(contractInterfacePath)
-    artifact.abi = contractInterface.abi
-  } catch (err) {
-    throw new Error(`Could not read contract interface. Did you remember to compile your contracts?`)
-  }
+  const contractInterface = await readJson(contractInterfacePath)
+  artifact.abi = contractInterface.abi
 
   // Analyse contract functions and returns an array
   // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
@@ -137,50 +124,35 @@ async function prepareFilesForPublishing (files = [], ignorePatterns = null) {
   return tmpDir
 }
 
-exports.handler = async function ({
+exports.task = function ({
   reporter,
 
   // Globals
   cwd,
-  ethRpc,
-  keyfile,
+  web3,
+  network,
   module,
   apm: apmOptions,
 
   // Arguments
+
   contract,
   onlyArtifacts,
+  alreadyCompiled,
   provider,
   key,
   files,
-  ignore,
-  skipArtifact,
-  skipContract
+  ignore
 }) {
-  // TODO: Clean up
-  const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
-  const privateKey = keyfile.key ? keyfile.key : key
-
-  apmOptions.ensRegistry = !apmOptions.ensRegistry ? keyfile.ens : apmOptions.ensRegistry
-
-  const apm = await APM(web3, apmOptions)
-
-  const tasks = new TaskList([
-    // TODO: Move this in to own file for reuse
+  return new TaskList([
+    {
+      title: 'Compile contracts',
+      task: async () => (await compileContracts()),
+      enabled: () => !alreadyCompiled
+    },
     {
       title: 'Check project',
       task: () => new TaskList([
-        {
-          title: 'Check if directory is an Aragon app',
-          task: () => {
-            if (!module || !Object.keys(module).length) {
-              throw new MessageError('This directory is not an Aragon app',
-                'ERR_NOT_A_PROJECT')
-            }
-
-            return 'Directory is an Aragon app'
-          }
-        },
         {
           title: 'Check version is valid',
           task: () => {
@@ -198,22 +170,20 @@ exports.handler = async function ({
     },
     {
       title: 'Determine contract address for version',
-      task: (ctx, task) => {
+      task: async (ctx, task) => {
         ctx.contract = contract
 
         // Check if we can fall back to a previous contract address
         if (!contract && module.version !== '1.0.0') {
           task.output = 'No contract address provided, using previous one'
 
-          return apm.getLatestVersion(module.appName)
-            .then(({ contract }) => {
-              ctx.contract = contract
-
-              return `Using ${contract}`
-            })
-            .catch(() => {
-              throw new Error('Could not determine previous contract')
-            })
+          try {
+            const { contract } = ctx.apm.getLatestVersion(module.appName)
+            ctx.contract = contract
+            return `Using ${contract}`
+          } catch (err) {
+            throw new Error('Could not determine previous contract')
+          }
         }
 
         // Contract address required for initial version
@@ -226,77 +196,90 @@ exports.handler = async function ({
       enabled: () => !onlyArtifacts
     },
     {
-      title: 'Prepare files for publishing',
-      task: (ctx, task) => prepareFilesForPublishing(files, ignore)
-        .then((pathToPublish) => {
-          ctx.pathToPublish = pathToPublish
+      title: 'Building frontend',
+      task: async (ctx, task) => {
+        if (!fs.existsSync('package.json')) {
+          task.skip('No package.json found')
+          return
+        }
 
-          return `Files copied to temporary directory: ${pathToPublish}`
+        const packageJson = await readJson('package.json')
+        const scripts = packageJson.scripts || {}
+        if (!scripts.build) {
+          task.skip('No build script defined in package.json')
+          return
+        }
+
+        const bin = await getNodePackageManager()
+        const buildTask = execa(bin, ['run', 'build'])
+        buildTask.stdout.on('data', (log) => {
+          if (!log) return
+          task.output = log
         })
+
+        return buildTask.catch((err) => {
+            throw new Error(`${err.message}\n${err.stderr}\n\nFailed to build. See above output.`)
+          })
+      }
+    },
+    {
+      title: 'Prepare files for publishing',
+      task: async (ctx, task) => {
+        const pathToPublish = await prepareFilesForPublishing(files, ignore)
+        ctx.pathToPublish = pathToPublish
+
+        return `Files copied to temporary directory: ${pathToPublish}`
+      }
     },
     {
       title: 'Generate application artifact',
-      task: (ctx, task) => {
+      task: async (ctx, task) => {
         const dir = onlyArtifacts ? cwd : ctx.pathToPublish
-
-        return generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
-          .then((artifact) => {
-            reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
-            reporter.debug(`Saved artifact in ${dir}/artifact.json`)
-          })
-      },
-      enabled: () => !skipArtifact
+        const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
+        // reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
+        // reporter.debug(`Saved artifact in ${dir}/artifact.json`)
+      }
     },
     {
       title: `Publish ${module.appName} v${module.version}`,
-      task: (ctx, task) => {
-        task.output = privateKey
-          ? 'Generating transaction to sign'
-          : 'Signing transaction...'
-        const from = privateKey
-          ? web3.eth.accounts.privateKeyToAccount('0x' + privateKey).address
-          : null
+      task: async (ctx, task) => {
+        task.output = 'Generating transaction and waiting for confirmation'
+        const accounts = await web3.eth.getAccounts()
+        const from = accounts[0]
 
-        return apm.publishVersion(
-          module.appName,
-          module.version,
-          provider,
-          ctx.pathToPublish,
-          contract,
-          from
-        ).then((transaction) => {
-          if (!privateKey) {
-            return `Sign and broadcast this transaction:\n${JSON.stringify(transaction)}`
-          }
-
-          // Sign transaction
-          const tx = new EthereumTx(transaction)
-          tx.sign(Buffer.from(privateKey, 'hex'))
-          const signed = '0x' + tx.serialize().toString('hex')
-
-          ctx.transactionStatus = web3.eth.sendSignedTransaction(signed)
-
-          return 'Signed transaction to publish app'
-        })
+        try {
+          const transaction = await ctx.apm.publishVersion(
+            from,
+            module.appName,
+            module.version,
+            provider,
+            ctx.pathToPublish,
+            contract
+          )
+          // Fix because APM.js gas comes with decimals and from doesn't work
+          transaction.from = from
+          transaction.gas = Math.round(transaction.gas)
+          return await web3.eth.sendTransaction(transaction)
+        } catch (e) {
+          const errMsg = `${e}\nMaybe an existing version of this package was already deployed, try running 'aragon version' to bump it`
+          throw new Error(errMsg)
+        } 
       },
       enabled: () => !onlyArtifacts
-    },
-    // TODO: Move this in to own file for reuse
-    {
-      title: 'Wait for confirmation',
-      task: (ctx, task) => new Promise((resolve, reject) => {
-        ctx.transactionStatus.on('transactionHash', (transactionHash) => {
-          task.output = `Awaiting receipt for ${transactionHash}`
-        }).on('receipt', (receipt) => {
-          resolve(`Successfully published ${module.appName} v${module.version}`)
-        }).on('error', (err) => {
-          reject(new Error('Failed to check transaction receipt. This does not mean your transaction was unsuccessful.'))
-          reporter.debug(err)
-        })
-      }),
-      enabled: () => !onlyArtifacts && !skipArtifact
     }
   ])
+}
 
-  return tasks.run()
+exports.handler = async (args) => {
+  const { apm: apmOptions, network, reporter, module } = args
+
+  const web3 = await ensureWeb3(network)
+
+  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
+
+  const apm = APM(web3, apmOptions)
+
+  return exports.task({ ...args, web3 }).run({ web3, apm })
+    .then(() => { process.exit() })
+    .catch(() => { process.exit() })
 }

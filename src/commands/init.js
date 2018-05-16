@@ -2,19 +2,19 @@ const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const TaskList = require('listr')
 const execa = require('execa')
+const path = require('path')
+const fs = require('fs-extra')
+const { installDeps } = require('../util')
 
 exports.command = 'init <name> [template]'
 
 exports.describe = 'Initialise a new application'
 
-exports.examples = [
-  ['$0 init poll.aragonpm.eth', `Create a new app called "poll.aragonpm.eth" in the directory "poll"`]
-]
-
 exports.builder = (yargs) => {
-  return yargs.positional('name', {
-    description: 'The application name'
-  })
+  return yargs
+    .positional('name', {
+      description: 'The application name (appname.aragonpm.eth)'
+    })
     .option('cwd', {
       description: 'The current working directory',
       default: process.cwd()
@@ -41,46 +41,51 @@ exports.builder = (yargs) => {
     .check(function validateApplicationName ({ name }) {
       const isValidAppName = name.split('.').length >= 2
       if (!isValidAppName) {
-        throw new Error(`${name} is not a valid application name (should be e.g. "foo.aragonpm.eth")`)
+        throw new Error(`${name} is not a valid application name (should be e.g. "appname.aragonpm.eth")`)
       }
 
       return true
-    })
+    }, true)
 }
 
 exports.handler = function ({ reporter, name, template }) {
-  // TODO: Somehow write name to `manifest.json` in template?
-  // TODO: Write human-readable app name to `arapp.json`
   const basename = name.split('.')[0]
   const tasks = new TaskList([
     {
       title: 'Clone template',
-      task: (ctx, task) => {
+      task: async (ctx, task) => {
         task.output = `Cloning ${template} into ${basename}...`
 
-        return clone(template, basename, { shallow: true })
-          .then(() => `Template cloned to ${basename}`)
-          .catch((err) => {
-            throw new Error(`Failed to clone template ${template} (${err.message})`)
-          })
+        const repo = await clone(template, basename, { shallow: true })
+        console.log(`Template cloned to ${basename}`)
       }
     },
     {
-      title: 'Install package dependencies with Yarn',
-      task: (ctx, task) => execa('yarn', { cwd: basename })
-        .catch(() => {
-          ctx.yarn = false
+      title: 'Preparing template',
+      task: async (ctx, task) => {
+        // Set `appName` in arapp
+        const arappPath = path.resolve(
+          basename,
+          'arapp.json'
+        )
+        const arapp = await fs.readJson(arappPath)
+        arapp.appName = name
 
-          task.skip('Yarn not available, install it via `npm install -g yarn`')
-        })
+        // Delete .git folder
+        const gitFolderPath = path.resolve(
+          basename,
+          '.git'
+        )
+
+        return Promise.all([
+          fs.writeJson(arappPath, arapp, { spaces: 2 }),
+          fs.remove(gitFolderPath)
+        ])
+      }
     },
     {
-      title: 'Install package dependencies with npm',
-      enabled: ctx => ctx.yarn === false,
-      task: () => execa('npm', ['install'], { cwd: basename })
-        .catch(() => {
-          throw new Error('Could not install dependencies')
-        })
+      title: 'Install package dependencies',
+      task: async (ctx, task) => (await installDeps(basename, task)),
     }
   ])
 
