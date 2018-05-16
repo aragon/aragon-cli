@@ -30,6 +30,10 @@ exports.builder = function (yargs) {
     description: 'Just run the smart contracts, without the Aragon client',
     default: false,
     boolean: true
+  }).option('files', {
+    description: 'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
+    default: ['.'],
+    array: true
   })
 }
 
@@ -76,7 +80,8 @@ exports.handler = function ({
     apm: apmOptions,
     network,
     module,
-    client
+    client,
+    files
   }) {
   const tasks = new TaskList([
     {
@@ -193,7 +198,7 @@ exports.handler = function ({
           alreadyCompiled: true,
           contract: ctx.contracts['AppCode'],
           provider: 'ipfs',
-          files: ['.'],
+          files,
           ignore: ['node_modules'],
           reporter,
           cwd,
