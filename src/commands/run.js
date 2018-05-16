@@ -25,6 +25,14 @@ exports.command = 'run'
 
 exports.describe = 'Run the current app locally'
 
+exports.builder = function (yargs) {
+  return yargs.option('no-client', {
+    description: 'Just run the smart contracts, without the Aragon client',
+    default: false,
+    boolean: true
+  })
+}
+
 function getContract (pkg, contract) {
   const artifact = require(`${pkg}/build/contracts/${contract}.json`)
   return artifact
@@ -67,7 +75,8 @@ exports.handler = function ({
     cwd,
     apm: apmOptions,
     network,
-    module
+    module,
+    client
   }) {
   const tasks = new TaskList([
     {
@@ -109,7 +118,7 @@ exports.handler = function ({
             await setIPFSCORS()
           } else {
             await setIPFSCORS()
-            task.skip('IPFS daemon already running')
+            task.skip('Connected to IPFS daemon')
           }
         }
       }
@@ -245,8 +254,8 @@ exports.handler = function ({
           title: 'Download wrapper',
           task: (ctx, task) => {
             // TODO: Clean when https://github.com/aragon/aragon/pull/237 is merged
-            const WRAPPER_COMMIT = '18f46c83cbde07da625a6d75fd5b6ca449158c7f'
-            const TEMP_WRAPPER_BRANCH = 'remotes/origin/start-url-2'
+            const WRAPPER_COMMIT = '5e4bb9f803ab274db190ebc98b1e3ac77be8ba1f'
+            const TEMP_WRAPPER_BRANCH = 'remotes/origin/master'
             const WRAPPER_PATH = `${os.homedir()}/.aragon/wrapper-${WRAPPER_COMMIT}`
             ctx.wrapperPath = WRAPPER_PATH
 
@@ -266,7 +275,7 @@ exports.handler = function ({
               WRAPPER_PATH,
               { checkout: TEMP_WRAPPER_BRANCH }
             )
-          }
+          },
         },
         {
           title: 'Install wrapper dependencies',
@@ -312,7 +321,8 @@ exports.handler = function ({
             checkWrapperReady()
           }
         }
-      ])
+      ]),
+      enabled: () => client !== false
     }
   ])
 
@@ -334,9 +344,13 @@ exports.handler = function ({
     Here are some accounts you can use.
     The first one was used to create everything.
 
-    ${ctx.accounts.map((account) => chalk.bold(`Address: ${account}\n  `))}
+    ${chalk.bold(ctx.accounts.join(`\n    `))}
 
-    Open up http://localhost:3000/#/${ctx.daoAddress} to view your DAO!`)
+    ${(client !== false) ?
+      `Opening http://localhost:3000/#/${ctx.daoAddress} to view your DAO` :
+      `Use "aragon dao" to interact with your DAO`
+    }`)
+
     if (!manifest) {
       reporter.warning('No front-end detected (no manifest.json)')
     } else if (!manifest.start_url) {
