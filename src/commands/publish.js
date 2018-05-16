@@ -145,7 +145,6 @@ exports.task = function ({
   ignore
 }) {
   return new TaskList([
-    // TODO: Move this in to own file for reuse
     {
       title: 'Compile contracts',
       task: async () => (await compileContracts()),
@@ -171,22 +170,20 @@ exports.task = function ({
     },
     {
       title: 'Determine contract address for version',
-      task: (ctx, task) => {
+      task: async (ctx, task) => {
         ctx.contract = contract
 
         // Check if we can fall back to a previous contract address
         if (!contract && module.version !== '1.0.0') {
           task.output = 'No contract address provided, using previous one'
 
-          return ctx.apm.getLatestVersion(module.appName)
-            .then(({ contract }) => {
-              ctx.contract = contract
-
-              return `Using ${contract}`
-            })
-            .catch(() => {
-              throw new Error('Could not determine previous contract')
-            })
+          try {
+            const { contract } = ctx.apm.getLatestVersion(module.appName)
+            ctx.contract = contract
+            return `Using ${contract}`
+          } catch (err) {
+            throw new Error('Could not determine previous contract')
+          }
         }
 
         // Contract address required for initial version
@@ -227,23 +224,20 @@ exports.task = function ({
     },
     {
       title: 'Prepare files for publishing',
-      task: (ctx, task) => prepareFilesForPublishing(files, ignore)
-        .then((pathToPublish) => {
-          ctx.pathToPublish = pathToPublish
+      task: async (ctx, task) => {
+        const pathToPublish = await prepareFilesForPublishing(files, ignore)
+        ctx.pathToPublish = pathToPublish
 
-          return `Files copied to temporary directory: ${pathToPublish}`
-        })
+        return `Files copied to temporary directory: ${pathToPublish}`
+      }
     },
     {
       title: 'Generate application artifact',
-      task: (ctx, task) => {
+      task: async (ctx, task) => {
         const dir = onlyArtifacts ? cwd : ctx.pathToPublish
-
-        return generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
-          .then((artifact) => {
-            // reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
-            // reporter.debug(`Saved artifact in ${dir}/artifact.json`)
-          })
+        const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
+        // reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
+        // reporter.debug(`Saved artifact in ${dir}/artifact.json`)
       }
     },
     {
@@ -267,7 +261,7 @@ exports.task = function ({
           transaction.gas = Math.round(transaction.gas)
           return await web3.eth.sendTransaction(transaction)
         } catch (e) {
-          const errMsg = `${e}\nMaybe a version of this package was already deployed to the chain, try restating your local Ethereum chain`
+          const errMsg = `${e}\nMaybe an existing version of this package was already deployed, try running 'aragon version' to bump it`
           throw new Error(errMsg)
         } 
       },
@@ -285,5 +279,7 @@ exports.handler = async (args) => {
 
   const apm = APM(web3, apmOptions)
 
-  return exports.task({ ...args, web3 }).run({ web3, apm }).then(() => { process.exit() }).catch(() => { process.exit() })
+  return exports.task({ ...args, web3 }).run({ web3, apm })
+    .then(() => { process.exit() })
+    .catch(() => { process.exit() })
 }

@@ -15,9 +15,20 @@ const fs = require('fs-extra')
 const opn = require('opn')
 const execa = require('execa')
 const { compileContracts } = require('../helpers/truffle-runner')
-const { isIPFSRunning, isIPFSInstalled, startIPFSDaemon, setIPFSCORS } = require('../helpers/ipfs-daemon')
-const { findProjectRoot, isPortTaken, installDeps, getNodePackageManager } = require('../util')
+const {
+  isIPFSInstalled,
+  startIPFSDaemon,
+  checkIPFSCORS,
+  setIPFSCORS
+} = require('../helpers/ipfs-daemon')
+const {
+  findProjectRoot,
+  isPortTaken,
+  installDeps,
+  getNodePackageManager
+} = require('../util')
 const { Writable } = require('stream')
+const url = require('url')
 
 const TX_MIN_GAS = 10e6
 
@@ -37,26 +48,25 @@ exports.builder = function (yargs) {
   })
 }
 
-function getContract (pkg, contract) {
+const getContract = (pkg, contract) => {
   const artifact = require(`${pkg}/build/contracts/${contract}.json`)
   return artifact
 }
 
-function deployContract (web3, sender, { abi, bytecode }, args = []) {
+const deployContract = async (web3, sender, { abi, bytecode }, args = []) => {
   const contract = new web3.eth.Contract(abi)
 
-  return contract.deploy({
+  const instance = await contract.deploy({
     data: bytecode,
     arguments: args
   }).send({
     from: sender,
     gas: TX_MIN_GAS
-  }).then((instance) => {
-    return instance.options.address
   })
+  return instance.options.address
 }
 
-async function setPermissions (web3, sender, aclAddress, permissions) {
+const setPermissions = async (web3, sender, aclAddress, permissions) => {
   const acl = new web3.eth.Contract(
     getContract('@aragon/os', 'ACL').abi,
     aclAddress
@@ -111,41 +121,51 @@ exports.handler = function ({
     {
       title: 'Start IPFS',
       task: async (ctx, task) => {
-        const installed = await isIPFSInstalled()
-        if (!installed) {
-          setTimeout(() => opn('https://ipfs.io/docs/install'), 2500)
-          throw new Error(`
-            Running your app requires IPFS. Opening install instructions in your browser`
-          )
-        } else {
-          const running = await isIPFSRunning()
-          if (!running) {
-            await startIPFSDaemon()
-            await setIPFSCORS()
+        // If the dev manually set their IPFS node, skip install and running check
+        if (apmOptions.ipfs.rpc.default) {
+          const installed = await isIPFSInstalled()
+          if (!installed) {
+            setTimeout(() => opn('https://ipfs.io/docs/install'), 2500)
+            throw new Error(`
+              Running your app requires IPFS. Opening install instructions in your browser`
+            )
           } else {
-            await setIPFSCORS()
-            task.skip('Connected to IPFS daemon')
+            const running = await isPortTaken(apmOptions.ipfs.rpc.port)
+            if (!running) {
+              await startIPFSDaemon()
+              await setIPFSCORS(apmOptions.ipfs.rpc)
+            } else {
+              await setIPFSCORS(apmOptions.ipfs.rpc)
+              task.skip('Connected to IPFS daemon')
+            }
           }
+        } else {
+          await checkIPFSCORS(apmOptions.ipfs.rpc)
+          task.skip('Connecting to provided IPFS daemon.')
         }
       }
     },
     {
       title: 'Fetching DAOFactory from on-chain templates',
-      task: (ctx, task) => {
+      task: async(ctx, task) => {
         ctx.ens = require('@aragon/aragen').ens
-        const apm = APM(ctx.web3, {
-          ipfs: { host: 'localhost', port: 5001, protocol: 'http' },
+        ctx.apm = APM(ctx.web3, {
+          ipfs: apmOptions.ipfs.rpc,
           ensRegistryAddress: ctx.ens
         })
 
         ctx.contracts = {}
-        return apm.getLatestVersionContract('democracy-template.aragonpm.eth')
-          .then(demTemplate => {
-            return new ctx.web3.eth.Contract(
-              getContract('@aragon/templates-beta', 'DemocracyTemplate').abi,
-              demTemplate
-          ).methods.fac().call().then(fac => { ctx.contracts['DAOFactory'] = fac })
-        })
+        try {
+          const demTemplate = await ctx.apm.getLatestVersionContract('democracy-template.aragonpm.eth')
+          const fac = await new ctx.web3.eth.Contract(
+            getContract('@aragon/templates-beta', 'DemocracyTemplate').abi,
+            demTemplate
+          ).methods.fac().call()
+          ctx.contracts['DAOFactory'] = fac
+        } catch (err) {
+          console.error(`${err}\nTransaction reverted, try using 'aragon run' or 'aragon devchain'`)
+          process.exit()
+        }
       },
     },
     {
@@ -190,10 +210,6 @@ exports.handler = function ({
     {
       title: 'Publish app',
       task: (ctx) => {
-        ctx.apm = APM(ctx.web3, {
-          ipfs: { host: 'localhost', port: 5001, protocol: 'http' },
-          ensRegistryAddress: ctx.ens
-        })
         return publish.task({
           alreadyCompiled: true,
           contract: ctx.contracts['AppCode'],
@@ -297,9 +313,9 @@ exports.handler = function ({
                 cwd: ctx.wrapperPath,
                 env: {
                   BROWSER: 'none',
-                  REACT_APP_IPFS_GATEWAY: 'http://localhost:8080/ipfs',
-                  REACT_APP_IPFS_RPC: 'http://localhost:5001',
-                  REACT_APP_DEFAULT_ETH_NODE: `ws://localhost:${network.port}`,
+                  REACT_APP_IPFS_GATEWAY: `http://${apmOptions.ipfs.rpc.host}:8080/ipfs`,
+                  REACT_APP_IPFS_RPC: url.format(apmOptions.ipfs.rpc),
+                  REACT_APP_DEFAULT_ETH_NODE: network.provider.connection._url,
                   REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens
                 }
               }
@@ -341,7 +357,7 @@ exports.handler = function ({
 
     This is the configuration for your development deployment:
     ${chalk.bold('Ethereum Node')}: ${network.provider.connection._url}
-    ${chalk.bold('APM registry')}: ${ctx.registryAddress}
+    ${chalk.bold('APM registry')}: ${ctx.apm.registryAddress}
     ${chalk.bold('ENS registry')}: ${ctx.ens}
     ${chalk.bold('DAO address')}: ${ctx.daoAddress}
 
@@ -356,7 +372,7 @@ exports.handler = function ({
 
     ${(client !== false) ?
       `Opening http://localhost:3000/#/${ctx.daoAddress} to view your DAO` :
-      `Use "aragon dao" to interact with your DAO`
+      `Use "aragon dao ${ctx.daoAddress}" to interact with your DAO`
     }`)
 
     if (!manifest) {

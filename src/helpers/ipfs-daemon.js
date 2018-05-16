@@ -2,10 +2,6 @@ const { hasBin, isPortTaken } = require('../util')
 const execa = require('execa')
 const ipfsAPI = require('ipfs-api')
 
-const isIPFSRunning = async () => {
-  return await isPortTaken(5001)
-}
-
 const isIPFSInstalled = async () => {
   return await hasBin('ipfs')
 }
@@ -19,19 +15,38 @@ const startIPFSDaemon = async () => {
   })
 }
 
-const setIPFSCORS = async () => {
-  const ipfs = ipfsAPI('localhost', '5001', {protocol: 'http'})
-  await ipfs.config.set('API.HTTPHeaders.Access-Control-Allow-Origin', ["*"])
-  await ipfs.config.set('API.HTTPHeaders.Access-Control-Allow-Methods', ["PUT", "GET", "POST"])
-}
+let ipfsNode
 
-const ensureIPFS = async () => {
-  const running = await isIPFSRunning()
-  if (!running) {
-    await startIPFSDaemon()
+const IPFSCORS = [{
+  key: 'API.HTTPHeaders.Access-Control-Allow-Origin',
+  value: ["*"]
+}, {
+  key: 'API.HTTPHeaders.Access-Control-Allow-Methods',
+  value: ["PUT", "GET", "POST"]
+}]
+
+const checkIPFSCORS = async (ipfsRpc) => {
+  if (!ipfsNode) ipfsNode = ipfsAPI(ipfsRpc)
+  const conf = await ipfsNode.config.get('API.HTTPHeaders')
+  const allowOrigin = IPFSCORS[0].key.split('.').pop()
+  const allowMethods = IPFSCORS[1].key.split('.').pop()
+  if (conf && conf[allowOrigin] && conf[allowMethods]) {
+    return true
+  } else {
+    throw new Error(`Please set the following flags in your IPFS node:
+    ${IPFSCORS.map(({ key, value }) => {
+      return `${key}: ${value}`
+    }).join('\n    ')}`)
+    process.exit()
   }
-  await setIPFSCORS()
-  return true
 }
 
-module.exports = { isIPFSRunning, isIPFSInstalled, startIPFSDaemon, setIPFSCORS }
+const setIPFSCORS = (ipfsRpc) => {
+  if (!ipfsNode) ipfsNode = ipfsAPI(ipfsRpc)
+  return Promise.all(
+    IPFSCORS.map(({ key, value }) =>
+      ipfsNode.config.set(key, value))
+  )
+}
+
+module.exports = { isIPFSInstalled, startIPFSDaemon, checkIPFSCORS, setIPFSCORS }

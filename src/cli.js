@@ -10,6 +10,7 @@ const ConsoleReporter = require('./reporters/ConsoleReporter')
 const fs = require('fs')
 const Web3 = require('web3')
 const { getTruffleConfig, getENSAddress } = require('./helpers/truffle-config')
+const url = require('url')
 
 const MIDDLEWARES = [
   manifestMiddleware,
@@ -88,14 +89,26 @@ cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
 
 cmd.option('apm.ipfs.rpc', {
   description: 'An URI to the IPFS node used to publish files',
-  default: {
-    host: 'ipfs.aragon.network',
-    protocol: 'http',
-    port: 5001
-  }
+  default: 'http://localhost:5001#default'
 })
 cmd.group('apm.ipfs.rpc', 'APM providers:')
 
+cmd.option('apm', {
+  coerce: (apm) => {
+    if (apm.ipfs && apm.ipfs.rpc) {
+      const uri = url.parse(apm.ipfs.rpc)
+      apm.ipfs.rpc = {
+        protocol: uri.protocol.replace(':', ''),
+        host: uri.hostname,
+        port: uri.port
+      }
+      if (uri.hash === '#default') {
+        apm.ipfs.rpc.default = true
+      }
+    }
+    return apm
+  }
+})
 
 // Add epilogue
 cmd.epilogue('For more information, check out https://hack.aragon.one')

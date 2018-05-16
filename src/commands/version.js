@@ -20,4 +20,5 @@ exports.handler = async function ({ reporter, bump, cwd }) {
 
   fs.writeFileSync(manifestLocation, JSON.stringify(manifest, null, 2))
   reporter.success(`New version: ${manifest.version}`)
+  process.exit()
 }
