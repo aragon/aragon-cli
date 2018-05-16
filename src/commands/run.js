@@ -25,13 +25,6 @@ exports.command = 'run'
 
 exports.describe = 'Run the current app locally'
 
-exports.builder = {
-  port: {
-    description: 'The port to run the local chain on',
-    default: 8545
-  }
-}
-
 function getContract (pkg, contract) {
   const artifact = require(`${pkg}/build/contracts/${contract}.json`)
   return artifact
@@ -74,10 +67,7 @@ exports.handler = function ({
     cwd,
     apm: apmOptions,
     network,
-    module,
-  
-    // Arguments
-    port
+    module
   }) {
   const tasks = new TaskList([
     {
@@ -202,9 +192,6 @@ exports.handler = function ({
           module,
           web3: ctx.web3,
           apm: apmOptions,
-        
-          // Arguments
-          port
         })
       }
     },
@@ -299,7 +286,7 @@ exports.handler = function ({
                   BROWSER: 'none',
                   REACT_APP_IPFS_GATEWAY: 'http://localhost:8080/ipfs',
                   REACT_APP_IPFS_RPC: 'http://localhost:5001',
-                  REACT_APP_DEFAULT_ETH_NODE: `ws://localhost:${port}`,
+                  REACT_APP_DEFAULT_ETH_NODE: `ws://localhost:${network.port}`,
                   REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens
                 }
               }
@@ -338,18 +325,18 @@ exports.handler = function ({
   return tasks.run().then((ctx) => {
     reporter.info(`You are now ready to open your app in Aragon.
 
-   This is the configuration for your development deployment:
-   ${chalk.bold('Ethereum Node')}: ws://localhost:${port}
-   ${chalk.bold('APM registry')}: ${ctx.registryAddress}
-   ${chalk.bold('ENS registry')}: ${ctx.ens}
-   ${chalk.bold('DAO address')}: ${ctx.daoAddress}
+    This is the configuration for your development deployment:
+    ${chalk.bold('Ethereum Node')}: ${network.provider.connection._url}
+    ${chalk.bold('APM registry')}: ${ctx.registryAddress}
+    ${chalk.bold('ENS registry')}: ${ctx.ens}
+    ${chalk.bold('DAO address')}: ${ctx.daoAddress}
 
-   Here are some accounts you can use.
-   The first one was used to create everything.
+    Here are some accounts you can use.
+    The first one was used to create everything.
 
-   ${ctx.accounts.map((account) => chalk.bold(`Address: ${account}\n  `))}
+    ${ctx.accounts.map((account) => chalk.bold(`Address: ${account}\n  `))}
 
-   Open up http://localhost:3000/#/${ctx.daoAddress} to view your DAO!`)
+    Open up http://localhost:3000/#/${ctx.daoAddress} to view your DAO!`)
     if (!manifest) {
       reporter.warning('No front-end detected (no manifest.json)')
     } else if (!manifest.start_url) {
