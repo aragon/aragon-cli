@@ -142,7 +142,8 @@ exports.task = function ({
   provider,
   key,
   files,
-  ignore
+  ignore,
+  automaticallyBump
 }) {
   return new TaskList([
     {
@@ -155,8 +156,9 @@ exports.task = function ({
       task: () => new TaskList([
         {
           title: 'Check version is valid',
-          task: () => {
+          task: (ctx) => {
             if (module && semver.valid(module.version)) {
+              ctx.version = module.version
               return `${module.version} is a valid version`
             }
 
@@ -169,12 +171,26 @@ exports.task = function ({
       ], { concurrent: true })
     },
     {
+      title: 'Automatically bump version',
+      task: async (ctx, task) => {
+        let repo
+        try {
+          repo = await ctx.apm.getRepository(module.appName)
+        } catch (_) {
+          return task.skip('First time')
+        }
+        const version = await repo.methods.getVersionsCount().call()
+        ctx.version = `${parseInt(version) + 1}.0.0`
+      },
+      enabled: () => automaticallyBump
+    },
+    {
       title: 'Determine contract address for version',
       task: async (ctx, task) => {
         ctx.contract = contract
 
         // Check if we can fall back to a previous contract address
-        if (!contract && module.version !== '1.0.0') {
+        if (!contract && ctx.version !== '1.0.0') {
           task.output = 'No contract address provided, using previous one'
 
           try {
@@ -251,7 +267,7 @@ exports.task = function ({
           const transaction = await ctx.apm.publishVersion(
             from,
             module.appName,
-            module.version,
+            ctx.version,
             provider,
             ctx.pathToPublish,
             ctx.contract
@@ -262,7 +278,9 @@ exports.task = function ({
           
           return await web3.eth.sendTransaction(transaction)
         } catch (e) {
-          const errMsg = `${e}\nMaybe an existing version of this package was already deployed, try running 'aragon version' to bump it`
+          const errMsg = `${e}\nThis is usually one of these reasons, maybe:
+          - An existing version of this package was already deployed, try running 'aragon version' to bump it
+          - You are deploying a version higher than the one in the chain`
           throw new Error(errMsg)
         } 
       },
