@@ -314,7 +314,11 @@ exports.handler = function ({
                 env: {
                   BROWSER: 'none',
                   REACT_APP_IPFS_GATEWAY: `http://${apmOptions.ipfs.rpc.host}:8080/ipfs`,
-                  REACT_APP_IPFS_RPC: url.format(apmOptions.ipfs.rpc),
+                  REACT_APP_IPFS_RPC: url.format({
+                    protocol: apmOptions.ipfs.rpc.protocol,
+                    hostname: apmOptions.ipfs.rpc.host,
+                    port: apmOptions.ipfs.rpc.port
+                  }),
                   REACT_APP_DEFAULT_ETH_NODE: network.provider.connection._url,
                   REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens
                 }
