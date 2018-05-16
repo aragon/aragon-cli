@@ -1,4 +1,4 @@
-const Web3 = require('web3')
+const { ensureWeb3 } = require('../helpers/web3-fallback')
 const findUp = require('find-up')
 const APM = require('@aragon/apm')
 
@@ -6,21 +6,15 @@ exports.command = 'versions'
 
 exports.describe = 'List all versions of the package'
 
-exports.handler = async function ({ reporter, module, bump, cwd, keyfile, ethRpc, apm: apmOptions }) {
-  const web3 = new Web3(keyfile.rpc ? keyfile.rpc : ethRpc)
+exports.handler = async function ({ reporter, module, bump, cwd, network, apm: apmOptions }) {
+  const web3 = await ensureWeb3(network)
 
-  apmOptions.ensRegistry = !apmOptions.ensRegistry ? keyfile.ens : apmOptions.ensRegistry
+  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
-  const moduleLocation = await findUp('arapp.json', { cwd })
-  if (!moduleLocation) {
-    throw new Error('This directory is not an Aragon project')
-  }
-
-  return APM(web3, apmOptions).getAllVersions(module.appName)
-    .then((versions) => {
-      reporter.info(`${module.appName} has ${versions.length} published versions`)
-      versions.forEach((version) => {
-        reporter.success(`${version.version}: ${version.contractAddress} ${version.content.provider}:${version.content.location}`)
-      })
-    })
+  const versions = await APM(web3, apmOptions).getAllVersions(module.appName)
+  reporter.info(`${module.appName} has ${versions.length} published versions`)
+  versions.map((version) => {
+    reporter.success(`${version.version}: ${version.contractAddress} ${version.content.provider}:${version.content.location}`)
+  })
+  process.exit()
 }
