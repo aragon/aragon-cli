@@ -131,11 +131,13 @@ exports.handler = function ({
           } else {
             const running = await isPortTaken(apmOptions.ipfs.rpc.port)
             if (!running) {
+              task.output = 'Starting IPFS at port: ' + apmOptions.ipfs.rpc.port
               await startIPFSDaemon()
               await setIPFSCORS(apmOptions.ipfs.rpc)
             } else {
+              task.output = 'IPFS is started, checking CORS config'
               await setIPFSCORS(apmOptions.ipfs.rpc)
-              task.skip('Connected to IPFS daemon')
+              task.skip('Connected to IPFS daemon ar port: '+ apmOptions.ipfs.rpc.port)
             }
           }
         } else {
