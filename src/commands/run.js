@@ -225,11 +225,9 @@ exports.handler = function ({
               getContract('@aragon/os', 'Kernel').abi,
               ctx.daoAddress
             )
-            apmOptions.ensRegistryAddress = apmOptions['ens-registry']
-            const apm = APM(ctx.web3, apmOptions)
 
             // Use latest APM version
-            const { contractAddress } = await apm.getLatestVersion(module.appName)
+            const { contractAddress } = await ctx.apm.getLatestVersion(module.appName)
 
             const { events } = await kernel.methods.newAppInstance(
               namehash.hash(module.appName),
@@ -351,7 +349,7 @@ exports.handler = function ({
     manifest = fs.readJsonSync(manifestPath)
   }
 
-  return tasks.run().then((ctx) => {
+  return tasks.run().then(async (ctx) => {
 
     reporter.info(`You are now ready to open your app in Aragon.`)
 
@@ -359,9 +357,12 @@ exports.handler = function ({
       devchain.printAccounts(reporter, ctx.privateKeys)
     }
 
+    const registry = module.appName.split('.').slice(1).join('.')
+    const registryAddr = await ctx.apm.ensResolve(registry)
+
     reporter.info(`This is the configuration for your development deployment:
     ${chalk.bold('Ethereum Node')}: ${network.provider.connection._url}
-    ${chalk.bold('APM registry')}: ${ctx.apm.registryAddress}
+    ${chalk.bold(`APM registry (${registry})`)}: ${registryAddr}
     ${chalk.bold('ENS registry')}: ${ctx.ens}
     ${chalk.bold('DAO address')}: ${ctx.daoAddress}
 
