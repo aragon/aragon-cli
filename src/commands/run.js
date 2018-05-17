@@ -14,7 +14,6 @@ const os = require('os')
 const fs = require('fs-extra')
 const opn = require('opn')
 const execa = require('execa')
-const { compileContracts } = require('../helpers/truffle-runner')
 const {
   isIPFSInstalled,
   startIPFSDaemon,
@@ -53,19 +52,6 @@ const getContract = (pkg, contract) => {
   return artifact
 }
 
-const deployContract = async (web3, sender, { abi, bytecode }, args = []) => {
-  const contract = new web3.eth.Contract(abi)
-
-  const instance = await contract.deploy({
-    data: bytecode,
-    arguments: args
-  }).send({
-    from: sender,
-    gas: TX_MIN_GAS
-  })
-  return instance.options.address
-}
-
 const setPermissions = async (web3, sender, aclAddress, permissions) => {
   const acl = new web3.eth.Contract(
     getContract('@aragon/os', 'ACL').abi,
@@ -94,10 +80,6 @@ exports.handler = function ({
     files
   }) {
   const tasks = new TaskList([
-    {
-      title: 'Compile contracts',
-      task: async () => (await compileContracts())
-    },
     {
       title: 'Start a local Ethereum network',
       skip: async (ctx) => {
