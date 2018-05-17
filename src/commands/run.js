@@ -153,6 +153,7 @@ exports.handler = function ({
           ipfs: apmOptions.ipfs.rpc,
           ensRegistryAddress: ctx.ens
         })
+        ctx.apmRegistryAddress = await ctx.apm.getRepoRegistryAddress(module.appName)
 
         ctx.contracts = {}
         try {
@@ -362,7 +363,7 @@ exports.handler = function ({
 
     This is the configuration for your development deployment:
     ${chalk.bold('Ethereum Node')}: ${network.provider.connection._url}
-    ${chalk.bold('APM registry')}: ${ctx.apm.registryAddress}
+    ${chalk.bold('APM registry')}: ${ctx.apmRegistryAddress}
     ${chalk.bold('ENS registry')}: ${ctx.ens}
     ${chalk.bold('DAO address')}: ${ctx.daoAddress}
 
