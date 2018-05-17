@@ -69,10 +69,12 @@ exports.task = async function ({ port = 8545 }) {
 
 exports.handler = async ({ reporter, port }) => {
   const ctx = await exports.task({ port })
-  reporter.info(`Here are some accounts you can use.
-  The first one will use for all the actions the CLI performs.
+  reporter.info(`Here are some Ethereum accounts you can use.
+  The first one will be used for all the actions the CLI performs.
+  You can use your favorite Ethereum provider or wallet to import their private keys.
+  You can also point it to your chain: http://localhost:${port}.
 
   ${Object.keys(ctx.privateKeys).map((address) =>
-    chalk.bold(`Address: ${address}\n  Key: `) + ctx.privateKeys[address].secretKey.toString('hex')).join('\n  ')}
+    chalk.bold(`Address: ${address}\n  Private key: `) + ctx.privateKeys[address].secretKey.toString('hex')).join('\n  ')}
   `)
 }
