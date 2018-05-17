@@ -371,7 +371,7 @@ exports.handler = function ({
 
     ${(ctx.privateKeys) ?
       Object.keys(ctx.privateKeys).map((address) =>
-        chalk.bold(`Address: ${address}\n  Key: `) + ctx.privateKeys[address].secretKey.toString('hex')).join('\n  ') :
+        chalk.bold(`Address: ${address}\n  Private key: `) + ctx.privateKeys[address].secretKey.toString('hex')).join('\n  ') :
       chalk.bold(ctx.accounts.join(`\n    `))
     }
 
