@@ -210,7 +210,7 @@ exports.task = function ({
     {
       title: 'Deploying contract',
       task: async (ctx) => {
-        const deployTaskParams = { contract: deploy.arappContract(), reporter, network, cwd }
+        const deployTaskParams = { contract: deploy.arappContract(), reporter, network, cwd, web3 }
 
         const { deployedContract } = await deploy.task(deployTaskParams)
         ctx.contract = deployedContract

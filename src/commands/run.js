@@ -45,6 +45,16 @@ exports.builder = function (yargs) {
     description: 'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
     default: ['.'],
     array: true
+  }).option('port', {
+    description: 'Port to start devchain at',
+    default: '8545',
+  }).option('accounts', {
+    default: 2,
+    description: 'Number of accounts to print'
+  }).option('reset', {
+    default: false,
+    boolean: true,
+    description: 'Reset devchain to snapshot'
   })
 }
 
@@ -78,8 +88,12 @@ exports.handler = function ({
     network,
     module,
     client,
-    files
+    files,
+    port,
+    accounts,
+    reset
   }) {
+  const showAccounts = accounts
   const tasks = new TaskList([
     {
       title: 'Start a local Ethereum network',
@@ -95,10 +109,12 @@ exports.handler = function ({
         }
       },
       task: async (ctx, task) => {
-        const { web3, accounts, privateKeys } = await devchain.task({})
+        const { web3, accounts, privateKeys } = await devchain.task({ port, reset, showAccounts })
         ctx.web3 = web3
         ctx.accounts = accounts
         ctx.privateKeys = privateKeys
+
+        if (ctx.accounts.length == 0) throw new Error("Devchain started with no accounts")
       }
     },
     {
@@ -182,7 +198,7 @@ exports.handler = function ({
     {
       title: 'Deploy app code',
       task: async (ctx, task) => {
-        const deployTaskParams = { contract: deploy.arappContract(), reporter, network, cwd }
+        const deployTaskParams = { contract: deploy.arappContract(), web3: ctx.web3, reporter, network, cwd }
 
         const { deployedContract } = await deploy.task(deployTaskParams)
         ctx.contracts['AppCode'] = deployedContract
@@ -339,22 +355,18 @@ exports.handler = function ({
   }
 
   return tasks.run().then((ctx) => {
-    reporter.info(`You are now ready to open your app in Aragon.
 
-    This is the configuration for your development deployment:
+    reporter.info(`You are now ready to open your app in Aragon.`)
+
+    if (ctx.privateKeys) {
+      devchain.printAccounts(reporter, ctx.privateKeys)
+    }
+
+    reporter.info(`This is the configuration for your development deployment:
     ${chalk.bold('Ethereum Node')}: ${network.provider.connection._url}
     ${chalk.bold('APM registry')}: ${ctx.apm.registryAddress}
     ${chalk.bold('ENS registry')}: ${ctx.ens}
     ${chalk.bold('DAO address')}: ${ctx.daoAddress}
-
-    Here are some accounts you can use.
-    The first one was used to create everything.
-
-    ${(ctx.privateKeys) ?
-      Object.keys(ctx.privateKeys).map((address) =>
-        chalk.bold(`Address: ${address}\n  Private key: `) + ctx.privateKeys[address].secretKey.toString('hex')).join('\n  ') :
-      chalk.bold(ctx.accounts.join(`\n    `))
-    }
 
     ${(client !== false) ?
       `Opening http://localhost:3000/#/${ctx.daoAddress} to view your DAO` :

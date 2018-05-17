@@ -24,7 +24,7 @@ exports.builder = yargs => {
 	})
 }
 
-exports.task = ({ reporter, network, cwd, contract }) => {
+exports.task = ({ reporter, network, cwd, contract, web3 }) => {
 	const contractName = contract
 	const tasks = new TaskList([
 		{
@@ -36,8 +36,6 @@ exports.task = ({ reporter, network, cwd, contract }) => {
 		{
 			title: `Deploy '${contractName}' to network`,
 			task: async (ctx, task) => {
-				const web3 = await ensureWeb3(network)
-
 				let contractArtifacts
 				try {
 					contractArtifacts = require(path.join(cwd, 'build/contracts', contractName))
