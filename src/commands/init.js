@@ -38,17 +38,13 @@ exports.builder = (yargs) => {
         return `https://github.com/${tmpl}`
       }
     })
-    .check(function validateApplicationName ({ name }) {
-      const isValidAppName = name.split('.').length >= 2
-      if (!isValidAppName) {
-        throw new Error(`${name} is not a valid application name (should be e.g. "appname.aragonpm.eth")`)
-      }
-
-      return true
-    }, true)
 }
 
 exports.handler = function ({ reporter, name, template }) {
+  if (name.split('.').length == 1) {
+    name = name + '.aragonpm.eth'
+  }
+  
   const basename = name.split('.')[0]
   const tasks = new TaskList([
     {

@@ -98,14 +98,13 @@ exports.handler = function ({
     {
       title: 'Start a local Ethereum network',
       skip: async (ctx) => {
-        try {
-          const web3 = new Web3(network.provider)
-          ctx.web3 = web3
-          const listening = await web3.eth.net.isListening()
-          ctx.accounts = await web3.eth.getAccounts()
-          return 'Connected to the provided Ethereum network'
-        } catch (err) {
+        const hostURL = new url.URL(network.provider.connection._url)
+        if (!await isPortTaken(hostURL.port)) {
           return false
+        } else {
+          ctx.web3 = new Web3(network.provider)
+          ctx.accounts = await ctx.web3.eth.getAccounts()
+          return 'Connected to the provided Ethereum network'
         }
       },
       task: async (ctx, task) => {

@@ -67,6 +67,7 @@ exports.task = async function ({ port = 8545, reset = false, showAccounts = 2 })
         })
       )
       await listen()
+
       ctx.web3 = new Web3(
         new Web3.providers.WebsocketProvider(`ws://localhost:${port}`)
       )
