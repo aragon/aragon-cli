@@ -25,7 +25,6 @@ exports.builder = yargs => {
 }
 
 exports.task = ({ reporter, network, cwd, contract }) => {
-	reporter.info(contract)
 	const contractName = contract
 	const tasks = new TaskList([
 		{
@@ -48,7 +47,7 @@ exports.task = ({ reporter, network, cwd, contract }) => {
 
 				const { abi, bytecode } = contractArtifacts
 
-				if (!bytecode) {
+				if (!bytecode || bytecode == '0x') {
 					throw new Error('Contract bytecode couldnt be generated. Contracts that dont implement all interface methods cant be deployed')
 				} 
 
