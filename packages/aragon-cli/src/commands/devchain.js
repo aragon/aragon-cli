@@ -8,6 +8,7 @@ const path = require('path')
 const rimraf = require('rimraf')
 const mkdirp = require('mkdirp')
 const chalk = require('chalk')
+const fs = require('fs')
 
 const { BLOCK_GAS_LIMIT, MNEMONIC } = require('../helpers/ganache-vars')
 
@@ -35,7 +36,8 @@ exports.task = async function ({ port = 8545 }) {
       await mkDir(path.resolve(snapshotPath, '..'))
       const aragen = path.resolve(require.resolve('@aragon/aragen'), '../aragon-ganache')
       await recursiveCopy(aragen, snapshotPath)
-    }
+    },
+    enabled: () => !fs.existsSync(snapshotPath)
   },
   {
     title: 'Starting a local chain from snapshot',
