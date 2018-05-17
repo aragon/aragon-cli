@@ -15,6 +15,8 @@ const { findProjectRoot, getNodePackageManager } = require('../../util')
 const ignore = require('ignore')
 const execa = require('execa')
 const { compileContracts } = require('../../helpers/truffle-runner')
+const web3Utils = require('web3-utils')
+const deploy = require('../deploy')
 
 exports.command = 'publish [contract]'
 
@@ -22,7 +24,7 @@ exports.describe = 'Publish a new version of the application'
 
 exports.builder = function (yargs) {
   return yargs.positional('contract', {
-    description: 'The address of the contract to publish in this version'
+    description: 'The address or name of the contract to publish in this version. If it isn\' provided, it will default to the current version\'s contract.'
   }).option('only-artifacts', {
     description: 'Whether just generate artifacts file without publishing',
     default: false,
@@ -31,6 +33,10 @@ exports.builder = function (yargs) {
     description: 'The APM storage provider to publish files to',
     default: 'ipfs',
     choices: ['ipfs']
+  }).option('reuse', {
+    description: 'Whether to reuse the previous version contract and skip deployment on non-major versions',
+    default: false,
+    boolean: true
   }).option('files', {
     description: 'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
     default: ['.'],
@@ -139,6 +145,7 @@ exports.task = function ({
   contract,
   onlyArtifacts,
   alreadyCompiled,
+  reuse,
   provider,
   key,
   files,
@@ -147,13 +154,9 @@ exports.task = function ({
 }) {
   return new TaskList([
     {
-      title: 'Compile contracts',
-      task: async () => (await compileContracts()),
-      enabled: () => !alreadyCompiled
-    },
-    {
-      title: 'Check project',
-      task: () => new TaskList([
+      title: 'Preflight checks',
+      enabled: () => !automaticallyBump,
+      task: (ctx) => new TaskList([
         {
           title: 'Check version is valid',
           task: (ctx) => {
@@ -167,31 +170,78 @@ exports.task = function ({
               : 'Could not determine version',
               'ERR_INVALID_VERSION')
           }
+        },
+        {
+          title: 'Checking version bump',
+          task: async (ctx) => {
+            let repo = { version: '0.0.0' }
+            try {
+              repo = await ctx.apm.getLatestVersion(module.appName)
+            } catch (e) {
+              if (ctx.apm.validInitialVersions.indexOf(ctx.version) == -1) {
+                throw new Error('Invalid initial version, it can only be 0.0.1, 0.1.0 or 1.0.0. Check your arapp file.')
+              } else {
+                ctx.isMajor = true // consider first version as major
+                return
+              }
+            }
+
+            if (ctx.version == repo.version) {
+              throw new Error('Version is already published, please bump it using `aragon apm version [major, minor, patch]`')
+            }
+
+            const isValid = await ctx.apm.isValidBump(module.appName, repo.version, ctx.version)
+
+            if (!isValid) {
+              throw new Error('Version bump is not valid, you have to respect APM bumps policy. Check version upgrade rules in documentation https://hack.aragon.one/docs/aragonos-ref.html#631-version-upgrade-rules')
+            }
+
+            const getMajor = version => version.split('.')[0]
+            ctx.isMajor = getMajor(repo.version) != getMajor(ctx.version)
+          }
         }
-      ], { concurrent: true })
+      ])
+    },
+    {
+      title: 'Compile contracts',
+      task: async () => (await compileContracts()),
+      enabled: () => web3Utils.isAddress(contract)
+    },
+    {
+      title: 'Deploying contract',
+      task: async (ctx) => {
+        const deployTaskParams = { contract: deploy.arappContract(), reporter, network, cwd }
+
+        const { deployedContract } = await deploy.task(deployTaskParams)
+        ctx.contract = deployedContract
+      },
+      enabled: ctx => (contract && !web3Utils.isAddress(contract)) || (!contract && ctx.isMajor && !reuse)
     },
     {
       title: 'Automatically bump version',
       task: async (ctx, task) => {
-        let repo
+        let nextMajorVersion
         try {
-          repo = await ctx.apm.getRepository(module.appName)
+          const { version } = await ctx.apm.getLatestVersion(module.appName)
+          nextMajorVersion = parseInt(version.split('.')[0]) + 1
         } catch (_) {
           ctx.version = '1.0.0'
-          return task.skip('Creating APM repo')
+          return task.skip('Starting from initial version')
         }
-        const version = await repo.methods.getVersionsCount().call()
-        ctx.version = `${parseInt(version) + 1}.0.0`
+        
+        ctx.version = `${nextMajorVersion}.0.0`
       },
       enabled: () => automaticallyBump
     },
     {
       title: 'Determine contract address for version',
       task: async (ctx, task) => {
-        ctx.contract = contract
+        if (web3Utils.isAddress(contract)) {
+          ctx.contract = contract
+        }
 
         // Check if we can fall back to a previous contract address
-        if (!contract && ctx.version !== '1.0.0') {
+        if (!ctx.contract && ctx.version !== '1.0.0') {
           task.output = 'No contract address provided, using previous one'
 
           try {
@@ -204,7 +254,7 @@ exports.task = function ({
         }
 
         // Contract address required for initial version
-        if (!contract) {
+        if (!ctx.contract) {
           throw new Error('No contract address supplied for initial version')
         }
 
@@ -258,7 +308,7 @@ exports.task = function ({
       }
     },
     {
-      title: `Publish ${module.appName} v${module.version}`,
+      title: `Publish ${module.appName}`,
       task: async (ctx, task) => {
         task.output = 'Generating transaction and waiting for confirmation'
         const accounts = await web3.eth.getAccounts()
@@ -282,7 +332,7 @@ exports.task = function ({
           const errMsg = `${e}\nThis is usually one of these reasons, maybe:
           - An existing version of this package was already deployed, try running 'aragon version' to bump it
           - You are deploying a version higher than the one in the chain`
-          throw new Error(errMsg)
+          throw new Error(e)
         } 
       },
       enabled: () => !onlyArtifacts

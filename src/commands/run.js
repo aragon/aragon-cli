@@ -184,8 +184,8 @@ exports.handler = function ({
       task: async (ctx, task) => {
         const deployTaskParams = { contract: deploy.arappContract(), reporter, network, cwd }
 
-        const x = await deploy.task(deployTaskParams)
-        ctx.contracts['AppCode'] = x.deployedContract
+        const { deployedContract } = await deploy.task(deployTaskParams)
+        ctx.contracts['AppCode'] = deployedContract
       }
     },
     {
