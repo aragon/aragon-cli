@@ -18,7 +18,7 @@ const { compileContracts } = require('../helpers/truffle-runner')
 const {
   isIPFSInstalled,
   startIPFSDaemon,
-  checkIPFSCORS,
+  isIPFSCORS,
   setIPFSCORS
 } = require('../helpers/ipfs-daemon')
 const {
@@ -140,8 +140,8 @@ exports.handler = function ({
             }
           }
         } else {
-          await checkIPFSCORS(apmOptions.ipfs.rpc)
-          task.skip('Connecting to provided IPFS daemon.')
+          await isIPFSCORS(apmOptions.ipfs.rpc)
+          task.skip('Connecting to provided IPFS daemon')
         }
       }
     },
