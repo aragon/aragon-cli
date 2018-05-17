@@ -6,8 +6,7 @@
   "bin": {
     "aragon": "./dist/cli.js",
     "apm": "/aliases/apm.sh",
-    "dao": "./aliases/dao.sh",
-    "aragon-dev-cli": "./dist/cli.js"
+    "dao": "./aliases/dao.sh"
   },
   "scripts": {
     "build": "babel -d dist src",
