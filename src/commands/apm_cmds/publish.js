@@ -178,7 +178,7 @@ exports.task = function ({
           repo = await ctx.apm.getRepository(module.appName)
         } catch (_) {
           ctx.version = '1.0.0'
-          return task.skip('First time')
+          return task.skip('Creating APM repo')
         }
         const version = await repo.methods.getVersionsCount().call()
         ctx.version = `${parseInt(version) + 1}.0.0`

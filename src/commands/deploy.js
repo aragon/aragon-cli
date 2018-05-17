@@ -10,19 +10,22 @@ exports.command = 'deploy [contract]'
 
 exports.describe = 'Deploys contract code of the app to the chain'
 
+exports.arappContract = () => {
+	const contractPath = require(path.resolve(findProjectRoot(), 'arapp.json')).path
+	const contractName = path.basename(contractPath).split('.')[0]
+
+	return contractName
+}
+
 exports.builder = yargs => {
 	return yargs.positional('contract', {
 		description: 'Contract name (defaults to the contract at the path in arapp.json)',
-		default: () => {
-			const contractPath = require(path.resolve(findProjectRoot(), 'arapp.json')).path
-			const contractName = path.basename(contractPath).split('.')[0]
-
-			return contractName
-		}
+		default: exports.arappContract,
 	})
 }
 
-exports.handler = async function ({ reporter, network, cwd, module, contract }) {
+exports.task = ({ reporter, network, cwd, contract }) => {
+	reporter.info(contract)
 	const contractName = contract
 	const tasks = new TaskList([
 		{
@@ -65,8 +68,11 @@ exports.handler = async function ({ reporter, network, cwd, module, contract }) 
 		}
 	])
 	return tasks.run()
-    .then((ctx) => {
-      reporter.success(`Successfully deployed ${contractName} at: ${chalk.bold(ctx.deployedContract)}`)
-      process.exit()
-    })
+}
+
+exports.handler = async ({ reporter, network, cwd, contract }) => {
+		const ctx = await exports.task({ reporter, network, cwd, contract })
+
+    reporter.success(`Successfully deployed ${contract} at: ${chalk.bold(ctx.deployedContract)}`)
+    process.exit()
 }

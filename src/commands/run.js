@@ -8,6 +8,7 @@ const path = require('path')
 const APM = require('@aragon/apm')
 const publish = require('./apm_cmds/publish')
 const devchain = require('./devchain')
+const deploy = require('./deploy')
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const os = require('os')
@@ -181,12 +182,10 @@ exports.handler = function ({
     {
       title: 'Deploy app code',
       task: async (ctx, task) => {
-        const appCodeAddress = await deployContract(
-          ctx.web3,
-          ctx.accounts[0],
-          getContract(cwd, path.basename(module.path, '.sol'))
-        )
-        ctx.contracts['AppCode'] = appCodeAddress
+        const deployTaskParams = { contract: deploy.arappContract(), reporter, network, cwd }
+
+        const x = await deploy.task(deployTaskParams)
+        ctx.contracts['AppCode'] = x.deployedContract
       }
     },
     {
