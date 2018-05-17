@@ -59,7 +59,7 @@ cmd.option('network', {
     if (truffleConfig) {
       const truffleNetwork = truffleConfig.networks[network]
       if (!truffleNetwork) {
-        throw new Error(`Didn't find network ${network} in your truffle.js`)
+        throw new Error(`aragon <command> requires a network '${network}' in your truffle.js. For an example, see http://truffleframework.com/docs/advanced/configuration`)
       }
       let provider
       if (truffleNetwork.provider) {
