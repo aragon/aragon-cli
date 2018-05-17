@@ -6,7 +6,7 @@ const { keccak256 } = require('js-sha3')
 const chalk = require('chalk')
 const path = require('path')
 const APM = require('@aragon/apm')
-const publish = require('./publish')
+const publish = require('./apm_cmds/publish')
 const devchain = require('./devchain')
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
@@ -377,7 +377,7 @@ exports.handler = function ({
 
     ${(client !== false) ?
       `Opening http://localhost:3000/#/${ctx.daoAddress} to view your DAO` :
-      `Use "aragon dao ${ctx.daoAddress}" to interact with your DAO`
+      `Use "aragon dao <command> ${ctx.daoAddress}" to interact with your DAO`
     }`)
 
     if (!manifest) {
