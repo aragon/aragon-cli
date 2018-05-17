@@ -198,20 +198,10 @@ exports.handler = function ({
         ])
     },
     {
-      title: 'Deploy app code',
-      task: async (ctx, task) => {
-        const deployTaskParams = { contract: deploy.arappContract(), web3: ctx.web3, reporter, network, cwd }
-
-        const { deployedContract } = await deploy.task(deployTaskParams)
-        ctx.contracts['AppCode'] = deployedContract
-      }
-    },
-    {
-      title: 'Publish app',
+      title: 'Publish APM package',
       task: (ctx) => {
         return publish.task({
           alreadyCompiled: true,
-          contract: ctx.contracts['AppCode'],
           provider: 'ipfs',
           files,
           ignore: ['node_modules'],
@@ -235,10 +225,15 @@ exports.handler = function ({
               getContract('@aragon/os', 'Kernel').abi,
               ctx.daoAddress
             )
+            apmOptions.ensRegistryAddress = apmOptions['ens-registry']
+            const apm = APM(ctx.web3, apmOptions)
+
+            // Use latest APM version
+            const { contractAddress } = await apm.getLatestVersion(module.appName)
 
             const { events } = await kernel.methods.newAppInstance(
               namehash.hash(module.appName),
-              ctx.contracts['AppCode']
+              contractAddress
             ).send({
               from: ctx.accounts[0],
               gasLimit: TX_MIN_GAS

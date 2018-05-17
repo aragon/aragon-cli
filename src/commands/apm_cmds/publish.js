@@ -211,11 +211,12 @@ exports.task = function ({
       title: 'Deploying contract',
       task: async (ctx) => {
         const deployTaskParams = { contract: deploy.arappContract(), reporter, network, cwd, web3 }
+        
+        const { deployedContract } = await deploy.task(deployTaskParams)
 
-        const { deployedContract } = await deploy.task(deployTaskParams)
         ctx.contract = deployedContract
       },
-      enabled: ctx => (contract && !web3Utils.isAddress(contract)) || (!contract && ctx.isMajor && !reuse)
+      enabled: ctx => (contract && !web3Utils.isAddress(contract)) || (!contract && ctx.isMajor && !reuse) || automaticallyBump
     },
     {
       title: 'Automatically bump version',
