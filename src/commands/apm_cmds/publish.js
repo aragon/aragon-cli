@@ -154,7 +154,7 @@ exports.task = function ({
 }) {
   return new TaskList([
     {
-      title: 'Preflight checks',
+      title: 'Preflight checks for publishing to APM',
       enabled: () => !automaticallyBump,
       task: (ctx) => new TaskList([
         {
