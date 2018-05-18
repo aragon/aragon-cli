@@ -260,7 +260,8 @@ exports.handler = function ({
 
     const registry = module.appName.split('.').slice(1).join('.')
 
-    reporter.info(`\nThis is the configuration for your development deployment:
+    console.log()
+    reporter.info(`This is the configuration for your development deployment:
     ${chalk.bold('Ethereum Node')}: ${network.provider.connection._url}
     ${chalk.bold('ENS registry')}: ${ctx.ens}
     ${chalk.bold(`APM registry`)}: ${registry}

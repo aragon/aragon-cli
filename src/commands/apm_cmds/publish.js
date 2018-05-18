@@ -326,7 +326,8 @@ exports.task = function ({
             ctx.version,
             provider,
             ctx.pathToPublish,
-            ctx.contract
+            ctx.contract,
+            from
           )
           // Fix because APM.js gas comes with decimals and from doesn't work
           transaction.from = from
