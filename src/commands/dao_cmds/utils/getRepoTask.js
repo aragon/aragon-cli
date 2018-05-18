@@ -10,7 +10,7 @@ module.exports = {
       default: 'latest'
     })
 	},
-	task: ({ apm, apmRepo, apmRepoVersion }) => {
+	task: ({ apm, apmRepo, apmRepoVersion = LATEST_VERSION}) => {
 		return async (ctx) => {
 			if (apmRepoVersion == LATEST_VERSION) {
 			  	ctx.repo = await apm.getLatestVersion(apmRepo)

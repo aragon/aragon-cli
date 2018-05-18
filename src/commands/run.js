@@ -9,6 +9,8 @@ const APM = require('@aragon/apm')
 const publish = require('./apm_cmds/publish')
 const devchain = require('./devchain')
 const deploy = require('./deploy')
+const newDAO = require('./dao_cmds/new')
+const install = require('./dao_cmds/install')
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const os = require('os')
@@ -71,9 +73,9 @@ const setPermissions = async (web3, sender, aclAddress, permissions) => {
   )
   return Promise.all(
     permissions.map(([who, where, what]) =>
-      acl.methods.createPermission(who, where, '0x' + keccak256(what), who).send({
+      acl.methods.createPermission(who, where, what, who).send({
         from: sender,
-        gasLimit: TX_MIN_GAS
+        gasLimit: 1e6
       })
     )
   )
@@ -141,61 +143,21 @@ exports.handler = function ({
         }
       }
     },
-    {
-      title: 'Fetching DAOFactory from on-chain templates',
-      task: async(ctx, task) => {
-        ctx.ens = require('@aragon/aragen').ens
-        ctx.apm = APM(ctx.web3, {
-          ipfs: apmOptions.ipfs.rpc,
-          ensRegistryAddress: ctx.ens
-        })
-
-        ctx.contracts = {}
-        try {
-          const demTemplate = await ctx.apm.getLatestVersionContract('democracy-template.aragonpm.eth')
-          const fac = await new ctx.web3.eth.Contract(
-            getContract('@aragon/templates-beta', 'DemocracyTemplate').abi,
-            demTemplate
-          ).methods.fac().call()
-          ctx.contracts['DAOFactory'] = fac
-        } catch (err) {
-          console.error(`${err}\nTransaction reverted, try using 'aragon run' or 'aragon devchain'`)
-          process.exit()
-        }
-      },
-    },
-    {
+    { 
       title: 'Create DAO',
-      task: async (ctx, task) => {
-        const factory = new ctx.web3.eth.Contract(
-          getContract('@aragon/os', 'DAOFactory').abi,
-          ctx.contracts['DAOFactory']
-        )
-
-        const { events } = await factory.methods.newDAO(ctx.accounts[0]).send({
-          from: ctx.accounts[0],
-          gas: TX_MIN_GAS
-        })
-        ctx.daoAddress = events['DeployDAO'].returnValues.dao
-
-        const kernel = new ctx.web3.eth.Contract(
-          getContract('@aragon/os', 'Kernel').abi, ctx.daoAddress
-        )
-        const aclAddress = await kernel.methods.acl().call()
-        ctx.aclAddress = aclAddress
-      }
+      task: (ctx) => newDAO.task({ web3: ctx.web3, reporter, apmOptions }),
     },
     {
-      title: 'Set DAO permissions',
+      title: 'Initializing DAO permissions',
       task: (ctx, task) =>
         setPermissions(ctx.web3, ctx.accounts[0], ctx.aclAddress, [
-          [ANY_ENTITY, ctx.daoAddress, 'APP_MANAGER_ROLE']
+          [ANY_ENTITY, ctx.daoAddress, ctx.appManagerRole]
         ])
     },
     {
       title: 'Publish APM package',
       task: (ctx) => {
-        return publish.task({
+        const publishParams = {
           alreadyCompiled: true,
           provider: 'ipfs',
           files,
@@ -207,54 +169,23 @@ exports.handler = function ({
           web3: ctx.web3,
           apm: apmOptions,
           automaticallyBump: true
-        })
-      }
+        }
+        return publish.task(publishParams)
+      },
     },
     {
       title: 'Install app',
-      task: () => new TaskList([
-        {
-          title: 'Deploy proxy',
-          task: async (ctx) => {
-            const kernel = new ctx.web3.eth.Contract(
-              getContract('@aragon/os', 'Kernel').abi,
-              ctx.daoAddress
-            )
-
-            // Use latest APM version
-            const { contractAddress } = await ctx.apm.getLatestVersion(module.appName)
-
-            const { events } = await kernel.methods.newAppInstance(
-              namehash.hash(module.appName),
-              contractAddress
-            ).send({
-              from: ctx.accounts[0],
-              gasLimit: TX_MIN_GAS
-            })
-            
-            ctx.appAddress = events['NewAppProxy'].returnValues.proxy
-          }
-        },
-        {
-          title: 'Set permissions',
-          task: async (ctx, task) => {
-            if (!module.roles || module.roles.length === 0) {
-              throw new Error('You have no permissions defined in your arapp.json\nThis is required for your app to properly show up.')
-              return
-            }
-
-            const permissions = module.roles
-              .map((role) => [ANY_ENTITY, ctx.appAddress, role.id])
-
-            return setPermissions(
-              ctx.web3,
-              ctx.accounts[0],
-              ctx.aclAddress,
-              permissions
-            )
-          }
+      task: (ctx) => {
+        const installParams = {
+          dao: ctx.daoAddress,
+          apmRepo: module.appName,
+          apmRepoVersion: 'latest',
+          web3: ctx.web3,
+          reporter,
+          apmOptions,
         }
-      ])
+        return install.task(installParams)
+      }
     },
     {
       title: 'Open DAO',
@@ -360,12 +291,11 @@ exports.handler = function ({
     }
 
     const registry = module.appName.split('.').slice(1).join('.')
-    const registryAddr = await ctx.apm.ensResolve(registry)
 
-    reporter.info(`This is the configuration for your development deployment:
+    reporter.info(`\nThis is the configuration for your development deployment:
     ${chalk.bold('Ethereum Node')}: ${network.provider.connection._url}
-    ${chalk.bold(`APM registry (${registry})`)}: ${registryAddr}
     ${chalk.bold('ENS registry')}: ${ctx.ens}
+    ${chalk.bold(`APM registry`)}: ${registry}
     ${chalk.bold('DAO address')}: ${ctx.daoAddress}
 
     ${(client !== false) ?
