@@ -207,13 +207,11 @@ exports.task = function ({
       enabled: () => web3Utils.isAddress(contract)
     },
     {
-      title: 'Deploying contract',
+      title: 'Deploy contract',
       task: async (ctx) => {
         const deployTaskParams = { contract: deploy.arappContract(), reporter, network, cwd, web3 }
         
-        const { deployedContract } = await deploy.task(deployTaskParams)
-
-        ctx.contract = deployedContract
+        return await deploy.task(deployTaskParams)
       },
       enabled: ctx => (contract && !web3Utils.isAddress(contract)) || (!contract && ctx.isMajor && !reuse) || automaticallyBump
     },

@@ -109,12 +109,7 @@ exports.handler = function ({
         }
       },
       task: async (ctx, task) => {
-        const { web3, accounts, privateKeys } = await devchain.task({ port, reset, showAccounts })
-        ctx.web3 = web3
-        ctx.accounts = accounts
-        ctx.privateKeys = privateKeys
-
-        if (ctx.accounts.length == 0) throw new Error("Devchain started with no accounts")
+        return await devchain.task({ port, reset, showAccounts })
       }
     },
     {

@@ -24,7 +24,10 @@ exports.builder = yargs => {
 	})
 }
 
-exports.task = ({ reporter, network, cwd, contract, web3 }) => {
+exports.task = async ({ reporter, network, cwd, contract, web3 }) => {
+	if (!web3) {
+		web3 = await ensureWeb3(network)
+	}
 	const contractName = contract
 	const tasks = new TaskList([
 		{
@@ -59,17 +62,18 @@ exports.task = ({ reporter, network, cwd, contract, web3 }) => {
 					throw new Error("Contract deployment failed")
 				}
 
-				ctx.deployedContract = instance.options.address
-				return ctx.deployedContract
+				ctx.contract = instance.options.address
+				return ctx.contract
 			}
 		}
 	])
-	return tasks.run()
+	return tasks
 }
 
 exports.handler = async ({ reporter, network, cwd, contract }) => {
-		const ctx = await exports.task({ reporter, network, cwd, contract })
+	const task = await exports.task({ reporter, network, cwd, contract })
+	const ctx = await task.run()
 
-    reporter.success(`Successfully deployed ${contract} at: ${chalk.bold(ctx.deployedContract)}`)
+    reporter.success(`Successfully deployed ${contract} at: ${chalk.bold(ctx.contract)}`)
     process.exit()
 }

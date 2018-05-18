@@ -82,7 +82,7 @@ exports.task = async function ({ port = 8545, reset = false, showAccounts = 2 })
     }
   }])
 
-  return tasks.run()
+  return tasks
 }
 
 exports.printAccounts = (reporter, privateKeys) => {
@@ -97,7 +97,8 @@ exports.printAccounts = (reporter, privateKeys) => {
 }
 
 exports.handler = async ({ reporter, port, reset, accounts }) => {
-  const { privateKeys } = await exports.task({ port, reset, showAccounts: accounts })
+  const task = await exports.task({ port, reset, showAccounts: accounts })
+  const { privateKeys } = await task.run()
   exports.printAccounts(reporter, privateKeys)  
 
   reporter.info(`Devchain running: ${chalk.bold('http://localhost:'+port)}.`)
