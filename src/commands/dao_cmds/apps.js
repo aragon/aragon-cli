@@ -30,7 +30,7 @@ const printContent = (content) => {
   return `${content.provider}:${content.location}`.slice(0,25) + '...'
 }
 
-exports.handler = async function ({ reporter, dao, network, apm }) {
+exports.handler = async function ({ reporter, dao, network, apm: apmOptions }) {
   knownApps = listApps()
   const web3 = await ensureWeb3(network)
 
@@ -41,7 +41,7 @@ exports.handler = async function ({ reporter, dao, network, apm }) {
         task.output = `Fetching apps for ${dao}...`
 
         return new Promise((resolve, reject) => {
-          initAragonJS(dao, apm['ens-registry'], {
+          initAragonJS(dao, apmOptions['ens-registry'], {
             provider: web3.currentProvider,
             onApps: apps => {
               ctx.apps = apps
