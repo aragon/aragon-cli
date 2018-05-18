@@ -7,8 +7,9 @@ const path = require('path')
 const APM = require('@aragon/apm')
 const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
+const getRepoTask = require('./utils/getRepoTask')
+const upgrade = require('./upgrade')
 
-const LATEST_VERSION = 'latest'
 const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
 
 const getContract = (pkg, contract) => {
@@ -37,9 +38,16 @@ exports.describe = 'Install an app into a DAO'
 
 exports.builder = function (yargs) {
   return daoArg(yargs)
+    .option('apmRepo', {
+      describe: 'Name of the APM repo'
+    })
+    .option('apmRepoVersion', {
+        describe: 'Version of the package upgrading to',
+        default: 'latest'
+    })
 }
 
-exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion = LATEST_VERSION }) => {
+exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion }) => {
   const apm = await APM(web3, apmOptions)
 
   apmRepo = defaultAPMName(apmRepo)
@@ -48,18 +56,11 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
   const tasks = new TaskList([
     {
       title: `Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`,
-      task: async (ctx, task) => {
-        if (apmRepoVersion == LATEST_VERSION) {
-          ctx.repo = await apm.getLatestVersion(apmRepo)
-        } else {
-          ctx.repo = await apm.getVersion(apmRepo, apmRepoVersion.split('.'))
-        }
-
-        // appId is loaded from artifact.json in IPFS
-        if (!ctx.repo.appId) {
-          throw new Error("Cannot find artifacts in APM repo. Please make sure the package is published and IPFS running.")
-        }
-      }
+      task: getRepoTask({ apm, apmRepo, apmRepoVersion }),
+    },
+    {
+      title: `Upgrading app`,
+      task: ctx => upgrade.task({ repo: ctx.repo, web3, dao, apmRepo, apmRepoVersion, apmOptions, reporter })
     },
     {
       title: 'Deploying app instance',
@@ -116,5 +117,6 @@ exports.handler = async function ({ reporter, dao, network, apm: apmOptions, apm
   const web3 = await ensureWeb3(network)
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
-  return exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion })
+  await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion })
+  process.exit()
 }
