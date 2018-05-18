@@ -58,7 +58,6 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, contr
 
   // Set `appId`
   artifact.appId = namehash.hash(artifact.appName)
-  delete artifact.appName
 
   // Set ABI
   const contractInterface = await readJson(contractInterfacePath)
