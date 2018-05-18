@@ -18,26 +18,35 @@ exports.builder = {
   port: {
     description: 'The port to run the local chain on',
     default: 8545
+  },
+  reset: {
+    type: 'boolean',
+    default: false,
+    description: 'Reset devchain to snapshot'
+  },
+  accounts: {
+    default: 2,
+    description: 'Number of accounts to print'
   }
 }
 
-exports.task = async function ({ port = 8545 }) {
+exports.task = async function ({ port = 8545, reset = false, showAccounts = 2 }) {
   const removeDir = promisify(rimraf)
   const mkDir = promisify(mkdirp)
   const recursiveCopy = promisify(ncp)
 
-  const snapshotPath = path.join(homedir, '.aragon/ganache-db')
+  const snapshotPath = path.join(homedir, `.aragon/ganache-db-${port}`)
 
   const tasks = new TaskList([
   {
-    title: 'Setting up latest Aragon snapshot',
+    title: 'Setting up a new chain from latest Aragon snapshot',
     task: async (ctx, task) => {
       await removeDir(snapshotPath)
       await mkDir(path.resolve(snapshotPath, '..'))
       const aragen = path.resolve(require.resolve('@aragon/aragen'), '../aragon-ganache')
       await recursiveCopy(aragen, snapshotPath)
     },
-    enabled: () => !fs.existsSync(snapshotPath)
+    enabled: () => !fs.existsSync(snapshotPath) || reset
   },
   {
     title: 'Starting a local chain from snapshot',
@@ -58,25 +67,38 @@ exports.task = async function ({ port = 8545 }) {
         })
       )
       await listen()
+
       ctx.web3 = new Web3(
         new Web3.providers.WebsocketProvider(`ws://localhost:${port}`)
       )
-      ctx.accounts = await ctx.web3.eth.getAccounts()
-      ctx.privateKeys = server.provider.manager.state.accounts
+      const accounts = await ctx.web3.eth.getAccounts()
+
+      ctx.accounts = accounts.slice(0, parseInt(showAccounts))
+
+      const ganacheAccounts = server.provider.manager.state.accounts
+      ctx.privateKeys = ctx.accounts.map((address) => (
+        { key: ganacheAccounts[address.toLowerCase()].secretKey.toString('hex'), address }
+      ))
     }
   }])
 
   return tasks.run()
 }
 
-exports.handler = async ({ reporter, port }) => {
-  const ctx = await exports.task({ port })
+exports.printAccounts = (reporter, privateKeys) => {
+  const formattedAccounts = privateKeys.map(({ address, key }, i) => 
+    chalk.bold(`Address #${i + 1}: ${address}\nPrivate key: `) + key
+  )
+
   reporter.info(`Here are some Ethereum accounts you can use.
   The first one will be used for all the actions the CLI performs.
   You can use your favorite Ethereum provider or wallet to import their private keys.
-  You can also point it to your chain: http://localhost:${port}.
+  \n${formattedAccounts.join('\n')}`)
+}
 
-  ${Object.keys(ctx.privateKeys).map((address) =>
-    chalk.bold(`Address: ${address}\n  Private key: `) + ctx.privateKeys[address].secretKey.toString('hex')).join('\n  ')}
-  `)
+exports.handler = async ({ reporter, port, reset, accounts }) => {
+  const { privateKeys } = await exports.task({ port, reset, showAccounts: accounts })
+  exports.printAccounts(reporter, privateKeys)  
+
+  reporter.info(`Devchain running: ${chalk.bold('http://localhost:'+port)}.`)
 }

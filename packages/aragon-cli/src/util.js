@@ -22,21 +22,26 @@ const findProjectRoot = () => {
 
 const hasBin = (bin) => new Promise((resolve, reject) => hasbin(bin, resolve))
 
-const isPortTaken = async (port) => {
-  return new Promise((resolve, reject) => {
-    const tester = net.createServer()
-    .once('error', (err) => {
-      if (err.code === 'EADDRINUSE') {
-        resolve(true)
-      } else {
-        resolve(false)
-      }
+const isPortTaken = async (port, opts) => {
+  opts = Object.assign({timeout: 1000}, opts)
+
+  return new Promise((resolve => {
+    const socket = new net.Socket()
+
+    const onError = () => {
+      socket.destroy()
+      resolve(false)
+    }
+
+    socket.setTimeout(opts.timeout)
+    socket.on('error', onError)
+    socket.on('timeout', onError)
+
+    socket.connect(port, opts.host, () => {
+      socket.end()
+      resolve(true)
     })
-    .once('listening', function() {
-      tester.once('close', () => resolve(false)).close()
-    })
-    .listen(port)
-  })
+  }))
 }
 
 const getNodePackageManager = async () => {

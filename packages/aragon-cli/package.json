@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "4.0.0-rc.10",
+  "version": "4.0.0-rc.12",
   "description": "Aragon command-line tools",
   "main": "dist/cli.js",
   "bin": {
@@ -35,6 +35,7 @@
   },
   "homepage": "https://github.com/aragon/aragon-dev-cli#readme",
   "dependencies": {
+    "@aragon/apm": "^1.0.0",
     "@aragon/apps-finance": "^1.0.1",
     "@aragon/apps-token-manager": "^1.0.0",
     "@aragon/apps-vault": "^2.0.1",
@@ -82,7 +83,7 @@
     "standard": "^10.0.3"
   },
   "engines": {
-    "node": ">=8.9.1"
+    "node": ">=9.0.0"
   },
   "ava": {
     "require": [
