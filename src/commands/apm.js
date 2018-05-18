@@ -1,5 +1,3 @@
-const appsCommand = require('./dao_cmds/apps')
-const daoArg = require('./dao_cmds/utils/daoArg')
 const {
   manifestMiddleware,
   moduleMiddleware

@@ -8,13 +8,13 @@ const path = require('path')
 const APM = require('@aragon/apm')
 const publish = require('./apm_cmds/publish')
 const devchain = require('./devchain')
+const deploy = require('./deploy')
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const os = require('os')
 const fs = require('fs-extra')
 const opn = require('opn')
 const execa = require('execa')
-const { compileContracts } = require('../helpers/truffle-runner')
 const {
   isIPFSInstalled,
   startIPFSDaemon,
@@ -45,25 +45,22 @@ exports.builder = function (yargs) {
     description: 'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
     default: ['.'],
     array: true
+  }).option('port', {
+    description: 'Port to start devchain at',
+    default: '8545',
+  }).option('accounts', {
+    default: 2,
+    description: 'Number of accounts to print'
+  }).option('reset', {
+    default: false,
+    boolean: true,
+    description: 'Reset devchain to snapshot'
   })
 }
 
 const getContract = (pkg, contract) => {
   const artifact = require(`${pkg}/build/contracts/${contract}.json`)
   return artifact
-}
-
-const deployContract = async (web3, sender, { abi, bytecode }, args = []) => {
-  const contract = new web3.eth.Contract(abi)
-
-  const instance = await contract.deploy({
-    data: bytecode,
-    arguments: args
-  }).send({
-    from: sender,
-    gas: TX_MIN_GAS
-  })
-  return instance.options.address
 }
 
 const setPermissions = async (web3, sender, aclAddress, permissions) => {
@@ -91,31 +88,32 @@ exports.handler = function ({
     network,
     module,
     client,
-    files
+    files,
+    port,
+    accounts,
+    reset
   }) {
+  const showAccounts = accounts
   const tasks = new TaskList([
-    {
-      title: 'Compile contracts',
-      task: async () => (await compileContracts())
-    },
     {
       title: 'Start a local Ethereum network',
       skip: async (ctx) => {
-        try {
-          const web3 = new Web3(network.provider)
-          ctx.web3 = web3
-          const listening = await web3.eth.net.isListening()
-          ctx.accounts = await web3.eth.getAccounts()
-          return 'Connected to the provided Ethereum network'
-        } catch (err) {
+        const hostURL = new url.URL(network.provider.connection._url)
+        if (!await isPortTaken(hostURL.port)) {
           return false
+        } else {
+          ctx.web3 = new Web3(network.provider)
+          ctx.accounts = await ctx.web3.eth.getAccounts()
+          return 'Connected to the provided Ethereum network'
         }
       },
       task: async (ctx, task) => {
-        const { web3, accounts, privateKeys } = await devchain.task({})
+        const { web3, accounts, privateKeys } = await devchain.task({ port, reset, showAccounts })
         ctx.web3 = web3
         ctx.accounts = accounts
         ctx.privateKeys = privateKeys
+
+        if (ctx.accounts.length == 0) throw new Error("Devchain started with no accounts")
       }
     },
     {
@@ -132,11 +130,13 @@ exports.handler = function ({
           } else {
             const running = await isPortTaken(apmOptions.ipfs.rpc.port)
             if (!running) {
+              task.output = 'Starting IPFS at port: ' + apmOptions.ipfs.rpc.port
               await startIPFSDaemon()
               await setIPFSCORS(apmOptions.ipfs.rpc)
             } else {
+              task.output = 'IPFS is started, checking CORS config'
               await setIPFSCORS(apmOptions.ipfs.rpc)
-              task.skip('Connected to IPFS daemon')
+              task.skip('Connected to IPFS daemon ar port: '+ apmOptions.ipfs.rpc.port)
             }
           }
         } else {
@@ -197,22 +197,10 @@ exports.handler = function ({
         ])
     },
     {
-      title: 'Deploy app code',
-      task: async (ctx, task) => {
-        const appCodeAddress = await deployContract(
-          ctx.web3,
-          ctx.accounts[0],
-          getContract(cwd, path.basename(module.path, '.sol'))
-        )
-        ctx.contracts['AppCode'] = appCodeAddress
-      }
-    },
-    {
-      title: 'Publish app',
+      title: 'Publish APM package',
       task: (ctx) => {
         return publish.task({
           alreadyCompiled: true,
-          contract: ctx.contracts['AppCode'],
           provider: 'ipfs',
           files,
           ignore: ['node_modules'],
@@ -237,9 +225,12 @@ exports.handler = function ({
               ctx.daoAddress
             )
 
+            // Use latest APM version
+            const { contractAddress } = await ctx.apm.getLatestVersion(module.appName)
+
             const { events } = await kernel.methods.newAppInstance(
               namehash.hash(module.appName),
-              ctx.contracts['AppCode']
+              contractAddress
             ).send({
               from: ctx.accounts[0],
               gasLimit: TX_MIN_GAS
@@ -357,23 +348,22 @@ exports.handler = function ({
     manifest = fs.readJsonSync(manifestPath)
   }
 
-  return tasks.run().then((ctx) => {
-    reporter.info(`You are now ready to open your app in Aragon.
+  return tasks.run().then(async (ctx) => {
 
-    This is the configuration for your development deployment:
+    reporter.info(`You are now ready to open your app in Aragon.`)
+
+    if (ctx.privateKeys) {
+      devchain.printAccounts(reporter, ctx.privateKeys)
+    }
+
+    const registry = module.appName.split('.').slice(1).join('.')
+    const registryAddr = await ctx.apm.ensResolve(registry)
+
+    reporter.info(`This is the configuration for your development deployment:
     ${chalk.bold('Ethereum Node')}: ${network.provider.connection._url}
-    ${chalk.bold('APM registry')}: ${ctx.apm.registryAddress}
+    ${chalk.bold(`APM registry (${registry})`)}: ${registryAddr}
     ${chalk.bold('ENS registry')}: ${ctx.ens}
     ${chalk.bold('DAO address')}: ${ctx.daoAddress}
-
-    Here are some accounts you can use.
-    The first one was used to create everything.
-
-    ${(ctx.privateKeys) ?
-      Object.keys(ctx.privateKeys).map((address) =>
-        chalk.bold(`Address: ${address}\n  Private key: `) + ctx.privateKeys[address].secretKey.toString('hex')).join('\n  ') :
-      chalk.bold(ctx.accounts.join(`\n    `))
-    }
 
     ${(client !== false) ?
       `Opening http://localhost:3000/#/${ctx.daoAddress} to view your DAO` :
