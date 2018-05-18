@@ -37,14 +37,7 @@ exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'
 exports.describe = 'Install an app into a DAO'
 
 exports.builder = function (yargs) {
-  return daoArg(yargs)
-    .option('apmRepo', {
-      describe: 'Name of the APM repo'
-    })
-    .option('apmRepoVersion', {
-        describe: 'Version of the package upgrading to',
-        default: 'latest'
-    })
+  return getRepoTask.args(daoArg(yargs))
 }
 
 exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion }) => {
@@ -56,7 +49,7 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
   const tasks = new TaskList([
     {
       title: `Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`,
-      task: getRepoTask({ apm, apmRepo, apmRepoVersion }),
+      task: getRepoTask.task({ apm, apmRepo, apmRepoVersion }),
     },
     {
       title: `Upgrading app`,
@@ -107,16 +100,17 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
     }
   ])
 
-  return tasks.run()
-    .then((ctx) => {
-      reporter.success(`Installed ${apmRepo} at: ${chalk.bold(ctx.appAddress)}`)
-    })
+  return tasks
 }
 
 exports.handler = async function ({ reporter, dao, network, apm: apmOptions, apmRepo, apmRepoVersion }) {
   const web3 = await ensureWeb3(network)
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
-  await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion })
-  process.exit()
+  const task = await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion })
+  return task.run()
+    .then((ctx) => {
+      reporter.success(`Installed ${apmRepo} at: ${chalk.bold(ctx.appAddress)}`)
+      process.exit()
+    })
 }

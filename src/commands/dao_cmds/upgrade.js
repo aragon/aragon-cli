@@ -16,14 +16,7 @@ exports.command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
 exports.describe = 'Upgrade an app into a DAO'
 
 exports.builder = function (yargs) {
-  return daoArg(yargs)
-    .option('apmRepo', {
-      describe: 'Name of the APM repo'
-    })
-    .option('apmRepoVersion', {
-      describe: 'Version of the package upgrading to',
-      default: 'latest'
-    })
+  return getRepoTask.args(daoArg(yargs))
 }
 
 const getContract = (pkg, contract) => {
@@ -41,7 +34,7 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
     {
       title: `Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`,
       skip: ctx => ctx.repo, // only run if repo isn't passed
-      task: getRepoTask({ apm, apmRepo, apmRepoVersion }),
+      task: getRepoTask.task({ apm, apmRepo, apmRepoVersion }),
     },
     {
       title: 'Upgrading app',
@@ -64,16 +57,17 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
     },
   ], { repo })
 
-  return tasks.run()
-    .then((ctx) => {
-      reporter.success(`Upgraded ${apmRepo} to ${chalk.bold(ctx.repo.version)}`)
-    })
+  return tasks
 }
 
 exports.handler = async function ({ reporter, dao, network, apm: apmOptions, apmRepo, apmRepoVersion }) {
   const web3 = await ensureWeb3(network)
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
-  await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion })
-  process.exit()
+  const task = await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion })
+  return task.run()
+    .then((ctx) => {
+      reporter.success(`Upgraded ${apmRepo} to ${chalk.bold(ctx.repo.version)}`)
+      process.exit()
+    })
 }
