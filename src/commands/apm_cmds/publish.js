@@ -17,6 +17,7 @@ const execa = require('execa')
 const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
+const startIPFS = require('../ipfs')
 
 exports.command = 'publish [contract]'
 
@@ -288,6 +289,10 @@ exports.task = function ({
             throw new Error(`${err.message}\n${err.stderr}\n\nFailed to build. See above output.`)
           })
       }
+    },
+    {
+      title: 'Check IPFS',
+      task: () => startIPFS.task({ apmOptions }),
     },
     {
       title: 'Prepare files for publishing',
