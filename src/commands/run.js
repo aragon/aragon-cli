@@ -191,6 +191,7 @@ exports.handler = function ({
         {
           title: 'Start Aragon client',
           task: async (ctx, task) => {
+            ctx.ens = apmOptions['ens-registry']
             if (await isPortTaken(WRAPPER_PORT)) {
               ctx.portOpen = true
               return
