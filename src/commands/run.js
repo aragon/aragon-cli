@@ -11,18 +11,14 @@ const devchain = require('./devchain')
 const deploy = require('./deploy')
 const newDAO = require('./dao_cmds/new')
 const install = require('./dao_cmds/install')
+const startIPFS = require('./ipfs')
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const os = require('os')
 const fs = require('fs-extra')
 const opn = require('opn')
 const execa = require('execa')
-const {
-  isIPFSInstalled,
-  startIPFSDaemon,
-  isIPFSCORS,
-  setIPFSCORS
-} = require('../helpers/ipfs-daemon')
+
 const {
   findProjectRoot,
   isPortTaken,
@@ -115,33 +111,8 @@ exports.handler = function ({
       }
     },
     {
-      title: 'Start IPFS',
-      task: async (ctx, task) => {
-        // If the dev manually set their IPFS node, skip install and running check
-        if (apmOptions.ipfs.rpc.default) {
-          const installed = await isIPFSInstalled()
-          if (!installed) {
-            setTimeout(() => opn('https://ipfs.io/docs/install'), 2500)
-            throw new Error(`
-              Running your app requires IPFS. Opening install instructions in your browser`
-            )
-          } else {
-            const running = await isPortTaken(apmOptions.ipfs.rpc.port)
-            if (!running) {
-              task.output = 'Starting IPFS at port: ' + apmOptions.ipfs.rpc.port
-              await startIPFSDaemon()
-              await setIPFSCORS(apmOptions.ipfs.rpc)
-            } else {
-              task.output = 'IPFS is started, checking CORS config'
-              await setIPFSCORS(apmOptions.ipfs.rpc)
-              task.skip('Connected to IPFS daemon ar port: '+ apmOptions.ipfs.rpc.port)
-            }
-          }
-        } else {
-          await isIPFSCORS(apmOptions.ipfs.rpc)
-          task.skip('Connecting to provided IPFS daemon')
-        }
-      }
+      title: 'Check IPFS',
+      task: () => startIPFS.task({ apmOptions }),
     },
     { 
       title: 'Create DAO',
