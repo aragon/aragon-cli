@@ -31,7 +31,7 @@ const setPermissions = async (web3, sender, aclAddress, permissions) => {
   )
 }
 
-exports.command = 'install <apmRepo> <dao> [apmRepoVersion]'
+exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'
 
 exports.describe = 'Install an app into a DAO'
 
