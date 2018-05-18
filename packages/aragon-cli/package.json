@@ -83,7 +83,7 @@
     "standard": "^10.0.3"
   },
   "engines": {
-    "node": ">=9.0.0"
+    "node": ">=8.0.0"
   },
   "ava": {
     "require": [
