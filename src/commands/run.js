@@ -23,8 +23,11 @@ const {
   findProjectRoot,
   isPortTaken,
   installDeps,
-  getNodePackageManager
+  getNodePackageManager,
+  getContract,
+  ANY_ENTITY
 } = require('../util')
+
 const { Writable } = require('stream')
 const url = require('url')
 
@@ -57,11 +60,6 @@ exports.builder = function (yargs) {
   })
 }
 
-const getContract = (pkg, contract) => {
-  const artifact = require(`${pkg}/build/contracts/${contract}.json`)
-  return artifact
-}
-
 const setPermissions = async (web3, sender, aclAddress, permissions) => {
   const acl = new web3.eth.Contract(
     getContract('@aragon/os', 'ACL').abi,
@@ -76,8 +74,6 @@ const setPermissions = async (web3, sender, aclAddress, permissions) => {
     )
   )
 }
-
-const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
 
 exports.handler = function ({
     // Globals

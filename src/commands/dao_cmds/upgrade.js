@@ -8,6 +8,7 @@ const APM = require('@aragon/apm')
 const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
 const getRepoTask = require('./utils/getRepoTask')
+const { getContract } = require('../../util')
 
 const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
 
@@ -17,11 +18,6 @@ exports.describe = 'Upgrade an app into a DAO'
 
 exports.builder = function (yargs) {
   return getRepoTask.args(daoArg(yargs))
-}
-
-const getContract = (pkg, contract) => {
-  const artifact = require(`${pkg}/build/contracts/${contract}.json`)
-  return artifact
 }
 
 exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, repo }) => {

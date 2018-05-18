@@ -7,17 +7,13 @@ const path = require('path')
 const APM = require('@aragon/apm')
 const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
+const { getContract } = require('../../util')
 
 const BASE_TEMPLATE_REPO = 'democracy-template.aragonpm.eth'
 
 exports.command = 'new'
 
 exports.describe = 'Create a new DAO'
-
-const getContract = (pkg, contract) => {
-  const artifact = require(`${pkg}/build/contracts/${contract}.json`)
-  return artifact
-}
 
 exports.task = async ({ web3, reporter, apmOptions }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']

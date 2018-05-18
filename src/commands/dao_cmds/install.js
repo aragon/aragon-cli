@@ -9,13 +9,7 @@ const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
 const getRepoTask = require('./utils/getRepoTask')
 const upgrade = require('./upgrade')
-
-const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
-
-const getContract = (pkg, contract) => {
-  const artifact = require(`${pkg}/build/contracts/${contract}.json`)
-  return artifact
-}
+const { getContract, ANY_ENTITY } = require('../../util')
 
 const setPermissions = async (web3, sender, aclAddress, permissions) => {
   const acl = new web3.eth.Contract(

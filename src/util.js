@@ -65,4 +65,11 @@ const installDeps = async (cwd, task) => {
   })
 }
 
-module.exports = { findProjectRoot, hasBin, isPortTaken, installDeps, getNodePackageManager }
+const getContract = (pkg, contract) => {
+  const artifact = require(`${pkg}/build/contracts/${contract}.json`)
+  return artifact
+}
+
+const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
+
+module.exports = { findProjectRoot, hasBin, isPortTaken, installDeps, getNodePackageManager, getContract, ANY_ENTITY }
