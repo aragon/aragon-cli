@@ -31,6 +31,7 @@ const { Writable } = require('stream')
 const url = require('url')
 
 const TX_MIN_GAS = 10e6
+const WRAPPER_PORT = 3000
 
 exports.command = 'run'
 
@@ -297,6 +298,10 @@ exports.handler = function ({
         {
           title: 'Start Aragon client',
           task: async (ctx, task) => {
+            if (await isPortTaken(WRAPPER_PORT)) {
+              ctx.portOpen = true
+              return
+            }
             const bin = await getNodePackageManager()
             execa(
               bin,
@@ -326,9 +331,9 @@ exports.handler = function ({
             // Check until the wrapper is served
             const checkWrapperReady = () => {
               setTimeout(async () => {
-                const portTaken = await isPortTaken(3000)
+                const portTaken = await isPortTaken(WRAPPER_PORT)
                 if (portTaken) {
-                  opn(`http://localhost:3000/#/${ctx.daoAddress}`)
+                  opn(`http://localhost:${WRAPPER_PORT}/#/${ctx.daoAddress}`)
                 } else {
                   checkWrapperReady()
                 }
@@ -349,6 +354,9 @@ exports.handler = function ({
   }
 
   return tasks.run().then(async (ctx) => {
+    if (ctx.portOpen) {
+      reporter.warning(`Server already listening at port ${WRAPPER_PORT}, skipped starting Aragon`)
+    }
 
     reporter.info(`You are now ready to open your app in Aragon.`)
 
