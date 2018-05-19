@@ -14,7 +14,11 @@ exports.handler = async function ({ reporter, module, bump, cwd, network, apm: a
   const versions = await APM(web3, apmOptions).getAllVersions(module.appName)
   reporter.info(`${module.appName} has ${versions.length} published versions`)
   versions.map((version) => {
-    reporter.success(`${version.version}: ${version.contractAddress} ${version.content.provider}:${version.content.location}`)
+    if (version === undefined) {
+      reporter.error('Version not found in provider')
+    } else {
+      reporter.success(`${version.version}: ${version.contractAddress} ${version.content.provider}:${version.content.location}`)
+    }
   })
   process.exit()
 }
