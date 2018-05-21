@@ -160,8 +160,8 @@ exports.handler = function ({
         {
           title: 'Download wrapper',
           task: (ctx, task) => {
-            const WRAPPER_COMMIT = '5e4bb9f803ab274db190ebc98b1e3ac77be8ba1f'
-            const WRAPPER_BRANCH = 'remotes/origin/master'
+            const WRAPPER_COMMIT = '4c098adefc3ad5dca002b1d656703ea1f2aab15d'
+            const WRAPPER_BRANCH = 'remotes/origin/local-environment'
             const WRAPPER_PATH = `${os.homedir()}/.aragon/wrapper-${WRAPPER_COMMIT}`
             ctx.wrapperPath = WRAPPER_PATH
 
@@ -197,26 +197,13 @@ exports.handler = function ({
               return
             }
             const bin = await getNodePackageManager()
-            execa(
-              bin,
-              ['start'],
-              {
-                cwd: ctx.wrapperPath,
-                env: {
-                  BROWSER: 'none',
-                  REACT_APP_IPFS_GATEWAY: `http://${apmOptions.ipfs.rpc.host}:8080/ipfs`,
-                  REACT_APP_IPFS_RPC: url.format({
-                    protocol: apmOptions.ipfs.rpc.protocol,
-                    hostname: apmOptions.ipfs.rpc.host,
-                    port: apmOptions.ipfs.rpc.port
-                  }),
-                  REACT_APP_DEFAULT_ETH_NODE: network.provider.connection._url,
-                  REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens
-                }
+            const startArguments = {
+              cwd: ctx.wrapperPath,
+              env: {
+                REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens
               }
-            ).catch((err) => {
-              throw new Error(err)
-            })
+            }
+            execa(bin, ['run', 'start:local'], startArguments).catch((err) => { throw new Error(err) })
           }
         },
         {
