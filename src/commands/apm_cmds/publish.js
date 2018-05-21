@@ -17,6 +17,7 @@ const execa = require('execa')
 const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
+const startIPFS = require('../ipfs')
 
 exports.command = 'publish [contract]'
 
@@ -58,7 +59,6 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, contr
 
   // Set `appId`
   artifact.appId = namehash.hash(artifact.appName)
-  delete artifact.appName
 
   // Set ABI
   const contractInterface = await readJson(contractInterfacePath)
@@ -152,6 +152,8 @@ exports.task = function ({
   ignore,
   automaticallyBump
 }) {
+  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
+  const apm = APM(web3, apmOptions)
   return new TaskList([
     {
       title: 'Preflight checks for publishing to APM',
@@ -176,9 +178,9 @@ exports.task = function ({
           task: async (ctx) => {
             let repo = { version: '0.0.0' }
             try {
-              repo = await ctx.apm.getLatestVersion(module.appName)
+              repo = await apm.getLatestVersion(module.appName)
             } catch (e) {
-              if (ctx.apm.validInitialVersions.indexOf(ctx.version) == -1) {
+              if (apm.validInitialVersions.indexOf(ctx.version) == -1) {
                 throw new Error('Invalid initial version, it can only be 0.0.1, 0.1.0 or 1.0.0. Check your arapp file.')
               } else {
                 ctx.isMajor = true // consider first version as major
@@ -190,7 +192,7 @@ exports.task = function ({
               throw new Error('Version is already published, please bump it using `aragon apm version [major, minor, patch]`')
             }
 
-            const isValid = await ctx.apm.isValidBump(module.appName, repo.version, ctx.version)
+            const isValid = await apm.isValidBump(module.appName, repo.version, ctx.version)
 
             if (!isValid) {
               throw new Error('Version bump is not valid, you have to respect APM bumps policy. Check version upgrade rules in documentation https://hack.aragon.one/docs/aragonos-ref.html#631-version-upgrade-rules')
@@ -208,13 +210,11 @@ exports.task = function ({
       enabled: () => web3Utils.isAddress(contract)
     },
     {
-      title: 'Deploying contract',
+      title: 'Deploy contract',
       task: async (ctx) => {
         const deployTaskParams = { contract: deploy.arappContract(), reporter, network, cwd, web3 }
         
-        const { deployedContract } = await deploy.task(deployTaskParams)
-
-        ctx.contract = deployedContract
+        return await deploy.task(deployTaskParams)
       },
       enabled: ctx => (contract && !web3Utils.isAddress(contract)) || (!contract && ctx.isMajor && !reuse) || automaticallyBump
     },
@@ -223,7 +223,7 @@ exports.task = function ({
       task: async (ctx, task) => {
         let nextMajorVersion
         try {
-          const { version } = await ctx.apm.getLatestVersion(module.appName)
+          const { version } = await apm.getLatestVersion(module.appName)
           nextMajorVersion = parseInt(version.split('.')[0]) + 1
         } catch (_) {
           ctx.version = '1.0.0'
@@ -246,7 +246,7 @@ exports.task = function ({
           task.output = 'No contract address provided, using previous one'
 
           try {
-            const { contract } = ctx.apm.getLatestVersion(module.appName)
+            const { contract } = apm.getLatestVersion(module.appName)
             ctx.contract = contract
             return `Using ${contract}`
           } catch (err) {
@@ -291,6 +291,10 @@ exports.task = function ({
       }
     },
     {
+      title: 'Check IPFS',
+      task: () => startIPFS.task({ apmOptions }),
+    },
+    {
       title: 'Prepare files for publishing',
       task: async (ctx, task) => {
         const pathToPublish = await prepareFilesForPublishing(files, ignore)
@@ -316,13 +320,14 @@ exports.task = function ({
         const from = accounts[0]
 
         try {
-          const transaction = await ctx.apm.publishVersion(
+          const transaction = await apm.publishVersion(
             from,
             module.appName,
             ctx.version,
             provider,
             ctx.pathToPublish,
-            ctx.contract
+            ctx.contract,
+            from
           )
           // Fix because APM.js gas comes with decimals and from doesn't work
           transaction.from = from
@@ -346,11 +351,7 @@ exports.handler = async (args) => {
 
   const web3 = await ensureWeb3(network)
 
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
-
-  const apm = APM(web3, apmOptions)
-
-  return exports.task({ ...args, web3 }).run({ web3, apm })
+  return exports.task({ ...args, web3 }).run({ web3 })
     .then(() => { process.exit() })
     .catch(() => { process.exit() })
 }

@@ -30,7 +30,7 @@ const printContent = (content) => {
   return `${content.provider}:${content.location}`.slice(0,25) + '...'
 }
 
-exports.handler = async function ({ reporter, dao, network, apm }) {
+exports.handler = async function ({ reporter, dao, network, apm: apmOptions }) {
   knownApps = listApps()
   const web3 = await ensureWeb3(network)
 
@@ -41,7 +41,7 @@ exports.handler = async function ({ reporter, dao, network, apm }) {
         task.output = `Fetching apps for ${dao}...`
 
         return new Promise((resolve, reject) => {
-          initAragonJS(dao, apm['ens-registry'], {
+          initAragonJS(dao, apmOptions['ens-registry'], {
             provider: web3.currentProvider,
             onApps: apps => {
               ctx.apps = apps
@@ -62,17 +62,23 @@ exports.handler = async function ({ reporter, dao, network, apm }) {
   return tasks.run()
     .then((ctx) => {
       reporter.success(`Successfully fetched DAO apps for ${ctx.daoAddress}`)
-
       const appsContent = ctx.apps.map(
-        ({ appId, proxyAddress, codeAddress, content }) => 
-        ([ printAppName(appId), proxyAddress, printContent(content)])
+        ({ appId, proxyAddress, codeAddress, content, appName, version }) => 
+        ([ appName ? `${appName}@v${version}`: printAppName(appId), proxyAddress, printContent(content)])
       )
+
+      // filter registry name to make it shorter
+      // TODO: Add flag to turn off
+      const filteredContent = appsContent.map((row) => {
+        row[0] = row[0].replace('.aragonpm.eth', '')
+        return row
+      })
 
       const table = new Table({
         head: ['App', 'Proxy address', 'Content'].map(x => x.white),
       })
 
-      appsContent.forEach(row => table.push(row))
+      filteredContent.forEach(row => table.push(row))
 
       console.log(table.toString())
       process.exit() // force exit, as aragonjs hangs
