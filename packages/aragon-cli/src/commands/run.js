@@ -9,24 +9,25 @@ const APM = require('@aragon/apm')
 const publish = require('./apm_cmds/publish')
 const devchain = require('./devchain')
 const deploy = require('./deploy')
+const newDAO = require('./dao_cmds/new')
+const install = require('./dao_cmds/install')
+const startIPFS = require('./ipfs')
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const os = require('os')
 const fs = require('fs-extra')
 const opn = require('opn')
 const execa = require('execa')
-const {
-  isIPFSInstalled,
-  startIPFSDaemon,
-  isIPFSCORS,
-  setIPFSCORS
-} = require('../helpers/ipfs-daemon')
+
 const {
   findProjectRoot,
   isPortTaken,
   installDeps,
-  getNodePackageManager
+  getNodePackageManager,
+  getContract,
+  ANY_ENTITY
 } = require('../util')
+
 const { Writable } = require('stream')
 const url = require('url')
 
@@ -59,11 +60,6 @@ exports.builder = function (yargs) {
   })
 }
 
-const getContract = (pkg, contract) => {
-  const artifact = require(`${pkg}/build/contracts/${contract}.json`)
-  return artifact
-}
-
 const setPermissions = async (web3, sender, aclAddress, permissions) => {
   const acl = new web3.eth.Contract(
     getContract('@aragon/os', 'ACL').abi,
@@ -71,15 +67,13 @@ const setPermissions = async (web3, sender, aclAddress, permissions) => {
   )
   return Promise.all(
     permissions.map(([who, where, what]) =>
-      acl.methods.createPermission(who, where, '0x' + keccak256(what), who).send({
+      acl.methods.createPermission(who, where, what, who).send({
         from: sender,
-        gasLimit: TX_MIN_GAS
+        gasLimit: 1e6
       })
     )
   )
 }
-
-const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
 
 exports.handler = function ({
     // Globals
@@ -109,98 +103,28 @@ exports.handler = function ({
         }
       },
       task: async (ctx, task) => {
-        const { web3, accounts, privateKeys } = await devchain.task({ port, reset, showAccounts })
-        ctx.web3 = web3
-        ctx.accounts = accounts
-        ctx.privateKeys = privateKeys
-
-        if (ctx.accounts.length == 0) throw new Error("Devchain started with no accounts")
+        return await devchain.task({ port, reset, showAccounts })
       }
     },
     {
-      title: 'Start IPFS',
-      task: async (ctx, task) => {
-        // If the dev manually set their IPFS node, skip install and running check
-        if (apmOptions.ipfs.rpc.default) {
-          const installed = await isIPFSInstalled()
-          if (!installed) {
-            setTimeout(() => opn('https://ipfs.io/docs/install'), 2500)
-            throw new Error(`
-              Running your app requires IPFS. Opening install instructions in your browser`
-            )
-          } else {
-            const running = await isPortTaken(apmOptions.ipfs.rpc.port)
-            if (!running) {
-              task.output = 'Starting IPFS at port: ' + apmOptions.ipfs.rpc.port
-              await startIPFSDaemon()
-              await setIPFSCORS(apmOptions.ipfs.rpc)
-            } else {
-              task.output = 'IPFS is started, checking CORS config'
-              await setIPFSCORS(apmOptions.ipfs.rpc)
-              task.skip('Connected to IPFS daemon ar port: '+ apmOptions.ipfs.rpc.port)
-            }
-          }
-        } else {
-          await isIPFSCORS(apmOptions.ipfs.rpc)
-          task.skip('Connecting to provided IPFS daemon')
-        }
-      }
+      title: 'Check IPFS',
+      task: () => startIPFS.task({ apmOptions }),
     },
-    {
-      title: 'Fetching DAOFactory from on-chain templates',
-      task: async(ctx, task) => {
-        ctx.ens = require('@aragon/aragen').ens
-        ctx.apm = APM(ctx.web3, {
-          ipfs: apmOptions.ipfs.rpc,
-          ensRegistryAddress: ctx.ens
-        })
-
-        ctx.contracts = {}
-        try {
-          const demTemplate = await ctx.apm.getLatestVersionContract('democracy-template.aragonpm.eth')
-          const fac = await new ctx.web3.eth.Contract(
-            getContract('@aragon/templates-beta', 'DemocracyTemplate').abi,
-            demTemplate
-          ).methods.fac().call()
-          ctx.contracts['DAOFactory'] = fac
-        } catch (err) {
-          console.error(`${err}\nTransaction reverted, try using 'aragon run' or 'aragon devchain'`)
-          process.exit()
-        }
-      },
-    },
-    {
+    { 
       title: 'Create DAO',
-      task: async (ctx, task) => {
-        const factory = new ctx.web3.eth.Contract(
-          getContract('@aragon/os', 'DAOFactory').abi,
-          ctx.contracts['DAOFactory']
-        )
-
-        const { events } = await factory.methods.newDAO(ctx.accounts[0]).send({
-          from: ctx.accounts[0],
-          gas: TX_MIN_GAS
-        })
-        ctx.daoAddress = events['DeployDAO'].returnValues.dao
-
-        const kernel = new ctx.web3.eth.Contract(
-          getContract('@aragon/os', 'Kernel').abi, ctx.daoAddress
-        )
-        const aclAddress = await kernel.methods.acl().call()
-        ctx.aclAddress = aclAddress
-      }
+      task: (ctx) => newDAO.task({ web3: ctx.web3, reporter, apmOptions }),
     },
     {
-      title: 'Set DAO permissions',
+      title: 'Initializing DAO permissions',
       task: (ctx, task) =>
         setPermissions(ctx.web3, ctx.accounts[0], ctx.aclAddress, [
-          [ANY_ENTITY, ctx.daoAddress, 'APP_MANAGER_ROLE']
+          [ANY_ENTITY, ctx.daoAddress, ctx.appManagerRole]
         ])
     },
     {
       title: 'Publish APM package',
       task: (ctx) => {
-        return publish.task({
+        const publishParams = {
           alreadyCompiled: true,
           provider: 'ipfs',
           files,
@@ -212,54 +136,23 @@ exports.handler = function ({
           web3: ctx.web3,
           apm: apmOptions,
           automaticallyBump: true
-        })
-      }
+        }
+        return publish.task(publishParams)
+      },
     },
     {
       title: 'Install app',
-      task: () => new TaskList([
-        {
-          title: 'Deploy proxy',
-          task: async (ctx) => {
-            const kernel = new ctx.web3.eth.Contract(
-              getContract('@aragon/os', 'Kernel').abi,
-              ctx.daoAddress
-            )
-
-            // Use latest APM version
-            const { contractAddress } = await ctx.apm.getLatestVersion(module.appName)
-
-            const { events } = await kernel.methods.newAppInstance(
-              namehash.hash(module.appName),
-              contractAddress
-            ).send({
-              from: ctx.accounts[0],
-              gasLimit: TX_MIN_GAS
-            })
-            
-            ctx.appAddress = events['NewAppProxy'].returnValues.proxy
-          }
-        },
-        {
-          title: 'Set permissions',
-          task: async (ctx, task) => {
-            if (!module.roles || module.roles.length === 0) {
-              throw new Error('You have no permissions defined in your arapp.json\nThis is required for your app to properly show up.')
-              return
-            }
-
-            const permissions = module.roles
-              .map((role) => [ANY_ENTITY, ctx.appAddress, role.id])
-
-            return setPermissions(
-              ctx.web3,
-              ctx.accounts[0],
-              ctx.aclAddress,
-              permissions
-            )
-          }
+      task: (ctx) => {
+        const installParams = {
+          dao: ctx.daoAddress,
+          apmRepo: module.appName,
+          apmRepoVersion: 'latest',
+          web3: ctx.web3,
+          reporter,
+          apmOptions,
         }
-      ])
+        return install.task(installParams)
+      }
     },
     {
       title: 'Open DAO',
@@ -267,8 +160,8 @@ exports.handler = function ({
         {
           title: 'Download wrapper',
           task: (ctx, task) => {
-            const WRAPPER_COMMIT = '5e4bb9f803ab274db190ebc98b1e3ac77be8ba1f'
-            const WRAPPER_BRANCH = 'remotes/origin/master'
+            const WRAPPER_COMMIT = '4c098adefc3ad5dca002b1d656703ea1f2aab15d'
+            const WRAPPER_BRANCH = 'remotes/origin/local-environment'
             const WRAPPER_PATH = `${os.homedir()}/.aragon/wrapper-${WRAPPER_COMMIT}`
             ctx.wrapperPath = WRAPPER_PATH
 
@@ -298,31 +191,19 @@ exports.handler = function ({
         {
           title: 'Start Aragon client',
           task: async (ctx, task) => {
+            ctx.ens = apmOptions['ens-registry']
             if (await isPortTaken(WRAPPER_PORT)) {
               ctx.portOpen = true
               return
             }
             const bin = await getNodePackageManager()
-            execa(
-              bin,
-              ['start'],
-              {
-                cwd: ctx.wrapperPath,
-                env: {
-                  BROWSER: 'none',
-                  REACT_APP_IPFS_GATEWAY: `http://${apmOptions.ipfs.rpc.host}:8080/ipfs`,
-                  REACT_APP_IPFS_RPC: url.format({
-                    protocol: apmOptions.ipfs.rpc.protocol,
-                    hostname: apmOptions.ipfs.rpc.host,
-                    port: apmOptions.ipfs.rpc.port
-                  }),
-                  REACT_APP_DEFAULT_ETH_NODE: network.provider.connection._url,
-                  REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens
-                }
+            const startArguments = {
+              cwd: ctx.wrapperPath,
+              env: {
+                REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens
               }
-            ).catch((err) => {
-              throw new Error(err)
-            })
+            }
+            execa(bin, ['run', 'start:local'], startArguments).catch((err) => { throw new Error(err) })
           }
         },
         {
@@ -365,12 +246,12 @@ exports.handler = function ({
     }
 
     const registry = module.appName.split('.').slice(1).join('.')
-    const registryAddr = await ctx.apm.ensResolve(registry)
 
+    console.log()
     reporter.info(`This is the configuration for your development deployment:
     ${chalk.bold('Ethereum Node')}: ${network.provider.connection._url}
-    ${chalk.bold(`APM registry (${registry})`)}: ${registryAddr}
     ${chalk.bold('ENS registry')}: ${ctx.ens}
+    ${chalk.bold(`APM registry`)}: ${registry}
     ${chalk.bold('DAO address')}: ${ctx.daoAddress}
 
     ${(client !== false) ?

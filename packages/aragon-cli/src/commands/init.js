@@ -5,6 +5,7 @@ const execa = require('execa')
 const path = require('path')
 const fs = require('fs-extra')
 const { installDeps } = require('../util')
+const defaultAPMName = require('../helpers/default-apm')
 
 exports.command = 'init <name> [template]'
 
@@ -41,9 +42,7 @@ exports.builder = (yargs) => {
 }
 
 exports.handler = function ({ reporter, name, template }) {
-  if (name.split('.').length == 1) {
-    name = name + '.aragonpm.eth'
-  }
+  name = defaultAPMName(name)
   
   const basename = name.split('.')[0]
   const tasks = new TaskList([
