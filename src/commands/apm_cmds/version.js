@@ -8,7 +8,7 @@ exports.describe = 'Bump the application version'
 
 exports.builder = function (yargs) {
   return yargs.positional('bump', {
-    choices: ['major', 'minor', 'patch']
+    description: 'Type of bump (major, minor or patch) or version number',
   })
 }
 
@@ -16,7 +16,12 @@ exports.handler = async function ({ reporter, bump, cwd }) {
   const manifestLocation = await findUp('arapp.json', { cwd })
 
   let manifest = JSON.parse(fs.readFileSync(manifestLocation))
-  manifest.version = semver.inc(manifest.version, bump)
+
+  manifest.version = semver.valid(bump) ? semver.valid(bump) : semver.inc(manifest.version, bump)
+   
+  if (!manifest.version) {
+  	throw new Error('Invalid bump. Please use a version number or a valid bump (major, minor or patch)')
+  }
 
   fs.writeFileSync(manifestLocation, JSON.stringify(manifest, null, 2))
   reporter.success(`New version: ${manifest.version}`)

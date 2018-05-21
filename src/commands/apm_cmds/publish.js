@@ -47,6 +47,13 @@ exports.builder = function (yargs) {
   }).option('ignore', {
     description: 'A gitignore pattern of files to ignore. Specify multiple times to add multiple patterns.',
     array: true
+  }).option('ipfs-check', {
+    description: 'Whether to have publish start IPFS if not started',
+    boolean: true,
+    default: true
+  }).option('publish-dir', {
+    description: 'Temporary directory where files will be copied before publishing. Defaults to temp dir.',
+    default: null,
   })
 }
 
@@ -91,10 +98,7 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, contr
  * @param {string} ignorePatterns An array of glob-like pattern of files to ignore
  * @return {string} The path to the temporary directory
  */
-async function prepareFilesForPublishing (files = [], ignorePatterns = null) {
-  // Create temporary directory
-  const { path: tmpDir } = await tmp.dir()
-
+async function prepareFilesForPublishing (tmpDir, files = [], ignorePatterns = null) {
   // Ignored files filter
   const filter = ignore().add(ignorePatterns)
   const projectRoot = findProjectRoot()
@@ -155,7 +159,9 @@ exports.task = function ({
   key,
   files,
   ignore,
-  automaticallyBump
+  automaticallyBump,
+  ipfsCheck,
+  publishDir,
 }) {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
@@ -298,14 +304,22 @@ exports.task = function ({
     {
       title: 'Check IPFS',
       task: () => startIPFS.task({ apmOptions }),
+      enabled: () => ipfsCheck,
     },
     {
       title: 'Prepare files for publishing',
       task: async (ctx, task) => {
-        const pathToPublish = await prepareFilesForPublishing(files, ignore)
-        ctx.pathToPublish = pathToPublish
 
-        return `Files copied to temporary directory: ${pathToPublish}`
+        // Create temporary directory
+        if (!publishDir) {
+          const { path: tmpDir } = await tmp.dir()
+          publishDir = tmpDir
+        }
+        
+        await prepareFilesForPublishing(publishDir, files, ignore)
+        ctx.pathToPublish = publishDir
+
+        return `Files copied to temporary directory: ${ctx.pathToPublish}`
       }
     },
     {
