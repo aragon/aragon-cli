@@ -58,12 +58,12 @@ This command does the following:
 
 The local chain is started at `PORT`, which defaults to 8545.
 
-The publish step of the app works exactly as `aragon publish`, described below.
+The publish step of the app works exactly as `aragon apm publish`, described below.
 
 #### `aragon apm publish` or `apm publish`
 
 ```
-$ apm publish [CONTRACT_ADDRESS or CONTRACT_NAME] [--files PATTERN] [--ignore PATTERN] [--skip-confirm] [--only-artifacts]
+$ apm apm publish [CONTRACT_ADDRESS or CONTRACT_NAME] [--files PATTERN] [--ignore PATTERN] [--skip-confirm] [--only-artifacts]
 ```
 
 Publishes a new (or the first!) version of your app.
@@ -99,8 +99,6 @@ View a list of published versions for the app in the current directory.
 ### DAOs
 
 #### `aragon apm grant` or `apm grant`
-
-**Note: This command is deprecated and will be replaced with a new one in the near future**
 
 ```
 $ apm grant <ADDRESS> [--skip-confirm]
