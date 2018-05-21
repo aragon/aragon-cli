@@ -308,8 +308,8 @@ exports.task = function ({
       task: async (ctx, task) => {
         const dir = onlyArtifacts ? cwd : ctx.pathToPublish
         const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
-        // reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
-        // reporter.debug(`Saved artifact in ${dir}/artifact.json`)
+        reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
+        reporter.info(`Saved artifact in ${dir}/artifact.json`)
       }
     },
     {

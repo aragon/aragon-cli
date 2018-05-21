@@ -56,7 +56,7 @@ exports.task = async ({ reporter, network, cwd, contract, web3 }) => {
 
 				const contract = new web3.eth.Contract(abi, { data: bytecode })
 				const accounts = await web3.eth.getAccounts()
-				const instance = await contract.deploy().send({ from: accounts[0], gas: 4e6 })
+				const instance = await contract.deploy().send({ from: accounts[0], gas: 6.9e6 })
 
 				if (!instance.options.address) {
 					throw new Error("Contract deployment failed")
