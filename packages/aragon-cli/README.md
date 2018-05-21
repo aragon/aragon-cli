@@ -17,23 +17,9 @@ npm install -g @aragon/cli
 
 ## Configuration
 
-In order to publish apps you need to create a keyfile in your home directory with the following values:
+Aragon CLI uses Truffle configuration files for the web3 provider. Running any command with `--network x` will tell the CLI to use the configuration for the network `x` in the truffle config. If no network is passed, it will default to the `development` network.
 
-```js
-{
-  "key": "<snip>"
-  "rpc": "wss://rinkeby.infura.io/ws",
-  "ens": "0xfbae32d1cde628bc45f51efc8cc4fa1415447e"
-}
-```
-
-> Note that the ENS registry address is an Aragon deployment
-
-Please note that you need to replace `<snip>` with private key with **no password**. This is a temporary measure and will be changed in the near future. **Please only use this on testnets for development**.
-
-Save the file as `.localkey.json` in your home directory. You can now publish apps.
-
-To use other networks, you can change the `rpc` and `ens` keys.
+All other configuration must be done through CLI flags for now. Do `aragon [command] --help` for more information about the configuration options for each command.
 
 ## Usage
 
@@ -72,12 +58,12 @@ This command does the following:
 
 The local chain is started at `PORT`, which defaults to 8545.
 
-The publish step of the app works exactly as `aragon publish`, described below.
+The publish step of the app works exactly as `aragon apm publish`, described below.
 
-#### `aragon publish`
+#### `aragon apm publish` or `apm publish`
 
 ```
-$ aragon publish [CONTRACT_ADDRESS] [--files PATTERN] [--ignore PATTERN] [--skip-confirm] [--only-artifacts]
+$ apm apm publish [CONTRACT_ADDRESS or CONTRACT_NAME] [--files PATTERN] [--ignore PATTERN] [--skip-confirm] [--only-artifacts]
 ```
 
 Publishes a new (or the first!) version of your app.
@@ -92,57 +78,32 @@ Before publishing, your smart contract source code is scanned to generate an art
 
 If `--skip-confirm` is specified the command will not wait for the transaction to receive confirmations.
 
-#### `aragon version`
+#### `aragon apm version` or `apm version`
 
 ```
-$ aragon version <BUMP>
+$ apm version <BUMP>
 ```
 
 Bumps the version of your Aragon app, where a valid `BUMP` is either *major*, *minor* or *patch*.
 
 Note that you are only allowed to release a version with a new smart contract address if the bump specified is major.
 
-#### `aragon versions`
+#### `aragon apm versions` or `apm versions`
 
 ```
-$ aragon versions
+$ apm versions
 ```
 
 View a list of published versions for the app in the current directory.
 
 ### DAOs
 
-#### `aragon grant`
-
-**Note: This command is deprecated and will be replaced with a new one in the near future**
+#### `aragon apm grant` or `apm grant`
 
 ```
-$ aragon grant <ADDRESS> [--skip-confirm]
+$ apm grant <ADDRESS> [--skip-confirm]
 ```
 
 Grants permission for `ADDRESS` to interact with the APM repository of the app in the current directory.
 
 If `--skip-confirm` is specified the command will not wait for the transaction to receive confirmations.
-
-## Recipes
-
-### Creating and publishing an application
-
-```bash
-aragon init polls.aragonpm.test
-cd polls
-aragon publish
-```
-
-### Publishing a new version
-
-```bash
-aragon version minor
-aragon publish
-```
-
-### Scaffolding from a custom template
-
-```bash
-aragon init polls.aragonpm.test username/gh-repo
-```
