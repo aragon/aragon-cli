@@ -39,9 +39,9 @@ exports.command = 'run'
 exports.describe = 'Run the current app locally'
 
 exports.builder = function (yargs) {
-  return yargs.option('no-client', {
+  return yargs.option('client', {
     description: 'Just run the smart contracts, without the Aragon client',
-    default: false,
+    default: true,
     boolean: true
   }).option('files', {
     description: 'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
@@ -191,7 +191,6 @@ exports.handler = function ({
         {
           title: 'Start Aragon client',
           task: async (ctx, task) => {
-            ctx.ens = apmOptions['ens-registry']
             if (await isPortTaken(WRAPPER_PORT)) {
               ctx.portOpen = true
               return
@@ -224,7 +223,7 @@ exports.handler = function ({
           }
         }
       ]),
-      enabled: () => client !== false
+      enabled: () => client === true
     }
   ])
 
@@ -234,7 +233,7 @@ exports.handler = function ({
     manifest = fs.readJsonSync(manifestPath)
   }
 
-  return tasks.run().then(async (ctx) => {
+  return tasks.run({ ens: apmOptions['ens-registry'] }).then(async (ctx) => {
     if (ctx.portOpen) {
       reporter.warning(`Server already listening at port ${WRAPPER_PORT}, skipped starting Aragon`)
     }
