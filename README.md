@@ -107,3 +107,25 @@ $ apm grant <ADDRESS> [--skip-confirm]
 Grants permission for `ADDRESS` to interact with the APM repository of the app in the current directory.
 
 If `--skip-confirm` is specified the command will not wait for the transaction to receive confirmations.
+
+#### `aragon dao apps` or `dao apps`
+
+```
+$ dao apps <your-dao-address>
+```
+
+Shows your installed apps along with their Proxy and IPFS addresses.
+
+#### `aragon dao acl` or `dao acl`
+
+```
+$ dao acl <your-dao-address>
+```
+
+Shows the roles defined in your DAO with all the relevant info: where they are defined and to whom are granted.
+
+### Misc
+
+#### `aragon devchain`
+
+Starts a local ganache test chain for development. This is done automatically with `aragon run` also if you don't have one already running.
