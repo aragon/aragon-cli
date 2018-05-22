@@ -27,8 +27,7 @@ exports.describe = 'Publish a new version of the application'
 
 exports.builder = function (yargs) {
   return yargs.positional('contract', {
-    description: 'The address or name of the contract to publish in this version. If it isn\' provided, it will default to the current version\'s contract.',
-    default: 'arapp',
+    description: 'The address or name of the contract to publish in this version. If it isn\' provided, it will default to the current version\'s contract.'
   }).option('only-artifacts', {
     description: 'Whether just generate artifacts file without publishing',
     default: false,
