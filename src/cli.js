@@ -20,7 +20,7 @@ const cmd = require('yargs')
       cmd.middlewares = MIDDLEWARES
       return cmd
     }
-  }).strict()
+  }) //.strict()
 
 cmd.alias('h', 'help')
 cmd.alias('v', 'version')

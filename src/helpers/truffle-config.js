@@ -13,11 +13,12 @@ const getTruffleConfig = () => {
       return truffleConfig
     } 
   } catch (err) {
+    console.log(err)
     // This means you are running init
     return null
   }
 
-  throw new Error(`Didn't found any truffle.js file`)
+  throw new Error(`Didn't find any truffle.js file`)
 }
 
 const getENSAddress = (network) => {
