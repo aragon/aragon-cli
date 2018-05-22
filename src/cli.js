@@ -57,8 +57,10 @@ cmd.option('network', {
       }
     }
 
+    const skipNetworkCommands = ['init', 'devchain', 'ipfs']
+
     if (process.argv.length >= 3) {
-      if (process.argv[2] == 'init') {
+      if (skipNetworkCommands.indexOf(process.argv[2]) >= 0) {
         return {}
       }
     }
@@ -119,6 +121,7 @@ cmd.epilogue('For more information, check out https://hack.aragon.one')
 
 // Run
 const reporter = new ConsoleReporter()
+reporter.debug(JSON.stringify(process.argv))
 cmd.fail((msg, err, yargs) => {
   if (!err) yargs.showHelp()
   reporter.error(msg || err.message || 'An error occurred')

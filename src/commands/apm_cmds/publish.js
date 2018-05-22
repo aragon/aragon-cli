@@ -26,35 +26,36 @@ exports.command = 'publish [contract]'
 exports.describe = 'Publish a new version of the application'
 
 exports.builder = function (yargs) {
-  return yargs.positional('contract', {
-    description: 'The address or name of the contract to publish in this version. If it isn\' provided, it will default to the current version\'s contract.'
-  }).option('only-artifacts', {
-    description: 'Whether just generate artifacts file without publishing',
-    default: false,
-    boolean: true
-  }).option('provider', {
-    description: 'The APM storage provider to publish files to',
-    default: 'ipfs',
-    choices: ['ipfs']
-  }).option('reuse', {
-    description: 'Whether to reuse the previous version contract and skip deployment on non-major versions',
-    default: false,
-    boolean: true
-  }).option('files', {
-    description: 'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
-    default: ['.'],
-    array: true
-  }).option('ignore', {
-    description: 'A gitignore pattern of files to ignore. Specify multiple times to add multiple patterns.',
-    array: true
-  }).option('ipfs-check', {
-    description: 'Whether to have publish start IPFS if not started',
-    boolean: true,
-    default: true
-  }).option('publish-dir', {
-    description: 'Temporary directory where files will be copied before publishing. Defaults to temp dir.',
-    default: null,
-  })
+  return deploy.builder(yargs) // inherit deploy options
+    .positional('contract', {
+      description: 'The address or name of the contract to publish in this version. If it isn\' provided, it will default to the current version\'s contract.'
+    }).option('only-artifacts', {
+      description: 'Whether just generate artifacts file without publishing',
+      default: false,
+      boolean: true
+    }).option('provider', {
+      description: 'The APM storage provider to publish files to',
+      default: 'ipfs',
+      choices: ['ipfs']
+    }).option('reuse', {
+      description: 'Whether to reuse the previous version contract and skip deployment on non-major versions',
+      default: false,
+      boolean: true
+    }).option('files', {
+      description: 'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
+      default: ['.'],
+      array: true
+    }).option('ignore', {
+      description: 'A gitignore pattern of files to ignore. Specify multiple times to add multiple patterns.',
+      array: true
+    }).option('ipfs-check', {
+      description: 'Whether to have publish start IPFS if not started',
+      boolean: true,
+      default: true
+    }).option('publish-dir', {
+      description: 'Temporary directory where files will be copied before publishing. Defaults to temp dir.',
+      default: null,
+    })
 }
 
 async function generateApplicationArtifact (web3, cwd, outputPath, module, contract, reporter) {
@@ -162,6 +163,7 @@ exports.task = function ({
   automaticallyBump,
   ipfsCheck,
   publishDir,
+  init,
 }) {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
@@ -223,7 +225,7 @@ exports.task = function ({
     {
       title: 'Deploy contract',
       task: async (ctx) => {
-        const deployTaskParams = { contract: deploy.arappContract(), reporter, network, cwd, web3 }
+        const deployTaskParams = { contract: deploy.arappContract(), init, reporter, network, cwd, web3, apmOptions }
         
         return await deploy.task(deployTaskParams)
       },
@@ -328,7 +330,7 @@ exports.task = function ({
         const dir = onlyArtifacts ? cwd : ctx.pathToPublish
         const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
         reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
-        reporter.info(`Saved artifact in ${dir}/artifact.json`)
+        return `Saved artifact in ${dir}/artifact.json`
       }
     },
     {
