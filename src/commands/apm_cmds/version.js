@@ -2,13 +2,15 @@ const fs = require('fs')
 const findUp = require('find-up')
 const semver = require('semver')
 
-exports.command = 'version <bump>'
+exports.command = 'version [bump]'
 
 exports.describe = 'Bump the application version'
 
 exports.builder = function (yargs) {
   return yargs.positional('bump', {
     description: 'Type of bump (major, minor or patch) or version number',
+    type: 'string',
+    default: 'patch'
   })
 }
 

@@ -50,27 +50,36 @@ cmd.option('network', {
   description: 'The network in your truffle.js that you want to use',
   default: 'development',
   coerce: (network) => {
-    const truffleConfig = getTruffleConfig()
-    if (truffleConfig) {
-      const truffleNetwork = truffleConfig.networks[network]
-      if (!truffleNetwork) {
-        throw new Error(`aragon <command> requires a network '${network}' in your truffle.js. For an example, see http://truffleframework.com/docs/advanced/configuration`)
+    // Catch commands that dont require network and return
+    if (process.argv.length >= 4) {
+      if (process.argv[3] == 'version') {
+        return {}
       }
-      let provider
-      if (truffleNetwork.provider) {
-        provider = truffleNetwork.provider
-      } else if (truffleNetwork.host && truffleNetwork.port) {
-        provider = new Web3.providers.WebsocketProvider(`ws://${truffleNetwork.host}:${truffleNetwork.port}`)
-      } else {
-        provider = new Web3.providers.HttpProvider(`http://localhost:8545`)
-      }
-      truffleNetwork.provider = provider
-      truffleNetwork.name = network
-      return truffleNetwork
-    } else {
-      // This means you are running init
-      return {}
     }
+
+    if (process.argv.length >= 3) {
+      if (process.argv[2] == 'init') {
+        return {}
+      }
+    }
+
+    const truffleConfig = getTruffleConfig()
+
+    const truffleNetwork = truffleConfig.networks[network]
+    if (!truffleNetwork) {
+      throw new Error(`aragon <command> requires a network '${network}' in your truffle.js. For an example, see http://truffleframework.com/docs/advanced/configuration`)
+    }
+    let provider
+    if (truffleNetwork.provider) {
+      provider = truffleNetwork.provider
+    } else if (truffleNetwork.host && truffleNetwork.port) {
+      provider = new Web3.providers.WebsocketProvider(`ws://${truffleNetwork.host}:${truffleNetwork.port}`)
+    } else {
+      provider = new Web3.providers.HttpProvider(`http://localhost:8545`)
+    }
+    truffleNetwork.provider = provider
+    truffleNetwork.name = network
+    return truffleNetwork   
   }
   // conflicts: 'init'
 })
