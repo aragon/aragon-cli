@@ -1,5 +1,5 @@
 const namehash = require('eth-ens-namehash').hash
-const sha3 = require('js-sha3')
+const sha3 = require('sha3')
 const { findProjectRoot } = require('../../../util')
 
 const path = require('path')
