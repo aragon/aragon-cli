@@ -35,6 +35,8 @@ exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions
 		web3 = await ensureWeb3(network)
 	}
 
+	init = init || []
+
 	// Mappings allow to pass certain init parameters that get replaced for their actual value
 	const mappingMask = key => `@ARAGON_${key}`
 	const mappings = { 

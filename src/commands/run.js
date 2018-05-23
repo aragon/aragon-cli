@@ -88,6 +88,7 @@ exports.handler = function ({
     accounts,
     reset
   }) {
+  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const showAccounts = accounts
   const tasks = new TaskList([
     {
@@ -110,20 +111,9 @@ exports.handler = function ({
       title: 'Check IPFS',
       task: () => startIPFS.task({ apmOptions }),
     },
-    { 
-      title: 'Create DAO',
-      task: (ctx) => newDAO.task({ web3: ctx.web3, reporter, apmOptions }),
-    },
     {
-      title: 'Initializing DAO permissions',
-      task: (ctx, task) =>
-        setPermissions(ctx.web3, ctx.accounts[0], ctx.aclAddress, [
-          [ANY_ENTITY, ctx.daoAddress, ctx.appManagerRole]
-        ])
-    },
-    {
-      title: 'Publish APM package',
-      task: (ctx) => {
+      title: 'Publish app to APM',
+      task: async (ctx) => {
         const publishParams = {
           alreadyCompiled: true,
           provider: 'ipfs',
@@ -135,24 +125,30 @@ exports.handler = function ({
           module,
           web3: ctx.web3,
           apm: apmOptions,
-          automaticallyBump: true
+          automaticallyBump: true,
+          getRepo: true
         }
         return publish.task(publishParams)
       },
     },
-    {
-      title: 'Install app',
+    { 
+      title: 'Create DAO',
       task: (ctx) => {
-        const installParams = {
-          dao: ctx.daoAddress,
-          apmRepo: module.appName,
-          apmRepoVersion: 'latest',
-          web3: ctx.web3,
-          reporter,
-          apmOptions,
+        const roles = ctx.repo.roles.map(role => role.bytes)
+        const fnArgs = [ctx.repo.appId, roles, ctx.accounts[0], '0x']
+
+        const newDAOParams = {
+          template: newDAO.BARE_KIT, 
+          templateVersion: 'latest',
+          fn: 'newInstance', 
+          fnArgs,
+          web3: ctx.web3, 
+          reporter, 
+          apmOptions
         }
-        return install.task(installParams)
-      }
+
+        return newDAO.task(newDAOParams)
+      },
     },
     {
       title: 'Open DAO',

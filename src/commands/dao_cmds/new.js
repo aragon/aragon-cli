@@ -11,6 +11,8 @@ const { getContract } = require('../../util')
 const getRepoTask = require('./utils/getRepoTask')
 
 exports.BARE_KIT = defaultAPMName('bare-kit')
+exports.BARE_INSTANCE_FUNCTION = 'newBareInstance'
+
 exports.command = 'new [template] [template-version]'
 
 exports.describe = 'Create a new DAO'
@@ -31,7 +33,7 @@ exports.builder = yargs => {
   })
   .option('fn', {
     description: 'Function to be called to create instance',
-    default: 'newBareInstance'
+    default: exports.BARE_INSTANCE_FUNCTION
   })
 }
 

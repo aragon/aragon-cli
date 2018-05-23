@@ -18,6 +18,7 @@ const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
 const startIPFS = require('../ipfs')
+const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 
 const MANIFEST_FILE = 'manifest.json'
 
@@ -164,6 +165,7 @@ exports.task = function ({
   ipfsCheck,
   publishDir,
   init,
+  getRepo,
 }) {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
@@ -363,6 +365,11 @@ exports.task = function ({
         } 
       },
       enabled: () => !onlyArtifacts
+    },
+    {
+      title: 'Fetch published repo',
+      task: getRepoTask.task({ apmRepo: module.appName, apm }),
+      enabled: () => getRepo,
     }
   ])
 }
