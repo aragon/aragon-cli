@@ -150,7 +150,8 @@ exports.task = function ({
   key,
   files,
   ignore,
-  automaticallyBump
+  automaticallyBump,
+  ipfsCheck
 }) {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
@@ -293,6 +294,7 @@ exports.task = function ({
     {
       title: 'Check IPFS',
       task: () => startIPFS.task({ apmOptions }),
+      enabled: () => ipfsCheck,
     },
     {
       title: 'Prepare files for publishing',
