@@ -345,7 +345,7 @@ exports.task = function ({
           const errMsg = `${e}\nThis is usually one of these reasons, maybe:
           - An existing version of this package was already deployed, try running 'aragon version' to bump it
           - You are deploying a version higher than the one in the chain`
-          throw new Error(e)
+          throw new Error(errMsg)
         } 
       },
       enabled: () => !onlyArtifacts
