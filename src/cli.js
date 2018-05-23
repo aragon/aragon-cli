@@ -51,8 +51,9 @@ cmd.option('network', {
   default: 'development',
   coerce: (network) => {
     // Catch commands that dont require network and return
+    const skipNetworkSubcommands = ['version', 'new']
     if (process.argv.length >= 4) {
-      if (process.argv[3] == 'version') {
+      if (skipNetworkSubcommands.indexOf(process.argv[3]) >= 'version') {
         return {}
       }
     }
