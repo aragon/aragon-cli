@@ -19,6 +19,8 @@ const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
 const startIPFS = require('../ipfs')
 
+const MANIFEST_FILE = 'manifest.json'
+
 exports.command = 'publish [contract]'
 
 exports.describe = 'Publish a new version of the application'
@@ -94,17 +96,13 @@ async function prepareFilesForPublishing (files = [], ignorePatterns = null) {
   const { path: tmpDir } = await tmp.dir()
 
   // Ignored files filter
-  const filter = ignore()
-    .add(ignorePatterns)
-  
-  const gitignorePath = path.resolve(
-    findProjectRoot(),
-    '.gitignore'
-  )
+  const filter = ignore().add(ignorePatterns)
+  const projectRoot = findProjectRoot()
+
+  const gitignorePath = path.resolve(projectRoot, '.gitignore')
 
   if (pathExistsSync(gitignorePath)) {
-    filter
-      .add(fs.readFileSync(gitignorePath).toString())
+    filter.add(fs.readFileSync(gitignorePath).toString())
   }
 
   function filterIgnoredFiles (src) {
@@ -126,6 +124,13 @@ async function prepareFilesForPublishing (files = [], ignorePatterns = null) {
       })
     })
   )
+
+  const manifestOrigin = path.resolve(projectRoot, MANIFEST_FILE)
+  const manifestDst = path.resolve(tmpDir, MANIFEST_FILE)
+
+  if (!pathExistsSync(manifestDst) && pathExistsSync(manifestOrigin)) {
+    await copy(manifestOrigin, manifestDst)
+  }
 
   return tmpDir
 }
