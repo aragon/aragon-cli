@@ -186,6 +186,9 @@ exports.task = function ({
             try {
               repo = await apm.getLatestVersion(module.appName)
             } catch (e) {
+              if (e.message.indexOf("Invalid content URI") == 0) {
+                return
+              }
               if (apm.validInitialVersions.indexOf(ctx.version) == -1) {
                 throw new Error('Invalid initial version, it can only be 0.0.1, 0.1.0 or 1.0.0. Check your arapp file.')
               } else {
