@@ -10,10 +10,11 @@ exports.builder = function (yargs) {
   return yargs.positional('bump', {
     description: 'Type of bump (major, minor or patch) or version number',
     type: 'string',
-    default: 'patch'
+    default: '1.0.0' 
   })
 }
 
+// TODO: Fix always default bump when network is not development
 exports.handler = async function ({ reporter, bump, cwd }) {
   const manifestLocation = await findUp('arapp.json', { cwd })
 

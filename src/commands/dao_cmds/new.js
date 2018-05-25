@@ -12,18 +12,19 @@ const getRepoTask = require('./utils/getRepoTask')
 
 exports.BARE_KIT = defaultAPMName('bare-kit')
 exports.BARE_INSTANCE_FUNCTION = 'newBareInstance'
+exports.BARE_KIT_DEPLOY_EVENT = 'DeployInstance'
 
-exports.command = 'new [template] [template-version]'
+exports.command = 'new [kit] [kit-version]'
 
 exports.describe = 'Create a new DAO'
 
 exports.builder = yargs => {
-  return yargs.positional('template', {
-    description: 'Name of the template to use creating the DAO',
+  return yargs.positional('kit', {
+    description: 'Name of the kit to use creating the DAO',
     default: exports.BARE_KIT,
   })
-  .positional('template-version', {
-    description: 'Version of the template to be used',
+  .positional('kit-version', {
+    description: 'Version of the kit to be used',
     default: 'latest'
   })
   .option('fn-args', {
@@ -35,31 +36,36 @@ exports.builder = yargs => {
     description: 'Function to be called to create instance',
     default: exports.BARE_INSTANCE_FUNCTION
   })
+  .option('deploy-event', {
+    description: 'Event name that the kit will fire on success',
+    default: exports.BARE_KIT_DEPLOY_EVENT
+  })
 }
 
-exports.task = async ({ web3, reporter, apmOptions, template, templateVersion, fn, fnArgs, skipChecks }) => {
+exports.task = async ({ web3, reporter, apmOptions, kit, kitVersion, fn, fnArgs, skipChecks, deployEvent, kitInstance }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
-  template = defaultAPMName(template)
+  kit = defaultAPMName(kit)
 
   const tasks = new TaskList([
     {
-      title: `Fetching template ${chalk.bold(template)}@${templateVersion}`,
-      task: getRepoTask.task({ apm, apmRepo: template, apmRepoVersion: templateVersion }),
+      title: `Fetching kit ${chalk.bold(kit)}@${kitVersion}`,
+      task: getRepoTask.task({ apm, apmRepo: kit, apmRepoVersion: kitVersion }),
+      enabled: () => !kitInstance,
     },
     {
-      title: 'Create new DAO from template',
+      title: 'Create new DAO from kit',
       task: async (ctx, task) => {
         if (!ctx.accounts) {
           ctx.accounts = await web3.eth.getAccounts()
         }
 
-        const template = new web3.eth.Contract(ctx.repo.abi, ctx.repo.contractAddress)
-        const newInstanceTx = template.methods[fn](...fnArgs)
+        const kit = kitInstance || new web3.eth.Contract(ctx.repo.abi, ctx.repo.contractAddress)
+        const newInstanceTx = kit.methods[fn](...fnArgs)
 
-        const { events } = await newInstanceTx.send({ from: ctx.accounts[0], gas: 5e6 })
-        ctx.daoAddress = events['DeployInstance'].returnValues.dao
+        const { events } = await newInstanceTx.send({ from: ctx.accounts[0], gas: 15e6 })
+        ctx.daoAddress = events[deployEvent].returnValues.dao
       },
     },
     {
@@ -78,10 +84,10 @@ exports.task = async ({ web3, reporter, apmOptions, template, templateVersion, f
   return tasks
 }
 
-exports.handler = async function ({ reporter, network, template, templateVersion, fn, fnArgs, apm: apmOptions }) {
+exports.handler = async function ({ reporter, network, kit, kitVersion, fn, fnArgs, deployEvent, apm: apmOptions }) {
   const web3 = await ensureWeb3(network)
 
-  const task = await exports.task({ web3, reporter, network, apmOptions, template, templateVersion, fn, fnArgs, skipChecks: false })
+  const task = await exports.task({ web3, reporter, network, apmOptions, kit, kitVersion, fn, fnArgs, deployEvent, skipChecks: false })
   return task.run()
     .then((ctx) => {
       reporter.success(`Created DAO: ${chalk.bold(ctx.daoAddress)}`)

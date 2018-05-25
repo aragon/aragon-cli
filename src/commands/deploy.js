@@ -78,6 +78,7 @@ exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions
 					throw new Error("Contract deployment failed")
 				}
 
+				ctx.contractInstance = instance
 				ctx.contract = instance.options.address
 				return ctx.contract
 			}

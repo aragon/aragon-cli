@@ -57,6 +57,13 @@ exports.builder = function (yargs) {
     default: false,
     boolean: true,
     description: 'Reset devchain to snapshot'
+  }).option('kit', {
+    default: newDAO.BARE_KIT,
+    description: "Kit contract name"
+  }).option('kit-init', {
+    description: 'Arguments to be passed to the kit constructor',
+    array: true,
+    default: [],
   })
 }
 
@@ -86,7 +93,9 @@ exports.handler = function ({
     files,
     port,
     accounts,
-    reset
+    reset,
+    kit,
+    kitInit,
   }) {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const showAccounts = accounts
@@ -131,17 +140,37 @@ exports.handler = function ({
         return publish.task(publishParams)
       },
     },
+    {
+      title: 'Deploy Kit',
+      enabled: () => kit != newDAO.BARE_KIT,
+      task: ctx => {
+        const deployParams = {
+          contract: kit,
+          init: kitInit,
+          reporter,
+          network,
+          cwd,
+          web3: ctx.web3,
+          apmOptions,
+        }
+
+        return deploy.task(deployParams)
+      }
+    },
     { 
       title: 'Create DAO',
       task: (ctx) => {
         const roles = ctx.repo.roles.map(role => role.bytes)
-        const fnArgs = [ctx.repo.appId, roles, ctx.accounts[0], '0x']
+        // If no kit was deployed, use default params
+        const fnArgs = ctx.contractInstance ? [] : [ctx.repo.appId, roles, ctx.accounts[0], '0x']
 
         const newDAOParams = {
-          template: newDAO.BARE_KIT, 
-          templateVersion: 'latest',
-          fn: 'newInstance', 
+          kit, 
+          kitVersion: 'latest',
+          kitInstance: ctx.contractInstance,
+          fn: 'newInstance',
           fnArgs,
+          deployEvent: newDAO.BARE_KIT_DEPLOY_EVENT,
           web3: ctx.web3, 
           reporter, 
           apmOptions

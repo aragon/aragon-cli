@@ -240,7 +240,7 @@ exports.task = function ({
         try {
           const { version } = await apm.getLatestVersion(module.appName)
           nextMajorVersion = parseInt(version.split('.')[0]) + 1
-        } catch (_) {
+        } catch (e) {
           ctx.version = '1.0.0'
           return task.skip('Starting from initial version')
         }
@@ -338,6 +338,8 @@ exports.task = function ({
     {
       title: `Publish ${module.appName}`,
       task: async (ctx, task) => {
+        ctx.contractInstance = null // clean up deploy sub-command artifacts
+
         task.output = 'Generating transaction and waiting for confirmation'
         const accounts = await web3.eth.getAccounts()
         const from = accounts[0]
