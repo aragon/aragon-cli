@@ -99,10 +99,15 @@ async function prepareFilesForPublishing (files = [], ignorePatterns = null) {
   const filter = ignore().add(ignorePatterns)
   const projectRoot = findProjectRoot()
 
-  const gitignorePath = path.resolve(projectRoot, '.gitignore')
+  const ipfsignorePath = path.resolve(projectRoot, '.ipfsignore')
+  if (pathExistsSync(ipfsignorePath)) {
+    filter.add(fs.readFileSync(ipfsignorePath).toString())
+  } else {
+    const gitignorePath = path.resolve(projectRoot, '.gitignore')
 
-  if (pathExistsSync(gitignorePath)) {
-    filter.add(fs.readFileSync(gitignorePath).toString())
+    if (pathExistsSync(gitignorePath)) {
+      filter.add(fs.readFileSync(gitignorePath).toString())
+    }
   }
 
   function filterIgnoredFiles (src) {
