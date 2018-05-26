@@ -46,6 +46,7 @@ exports.builder = function (yargs) {
     array: true
   }).option('ignore', {
     description: 'A gitignore pattern of files to ignore. Specify multiple times to add multiple patterns.',
+    default: ['node_modules'],
     array: true
   })
 }
