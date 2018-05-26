@@ -20,6 +20,7 @@ const deploy = require('../deploy')
 const startIPFS = require('../ipfs')
 
 const MANIFEST_FILE = 'manifest.json'
+const DEFAULT_IGNORE_LIST = ['node_modules', '.git']
 
 exports.command = 'publish [contract]'
 
@@ -96,7 +97,7 @@ async function prepareFilesForPublishing (files = [], ignorePatterns = null) {
   const { path: tmpDir } = await tmp.dir()
 
   // Ignored files filter
-  const filter = ignore().add(ignorePatterns)
+  const filter = ignore().add(DEFAULT_IGNORE_LIST).add(ignorePatterns)
   const projectRoot = findProjectRoot()
 
   const ipfsignorePath = path.resolve(projectRoot, '.ipfsignore')

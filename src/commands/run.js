@@ -128,7 +128,6 @@ exports.handler = function ({
           alreadyCompiled: true,
           provider: 'ipfs',
           files,
-          ignore: ['node_modules'],
           reporter,
           cwd,
           network,
