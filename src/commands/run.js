@@ -199,7 +199,8 @@ exports.handler = function ({
             const startArguments = {
               cwd: ctx.wrapperPath,
               env: {
-                REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens
+                REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens,
+                BROWSER: 'none',
               }
             }
             execa(bin, ['run', 'start:local'], startArguments).catch((err) => { throw new Error(err) })
