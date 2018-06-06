@@ -48,7 +48,8 @@ exports.builder = function (yargs) {
       array: true
     }).option('ignore', {
       description: 'A gitignore pattern of files to ignore. Specify multiple times to add multiple patterns.',
-      array: true
+      array: true,
+      default: ['node_modules'],
     }).option('ipfs-check', {
       description: 'Whether to have publish start IPFS if not started',
       boolean: true,
