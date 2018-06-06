@@ -119,8 +119,10 @@ async function prepareFilesForPublishing (tmpDir, files = [], ignorePatterns = n
     }
   }
 
+  const replaceRootRegex = new RegExp(`^${projectRoot}`)
   function filterIgnoredFiles (src) {
-    return !filter.ignores(src)
+    const relativeSrc = src.replace(replaceRootRegex, '.')
+    return !filter.ignores(relativeSrc)
   }
 
   // Copy files
