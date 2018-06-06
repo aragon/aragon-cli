@@ -14,7 +14,11 @@ exports.command = 'dao <command>'
 exports.describe = 'Manage your Aragon DAO'
 
 exports.builder = function (yargs) {
-  const cmd = daoArg(yargs).commandDir('dao_cmds', {
+  if (process.argv[3] != 'new') {
+    yargs = daoArg(yargs)
+  }
+  
+  const cmd = yargs.commandDir('dao_cmds', {
     visit: (cmd) => {
       // Add middlewares
       cmd.middlewares = MIDDLEWARES

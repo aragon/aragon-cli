@@ -20,14 +20,32 @@ exports.arappContract = () => {
 exports.builder = yargs => {
 	return yargs.positional('contract', {
 		description: 'Contract name (defaults to the contract at the path in arapp.json)',
-		default: exports.arappContract,
+	}).option('init', {
+		description: 'Arguments to be passed to contract constructor',
+		array: true,
+		default: [],
 	})
 }
 
-exports.task = async ({ reporter, network, cwd, contract, web3 }) => {
+exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions }) => {
+	if (!contract) {
+		contract = exports.arappContract()
+	}
+	apmOptions.ensRegistryAddress = apmOptions['ens-registry']
+
 	if (!web3) {
 		web3 = await ensureWeb3(network)
 	}
+
+	init = init || []
+
+	// Mappings allow to pass certain init parameters that get replaced for their actual value
+	const mappingMask = key => `@ARAGON_${key}`
+	const mappings = { 
+		[mappingMask('ENS')]: () => apmOptions.ensRegistryAddress // <ens> to ens addr
+	}
+	const processedInit = init.map(value => mappings[value] ? mappings[value]() : value)
+
 	const contractName = contract
 	const tasks = new TaskList([
 		{
@@ -39,6 +57,7 @@ exports.task = async ({ reporter, network, cwd, contract, web3 }) => {
 		{
 			title: `Deploy '${contractName}' to network`,
 			task: async (ctx, task) => {
+				ctx.contractName = contractName
 				let contractArtifacts
 				try {
 					contractArtifacts = require(path.join(cwd, 'build/contracts', contractName))
@@ -56,12 +75,16 @@ exports.task = async ({ reporter, network, cwd, contract, web3 }) => {
 
 				const contract = new web3.eth.Contract(abi, { data: bytecode })
 				const accounts = await web3.eth.getAccounts()
-				const instance = await contract.deploy().send({ from: accounts[0], gas: 4e6 })
+				const deployTx = contract.deploy({ arguments: processedInit })
+				const gas = await deployTx.estimateGas() 
+
+				const instance = await deployTx.send({ from: accounts[0], gas, gasPrice: '19000000000' }) // 19 gwei
 
 				if (!instance.options.address) {
 					throw new Error("Contract deployment failed")
 				}
 
+				ctx.contractInstance = instance
 				ctx.contract = instance.options.address
 				return ctx.contract
 			}
@@ -70,10 +93,10 @@ exports.task = async ({ reporter, network, cwd, contract, web3 }) => {
 	return tasks
 }
 
-exports.handler = async ({ reporter, network, cwd, contract }) => {
-	const task = await exports.task({ reporter, network, cwd, contract })
+exports.handler = async ({ reporter, network, cwd, contract, init, apm: apmOptions }) => {
+	const task = await exports.task({ reporter, network, cwd, contract, init, apmOptions })
 	const ctx = await task.run()
 
-    reporter.success(`Successfully deployed ${contract} at: ${chalk.bold(ctx.contract)}`)
-    process.exit()
+  reporter.success(`Successfully deployed ${ctx.contractName} at: ${chalk.bold(ctx.contract)}`)
+  process.exit()
 }
