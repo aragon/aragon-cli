@@ -74,6 +74,7 @@ exports.task = async function ({ port = 8545, reset = false, showAccounts = 2 })
       const accounts = await ctx.web3.eth.getAccounts()
 
       ctx.accounts = accounts.slice(0, parseInt(showAccounts))
+      ctx.mnemonic = MNEMONIC
 
       const ganacheAccounts = server.provider.manager.state.accounts
       ctx.privateKeys = ctx.accounts.map((address) => (
@@ -94,6 +95,10 @@ exports.printAccounts = (reporter, privateKeys) => {
   The first one will be used for all the actions the CLI performs.
   You can use your favorite Ethereum provider or wallet to import their private keys.
   \n${formattedAccounts.join('\n')}`)
+}
+
+exports.printMnemonic = (reporter, mnemonic) => {
+  reporter.info(`The accounts were generated from the following mnemonic phrase: ${mnemonic}\n.`)
 }
 
 exports.handler = async ({ reporter, port, reset, accounts }) => {
