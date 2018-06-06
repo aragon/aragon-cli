@@ -20,7 +20,6 @@ exports.arappContract = () => {
 exports.builder = yargs => {
 	return yargs.positional('contract', {
 		description: 'Contract name (defaults to the contract at the path in arapp.json)',
-		default: exports.arappContract,
 	}).option('init', {
 		description: 'Arguments to be passed to contract constructor',
 		array: true,
@@ -29,6 +28,9 @@ exports.builder = yargs => {
 }
 
 exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions }) => {
+	if (!contract) {
+		contract = exports.arappContract()
+	}
 	apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
 	if (!web3) {
@@ -55,6 +57,7 @@ exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions
 		{
 			title: `Deploy '${contractName}' to network`,
 			task: async (ctx, task) => {
+				ctx.contractName = contractName
 				let contractArtifacts
 				try {
 					contractArtifacts = require(path.join(cwd, 'build/contracts', contractName))
@@ -72,7 +75,10 @@ exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions
 
 				const contract = new web3.eth.Contract(abi, { data: bytecode })
 				const accounts = await web3.eth.getAccounts()
-				const instance = await contract.deploy({ arguments: processedInit }).send({ from: accounts[0], gas: 15e6 })
+				const deployTx = contract.deploy({ arguments: processedInit })
+				const gas = await deployTx.estimateGas() 
+
+				const instance = await deployTx.send({ from: accounts[0], gas, gasPrice: '19000000000' }) // 19 gwei
 
 				if (!instance.options.address) {
 					throw new Error("Contract deployment failed")
@@ -91,6 +97,6 @@ exports.handler = async ({ reporter, network, cwd, contract, init, apm: apmOptio
 	const task = await exports.task({ reporter, network, cwd, contract, init, apmOptions })
 	const ctx = await task.run()
 
-    reporter.success(`Successfully deployed ${contract} at: ${chalk.bold(ctx.contract)}`)
-    process.exit()
+  reporter.success(`Successfully deployed ${ctx.contractName} at: ${chalk.bold(ctx.contract)}`)
+  process.exit()
 }

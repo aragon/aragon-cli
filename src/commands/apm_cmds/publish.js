@@ -56,6 +56,9 @@ exports.builder = function (yargs) {
     }).option('publish-dir', {
       description: 'Temporary directory where files will be copied before publishing. Defaults to temp dir.',
       default: null,
+    }).option('only-content', {
+      description: 'Whether to skip contract compilation, deployment and contract artifact generation',
+      default: false,
     })
 }
 
@@ -166,7 +169,12 @@ exports.task = function ({
   publishDir,
   init,
   getRepo,
+  onlyContent,
 }) {
+  if (onlyContent) {
+    contract = '0x0000000000000000000000000000000000000000'
+  }
+  
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
   return new TaskList([
@@ -222,7 +230,7 @@ exports.task = function ({
     {
       title: 'Compile contracts',
       task: async () => (await compileContracts()),
-      enabled: () => web3Utils.isAddress(contract)
+      enabled: () => !onlyContent && web3Utils.isAddress(contract)
     },
     {
       title: 'Deploy contract',
@@ -231,7 +239,7 @@ exports.task = function ({
         
         return await deploy.task(deployTaskParams)
       },
-      enabled: ctx => (contract && !web3Utils.isAddress(contract)) || (!contract && ctx.isMajor && !reuse) || automaticallyBump
+      enabled: ctx => !onlyContent && ((contract && !web3Utils.isAddress(contract)) || (!contract && ctx.isMajor && !reuse) || automaticallyBump)
     },
     {
       title: 'Automatically bump version',
@@ -328,10 +336,11 @@ exports.task = function ({
     },
     {
       title: 'Generate application artifact',
+      skip: () => onlyContent,
       task: async (ctx, task) => {
         const dir = onlyArtifacts ? cwd : ctx.pathToPublish
         const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
-        reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
+
         return `Saved artifact in ${dir}/artifact.json`
       }
     },
@@ -357,6 +366,9 @@ exports.task = function ({
           // Fix because APM.js gas comes with decimals and from doesn't work
           transaction.from = from
           transaction.gas = Math.round(transaction.gas)
+          transaction.gasPrice = '19000000000' // 19 gwei
+
+          reporter.debug(JSON.stringify(transaction))
           
           return await web3.eth.sendTransaction(transaction)
         } catch (e) {

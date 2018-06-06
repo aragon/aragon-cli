@@ -34,6 +34,9 @@ const url = require('url')
 const TX_MIN_GAS = 10e6
 const WRAPPER_PORT = 3000
 
+const WRAPPER_COMMIT = 'e60e74107c1d63a34010869159d945f919443851'
+const WRAPPER_BRANCH = 'master'
+
 exports.command = 'run'
 
 exports.describe = 'Run the current app locally'
@@ -185,8 +188,6 @@ exports.handler = function ({
         {
           title: 'Download wrapper',
           task: (ctx, task) => {
-            const WRAPPER_COMMIT = '54c188b820109f24b1a409c504a732ec43f25a0f'
-            const WRAPPER_BRANCH = 'remotes/origin/add-app-serve-src-mode'
             const WRAPPER_PATH = `${os.homedir()}/.aragon/wrapper-${WRAPPER_COMMIT}`
             ctx.wrapperPath = WRAPPER_PATH
 
