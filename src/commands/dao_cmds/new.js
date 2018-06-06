@@ -14,7 +14,7 @@ exports.BARE_KIT = defaultAPMName('bare-kit')
 exports.BARE_INSTANCE_FUNCTION = 'newBareInstance'
 exports.BARE_KIT_DEPLOY_EVENT = 'DeployInstance'
 
-const BARE_KIT_ABI = 
+const BARE_KIT_ABI = require('./utils/bare-kit-abi')
 
 exports.command = 'new [kit] [kit-version]'
 
@@ -64,7 +64,7 @@ exports.task = async ({ web3, reporter, apmOptions, kit, kitVersion, fn, fnArgs,
         }
 
         // TODO: Remove hack once https://github.com/aragon/aragen/pull/15 is finished and published
-        const abi = ctx.repo.abi || require('./utils/bare-kit-abi')
+        const abi = ctx.repo.abi || BARE_KIT_ABI
         const kit = kitInstance || new web3.eth.Contract(abi, ctx.repo.contractAddress)
         const newInstanceTx = kit.methods[fn](...fnArgs)
 
