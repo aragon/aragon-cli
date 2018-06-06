@@ -34,6 +34,9 @@ const url = require('url')
 const TX_MIN_GAS = 10e6
 const WRAPPER_PORT = 3000
 
+const WRAPPER_COMMIT = 'e60e74107c1d63a34010869159d945f919443851'
+const WRAPPER_BRANCH = 'master'
+
 exports.command = 'run'
 
 exports.describe = 'Run the current app locally'
@@ -57,6 +60,13 @@ exports.builder = function (yargs) {
     default: false,
     boolean: true,
     description: 'Reset devchain to snapshot'
+  }).option('kit', {
+    default: newDAO.BARE_KIT,
+    description: "Kit contract name"
+  }).option('kit-init', {
+    description: 'Arguments to be passed to the kit constructor',
+    array: true,
+    default: [],
   })
 }
 
@@ -86,8 +96,11 @@ exports.handler = function ({
     files,
     port,
     accounts,
-    reset
+    reset,
+    kit,
+    kitInit,
   }) {
+  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const showAccounts = accounts
   const tasks = new TaskList([
     {
@@ -110,20 +123,9 @@ exports.handler = function ({
       title: 'Check IPFS',
       task: () => startIPFS.task({ apmOptions }),
     },
-    { 
-      title: 'Create DAO',
-      task: (ctx) => newDAO.task({ web3: ctx.web3, reporter, apmOptions }),
-    },
     {
-      title: 'Initializing DAO permissions',
-      task: (ctx, task) =>
-        setPermissions(ctx.web3, ctx.accounts[0], ctx.aclAddress, [
-          [ANY_ENTITY, ctx.daoAddress, ctx.appManagerRole]
-        ])
-    },
-    {
-      title: 'Publish APM package',
-      task: (ctx) => {
+      title: 'Publish app to APM',
+      task: async (ctx) => {
         const publishParams = {
           alreadyCompiled: true,
           provider: 'ipfs',
@@ -135,24 +137,50 @@ exports.handler = function ({
           module,
           web3: ctx.web3,
           apm: apmOptions,
-          automaticallyBump: true
+          automaticallyBump: true,
+          getRepo: true
         }
         return publish.task(publishParams)
       },
     },
     {
-      title: 'Install app',
-      task: (ctx) => {
-        const installParams = {
-          dao: ctx.daoAddress,
-          apmRepo: module.appName,
-          apmRepoVersion: 'latest',
-          web3: ctx.web3,
+      title: 'Deploy Kit',
+      enabled: () => kit != newDAO.BARE_KIT,
+      task: ctx => {
+        const deployParams = {
+          contract: kit,
+          init: kitInit,
           reporter,
+          network,
+          cwd,
+          web3: ctx.web3,
           apmOptions,
         }
-        return install.task(installParams)
+
+        return deploy.task(deployParams)
       }
+    },
+    { 
+      title: 'Create DAO',
+      task: (ctx) => {
+        const roles = ctx.repo.roles.map(role => role.bytes)
+        // If no kit was deployed, use default params
+        const fnArgs = ctx.contractInstance ? [] : [ctx.repo.appId, roles, ctx.accounts[0], '0x']
+
+        const newDAOParams = {
+          kit, 
+          kitVersion: 'latest',
+          kitInstance: ctx.contractInstance,
+          fn: 'newInstance',
+          fnArgs,
+          deployEvent: newDAO.BARE_KIT_DEPLOY_EVENT,
+          web3: ctx.web3, 
+          reporter, 
+          apmOptions
+        }
+
+        return newDAO.task(newDAOParams)
+      },
     },
     {
       title: 'Open DAO',
@@ -160,8 +188,6 @@ exports.handler = function ({
         {
           title: 'Download wrapper',
           task: (ctx, task) => {
-            const WRAPPER_COMMIT = '2b0558424c5cca084ecdcadb5429c7c19ef82dee'
-            const WRAPPER_BRANCH = 'remotes/origin/master'
             const WRAPPER_PATH = `${os.homedir()}/.aragon/wrapper-${WRAPPER_COMMIT}`
             ctx.wrapperPath = WRAPPER_PATH
 
@@ -199,7 +225,8 @@ exports.handler = function ({
             const startArguments = {
               cwd: ctx.wrapperPath,
               env: {
-                REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens
+                REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens,
+                BROWSER: 'none',
               }
             }
             execa(bin, ['run', 'start:local'], startArguments).catch((err) => { throw new Error(err) })
