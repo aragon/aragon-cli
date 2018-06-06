@@ -43,6 +43,8 @@ Finally, templates with a single short name (such as `react` or `bare`) are trea
 $ aragon run [--port PORT]
 ```
 
+For running from a custom Kit (so you can deploy other Aragon apps to the DAO) check https://github.com/aragon/aragon-react-kit-boilerplate
+
 Run the app in the current directory locally.
 
 This command does the following:
@@ -63,7 +65,7 @@ The publish step of the app works exactly as `aragon apm publish`, described bel
 #### `aragon apm publish` or `apm publish`
 
 ```
-$ apm apm publish [CONTRACT_ADDRESS or CONTRACT_NAME] [--files PATTERN] [--ignore PATTERN] [--skip-confirm] [--only-artifacts]
+$ apm publish [CONTRACT_ADDRESS or CONTRACT_NAME] [--files PATTERN] [--ignore PATTERN] [--skip-confirm] [--only-artifacts]
 ```
 
 Publishes a new (or the first!) version of your app.
