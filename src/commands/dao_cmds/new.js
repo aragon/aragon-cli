@@ -8,62 +8,70 @@ const APM = require('@aragon/apm')
 const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
 const { getContract } = require('../../util')
+const getRepoTask = require('./utils/getRepoTask')
 
-const BASE_TEMPLATE_REPO = 'democracy-template.aragonpm.eth'
+exports.BARE_KIT = defaultAPMName('bare-kit')
+exports.BARE_INSTANCE_FUNCTION = 'newBareInstance'
+exports.BARE_KIT_DEPLOY_EVENT = 'DeployInstance'
 
-exports.command = 'new'
+exports.command = 'new [kit] [kit-version]'
 
 exports.describe = 'Create a new DAO'
 
-exports.task = async ({ web3, reporter, apmOptions }) => {
+exports.builder = yargs => {
+  return yargs.positional('kit', {
+    description: 'Name of the kit to use creating the DAO',
+    default: exports.BARE_KIT,
+  })
+  .positional('kit-version', {
+    description: 'Version of the kit to be used',
+    default: 'latest'
+  })
+  .option('fn-args', {
+    description: 'Arguments to be passed to the newInstance function (or the function passed with --fn)',
+    array: true,
+    default: [],
+  })
+  .option('fn', {
+    description: 'Function to be called to create instance',
+    default: exports.BARE_INSTANCE_FUNCTION
+  })
+  .option('deploy-event', {
+    description: 'Event name that the kit will fire on success',
+    default: exports.BARE_KIT_DEPLOY_EVENT
+  })
+}
+
+exports.task = async ({ web3, reporter, apmOptions, kit, kitVersion, fn, fnArgs, skipChecks, deployEvent, kitInstance }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
+  kit = defaultAPMName(kit)
+
   const tasks = new TaskList([
     {
-      title: 'Fetch template from APM',
-      task: async (ctx) => {
-        ctx.repo = { contractAddress: await apm.getLatestVersionContract(BASE_TEMPLATE_REPO) }
-      },
+      title: `Fetching kit ${chalk.bold(kit)}@${kitVersion}`,
+      task: getRepoTask.task({ apm, apmRepo: kit, apmRepoVersion: kitVersion }),
+      enabled: () => !kitInstance,
     },
     {
-      title: 'Fetching DAOFactory from on-chain template',
-      task: async(ctx, task) => {
-        try {
-          const fac = await new web3.eth.Contract(
-            getContract('@aragon/templates-beta', 'DemocracyTemplate').abi,
-            ctx.repo.contractAddress
-          ).methods.fac().call()
-          try {
-            ctx.contracts['DAOFactory'] = fac
-          } catch (e) {
-            ctx.contracts = { ['DAOFactory']: fac }
-          }
-          
-        } catch (err) {
-          console.error(`${err}\nCall failed, try using 'aragon run' or 'aragon devchain'`)
-          process.exit()
-        }
-      },
-    },
-    {
-      title: 'Deploy DAO',
+      title: 'Create new DAO from kit',
       task: async (ctx, task) => {
         if (!ctx.accounts) {
           ctx.accounts = await web3.eth.getAccounts()
         }
 
-        const factory = new web3.eth.Contract(
-          getContract('@aragon/os', 'DAOFactory').abi,
-          ctx.contracts['DAOFactory']
-        )
+        const kit = kitInstance || new web3.eth.Contract(ctx.repo.abi, ctx.repo.contractAddress)
+        const newInstanceTx = kit.methods[fn](...fnArgs)
 
-        const { events } = await factory.methods.newDAO(ctx.accounts[0]).send({
-          from: ctx.accounts[0],
-          gas: 5e6
-        })
-        ctx.daoAddress = events['DeployDAO'].returnValues.dao
-
+        const { events } = await newInstanceTx.send({ from: ctx.accounts[0], gas: 15e6 })
+        ctx.daoAddress = events[deployEvent].returnValues.dao
+      },
+    },
+    {
+      title: 'Checking DAO',
+      skip: () => skipChecks,
+      task: async (ctx, task) => {
         const kernel = new web3.eth.Contract(
           getContract('@aragon/os', 'Kernel').abi, ctx.daoAddress
         )
@@ -76,13 +84,14 @@ exports.task = async ({ web3, reporter, apmOptions }) => {
   return tasks
 }
 
-exports.handler = async function ({ reporter, network, apm: apmOptions }) {
+exports.handler = async function ({ reporter, network, kit, kitVersion, fn, fnArgs, deployEvent, apm: apmOptions }) {
   const web3 = await ensureWeb3(network)
 
-  const task = await exports.task({ web3, reporter, network, apmOptions })
+  const task = await exports.task({ web3, reporter, network, apmOptions, kit, kitVersion, fn, fnArgs, deployEvent, skipChecks: false })
   return task.run()
     .then((ctx) => {
       reporter.success(`Created DAO: ${chalk.bold(ctx.daoAddress)}`)
+
       process.exit()
     })
 }

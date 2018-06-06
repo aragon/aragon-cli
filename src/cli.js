@@ -20,7 +20,7 @@ const cmd = require('yargs')
       cmd.middlewares = MIDDLEWARES
       return cmd
     }
-  }).strict()
+  }) //.strict()
 
 cmd.alias('h', 'help')
 cmd.alias('v', 'version')
@@ -50,27 +50,39 @@ cmd.option('network', {
   description: 'The network in your truffle.js that you want to use',
   default: 'development',
   coerce: (network) => {
-    const truffleConfig = getTruffleConfig()
-    if (truffleConfig) {
-      const truffleNetwork = truffleConfig.networks[network]
-      if (!truffleNetwork) {
-        throw new Error(`aragon <command> requires a network '${network}' in your truffle.js. For an example, see http://truffleframework.com/docs/advanced/configuration`)
+    // Catch commands that dont require network and return
+    const skipNetworkSubcommands = ['version', 'new']
+    if (process.argv.length >= 4) {
+      if (skipNetworkSubcommands.indexOf(process.argv[3]) >= 'version') {
+        return {}
       }
-      let provider
-      if (truffleNetwork.provider) {
-        provider = truffleNetwork.provider
-      } else if (truffleNetwork.host && truffleNetwork.port) {
-        provider = new Web3.providers.WebsocketProvider(`ws://${truffleNetwork.host}:${truffleNetwork.port}`)
-      } else {
-        provider = new Web3.providers.HttpProvider(`http://localhost:8545`)
-      }
-      truffleNetwork.provider = provider
-      truffleNetwork.name = network
-      return truffleNetwork
-    } else {
-      // This means you are running init
-      return {}
     }
+
+    const skipNetworkCommands = ['init', 'devchain', 'ipfs']
+
+    if (process.argv.length >= 3) {
+      if (skipNetworkCommands.indexOf(process.argv[2]) >= 0) {
+        return {}
+      }
+    }
+
+    const truffleConfig = getTruffleConfig()
+
+    const truffleNetwork = truffleConfig.networks[network]
+    if (!truffleNetwork) {
+      throw new Error(`aragon <command> requires a network '${network}' in your truffle.js. For an example, see http://truffleframework.com/docs/advanced/configuration`)
+    }
+    let provider
+    if (truffleNetwork.provider) {
+      provider = truffleNetwork.provider
+    } else if (truffleNetwork.host && truffleNetwork.port) {
+      provider = new Web3.providers.WebsocketProvider(`ws://${truffleNetwork.host}:${truffleNetwork.port}`)
+    } else {
+      provider = new Web3.providers.HttpProvider(`http://localhost:8545`)
+    }
+    truffleNetwork.provider = provider
+    truffleNetwork.name = network
+    return truffleNetwork   
   }
   // conflicts: 'init'
 })
@@ -110,6 +122,7 @@ cmd.epilogue('For more information, check out https://hack.aragon.one')
 
 // Run
 const reporter = new ConsoleReporter()
+reporter.debug(JSON.stringify(process.argv))
 cmd.fail((msg, err, yargs) => {
   if (!err) yargs.showHelp()
   reporter.error(msg || err.message || 'An error occurred')

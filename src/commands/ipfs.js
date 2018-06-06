@@ -1,3 +1,4 @@
+const path = require('path')
 const TaskList = require('listr')
 const {
   isIPFSInstalled,
@@ -7,6 +8,7 @@ const {
 } = require('../helpers/ipfs-daemon')
 
 const { isPortTaken } = require('../util')
+const IPFS = require('ipfs-api')
 
 exports.command = 'ipfs'
 
@@ -42,7 +44,21 @@ exports.task = ({ apmOptions }) => {
 		      await isIPFSCORS(apmOptions.ipfs.rpc)
 		      return 'Connecting to provided IPFS daemon'
 		    }
-		  }
+			}
+		},
+		{
+			title: 'Add local files',
+			task: (ctx) => {
+				const ipfs = IPFS('localhost', '5001', { protocol: 'http' })
+				const files = path.resolve(require.resolve('@aragon/aragen'), '../published-apps')
+
+				return new Promise((resolve, reject) => {
+					ipfs.util.addFromFs(files, { recursive: true, ignore: 'node_modules' }, (err, files) => {
+						if (err) return reject(err)
+						resolve(files)
+					})
+				})
+			}
 		}
 	])
 }

@@ -18,6 +18,7 @@ const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
 const startIPFS = require('../ipfs')
+const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 
 const MANIFEST_FILE = 'manifest.json'
 
@@ -26,29 +27,40 @@ exports.command = 'publish [contract]'
 exports.describe = 'Publish a new version of the application'
 
 exports.builder = function (yargs) {
-  return yargs.positional('contract', {
-    description: 'The address or name of the contract to publish in this version. If it isn\' provided, it will default to the current version\'s contract.'
-  }).option('only-artifacts', {
-    description: 'Whether just generate artifacts file without publishing',
-    default: false,
-    boolean: true
-  }).option('provider', {
-    description: 'The APM storage provider to publish files to',
-    default: 'ipfs',
-    choices: ['ipfs']
-  }).option('reuse', {
-    description: 'Whether to reuse the previous version contract and skip deployment on non-major versions',
-    default: false,
-    boolean: true
-  }).option('files', {
-    description: 'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
-    default: ['.'],
-    array: true
-  }).option('ignore', {
-    description: 'A gitignore pattern of files to ignore. Specify multiple times to add multiple patterns.',
-    default: ['node_modules'],
-    array: true
-  })
+  return deploy.builder(yargs) // inherit deploy options
+    .positional('contract', {
+      description: 'The address or name of the contract to publish in this version. If it isn\' provided, it will default to the current version\'s contract.'
+    }).option('only-artifacts', {
+      description: 'Whether just generate artifacts file without publishing',
+      default: false,
+      boolean: true
+    }).option('provider', {
+      description: 'The APM storage provider to publish files to',
+      default: 'ipfs',
+      choices: ['ipfs']
+    }).option('reuse', {
+      description: 'Whether to reuse the previous version contract and skip deployment on non-major versions',
+      default: false,
+      boolean: true
+    }).option('files', {
+      description: 'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
+      default: ['.'],
+      array: true
+    }).option('ignore', {
+      description: 'A gitignore pattern of files to ignore. Specify multiple times to add multiple patterns.',
+      array: true,
+      default: ['node_modules'],
+    }).option('ipfs-check', {
+      description: 'Whether to have publish start IPFS if not started',
+      boolean: true,
+      default: true
+    }).option('publish-dir', {
+      description: 'Temporary directory where files will be copied before publishing. Defaults to temp dir.',
+      default: null,
+    }).option('only-content', {
+      description: 'Whether to skip contract compilation, deployment and contract artifact generation',
+      default: false,
+    })
 }
 
 async function generateApplicationArtifact (web3, cwd, outputPath, module, contract, reporter) {
@@ -69,7 +81,7 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, contr
 
   // Analyse contract functions and returns an array
   // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
-  artifact.functions = await extract(artifact.path)
+  artifact.functions = await extract(path.resolve(cwd, artifact.path))
 
   artifact.roles = artifact.roles
     .map(role => Object.assign(role, { bytes: '0x'+keccak256(role.id) }))
@@ -92,10 +104,7 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, contr
  * @param {string} ignorePatterns An array of glob-like pattern of files to ignore
  * @return {string} The path to the temporary directory
  */
-async function prepareFilesForPublishing (files = [], ignorePatterns = null) {
-  // Create temporary directory
-  const { path: tmpDir } = await tmp.dir()
-
+async function prepareFilesForPublishing (tmpDir, files = [], ignorePatterns = null) {
   // Ignored files filter
   const filter = ignore().add(ignorePatterns)
   const projectRoot = findProjectRoot()
@@ -111,8 +120,10 @@ async function prepareFilesForPublishing (files = [], ignorePatterns = null) {
     }
   }
 
+  const replaceRootRegex = new RegExp(`^${projectRoot}`)
   function filterIgnoredFiles (src) {
-    return !filter.ignores(src)
+    const relativeSrc = src.replace(replaceRootRegex, '.')
+    return !filter.ignores(relativeSrc)
   }
 
   // Copy files
@@ -162,8 +173,16 @@ exports.task = function ({
   files,
   ignore,
   automaticallyBump,
-  ipfsCheck
+  ipfsCheck,
+  publishDir,
+  init,
+  getRepo,
+  onlyContent,
 }) {
+  if (onlyContent) {
+    contract = '0x0000000000000000000000000000000000000000'
+  }
+  
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
   return new TaskList([
@@ -222,16 +241,16 @@ exports.task = function ({
     {
       title: 'Compile contracts',
       task: async () => (await compileContracts()),
-      enabled: () => web3Utils.isAddress(contract)
+      enabled: () => !onlyContent && web3Utils.isAddress(contract)
     },
     {
       title: 'Deploy contract',
       task: async (ctx) => {
-        const deployTaskParams = { contract: deploy.arappContract(), reporter, network, cwd, web3 }
+        const deployTaskParams = { contract: deploy.arappContract(), init, reporter, network, cwd, web3, apmOptions }
         
         return await deploy.task(deployTaskParams)
       },
-      enabled: ctx => (contract && !web3Utils.isAddress(contract)) || (!contract && ctx.isMajor && !reuse) || automaticallyBump
+      enabled: ctx => !onlyContent && ((contract && !web3Utils.isAddress(contract)) || (!contract && ctx.isMajor && !reuse) || automaticallyBump)
     },
     {
       title: 'Automatically bump version',
@@ -240,7 +259,7 @@ exports.task = function ({
         try {
           const { version } = await apm.getLatestVersion(module.appName)
           nextMajorVersion = parseInt(version.split('.')[0]) + 1
-        } catch (_) {
+        } catch (e) {
           ctx.version = '1.0.0'
           return task.skip('Starting from initial version')
         }
@@ -313,24 +332,34 @@ exports.task = function ({
     {
       title: 'Prepare files for publishing',
       task: async (ctx, task) => {
-        const pathToPublish = await prepareFilesForPublishing(files, ignore)
-        ctx.pathToPublish = pathToPublish
 
-        return `Files copied to temporary directory: ${pathToPublish}`
+        // Create temporary directory
+        if (!publishDir) {
+          const { path: tmpDir } = await tmp.dir()
+          publishDir = tmpDir
+        }
+        
+        await prepareFilesForPublishing(publishDir, files, ignore)
+        ctx.pathToPublish = publishDir
+
+        return `Files copied to temporary directory: ${ctx.pathToPublish}`
       }
     },
     {
       title: 'Generate application artifact',
+      skip: () => onlyContent,
       task: async (ctx, task) => {
         const dir = onlyArtifacts ? cwd : ctx.pathToPublish
         const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
-        // reporter.debug(`Generated artifact: ${JSON.stringify(artifact)}`)
-        // reporter.debug(`Saved artifact in ${dir}/artifact.json`)
+
+        return `Saved artifact in ${dir}/artifact.json`
       }
     },
     {
       title: `Publish ${module.appName}`,
       task: async (ctx, task) => {
+        ctx.contractInstance = null // clean up deploy sub-command artifacts
+
         task.output = 'Generating transaction and waiting for confirmation'
         const accounts = await web3.eth.getAccounts()
         const from = accounts[0]
@@ -348,6 +377,9 @@ exports.task = function ({
           // Fix because APM.js gas comes with decimals and from doesn't work
           transaction.from = from
           transaction.gas = Math.round(transaction.gas)
+          transaction.gasPrice = '19000000000' // 19 gwei
+
+          reporter.debug(JSON.stringify(transaction))
           
           return await web3.eth.sendTransaction(transaction)
         } catch (e) {
@@ -358,6 +390,11 @@ exports.task = function ({
         } 
       },
       enabled: () => !onlyArtifacts
+    },
+    {
+      title: 'Fetch published repo',
+      task: getRepoTask.task({ apmRepo: module.appName, apm }),
+      enabled: () => getRepo,
     }
   ])
 }

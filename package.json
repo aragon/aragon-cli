@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "4.0.6",
+  "version": "4.1.0",
   "description": "Aragon command-line tools",
   "main": "dist/cli.js",
   "bin": {
@@ -40,8 +40,8 @@
     "@aragon/apps-token-manager": "^1.0.0",
     "@aragon/apps-vault": "^2.0.1",
     "@aragon/apps-voting": "^1.0.0",
-    "@aragon/aragen": "1.0.2",
-    "@aragon/os": "3.1.4",
+    "@aragon/aragen": "1.3.0-beta.1",
+    "@aragon/os": "3.1.8",
     "@aragon/templates-beta": "^1.1.3",
     "@aragon/wrapper": "^2.0.0-beta.33",
     "bignumber.js": "^7.1.0",
