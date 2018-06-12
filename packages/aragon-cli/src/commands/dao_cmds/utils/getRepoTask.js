@@ -10,7 +10,7 @@ module.exports = {
       default: 'latest'
     })
 	},
-	task: ({ apm, apmRepo, apmRepoVersion = LATEST_VERSION}) => {
+	task: ({ apm, apmRepo, apmRepoVersion = LATEST_VERSION, artifactRequired = true }) => {
 		return async (ctx) => {
 			if (apmRepoVersion == LATEST_VERSION) {
 			  	ctx.repo = await apm.getLatestVersion(apmRepo)
@@ -19,7 +19,7 @@ module.exports = {
 			}
 
 			// appId is loaded from artifact.json in IPFS
-			if (!ctx.repo.appId) {
+			if (artifactRequired && !ctx.repo.appId) {
 			  	throw new Error("Cannot find artifacts in APM repo. Please make sure the package is published and IPFS running.")
 			}
 		}
