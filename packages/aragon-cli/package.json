@@ -35,7 +35,6 @@
   },
   "homepage": "https://github.com/aragon/aragon-dev-cli#readme",
   "dependencies": {
-    "@aragon/apm": "^1.1.2",
     "@aragon/apps-finance": "^1.0.1",
     "@aragon/apps-token-manager": "^1.0.0",
     "@aragon/apps-vault": "^2.0.1",
