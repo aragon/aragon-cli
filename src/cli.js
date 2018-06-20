@@ -45,15 +45,29 @@ cmd.option('cwd', {
   }
 })
 
+/*
+  yargs will coerce this function multiple times while executing one command for unknown
+  reasons. When a positional optional argument is present, it will go as far as coercing the
+  default network, causing a crash in case the default network is not defined, even if explicitely
+  specifying another network.
+
+  caching the network also helps performance as we don't need to reinitialize the web3 provider
+*/
+let cachedNetwork
+
 // Ethereum
 cmd.option('network', {
   description: 'The network in your truffle.js that you want to use',
   default: 'development',
   coerce: (network) => {
+    if (cachedNetwork) {
+      return cachedNetwork
+    }
+
     // Catch commands that dont require network and return
     const skipNetworkSubcommands = ['version', 'new']
     if (process.argv.length >= 4) {
-      if (skipNetworkSubcommands.indexOf(process.argv[3]) >= 'version') {
+      if (skipNetworkSubcommands.indexOf(process.argv[3]) >= 0) {
         return {}
       }
     }
@@ -82,6 +96,9 @@ cmd.option('network', {
     }
     truffleNetwork.provider = provider
     truffleNetwork.name = network
+
+    cachedNetwork = truffleNetwork
+
     return truffleNetwork   
   }
   // conflicts: 'init'
