@@ -54,7 +54,8 @@ exports.task = async function ({ port = 8545, reset = false, showAccounts = 2 })
       const server = ganache.server({
         gasLimit: BLOCK_GAS_LIMIT,
         mnemonic: MNEMONIC,
-        db_path: snapshotPath
+        db_path: snapshotPath,
+        network_id: Math.floor(Math.random() * 1000)
       })
       const listen = () => (
         new Promise((resolve, reject) => {
