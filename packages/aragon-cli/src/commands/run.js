@@ -221,7 +221,7 @@ exports.handler = function ({
               ctx.portOpen = true
               return
             }
-            const bin = await getNodePackageManager()
+            const bin = getNodePackageManager()
             const startArguments = {
               cwd: ctx.wrapperPath,
               env: {

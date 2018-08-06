@@ -312,7 +312,7 @@ exports.task = function ({
           return
         }
 
-        const bin = await getNodePackageManager()
+        const bin = getNodePackageManager()
         const buildTask = execa(bin, ['run', 'build'])
         buildTask.stdout.on('data', (log) => {
           if (!log) return

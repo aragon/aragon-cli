@@ -6,7 +6,8 @@ const execa = require('execa')
 const net = require('net')
 
 let cachedProjectRoot
-let cachedNodePackageManager
+
+const PGK_MANAGER_BIN_NPM = 'npm';
 
 const findProjectRoot = () => {
   if (!cachedProjectRoot) {
@@ -44,16 +45,12 @@ const isPortTaken = async (port, opts) => {
   }))
 }
 
-const getNodePackageManager = async () => {
-  if (!cachedNodePackageManager) {
-    const hasYarn = await hasBin('yarn')
-    cachedNodePackageManager = (hasYarn) ? 'yarn' : 'npm'
-  }
-  return cachedNodePackageManager
+const getNodePackageManager = () => {
+  return PGK_MANAGER_BIN_NPM
 }
 
-const installDeps = async (cwd, task) => {
-  const bin = await getNodePackageManager()
+const installDeps = (cwd, task) => {
+  const bin = getNodePackageManager()
   const installTask = execa(bin, ['install'], { cwd })
   installTask.stdout.on('data', (log) => {
     if (!log) return
