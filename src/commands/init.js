@@ -47,6 +47,16 @@ exports.handler = function ({ reporter, name, template }) {
   const basename = name.split('.')[0]
   const tasks = new TaskList([
     {
+      title: 'Checking project existence',
+      task: async (ctx, task) => {
+        const projectPath = path.resolve(process.cwd(), basename)
+        const exists = await fs.pathExists(projectPath)
+        if (exists) {
+          throw new Error(`Couldn't initialize project. Project with name ${basename} already exists in ${projectPath}. Use different <name> or rename existing project folder.`)
+        }
+      }
+    },
+    {
       title: 'Clone template',
       task: async (ctx, task) => {
         task.output = `Cloning ${template} into ${basename}...`
