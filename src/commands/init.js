@@ -62,7 +62,7 @@ exports.handler = function ({ reporter, name, template }) {
         task.output = `Cloning ${template} into ${basename}...`
 
         const repo = await clone(template, basename, { shallow: true })
-        console.log(`Template cloned to ${basename}`)
+        // console.log(`Template cloned to ${basename}`)
       }
     },
     {
