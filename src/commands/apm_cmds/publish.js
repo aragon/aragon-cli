@@ -347,7 +347,7 @@ exports.task = function ({
     },
     {
       title: 'Generate application artifact',
-      skip: () => onlyContent,
+      skip: () => onlyContent && !module.path, // TODO: If onlyContent has been set, get previous version's artifact
       task: async (ctx, task) => {
         const dir = onlyArtifacts ? cwd : ctx.pathToPublish
         const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
