@@ -67,6 +67,9 @@ exports.builder = function (yargs) {
     description: 'Arguments to be passed to the kit constructor',
     array: true,
     default: [],
+  }).option('build-script', {
+    description: 'The npm script that will be run when building the app',
+    default: 'build',
   })
 }
 
@@ -99,6 +102,7 @@ exports.handler = function ({
     reset,
     kit,
     kitInit,
+    buildScript,
   }) {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const showAccounts = accounts
@@ -135,6 +139,8 @@ exports.handler = function ({
           cwd,
           network,
           module,
+          buildScript,
+          build: true,
           web3: ctx.web3,
           apm: apmOptions,
           automaticallyBump: true,
