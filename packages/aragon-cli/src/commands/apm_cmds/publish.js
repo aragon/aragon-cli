@@ -60,6 +60,14 @@ exports.builder = function (yargs) {
     }).option('only-content', {
       description: 'Whether to skip contract compilation, deployment and contract artifact generation',
       default: false,
+      boolean: true,
+    }).option('build', {
+      description: 'Whether publish should try to build the app before publishing, running the script specified in --build-script',
+      default: true,
+      boolean: true,
+    }).option('build-script', {
+      description: 'The npm script that will be run when building the app',
+      default: 'build',
     })
 }
 
@@ -178,6 +186,8 @@ exports.task = function ({
   init,
   getRepo,
   onlyContent,
+  build,
+  buildScript,
 }) {
   if (onlyContent) {
     contract = '0x0000000000000000000000000000000000000000'
@@ -299,6 +309,7 @@ exports.task = function ({
     },
     {
       title: 'Building frontend',
+      enabled: () => build,
       task: async (ctx, task) => {
         if (!fs.existsSync('package.json')) {
           task.skip('No package.json found')
@@ -307,16 +318,17 @@ exports.task = function ({
 
         const packageJson = await readJson('package.json')
         const scripts = packageJson.scripts || {}
-        if (!scripts.build) {
-          task.skip('No build script defined in package.json')
+        if (!scripts[buildScript]) {
+          task.skip('Build script not defined in package.json')
           return
         }
 
         const bin = getNodePackageManager()
-        const buildTask = execa(bin, ['run', 'build'])
+        const buildTask = execa(bin, ['run', buildScript])
+
         buildTask.stdout.on('data', (log) => {
           if (!log) return
-          task.output = log
+          task.output = `npm run ${buildScript}: ${log}`
         })
 
         return buildTask.catch((err) => {
