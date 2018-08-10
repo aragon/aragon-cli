@@ -52,10 +52,12 @@ exports.task = async function ({ port = 8545, reset = false, showAccounts = 2 })
     title: 'Starting a local chain from snapshot',
     task: async (ctx, task) => {
       const server = ganache.server({
+        // Start on a different networkID every time to avoid Metamask nonce caching issue:
+        // https://github.com/aragon/aragon-cli/issues/156
+        network_id: parseInt(1e8 * Math.random()), 
         gasLimit: BLOCK_GAS_LIMIT,
         mnemonic: MNEMONIC,
         db_path: snapshotPath,
-        network_id: 15, // aragen uses network_id 15 when creating snapshot https://github.com/aragon/aragen/blob/3df0d65a9de7bbdeeea763a444e0ab367db366a0/scripts/start-ganache#L6
       })
       const listen = () => (
         new Promise((resolve, reject) => {
