@@ -90,8 +90,10 @@ exports.task = async function ({ port = 8545, reset = false, showAccounts = 2 })
 }
 
 exports.printAccounts = (reporter, privateKeys) => {
+  const firstAccountComment = '(this account is used to deploy DAOs, it has more permissions)'
+
   const formattedAccounts = privateKeys.map(({ address, key }, i) => 
-    chalk.bold(`Address #${i + 1}: ${address}\nPrivate key: `) + key
+    chalk.bold(`Address #${i + 1}:  ${address} ${ i == 0 ? firstAccountComment : ''}\nPrivate key: `) + key
   )
 
   reporter.info(`Here are some Ethereum accounts you can use.
@@ -101,13 +103,24 @@ exports.printAccounts = (reporter, privateKeys) => {
 }
 
 exports.printMnemonic = (reporter, mnemonic) => {
-  reporter.info(`The accounts were generated from the following mnemonic phrase: ${mnemonic}\n.`)
+  reporter.info(`The accounts were generated from the following mnemonic phrase:\n${mnemonic}\n`)
+}
+
+exports.printResetNotice = (reporter, reset) => {
+  if (reset) {
+    reporter.warning(`The devchain was reset, some steps need to be done to provent issues:
+    - Reset the application cache in Aragon Core by going to Settings > Troubleshooting.
+    - If using Metamask: switch to a different network, and then switch back to the 'Private Network' (this will clear the nonce cache and prevent errors when sending transactions)  
+  `)
+  }
 }
 
 exports.handler = async ({ reporter, port, reset, accounts }) => {
   const task = await exports.task({ port, reset, showAccounts: accounts })
-  const { privateKeys } = await task.run()
-  exports.printAccounts(reporter, privateKeys)  
+  const { privateKeys, mnemonic } = await task.run()
+  exports.printAccounts(reporter, privateKeys)
+  exports.printMnemonic(reporter, mnemonic)
+  exports.printResetNotice(reporter, reset)
 
   reporter.info(`Devchain running: ${chalk.bold('http://localhost:'+port)}.`)
 }
