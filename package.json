@@ -88,6 +88,9 @@
   "ava": {
     "require": [
       "@babel/register"
+    ],
+    "files": [
+      "test/**/*.js"
     ]
   }
 }
