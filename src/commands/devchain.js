@@ -108,7 +108,7 @@ exports.printMnemonic = (reporter, mnemonic) => {
 
 exports.printResetNotice = (reporter, reset) => {
   if (reset) {
-    reporter.warning(`The devchain was reset, some steps need to be done to provent issues:
+    reporter.warning(`The devchain was reset, some steps need to be done to prevent issues:
     - Reset the application cache in Aragon Core by going to Settings > Troubleshooting.
     - If using Metamask: switch to a different network, and then switch back to the 'Private Network' (this will clear the nonce cache and prevent errors when sending transactions)  
   `)
