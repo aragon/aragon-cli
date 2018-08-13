@@ -277,9 +277,12 @@ exports.handler = function ({
     if (ctx.privateKeys) {
       devchain.printAccounts(reporter, ctx.privateKeys)
     }
+
     if (ctx.mnemonic) {
       devchain.printMnemonic(reporter, ctx.mnemonic)
     }
+
+    devchain.printResetNotice(reporter, reset)
 
     const registry = module.appName.split('.').slice(1).join('.')
 
