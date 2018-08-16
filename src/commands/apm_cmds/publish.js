@@ -21,6 +21,7 @@ const startIPFS = require('../ipfs')
 const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 
 const MANIFEST_FILE = 'manifest.json'
+const ARTIFACT_FILE = 'artifact.json'
 
 exports.command = 'publish [contract]'
 
@@ -392,8 +393,11 @@ exports.task = function ({
       skip: () => onlyContent && !module.path, // TODO: If onlyContent has been set, get previous version's artifact
       task: async (ctx, task) => {
         const dir = onlyArtifacts ? cwd : ctx.pathToPublish
-        const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
 
+        if (onlyContent && !pathExistsSync(`${dir}/${ARTIFACT_FILE}`)) {
+          throw new Error('Couldn\'t find artifact.json. Please generate it first with apm publish --only-artifacts')
+        } 
+        const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
         return `Saved artifact in ${dir}/artifact.json`
       }
     },
