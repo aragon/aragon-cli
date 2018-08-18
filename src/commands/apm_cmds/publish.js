@@ -29,7 +29,7 @@ exports.describe = 'Publish a new version of the application'
 exports.builder = function (yargs) {
   return deploy.builder(yargs) // inherit deploy options
     .positional('contract', {
-      description: 'The address or name of the contract to publish in this version. If it isn\' provided, it will default to the current version\'s contract.'
+      description: 'The address or name of the contract to publish in this version. If it isn\'t provided, it will default to the current version\'s contract.'
     }).option('only-artifacts', {
       description: 'Whether just generate artifacts file without publishing',
       default: false,
