@@ -239,7 +239,7 @@ exports.task = function ({
             const isValid = await apm.isValidBump(module.appName, repo.version, ctx.version)
 
             if (!isValid) {
-              throw new Error('Version bump is not valid, you have to respect APM bumps policy. Check version upgrade rules in documentation https://hack.aragon.one/docs/aragonos-ref.html#631-version-upgrade-rules')
+              throw new Error('Version bump is not valid, you have to respect APM bumps policy. Check version upgrade rules in documentation https://hack.aragon.org/docs/aragonos-ref.html#631-version-upgrade-rules')
             }
 
             const getMajor = version => version.split('.')[0]
