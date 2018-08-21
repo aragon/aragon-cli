@@ -20,10 +20,10 @@ exports.handler = async function ({
   network,
   module,
   apm: apmOptions,
-
   // Arguments
   address
 }) {
+
   const web3 = await ensureWeb3(network)
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 

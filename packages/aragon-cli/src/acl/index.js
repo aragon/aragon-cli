@@ -8,11 +8,16 @@ module.exports = (web3) => {
     return new web3.eth.Contract(require('@aragon/os/build/contracts/ACL').abi, aclAddr)
   }
 
+  const getRoleId = async (repoAddr) => {
+    const repo = new web3.eth.Contract(require('@aragon/os/build/contracts/Repo').abi, repoAddr)
+    return await repo.methods.CREATE_VERSION_ROLE().call()
+  }
+
   return {
     grant: async (repoAddr, grantee) => {
       const acl = await getACL(repoAddr)
 
-      const roleId = '0x0000000000000000000000000000000000000000000000000000000000000001'
+      const roleId = await getRoleId(repoAddr)
 
       const call = acl.methods.grantPermission(grantee, repoAddr, roleId)
       return {
