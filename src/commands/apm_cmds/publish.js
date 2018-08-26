@@ -68,6 +68,12 @@ exports.builder = function (yargs) {
     }).option('build-script', {
       description: 'The npm script that will be run when building the app',
       default: 'build',
+    }).option('http', {
+      description: 'URL for where your app is served e.g. localhost:1234',
+      default: null,
+    }).option('served-at', {
+      description: 'Directory where your files is being served from e.g. ./dist',
+      default: null,
     })
 }
 
@@ -188,6 +194,8 @@ exports.task = function ({
   onlyContent,
   build,
   buildScript,
+  http,
+  servedAt,
 }) {
   if (onlyContent) {
     contract = '0x0000000000000000000000000000000000000000'
@@ -334,12 +342,13 @@ exports.task = function ({
         return buildTask.catch((err) => {
             throw new Error(`${err.message}\n${err.stderr}\n\nFailed to build. See above output.`)
           })
-      }
+      },
+      enabled: () => !http,
     },
     {
       title: 'Check IPFS',
       task: () => startIPFS.task({ apmOptions }),
-      enabled: () => ipfsCheck,
+      enabled: () => http ? false : ipfsCheck,
     },
     {
       title: 'Prepare files for publishing',
@@ -355,7 +364,28 @@ exports.task = function ({
         ctx.pathToPublish = publishDir
 
         return `Files copied to temporary directory: ${ctx.pathToPublish}`
-      }
+      },
+      enabled: () => !http,
+    },
+    {
+      title: 'Check for --served-at argument and copy manifest.json to destination',
+      task: async (ctx, task) => {
+        if (!servedAt) { throw new Error('You need to provide --served-at argument') }
+
+        const projectRoot = findProjectRoot()
+        const manifestOrigin = path.resolve(projectRoot, MANIFEST_FILE)
+        const manifestDst = path.resolve(servedAt, MANIFEST_FILE)
+
+        if (!pathExistsSync(manifestDst) && pathExistsSync(manifestOrigin)) {
+          let manifest = await readJson(manifestOrigin)
+          manifest.start_url = path.basename(manifest.start_url)
+          manifest.script = path.basename(manifest.script)
+          await writeJson(manifestDst, manifest)
+        }
+
+        ctx.pathToPublish = servedAt
+      },
+      enabled: () => http,
     },
     {
       title: 'Generate application artifact',
@@ -381,8 +411,8 @@ exports.task = function ({
             from,
             module.appName,
             ctx.version,
-            provider,
-            ctx.pathToPublish,
+            http ? 'http' : provider,
+            http || ctx.pathToPublish,
             ctx.contract,
             from
           )
