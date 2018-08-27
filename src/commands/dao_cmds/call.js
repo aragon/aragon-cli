@@ -6,7 +6,6 @@ const { listApps } = require('./utils/knownApps')
 const { rolesForApps } = require('./acl_cmds/utils/knownRoles')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 import { addressesEqual } from './utils/web3-utils'
-var stringify = require('json-stringify-safe');
 
 const Table = require('cli-table')
 const colors = require('colors')
