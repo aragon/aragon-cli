@@ -34,8 +34,7 @@ const url = require('url')
 const TX_MIN_GAS = 10e6
 const WRAPPER_PORT = 3000
 
-const WRAPPER_COMMIT = 'e60e74107c1d63a34010869159d945f919443851'
-const WRAPPER_BRANCH = 'master'
+const WRAPPER_COMMIT = '76e173be015f150a516802de61585d31ab786d4f'
 
 exports.command = 'run'
 
@@ -212,7 +211,7 @@ exports.handler = function ({
             return clone(
               'https://github.com/aragon/aragon',
               WRAPPER_PATH,
-              { checkout: WRAPPER_BRANCH }
+              { checkout: WRAPPER_COMMIT }
             )
           },
         },
