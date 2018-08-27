@@ -13,13 +13,14 @@ const colors = require('colors')
 const knownRoles = rolesForApps()
 const ANY_ENTITY = '0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF'
 const ANY_ENTITY_TEXT = 'Any entity'
+const GAS_ESTIMATE_ERROR_FACTOR = 2
 
 const path = require('path')
 let knownApps
 
-exports.command = 'call <dao> <proxy-address> <fn> [fn-args]'
+exports.command = 'exec <dao> <proxy-address> <fn> [fn-args]'
 
-exports.describe = 'Inspect permissions in a DAO'
+exports.describe = 'Executes a call in an app of a DAO'
 
 exports.builder = function (yargs) {
   return daoArg(yargs)
@@ -27,7 +28,7 @@ exports.builder = function (yargs) {
     description: 'Proxy address of the app with the function to be run'
   })
   .positional('fn', {
-    description: 'Function to be called'
+    description: 'Function to be executed'
   })
   .option('fn-args', {
     description: 'Arguments to be passed to the function',
@@ -46,14 +47,11 @@ exports.handler = async function ({ reporter, dao, apm, network, proxyAddress, f
       task: async (ctx, task) => {
         task.output = `Fetching dao at ${dao}...`
 
-
         if (!ctx.accounts) {
           ctx.accounts = await web3.eth.getAccounts()
         }
 
         return new Promise((resolve, reject) => {
-
-
           initAragonJS(dao, apm['ens-registry'], {
             accounts: ctx.accounts,
             provider: web3.currentProvider,
@@ -73,31 +71,40 @@ exports.handler = async function ({ reporter, dao, apm, network, proxyAddress, f
             onDaoAddress: addr => ctx.daoAddress = addr,
             onError: err => reject(err)
           })
-            .then(async wrapper => {
-              ctx.wrapper = wrapper
-              if (ctx.apps) {
-                ctx.transactionPath = await ctx.wrapper.getTransactionPath(proxyAddress, fn, fnArgs)
-                resolve()
-              }
-            })
-            .catch(err => {
-              reporter.error('Error inspecting DAO')
-              reporter.debug(err)
-              process.exit(1)
-            })
+          .then(async wrapper => {
+            ctx.wrapper = wrapper
+            if (ctx.apps) {
+              ctx.transactionPath = await ctx.wrapper.getTransactionPath(proxyAddress, fn, fnArgs)
+              resolve()
+            }
+          })
+          .catch(err => {
+            reporter.error('Error inspecting DAO')
+            reporter.debug(err)
+            process.exit(1)
+          })
         })
       }
     },
     {
-      title: `calling ${fn}`,
+      title: `Executing ${fn} in ${proxyAddress}`,
       task: async (ctx, task) => {
         task.output = `Waiting for response...`
-        ctx.transactionPath[0].gas = await web3.eth.estimateGas(ctx.transactionPath[0])
-        ctx.transactionPath[0].gas = ctx.transactionPath[0].gas *2 // need better estimations
+        let tx = ctx.transactionPath[0] // TODO: Support choosing between possible transaction paths
+
+        if (!tx) {
+          throw new Error('Cannot find transaction path for executing action')
+        }
+
+        const estimatedGas = await web3.eth.estimateGas(ctx.transactionPath[0])
+        tx.gas = parseInt(GAS_ESTIMATE_ERROR_FACTOR * estimatedGas)
         return new Promise((resolve, reject) => {
           web3.eth.sendTransaction(ctx.transactionPath[0],(err,res) => {
-            if(err) reject(err)
-            ctx.res=res
+            if(err){
+              reject(err)
+              return
+            }
+            ctx.res = res
             resolve()
           })
         })
