@@ -62,10 +62,10 @@ The local chain is started at `PORT`, which defaults to 8545.
 
 The publish step of the app works exactly as `aragon apm publish`, described below.
 
-#### `aragon apm publish` or `apm publish`
+#### `aragon apm publish`
 
 ```
-$ apm publish [CONTRACT_ADDRESS or CONTRACT_NAME] [--files PATTERN] [--ignore PATTERN] [--skip-confirm] [--only-artifacts]
+$ aragon apm publish [CONTRACT_ADDRESS or CONTRACT_NAME] [--files PATTERN] [--ignore PATTERN] [--skip-confirm] [--only-artifacts]
 ```
 
 Publishes a new (or the first!) version of your app.
@@ -80,30 +80,30 @@ Before publishing, your smart contract source code is scanned to generate an art
 
 If `--skip-confirm` is specified the command will not wait for the transaction to receive confirmations.
 
-#### `aragon apm version` or `apm version`
+#### `aragon apm version`
 
 ```
-$ apm version <BUMP>
+$ aragon apm version <BUMP>
 ```
 
 Bumps the version of your Aragon app, where a valid `BUMP` is either *major*, *minor* or *patch*.
 
 Note that you are only allowed to release a version with a new smart contract address if the bump specified is major.
 
-#### `aragon apm versions` or `apm versions`
+#### `aragon apm versions`
 
 ```
-$ apm versions
+$ aragon apm versions
 ```
 
 View a list of published versions for the app in the current directory.
 
 ### DAOs
 
-#### `aragon apm grant` or `apm grant`
+#### `aragon apm grant`
 
 ```
-$ apm grant <ADDRESS> [--skip-confirm]
+$ aragon apm grant <ADDRESS> [--skip-confirm]
 ```
 
 Grants permission for `ADDRESS` to interact with the APM repository of the app in the current directory.
