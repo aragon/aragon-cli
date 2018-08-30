@@ -26,7 +26,8 @@ exports.builder = (yargs) => {
       coerce: function resolveTemplateName (tmpl) {
         const aliases = {
           bare: 'aragon/aragon-bare-boilerplate',
-          react: 'aragon/aragon-react-boilerplate'
+          react: 'aragon/aragon-react-boilerplate',
+          ['react-kit']: 'aragon/aragon-react-kit-boilerplate'
         }
 
         if (!tmpl.includes('/')) {
