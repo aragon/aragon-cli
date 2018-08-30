@@ -12,6 +12,8 @@ exports.command = 'apm <command>'
 
 exports.describe = 'Publish and manage your APM package'
 
+exports.aliases = ['package']
+
 exports.builder = function (yargs) {
   const cmd = yargs.commandDir('apm_cmds', {
     visit: (cmd) => {
