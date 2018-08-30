@@ -88,7 +88,11 @@ cmd.option('network', {
     }
     let provider
     if (truffleNetwork.provider) {
-      provider = truffleNetwork.provider
+      if (typeof truffleNetwork.provider === 'function') {
+        provider = truffleNetwork.provider()
+      } else {
+        provider = truffleNetwork.provider
+      }
     } else if (truffleNetwork.host && truffleNetwork.port) {
       provider = new Web3.providers.WebsocketProvider(`ws://${truffleNetwork.host}:${truffleNetwork.port}`)
     } else {
