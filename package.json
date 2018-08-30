@@ -5,7 +5,6 @@
   "main": "dist/cli.js",
   "bin": {
     "aragon": "./dist/cli.js",
-    "apm": "./aliases/apm",
     "dao": "./aliases/dao"
   },
   "scripts": {
