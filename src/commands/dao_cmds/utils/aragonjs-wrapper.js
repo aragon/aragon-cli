@@ -61,6 +61,7 @@ const initWrapper = async (
   ensRegistryAddress,
   {
     provider,
+    accounts = '',
     walletProvider = null,
     ipfsConf = ipfsDefaultConf,
     onError = noop,
@@ -93,9 +94,8 @@ const initWrapper = async (
     apm: { ipfs: ipfsConf },
   })
 
-  const account = ''
   try {
-    await wrapper.init(account && [account])
+    await wrapper.init(accounts || [accounts])
   } catch (err) {
     if (err.message === 'connection not open') {
       onError(
