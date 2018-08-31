@@ -13,7 +13,8 @@ const knownRoles = rolesForApps()
 const ANY_ENTITY = '0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF'
 const ANY_ENTITY_TEXT = 'Any entity'
 
-const path = require('path')
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+
 let knownApps
 
 exports.command = 'view <dao>'
@@ -34,7 +35,7 @@ const appFromProxyAddress = (proxyAddress, apps) => {
 }
 
 const formatRow = ({ to, role, allowedEntities, manager }, apps) => {
-  if (!allowedEntities || allowedEntities.length == 0) {
+  if (manager == ZERO_ADDRESS && !allowedEntities || allowedEntities.length == 0) {
     return null
   }
 
@@ -46,8 +47,9 @@ const formatRow = ({ to, role, allowedEntities, manager }, apps) => {
     const allowedEmoji = allowedName == ANY_ENTITY_TEXT ? '🆓' : '✅'
     return acc + '\n' + allowedEmoji + '  ' + allowedName
   }, '').slice(1) // remove first newline
+  const formattedManager = printAppName(appFromProxyAddress(manager, apps).appId, manager)
 
-  return [formattedTo, formattedRole, formattedAllowed]
+  return [formattedTo, formattedRole, formattedAllowed, formattedManager]
 } 
 
 exports.handler = async function ({ reporter, dao, network, apm }) {
