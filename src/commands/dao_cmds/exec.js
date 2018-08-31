@@ -52,31 +52,27 @@ exports.handler = async function ({ reporter, dao, apm, network, proxyAddress, f
         }
 
         return new Promise((resolve, reject) => {
+          let wrapper, appsLoaded
+
+          const tryFindTransactionPath = async () => {
+            if (appsLoaded && wrapper) {
+              ctx.transactionPath = await wrapper.getTransactionPath(proxyAddress, fn, fnArgs)
+              resolve()
+            }
+          }
+
           initAragonJS(dao, apm['ens-registry'], {
             accounts: ctx.accounts,
             provider: web3.currentProvider,
-            onTransaction: transaction => {
-              ctx.transaction = transaction
-            },
-            onPermissions: permissions => {
-              ctx.acl = permissions
-            },
             onApps: async apps => {
-              ctx.apps = apps
-              if (ctx.wrapper) {
-                ctx.transactionPath = await ctx.wrapper.getTransactionPath(proxyAddress, fn, fnArgs)
-                resolve()
-              }
+              appsLoaded = true
+              await tryFindTransactionPath()
             },
-            onDaoAddress: addr => ctx.daoAddress = addr,
             onError: err => reject(err)
           })
-          .then(async wrapper => {
-            ctx.wrapper = wrapper
-            if (ctx.apps) {
-              ctx.transactionPath = await ctx.wrapper.getTransactionPath(proxyAddress, fn, fnArgs)
-              resolve()
-            }
+          .then(async (initializedWrapper) => {
+            wrapper = initializedWrapper
+            await tryFindTransactionPath()
           })
           .catch(err => {
             reporter.error('Error inspecting DAO')
