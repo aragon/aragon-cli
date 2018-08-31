@@ -5,7 +5,8 @@
 [![NPM version](https://img.shields.io/npm/v/@aragon/cli.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli)
 [![Downloads](https://img.shields.io/npm/dm/@aragon/cli.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli)
 
-Aragon CLI is a tool for creating, testing and publishing Aragon applications.
+Aragon CLI is a tool for creating, testing and publishing [Aragon 
+applications](https://hack.aragon.org).
 
 ## Installation
 
