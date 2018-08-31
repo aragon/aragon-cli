@@ -33,11 +33,15 @@ const appFromProxyAddress = (proxyAddress, apps) => {
   return apps.filter(app => app.proxyAddress == proxyAddress)[0] || {}
 }
 
-const formatRow = ({ to, role, allowed }, apps) => {
+const formatRow = ({ to, role, allowedEntities, manager }, apps) => {
+  if (!allowedEntities || allowedEntities.length == 0) {
+    return null
+  }
+
   const formattedTo = printAppName(appFromProxyAddress(to, apps).appId, to)
   let formattedRole = knownRoles[role] || `${role.slice(0, 8)}..${role.slice(-6)}`
   if (formattedRole['id']) formattedRole = formattedRole['id']
-  const formattedAllowed = allowed.reduce((acc, addr) => {
+  const formattedAllowed = allowedEntities.reduce((acc, addr) => {
     const allowedName = printAppName(appFromProxyAddress(addr, apps).appId, addr)
     const allowedEmoji = allowedName == ANY_ENTITY_TEXT ? '🆓' : '✅'
     return acc + '\n' + allowedEmoji + '  ' + allowedName
@@ -94,19 +98,19 @@ exports.handler = async function ({ reporter, dao, network, apm }) {
       // filter according to cli params will happen here
 
       const table = new Table({
-        head: ['App', 'Action', 'Allowed entities'].map(x => x.white),
+        head: ['App', 'Action', 'Allowed entities', 'Manager'].map(x => x.white),
       })
 
       const tos = Object.keys(acl)
 
       const flattenedACL = tos.reduce((acc, to) => {
         const roles = Object.keys(acl[to])
-        const permissions = roles.map((role) => ({ allowed: acl[to][role], to, role }))
+        const permissions = roles.map((role) => ({ to, role, ...acl[to][role] }))
       
         return acc.concat(permissions)
       }, [])
 
-      flattenedACL.map(row => formatRow(row, ctx.apps)).forEach(row => table.push(row))
+      flattenedACL.map(row => formatRow(row, ctx.apps)).filter(row => row).forEach(row => table.push(row))
 
       console.log(table.toString())
       process.exit() // force exit, as aragonjs hangs
