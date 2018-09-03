@@ -348,7 +348,7 @@ exports.task = function ({
     {
       title: 'Check IPFS',
       task: () => startIPFS.task({ apmOptions }),
-      enabled: () => http ? false : ipfsCheck,
+      enabled: () => !http && ipfsCheck,
     },
     {
       title: 'Prepare files for publishing',
