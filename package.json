@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/aragon/aragon-dev-cli#readme",
   "dependencies": {
-    "@aragon/apm": "^2.0.0",
+    "@aragon/apm": "^2.0.1",
     "@aragon/apps-finance": "^1.0.1",
     "@aragon/apps-token-manager": "^1.0.0",
     "@aragon/apps-vault": "^2.0.1",
@@ -67,7 +67,7 @@
     "rimraf": "^2.6.2",
     "semver": "^5.4.1",
     "tmp-promise": "^1.0.4",
-    "truffle": "^4.1.8",
+    "truffle": "^4.0.5",
     "web3": "^1.0.0-beta.34",
     "yargs": "^10.1.0"
   },
