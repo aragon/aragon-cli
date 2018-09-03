@@ -72,8 +72,8 @@ exports.builder = function (yargs) {
   }).option('http', {
     description: 'URL for where your app is served from e.g. localhost:1234',
     default: null,
-  }).option('served-at', {
-    description: 'URL for where your app is served from e.g. localhost:1234',
+  }).option('http-served-from', {
+    description: 'Directory where your files is being served from e.g. ./dist',
     default: null,
   })
 }
@@ -109,7 +109,7 @@ exports.handler = function ({
     kitInit,
     buildScript,
     http,
-    servedAt,
+    httpServedFrom,
   }) {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const showAccounts = accounts
@@ -133,6 +133,7 @@ exports.handler = function ({
     {
       title: 'Check IPFS',
       task: () => startIPFS.task({ apmOptions }),
+      skip: () => http
     },
     {
       title: 'Publish app to APM',
@@ -154,7 +155,7 @@ exports.handler = function ({
           automaticallyBump: true,
           getRepo: true,
           http,
-          servedAt,
+          httpServedFrom,
         }
         return publish.task(publishParams)
       },
