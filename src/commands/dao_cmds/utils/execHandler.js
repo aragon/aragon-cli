@@ -2,7 +2,7 @@ const TaskList = require('listr')
 import initAragonJS from './aragonjs-wrapper'
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 
-const GAS_ESTIMATE_FUZZ_FACTOR = 1.5
+const GAS_ESTIMATE_FUZZ_FACTOR = 2
 
 module.exports = async function (dao, getTransactionPath, { reporter, apm, network }) {
   const web3 = await ensureWeb3(network)
@@ -80,7 +80,7 @@ module.exports = async function (dao, getTransactionPath, { reporter, apm, netwo
 
   return tasks.run()
     .then((ctx) => {
-      reporter.success(`Successfully sent transaction starting with transaction: ` + JSON.stringify(ctx.transactionPath[0].description))
+      reporter.success(`Successfully sent executed action starting with transaction: ` + JSON.stringify(ctx.transactionPath[0].description))
       process.exit()
     })
 }
