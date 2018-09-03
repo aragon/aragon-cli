@@ -27,7 +27,7 @@ exports.builder = function (yargs) {
 
 const printAppName = (appId, addr) => {
   if (addr == ANY_ENTITY) return ANY_ENTITY_TEXT
-  return knownApps[appId] ? `${knownApps[appId].split('.')[0]} (${appId.slice(0,6)})` : addr.slice(0, 16) + '...'
+  return knownApps[appId] ? `${knownApps[appId].split('.')[0]} (${addr.slice(0,6)})` : addr.slice(0, 16) + '...'
 }
 
 const appFromProxyAddress = (proxyAddress, apps) => {
