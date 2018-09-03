@@ -20,7 +20,7 @@ module.exports = {
 
 			// appId is loaded from artifact.json in IPFS
 			if (artifactRequired && !ctx.repo.appId) {
-			  	throw new Error("Cannot find artifacts in APM repo. Please make sure the package is published and IPFS running.")
+			  	throw new Error("Cannot find artifacts in APM repo. Please make sure the package is published and IPFS or your HTTP server running.")
 			}
 		}
 	}
