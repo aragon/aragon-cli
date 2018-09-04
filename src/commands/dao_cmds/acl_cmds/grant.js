@@ -14,5 +14,5 @@ exports.builder = function (yargs) {
 exports.handler = async function ({ reporter, dao, app, role, entity, network, apm }) {
   const method = 'grantPermission'
   const params = [entity, app, role]
-  return aclExecHandler(dao, method, params, { reporter, apm, network })
+  return aclExecHandler(dao, method, params, { reporter, apm, network, role })
 }
