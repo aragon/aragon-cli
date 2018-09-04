@@ -66,6 +66,9 @@ exports.builder = function (yargs) {
     description: 'Arguments to be passed to the kit constructor',
     array: true,
     default: [],
+  }).option('kit-deploy-event', {
+    description: 'Arguments to be passed to the kit constructor',
+    default: newDAO.BARE_KIT_DEPLOY_EVENT,
   }).option('build-script', {
     description: 'The npm script that will be run when building the app',
     default: 'build',
@@ -75,6 +78,13 @@ exports.builder = function (yargs) {
   }).option('http-served-from', {
     description: 'Directory where your files is being served from e.g. ./dist',
     default: null,
+  }).option('app-init', {
+    description: 'Name of the function that will be called to initialize an app',
+    default: 'initialize'
+  }).option('app-init-args', {
+    description: 'Arguments for calling the app init function',
+    array: true,
+    default: [],
   })
 }
 
@@ -107,9 +117,12 @@ exports.handler = function ({
     reset,
     kit,
     kitInit,
+    kitDeployEvent,
     buildScript,
     http,
     httpServedFrom,
+    appInit,
+    appInitArgs,
   }) {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const showAccounts = accounts
@@ -181,8 +194,23 @@ exports.handler = function ({
       title: 'Create DAO',
       task: (ctx) => {
         const roles = ctx.repo.roles.map(role => role.bytes)
-        // If no kit was deployed, use default params
-        const fnArgs = ctx.contractInstance ? [] : [ctx.repo.appId, roles, ctx.accounts[0], '0x']
+        let fnArgs
+
+        if (ctx.contractInstance) {
+          // If no kit was deployed, use default params
+          fnArgs = []
+        } else {
+          const methodABI = ctx.repo.abi.find(method => method.name == appInit)
+
+          let initPayload
+          if (!methodABI) {
+            initPayload = '0x' // TODO: Report warning when app wasn't initialized
+          } else {
+            initPayload = ctx.web3.eth.abi.encodeFunctionCall(methodABI, appInitArgs)
+          }
+
+          fnArgs = [ctx.repo.appId, roles, ctx.accounts[0], initPayload]
+        }
 
         const newDAOParams = {
           kit, 
@@ -190,7 +218,7 @@ exports.handler = function ({
           kitInstance: ctx.contractInstance,
           fn: 'newInstance',
           fnArgs,
-          deployEvent: newDAO.BARE_KIT_DEPLOY_EVENT,
+          deployEvent: kitDeployEvent,
           web3: ctx.web3, 
           reporter, 
           apmOptions
