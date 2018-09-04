@@ -75,6 +75,10 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
         // TODO: report if empty
         const initPayload = encodeInitPayload(web3, ctx.repo.abi, appInit, appInitArgs)
 
+        if (initPayload == '0x') {
+          ctx.notInitialized = true
+        }
+
         const { events } = await kernel.methods.newAppInstance(
           ctx.repo.appId,
           ctx.repo.contractAddress,
@@ -119,6 +123,11 @@ exports.handler = async function ({ reporter, dao, network, apm: apmOptions, apm
   return task.run()
     .then((ctx) => {
       reporter.success(`Installed ${apmRepo} at: ${chalk.bold(ctx.appAddress)}`)
+
+      if (ctx.notInitialized) {
+        reporter.warning('App could not be initialized, check the --app-init flag. Functions protected behind the ACL will not work until the app is initialized')
+      }
+
       process.exit()
     })
 }

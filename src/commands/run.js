@@ -203,6 +203,10 @@ exports.handler = function ({
           // TODO: Report warning when app wasn't initialized
           const initPayload = encodeInitPayload(ctx.web3, ctx.repo.abi, appInit, appInitArgs)
 
+          if (initPayload == '0x') {
+            ctx.notInitialized = true
+          }
+
           fnArgs = [ctx.repo.appId, roles, ctx.accounts[0], initPayload]
         }
 
@@ -302,6 +306,10 @@ exports.handler = function ({
   return tasks.run({ ens: apmOptions['ens-registry'] }).then(async (ctx) => {
     if (ctx.portOpen) {
       reporter.warning(`Server already listening at port ${WRAPPER_PORT}, skipped starting Aragon`)
+    }
+
+    if (ctx.notInitialized) {
+      reporter.warning('App could not be initialized, check the --app-init flag. Functions protected behind the ACL will not work until the app is initialized')
     }
 
     reporter.info(`You are now ready to open your app in Aragon.`)
