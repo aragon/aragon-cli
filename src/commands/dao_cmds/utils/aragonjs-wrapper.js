@@ -45,7 +45,7 @@ const initWrapper = async (
     provider,
     accounts = '',
     walletProvider = null,
-    ipfsConf = null,
+    ipfsConf = {},
     onError = noop,
     onApps = noop,
     onForwarders = noop,
