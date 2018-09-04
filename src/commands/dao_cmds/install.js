@@ -8,6 +8,7 @@ const APM = require('@aragon/apm')
 const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
 const getRepoTask = require('./utils/getRepoTask')
+const encodeInitPayload = require('./utils/encodeInitPayload')
 const upgrade = require('./upgrade')
 const { getContract, ANY_ENTITY } = require('../../util')
 
@@ -32,9 +33,17 @@ exports.describe = 'Install an app into a DAO'
 
 exports.builder = function (yargs) {
   return getRepoTask.args(daoArg(yargs))
+    .option('app-init', {
+      description: 'Name of the function that will be called to initialize an app',
+      default: 'initialize'
+    }).option('app-init-args', {
+      description: 'Arguments for calling the app init function',
+      array: true,
+      default: [],
+    })
 }
 
-exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion }) => {
+exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, appInit, appInitArgs }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
@@ -63,9 +72,14 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
           ctx.accounts = await web3.eth.getAccounts()
         }
 
+        // TODO: report if empty
+        const initPayload = encodeInitPayload(web3, ctx.repo.abi, appInit, appInitArgs)
+
         const { events } = await kernel.methods.newAppInstance(
           ctx.repo.appId,
-          ctx.repo.contractAddress
+          ctx.repo.contractAddress,
+          initPayload,
+          false
         ).send({
           from: ctx.accounts[0],
           gasLimit: 1e6
@@ -98,10 +112,10 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
   return tasks
 }
 
-exports.handler = async function ({ reporter, dao, network, apm: apmOptions, apmRepo, apmRepoVersion }) {
+exports.handler = async function ({ reporter, dao, network, apm: apmOptions, apmRepo, apmRepoVersion, appInit, appInitArgs }) {
   const web3 = await ensureWeb3(network)
 
-  const task = await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion })
+  const task = await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, appInit, appInitArgs })
   return task.run()
     .then((ctx) => {
       reporter.success(`Installed ${apmRepo} at: ${chalk.bold(ctx.appAddress)}`)

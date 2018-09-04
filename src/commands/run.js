@@ -10,8 +10,8 @@ const publish = require('./apm_cmds/publish')
 const devchain = require('./devchain')
 const deploy = require('./deploy')
 const newDAO = require('./dao_cmds/new')
-const install = require('./dao_cmds/install')
 const startIPFS = require('./ipfs')
+const encodeInitPayload = require('./dao_cmds/utils/encodeInitPayload')
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const os = require('os')
@@ -200,14 +200,8 @@ exports.handler = function ({
           // If no kit was deployed, use default params
           fnArgs = []
         } else {
-          const methodABI = ctx.repo.abi.find(method => method.name == appInit)
-
-          let initPayload
-          if (!methodABI) {
-            initPayload = '0x' // TODO: Report warning when app wasn't initialized
-          } else {
-            initPayload = ctx.web3.eth.abi.encodeFunctionCall(methodABI, appInitArgs)
-          }
+          // TODO: Report warning when app wasn't initialized
+          const initPayload = encodeInitPayload(ctx.web3, ctx.repo.abi, appInit, appInitArgs)
 
           fnArgs = [ctx.repo.appId, roles, ctx.accounts[0], initPayload]
         }
