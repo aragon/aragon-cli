@@ -5,26 +5,8 @@ import Aragon, {
   isNameUsed,
   ensResolve,
 } from '@aragon/wrapper'
-import {
-  appOverrides,
-  sortAppsPair,
-  appLocator,
-  ipfsDefaultConf,
-} from './environment'
-
 
 const noop = () => {}
-
-const appSrc = (app, gateway = ipfsDefaultConf.gateway) => {
-  const hash = app.content && app.content.location
-  if (!hash) return ''
-
-  if (appLocator[app.appId]) {
-    return appLocator[app.appId]
-  }
-
-  return `${gateway}/${hash}/`
-}
 
 // Subscribe to wrapper's observables
 const subscribe = (
@@ -63,7 +45,7 @@ const initWrapper = async (
     provider,
     accounts = '',
     walletProvider = null,
-    ipfsConf = ipfsDefaultConf,
+    ipfsConf = {},
     onError = noop,
     onApps = noop,
     onForwarders = noop,
