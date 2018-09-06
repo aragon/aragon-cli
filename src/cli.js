@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+require('babel-polyfill')
 const { manifestMiddleware, moduleMiddleware } = require('./middleware')
 const { findProjectRoot } = require('./util')
 const ConsoleReporter = require('./reporters/ConsoleReporter')
