@@ -47,7 +47,6 @@
     "chalk": "^2.1.0",
     "cli-table": "^0.3.1",
     "colors": "^1.2.4",
-    "core-js": "^2.5.7",
     "dev-null": "^0.1.1",
     "eth-ens-namehash": "^2.0.8",
     "execa": "^0.10.0",
@@ -80,6 +79,7 @@
     "@babel/preset-env": "^7.0.0-beta.46",
     "@babel/register": "^7.0.0-beta.46",
     "ava": "^0.22.0",
+    "babel-polyfill": "^6.26.0",
     "coveralls": "^3.0.0",
     "standard": "^10.0.3"
   },
