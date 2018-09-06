@@ -146,7 +146,7 @@ exports.handler = function ({
     {
       title: 'Check IPFS',
       task: () => startIPFS.task({ apmOptions }),
-      enabled: () => !http
+      enabled: () => !http || kit
     },
     {
       title: 'Publish app to APM',
