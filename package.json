@@ -43,6 +43,7 @@
     "@aragon/os": "3.1.8",
     "@aragon/templates-beta": "^1.1.3",
     "@aragon/wrapper": "^2.0.0-beta.43",
+    "babel-polyfill": "^6.26.0",
     "bignumber.js": "^7.1.0",
     "chalk": "^2.1.0",
     "cli-table": "^0.3.1",
@@ -79,7 +80,6 @@
     "@babel/preset-env": "^7.0.0-beta.46",
     "@babel/register": "^7.0.0-beta.46",
     "ava": "^0.22.0",
-    "babel-polyfill": "^6.26.0",
     "coveralls": "^3.0.0",
     "standard": "^10.0.3"
   },
