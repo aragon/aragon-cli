@@ -51,7 +51,7 @@ exports.task = ({ apmOptions }) => {
 			title: 'Add local files',
 			task: (ctx) => {
 				const ipfs = IPFS('localhost', '5001', { protocol: 'http' })
-				const files = path.resolve(require.resolve('@aragon/aragen'), '../published-apps')
+				const files = path.resolve(require.resolve('@aragon/aragen'), '../ipfs-cache')
 
 				return new Promise((resolve, reject) => {
 					ipfs.util.addFromFs(files, { recursive: true, ignore: 'node_modules' }, (err, files) => {
