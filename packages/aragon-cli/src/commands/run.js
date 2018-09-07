@@ -34,7 +34,7 @@ const url = require('url')
 const TX_MIN_GAS = 10e6
 const WRAPPER_PORT = 3000
 
-const WRAPPER_COMMIT = 'fa2025232330bc3e4d3b792cab4bf44d754d33e6'
+const WRAPPER_COMMIT = 'fcebf55d1af6c574a92587e2a1d3ac8c00804d16'
 
 exports.command = 'run'
 
