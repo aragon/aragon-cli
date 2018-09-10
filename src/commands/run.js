@@ -18,6 +18,7 @@ const os = require('os')
 const fs = require('fs-extra')
 const opn = require('opn')
 const execa = require('execa')
+const pkg = require('../../package.json')
 
 const {
   findProjectRoot,
@@ -34,7 +35,7 @@ const url = require('url')
 const TX_MIN_GAS = 10e6
 const WRAPPER_PORT = 3000
 
-const WRAPPER_COMMIT = 'fcebf55d1af6c574a92587e2a1d3ac8c00804d16'
+const aragonClientVersion = pkg.aragon.clientVersion;
 
 exports.command = 'run'
 
@@ -231,8 +232,7 @@ exports.handler = function ({
         {
           title: 'Download wrapper',
           task: (ctx, task) => {
-            const WRAPPER_PATH = `${os.homedir()}/.aragon/wrapper-${WRAPPER_COMMIT}`
-            ctx.wrapperPath = WRAPPER_PATH
+            const WRAPPER_PATH = `${os.homedir()}/.aragon/wrapper-${aragonClientVersion}`
 
             // Make sure we haven't already downloaded the wrapper
             if (fs.existsSync(path.resolve(WRAPPER_PATH))) {
@@ -248,7 +248,7 @@ exports.handler = function ({
             return clone(
               'https://github.com/aragon/aragon',
               WRAPPER_PATH,
-              { checkout: WRAPPER_COMMIT }
+              { checkout: aragonClientVersion }
             )
           },
         },
