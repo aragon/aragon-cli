@@ -33,7 +33,7 @@ const { Writable } = require('stream')
 const url = require('url')
 
 const TX_MIN_GAS = 10e6
-const WRAPPER_PORT = 3000
+const CLIENT_PORT = 3000
 
 const aragonClientVersion = pkg.aragon.clientVersion;
 
@@ -232,22 +232,23 @@ exports.handler = function ({
         {
           title: 'Download wrapper',
           task: (ctx, task) => {
-            const WRAPPER_PATH = `${os.homedir()}/.aragon/wrapper-${aragonClientVersion}`
+            const CLIENT_PATH = `${os.homedir()}/.aragon/wrapper-${aragonClientVersion}`
+            ctx.wrapperPath = CLIENT_PATH
 
             // Make sure we haven't already downloaded the wrapper
-            if (fs.existsSync(path.resolve(WRAPPER_PATH))) {
+            if (fs.existsSync(path.resolve(CLIENT_PATH))) {
               task.skip('Wrapper already downloaded')
               ctx.wrapperAvailable = true
               return
             }
 
             // Ensure folder exists
-            fs.ensureDirSync(WRAPPER_PATH)
+            fs.ensureDirSync(CLIENT_PATH)
 
             // Clone wrapper
             return clone(
               'https://github.com/aragon/aragon',
-              WRAPPER_PATH,
+              CLIENT_PATH,
               { checkout: aragonClientVersion }
             )
           },
@@ -260,7 +261,7 @@ exports.handler = function ({
         {
           title: 'Start Aragon client',
           task: async (ctx, task) => {
-            if (await isPortTaken(WRAPPER_PORT)) {
+            if (await isPortTaken(CLIENT_PORT)) {
               ctx.portOpen = true
               return
             }
@@ -281,9 +282,9 @@ exports.handler = function ({
             // Check until the wrapper is served
             const checkWrapperReady = () => {
               setTimeout(async () => {
-                const portTaken = await isPortTaken(WRAPPER_PORT)
+                const portTaken = await isPortTaken(CLIENT_PORT)
                 if (portTaken) {
-                  opn(`http://localhost:${WRAPPER_PORT}/#/${ctx.daoAddress}`)
+                  opn(`http://localhost:${CLIENT_PORT}/#/${ctx.daoAddress}`)
                 } else {
                   checkWrapperReady()
                 }
@@ -305,7 +306,7 @@ exports.handler = function ({
 
   return tasks.run({ ens: apmOptions['ens-registry'] }).then(async (ctx) => {
     if (ctx.portOpen) {
-      reporter.warning(`Server already listening at port ${WRAPPER_PORT}, skipped starting Aragon`)
+      reporter.warning(`Server already listening at port ${CLIENT_PORT}, skipped starting Aragon`)
     }
 
     if (ctx.notInitialized) {
