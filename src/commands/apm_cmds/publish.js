@@ -11,6 +11,7 @@ const EthereumTx = require('ethereumjs-tx')
 const namehash = require('eth-ens-namehash')
 const { keccak256 } = require('js-sha3')
 const TaskList = require('listr')
+const taskInput = require('listr-input')
 const { findProjectRoot, getNodePackageManager } = require('../../util')
 const ignore = require('ignore')
 const execa = require('execa')
@@ -166,6 +167,10 @@ async function prepareFilesForPublishing (tmpDir, files = [], ignorePatterns = n
 
   return tmpDir
 }
+
+const POSITIVE_ANSWERS = ['yes', 'y']
+const NEGATIVE_ANSWERS = ['no', 'n', 'abort', 'a']
+const ANSWERS = POSITIVE_ANSWERS.concat(NEGATIVE_ANSWERS)
 
 exports.task = function ({
   reporter,
@@ -395,9 +400,21 @@ exports.task = function ({
         const dir = onlyArtifacts ? cwd : ctx.pathToPublish
 
         if (onlyContent && !pathExistsSync(`${dir}/${ARTIFACT_FILE}`)) {
-          throw new Error('Couldn\'t find artifact.json. Please generate it first with apm publish --only-artifacts')
-        } 
-        const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
+          return taskInput('Couldn\'t find artifact.json, do you want to generate one? [y]es/[a]bort', {
+
+            validate: value => {
+              return ANSWERS.indexOf(value) > -1
+            },
+            done: async (answer) => {
+              if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
+                const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
+                return `Saved artifact in ${dir}/artifact.json`
+              }
+              throw new Error('Aborting publication...')
+            }
+          })
+        }
+        await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
         return `Saved artifact in ${dir}/artifact.json`
       }
     },
