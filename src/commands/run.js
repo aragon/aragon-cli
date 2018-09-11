@@ -288,6 +288,7 @@ exports.handler = function ({
               env: {
                 REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens,
                 BROWSER: 'none',
+                REACT_APP_PORT: clientPort
               }
             }
 
@@ -353,7 +354,7 @@ exports.handler = function ({
     ${chalk.bold('DAO address')}: ${ctx.daoAddress}
 
     ${(client !== false) ?
-      `Opening http://localhost:3000/#/${ctx.daoAddress} to view your DAO` :
+      `Opening http://localhost:${clientPort}/#/${ctx.daoAddress} to view your DAO` :
       `Use "aragon dao <command> ${ctx.daoAddress}" to interact with your DAO`
     }`)
 
