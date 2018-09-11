@@ -18,11 +18,13 @@ const execa = require('execa')
 const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
+const versionTask = require('./version')
 const startIPFS = require('../ipfs')
 const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 
 const MANIFEST_FILE = 'manifest.json'
 const ARTIFACT_FILE = 'artifact.json'
+const VERSION_BUMP_TYPES = ['patch', 'minor', 'major']
 
 exports.command = 'publish [contract]'
 
@@ -76,6 +78,9 @@ exports.builder = function (yargs) {
     }).option('http-served-from', {
       description: 'Directory where your files is being served from e.g. ./dist',
       default: null,
+    }).option('version-bump', {
+      description: 'Specify version bump type for to be published app',
+      default: null
     })
 }
 
@@ -192,7 +197,7 @@ exports.task = function ({
   key,
   files,
   ignore,
-  automaticallyBump,
+  versionBump,
   ipfsCheck,
   publishDir,
   init,
@@ -203,19 +208,36 @@ exports.task = function ({
   http,
   httpServedFrom,
 }) {
-  if (onlyContent) {
-    contract = '0x0000000000000000000000000000000000000000'
-  }
   
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
   return new TaskList([
     {
       title: 'Preflight checks for publishing to APM',
-      enabled: () => !automaticallyBump,
       task: (ctx) => new TaskList([
         {
+          title: 'Fetch latest app version from chain and increment',
+          enabled: () => !!versionBump,
+          task: async (ctx, task) => {
+
+            if (VERSION_BUMP_TYPES.indexOf(versionBump) == -1) {
+              throw new Error(`Not a valid version bump type. Please use one of 'patch', 'minor', 'major'`)
+            }
+
+            const newVersion = await versionTask.bumpVersionAndUpdateManifest({
+              module,
+              bump: versionBump,
+              cwd,
+              apm
+            })
+
+            ctx.version = newVersion
+            ctx.isMajor = versionBump === VERSION_BUMP_TYPES[2]
+          }
+        },
+        {
           title: 'Check version is valid',
+          enabled: () => !!!versionBump,
           task: (ctx) => {
             if (module && semver.valid(module.version)) {
               ctx.version = module.version
@@ -230,6 +252,7 @@ exports.task = function ({
         },
         {
           title: 'Checking version bump',
+          enabled: () => !!!versionBump,
           task: async (ctx) => {
             let repo = { version: '0.0.0' }
             try {
@@ -253,44 +276,39 @@ exports.task = function ({
             const isValid = await apm.isValidBump(module.appName, repo.version, ctx.version)
 
             if (!isValid) {
-              throw new Error('Version bump is not valid, you have to respect APM bumps policy. Check version upgrade rules in documentation https://hack.aragon.org/docs/aragonos-ref.html#631-version-upgrade-rules')
+              throw new Error('Version bump is not valid, you have to respect APM bumps policy. Use --version-bump to bump your app\'s version and check our version upgrade rules in documentation https://hack.aragon.org/docs/aragonos-ref.html#631-version-upgrade-rules')
             }
 
             const getMajor = version => version.split('.')[0]
+
             ctx.isMajor = getMajor(repo.version) != getMajor(ctx.version)
           }
         }
       ])
     },
     {
-      title: 'Compile contracts',
-      task: async () => (await compileContracts()),
-      enabled: () => !onlyContent && web3Utils.isAddress(contract)
-    },
-    {
-      title: 'Deploy contract',
-      task: async (ctx) => {
-        const deployTaskParams = { contract, init, reporter, network, cwd, web3, apmOptions }
-        
-        return await deploy.task(deployTaskParams)
-      },
-      enabled: ctx => !onlyContent && ((contract && !web3Utils.isAddress(contract)) || (!contract && ctx.isMajor && !reuse) || automaticallyBump)
-    },
-    {
-      title: 'Automatically bump version',
-      task: async (ctx, task) => {
-        let nextMajorVersion
-        try {
-          const { version } = await apm.getLatestVersion(module.appName)
-          nextMajorVersion = parseInt(version.split('.')[0]) + 1
-        } catch (e) {
-          ctx.version = '1.0.0'
-          return task.skip('Starting from initial version')
+      title: 'Compile and deploy contracts',
+      skip: (ctx, task) => {
+        if (!ctx.isMajor || onlyContent) {
+          return 'Publishing patch or minor version, skipping contract compilation and deployment.'
         }
-        
-        ctx.version = `${nextMajorVersion}.0.0`
       },
-      enabled: () => automaticallyBump
+      task: ctx => new TaskList([
+        {
+          title: 'Compile contracts',
+          task: async () => (await compileContracts()),
+          enabled: () => web3Utils.isAddress(contract)
+        },
+        {
+          title: 'Deploy contract',
+          task: async (ctx) => {
+            const deployTaskParams = { contract, init, reporter, network, cwd, web3, apmOptions }
+
+            return await deploy.task(deployTaskParams)
+          },
+          enabled: ctx => !web3Utils.isAddress(contract) && !reuse
+        },
+      ])
     },
     {
       title: 'Determine contract address for version',
@@ -426,31 +444,22 @@ exports.task = function ({
         task.output = 'Generating transaction and waiting for confirmation'
         const accounts = await web3.eth.getAccounts()
         const from = accounts[0]
+        const transaction = await apm.publishVersion(
+          from,
+          module.appName,
+          ctx.version,
+          http ? 'http' : provider,
+          http || ctx.pathToPublish,
+          ctx.contract,
+          from
+        )
+        // Fix because APM.js gas comes with decimals and from doesn't work
+        transaction.from = from
+        transaction.gas = Math.round(transaction.gas)
+        transaction.gasPrice = '19000000000' // 19 gwei
 
-        try {
-          const transaction = await apm.publishVersion(
-            from,
-            module.appName,
-            ctx.version,
-            http ? 'http' : provider,
-            http || ctx.pathToPublish,
-            ctx.contract,
-            from
-          )
-          // Fix because APM.js gas comes with decimals and from doesn't work
-          transaction.from = from
-          transaction.gas = Math.round(transaction.gas)
-          transaction.gasPrice = '19000000000' // 19 gwei
-
-          reporter.debug(JSON.stringify(transaction))
-          
-          return await web3.eth.sendTransaction(transaction)
-        } catch (e) {
-          const errMsg = `${e}\nThis is usually one of these reasons, maybe:
-          - An existing version of this package was already deployed, try running 'aragon version' to bump it
-          - You are deploying a version higher than the one in the chain`
-          throw new Error(errMsg)
-        } 
+        reporter.debug(JSON.stringify(transaction))
+        return await web3.eth.sendTransaction(transaction)
       },
       enabled: () => !onlyArtifacts
     },
