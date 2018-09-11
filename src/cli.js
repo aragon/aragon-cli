@@ -65,14 +65,6 @@ cmd.option('network', {
       return cachedNetwork
     }
 
-    // Catch commands that dont require network and return
-    const skipNetworkSubcommands = new Set(['version']) // 'aragon apm version'
-    if (process.argv.length >= 4) {
-      if (skipNetworkSubcommands.has(process.argv[3])) {
-        return {}
-      }
-    }
-
     const skipNetworkCommands = new Set(['init', 'devchain', 'ipfs'])
 
     if (process.argv.length >= 3) {
