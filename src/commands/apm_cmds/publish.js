@@ -304,8 +304,8 @@ exports.task = function ({
           task.output = 'No contract address provided, using previous one'
 
           try {
-            const { contract } = apm.getLatestVersion(module.appName)
-            ctx.contract = contract
+            const { contractAddress } = await apm.getLatestVersion(module.appName)
+            ctx.contract = contractAddress
             return `Using ${contract}`
           } catch (err) {
             throw new Error('Could not determine previous contract')
