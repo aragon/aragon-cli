@@ -2,7 +2,6 @@ const opn = require('opn')
 const path = require('path')
 const TaskList = require('listr')
 const {
-  isIPFSInstalled,
   startIPFSDaemon,
   isIPFSCORS,
   setIPFSCORS
@@ -22,25 +21,17 @@ exports.task = ({ apmOptions }) => {
 	  	task: async (ctx, task) => {
 		    // If the dev manually set their IPFS node, skip install and running check
 		    if (apmOptions.ipfs.rpc.default) {
-		      const installed = await isIPFSInstalled()
-		      if (!installed) {
-		        setTimeout(() => opn('https://ipfs.io/docs/install'), 2500)
-		        throw new Error(`
-		          Running your app requires IPFS. Opening install instructions in your browser`
-		        )
-		      } else {
-		        const running = await isPortTaken(apmOptions.ipfs.rpc.port)
-		        if (!running) {
-		          task.output = 'Starting IPFS at port: ' + apmOptions.ipfs.rpc.port
-		          await startIPFSDaemon()
-		          ctx.started = true
-		          await setIPFSCORS(apmOptions.ipfs.rpc)
-		        } else {
-		          task.output = 'IPFS is started, checking CORS config'
-		          await setIPFSCORS(apmOptions.ipfs.rpc)
-		          return 'Connected to IPFS daemon ar port: '+ apmOptions.ipfs.rpc.port 
-		        }
-		      }
+					const running = await isPortTaken(apmOptions.ipfs.rpc.port)
+					if (!running) {
+						task.output = 'Starting IPFS at port: ' + apmOptions.ipfs.rpc.port
+						await startIPFSDaemon()
+						ctx.started = true
+						await setIPFSCORS(apmOptions.ipfs.rpc)
+					} else {
+						task.output = 'IPFS is started, checking CORS config'
+						await setIPFSCORS(apmOptions.ipfs.rpc)
+						return 'Connected to IPFS daemon ar port: '+ apmOptions.ipfs.rpc.port 
+					}
 		    } else {
 		      await isIPFSCORS(apmOptions.ipfs.rpc)
 		      return 'Connecting to provided IPFS daemon'

@@ -1,20 +1,14 @@
-const { hasBin, isPortTaken } = require('../util')
 const execa = require('execa')
 const fs = require('fs')
 const path = require('path')
 const homedir = require('homedir')()
 const ipfsAPI = require('ipfs-api')
 
-const isIPFSInstalled = async () => {
-  return await hasBin('ipfs')
-}
-
 const ensureIPFSInitialized = async () => {
   if (fs.existsSync(path.join(homedir, '.ipfs'))) {
     return true
   }
-  const ipfsInit = await execa('ipfs', ['init'])
-  return true
+  await execa('ipfs', ['init'])
 }
 
 const startIPFSDaemon = () => (
@@ -61,4 +55,4 @@ const setIPFSCORS = (ipfsRpc) => {
   )
 }
 
-module.exports = { isIPFSInstalled, startIPFSDaemon, isIPFSCORS, setIPFSCORS }
+module.exports = { startIPFSDaemon, isIPFSCORS, setIPFSCORS }

@@ -1,6 +1,5 @@
 const findUp = require('find-up')
 const path = require('path')
-const hasbin = require('hasbin')
 const { promisify } = require('util')
 const execa = require('execa')
 const net = require('net')
@@ -20,8 +19,6 @@ const findProjectRoot = () => {
   }
   return cachedProjectRoot
 }
-
-const hasBin = (bin) => new Promise((resolve, reject) => hasbin(bin, resolve))
 
 const isPortTaken = async (port, opts) => {
   opts = Object.assign({timeout: 1000}, opts)
@@ -69,4 +66,4 @@ const getContract = (pkg, contract) => {
 
 const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
 
-module.exports = { findProjectRoot, hasBin, isPortTaken, installDeps, getNodePackageManager, getContract, ANY_ENTITY }
+module.exports = { findProjectRoot, isPortTaken, installDeps, getNodePackageManager, getContract, ANY_ENTITY }
