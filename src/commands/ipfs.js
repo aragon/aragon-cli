@@ -30,7 +30,7 @@ exports.task = ({ apmOptions }) => {
 					} else {
 						task.output = 'IPFS is started, checking CORS config'
 						await setIPFSCORS(apmOptions.ipfs.rpc)
-						return 'Connected to IPFS daemon ar port: '+ apmOptions.ipfs.rpc.port 
+						return 'Connected to IPFS daemon at port: '+ apmOptions.ipfs.rpc.port 
 					}
 		    } else {
 		      await isIPFSCORS(apmOptions.ipfs.rpc)
