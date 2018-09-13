@@ -18,6 +18,7 @@ const os = require('os')
 const fs = require('fs-extra')
 const opn = require('opn')
 const execa = require('execa')
+const pkg = require('../../package.json')
 
 const {
   findProjectRoot,
@@ -32,9 +33,9 @@ const { Writable } = require('stream')
 const url = require('url')
 
 const TX_MIN_GAS = 10e6
-const WRAPPER_PORT = 3000
 
-const WRAPPER_COMMIT = 'fcebf55d1af6c574a92587e2a1d3ac8c00804d16'
+const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion;
+const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 
 exports.command = 'run'
 
@@ -85,6 +86,12 @@ exports.builder = function (yargs) {
     description: 'Arguments for calling the app init function',
     array: true,
     default: [],
+  }).option('client-version', {
+    description: 'Version of Aragon client used to run your sandboxed app',
+    default: DEFAULT_CLIENT_VERSION
+  }).option('client-port', {
+    description: 'Port being used by Aragon client',
+    default: DEFAULT_CLIENT_PORT
   })
 }
 
@@ -123,9 +130,16 @@ exports.handler = function ({
     httpServedFrom,
     appInit,
     appInitArgs,
+    clientVersion,
+    clientPort
   }) {
+
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
+
+  clientPort = clientPort || DEFAULT_CLIENT_PORT
+
   const showAccounts = accounts
+
   const tasks = new TaskList([
     {
       title: 'Start a local Ethereum network',
@@ -231,26 +245,25 @@ exports.handler = function ({
         {
           title: 'Download wrapper',
           task: (ctx, task) => {
-            const WRAPPER_PATH = `${os.homedir()}/.aragon/wrapper-${WRAPPER_COMMIT}`
-            ctx.wrapperPath = WRAPPER_PATH
+            clientVersion = clientVersion || DEFAULT_CLIENT_VERSION
+            const CLIENT_PATH = `${os.homedir()}/.aragon/wrapper-${clientVersion}`
+            ctx.wrapperPath = CLIENT_PATH
 
             // Make sure we haven't already downloaded the wrapper
-            if (fs.existsSync(path.resolve(WRAPPER_PATH))) {
+            if (fs.existsSync(path.resolve(CLIENT_PATH))) {
               task.skip('Wrapper already downloaded')
               ctx.wrapperAvailable = true
               return
             }
 
             // Ensure folder exists
-            fs.ensureDirSync(WRAPPER_PATH)
+            fs.ensureDirSync(CLIENT_PATH)
 
             // Clone wrapper
-            return clone(
-              'https://github.com/aragon/aragon',
-              WRAPPER_PATH,
-              { checkout: WRAPPER_COMMIT }
-            )
-          },
+            return clone('https://github.com/aragon/aragon', CLIENT_PATH, {
+              checkout: clientVersion
+            })
+          }
         },
         {
           title: 'Install wrapper dependencies',
@@ -260,7 +273,7 @@ exports.handler = function ({
         {
           title: 'Start Aragon client',
           task: async (ctx, task) => {
-            if (await isPortTaken(WRAPPER_PORT)) {
+            if (await isPortTaken(clientPort)) {
               ctx.portOpen = true
               return
             }
@@ -281,9 +294,9 @@ exports.handler = function ({
             // Check until the wrapper is served
             const checkWrapperReady = () => {
               setTimeout(async () => {
-                const portTaken = await isPortTaken(WRAPPER_PORT)
+                const portTaken = await isPortTaken(clientPort)
                 if (portTaken) {
-                  opn(`http://localhost:${WRAPPER_PORT}/#/${ctx.daoAddress}`)
+                  opn(`http://localhost:${clientPort}/#/${ctx.daoAddress}`)
                 } else {
                   checkWrapperReady()
                 }
@@ -305,7 +318,7 @@ exports.handler = function ({
 
   return tasks.run({ ens: apmOptions['ens-registry'] }).then(async (ctx) => {
     if (ctx.portOpen) {
-      reporter.warning(`Server already listening at port ${WRAPPER_PORT}, skipped starting Aragon`)
+      reporter.warning(`Server already listening at port ${clientPort}, skipped starting Aragon`)
     }
 
     if (ctx.notInitialized) {
