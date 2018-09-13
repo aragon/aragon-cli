@@ -5,10 +5,9 @@ const homedir = require('homedir')()
 const ipfsAPI = require('ipfs-api')
 
 const ensureIPFSInitialized = async () => {
-  if (fs.existsSync(path.join(homedir, '.ipfs'))) {
-    return true
+  if (!fs.existsSync(path.join(homedir, '.ipfs'))) {
+    await execa('ipfs', ['init'])
   }
-  await execa('ipfs', ['init'])
 }
 
 const startIPFSDaemon = () => (
