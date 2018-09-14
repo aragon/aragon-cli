@@ -11,6 +11,7 @@ const EthereumTx = require('ethereumjs-tx')
 const namehash = require('eth-ens-namehash')
 const { keccak256 } = require('js-sha3')
 const TaskList = require('listr')
+const taskInput = require('listr-input')
 const { findProjectRoot, getNodePackageManager } = require('../../util')
 const ignore = require('ignore')
 const execa = require('execa')
@@ -21,6 +22,7 @@ const startIPFS = require('../ipfs')
 const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 
 const MANIFEST_FILE = 'manifest.json'
+const ARTIFACT_FILE = 'artifact.json'
 
 exports.command = 'publish [contract]'
 
@@ -165,6 +167,10 @@ async function prepareFilesForPublishing (tmpDir, files = [], ignorePatterns = n
 
   return tmpDir
 }
+
+const POSITIVE_ANSWERS = ['yes', 'y']
+const NEGATIVE_ANSWERS = ['no', 'n', 'abort', 'a']
+const ANSWERS = POSITIVE_ANSWERS.concat(NEGATIVE_ANSWERS)
 
 exports.task = function ({
   reporter,
@@ -392,8 +398,23 @@ exports.task = function ({
       skip: () => onlyContent && !module.path, // TODO: If onlyContent has been set, get previous version's artifact
       task: async (ctx, task) => {
         const dir = onlyArtifacts ? cwd : ctx.pathToPublish
-        const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
 
+        if (onlyContent && !pathExistsSync(`${dir}/${ARTIFACT_FILE}`)) {
+          return taskInput('Couldn\'t find artifact.json, do you want to generate one? [y]es/[a]bort', {
+
+            validate: value => {
+              return ANSWERS.indexOf(value) > -1
+            },
+            done: async (answer) => {
+              if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
+                const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
+                return `Saved artifact in ${dir}/artifact.json`
+              }
+              throw new Error('Aborting publication...')
+            }
+          })
+        }
+        await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
         return `Saved artifact in ${dir}/artifact.json`
       }
     },
