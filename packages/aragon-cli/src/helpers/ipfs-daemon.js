@@ -1,11 +1,11 @@
 const execa = require('execa')
 const fs = require('fs')
 const path = require('path')
-const homedir = require('homedir')()
+const os = require('os')
 const ipfsAPI = require('ipfs-api')
 
 const ensureIPFSInitialized = async () => {
-  if (!fs.existsSync(path.join(homedir, '.ipfs'))) {
+  if (!fs.existsSync(path.join(os.homedir(), '.ipfs'))) {
     await execa('ipfs', ['init'])
   }
 }
