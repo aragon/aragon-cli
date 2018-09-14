@@ -3,7 +3,7 @@ const ncp = require('ncp')
 const ganache = require('ganache-core')
 const Web3 = require('web3')
 const { promisify } = require('util')
-const homedir = require('homedir')()
+const os = require('os')
 const path = require('path')
 const rimraf = require('rimraf')
 const mkdirp = require('mkdirp')
@@ -35,7 +35,7 @@ exports.task = async function ({ port = 8545, reset = false, showAccounts = 2 })
   const mkDir = promisify(mkdirp)
   const recursiveCopy = promisify(ncp)
 
-  const snapshotPath = path.join(homedir, `.aragon/ganache-db-${port}`)
+  const snapshotPath = path.join(os.homedir(), `.aragon/ganache-db-${port}`)
 
   const tasks = new TaskList([
   {
