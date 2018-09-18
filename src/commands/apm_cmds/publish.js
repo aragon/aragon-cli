@@ -437,19 +437,15 @@ exports.task = function ({
             ctx.contract,
             from
           )
-          // Fix because APM.js gas comes with decimals and from doesn't work
+
           transaction.from = from
-          transaction.gas = Math.round(transaction.gas)
           transaction.gasPrice = '19000000000' // 19 gwei
 
           reporter.debug(JSON.stringify(transaction))
           
           return await web3.eth.sendTransaction(transaction)
         } catch (e) {
-          const errMsg = `${e}\nThis is usually one of these reasons, maybe:
-          - An existing version of this package was already deployed, try running 'aragon version' to bump it
-          - You are deploying a version higher than the one in the chain`
-          throw new Error(errMsg)
+          throw e
         } 
       },
       enabled: () => !onlyArtifacts
