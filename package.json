@@ -8,11 +8,11 @@
     "dao": "./aliases/dao"
   },
   "scripts": {
-    "build": "npm run extract-roles; babel -d dist src --copy-files",
+    "build": "npm run extract-roles && babel -d dist src --copy-files",
     "prepare": "npm run build",
     "test": "ava",
     "lint": "standard src",
-    "extract-roles": "./scripts/extractAppRoles.js"
+    "extract-roles": "scripts/extract-roles"
   },
   "repository": {
     "type": "git",
