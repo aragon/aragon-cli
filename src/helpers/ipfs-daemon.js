@@ -9,19 +9,39 @@ const ipfsBin = getNPMBinary('go-ipfs', 'bin/ipfs')
 
 const ensureIPFSInitialized = async () => {
   if (!fs.existsSync(path.join(os.homedir(), '.ipfs'))) {
+    // We could use 'ipfs daemon --init' when https://github.com/ipfs/go-ipfs/issues/3913 is solved
     await execa(ipfsBin, ['init'])
   }
 }
 
-const startIPFSDaemon = () => (
-  new Promise(async (resolve) => {
+const startIPFSDaemon = () => {
+  const IPFS_START_TIMEOUT = 7500 // 7.5s for timeout, may need to be tweaked
+
+  let startOutput = ''
+
+  // We add a timeout as starting
+  const timeout = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject(new Error(`Starting IPFS timed out:\n${startOutput}`))
+    }, IPFS_START_TIMEOUT)
+  })
+
+  const start = new Promise(async (resolve, reject) => {
     await ensureIPFSInitialized()
     const ipfsProc = execa(ipfsBin, ['daemon'])
+
     ipfsProc.stdout.on('data', (data) => {
+      startOutput = `${startOutput}${data.toString()}\n`
       if (data.toString().includes('Daemon is ready')) resolve()
     })
+
+    ipfsProc.stderr.on('data', (data) => {
+      reject(new Error(`Starting IPFS failed: ${data.toString()}`))
+    })
   })
-)
+
+  return Promise.race([start, timeout])
+}
 
 let ipfsNode
 
