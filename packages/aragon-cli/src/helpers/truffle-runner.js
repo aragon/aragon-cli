@@ -1,10 +1,12 @@
 const execa = require('execa')
-const { Writable } = require('stream')
 const devnull = require('dev-null')
+const { getNPMBinary } = require('../util')
+
+const truffleBin = getNPMBinary('truffle', 'build/cli.bundled.js')
 
 const runTruffle = (args, { stdout, stderr, stdin }) => {
   return new Promise((resolve, reject) => {
-    const truffle = execa('truffle', args)
+    const truffle = execa(truffleBin, args)
     let errMsg = ''
     truffle.on('exit', (code) => {
       (code === 0) ? resolve() : reject(errMsg)
@@ -21,7 +23,7 @@ const runTruffle = (args, { stdout, stderr, stdin }) => {
 
 const compileContracts = async () => {
   try {
-    const truffle = await runTruffle(['compile'], { stdout: devnull() })
+    await runTruffle(['compile'], { stdout: devnull() })
   } catch (err) {
     console.log(err)
     process.exit(1)

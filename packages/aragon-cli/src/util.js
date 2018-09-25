@@ -1,8 +1,9 @@
 const findUp = require('find-up')
 const path = require('path')
-const { promisify } = require('util')
 const execa = require('execa')
 const net = require('net')
+const pathToPackage = require('global-modules-path').getPath
+const { getInstalledPathSync } = require('get-installed-path')
 
 let cachedProjectRoot
 
@@ -59,6 +60,16 @@ const installDeps = (cwd, task) => {
   })
 }
 
+const getNPMBinary = (packageName, relativeBinaryPath) => {
+  let binaryPath
+  try {
+    binaryPath = `${path.join(getInstalledPathSync(packageName, { local: true }), relativeBinaryPath)}`
+  } catch (e) {
+    binaryPath = `${path.join(pathToPackage('@aragon/cli'), 'node_modules', packageName, path.normalize(relativeBinaryPath))}`
+  }
+  return binaryPath
+}
+
 const getContract = (pkg, contract) => {
   const artifact = require(`${pkg}/build/contracts/${contract}.json`)
   return artifact
@@ -66,4 +77,4 @@ const getContract = (pkg, contract) => {
 
 const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
 
-module.exports = { findProjectRoot, isPortTaken, installDeps, getNodePackageManager, getContract, ANY_ENTITY }
+module.exports = { findProjectRoot, isPortTaken, installDeps, getNodePackageManager, getNPMBinary, getContract, ANY_ENTITY }
