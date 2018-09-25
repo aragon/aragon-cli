@@ -28,7 +28,7 @@ const startIPFSDaemon = () => {
 
   const start = new Promise(async (resolve, reject) => {
     await ensureIPFSInitialized()
-    const ipfsProc = execa(ipfsBin, ['daemon'])
+    const ipfsProc = execa(ipfsBin, ['daemon', '--migrate'])
 
     ipfsProc.stdout.on('data', (data) => {
       startOutput = `${startOutput}${data.toString()}\n`
