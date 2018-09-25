@@ -1,19 +1,22 @@
 const execa = require('execa')
 const fs = require('fs')
 const path = require('path')
-const homedir = require('homedir')()
+const os = require('os')
 const ipfsAPI = require('ipfs-api')
+const { getNPMBinary } = require('../util')
+
+const ipfsBin = getNPMBinary('go-ipfs', 'bin/ipfs')
 
 const ensureIPFSInitialized = async () => {
-  if (!fs.existsSync(path.join(homedir, '.ipfs'))) {
-    await execa('ipfs', ['init'])
+  if (!fs.existsSync(path.join(os.homedir(), '.ipfs'))) {
+    await execa(ipfsBin, ['init'])
   }
 }
 
 const startIPFSDaemon = () => (
   new Promise(async (resolve) => {
     await ensureIPFSInitialized()
-    const ipfsProc = execa('ipfs', ['daemon'])
+    const ipfsProc = execa(ipfsBin, ['daemon'])
     ipfsProc.stdout.on('data', (data) => {
       if (data.toString().includes('Daemon is ready')) resolve()
     })

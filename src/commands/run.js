@@ -92,6 +92,9 @@ exports.builder = function (yargs) {
   }).option('client-port', {
     description: 'Port being used by Aragon client',
     default: DEFAULT_CLIENT_PORT
+  }).option('client-path', {
+    description: 'A path pointing to an existing Aragon client installation',
+    default: null
   })
 }
 
@@ -131,7 +134,8 @@ exports.handler = function ({
     appInit,
     appInitArgs,
     clientVersion,
-    clientPort
+    clientPort,
+    clientPath
   }) {
 
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
@@ -244,6 +248,7 @@ exports.handler = function ({
       task: (ctx, task) => new TaskList([
         {
           title: 'Download wrapper',
+          skip: () => !!clientPath,
           task: (ctx, task) => {
             clientVersion = clientVersion || DEFAULT_CLIENT_VERSION
             const CLIENT_PATH = `${os.homedir()}/.aragon/wrapper-${clientVersion}`
@@ -268,7 +273,7 @@ exports.handler = function ({
         {
           title: 'Install wrapper dependencies',
           task: async (ctx, task) => (await installDeps(ctx.wrapperPath, task)),
-          enabled: (ctx) => !ctx.wrapperAvailable
+          enabled: (ctx) => !ctx.wrapperAvailable && !clientPath
         },
         {
           title: 'Start Aragon client',
@@ -279,12 +284,14 @@ exports.handler = function ({
             }
             const bin = getNodePackageManager()
             const startArguments = {
-              cwd: ctx.wrapperPath,
+              cwd: clientPath || ctx.wrapperPath,
               env: {
                 REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens,
                 BROWSER: 'none',
+                REACT_APP_PORT: clientPort
               }
             }
+
             execa(bin, ['run', 'start:local'], startArguments).catch((err) => { throw new Error(err) })
           }
         },
@@ -347,7 +354,7 @@ exports.handler = function ({
     ${chalk.bold('DAO address')}: ${ctx.daoAddress}
 
     ${(client !== false) ?
-      `Opening http://localhost:3000/#/${ctx.daoAddress} to view your DAO` :
+      `Opening http://localhost:${clientPort}/#/${ctx.daoAddress} to view your DAO` :
       `Use "aragon dao <command> ${ctx.daoAddress}" to interact with your DAO`
     }`)
 
