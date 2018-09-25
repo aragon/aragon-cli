@@ -287,7 +287,6 @@ exports.handler = function ({
               cwd: clientPath || ctx.wrapperPath,
               env: {
                 REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens,
-                BROWSER: 'none',
                 REACT_APP_PORT: clientPort
               }
             }
