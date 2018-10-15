@@ -12,15 +12,15 @@ module.exports = {
   },
   task: ({ apm, apmRepo, apmRepoVersion = LATEST_VERSION, artifactRequired = true }) => {
     return async (ctx) => {
-      if (apmRepoVersion == LATEST_VERSION) {
-			  	ctx.repo = await apm.getLatestVersion(apmRepo)
+      if (apmRepoVersion === LATEST_VERSION) {
+        ctx.repo = await apm.getLatestVersion(apmRepo)
       } else {
-			  	ctx.repo = await apm.getVersion(apmRepo, apmRepoVersion.split('.'))
+        ctx.repo = await apm.getVersion(apmRepo, apmRepoVersion.split('.'))
       }
 
-			// appId is loaded from artifact.json in IPFS
+      // appId is loaded from artifact.json in IPFS
       if (artifactRequired && !ctx.repo.appId) {
-			  	throw new Error('Cannot find artifacts in APM repo. Please make sure the package is published and IPFS or your HTTP server running.')
+        throw new Error('Cannot find artifacts in APM repo. Please make sure the package is published and IPFS or your HTTP server running.')
       }
     }
   }

@@ -55,7 +55,7 @@ exports.task = ({ apmOptions }) => {
 }
 
 exports.handler = function ({ reporter, apm: apmOptions }) {
-  const task = exports.task({ apmOptions })
+  const task = exports.task({ apmOptions })
 
   task.run().then(ctx => {
     if (ctx.started) {

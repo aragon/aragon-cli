@@ -3,10 +3,9 @@ require('babel-polyfill')
 const { manifestMiddleware, moduleMiddleware } = require('./middleware')
 const { findProjectRoot } = require('./util')
 const ConsoleReporter = require('./reporters/ConsoleReporter')
-const fs = require('fs')
 const Web3 = require('web3')
-const { getTruffleConfig, getENSAddress } = require('./helpers/truffle-config')
-const url = require('url')
+const { getTruffleConfig } = require('./helpers/truffle-config')
+const url = require('url');
 
 const MIDDLEWARES = [
   manifestMiddleware,

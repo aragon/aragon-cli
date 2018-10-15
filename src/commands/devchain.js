@@ -46,7 +46,7 @@ exports.task = async function ({ port = 8545, reset = false, showAccounts = 2 })
         const aragen = path.resolve(require.resolve('@aragon/aragen'), '../aragon-ganache')
         await recursiveCopy(aragen, snapshotPath)
       },
-      enabled: () => !fs.existsSync(snapshotPath) || reset
+      enabled: () => !fs.existsSync(snapshotPath) || reset
     },
     {
       title: 'Starting a local chain from snapshot',
@@ -93,7 +93,7 @@ exports.printAccounts = (reporter, privateKeys) => {
   const firstAccountComment = '(this account is used to deploy DAOs, it has more permissions)'
 
   const formattedAccounts = privateKeys.map(({ address, key }, i) =>
-    chalk.bold(`Address #${i + 1}:  ${address} ${i == 0 ? firstAccountComment : ''}\nPrivate key: `) + key
+    chalk.bold(`Address #${i + 1}:  ${address} ${i === 0 ? firstAccountComment : ''}\nPrivate key: `) + key
   )
 
   reporter.info(`Here are some Ethereum accounts you can use.

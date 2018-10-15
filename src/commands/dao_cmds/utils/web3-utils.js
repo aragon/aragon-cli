@@ -1,5 +1,3 @@
-import Web3 from 'web3'
-
 // Check address equality without checksums
 export function addressesEqual (first, second) {
   first = first && first.toLowerCase()

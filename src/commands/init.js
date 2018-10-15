@@ -1,12 +1,9 @@
+import { checkProjectExists, prepareTemplate } from '../lib/init'
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const TaskList = require('listr')
-const execa = require('execa')
-const path = require('path')
-const fs = require('fs-extra')
 const { installDeps } = require('../util')
 const defaultAPMName = require('../helpers/default-apm')
-import { checkProjectExists, prepareTemplate } from '../lib/init'
 
 exports.command = 'init <name> [template]'
 
@@ -71,7 +68,7 @@ exports.handler = function ({ reporter, name, template }) {
     },
     {
       title: 'Installing package dependencies',
-      task: async (ctx, task) => (await installDeps(basename, task))
+      task: async (ctx, task) => installDeps(basename, task)
     }
   ])
 

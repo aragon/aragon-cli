@@ -1,9 +1,6 @@
 const TaskList = require('listr')
-const Web3 = require('web3')
 const daoArg = require('./utils/daoArg')
-import initAragonJS from './utils/aragonjs-wrapper'
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const path = require('path')
 const APM = require('@aragon/apm')
 const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
@@ -68,14 +65,14 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
         )
 
         ctx.aclAddress = await kernel.methods.acl().call()
-        if (!ctx.accounts) {
+        if (!ctx.accounts) {
           ctx.accounts = await web3.eth.getAccounts()
         }
 
         // TODO: report if empty
         const initPayload = encodeInitPayload(web3, ctx.repo.abi, appInit, appInitArgs)
 
-        if (initPayload == '0x') {
+        if (initPayload === '0x') {
           ctx.notInitialized = true
         }
 

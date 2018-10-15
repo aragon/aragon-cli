@@ -1,11 +1,7 @@
 const TaskList = require('listr')
-const ganache = require('ganache-core')
 const Web3 = require('web3')
-const namehash = require('eth-ens-namehash')
-const { keccak256 } = require('js-sha3')
 const chalk = require('chalk')
 const path = require('path')
-const APM = require('@aragon/apm')
 const publish = require('./apm_cmds/publish')
 const devchain = require('./devchain')
 const deploy = require('./deploy')
@@ -24,15 +20,10 @@ const {
   findProjectRoot,
   isPortTaken,
   installDeps,
-  getNodePackageManager,
-  getContract,
-  ANY_ENTITY
+  getNodePackageManager
 } = require('../util')
 
-const { Writable } = require('stream')
 const url = require('url')
-
-const TX_MIN_GAS = 10e6
 
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
@@ -98,21 +89,6 @@ exports.builder = function (yargs) {
   })
 }
 
-const setPermissions = async (web3, sender, aclAddress, permissions) => {
-  const acl = new web3.eth.Contract(
-    getContract('@aragon/os', 'ACL').abi,
-    aclAddress
-  )
-  return Promise.all(
-    permissions.map(([who, where, what]) =>
-      acl.methods.createPermission(who, where, what, who).send({
-        from: sender,
-        gasLimit: 1e6
-      })
-    )
-  )
-}
-
 exports.handler = function ({
     // Globals
     reporter,
@@ -156,9 +132,7 @@ exports.handler = function ({
           return 'Connected to the provided Ethereum network'
         }
       },
-      task: async (ctx, task) => {
-        return await devchain.task({ port, reset, showAccounts })
-      }
+      task: async (ctx, task) => devchain.task({ port, reset, showAccounts })
     },
     {
       title: 'Check IPFS',
@@ -192,7 +166,7 @@ exports.handler = function ({
     },
     {
       title: 'Deploy Kit',
-      enabled: () => kit != newDAO.BARE_KIT,
+      enabled: () => kit !== newDAO.BARE_KIT,
       task: ctx => {
         const deployParams = {
           contract: kit,
@@ -220,7 +194,7 @@ exports.handler = function ({
           // TODO: Report warning when app wasn't initialized
           const initPayload = encodeInitPayload(ctx.web3, ctx.repo.abi, appInit, appInitArgs)
 
-          if (initPayload == '0x') {
+          if (initPayload === '0x') {
             ctx.notInitialized = true
           }
 
@@ -271,7 +245,7 @@ exports.handler = function ({
         },
         {
           title: 'Install wrapper dependencies',
-          task: async (ctx, task) => (await installDeps(ctx.wrapperPath, task)),
+          task: async (ctx, task) => installDeps(ctx.wrapperPath, task),
           enabled: (ctx) => !ctx.wrapperAvailable && !clientPath
         },
         {

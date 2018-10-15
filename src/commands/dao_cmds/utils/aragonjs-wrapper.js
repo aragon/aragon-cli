@@ -1,8 +1,4 @@
-import { BigNumber } from 'bignumber.js'
 import Aragon, {
-  providers,
-  setupTemplates,
-  isNameUsed,
   ensResolve
 } from '@aragon/wrapper'
 
@@ -11,8 +7,7 @@ const noop = () => {}
 // Subscribe to wrapper's observables
 const subscribe = (
   wrapper,
-  { onApps, onForwarders, onTransaction, onPermissions },
-  { ipfsConf }
+  { onApps, onForwarders, onTransaction, onPermissions }
 ) => {
   const { apps, forwarders, transactions, permissions } = wrapper
 
@@ -64,7 +59,7 @@ const initWrapper = async (
     : dao
 
   if (!daoAddress) {
-    onError(new InvalidAddress('The provided DAO address is invalid'))
+    onError(new Error('The provided DAO address is invalid'))
     return
   }
 
@@ -81,9 +76,7 @@ const initWrapper = async (
   } catch (err) {
     if (err.message === 'connection not open') {
       onError(
-        new NoConnection(
-          'The wrapper can not be initialized without a connection'
-        )
+        new Error('The wrapper can not be initialized without a connection')
       )
       return
     }

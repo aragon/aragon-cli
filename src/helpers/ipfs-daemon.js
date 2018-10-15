@@ -45,7 +45,6 @@ const isIPFSCORS = async (ipfsRpc) => {
     ${IPFSCORS.map(({ key, value }) => {
       return `${key}: ${value}`
     }).join('\n    ')}`)
-    process.exit()
   }
 }
 

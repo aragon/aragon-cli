@@ -1,13 +1,10 @@
-const TaskList = require('listr')
-const Web3 = require('web3')
-const daoArg = require('./utils/daoArg')
 import initAragonJS from './utils/aragonjs-wrapper'
+const TaskList = require('listr')
+const daoArg = require('./utils/daoArg')
 const { listApps } = require('./utils/knownApps')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const path = require('path')
 
 const Table = require('cli-table')
-const colors = require('colors')
 
 let knownApps
 
@@ -46,7 +43,7 @@ exports.handler = async function ({ reporter, dao, network, apm: apmOptions }) {
               ctx.apps = apps
               resolve()
             },
-            onDaoAddress: addr => ctx.daoAddress = addr,
+            onDaoAddress: addr => { ctx.daoAddress = addr },
             onError: err => reject(err)
           }).catch(err => {
             reporter.error('Error inspecting DAO apps')
@@ -63,7 +60,7 @@ exports.handler = async function ({ reporter, dao, network, apm: apmOptions }) {
       reporter.success(`Successfully fetched DAO apps for ${ctx.daoAddress}`)
       const appsContent = ctx.apps.map(
         ({ appId, proxyAddress, codeAddress, content, appName, version }) =>
-        ([ appName ? `${appName}@v${version}` : printAppName(appId), proxyAddress, printContent(content)])
+          ([ appName ? `${appName}@v${version}` : printAppName(appId), proxyAddress, printContent(content) ])
       )
 
       // filter registry name to make it shorter

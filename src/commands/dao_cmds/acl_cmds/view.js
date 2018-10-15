@@ -1,13 +1,11 @@
-const TaskList = require('listr')
-const Web3 = require('web3')
-const daoArg = require('../utils/daoArg')
 import initAragonJS from '../utils/aragonjs-wrapper'
+const TaskList = require('listr')
+const daoArg = require('../utils/daoArg')
 const { listApps } = require('../utils/knownApps')
 const { rolesForApps } = require('./utils/knownRoles')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 
 const Table = require('cli-table')
-const colors = require('colors')
 
 const knownRoles = rolesForApps()
 const ANY_ENTITY = '0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF'
@@ -26,16 +24,16 @@ exports.builder = function (yargs) {
 }
 
 const printAppName = (appId, addr) => {
-  if (addr == ANY_ENTITY) return ANY_ENTITY_TEXT
+  if (addr === ANY_ENTITY) return ANY_ENTITY_TEXT
   return knownApps[appId] ? `${knownApps[appId].split('.')[0]} (${addr.slice(0, 6)})` : addr.slice(0, 16) + '...'
 }
 
 const appFromProxyAddress = (proxyAddress, apps) => {
-  return apps.filter(app => app.proxyAddress == proxyAddress)[0] || {}
+  return apps.filter(app => app.proxyAddress === proxyAddress)[0] || {}
 }
 
 const formatRow = ({ to, role, allowedEntities, manager }, apps) => {
-  if (manager == ZERO_ADDRESS && !allowedEntities || allowedEntities.length == 0) {
+  if (manager === ZERO_ADDRESS && (!allowedEntities || allowedEntities.length === 0)) {
     return null
   }
 
@@ -44,7 +42,7 @@ const formatRow = ({ to, role, allowedEntities, manager }, apps) => {
   if (formattedRole['id']) formattedRole = formattedRole['id']
   const formattedAllowed = allowedEntities.reduce((acc, addr) => {
     const allowedName = printAppName(appFromProxyAddress(addr, apps).appId, addr)
-    const allowedEmoji = allowedName == ANY_ENTITY_TEXT ? '🆓' : '✅'
+    const allowedEmoji = allowedName === ANY_ENTITY_TEXT ? '🆓' : '✅'
     return acc + '\n' + allowedEmoji + '  ' + allowedName
   }, '').slice(1) // remove first newline
   const formattedManager = printAppName(appFromProxyAddress(manager, apps).appId, manager)
@@ -79,7 +77,7 @@ exports.handler = async function ({ reporter, dao, network, apm }) {
               ctx.apps = apps
               resolveIfReady()
             },
-            onDaoAddress: addr => ctx.daoAddress = addr,
+            onDaoAddress: addr => { ctx.daoAddress = addr },
             onError: err => reject(err)
           }).catch(err => {
             reporter.error('Error inspecting DAO')

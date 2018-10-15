@@ -6,7 +6,7 @@ import { checkProjectExists, prepareTemplate } from '../../src/lib/init'
 const projectPath = './.tmp/aragon-app'
 
 test.beforeEach(t => {
-  fs.ensureDirSync(projectPath)
+  fs.ensureDirSync(projectPath);
 })
 
 test.afterEach(t => {

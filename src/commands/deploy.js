@@ -39,7 +39,7 @@ exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions
 
   init = init || []
 
-	// Mappings allow to pass certain init parameters that get replaced for their actual value
+  // Mappings allow to pass certain init parameters that get replaced for their actual value
   const mappingMask = key => `@ARAGON_${key}`
   const mappings = {
     [mappingMask('ENS')]: () => apmOptions.ensRegistryAddress // <ens> to ens addr
@@ -67,7 +67,7 @@ exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions
 
         const { abi, bytecode } = contractArtifacts
 
-        if (!bytecode || bytecode == '0x') {
+        if (!bytecode || bytecode === '0x') {
           throw new Error('Contract bytecode couldnt be generated. Contracts that dont implement all interface methods cant be deployed')
         }
 

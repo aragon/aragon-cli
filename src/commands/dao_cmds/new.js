@@ -1,9 +1,5 @@
 const TaskList = require('listr')
-const Web3 = require('web3')
-const daoArg = require('./utils/daoArg')
-import initAragonJS from './utils/aragonjs-wrapper'
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const path = require('path')
 const APM = require('@aragon/apm')
 const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
@@ -59,7 +55,7 @@ exports.task = async ({ web3, reporter, apmOptions, kit, kitVersion, fn, fnArgs,
     {
       title: 'Create new DAO from kit',
       task: async (ctx, task) => {
-        if (!ctx.accounts) {
+        if (!ctx.accounts) {
           ctx.accounts = await web3.eth.getAccounts()
         }
 

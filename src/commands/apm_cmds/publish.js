@@ -3,11 +3,10 @@ const fs = require('fs')
 const tmp = require('tmp-promise')
 const path = require('path')
 const { promisify } = require('util')
-const { copy, readJson, writeJson, pathExistsSync, existsSync } = require('fs-extra')
+const { copy, readJson, writeJson, pathExistsSync } = require('fs-extra')
 const extract = require('../../helpers/solidity-extractor')
 const APM = require('@aragon/apm')
 const semver = require('semver')
-const EthereumTx = require('ethereumjs-tx')
 const namehash = require('eth-ens-namehash')
 const { keccak256 } = require('js-sha3')
 const TaskList = require('listr')
@@ -100,7 +99,7 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, contr
   artifact.functions = await extract(path.resolve(cwd, artifact.path))
 
   artifact.roles = artifact.roles
-    .map(role => Object.assign(role, { bytes: '0x' + keccak256(role.id) }))
+    .map(role => Object.assign(role, { bytes: '0x' + keccak256(role.id) }))
 
   // Save artifact
   await writeJson(
@@ -222,7 +221,7 @@ exports.task = function ({
               return `${module.version} is a valid version`
             }
 
-            throw new MessageError(module
+            throw new Error(module
               ? `${module.version} is not a valid semantic version`
               : 'Could not determine version',
               'ERR_INVALID_VERSION')
@@ -235,10 +234,10 @@ exports.task = function ({
             try {
               repo = await apm.getLatestVersion(module.appName)
             } catch (e) {
-              if (e.message.indexOf('Invalid content URI') == 0) {
+              if (e.message.indexOf('Invalid content URI') === 0) {
                 return
               }
-              if (apm.validInitialVersions.indexOf(ctx.version) == -1) {
+              if (apm.validInitialVersions.indexOf(ctx.version) === -1) {
                 throw new Error('Invalid initial version, it can only be 0.0.1, 0.1.0 or 1.0.0. Check your arapp file.')
               } else {
                 ctx.isMajor = true // consider first version as major
@@ -246,7 +245,7 @@ exports.task = function ({
               }
             }
 
-            if (ctx.version == repo.version) {
+            if (ctx.version === repo.version) {
               throw new Error('Version is already published, please bump it using `aragon apm version [major, minor, patch]`')
             }
 
@@ -257,14 +256,14 @@ exports.task = function ({
             }
 
             const getMajor = version => version.split('.')[0]
-            ctx.isMajor = getMajor(repo.version) != getMajor(ctx.version)
+            ctx.isMajor = getMajor(repo.version) !== getMajor(ctx.version)
           }
         }
       ])
     },
     {
       title: 'Compile contracts',
-      task: async () => (await compileContracts()),
+      task: async () => compileContracts(),
       enabled: () => !onlyContent && web3Utils.isAddress(contract)
     },
     {
@@ -272,7 +271,7 @@ exports.task = function ({
       task: async (ctx) => {
         const deployTaskParams = { contract, init, reporter, network, cwd, web3, apmOptions }
 
-        return await deploy.task(deployTaskParams)
+        return deploy.task(deployTaskParams)
       },
       enabled: ctx => !onlyContent && ((contract && !web3Utils.isAddress(contract)) || (!contract && ctx.isMajor && !reuse) || automaticallyBump)
     },
@@ -323,7 +322,7 @@ exports.task = function ({
     },
     {
       title: 'Building frontend',
-      enabled: () => build,
+      enabled: () => build && !http,
       task: async (ctx, task) => {
         if (!fs.existsSync('package.json')) {
           task.skip('No package.json found')
@@ -348,8 +347,7 @@ exports.task = function ({
         return buildTask.catch((err) => {
           throw new Error(`${err.message}\n${err.stderr}\n\nFailed to build. See above output.`)
         })
-      },
-      enabled: () => !http
+      }
     },
     {
       title: 'Check IPFS',
@@ -406,7 +404,7 @@ exports.task = function ({
             },
             done: async (answer) => {
               if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
-                const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
+                await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
                 return `Saved artifact in ${dir}/artifact.json`
               }
               throw new Error('Aborting publication...')
@@ -458,7 +456,7 @@ exports.task = function ({
 }
 
 exports.handler = async (args) => {
-  const { apm: apmOptions, network, reporter, module } = args
+  const { network } = args
 
   const web3 = await ensureWeb3(network)
 

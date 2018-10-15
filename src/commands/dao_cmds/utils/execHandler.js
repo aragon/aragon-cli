@@ -1,5 +1,5 @@
-const TaskList = require('listr')
 import initAragonJS from './aragonjs-wrapper'
+const TaskList = require('listr')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 
 const GAS_ESTIMATE_FUZZ_FACTOR = 2
@@ -13,7 +13,7 @@ module.exports = async function (dao, getTransactionPath, { reporter, apm, netwo
       task: async (ctx, task) => {
         task.output = `Fetching DAO at ${dao}...`
 
-        if (!ctx.accounts) {
+        if (!ctx.accounts) {
           ctx.accounts = await web3.eth.getAccounts()
         }
 

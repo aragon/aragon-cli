@@ -1,16 +1,11 @@
 const TaskList = require('listr')
-const Web3 = require('web3')
 const daoArg = require('./utils/daoArg')
-import initAragonJS from './utils/aragonjs-wrapper'
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const path = require('path')
 const APM = require('@aragon/apm')
 const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
 const getRepoTask = require('./utils/getRepoTask')
 const { getContract } = require('../../util')
-
-const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
 
 exports.command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
 
@@ -41,7 +36,7 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
           dao
         )
 
-        if (!ctx.accounts) {
+        if (!ctx.accounts) {
           ctx.accounts = await web3.eth.getAccounts()
         }
 
@@ -52,7 +47,7 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
         return setApp.send({ from: ctx.accounts[0], gasLimit: 1e6 })
       }
     }
-  ], { repo })
+  ], { repo })
 
   return tasks
 }

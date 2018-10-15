@@ -10,7 +10,7 @@ module.exports = (web3) => {
 
   const getRoleId = async (repoAddr) => {
     const repo = new web3.eth.Contract(require('@aragon/os/build/contracts/Repo').abi, repoAddr)
-    return await repo.methods.CREATE_VERSION_ROLE().call()
+    return repo.methods.CREATE_VERSION_ROLE().call()
   }
 
   return {

@@ -1,7 +1,6 @@
 module.exports = (web3, abi, initFunctionName, initArgs) => {
-  const methodABI = abi.find(method => method.name == initFunctionName)
+  const methodABI = abi.find(method => method.name === initFunctionName)
 
-  let initPayload
   if (!methodABI) {
     return '0x'
   } else {
