@@ -27,7 +27,7 @@ exports.builder = function (yargs) {
 
 const printAppName = (appId, addr) => {
   if (addr == ANY_ENTITY) return ANY_ENTITY_TEXT
-  return knownApps[appId] ? `${knownApps[appId].split('.')[0]} (${addr.slice(0,6)})` : addr.slice(0, 16) + '...'
+  return knownApps[appId] ? `${knownApps[appId].split('.')[0]} (${addr.slice(0, 6)})` : addr.slice(0, 16) + '...'
 }
 
 const appFromProxyAddress = (proxyAddress, apps) => {
@@ -50,7 +50,7 @@ const formatRow = ({ to, role, allowedEntities, manager }, apps) => {
   const formattedManager = printAppName(appFromProxyAddress(manager, apps).appId, manager)
 
   return [formattedTo, formattedRole, formattedAllowed, formattedManager]
-} 
+}
 
 exports.handler = async function ({ reporter, dao, network, apm }) {
   knownApps = listApps()
@@ -80,15 +80,15 @@ exports.handler = async function ({ reporter, dao, network, apm }) {
               resolveIfReady()
             },
             onDaoAddress: addr => ctx.daoAddress = addr,
-            onError: err => reject(err) 
-          }).catch(err => { 
-              reporter.error('Error inspecting DAO')
-              reporter.debug(err)
-              process.exit(1)
-            })
+            onError: err => reject(err)
+          }).catch(err => {
+            reporter.error('Error inspecting DAO')
+            reporter.debug(err)
+            process.exit(1)
+          })
         })
       }
-    },
+    }
   ])
 
   return tasks.run()
@@ -100,7 +100,7 @@ exports.handler = async function ({ reporter, dao, network, apm }) {
       // filter according to cli params will happen here
 
       const table = new Table({
-        head: ['App', 'Action', 'Allowed entities', 'Manager'].map(x => x.white),
+        head: ['App', 'Action', 'Allowed entities', 'Manager'].map(x => x.white)
       })
 
       const tos = Object.keys(acl)
@@ -108,7 +108,7 @@ exports.handler = async function ({ reporter, dao, network, apm }) {
       const flattenedACL = tos.reduce((acc, to) => {
         const roles = Object.keys(acl[to])
         const permissions = roles.map((role) => ({ to, role, ...acl[to][role] }))
-      
+
         return acc.concat(permissions)
       }, [])
 

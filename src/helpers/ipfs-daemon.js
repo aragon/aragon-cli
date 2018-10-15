@@ -27,10 +27,10 @@ let ipfsNode
 
 const IPFSCORS = [{
   key: 'API.HTTPHeaders.Access-Control-Allow-Origin',
-  value: ["*"]
+  value: ['*']
 }, {
   key: 'API.HTTPHeaders.Access-Control-Allow-Methods',
-  value: ["PUT", "GET", "POST"]
+  value: ['PUT', 'GET', 'POST']
 }]
 
 const isIPFSCORS = async (ipfsRpc) => {

@@ -3,7 +3,7 @@ import Aragon, {
   providers,
   setupTemplates,
   isNameUsed,
-  ensResolve,
+  ensResolve
 } from '@aragon/wrapper'
 
 const noop = () => {}
@@ -51,16 +51,16 @@ const initWrapper = async (
     onForwarders = noop,
     onTransaction = noop,
     onDaoAddress = noop,
-    onPermissions = noop,
+    onPermissions = noop
   } = {}
 ) => {
   const isDomain = /[a-z0-9]+\.eth/.test(dao)
 
   const daoAddress = isDomain
     ? await resolveEnsDomain(dao, {
-        provider,
-        registryAddress: ensRegistryAddress,
-      })
+      provider,
+      registryAddress: ensRegistryAddress
+    })
     : dao
 
   if (!daoAddress) {
@@ -73,7 +73,7 @@ const initWrapper = async (
   const wrapper = new Aragon(daoAddress, {
     ensRegistryAddress,
     provider,
-    apm: { ipfs: ipfsConf },
+    apm: { ipfs: ipfsConf }
   })
 
   try {

@@ -11,7 +11,7 @@
     "build": "npm run extract-roles && babel -d dist src --copy-files",
     "prepare": "npm run build",
     "test": "ava",
-    "lint": "standard src",
+    "lint": "standard",
     "extract-roles": "scripts/extract-roles"
   },
   "repository": {
@@ -95,6 +95,11 @@
     ],
     "files": [
       "test/**/*.js"
+    ]
+  },
+  "standard": {
+    "ignore": [
+      "dist"
     ]
   },
   "aragon": {

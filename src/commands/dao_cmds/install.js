@@ -39,7 +39,7 @@ exports.builder = function (yargs) {
     }).option('app-init-args', {
       description: 'Arguments for calling the app init function',
       array: true,
-      default: [],
+      default: []
     })
 }
 
@@ -53,7 +53,7 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
   const tasks = new TaskList([
     {
       title: `Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`,
-      task: getRepoTask.task({ apm, apmRepo, apmRepoVersion }),
+      task: getRepoTask.task({ apm, apmRepo, apmRepoVersion })
     },
     {
       title: `Upgrading app`,
@@ -88,7 +88,7 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
           from: ctx.accounts[0],
           gasLimit: 1e6
         })
-        
+
         ctx.appAddress = events['NewAppProxy'].returnValues.proxy
       }
     },
@@ -97,7 +97,6 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
       task: async (ctx, task) => {
         if (!ctx.repo.roles || ctx.repo.roles.length === 0) {
           throw new Error('You have no permissions defined in your arapp.json\nThis is required for your app to properly show up.')
-          return
         }
 
         const permissions = ctx.repo.roles

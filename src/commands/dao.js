@@ -17,7 +17,7 @@ exports.builder = function (yargs) {
   if (process.argv[3] != 'new') {
     yargs = daoArg(yargs)
   }
-  
+
   const cmd = yargs.commandDir('dao_cmds', {
     visit: (cmd) => {
       // Add middlewares

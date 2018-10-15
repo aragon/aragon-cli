@@ -34,7 +34,7 @@ const url = require('url')
 
 const TX_MIN_GAS = 10e6
 
-const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion;
+const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 
 exports.command = 'run'
@@ -52,7 +52,7 @@ exports.builder = function (yargs) {
     array: true
   }).option('port', {
     description: 'Port to start devchain at',
-    default: '8545',
+    default: '8545'
   }).option('accounts', {
     default: 2,
     description: 'Number of accounts to print'
@@ -62,30 +62,30 @@ exports.builder = function (yargs) {
     description: 'Reset devchain to snapshot'
   }).option('kit', {
     default: newDAO.BARE_KIT,
-    description: "Kit contract name"
+    description: 'Kit contract name'
   }).option('kit-init', {
     description: 'Arguments to be passed to the kit constructor',
     array: true,
-    default: [],
+    default: []
   }).option('kit-deploy-event', {
     description: 'Arguments to be passed to the kit constructor',
-    default: newDAO.BARE_KIT_DEPLOY_EVENT,
+    default: newDAO.BARE_KIT_DEPLOY_EVENT
   }).option('build-script', {
     description: 'The npm script that will be run when building the app',
-    default: 'build',
+    default: 'build'
   }).option('http', {
     description: 'URL for where your app is served from e.g. localhost:1234',
-    default: null,
+    default: null
   }).option('http-served-from', {
     description: 'Directory where your files is being served from e.g. ./dist',
-    default: null,
+    default: null
   }).option('app-init', {
     description: 'Name of the function that will be called to initialize an app',
     default: 'initialize'
   }).option('app-init-args', {
     description: 'Arguments for calling the app init function',
     array: true,
-    default: [],
+    default: []
   }).option('client-version', {
     description: 'Version of Aragon client used to run your sandboxed app',
     default: DEFAULT_CLIENT_VERSION
@@ -137,7 +137,6 @@ exports.handler = function ({
     clientPort,
     clientPath
   }) {
-
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   clientPort = clientPort || DEFAULT_CLIENT_PORT
@@ -186,10 +185,10 @@ exports.handler = function ({
           automaticallyBump: true,
           getRepo: true,
           http,
-          httpServedFrom,
+          httpServedFrom
         }
         return publish.task(publishParams)
-      },
+      }
     },
     {
       title: 'Deploy Kit',
@@ -202,13 +201,13 @@ exports.handler = function ({
           network,
           cwd,
           web3: ctx.web3,
-          apmOptions,
+          apmOptions
         }
 
         return deploy.task(deployParams)
       }
     },
-    { 
+    {
       title: 'Create DAO',
       task: (ctx) => {
         const roles = ctx.repo.roles.map(role => role.bytes)
@@ -229,19 +228,19 @@ exports.handler = function ({
         }
 
         const newDAOParams = {
-          kit, 
+          kit,
           kitVersion: 'latest',
           kitInstance: ctx.contractInstance,
           fn: 'newInstance',
           fnArgs,
           deployEvent: kitDeployEvent,
-          web3: ctx.web3, 
-          reporter, 
+          web3: ctx.web3,
+          reporter,
           apmOptions
         }
 
         return newDAO.task(newDAOParams)
-      },
+      }
     },
     {
       title: 'Open DAO',
@@ -352,9 +351,9 @@ exports.handler = function ({
     ${chalk.bold(`APM registry`)}: ${registry}
     ${chalk.bold('DAO address')}: ${ctx.daoAddress}
 
-    ${(client !== false) ?
-      `Opening http://localhost:${clientPort}/#/${ctx.daoAddress} to view your DAO` :
-      `Use "aragon dao <command> ${ctx.daoAddress}" to interact with your DAO`
+    ${(client !== false)
+      ? `Opening http://localhost:${clientPort}/#/${ctx.daoAddress} to view your DAO`
+      : `Use "aragon dao <command> ${ctx.daoAddress}" to interact with your DAO`
     }`)
 
     if (!manifest) {

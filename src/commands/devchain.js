@@ -38,53 +38,53 @@ exports.task = async function ({ port = 8545, reset = false, showAccounts = 2 })
   const snapshotPath = path.join(os.homedir(), `.aragon/ganache-db-${port}`)
 
   const tasks = new TaskList([
-  {
-    title: 'Setting up a new chain from latest Aragon snapshot',
-    task: async (ctx, task) => {
-      await removeDir(snapshotPath)
-      await mkDir(path.resolve(snapshotPath, '..'))
-      const aragen = path.resolve(require.resolve('@aragon/aragen'), '../aragon-ganache')
-      await recursiveCopy(aragen, snapshotPath)
+    {
+      title: 'Setting up a new chain from latest Aragon snapshot',
+      task: async (ctx, task) => {
+        await removeDir(snapshotPath)
+        await mkDir(path.resolve(snapshotPath, '..'))
+        const aragen = path.resolve(require.resolve('@aragon/aragen'), '../aragon-ganache')
+        await recursiveCopy(aragen, snapshotPath)
+      },
+      enabled: () => !fs.existsSync(snapshotPath) || reset
     },
-    enabled: () => !fs.existsSync(snapshotPath) || reset
-  },
-  {
-    title: 'Starting a local chain from snapshot',
-    task: async (ctx, task) => {
-      const server = ganache.server({
+    {
+      title: 'Starting a local chain from snapshot',
+      task: async (ctx, task) => {
+        const server = ganache.server({
         // Start on a different networkID every time to avoid Metamask nonce caching issue:
         // https://github.com/aragon/aragon-cli/issues/156
-        network_id: parseInt(1e8 * Math.random()), 
-        gasLimit: BLOCK_GAS_LIMIT,
-        mnemonic: MNEMONIC,
-        db_path: snapshotPath,
-      })
-      const listen = () => (
+          network_id: parseInt(1e8 * Math.random()),
+          gasLimit: BLOCK_GAS_LIMIT,
+          mnemonic: MNEMONIC,
+          db_path: snapshotPath
+        })
+        const listen = () => (
         new Promise((resolve, reject) => {
           server.listen(port, (err) => {
             if (err) return reject(err)
-      
+
             task.title = `Local chain started at port ${port}`
             resolve()
           })
         })
       )
-      await listen()
+        await listen()
 
-      ctx.web3 = new Web3(
+        ctx.web3 = new Web3(
         new Web3.providers.WebsocketProvider(`ws://localhost:${port}`)
       )
-      const accounts = await ctx.web3.eth.getAccounts()
+        const accounts = await ctx.web3.eth.getAccounts()
 
-      ctx.accounts = accounts.slice(0, parseInt(showAccounts))
-      ctx.mnemonic = MNEMONIC
+        ctx.accounts = accounts.slice(0, parseInt(showAccounts))
+        ctx.mnemonic = MNEMONIC
 
-      const ganacheAccounts = server.provider.manager.state.accounts
-      ctx.privateKeys = ctx.accounts.map((address) => (
+        const ganacheAccounts = server.provider.manager.state.accounts
+        ctx.privateKeys = ctx.accounts.map((address) => (
         { key: ganacheAccounts[address.toLowerCase()].secretKey.toString('hex'), address }
       ))
-    }
-  }])
+      }
+    }])
 
   return tasks
 }
@@ -92,8 +92,8 @@ exports.task = async function ({ port = 8545, reset = false, showAccounts = 2 })
 exports.printAccounts = (reporter, privateKeys) => {
   const firstAccountComment = '(this account is used to deploy DAOs, it has more permissions)'
 
-  const formattedAccounts = privateKeys.map(({ address, key }, i) => 
-    chalk.bold(`Address #${i + 1}:  ${address} ${ i == 0 ? firstAccountComment : ''}\nPrivate key: `) + key
+  const formattedAccounts = privateKeys.map(({ address, key }, i) =>
+    chalk.bold(`Address #${i + 1}:  ${address} ${i == 0 ? firstAccountComment : ''}\nPrivate key: `) + key
   )
 
   reporter.info(`Here are some Ethereum accounts you can use.
@@ -122,5 +122,5 @@ exports.handler = async ({ reporter, port, reset, accounts }) => {
   exports.printMnemonic(reporter, mnemonic)
   exports.printResetNotice(reporter, reset)
 
-  reporter.info(`Devchain running: ${chalk.bold('http://localhost:'+port)}.`)
+  reporter.info(`Devchain running: ${chalk.bold('http://localhost:' + port)}.`)
 }

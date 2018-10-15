@@ -51,31 +51,31 @@ exports.builder = function (yargs) {
     }).option('ignore', {
       description: 'A gitignore pattern of files to ignore. Specify multiple times to add multiple patterns.',
       array: true,
-      default: ['node_modules'],
+      default: ['node_modules']
     }).option('ipfs-check', {
       description: 'Whether to have publish start IPFS if not started',
       boolean: true,
       default: true
     }).option('publish-dir', {
       description: 'Temporary directory where files will be copied before publishing. Defaults to temp dir.',
-      default: null,
+      default: null
     }).option('only-content', {
       description: 'Whether to skip contract compilation, deployment and contract artifact generation',
       default: false,
-      boolean: true,
+      boolean: true
     }).option('build', {
       description: 'Whether publish should try to build the app before publishing, running the script specified in --build-script',
       default: true,
-      boolean: true,
+      boolean: true
     }).option('build-script', {
       description: 'The npm script that will be run when building the app',
-      default: 'build',
+      default: 'build'
     }).option('http', {
       description: 'URL for where your app is served e.g. localhost:1234',
-      default: null,
+      default: null
     }).option('http-served-from', {
       description: 'Directory where your files is being served from e.g. ./dist',
-      default: null,
+      default: null
     })
 }
 
@@ -100,7 +100,7 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, contr
   artifact.functions = await extract(path.resolve(cwd, artifact.path))
 
   artifact.roles = artifact.roles
-    .map(role => Object.assign(role, { bytes: '0x'+keccak256(role.id) }))
+    .map(role => Object.assign(role, { bytes: '0x' + keccak256(role.id) }))
 
   // Save artifact
   await writeJson(
@@ -201,12 +201,12 @@ exports.task = function ({
   build,
   buildScript,
   http,
-  httpServedFrom,
+  httpServedFrom
 }) {
   if (onlyContent) {
     contract = '0x0000000000000000000000000000000000000000'
   }
-  
+
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
   return new TaskList([
@@ -235,7 +235,7 @@ exports.task = function ({
             try {
               repo = await apm.getLatestVersion(module.appName)
             } catch (e) {
-              if (e.message.indexOf("Invalid content URI") == 0) {
+              if (e.message.indexOf('Invalid content URI') == 0) {
                 return
               }
               if (apm.validInitialVersions.indexOf(ctx.version) == -1) {
@@ -271,7 +271,7 @@ exports.task = function ({
       title: 'Deploy contract',
       task: async (ctx) => {
         const deployTaskParams = { contract, init, reporter, network, cwd, web3, apmOptions }
-        
+
         return await deploy.task(deployTaskParams)
       },
       enabled: ctx => !onlyContent && ((contract && !web3Utils.isAddress(contract)) || (!contract && ctx.isMajor && !reuse) || automaticallyBump)
@@ -287,7 +287,7 @@ exports.task = function ({
           ctx.version = '1.0.0'
           return task.skip('Starting from initial version')
         }
-        
+
         ctx.version = `${nextMajorVersion}.0.0`
       },
       enabled: () => automaticallyBump
@@ -346,32 +346,31 @@ exports.task = function ({
         })
 
         return buildTask.catch((err) => {
-            throw new Error(`${err.message}\n${err.stderr}\n\nFailed to build. See above output.`)
-          })
+          throw new Error(`${err.message}\n${err.stderr}\n\nFailed to build. See above output.`)
+        })
       },
-      enabled: () => !http,
+      enabled: () => !http
     },
     {
       title: 'Check IPFS',
       task: () => startIPFS.task({ apmOptions }),
-      enabled: () => !http && ipfsCheck,
+      enabled: () => !http && ipfsCheck
     },
     {
       title: 'Prepare files for publishing',
       task: async (ctx, task) => {
-
         // Create temporary directory
         if (!publishDir) {
           const { path: tmpDir } = await tmp.dir()
           publishDir = tmpDir
         }
-        
+
         await prepareFilesForPublishing(publishDir, files, ignore)
         ctx.pathToPublish = publishDir
 
         return `Files copied to temporary directory: ${ctx.pathToPublish}`
       },
-      enabled: () => !http,
+      enabled: () => !http
     },
     {
       title: 'Check for --http-served-from argument and copy manifest.json to destination',
@@ -391,7 +390,7 @@ exports.task = function ({
 
         ctx.pathToPublish = httpServedFrom
       },
-      enabled: () => http,
+      enabled: () => http
     },
     {
       title: 'Generate application artifact',
@@ -442,18 +441,18 @@ exports.task = function ({
           transaction.gasPrice = '19000000000' // 19 gwei
 
           reporter.debug(JSON.stringify(transaction))
-          
+
           return await web3.eth.sendTransaction(transaction)
         } catch (e) {
           throw e
-        } 
+        }
       },
       enabled: () => !onlyArtifacts
     },
     {
       title: 'Fetch published repo',
       task: getRepoTask.task({ apmRepo: module.appName, apm }),
-      enabled: () => getRepo,
+      enabled: () => getRepo
     }
   ])
 }

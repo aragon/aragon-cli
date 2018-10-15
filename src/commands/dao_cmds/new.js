@@ -23,7 +23,7 @@ exports.describe = 'Create a new DAO'
 exports.builder = yargs => {
   return yargs.positional('kit', {
     description: 'Name of the kit to use creating the DAO',
-    default: exports.BARE_KIT,
+    default: exports.BARE_KIT
   })
   .positional('kit-version', {
     description: 'Version of the kit to be used',
@@ -32,7 +32,7 @@ exports.builder = yargs => {
   .option('fn-args', {
     description: 'Arguments to be passed to the newInstance function (or the function passed with --fn)',
     array: true,
-    default: [],
+    default: []
   })
   .option('fn', {
     description: 'Function to be called to create instance',
@@ -54,7 +54,7 @@ exports.task = async ({ web3, reporter, apmOptions, kit, kitVersion, fn, fnArgs,
     {
       title: `Fetching kit ${chalk.bold(kit)}@${kitVersion}`,
       task: getRepoTask.task({ apm, apmRepo: kit, apmRepoVersion: kitVersion, artifactRequired: false }),
-      enabled: () => !kitInstance,
+      enabled: () => !kitInstance
     },
     {
       title: 'Create new DAO from kit',
@@ -70,7 +70,7 @@ exports.task = async ({ web3, reporter, apmOptions, kit, kitVersion, fn, fnArgs,
 
         const { events } = await newInstanceTx.send({ from: ctx.accounts[0], gas: 15e6 })
         ctx.daoAddress = events[deployEvent].returnValues.dao
-      },
+      }
     },
     {
       title: 'Checking DAO',

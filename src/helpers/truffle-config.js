@@ -6,12 +6,12 @@ const getTruffleConfig = () => {
     if (fs.existsSync(`${findProjectRoot()}/truffle.js`)) {
       const truffleConfig = require(`${findProjectRoot()}/truffle`)
       return truffleConfig
-    } 
+    }
 
     if (fs.existsSync(`${findProjectRoot()}/truffle-config.js`)) {
       const truffleConfig = require(`${findProjectRoot()}/truffle-config.js`)
       return truffleConfig
-    } 
+    }
   } catch (err) {
     console.log(err)
     // This means you are running init

@@ -31,7 +31,7 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
     {
       title: `Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`,
       skip: ctx => ctx.repo, // only run if repo isn't passed
-      task: getRepoTask.task({ apm, apmRepo, apmRepoVersion }),
+      task: getRepoTask.task({ apm, apmRepo, apmRepoVersion })
     },
     {
       title: 'Upgrading app',
@@ -48,10 +48,10 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
         const basesNamespace = await kernel.methods.APP_BASES_NAMESPACE().call()
 
         const setApp = kernel.methods.setApp(basesNamespace, ctx.repo.appId, ctx.repo.contractAddress)
-        
+
         return setApp.send({ from: ctx.accounts[0], gasLimit: 1e6 })
       }
-    },
+    }
   ], { repo })
 
   return tasks

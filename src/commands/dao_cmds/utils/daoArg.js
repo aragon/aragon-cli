@@ -1,7 +1,7 @@
 const web3Utils = require('web3-utils')
 
 module.exports = (yargs) => {
-	return yargs
+  return yargs
 		.positional('dao', {
 	      description: 'Address of the Kernel or AragonID)',
 	      type: 'string'
