@@ -6,6 +6,7 @@ const path = require('path')
 const fs = require('fs-extra')
 const { installDeps } = require('../util')
 const defaultAPMName = require('../helpers/default-apm')
+import { checkProjectExists, prepareTemplate } from '../lib/init';
 
 exports.command = 'init <name> [template]'
 
@@ -44,52 +45,32 @@ exports.builder = (yargs) => {
 
 exports.handler = function ({ reporter, name, template }) {
   name = defaultAPMName(name)
-  
   const basename = name.split('.')[0]
+
   const tasks = new TaskList([
     {
-      title: 'Checking project existence',
+      title: 'Preparing initialization',
       task: async (ctx, task) => {
-        const projectPath = path.resolve(process.cwd(), basename)
-        const exists = await fs.pathExists(projectPath)
-        if (exists) {
-          throw new Error(`Couldn't initialize project. Project with name ${basename} already exists in ${projectPath}. Use different <name> or rename existing project folder.`)
-        }
+        task.output = 'Checking if project folder already exists...'
+        await checkProjectExists(basename)
       }
     },
     {
-      title: 'Clone template',
+      title: 'Cloning app template',
       task: async (ctx, task) => {
         task.output = `Cloning ${template} into ${basename}...`
-
-        const repo = await clone(template, basename, { shallow: true })
+        await clone(template, basename, { shallow: true })
       }
     },
     {
       title: 'Preparing template',
       task: async (ctx, task) => {
-        // Set `appName` in arapp
-        const arappPath = path.resolve(
-          basename,
-          'arapp.json'
-        )
-        const arapp = await fs.readJson(arappPath)
-        arapp.appName = name
-
-        // Delete .git folder
-        const gitFolderPath = path.resolve(
-          basename,
-          '.git'
-        )
-
-        return Promise.all([
-          fs.writeJson(arappPath, arapp, { spaces: 2 }),
-          fs.remove(gitFolderPath)
-        ])
+        task.output = 'Initiliazing arapp.json and removing Git repository';
+        await prepareTemplate(basename, name)
       }
     },
     {
-      title: 'Install package dependencies',
+      title: 'Installing package dependencies',
       task: async (ctx, task) => (await installDeps(basename, task)),
     }
   ])
