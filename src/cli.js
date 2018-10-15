@@ -5,7 +5,7 @@ const { findProjectRoot } = require('./util')
 const ConsoleReporter = require('./reporters/ConsoleReporter')
 const Web3 = require('web3')
 const { getTruffleConfig } = require('./helpers/truffle-config')
-const url = require('url');
+const url = require('url')
 
 const MIDDLEWARES = [
   manifestMiddleware,

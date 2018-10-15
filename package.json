@@ -83,6 +83,7 @@
     "@babel/preset-env": "^7.0.0-beta.46",
     "@babel/register": "^7.0.0-beta.46",
     "ava": "^0.22.0",
+    "babel-eslint": "^10.0.1",
     "coveralls": "^3.0.0",
     "standard": "^10.0.3"
   },
@@ -91,6 +92,7 @@
   },
   "ava": {
     "require": [
+      "babel-polyfill",
       "@babel/register"
     ],
     "files": [
@@ -98,6 +100,7 @@
     ]
   },
   "standard": {
+    "parser": "babel-eslint",
     "ignore": [
       "dist"
     ]
