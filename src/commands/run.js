@@ -15,6 +15,7 @@ const fs = require('fs-extra')
 const opn = require('opn')
 const execa = require('execa')
 const pkg = require('../../package.json')
+const ListrRenderer = require('../reporters/ListrRenderer')
 
 const {
   findProjectRoot,
@@ -94,6 +95,8 @@ exports.handler = function ({
     reporter,
     cwd,
     apm: apmOptions,
+    silent,
+    debug,
     network,
     module,
     client,
@@ -287,7 +290,9 @@ exports.handler = function ({
       ]),
       enabled: () => client === true
     }
-  ])
+  ],{
+    renderer: ListrRenderer(silent, debug)
+  })
 
   const manifestPath = path.resolve(findProjectRoot(), 'manifest.json')
   let manifest

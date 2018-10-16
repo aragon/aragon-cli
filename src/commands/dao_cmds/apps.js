@@ -4,6 +4,7 @@ const chalk = require('chalk')
 const daoArg = require('./utils/daoArg')
 const { listApps } = require('./utils/knownApps')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const ListrRenderer = require('../../reporters/ListrRenderer')
 
 const Table = require('cli-table')
 
@@ -27,7 +28,7 @@ const printContent = (content) => {
   return `${content.provider}:${content.location}`.slice(0, 25) + '...'
 }
 
-exports.handler = async function ({ reporter, dao, network, apm: apmOptions, module }) {
+exports.handler = async function ({ reporter, dao, network, apm: apmOptions, module, silent, debug }) {
   knownApps = listApps([module.appName])
   const web3 = await ensureWeb3(network)
 
@@ -54,7 +55,9 @@ exports.handler = async function ({ reporter, dao, network, apm: apmOptions, mod
         })
       }
     }
-  ])
+  ],{
+    renderer: ListrRenderer(silent, debug)
+  })
 
   return tasks.run()
     .then((ctx) => {

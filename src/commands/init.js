@@ -4,6 +4,7 @@ const clone = promisify(require('git-clone'))
 const TaskList = require('listr')
 const { installDeps } = require('../util')
 const defaultAPMName = require('../helpers/default-apm')
+const ListrRenderer = require('../reporters/ListrRenderer')
 
 exports.command = 'init <name> [template]'
 
@@ -40,7 +41,7 @@ exports.builder = (yargs) => {
     })
 }
 
-exports.handler = function ({ reporter, name, template }) {
+exports.handler = function ({ reporter, name, template, silent, debug }) {
   name = defaultAPMName(name)
   const basename = name.split('.')[0]
 
@@ -70,7 +71,9 @@ exports.handler = function ({ reporter, name, template }) {
       title: 'Installing package dependencies',
       task: async (ctx, task) => installDeps(basename, task)
     }
-  ])
+  ],{
+    renderer: ListrRenderer(silent, debug)
+  })
 
   return tasks.run()
     .then(() => reporter.success(`Created new application ${name} in ${basename}`))

@@ -9,6 +9,7 @@ const rimraf = require('rimraf')
 const mkdirp = require('mkdirp')
 const chalk = require('chalk')
 const fs = require('fs')
+const ListrRenderer = require('../reporters/ListrRenderer')
 
 const { BLOCK_GAS_LIMIT, MNEMONIC } = require('../helpers/ganache-vars')
 
@@ -30,7 +31,7 @@ exports.builder = {
   }
 }
 
-exports.task = async function ({ port = 8545, reset = false, showAccounts = 2 }) {
+exports.task = async function ({ port = 8545, reset = false, showAccounts = 2, silent, debug }) {
   const removeDir = promisify(rimraf)
   const mkDir = promisify(mkdirp)
   const recursiveCopy = promisify(ncp)
@@ -84,7 +85,9 @@ exports.task = async function ({ port = 8545, reset = false, showAccounts = 2 })
           { key: ganacheAccounts[address.toLowerCase()].secretKey.toString('hex'), address }
         ))
       }
-    }])
+    }],{
+      renderer: ListrRenderer(silent, debug)
+    })
 
   return tasks
 }
@@ -115,8 +118,8 @@ exports.printResetNotice = (reporter, reset) => {
   }
 }
 
-exports.handler = async ({ reporter, port, reset, accounts }) => {
-  const task = await exports.task({ port, reset, showAccounts: accounts })
+exports.handler = async ({ reporter, port, reset, accounts, silent, debug }) => {
+  const task = await exports.task({ port, reset, showAccounts: accounts, silent, debug })
   const { privateKeys, mnemonic } = await task.run()
   exports.printAccounts(reporter, privateKeys)
   exports.printMnemonic(reporter, mnemonic)

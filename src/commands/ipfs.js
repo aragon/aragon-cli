@@ -8,12 +8,13 @@ const {
 
 const { isPortTaken } = require('../util')
 const IPFS = require('ipfs-api')
+const ListrRenderer = require('../reporters/ListrRenderer')
 
 exports.command = 'ipfs'
 
 exports.describe = 'Start IPFS daemon configured to work with Aragon'
 
-exports.task = ({ apmOptions }) => {
+exports.task = ({ apmOptions, silent, debug }) => {
   return new TaskList([
     {
       title: 'Start IPFS',
@@ -51,7 +52,9 @@ exports.task = ({ apmOptions }) => {
         })
       }
     }
-  ])
+  ],{
+    renderer: ListrRenderer(silent, debug)
+  })
 }
 
 exports.handler = function ({ reporter, apm: apmOptions }) {

@@ -19,6 +19,7 @@ const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
 const startIPFS = require('../ipfs')
 const getRepoTask = require('../dao_cmds/utils/getRepoTask')
+const ListrRenderer = require('../../reporters/ListrRenderer')
 
 const DEFAULT_GAS_PRICE = require('../../../package.json').aragon.defaultGasPrice
 const MANIFEST_FILE = 'manifest.json'
@@ -244,6 +245,8 @@ exports.task = function ({
   network,
   module,
   apm: apmOptions,
+  silent,
+  debug,
 
   // Arguments
 
@@ -485,7 +488,9 @@ exports.task = function ({
       title: 'Fetch published repo',
       task: getRepoTask.task({ apmRepo: module.appName, apm })
     }
-  ])
+  ],{
+    renderer: ListrRenderer(silent, debug)
+  })
 }
 
 exports.handler = async (args) => {

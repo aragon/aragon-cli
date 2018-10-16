@@ -5,6 +5,7 @@ const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
 const { getContract } = require('../../util')
 const getRepoTask = require('./utils/getRepoTask')
+const ListrRenderer = require('../../reporters/ListrRenderer')
 
 exports.BARE_KIT = defaultAPMName('bare-kit')
 exports.BARE_INSTANCE_FUNCTION = 'newBareInstance'
@@ -40,7 +41,7 @@ exports.builder = yargs => {
   })
 }
 
-exports.task = async ({ web3, reporter, apmOptions, kit, kitVersion, fn, fnArgs, skipChecks, deployEvent, kitInstance }) => {
+exports.task = async ({ web3, reporter, apmOptions, kit, kitVersion, fn, fnArgs, skipChecks, deployEvent, kitInstance, silent, debug }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
@@ -79,15 +80,17 @@ exports.task = async ({ web3, reporter, apmOptions, kit, kitVersion, fn, fnArgs,
         ctx.appManagerRole = await kernel.methods.APP_MANAGER_ROLE().call()
       }
     }
-  ])
+  ],{
+    renderer: ListrRenderer(silent, debug)
+  })
 
   return tasks
 }
 
-exports.handler = async function ({ reporter, network, kit, kitVersion, fn, fnArgs, deployEvent, apm: apmOptions }) {
+exports.handler = async function ({ reporter, network, kit, kitVersion, fn, fnArgs, deployEvent, apm: apmOptions, silent, debug }) {
   const web3 = await ensureWeb3(network)
 
-  const task = await exports.task({ web3, reporter, network, apmOptions, kit, kitVersion, fn, fnArgs, deployEvent, skipChecks: false })
+  const task = await exports.task({ web3, reporter, network, apmOptions, kit, kitVersion, fn, fnArgs, deployEvent, skipChecks: false, silent, debug })
   return task.run()
     .then((ctx) => {
       reporter.success(`Created DAO: ${chalk.bold(ctx.daoAddress)}`)
