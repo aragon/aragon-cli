@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "Aragon command-line tools",
   "main": "dist/cli.js",
   "bin": {
@@ -72,10 +72,10 @@
     "yargs": "^10.1.0"
   },
   "devDependencies": {
-    "@aragon/apps-finance": "^1.0.1",
-    "@aragon/apps-token-manager": "^1.0.0",
-    "@aragon/apps-vault": "^2.0.1",
-    "@aragon/apps-voting": "^1.0.0",
+    "@aragon/apps-finance": "2.0.0-beta.2",
+    "@aragon/apps-token-manager": "2.0.0-beta.2",
+    "@aragon/apps-vault": "3.0.0-beta.2",
+    "@aragon/apps-voting": "2.0.0-beta.2",
     "@babel/cli": "^7.0.0-beta.46",
     "@babel/core": "^7.0.0-beta.46",
     "@babel/node": "^7.0.0-beta.46",
