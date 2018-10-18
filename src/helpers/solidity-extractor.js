@@ -2,12 +2,9 @@ const fs = require('fs')
 const { promisify } = require('util')
 const readFile = promisify(fs.readFile)
 
-const modifiesStateAndIsPublic = (declaration) => {
-  const blacklist = ['internal', 'private', 'view', 'pure']
-
-  // space words to ensure they are not part of another word
-  return blacklist.filter((w) => declaration.indexOf(` ${w} `) != -1).length == 0
-}
+const modifiesStateAndIsPublic = (declaration) => (
+  !declaration.match(/\b(internal|private|view|pure|constant)\b/)
+)
 
 const typeOrAddress = type => {
   const types = ['address', 'byte', 'uint', 'int', 'bool', 'string']
