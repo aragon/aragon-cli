@@ -10,7 +10,7 @@ const modifiesStateAndIsPublic = (declaration) => {
 }
 
 const typeOrAddress = type => {
-  const types = ['address', 'byte', 'uint', 'int', 'bool']
+  const types = ['address', 'byte', 'uint', 'int', 'bool', 'string']
 
   // check if the type starts with any of the above types, otherwise it is probably
   // a typed contract, so we need to return address for the signature
