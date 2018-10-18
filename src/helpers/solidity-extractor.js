@@ -19,8 +19,12 @@ const typeOrAddress = type => {
 
 // extracts function signature from function declaration
 const getSignature = (declaration) => {
-  const name = declaration.match(/function ([^]*?)\(/)[0].replace('function ', '')
-  let params = declaration.match(/\(([^]*?)\)/)[0].replace('(', '').replace(')', '')
+  let [ name, params ] = declaration.match(/function ([^]*?)\)/)[1].split('(')
+
+  if (!name) {
+    return 'fallback'
+  }
+
   if (params) {
     // Has parameters
     params = params
@@ -32,7 +36,7 @@ const getSignature = (declaration) => {
       .join(',')
   }
 
-  return name + params + ')'
+  return `${name}(${params})`
 }
 
 const getNotice = (declaration) => {
