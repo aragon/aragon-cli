@@ -165,6 +165,13 @@ async function prepareFilesForPublishing (tmpDir, files = [], ignorePatterns = n
     await copy(manifestOrigin, manifestDst)
   }
 
+  const artifactOrigin = path.resolve(projectRoot, ARTIFACT_FILE)
+  const artifactDst = path.resolve(tmpDir, ARTIFACT_FILE)
+
+  if (!pathExistsSync(artifactDst) && pathExistsSync(artifactOrigin)) {
+    await copy(artifactOrigin, artifactDst)
+  }
+
   return tmpDir
 }
 
@@ -395,13 +402,16 @@ exports.task = function ({
     },
     {
       title: 'Generate application artifact',
-      skip: () => onlyContent && !module.path, // TODO: If onlyContent has been set, get previous version's artifact
+      skip: () => onlyContent && !module.path,
       task: async (ctx, task) => {
         const dir = onlyArtifacts ? cwd : ctx.pathToPublish
 
-        if (onlyContent && !pathExistsSync(`${dir}/${ARTIFACT_FILE}`)) {
-          return taskInput('Couldn\'t find artifact.json, do you want to generate one? [y]es/[a]bort', {
+        if (pathExistsSync(`${dir}/${ARTIFACT_FILE}`)) {
+          return task.skip('Using existent artifact')
+        }
 
+        if (onlyContent) {
+          return taskInput('Couldn\'t find artifact.json, do you want to generate one? [y]es/[a]bort', {
             validate: value => {
               return ANSWERS.indexOf(value) > -1
             },
@@ -410,6 +420,7 @@ exports.task = function ({
                 const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
                 return `Saved artifact in ${dir}/artifact.json`
               }
+              // TODO: Should use artifact file from current version, just changing version number
               throw new Error('Aborting publication...')
             }
           })
