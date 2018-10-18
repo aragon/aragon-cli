@@ -1,12 +1,14 @@
 const daoArg = require('./dao_cmds/utils/daoArg')
 const {
   manifestMiddleware,
-  moduleMiddleware
+  moduleMiddleware,
+  environmentMiddleware
 } = require('../middleware')
 
 const MIDDLEWARES = [
   manifestMiddleware,
-  moduleMiddleware
+  moduleMiddleware,
+  environmentMiddleware
 ]
 
 exports.command = 'dao <command>'

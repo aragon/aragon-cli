@@ -64,7 +64,7 @@ const initWrapper = async (
     : dao
 
   if (!daoAddress) {
-    onError(new InvalidAddress('The provided DAO address is invalid'))
+    onError(new Error('The provided DAO address is invalid'))
     return
   }
 

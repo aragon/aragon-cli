@@ -38,6 +38,6 @@ test('prepare project template', async t => {
   const project = await fs.readJson(arappPath)
 
   t.falsy(await fs.pathExists(repoPath))
-  t.is(appName, project.appName)
+  t.is(appName, project.environments.default.appName)
 })
 

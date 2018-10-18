@@ -4,7 +4,7 @@ const semver = require('semver')
 
 exports.command = 'version [bump]'
 
-exports.describe = 'Bump the application version'
+exports.describe = '(deprecated) Bump the application version'
 
 exports.builder = function (yargs) {
   return yargs.positional('bump', {
@@ -19,6 +19,10 @@ exports.handler = async function ({ reporter, bump, cwd }) {
   const manifestLocation = await findUp('arapp.json', { cwd })
 
   let manifest = JSON.parse(fs.readFileSync(manifestLocation))
+
+  if (manifest.environments) {
+    throw new Error('Deprecated: Your arapp.json contains an `environments` which no longer requires a `version` set in arapp.json.')
+  }
 
   manifest.version = semver.valid(bump) ? semver.valid(bump) : semver.inc(manifest.version, bump)
    

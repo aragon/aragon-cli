@@ -24,13 +24,16 @@ const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 const MANIFEST_FILE = 'manifest.json'
 const ARTIFACT_FILE = 'artifact.json'
 
-exports.command = 'publish [contract]'
+exports.command = 'publish <bump> [contract]'
 
 exports.describe = 'Publish a new version of the application'
 
 exports.builder = function (yargs) {
   return deploy.builder(yargs) // inherit deploy options
-    .positional('contract', {
+    .positional('bump', {
+      description: 'Type of bump (major, minor or patch) or version number',
+      type: 'string'
+    }).positional('contract', {
       description: 'The address or name of the contract to publish in this version. If it isn\'t provided, it will default to the current version\'s contract.'
     }).option('only-artifacts', {
       description: 'Whether just generate artifacts file without publishing',
@@ -184,6 +187,7 @@ exports.task = function ({
 
   // Arguments
 
+  bump,
   contract,
   onlyArtifacts,
   alreadyCompiled,
@@ -209,45 +213,41 @@ exports.task = function ({
   
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
+  let repo = { version: '0.0.0' }
+
   return new TaskList([
     {
       title: 'Preflight checks for publishing to APM',
       enabled: () => !automaticallyBump,
       task: (ctx) => new TaskList([
         {
-          title: 'Check version is valid',
-          task: (ctx) => {
-            if (module && semver.valid(module.version)) {
-              ctx.version = module.version
-              return `${module.version} is a valid version`
+          title: 'Fetching current repo version',
+          task: async (ctx) => {
+            try {
+              repo = await apm.getLatestVersion(module.appName)
+              ctx.version = semver.valid(bump) ? semver.valid(bump) : semver.inc(repo.version, bump)
+            } catch (e) {
+              if (e.message.indexOf('Invalid content URI') === 0) {
+                return
+              }
+              ctx.version = semver.valid(bump) ? semver.valid(bump) : semver.inc(repo.version, bump)
+              if (apm.validInitialVersions.indexOf(ctx.version) === -1) {
+                throw new Error('Invalid initial version, it can only be 0.0.1, 0.1.0 or 1.0.0.')
+              } else {
+                ctx.isMajor = true // consider first version as major
+              }
             }
-
-            throw new MessageError(module
-              ? `${module.version} is not a valid semantic version`
-              : 'Could not determine version',
-              'ERR_INVALID_VERSION')
           }
         },
         {
           title: 'Checking version bump',
           task: async (ctx) => {
-            let repo = { version: '0.0.0' }
-            try {
-              repo = await apm.getLatestVersion(module.appName)
-            } catch (e) {
-              if (e.message.indexOf("Invalid content URI") == 0) {
-                return
-              }
-              if (apm.validInitialVersions.indexOf(ctx.version) == -1) {
-                throw new Error('Invalid initial version, it can only be 0.0.1, 0.1.0 or 1.0.0. Check your arapp file.')
-              } else {
-                ctx.isMajor = true // consider first version as major
-                return
-              }
+            if (!ctx.version) {
+              throw new Error('Invalid bump. Please use a version number or a valid bump (major, minor or patch)')
             }
 
-            if (ctx.version == repo.version) {
-              throw new Error('Version is already published, please bump it using `aragon apm version [major, minor, patch]`')
+            if (ctx.version === repo.version) {
+              throw new Error('Version is already published, please provide a valid version number or a valid bump (major, minor, or patch)')
             }
 
             const isValid = await apm.isValidBump(module.appName, repo.version, ctx.version)
@@ -257,7 +257,7 @@ exports.task = function ({
             }
 
             const getMajor = version => version.split('.')[0]
-            ctx.isMajor = getMajor(repo.version) != getMajor(ctx.version)
+            ctx.isMajor = getMajor(repo.version) !== getMajor(ctx.version)
           }
         }
       ])

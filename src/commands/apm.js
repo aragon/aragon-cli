@@ -1,11 +1,13 @@
 const {
   manifestMiddleware,
-  moduleMiddleware
+  moduleMiddleware,
+  environmentMiddleware
 } = require('../middleware')
 
 const MIDDLEWARES = [
   manifestMiddleware,
-  moduleMiddleware
+  moduleMiddleware,
+  environmentMiddleware
 ]
 
 exports.command = 'apm <command>'

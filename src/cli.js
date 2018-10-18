@@ -1,16 +1,14 @@
 #!/usr/bin/env node
 require('babel-polyfill')
-const { manifestMiddleware, moduleMiddleware } = require('./middleware')
+const { environmentMiddleware, manifestMiddleware, moduleMiddleware } = require('./middleware')
 const { findProjectRoot } = require('./util')
 const ConsoleReporter = require('./reporters/ConsoleReporter')
-const fs = require('fs')
-const Web3 = require('web3')
-const { getTruffleConfig, getENSAddress } = require('./helpers/truffle-config')
 const url = require('url')
 
 const MIDDLEWARES = [
   manifestMiddleware,
-  moduleMiddleware
+  moduleMiddleware,
+  environmentMiddleware
 ]
 
 // Set up commands
@@ -46,67 +44,24 @@ cmd.option('cwd', {
   }
 })
 
-/*
-  yargs will coerce this function multiple times while executing one command for unknown
-  reasons. When a positional optional argument is present, it will go as far as coercing the
-  default network, causing a crash in case the default network is not defined, even if explicitely
-  specifying another network.
-
-  caching the network also helps performance as we don't need to reinitialize the web3 provider
-*/
-let cachedNetwork
+// network coerce is called multiple times, only warn once
+let warnedDeprecatedNetwork = false
 
 // Ethereum
 cmd.option('network', {
-  description: 'The network in your truffle.js that you want to use',
-  default: 'development',
+  description: '(deprecated) The network in your truffle.js that you want to use. Deprecated in favor of `--environment`',
   coerce: (network) => {
-    if (cachedNetwork) {
-      return cachedNetwork
+    if (warnedDeprecatedNetwork) {
+      return network
     }
-
-    // Catch commands that dont require network and return
-    const skipNetworkSubcommands = new Set(['version']) // 'aragon apm version'
-    if (process.argv.length >= 4) {
-      if (skipNetworkSubcommands.has(process.argv[3])) {
-        return {}
-      }
-    }
-
-    const skipNetworkCommands = new Set(['init', 'devchain', 'ipfs'])
-
-    if (process.argv.length >= 3) {
-      if (skipNetworkCommands.has(process.argv[2])) {
-        return {}
-      }
-    }
-
-    const truffleConfig = getTruffleConfig()
-
-    const truffleNetwork = truffleConfig.networks[network]
-    if (!truffleNetwork) {
-      throw new Error(`aragon <command> requires a network '${network}' in your truffle.js. For an example, see http://truffleframework.com/docs/advanced/configuration`)
-    }
-    let provider
-    if (truffleNetwork.provider) {
-      if (typeof truffleNetwork.provider === 'function') {
-        provider = truffleNetwork.provider()
-      } else {
-        provider = truffleNetwork.provider
-      }
-    } else if (truffleNetwork.host && truffleNetwork.port) {
-      provider = new Web3.providers.WebsocketProvider(`ws://${truffleNetwork.host}:${truffleNetwork.port}`)
-    } else {
-      provider = new Web3.providers.HttpProvider(`http://localhost:8545`)
-    }
-    truffleNetwork.provider = provider
-    truffleNetwork.name = network
-
-    cachedNetwork = truffleNetwork
-
-    return truffleNetwork   
+    warnedDeprecatedNetwork = true
+    reporter.info('Use of `--network` is deprecated and has been replaced with `--environment`. You may need to update your arapp.json')
   }
-  // conflicts: 'init'
+})
+
+cmd.option('environment', {
+  description: 'The environment in your arapp.json that you want to use'
+  // default: 'default'
 })
 
 // APM

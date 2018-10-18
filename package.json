@@ -91,7 +91,8 @@
   },
   "ava": {
     "require": [
-      "@babel/register"
+      "@babel/register",
+      "@babel/polyfill"
     ],
     "files": [
       "test/**/*.js"
