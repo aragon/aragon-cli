@@ -52,28 +52,28 @@ exports.task = async function ({ port = 8545, reset = false, showAccounts = 2 })
       title: 'Starting a local chain from snapshot',
       task: async (ctx, task) => {
         const server = ganache.server({
-        // Start on a different networkID every time to avoid Metamask nonce caching issue:
-        // https://github.com/aragon/aragon-cli/issues/156
+          // Start on a different networkID every time to avoid Metamask nonce caching issue:
+          // https://github.com/aragon/aragon-cli/issues/156
           network_id: parseInt(1e8 * Math.random()),
           gasLimit: BLOCK_GAS_LIMIT,
           mnemonic: MNEMONIC,
           db_path: snapshotPath
         })
         const listen = () => (
-        new Promise((resolve, reject) => {
-          server.listen(port, (err) => {
-            if (err) return reject(err)
+          new Promise((resolve, reject) => {
+            server.listen(port, (err) => {
+              if (err) return reject(err)
 
-            task.title = `Local chain started at port ${port}`
-            resolve()
+              task.title = `Local chain started at port ${port}`
+              resolve()
+            })
           })
-        })
-      )
+        )
         await listen()
 
         ctx.web3 = new Web3(
-        new Web3.providers.WebsocketProvider(`ws://localhost:${port}`)
-      )
+          new Web3.providers.WebsocketProvider(`ws://localhost:${port}`)
+        )
         const accounts = await ctx.web3.eth.getAccounts()
 
         ctx.accounts = accounts.slice(0, parseInt(showAccounts))
@@ -81,8 +81,8 @@ exports.task = async function ({ port = 8545, reset = false, showAccounts = 2 })
 
         const ganacheAccounts = server.provider.manager.state.accounts
         ctx.privateKeys = ctx.accounts.map((address) => (
-        { key: ganacheAccounts[address.toLowerCase()].secretKey.toString('hex'), address }
-      ))
+          { key: ganacheAccounts[address.toLowerCase()].secretKey.toString('hex'), address }
+        ))
       }
     }])
 

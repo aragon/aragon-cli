@@ -13,8 +13,9 @@ const currentAppRoles = () => {
 const rolesForApps = () => {
   const allRoles = defaultAppsRoles.concat(currentAppRoles())
   const knownRoles = allRoles.reduce(
-    (acc, role) => Object.assign(acc, { [keccak256(role.id)]: role })
-    , {})
+    (acc, role) => Object.assign(acc, { [keccak256(role.id)]: role }),
+    {}
+  )
 
   return knownRoles
 }
