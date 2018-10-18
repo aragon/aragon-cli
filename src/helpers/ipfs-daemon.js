@@ -41,7 +41,6 @@ const isIPFSCORS = async (ipfsRpc) => {
   if (conf && conf[allowOrigin] && conf[allowMethods]) {
     return true
   } else {
-    process.exit()
     throw new Error(`Please set the following flags in your IPFS node:
     ${IPFSCORS.map(({ key, value }) => {
       return `${key}: ${value}`
