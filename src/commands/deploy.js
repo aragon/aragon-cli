@@ -6,6 +6,7 @@ const { compileContracts } = require('../helpers/truffle-runner')
 const { findProjectRoot } = require('../util')
 const { ensureWeb3 } = require('../helpers/web3-fallback')
 const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
+const DEFAULT_GAS_PRICE = require('../../package.json').aragon.defaultGasPrice
 
 exports.command = 'deploy [contract]'
 
@@ -75,10 +76,17 @@ exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions
 
         const contract = new web3.eth.Contract(abi, { data: bytecode })
         const accounts = await web3.eth.getAccounts()
+
         const deployTx = contract.deploy({ arguments: processedInit })
         const gas = await deployTx.estimateGas()
 
-        const deployPromise = deployTx.send({ from: accounts[0], gas, gasPrice: '19000000000' }) // 19 gwei
+        const args = {
+          from: accounts[0],
+          gasPrice: network.gasPrice || DEFAULT_GAS_PRICE,
+          gas: await deployTx.estimateGas()
+        }
+
+        const deployPromise = deployTx.send(args)
         deployPromise.on('transactionHash', (transactionHash) => ctx.transactionHash = transactionHash)
         const instance = await deployPromise
 
