@@ -22,6 +22,7 @@ const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 
 const MANIFEST_FILE = 'manifest.json'
 const ARTIFACT_FILE = 'artifact.json'
+const SOLIDITY_FILE = 'code.sol'
 
 exports.command = 'publish [contract]'
 
@@ -78,7 +79,7 @@ exports.builder = function (yargs) {
     })
 }
 
-async function generateApplicationArtifact (web3, cwd, outputPath, module, contract, reporter) {
+async function generateApplicationArtifact (web3, cwd, outputPath, module, deployArtifacts, reporter) {
   let artifact = Object.assign({}, module)
   const contractPath = artifact.path
   const contractInterfacePath = path.resolve(
@@ -93,6 +94,12 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, contr
   // Set ABI
   const contractInterface = await readJson(contractInterfacePath)
   artifact.abi = contractInterface.abi
+  artifact.deployment = deployArtifacts
+  fs.writeFileSync(
+    path.resolve(outputPath, SOLIDITY_FILE),
+    artifact.deployment.flattenedCode
+  )
+  artifact.deployment.flattenedCode = `./${SOLIDITY_FILE}`
 
   // Analyse contract functions and returns an array
   // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
@@ -414,7 +421,7 @@ exports.task = function ({
             },
             done: async (answer) => {
               if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
-                await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
+                await generateApplicationArtifact(web3, cwd, dir, module, ctx.deployArtifacts, reporter)
                 return `Saved artifact in ${dir}/artifact.json`
               }
               // TODO: Should use artifact file from current version, just changing version number
@@ -422,7 +429,7 @@ exports.task = function ({
             }
           })
         }
-        await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
+        await generateApplicationArtifact(web3, cwd, dir, module, ctx.deployArtifacts, ctx.reporter)
         return `Saved artifact in ${dir}/artifact.json`
       }
     },
