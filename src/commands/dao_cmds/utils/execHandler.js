@@ -31,7 +31,7 @@ module.exports = async function (dao, getTransactionPath, { reporter, apm, netwo
             }
           }
 
-          initAragonJS(dao, apm['ens-registry'], {
+          initAragonJS(dao, apm.ensRegistryAddress, {
             accounts: ctx.accounts,
             provider: web3.currentProvider,
             onApps: async apps => {

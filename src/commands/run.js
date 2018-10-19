@@ -113,8 +113,6 @@ exports.handler = function ({
     clientPort,
     clientPath
   }) {
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
-
   clientPort = clientPort || DEFAULT_CLIENT_PORT
 
   const showAccounts = accounts
@@ -295,7 +293,7 @@ exports.handler = function ({
     manifest = fs.readJsonSync(manifestPath)
   }
 
-  return tasks.run({ ens: apmOptions['ens-registry'] }).then(async (ctx) => {
+  return tasks.run({ ens: apmOptions.ensRegistryAddress }).then(async (ctx) => {
     if (ctx.portOpen) {
       reporter.warning(`Server already listening at port ${clientPort}, skipped starting Aragon`)
     }

@@ -67,7 +67,7 @@ exports.handler = async function ({ reporter, dao, network, apm }) {
             }
           }
 
-          initAragonJS(dao, apm['ens-registry'], {
+          initAragonJS(dao, apm.ensRegistryAddress, {
             provider: web3.currentProvider,
             onPermissions: permissions => {
               ctx.acl = permissions

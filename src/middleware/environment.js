@@ -1,4 +1,6 @@
 const Web3 = require('web3')
+const url = require('url')
+const { ens: defaultEnsRegistry } = require('@aragon/aragen')
 const { getTruffleConfig } = require('../helpers/truffle-config')
 
 const configureNetwork = (argv, network) => {
@@ -46,10 +48,30 @@ const configureNetwork = (argv, network) => {
   return truffleNetwork
 }
 
+const configureAPM = (ipfsRPC, ensRegistryAddress = defaultEnsRegistry) => {
+  const rpc = {}
+  if (ipfsRPC) {
+    const uri = url.parse(ipfsRPC)
+    Object.assign(rpc, {
+      protocol: uri.protocol.replace(':', ''),
+      host: uri.hostname,
+      port: parseInt(uri.port)
+    })
+    if (uri.hash === '#default') {
+      rpc.default = true
+    }
+  }
+
+  return {
+    ensRegistryAddress,
+    ipfs: { rpc }
+  }
+}
+
 // TODO this can be cleaned up once --network is no longer supported
 module.exports = function environmentMiddleware (argv) {
   const runsInCwd = argv['_'] === 'init'
-  const { reporter, module, apm } = argv
+  const { reporter, module } = argv
   let { environment, network } = argv
 
   if (environment && network) {
@@ -70,7 +92,10 @@ module.exports = function environmentMiddleware (argv) {
         process.exit(1)
       }
       if (!network) network = 'development'
-      return { network: configureNetwork(argv, network) }
+      return {
+        apm: configureAPM(argv['ipfs-rpc']),
+        network: configureNetwork(argv, network)
+      }
     }
 
     if (!environment) environment = 'default'
@@ -89,13 +114,8 @@ module.exports = function environmentMiddleware (argv) {
 
     const resp = {
       module: Object.assign({}, module, { appName: env.appName }),
+      apm: configureAPM(env.ipfsRPC || argv['ipfs-rpc'], env.registry),
       network: configureNetwork(argv, env.network)
-    }
-    if (env.registry) {
-      resp.apmEnsRegistry = env.registry
-      if (apm) {
-        apm['ens-registry'] = env.registry
-      }
     }
 
     return resp

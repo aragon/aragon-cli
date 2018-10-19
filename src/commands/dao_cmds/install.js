@@ -41,7 +41,6 @@ exports.builder = function (yargs) {
 }
 
 exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, appInit, appInitArgs }) => {
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
   apmRepo = defaultAPMName(apmRepo)

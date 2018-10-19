@@ -31,7 +31,6 @@ exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions
   if (!contract) {
     contract = exports.arappContract()
   }
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   if (!web3) {
     web3 = await ensureWeb3(network)

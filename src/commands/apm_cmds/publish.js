@@ -217,7 +217,6 @@ exports.task = function ({
     contract = '0x0000000000000000000000000000000000000000'
   }
 
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
   let repo = { version: '0.0.0' }
 

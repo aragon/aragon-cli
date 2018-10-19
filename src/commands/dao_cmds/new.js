@@ -41,7 +41,6 @@ exports.builder = yargs => {
 }
 
 exports.task = async ({ web3, reporter, apmOptions, kit, kitVersion, fn, fnArgs, skipChecks, deployEvent, kitInstance }) => {
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
   kit = defaultAPMName(kit)
