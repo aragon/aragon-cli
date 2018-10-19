@@ -94,13 +94,16 @@ async function generateApplicationArtifact (cwd, outputPath, module, deployArtif
   // Set ABI
   const contractInterface = await readJson(contractInterfacePath)
   artifact.abi = contractInterface.abi
-  artifact.deployment = deployArtifacts
-  if (deployArtifacts.flattenedCode) {
-    fs.writeFileSync(
-      path.resolve(outputPath, SOLIDITY_FILE),
-      artifact.deployment.flattenedCode
-    )
-    artifact.deployment.flattenedCode = `./${SOLIDITY_FILE}`
+
+  if (deployArtifacts) {
+    artifact.deployment = deployArtifacts
+    if (deployArtifacts.flattenedCode) {
+      fs.writeFileSync(
+        path.resolve(outputPath, SOLIDITY_FILE),
+        artifact.deployment.flattenedCode
+      )
+      artifact.deployment.flattenedCode = `./${SOLIDITY_FILE}`
+    }
   }
 
   // Analyse contract functions and returns an array
@@ -118,6 +121,46 @@ async function generateApplicationArtifact (cwd, outputPath, module, deployArtif
   )
 
   return artifact
+}
+
+async function copyCurrentApplicationArtifacts (outputPath, apm, repo, newVersion) {
+  const copyingFiles = [ARTIFACT_FILE, SOLIDITY_FILE]
+  const { content } = repo
+  const uri = `${content.provider}:${content.location}`
+
+  const copy = await Promise.all(copyingFiles.map(async (file) => {
+    try {
+      return {
+        filePath: path.resolve(outputPath, file),
+        fileContent: await apm.getFile(uri, file),
+        fileName: file
+      }
+    } catch (e) {
+      // Only throw if fetching artifact fails, if code can't be found
+      // continue as it could be fetched from previous versions
+      if (file === ARTIFACT_FILE) {
+        throw e
+      }
+    }
+  }))
+
+  const updateArtifactVersion = (file, version) => {
+    const newContent = JSON.parse(file.fileContent)
+    newContent.version = version
+    return { ...file, fileContent: JSON.stringify(newContent, null, 2) }
+  }
+
+  copy
+    .filter(item => item)
+    .map((file) => {
+      if (file.fileName === ARTIFACT_FILE) {
+        return updateArtifactVersion(file, newVersion)
+      }
+      return file
+    })
+    .forEach(({ fileName, filePath, fileContent }) =>
+      fs.writeFileSync(filePath, fileContent)
+  )
 }
 
 /**
@@ -246,9 +289,9 @@ exports.task = function ({
         {
           title: 'Checking version bump',
           task: async (ctx) => {
-            let repo = { version: '0.0.0' }
+            ctx.repo = { version: '0.0.0' }
             try {
-              repo = await apm.getLatestVersion(module.appName)
+              ctx.repo = await apm.getLatestVersion(module.appName)
             } catch (e) {
               if (e.message.indexOf('Invalid content URI') === 0) {
                 return
@@ -261,18 +304,18 @@ exports.task = function ({
               }
             }
 
-            if (ctx.version === repo.version) {
+            if (ctx.version === ctx.repo.version) {
               throw new Error('Version is already published, please bump it using `aragon apm version [major, minor, patch]`')
             }
 
-            const isValid = await apm.isValidBump(module.appName, repo.version, ctx.version)
+            const isValid = await apm.isValidBump(module.appName, ctx.repo.version, ctx.version)
 
             if (!isValid) {
               throw new Error('Version bump is not valid, you have to respect APM bumps policy. Check version upgrade rules in documentation https://hack.aragon.org/docs/aragonos-ref.html#631-version-upgrade-rules')
             }
 
             const getMajor = version => version.split('.')[0]
-            ctx.isMajor = getMajor(repo.version) !== getMajor(ctx.version)
+            ctx.isMajor = getMajor(ctx.repo.version) !== getMajor(ctx.version)
           }
         }
       ])
@@ -417,19 +460,24 @@ exports.task = function ({
         }
 
         if (onlyContent) {
-          return taskInput('Couldn\'t find artifact.json, do you want to generate one? [y]es/[a]bort', {
-            validate: value => {
-              return ANSWERS.indexOf(value) > -1
-            },
-            done: async (answer) => {
-              if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
-                await generateApplicationArtifact(cwd, dir, module, ctx.deployArtifacts)
-                return `Saved artifact in ${dir}/artifact.json`
+          try {
+            task.output = 'Fetching artifacts from previous version'
+            await copyCurrentApplicationArtifacts(dir, apm, ctx.repo, ctx.version)
+            return task.skip(`Using artifacts from v${ctx.repo.version}`)
+          } catch (e) {
+            return taskInput('Couldn\'t find artifacts in published version, generate one now? [y]es/[a]bort', {
+              validate: value => {
+                return ANSWERS.indexOf(value) > -1
+              },
+              done: async (answer) => {
+                if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
+                  await generateApplicationArtifact(cwd, dir, module, ctx.deployArtifacts)
+                  return `Saved artifact in ${dir}/artifact.json`
+                }
+                throw new Error('Aborting publication...')
               }
-              // TODO: Should use artifact file from current version, just changing version number
-              throw new Error('Aborting publication...')
-            }
-          })
+            })
+          }
         }
         await generateApplicationArtifact(cwd, dir, module, ctx.deployArtifacts)
         return `Saved artifact in ${dir}/artifact.json`
