@@ -79,7 +79,7 @@ exports.builder = function (yargs) {
     })
 }
 
-async function generateApplicationArtifact (web3, cwd, outputPath, module, deployArtifacts, reporter) {
+async function generateApplicationArtifact (cwd, outputPath, module, deployArtifacts) {
   let artifact = Object.assign({}, module)
   const contractPath = artifact.path
   const contractInterfacePath = path.resolve(
@@ -95,11 +95,13 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, deplo
   const contractInterface = await readJson(contractInterfacePath)
   artifact.abi = contractInterface.abi
   artifact.deployment = deployArtifacts
-  fs.writeFileSync(
-    path.resolve(outputPath, SOLIDITY_FILE),
-    artifact.deployment.flattenedCode
-  )
-  artifact.deployment.flattenedCode = `./${SOLIDITY_FILE}`
+  if (deployArtifacts.flattenedCode) {
+    fs.writeFileSync(
+      path.resolve(outputPath, SOLIDITY_FILE),
+      artifact.deployment.flattenedCode
+    )
+    artifact.deployment.flattenedCode = `./${SOLIDITY_FILE}`
+  }
 
   // Analyse contract functions and returns an array
   // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
@@ -421,7 +423,7 @@ exports.task = function ({
             },
             done: async (answer) => {
               if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
-                await generateApplicationArtifact(web3, cwd, dir, module, ctx.deployArtifacts, reporter)
+                await generateApplicationArtifact(cwd, dir, module, ctx.deployArtifacts)
                 return `Saved artifact in ${dir}/artifact.json`
               }
               // TODO: Should use artifact file from current version, just changing version number
@@ -429,7 +431,7 @@ exports.task = function ({
             }
           })
         }
-        await generateApplicationArtifact(web3, cwd, dir, module, ctx.deployArtifacts, ctx.reporter)
+        await generateApplicationArtifact(cwd, dir, module, ctx.deployArtifacts)
         return `Saved artifact in ${dir}/artifact.json`
       }
     },
