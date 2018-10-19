@@ -1,7 +1,7 @@
-import test from 'ava';
-import fs from 'fs-extra';
+import test from 'ava'
+import fs from 'fs-extra'
 
-import { checkProjectExists, prepareTemplate } from '../../src/lib/init';
+import { checkProjectExists, prepareTemplate } from '../../src/lib/init'
 
 const projectPath = './.tmp/aragon-app'
 
@@ -23,7 +23,6 @@ test('check if project folder already exists', async t => {
 })
 
 test('prepare project template', async t => {
-
   const repoPath = `${projectPath}/.git`
   const arappPath = `${projectPath}/arapp.json`
   const appName = 'TestApp'
@@ -40,4 +39,3 @@ test('prepare project template', async t => {
   t.falsy(await fs.pathExists(repoPath))
   t.is(appName, project.environments.default.appName)
 })
-

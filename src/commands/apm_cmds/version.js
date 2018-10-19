@@ -10,7 +10,7 @@ exports.builder = function (yargs) {
   return yargs.positional('bump', {
     description: 'Type of bump (major, minor or patch) or version number',
     type: 'string',
-    default: '1.0.0' 
+    default: '1.0.0'
   })
 }
 
@@ -25,9 +25,9 @@ exports.handler = async function ({ reporter, bump, cwd }) {
   }
 
   manifest.version = semver.valid(bump) ? semver.valid(bump) : semver.inc(manifest.version, bump)
-   
+
   if (!manifest.version) {
-  	throw new Error('Invalid bump. Please use a version number or a valid bump (major, minor or patch)')
+    throw new Error('Invalid bump. Please use a version number or a valid bump (major, minor or patch)')
   }
 
   fs.writeFileSync(manifestLocation, JSON.stringify(manifest, null, 2))

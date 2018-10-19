@@ -1,9 +1,6 @@
 const TaskList = require('listr')
-const Web3 = require('web3')
 const daoArg = require('./utils/daoArg')
-import initAragonJS from './utils/aragonjs-wrapper'
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const path = require('path')
 const APM = require('@aragon/apm')
 const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
@@ -39,7 +36,7 @@ exports.builder = function (yargs) {
     }).option('app-init-args', {
       description: 'Arguments for calling the app init function',
       array: true,
-      default: [],
+      default: []
     })
 }
 
@@ -53,7 +50,7 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
   const tasks = new TaskList([
     {
       title: `Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`,
-      task: getRepoTask.task({ apm, apmRepo, apmRepoVersion }),
+      task: getRepoTask.task({ apm, apmRepo, apmRepoVersion })
     },
     {
       title: `Upgrading app`,
@@ -68,14 +65,14 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
         )
 
         ctx.aclAddress = await kernel.methods.acl().call()
-        if (!ctx.accounts) {
+        if (!ctx.accounts) {
           ctx.accounts = await web3.eth.getAccounts()
         }
 
         // TODO: report if empty
         const initPayload = encodeInitPayload(web3, ctx.repo.abi, appInit, appInitArgs)
 
-        if (initPayload == '0x') {
+        if (initPayload === '0x') {
           ctx.notInitialized = true
         }
 
@@ -88,7 +85,7 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
           from: ctx.accounts[0],
           gasLimit: 1e6
         })
-        
+
         ctx.appAddress = events['NewAppProxy'].returnValues.proxy
       }
     },
@@ -97,7 +94,6 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
       task: async (ctx, task) => {
         if (!ctx.repo.roles || ctx.repo.roles.length === 0) {
           throw new Error('You have no permissions defined in your arapp.json\nThis is required for your app to properly show up.')
-          return
         }
 
         const permissions = ctx.repo.roles

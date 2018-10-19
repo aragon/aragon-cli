@@ -1,7 +1,7 @@
-import path from 'path';
-import fs from 'fs-extra';
+import path from 'path'
+import fs from 'fs-extra'
 
-export async function checkProjectExists(basename) {
+export async function checkProjectExists (basename) {
   const projectPath = path.resolve(process.cwd(), basename)
   const exists = await fs.pathExists(projectPath)
 

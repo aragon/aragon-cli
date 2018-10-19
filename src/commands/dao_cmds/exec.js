@@ -16,7 +16,7 @@ exports.builder = function (yargs) {
   .option('fn-args', {
     description: 'Arguments to be passed to the function',
     array: true,
-    default: [],
+    default: []
   })
 }
 

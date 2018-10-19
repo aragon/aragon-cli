@@ -3,7 +3,7 @@ const aclExecHandler = require('./utils/aclExecHandler')
 
 // Note: we usually order these values as entity, proxy, role but this order fits
 //       better with other CLI commands
-exports.command = 'set-manager <dao> <app> <role> <new-manager>' 
+exports.command = 'set-manager <dao> <app> <role> <new-manager>'
 
 exports.describe = 'Set the permission manager for a permission (only the current permission manager can do it)'
 

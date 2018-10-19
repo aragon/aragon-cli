@@ -2,25 +2,26 @@ const fs = require('fs')
 const { promisify } = require('util')
 const readFile = promisify(fs.readFile)
 
-const modifiesStateAndIsPublic = (declaration) => {
-  const blacklist = ['internal', 'private', 'view', 'pure']
-
-  // space words to ensure they are not part of another word
-  return blacklist.filter((w) => declaration.indexOf(` ${w} `) != -1).length == 0
-}
+const modifiesStateAndIsPublic = (declaration) => (
+  !declaration.match(/\b(internal|private|view|pure|constant)\b/)
+)
 
 const typeOrAddress = type => {
-  const types = ['address', 'byte', 'uint', 'int', 'bool']
+  const types = ['address', 'byte', 'uint', 'int', 'bool', 'string']
 
   // check if the type starts with any of the above types, otherwise it is probably
   // a typed contract, so we need to return address for the signature
-  return types.filter((t) => type.indexOf(t) == 0).length > 0 ? type : 'address'
+  return types.filter((t) => type.indexOf(t) === 0).length > 0 ? type : 'address'
 }
 
 // extracts function signature from function declaration
 const getSignature = (declaration) => {
-  const name = declaration.match(/function ([^]*?)\(/)[0].replace('function ', '')
-  let params = declaration.match(/\(([^]*?)\)/)[0].replace('(', '').replace(')', '')
+  let [ name, params ] = declaration.match(/function ([^]*?)\)/)[1].split('(')
+
+  if (!name) {
+    return 'fallback'
+  }
+
   if (params) {
     // Has parameters
     params = params
@@ -32,13 +33,13 @@ const getSignature = (declaration) => {
       .join(',')
   }
 
-  return name + params + ')'
+  return `${name}(${params})`
 }
 
 const getNotice = (declaration) => {
   // capture from @notice to either next '* @' or end of comment '*/'
   const notices = declaration.match(/(@notice)([^]*?)(\* @|\*\/)/m)
-  if (!notices || notices.length == 0) return null
+  if (!notices || notices.length === 0) return null
 
   return notices[0]
     .replace('*/', '').replace('* @', '').replace('@notice ', '')

@@ -29,7 +29,7 @@ exports.task = ({ apmOptions }) => {
           } else {
             task.output = 'IPFS is started, checking CORS config'
             await setIPFSCORS(apmOptions.ipfs.rpc)
-            return 'Connected to IPFS daemon at port: '+ apmOptions.ipfs.rpc.port 
+            return 'Connected to IPFS daemon at port: ' + apmOptions.ipfs.rpc.port
           }
         } else {
           await isIPFSCORS(apmOptions.ipfs.rpc)
@@ -55,14 +55,19 @@ exports.task = ({ apmOptions }) => {
 }
 
 exports.handler = function ({ reporter, apm: apmOptions }) {
-  const task = exports.task({ apmOptions })
+  const task = exports.task({ apmOptions })
 
-  task.run().then(ctx => {
-    if (ctx.started) {
-      reporter.info('IPFS daemon is now running. Stopping this process will stop IPFS')
-    } else {
-      reporter.warning('Didnt start IPFS, port busy')
-      process.exit()
-    }
-  })
+  task.run()
+    .then(ctx => {
+      if (ctx.started) {
+        reporter.info('IPFS daemon is now running. Stopping this process will stop IPFS')
+      } else {
+        reporter.warning('Didnt start IPFS, port busy')
+        process.exit()
+      }
+    })
+    .catch(err => {
+      reporter.error(err)
+      process.exit(1)
+    })
 }
