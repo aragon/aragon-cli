@@ -3,7 +3,7 @@ const aclExecHandler = require('./utils/aclExecHandler')
 
 // Note: we usually order these values as entity, proxy, role but this order fits
 //       better with other CLI commands
-exports.command = 'remove-manager <dao> <app> <role>' 
+exports.command = 'remove-manager <dao> <app> <role>'
 
 exports.describe = 'Remove permission manager for a permission (can be recreated)'
 

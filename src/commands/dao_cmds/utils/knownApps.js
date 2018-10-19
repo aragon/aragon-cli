@@ -4,7 +4,7 @@ const { findProjectRoot } = require('../../../util')
 
 const path = require('path')
 
-const keccak256 = x => '0x'+sha3.keccak_256(x)
+const keccak256 = x => '0x' + sha3.keccak_256(x)
 
 const knownAppNames = [
   'voting',
@@ -16,7 +16,7 @@ const knownAppNames = [
   'evmreg',
   'apm-registry',
   'apm-repo',
-  'apm-enssub',
+  'apm-enssub'
 ]
 
 const knownAPMRegistries = ['aragonpm.eth', 'open.aragonpm.eth']
@@ -27,13 +27,13 @@ const currentAppName = () => {
 }
 
 const listApps = (userApps = [currentAppName()]) => {
-	const appNames = knownAppNames.reduce((acc, appName) => (
-		acc.concat(knownAPMRegistries.map(apm => appName + '.' + apm))
-	), []).concat(userApps)
+  const appNames = knownAppNames.reduce((acc, appName) => (
+    acc.concat(knownAPMRegistries.map(apm => appName + '.' + apm))
+  ), []).concat(userApps)
 
-	let appIds = appNames.reduce((acc, app) => Object.assign(acc, { [namehash(app)]: app}), {})
-	// because of a current issue in the deployed apps, we need to calculate with just the keccak too (otherwise acl and evmreg dont show up)
-	return appNames.reduce((acc, app) => Object.assign(acc, { [keccak256(app)]: app}), appIds)
+  let appIds = appNames.reduce((acc, app) => Object.assign(acc, { [namehash(app)]: app }), {})
+  // because of a current issue in the deployed apps, we need to calculate with just the keccak too (otherwise acl and evmreg dont show up)
+  return appNames.reduce((acc, app) => Object.assign(acc, { [keccak256(app)]: app }), appIds)
 }
 
 module.exports = { listApps }
