@@ -486,6 +486,7 @@ exports.handler = async (args) => {
       }
 
       reporter.info(`Transaction hash: ${transactionHash}`)
+      reporter.debug(`Published directory: ${ctx.pathToPublish}`)
       process.exit(status ? 0 : 1)
     })
     .catch(() => { process.exit(1) })
