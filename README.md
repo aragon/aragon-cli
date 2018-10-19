@@ -132,3 +132,9 @@ Shows the roles defined in your DAO with all the relevant info: where they are d
 #### `aragon devchain`
 
 Starts a local ganache test chain for development. This is done automatically with `aragon run` also if you don't have one already running.
+
+### Note
+
+There is  `.ipfsignore` file got created. These are the files and/or sub-directories which you don't want added to the pack. 
+In that case, you will add the files paths, or path matching patterns, to a .ipfsignore file and then build the pack manifest.
+By doing so, the manifest does not include those files.
