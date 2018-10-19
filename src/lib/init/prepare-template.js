@@ -8,9 +8,16 @@ export async function prepareTemplate (basename, appName) {
   arapp.appName = appName
 
   const gitFolderPath = path.resolve(basename, '.git')
+  const licensePath = path.resolve(basename, 'LICENSE')
+
+  const packageJsonPath = path.resolve(basename, 'package.json')
+  const packageJson = await fs.readJson(packageJsonPath)
+  delete packageJson.license
 
   return Promise.all([
     fs.writeJson(arappPath, arapp, { spaces: 2 }),
-    fs.remove(gitFolderPath)
+    fs.writeJson(packageJsonPath, packageJson, { spaces: 2 }),
+    fs.remove(gitFolderPath),
+    fs.remove(licensePath)
   ])
 }
