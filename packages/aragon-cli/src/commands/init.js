@@ -1,12 +1,9 @@
+import { checkProjectExists, prepareTemplate } from '../lib/init'
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const TaskList = require('listr')
-const execa = require('execa')
-const path = require('path')
-const fs = require('fs-extra')
 const { installDeps } = require('../util')
 const defaultAPMName = require('../helpers/default-apm')
-import { checkProjectExists, prepareTemplate } from '../lib/init';
 
 exports.command = 'init <name> [template]'
 
@@ -28,7 +25,7 @@ exports.builder = (yargs) => {
         const aliases = {
           bare: 'aragon/aragon-bare-boilerplate',
           react: 'aragon/aragon-react-boilerplate',
-          ['react-kit']: 'aragon/aragon-react-kit-boilerplate'
+          'react-kit': 'aragon/aragon-react-kit-boilerplate'
         }
 
         if (!tmpl.includes('/')) {
@@ -65,13 +62,13 @@ exports.handler = function ({ reporter, name, template }) {
     {
       title: 'Preparing template',
       task: async (ctx, task) => {
-        task.output = 'Initiliazing arapp.json and removing Git repository';
+        task.output = 'Initiliazing arapp.json and removing Git repository'
         await prepareTemplate(basename, name)
       }
     },
     {
       title: 'Installing package dependencies',
-      task: async (ctx, task) => (await installDeps(basename, task)),
+      task: async (ctx, task) => installDeps(basename, task)
     }
   ])
 

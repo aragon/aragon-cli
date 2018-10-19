@@ -3,11 +3,10 @@ const fs = require('fs')
 const tmp = require('tmp-promise')
 const path = require('path')
 const { promisify } = require('util')
-const { copy, readJson, writeJson, pathExistsSync, existsSync } = require('fs-extra')
+const { copy, readJson, writeJson, pathExistsSync } = require('fs-extra')
 const extract = require('../../helpers/solidity-extractor')
 const APM = require('@aragon/apm')
 const semver = require('semver')
-const EthereumTx = require('ethereumjs-tx')
 const namehash = require('eth-ens-namehash')
 const { keccak256 } = require('js-sha3')
 const TaskList = require('listr')
@@ -51,31 +50,31 @@ exports.builder = function (yargs) {
     }).option('ignore', {
       description: 'A gitignore pattern of files to ignore. Specify multiple times to add multiple patterns.',
       array: true,
-      default: ['node_modules'],
+      default: ['node_modules']
     }).option('ipfs-check', {
       description: 'Whether to have publish start IPFS if not started',
       boolean: true,
       default: true
     }).option('publish-dir', {
       description: 'Temporary directory where files will be copied before publishing. Defaults to temp dir.',
-      default: null,
+      default: null
     }).option('only-content', {
       description: 'Whether to skip contract compilation, deployment and contract artifact generation',
       default: false,
-      boolean: true,
+      boolean: true
     }).option('build', {
       description: 'Whether publish should try to build the app before publishing, running the script specified in --build-script',
       default: true,
-      boolean: true,
+      boolean: true
     }).option('build-script', {
       description: 'The npm script that will be run when building the app',
-      default: 'build',
+      default: 'build'
     }).option('http', {
       description: 'URL for where your app is served e.g. localhost:1234',
-      default: null,
+      default: null
     }).option('http-served-from', {
       description: 'Directory where your files is being served from e.g. ./dist',
-      default: null,
+      default: null
     })
 }
 
@@ -100,7 +99,7 @@ async function generateApplicationArtifact (web3, cwd, outputPath, module, contr
   artifact.functions = await extract(path.resolve(cwd, artifact.path))
 
   artifact.roles = artifact.roles
-    .map(role => Object.assign(role, { bytes: '0x'+keccak256(role.id) }))
+    .map(role => Object.assign(role, { bytes: '0x' + keccak256(role.id) }))
 
   // Save artifact
   await writeJson(
@@ -201,12 +200,12 @@ exports.task = function ({
   build,
   buildScript,
   http,
-  httpServedFrom,
+  httpServedFrom
 }) {
   if (onlyContent) {
     contract = '0x0000000000000000000000000000000000000000'
   }
-  
+
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
   return new TaskList([
@@ -222,7 +221,7 @@ exports.task = function ({
               return `${module.version} is a valid version`
             }
 
-            throw new MessageError(module
+            throw new Error(module
               ? `${module.version} is not a valid semantic version`
               : 'Could not determine version',
               'ERR_INVALID_VERSION')
@@ -235,10 +234,10 @@ exports.task = function ({
             try {
               repo = await apm.getLatestVersion(module.appName)
             } catch (e) {
-              if (e.message.indexOf("Invalid content URI") == 0) {
+              if (e.message.indexOf('Invalid content URI') === 0) {
                 return
               }
-              if (apm.validInitialVersions.indexOf(ctx.version) == -1) {
+              if (apm.validInitialVersions.indexOf(ctx.version) === -1) {
                 throw new Error('Invalid initial version, it can only be 0.0.1, 0.1.0 or 1.0.0. Check your arapp file.')
               } else {
                 ctx.isMajor = true // consider first version as major
@@ -246,7 +245,7 @@ exports.task = function ({
               }
             }
 
-            if (ctx.version == repo.version) {
+            if (ctx.version === repo.version) {
               throw new Error('Version is already published, please bump it using `aragon apm version [major, minor, patch]`')
             }
 
@@ -257,22 +256,22 @@ exports.task = function ({
             }
 
             const getMajor = version => version.split('.')[0]
-            ctx.isMajor = getMajor(repo.version) != getMajor(ctx.version)
+            ctx.isMajor = getMajor(repo.version) !== getMajor(ctx.version)
           }
         }
       ])
     },
     {
       title: 'Compile contracts',
-      task: async () => (await compileContracts()),
+      task: async () => compileContracts(),
       enabled: () => !onlyContent && web3Utils.isAddress(contract)
     },
     {
       title: 'Deploy contract',
       task: async (ctx) => {
         const deployTaskParams = { contract, init, reporter, network, cwd, web3, apmOptions }
-        
-        return await deploy.task(deployTaskParams)
+
+        return deploy.task(deployTaskParams)
       },
       enabled: ctx => !onlyContent && ((contract && !web3Utils.isAddress(contract)) || (!contract && ctx.isMajor && !reuse) || automaticallyBump)
     },
@@ -287,7 +286,7 @@ exports.task = function ({
           ctx.version = '1.0.0'
           return task.skip('Starting from initial version')
         }
-        
+
         ctx.version = `${nextMajorVersion}.0.0`
       },
       enabled: () => automaticallyBump
@@ -323,7 +322,7 @@ exports.task = function ({
     },
     {
       title: 'Building frontend',
-      enabled: () => build,
+      enabled: () => build && !http,
       task: async (ctx, task) => {
         if (!fs.existsSync('package.json')) {
           task.skip('No package.json found')
@@ -346,32 +345,30 @@ exports.task = function ({
         })
 
         return buildTask.catch((err) => {
-            throw new Error(`${err.message}\n${err.stderr}\n\nFailed to build. See above output.`)
-          })
-      },
-      enabled: () => !http,
+          throw new Error(`${err.message}\n${err.stderr}\n\nFailed to build. See above output.`)
+        })
+      }
     },
     {
       title: 'Check IPFS',
       task: () => startIPFS.task({ apmOptions }),
-      enabled: () => !http && ipfsCheck,
+      enabled: () => !http && ipfsCheck
     },
     {
       title: 'Prepare files for publishing',
       task: async (ctx, task) => {
-
         // Create temporary directory
         if (!publishDir) {
           const { path: tmpDir } = await tmp.dir()
           publishDir = tmpDir
         }
-        
+
         await prepareFilesForPublishing(publishDir, files, ignore)
         ctx.pathToPublish = publishDir
 
         return `Files copied to temporary directory: ${ctx.pathToPublish}`
       },
-      enabled: () => !http,
+      enabled: () => !http
     },
     {
       title: 'Check for --http-served-from argument and copy manifest.json to destination',
@@ -391,7 +388,7 @@ exports.task = function ({
 
         ctx.pathToPublish = httpServedFrom
       },
-      enabled: () => http,
+      enabled: () => http
     },
     {
       title: 'Generate application artifact',
@@ -407,7 +404,7 @@ exports.task = function ({
             },
             done: async (answer) => {
               if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
-                const artifact = await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
+                await generateApplicationArtifact(web3, cwd, dir, module, contract, reporter)
                 return `Saved artifact in ${dir}/artifact.json`
               }
               throw new Error('Aborting publication...')
@@ -442,24 +439,24 @@ exports.task = function ({
           transaction.gasPrice = '19000000000' // 19 gwei
 
           reporter.debug(JSON.stringify(transaction))
-          
+
           return await web3.eth.sendTransaction(transaction)
         } catch (e) {
           throw e
-        } 
+        }
       },
       enabled: () => !onlyArtifacts
     },
     {
       title: 'Fetch published repo',
       task: getRepoTask.task({ apmRepo: module.appName, apm }),
-      enabled: () => getRepo,
+      enabled: () => getRepo
     }
   ])
 }
 
 exports.handler = async (args) => {
-  const { apm: apmOptions, network, reporter, module } = args
+  const { network } = args
 
   const web3 = await ensureWeb3(network)
 

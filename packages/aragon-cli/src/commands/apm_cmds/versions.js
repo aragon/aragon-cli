@@ -1,5 +1,4 @@
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const findUp = require('find-up')
 const APM = require('@aragon/apm')
 
 exports.command = 'versions'

@@ -11,7 +11,7 @@ const typeOrAddress = type => {
 
   // check if the type starts with any of the above types, otherwise it is probably
   // a typed contract, so we need to return address for the signature
-  return types.filter((t) => type.indexOf(t) == 0).length > 0 ? type : 'address'
+  return types.filter((t) => type.indexOf(t) === 0).length > 0 ? type : 'address'
 }
 
 // extracts function signature from function declaration
@@ -39,7 +39,7 @@ const getSignature = (declaration) => {
 const getNotice = (declaration) => {
   // capture from @notice to either next '* @' or end of comment '*/'
   const notices = declaration.match(/(@notice)([^]*?)(\* @|\*\/)/m)
-  if (!notices || notices.length == 0) return null
+  if (!notices || notices.length === 0) return null
 
   return notices[0]
     .replace('*/', '').replace('* @', '').replace('@notice ', '')

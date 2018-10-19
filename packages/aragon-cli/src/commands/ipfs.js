@@ -29,7 +29,7 @@ exports.task = ({ apmOptions }) => {
           } else {
             task.output = 'IPFS is started, checking CORS config'
             await setIPFSCORS(apmOptions.ipfs.rpc)
-            return 'Connected to IPFS daemon at port: '+ apmOptions.ipfs.rpc.port 
+            return 'Connected to IPFS daemon at port: ' + apmOptions.ipfs.rpc.port
           }
         } else {
           await isIPFSCORS(apmOptions.ipfs.rpc)
@@ -55,7 +55,7 @@ exports.task = ({ apmOptions }) => {
 }
 
 exports.handler = function ({ reporter, apm: apmOptions }) {
-  const task = exports.task({ apmOptions })
+  const task = exports.task({ apmOptions })
 
   task.run()
     .then(ctx => {
@@ -66,8 +66,8 @@ exports.handler = function ({ reporter, apm: apmOptions }) {
         process.exit()
       }
     })
-    .catch(error => {
-        reporter.error(error.message)
-        process.exit()
+    .catch(err => {
+      reporter.error(err)
+      process.exit(1)
     })
 }

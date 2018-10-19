@@ -7,7 +7,7 @@ const { getInstalledPathSync } = require('get-installed-path')
 
 let cachedProjectRoot
 
-const PGK_MANAGER_BIN_NPM = 'npm';
+const PGK_MANAGER_BIN_NPM = 'npm'
 
 const findProjectRoot = () => {
   if (!cachedProjectRoot) {
@@ -24,7 +24,7 @@ const findProjectRoot = () => {
 const isPortTaken = async (port, opts) => {
   opts = Object.assign({timeout: 1000}, opts)
 
-  return new Promise((resolve => {
+  return new Promise(resolve => {
     const socket = new net.Socket()
 
     const onError = () => {
@@ -40,7 +40,7 @@ const isPortTaken = async (port, opts) => {
       socket.end()
       resolve(true)
     })
-  }))
+  })
 }
 
 const getNodePackageManager = () => {

@@ -1,11 +1,10 @@
 #!/usr/bin/env node
-require('babel-polyfill')
+require('@babel/polyfill')
 const { manifestMiddleware, moduleMiddleware } = require('./middleware')
 const { findProjectRoot } = require('./util')
 const ConsoleReporter = require('./reporters/ConsoleReporter')
-const fs = require('fs')
 const Web3 = require('web3')
-const { getTruffleConfig, getENSAddress } = require('./helpers/truffle-config')
+const { getTruffleConfig } = require('./helpers/truffle-config')
 const url = require('url')
 
 const MIDDLEWARES = [
@@ -21,7 +20,7 @@ const cmd = require('yargs')
       cmd.middlewares = MIDDLEWARES
       return cmd
     }
-  }) //.strict()
+  }) // .strict()
 
 cmd.alias('h', 'help')
 cmd.alias('v', 'version')
@@ -104,7 +103,7 @@ cmd.option('network', {
 
     cachedNetwork = truffleNetwork
 
-    return truffleNetwork   
+    return truffleNetwork
   }
   // conflicts: 'init'
 })

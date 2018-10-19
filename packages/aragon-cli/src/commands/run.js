@@ -1,11 +1,7 @@
 const TaskList = require('listr')
-const ganache = require('ganache-core')
 const Web3 = require('web3')
-const namehash = require('eth-ens-namehash')
-const { keccak256 } = require('js-sha3')
 const chalk = require('chalk')
 const path = require('path')
-const APM = require('@aragon/apm')
 const publish = require('./apm_cmds/publish')
 const devchain = require('./devchain')
 const deploy = require('./deploy')
@@ -24,17 +20,12 @@ const {
   findProjectRoot,
   isPortTaken,
   installDeps,
-  getNodePackageManager,
-  getContract,
-  ANY_ENTITY
+  getNodePackageManager
 } = require('../util')
 
-const { Writable } = require('stream')
 const url = require('url')
 
-const TX_MIN_GAS = 10e6
-
-const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion;
+const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 
 exports.command = 'run'
@@ -52,7 +43,7 @@ exports.builder = function (yargs) {
     array: true
   }).option('port', {
     description: 'Port to start devchain at',
-    default: '8545',
+    default: '8545'
   }).option('accounts', {
     default: 2,
     description: 'Number of accounts to print'
@@ -62,30 +53,30 @@ exports.builder = function (yargs) {
     description: 'Reset devchain to snapshot'
   }).option('kit', {
     default: newDAO.BARE_KIT,
-    description: "Kit contract name"
+    description: 'Kit contract name'
   }).option('kit-init', {
     description: 'Arguments to be passed to the kit constructor',
     array: true,
-    default: [],
+    default: []
   }).option('kit-deploy-event', {
     description: 'Arguments to be passed to the kit constructor',
-    default: newDAO.BARE_KIT_DEPLOY_EVENT,
+    default: newDAO.BARE_KIT_DEPLOY_EVENT
   }).option('build-script', {
     description: 'The npm script that will be run when building the app',
-    default: 'build',
+    default: 'build'
   }).option('http', {
     description: 'URL for where your app is served from e.g. localhost:1234',
-    default: null,
+    default: null
   }).option('http-served-from', {
     description: 'Directory where your files is being served from e.g. ./dist',
-    default: null,
+    default: null
   }).option('app-init', {
     description: 'Name of the function that will be called to initialize an app',
     default: 'initialize'
   }).option('app-init-args', {
     description: 'Arguments for calling the app init function',
     array: true,
-    default: [],
+    default: []
   }).option('client-version', {
     description: 'Version of Aragon client used to run your sandboxed app',
     default: DEFAULT_CLIENT_VERSION
@@ -96,21 +87,6 @@ exports.builder = function (yargs) {
     description: 'A path pointing to an existing Aragon client installation',
     default: null
   })
-}
-
-const setPermissions = async (web3, sender, aclAddress, permissions) => {
-  const acl = new web3.eth.Contract(
-    getContract('@aragon/os', 'ACL').abi,
-    aclAddress
-  )
-  return Promise.all(
-    permissions.map(([who, where, what]) =>
-      acl.methods.createPermission(who, where, what, who).send({
-        from: sender,
-        gasLimit: 1e6
-      })
-    )
-  )
 }
 
 exports.handler = function ({
@@ -137,7 +113,6 @@ exports.handler = function ({
     clientPort,
     clientPath
   }) {
-
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   clientPort = clientPort || DEFAULT_CLIENT_PORT
@@ -157,9 +132,7 @@ exports.handler = function ({
           return 'Connected to the provided Ethereum network'
         }
       },
-      task: async (ctx, task) => {
-        return await devchain.task({ port, reset, showAccounts })
-      }
+      task: async (ctx, task) => devchain.task({ port, reset, showAccounts })
     },
     {
       title: 'Check IPFS',
@@ -186,14 +159,14 @@ exports.handler = function ({
           automaticallyBump: true,
           getRepo: true,
           http,
-          httpServedFrom,
+          httpServedFrom
         }
         return publish.task(publishParams)
-      },
+      }
     },
     {
       title: 'Deploy Kit',
-      enabled: () => kit != newDAO.BARE_KIT,
+      enabled: () => kit !== newDAO.BARE_KIT,
       task: ctx => {
         const deployParams = {
           contract: kit,
@@ -202,13 +175,13 @@ exports.handler = function ({
           network,
           cwd,
           web3: ctx.web3,
-          apmOptions,
+          apmOptions
         }
 
         return deploy.task(deployParams)
       }
     },
-    { 
+    {
       title: 'Create DAO',
       task: (ctx) => {
         const roles = ctx.repo.roles.map(role => role.bytes)
@@ -221,7 +194,7 @@ exports.handler = function ({
           // TODO: Report warning when app wasn't initialized
           const initPayload = encodeInitPayload(ctx.web3, ctx.repo.abi, appInit, appInitArgs)
 
-          if (initPayload == '0x') {
+          if (initPayload === '0x') {
             ctx.notInitialized = true
           }
 
@@ -229,19 +202,19 @@ exports.handler = function ({
         }
 
         const newDAOParams = {
-          kit, 
+          kit,
           kitVersion: 'latest',
           kitInstance: ctx.contractInstance,
           fn: 'newInstance',
           fnArgs,
           deployEvent: kitDeployEvent,
-          web3: ctx.web3, 
-          reporter, 
+          web3: ctx.web3,
+          reporter,
           apmOptions
         }
 
         return newDAO.task(newDAOParams)
-      },
+      }
     },
     {
       title: 'Open DAO',
@@ -272,7 +245,7 @@ exports.handler = function ({
         },
         {
           title: 'Install wrapper dependencies',
-          task: async (ctx, task) => (await installDeps(ctx.wrapperPath, task)),
+          task: async (ctx, task) => installDeps(ctx.wrapperPath, task),
           enabled: (ctx) => !ctx.wrapperAvailable && !clientPath
         },
         {
@@ -352,9 +325,9 @@ exports.handler = function ({
     ${chalk.bold(`APM registry`)}: ${registry}
     ${chalk.bold('DAO address')}: ${ctx.daoAddress}
 
-    ${(client !== false) ?
-      `Opening http://localhost:${clientPort}/#/${ctx.daoAddress} to view your DAO` :
-      `Use "aragon dao <command> ${ctx.daoAddress}" to interact with your DAO`
+    ${(client !== false)
+      ? `Opening http://localhost:${clientPort}/#/${ctx.daoAddress} to view your DAO`
+      : `Use "aragon dao <command> ${ctx.daoAddress}" to interact with your DAO`
     }`)
 
     if (!manifest) {

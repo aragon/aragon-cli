@@ -1,5 +1,3 @@
-const Web3 = require('web3')
-const EthereumTx = require('ethereumjs-tx')
 const APM = require('@aragon/apm')
 const ACL = require('../../acl')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
@@ -23,7 +21,6 @@ exports.handler = async function ({
   // Arguments
   address
 }) {
-
   const web3 = await ensureWeb3(network)
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
@@ -51,7 +48,7 @@ exports.handler = async function ({
     const receipt = await web3.eth.sendTransaction(transaction)
     reporter.success(`Successful transaction (${receipt.transactionHash})`)
   } catch (e) {
-    reporter.error(`${e}\nTransaction failed (${receipt.transactionHash})`)
+    reporter.error(`${e}\nTransaction failed`)
   }
   process.exit()
 

@@ -1,16 +1,11 @@
 const TaskList = require('listr')
-const Web3 = require('web3')
 const daoArg = require('./utils/daoArg')
-import initAragonJS from './utils/aragonjs-wrapper'
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const path = require('path')
 const APM = require('@aragon/apm')
 const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
 const getRepoTask = require('./utils/getRepoTask')
 const { getContract } = require('../../util')
-
-const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
 
 exports.command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
 
@@ -31,7 +26,7 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
     {
       title: `Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`,
       skip: ctx => ctx.repo, // only run if repo isn't passed
-      task: getRepoTask.task({ apm, apmRepo, apmRepoVersion }),
+      task: getRepoTask.task({ apm, apmRepo, apmRepoVersion })
     },
     {
       title: 'Upgrading app',
@@ -41,18 +36,18 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
           dao
         )
 
-        if (!ctx.accounts) {
+        if (!ctx.accounts) {
           ctx.accounts = await web3.eth.getAccounts()
         }
 
         const basesNamespace = await kernel.methods.APP_BASES_NAMESPACE().call()
 
         const setApp = kernel.methods.setApp(basesNamespace, ctx.repo.appId, ctx.repo.contractAddress)
-        
+
         return setApp.send({ from: ctx.accounts[0], gasLimit: 1e6 })
       }
-    },
-  ], { repo })
+    }
+  ], { repo })
 
   return tasks
 }
