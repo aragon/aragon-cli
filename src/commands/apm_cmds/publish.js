@@ -449,9 +449,7 @@ exports.task = function ({
           transaction.from = from
           transaction.gasPrice = '19000000000' // 19 gwei
 
-          reporter.debug(JSON.stringify(transaction))
-
-          return await web3.eth.sendTransaction(transaction)
+          ctx.receipt = await web3.eth.sendTransaction(transaction)
         } catch (e) {
           throw e
         }
@@ -460,18 +458,35 @@ exports.task = function ({
     },
     {
       title: 'Fetch published repo',
-      task: getRepoTask.task({ apmRepo: module.appName, apm }),
-      enabled: () => getRepo
+      task: getRepoTask.task({ apmRepo: module.appName, apm })
     }
   ])
 }
 
 exports.handler = async (args) => {
-  const { network } = args
+  const { reporter, network, module, onlyContent } = args
 
   const web3 = await ensureWeb3(network)
 
   return exports.task({ ...args, web3 }).run({ web3 })
-    .then(() => { process.exit() })
-    .catch(() => { process.exit() })
+    .then(ctx => {
+      const { appName } = module
+      const { transactionHash, status } = ctx.receipt
+      const { version, content, contractAddress } = ctx.repo
+
+      console.log()
+      if (!status) {
+        reporter.error(`Publish transaction reverted:`)
+      } else {
+        reporter.success(`Successfully published ${appName} v${version}: `)
+        if (!onlyContent) {
+          reporter.info(`Contract address: ${contractAddress}`)
+        }
+        reporter.info(`Content (${content.provider}): ${content.location}`)
+      }
+
+      reporter.info(`Transaction hash: ${transactionHash}`)
+      process.exit(status ? 0 : 1)
+    })
+    .catch(() => { process.exit(1) })
 }
