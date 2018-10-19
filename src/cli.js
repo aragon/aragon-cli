@@ -104,6 +104,7 @@ cmd.fail((msg, err, yargs) => {
   if (!err) yargs.showHelp()
   reporter.error(msg || err.message || 'An error occurred')
   reporter.debug(err && err.stack)
+  process.exit(1)
 }).parse(process.argv.slice(2), {
   reporter
 })

@@ -1,8 +1,5 @@
 const namehash = require('eth-ens-namehash').hash
 const sha3 = require('js-sha3')
-const { findProjectRoot } = require('../../../util')
-
-const path = require('path')
 
 const keccak256 = x => '0x' + sha3.keccak_256(x)
 
@@ -21,12 +18,7 @@ const knownAppNames = [
 
 const knownAPMRegistries = ['aragonpm.eth', 'open.aragonpm.eth']
 
-const currentAppName = () => {
-  const arappPath = path.resolve(findProjectRoot(), 'arapp.json')
-  return require(arappPath).appName
-}
-
-const listApps = (userApps = [currentAppName()]) => {
+const listApps = (userApps = []) => {
   const appNames = knownAppNames.reduce((acc, appName) => (
     acc.concat(knownAPMRegistries.map(apm => appName + '.' + apm))
   ), []).concat(userApps)

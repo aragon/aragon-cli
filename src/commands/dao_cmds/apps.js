@@ -26,8 +26,8 @@ const printContent = (content) => {
   return `${content.provider}:${content.location}`.slice(0, 25) + '...'
 }
 
-exports.handler = async function ({ reporter, dao, network, apm: apmOptions }) {
-  knownApps = listApps()
+exports.handler = async function ({ reporter, dao, network, apm: apmOptions, module }) {
+  knownApps = listApps([module.appName])
   const web3 = await ensureWeb3(network)
 
   const tasks = new TaskList([
