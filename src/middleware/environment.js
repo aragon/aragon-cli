@@ -53,20 +53,20 @@ module.exports = function environmentMiddleware (argv) {
   let { environment, network } = argv
 
   if (environment && network) {
-    reporter.error('Arguments network and environment are mutually exclusive')
+    reporter.error('Arguments \'--network\' and \'--environment\' are mutually exclusive. Using \'--network\'  has been deprecated and  \'--environment\' should be used instead.')
     process.exit(1)
   }
 
   if (!runsInCwd && module) {
     if (network && module.environments) {
       reporter.error(
-        'Your arapp.json contains an `environments` property. The use of `--network` is deprecated and `--environment` should be used instead.'
+        'Your arapp.json contains an `environments` property. The use of \'--network\' is deprecated and \'--environment\' should be used instead.'
       )
       process.exit(1)
     }
     if (!module.environments) {
       if (environment) {
-        reporter.error('Your arapp.json does not contain an `environments` property. The use of `--environment` is not supported.')
+        reporter.error('Your arapp.json does not contain an `environments` property. The use of \'--environment\'  is not supported.')
         process.exit(1)
       }
       if (!network) network = 'development'
@@ -74,16 +74,17 @@ module.exports = function environmentMiddleware (argv) {
     }
 
     if (!environment) environment = 'default'
-    if (!module.environments) {
-      reporter.error('No environments are defined in your arapp.json.')
-      process.exit(1)
-    }
 
     const env = module.environments[environment]
 
     if (!env) {
       reporter.error(`${environment} environment was not defined in your arapp.json.`)
       process.exit(1)
+    }
+
+    // only include the selected environment in the module
+    module.environments = {
+      [environment]: env
     }
 
     const resp = {

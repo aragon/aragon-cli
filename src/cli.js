@@ -66,7 +66,7 @@ cmd.option('environment', {
 
 // APM
 cmd.option('apm.ens-registry', {
-  description: 'Address of the ENS registry',
+  description: 'Address of the ENS registry. This will be overwritten if the selected \'--environment\' from your arapp.json includes a `registry` property',
   default: require('@aragon/aragen').ens
 })
 cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
