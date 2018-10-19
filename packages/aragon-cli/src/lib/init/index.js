@@ -1,2 +1,2 @@
-export * from './check-project-exists';
-export * from './prepare-template';
+export * from './check-project-exists'
+export * from './prepare-template'

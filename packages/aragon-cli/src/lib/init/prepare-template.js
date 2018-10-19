@@ -1,7 +1,7 @@
-import path from 'path';
-import fs from 'fs-extra';
+import path from 'path'
+import fs from 'fs-extra'
 
-export async function prepareTemplate(basename, appName) {
+export async function prepareTemplate (basename, appName) {
   const arappPath = path.resolve(basename, 'arapp.json')
   const arapp = await fs.readJson(arappPath)
 

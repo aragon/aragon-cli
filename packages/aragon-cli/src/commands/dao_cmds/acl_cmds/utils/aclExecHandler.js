@@ -11,7 +11,7 @@ module.exports = async function (dao, method, params, { reporter, apm, network, 
       processedParams = params
     } else {
       processedParams = params.map(param => (
-        param == role ? '0x' + keccak256(role) : param
+        param === role ? '0x' + keccak256(role) : param
       ))
     }
 

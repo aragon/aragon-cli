@@ -1,13 +1,10 @@
-const TaskList = require('listr')
-const Web3 = require('web3')
-const daoArg = require('./utils/daoArg')
 import initAragonJS from './utils/aragonjs-wrapper'
+const TaskList = require('listr')
+const daoArg = require('./utils/daoArg')
 const { listApps } = require('./utils/knownApps')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const path = require('path')
 
 const Table = require('cli-table')
-const colors = require('colors')
 
 let knownApps
 
@@ -20,14 +17,13 @@ exports.builder = function (yargs) {
 }
 
 const printAppName = (appId) => {
-  return knownApps[appId] ? knownApps[appId] : appId.slice(0,10) + '...'
+  return knownApps[appId] ? knownApps[appId] : appId.slice(0, 10) + '...'
 }
 
 const printContent = (content) => {
-  if (!content)
-    return '(No UI available)'
+  if (!content) { return '(No UI available)' }
 
-  return `${content.provider}:${content.location}`.slice(0,25) + '...'
+  return `${content.provider}:${content.location}`.slice(0, 25) + '...'
 }
 
 exports.handler = async function ({ reporter, dao, network, apm: apmOptions }) {
@@ -47,24 +43,24 @@ exports.handler = async function ({ reporter, dao, network, apm: apmOptions }) {
               ctx.apps = apps
               resolve()
             },
-            onDaoAddress: addr => ctx.daoAddress = addr,
-            onError: err => reject(err) 
-          }).catch(err => { 
-              reporter.error('Error inspecting DAO apps')
-              reporter.debug(err)
-              process.exit(1)
-            })
+            onDaoAddress: addr => { ctx.daoAddress = addr },
+            onError: err => reject(err)
+          }).catch(err => {
+            reporter.error('Error inspecting DAO apps')
+            reporter.debug(err)
+            process.exit(1)
+          })
         })
       }
-    },
+    }
   ])
 
   return tasks.run()
     .then((ctx) => {
       reporter.success(`Successfully fetched DAO apps for ${ctx.daoAddress}`)
       const appsContent = ctx.apps.map(
-        ({ appId, proxyAddress, codeAddress, content, appName, version }) => 
-        ([ appName ? `${appName}@v${version}`: printAppName(appId), proxyAddress, printContent(content)])
+        ({ appId, proxyAddress, codeAddress, content, appName, version }) =>
+          ([ appName ? `${appName}@v${version}` : printAppName(appId), proxyAddress, printContent(content) ])
       )
 
       // filter registry name to make it shorter
@@ -75,7 +71,7 @@ exports.handler = async function ({ reporter, dao, network, apm: apmOptions }) {
       })
 
       const table = new Table({
-        head: ['App', 'Proxy address', 'Content'].map(x => x.white),
+        head: ['App', 'Proxy address', 'Content'].map(x => x.white)
       })
 
       filteredContent.forEach(row => table.push(row))
