@@ -354,7 +354,7 @@ exports.handler = function ({
 
     ${(client !== false) ?
       `Opening http://localhost:${clientPort}/#/${ctx.daoAddress} to view your DAO` :
-      `Use "aragon dao <command> ${ctx.daoAddress}" to interact with your DAO`
+      `Use "dao <command> ${ctx.daoAddress}" to interact with your DAO`
     }`)
 
     if (!manifest) {
