@@ -3,6 +3,7 @@ const daoArg = require('./utils/daoArg')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const APM = require('@aragon/apm')
 const defaultAPMName = require('../../helpers/default-apm')
+const listrOpts = require('../../helpers/listrOpts')
 const chalk = require('chalk')
 const getRepoTask = require('./utils/getRepoTask')
 const encodeInitPayload = require('./utils/encodeInitPayload')
@@ -107,7 +108,7 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
         )
       }
     }
-  ])
+  ], listrOpts)
 
   return tasks
 }

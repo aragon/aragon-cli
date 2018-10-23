@@ -5,6 +5,7 @@ const {
   isIPFSCORS,
   setIPFSCORS
 } = require('../helpers/ipfs-daemon')
+const listrOpts = require('../helpers/listrOpts')
 
 const { isPortTaken } = require('../util')
 const IPFS = require('ipfs-api')
@@ -51,7 +52,7 @@ exports.task = ({ apmOptions }) => {
         })
       }
     }
-  ])
+  ], listrOpts)
 }
 
 exports.handler = function ({ reporter, apm: apmOptions }) {

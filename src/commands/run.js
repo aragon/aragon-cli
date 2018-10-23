@@ -15,6 +15,7 @@ const fs = require('fs-extra')
 const opn = require('opn')
 const execa = require('execa')
 const pkg = require('../../package.json')
+const listrOpts = require('../helpers/listrOpts')
 
 const {
   findProjectRoot,
@@ -284,10 +285,10 @@ exports.handler = function ({
             checkWrapperReady()
           }
         }
-      ]),
+      ], listrOpts),
       enabled: () => client === true
     }
-  ])
+  ], listrOpts)
 
   const manifestPath = path.resolve(findProjectRoot(), 'manifest.json')
   let manifest

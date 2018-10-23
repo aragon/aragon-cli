@@ -1,6 +1,7 @@
 const TaskList = require('listr')
 const daoArg = require('./utils/daoArg')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const listrOpts = require('../../helpers/listrOpts')
 const APM = require('@aragon/apm')
 const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
@@ -47,7 +48,7 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
         return setApp.send({ from: ctx.accounts[0], gasLimit: 1e6 })
       }
     }
-  ], { repo })
+  ], Object.assign({ repo }, listrOpts))
 
   return tasks
 }

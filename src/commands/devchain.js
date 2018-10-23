@@ -11,6 +11,7 @@ const chalk = require('chalk')
 const fs = require('fs')
 
 const { BLOCK_GAS_LIMIT, MNEMONIC } = require('../helpers/ganache-vars')
+const listrOpts = require('../helpers/listrOpts')
 
 exports.command = 'devchain'
 exports.describe = 'Open a test chain for development and pass arguments to ganache'
@@ -84,7 +85,7 @@ exports.task = async function ({ port = 8545, reset = false, showAccounts = 2 })
           { key: ganacheAccounts[address.toLowerCase()].secretKey.toString('hex'), address }
         ))
       }
-    }])
+    }], listrOpts)
 
   return tasks
 }

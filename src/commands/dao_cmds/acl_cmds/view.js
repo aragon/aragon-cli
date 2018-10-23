@@ -4,6 +4,7 @@ const daoArg = require('../utils/daoArg')
 const { listApps } = require('../utils/knownApps')
 const { rolesForApps } = require('./utils/knownRoles')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
+const listrOpts = require('../../../helpers/listrOpts')
 
 const Table = require('cli-table')
 
@@ -87,7 +88,7 @@ exports.handler = async function ({ reporter, dao, network, apm, module }) {
         })
       }
     }
-  ])
+  ], listrOpts)
 
   return tasks.run()
     .then((ctx) => {

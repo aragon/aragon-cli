@@ -5,6 +5,7 @@ const chalk = require('chalk')
 const { compileContracts } = require('../helpers/truffle-runner')
 const { findProjectRoot } = require('../util')
 const { ensureWeb3 } = require('../helpers/web3-fallback')
+const listrOpts = require('../helpers/listrOpts')
 const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
 const DEFAULT_GAS_PRICE = require('../../package.json').aragon.defaultGasPrice
 
@@ -109,7 +110,7 @@ exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions
         delete ctx.transactionHash
       }
     }
-  ])
+  ], listrOpts)
   return tasks
 }
 

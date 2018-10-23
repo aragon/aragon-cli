@@ -2,6 +2,7 @@ const TaskList = require('listr')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const APM = require('@aragon/apm')
 const defaultAPMName = require('../../helpers/default-apm')
+const listrOpts = require('../../helpers/listrOpts')
 const chalk = require('chalk')
 const { getContract } = require('../../util')
 const getRepoTask = require('./utils/getRepoTask')
@@ -79,7 +80,7 @@ exports.task = async ({ web3, reporter, apmOptions, kit, kitVersion, fn, fnArgs,
         ctx.appManagerRole = await kernel.methods.APP_MANAGER_ROLE().call()
       }
     }
-  ])
+  ], listrOpts)
 
   return tasks
 }

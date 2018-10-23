@@ -1,6 +1,7 @@
 import initAragonJS from './aragonjs-wrapper'
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
+const listrOpts = require('../../../helpers/listrOpts')
 
 const GAS_ESTIMATE_FUZZ_FACTOR = 2
 
@@ -76,7 +77,7 @@ module.exports = async function (dao, getTransactionPath, { reporter, apm, netwo
         })
       }
     }
-  ])
+  ], listrOpts)
 
   return tasks.run()
     .then((ctx) => {

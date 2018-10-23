@@ -15,6 +15,7 @@ const { findProjectRoot, getNodePackageManager } = require('../../util')
 const ignore = require('ignore')
 const execa = require('execa')
 const { compileContracts } = require('../../helpers/truffle-runner')
+const listrOpts = require('../../helpers/listrOpts')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
 const startIPFS = require('../ipfs')
@@ -485,7 +486,7 @@ exports.task = function ({
       title: 'Fetch published repo',
       task: getRepoTask.task({ apmRepo: module.appName, apm })
     }
-  ])
+  ], listrOpts)
 }
 
 exports.handler = async (args) => {
