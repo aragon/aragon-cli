@@ -5,6 +5,8 @@ const chalk = require('chalk')
 const { compileContracts } = require('../helpers/truffle-runner')
 const { findProjectRoot } = require('../util')
 const { ensureWeb3 } = require('../helpers/web3-fallback')
+const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
+const DEFAULT_GAS_PRICE = require('../../package.json').aragon.defaultGasPrice
 
 exports.command = 'deploy [contract]'
 
@@ -58,14 +60,13 @@ exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions
       title: `Deploy '${contractName}' to network`,
       task: async (ctx, task) => {
         ctx.contractName = contractName
-        let contractArtifacts
         try {
-          contractArtifacts = require(path.join(cwd, 'build/contracts', contractName))
+          ctx.contractArtifacts = require(path.join(cwd, 'build/contracts', contractName))
         } catch (e) {
           throw new Error('Contract artifact couldnt be found. Please ensure your contract name is the same as the filename.')
         }
 
-        const { abi, bytecode } = contractArtifacts
+        const { abi, bytecode } = ctx.contractArtifacts
 
         if (!bytecode || bytecode === '0x') {
           throw new Error('Contract bytecode couldnt be generated. Contracts that dont implement all interface methods cant be deployed')
@@ -75,10 +76,21 @@ exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions
 
         const contract = new web3.eth.Contract(abi, { data: bytecode })
         const accounts = await web3.eth.getAccounts()
+
         const deployTx = contract.deploy({ arguments: processedInit })
         const gas = await deployTx.estimateGas()
 
-        const instance = await deployTx.send({ from: accounts[0], gas, gasPrice: '19000000000' }) // 19 gwei
+        const args = {
+          from: accounts[0],
+          gasPrice: network.gasPrice || DEFAULT_GAS_PRICE,
+          gas
+        }
+
+        const deployPromise = deployTx.send(args)
+        deployPromise.on('transactionHash', (transactionHash) => {
+          ctx.transactionHash = transactionHash
+        })
+        const instance = await deployPromise
 
         if (!instance.options.address) {
           throw new Error('Contract deployment failed')
@@ -87,6 +99,14 @@ exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions
         ctx.contractInstance = instance
         ctx.contract = instance.options.address
         return ctx.contract
+      }
+    },
+    {
+      title: 'Generate deployment artifacts',
+      task: async (ctx, task) => {
+        ctx.deployArtifacts = await deployArtifacts(ctx.contractArtifacts)
+        ctx.deployArtifacts.transactionHash = ctx.transactionHash
+        delete ctx.transactionHash
       }
     }
   ])
@@ -98,5 +118,7 @@ exports.handler = async ({ reporter, network, cwd, contract, init, apm: apmOptio
   const ctx = await task.run()
 
   reporter.success(`Successfully deployed ${ctx.contractName} at: ${chalk.bold(ctx.contract)}`)
+  reporter.info(`Transaction hash: ${ctx.deployArtifacts.transactionHash}`)
+
   process.exit()
 }

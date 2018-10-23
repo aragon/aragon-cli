@@ -25,7 +25,7 @@ exports.handler = async function ({
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   const apm = await APM(web3, apmOptions)
-  const acl = ACL(web3)
+  const acl = ACL({ web3, network })
 
   const repo = await apm.getRepository(module.appName).catch(() => null)
   if (repo === null) {

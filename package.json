@@ -68,6 +68,7 @@
     "semver": "^5.4.1",
     "tmp-promise": "^1.0.4",
     "truffle": "4.1.14",
+    "truffle-flattener": "^1.2.9",
     "web3": "^1.0.0-beta.34",
     "yargs": "^10.1.0"
   },
@@ -108,6 +109,7 @@
   },
   "aragon": {
     "clientVersion": "526a1966d547f719030dcdd7867a5f5ea3808312",
-    "clientPort": "3000"
+    "clientPort": "3000",
+    "defaultGasPrice": "10000000000"
   }
 }
