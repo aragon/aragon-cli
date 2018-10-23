@@ -33,7 +33,8 @@ exports.builder = function (yargs) {
       description: 'Type of bump (major, minor or patch) or version number',
       type: 'string'
     }).positional('contract', {
-      description: 'The address or name of the contract to publish in this version. If it isn\'t provided, it will default to the current version\'s contract.'
+      description: 'The address or name of the contract to publish in this version. If it isn\'t provided, it will default to the current version\'s contract.',
+      type: 'string'
     }).option('only-artifacts', {
       description: 'Whether just generate artifacts file without publishing',
       default: false,
@@ -202,7 +203,6 @@ exports.task = function ({
   key,
   files,
   ignore,
-  automaticallyBump,
   ipfsCheck,
   publishDir,
   init,
@@ -223,50 +223,39 @@ exports.task = function ({
 
   return new TaskList([
     {
-      title: 'Preflight checks for publishing to APM',
-      enabled: () => !automaticallyBump,
-      task: (ctx) => new TaskList([
-        {
-          title: 'Fetching current repo version',
-          task: async (ctx) => {
-            try {
-              repo = await apm.getLatestVersion(module.appName)
-              ctx.version = semver.valid(bump) ? semver.valid(bump) : semver.inc(repo.version, bump)
-            } catch (e) {
-              if (e.message.indexOf('Invalid content URI') === 0) {
-                return
-              }
-              ctx.version = semver.valid(bump) ? semver.valid(bump) : semver.inc(repo.version, bump)
-              if (apm.validInitialVersions.indexOf(ctx.version) === -1) {
-                throw new Error('Invalid initial version, it can only be 0.0.1, 0.1.0 or 1.0.0.')
-              } else {
-                ctx.isMajor = true // consider first version as major
-              }
-            }
+      title: 'Check IPFS',
+      task: () => startIPFS.task({ apmOptions }),
+      enabled: () => !http && ipfsCheck
+    },
+    {
+      title: `Applying version bump (${bump})`,
+      task: async (ctx) => {
+        let isValid = true
+        try {
+          repo = await apm.getLatestVersion(module.appName)
+          ctx.version = semver.valid(bump) ? semver.valid(bump) : semver.inc(repo.version, bump)
+
+          const getMajor = version => version.split('.')[0]
+          ctx.isMajor = getMajor(repo.version) !== getMajor(ctx.version)
+
+          isValid = await apm.isValidBump(module.appName, repo.version, ctx.version)
+        } catch (e) {
+          throw e
+          if (e.message.indexOf('Invalid content URI') === 0) {
+            return
           }
-        },
-        {
-          title: 'Checking version bump',
-          task: async (ctx) => {
-            if (!ctx.version) {
-              throw new Error('Invalid bump. Please use a version number or a valid bump (major, minor or patch)')
-            }
-
-            if (ctx.version === repo.version) {
-              throw new Error('Version is already published, please provide a valid version number or a valid bump (major, minor, or patch)')
-            }
-
-            const isValid = await apm.isValidBump(module.appName, repo.version, ctx.version)
-
-            if (!isValid) {
-              throw new Error('Version bump is not valid, you have to respect APM bumps policy. Check version upgrade rules in documentation https://hack.aragon.org/docs/aragonos-ref.html#631-version-upgrade-rules')
-            }
-
-            const getMajor = version => version.split('.')[0]
-            ctx.isMajor = getMajor(repo.version) !== getMajor(ctx.version)
+          ctx.version = semver.valid(bump) ? semver.valid(bump) : semver.inc(repo.version, bump)
+          if (apm.validInitialVersions.indexOf(ctx.version) === -1) {
+            throw new Error('Invalid initial version, it can only be 0.0.1, 0.1.0 or 1.0.0.')
+          } else {
+            ctx.isMajor = true // consider first version as major
           }
         }
-      ])
+
+        if (!isValid) {
+          throw new Error('Version bump is not valid, you have to respect APM bumps policy. Check version upgrade rules in documentation https://hack.aragon.org/docs/aragonos-ref.html#631-version-upgrade-rules')
+        }
+      }
     },
     {
       title: 'Compile contracts',
@@ -280,23 +269,7 @@ exports.task = function ({
 
         return deploy.task(deployTaskParams)
       },
-      enabled: ctx => !onlyContent && ((contract && !web3Utils.isAddress(contract)) || (!contract && ctx.isMajor && !reuse) || automaticallyBump)
-    },
-    {
-      title: 'Automatically bump version',
-      task: async (ctx, task) => {
-        let nextMajorVersion
-        try {
-          const { version } = await apm.getLatestVersion(module.appName)
-          nextMajorVersion = parseInt(version.split('.')[0]) + 1
-        } catch (e) {
-          ctx.version = '1.0.0'
-          return task.skip('Starting from initial version')
-        }
-
-        ctx.version = `${nextMajorVersion}.0.0`
-      },
-      enabled: () => automaticallyBump
+      enabled: ctx => !onlyContent && ((contract && !web3Utils.isAddress(contract)) || (!contract && ctx.isMajor && !reuse))
     },
     {
       title: 'Determine contract address for version',
@@ -306,13 +279,13 @@ exports.task = function ({
         }
 
         // Check if we can fall back to a previous contract address
-        if (!ctx.contract && ctx.version !== '1.0.0') {
+        if (!ctx.contract && apm.validInitialVersions.indexOf(ctx.version) === -1) {
           task.output = 'No contract address provided, using previous one'
 
           try {
-            const { contract } = apm.getLatestVersion(module.appName)
-            ctx.contract = contract
-            return `Using ${contract}`
+            const { contractAddress } = await apm.getLatestVersion(module.appName)
+            ctx.contract = contractAddress
+            return `Using ${ctx.contract}`
           } catch (err) {
             throw new Error('Could not determine previous contract')
           }
@@ -355,11 +328,6 @@ exports.task = function ({
           throw new Error(`${err.message}\n${err.stderr}\n\nFailed to build. See above output.`)
         })
       }
-    },
-    {
-      title: 'Check IPFS',
-      task: () => startIPFS.task({ apmOptions }),
-      enabled: () => !http && ipfsCheck
     },
     {
       title: 'Prepare files for publishing',
