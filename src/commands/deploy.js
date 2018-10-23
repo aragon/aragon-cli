@@ -83,11 +83,13 @@ exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions
         const args = {
           from: accounts[0],
           gasPrice: network.gasPrice || DEFAULT_GAS_PRICE,
-          gas: await deployTx.estimateGas()
+          gas
         }
 
         const deployPromise = deployTx.send(args)
-        deployPromise.on('transactionHash', (transactionHash) => ctx.transactionHash = transactionHash)
+        deployPromise.on('transactionHash', (transactionHash) => {
+          ctx.transactionHash = transactionHash
+        })
         const instance = await deployPromise
 
         if (!instance.options.address) {
