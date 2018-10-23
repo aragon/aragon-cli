@@ -154,7 +154,7 @@ exports.handler = function ({
           contract: deploy.arappContract(),
           web3: ctx.web3,
           apm: apmOptions,
-          automaticallyBump: true,
+          bump: 'major',
           getRepo: true,
           http,
           httpServedFrom

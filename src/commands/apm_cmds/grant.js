@@ -24,7 +24,7 @@ exports.handler = async function ({
   const web3 = await ensureWeb3(network)
 
   const apm = await APM(web3, apmOptions)
-  const acl = ACL(web3)
+  const acl = ACL({ web3, network })
 
   const repo = await apm.getRepository(module.appName).catch(() => null)
   if (repo === null) {
