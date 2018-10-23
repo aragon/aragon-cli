@@ -1,5 +1,6 @@
 import initAragonJS from './utils/aragonjs-wrapper'
 const TaskList = require('listr')
+const chalk = require('chalk')
 const daoArg = require('./utils/daoArg')
 const { listApps } = require('./utils/knownApps')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
@@ -26,8 +27,8 @@ const printContent = (content) => {
   return `${content.provider}:${content.location}`.slice(0, 25) + '...'
 }
 
-exports.handler = async function ({ reporter, dao, network, apm: apmOptions }) {
-  knownApps = listApps()
+exports.handler = async function ({ reporter, dao, network, apm: apmOptions, module }) {
+  knownApps = listApps([module.appName])
   const web3 = await ensureWeb3(network)
 
   const tasks = new TaskList([
@@ -71,7 +72,7 @@ exports.handler = async function ({ reporter, dao, network, apm: apmOptions }) {
       })
 
       const table = new Table({
-        head: ['App', 'Proxy address', 'Content'].map(x => x.white)
+        head: ['App', 'Proxy address', 'Content'].map(x => chalk.white(x))
       })
 
       filteredContent.forEach(row => table.push(row))

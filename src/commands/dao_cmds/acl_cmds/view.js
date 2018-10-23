@@ -50,8 +50,8 @@ const formatRow = ({ to, role, allowedEntities, manager }, apps) => {
   return [formattedTo, formattedRole, formattedAllowed, formattedManager]
 }
 
-exports.handler = async function ({ reporter, dao, network, apm }) {
-  knownApps = listApps()
+exports.handler = async function ({ reporter, dao, network, apm, module }) {
+  knownApps = listApps([module.appName])
   const web3 = await ensureWeb3(network)
 
   const tasks = new TaskList([
