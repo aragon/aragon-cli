@@ -20,6 +20,7 @@ const deploy = require('../deploy')
 const startIPFS = require('../ipfs')
 const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 
+const DEFAULT_GAS_PRICE = require('../../../package.json').aragon.defaultGasPrice
 const MANIFEST_FILE = 'manifest.json'
 const ARTIFACT_FILE = 'artifact.json'
 const SOLIDITY_FILE = 'code.sol'
@@ -472,7 +473,7 @@ exports.task = function ({
           )
 
           transaction.from = from
-          transaction.gasPrice = '19000000000' // 19 gwei
+          transaction.gasPrice = network.gasPrice || DEFAULT_GAS_PRICE
 
           ctx.receipt = await web3.eth.sendTransaction(transaction)
         } catch (e) {
