@@ -293,7 +293,6 @@ exports.task = function ({
 
           isValid = await apm.isValidBump(module.appName, repo.version, ctx.version)
         } catch (e) {
-          throw e
           if (e.message.indexOf('Invalid content URI') === 0) {
             return
           }
