@@ -1,9 +1,10 @@
 const execa = require('execa')
 const fs = require('fs')
 const path = require('path')
+const { promisify } = require('util')
 const os = require('os')
 const ipfsAPI = require('ipfs-api')
-const { getNPMBinary } = require('../util')
+const { getNPMBinary, isPortTaken } = require('../util')
 
 const ipfsBin = getNPMBinary('go-ipfs', 'bin/ipfs')
 
@@ -76,4 +77,27 @@ const setIPFSCORS = (ipfsRpc) => {
   )
 }
 
-module.exports = { startIPFSDaemon, isIPFSCORS, setIPFSCORS }
+const isIPFSRunning = async (ipfsRpc) => {
+  const portTaken = await isPortTaken(ipfsRpc.port)
+
+  if (portTaken) {
+    if (!ipfsNode) ipfsNode = ipfsAPI(ipfsRpc)
+
+    const getId = promisify(ipfsNode.id)
+
+    try {
+      // if port is taken, attempt to fetch the node id
+      // if this errors, we can assume the port is taken
+      // by a process other then the ipfs gateway
+      await getId()
+      return true
+    } catch (e) {
+      console.log('error', e)
+      return false
+    }
+  }
+
+  return false
+}
+
+module.exports = { startIPFSDaemon, isIPFSCORS, setIPFSCORS, isIPFSRunning }
