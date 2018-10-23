@@ -52,13 +52,15 @@ module.exports = function environmentMiddleware (argv) {
   const { reporter, module, apm } = argv
   let { environment, network } = argv
 
-  if (environment && network) {
+  const isTruffleFwd = argv._[0] === 'contracts'
+
+  if (environment && network && !isTruffleFwd) {
     reporter.error('Arguments \'--network\' and \'--environment\' are mutually exclusive. Using \'--network\'  has been deprecated and  \'--environment\' should be used instead.')
     process.exit(1)
   }
 
   if (!runsInCwd && module) {
-    if (network && module.environments) {
+    if (network && module.environments && !isTruffleFwd) {
       reporter.error(
         'Your arapp.json contains an `environments` property. The use of \'--network\' is deprecated and \'--environment\' should be used instead.'
       )
