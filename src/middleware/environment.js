@@ -18,6 +18,13 @@ const configureNetwork = (argv, network) => {
     }
   }
 
+  if (argv.useFrame) {
+    return {
+      name: `frame-${network}`,
+      provider: new Web3.providers.WebsocketProvider('ws://localhost:1248')
+    }
+  }
+
   const truffleConfig = getTruffleConfig()
 
   const truffleNetwork = truffleConfig.networks[network]
