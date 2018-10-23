@@ -2,7 +2,7 @@
 require('@babel/polyfill')
 const { environmentMiddleware, manifestMiddleware, moduleMiddleware } = require('./middleware')
 const { findProjectRoot } = require('./util')
-const ConsoleReporter = require('./reporters/ConsoleReporter')
+const { ConsoleReporter, ens } = require('@aragon/aragen')
 const url = require('url')
 
 const MIDDLEWARES = [
@@ -67,7 +67,7 @@ cmd.option('environment', {
 // APM
 cmd.option('apm.ens-registry', {
   description: 'Address of the ENS registry. This will be overwritten if the selected \'--environment\' from your arapp.json includes a `registry` property',
-  default: require('@aragon/aragen').ens
+  default: ens
 })
 cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
 
