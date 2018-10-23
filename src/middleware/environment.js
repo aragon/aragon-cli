@@ -4,16 +4,16 @@ const { getTruffleConfig } = require('../helpers/truffle-config')
 const configureNetwork = (argv, network) => {
   // Catch commands that dont require network and return
   const skipNetworkSubcommands = new Set(['version']) // 'aragon apm version'
-  if (argv.length >= 4) {
-    if (skipNetworkSubcommands.has(argv[3])) {
+  if (argv._.length >= 2) {
+    if (skipNetworkSubcommands.has(argv._[1])) {
       return {}
     }
   }
 
-  const skipNetworkCommands = new Set(['init', 'devchain', 'ipfs'])
+  const skipNetworkCommands = new Set(['init', 'devchain', 'ipfs', 'contracts'])
 
-  if (argv.length >= 3) {
-    if (skipNetworkCommands.has(argv[2])) {
+  if (argv._.length >= 1) {
+    if (skipNetworkCommands.has(argv._[0])) {
       return {}
     }
   }
