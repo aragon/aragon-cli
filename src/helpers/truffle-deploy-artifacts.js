@@ -9,7 +9,8 @@ module.exports = async (contractArtifacts) => {
     compiler
   } = contractArtifacts
 
-  compiler.optimizer = getTruffleConfig().solc.optimizer
+  const solcConfig = getTruffleConfig().solc
+  compiler.optimizer = solcConfig ? solcConfig.optimizer : { enabled: false }
   const flattenedCode = await flatten([ sourcePath ])
 
   return {
