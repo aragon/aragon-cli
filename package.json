@@ -111,5 +111,12 @@
     "clientVersion": "526a1966d547f719030dcdd7867a5f5ea3808312",
     "clientPort": "3000",
     "defaultGasPrice": "10000000000"
+  },
+  "yargs": {
+    "short-option-groups": true,
+    "camel-case-expansion": true,
+    "dot-notation": true,
+    "parse-numbers": false,
+    "boolean-negation": true
   }
 }

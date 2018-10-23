@@ -46,7 +46,7 @@ test('prepare project template', async t => {
   const packageJson = await fs.readJson(packageJsonPath)
 
   t.falsy(await fs.pathExists(repoPath))
-  t.is(appName, project.appName)
   t.is(undefined, packageJson.license)
   t.falsy(fs.pathExistsSync(licensePath))
+  t.is(appName, project.environments.default.appName)
 })
