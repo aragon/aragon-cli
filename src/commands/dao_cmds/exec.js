@@ -1,7 +1,7 @@
 const execHandler = require('./utils/execHandler')
 const daoArg = require('./utils/daoArg')
 
-exports.command = 'exec <dao> <proxy-address> <fn> [fn-args]'
+exports.command = 'exec <dao> <proxy-address> <fn> [fn-args..]'
 
 exports.describe = 'Executes a call in an app of a DAO'
 
