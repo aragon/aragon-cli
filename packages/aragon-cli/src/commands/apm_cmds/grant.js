@@ -2,12 +2,14 @@ const APM = require('@aragon/apm')
 const ACL = require('../../acl')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 
-exports.command = 'grant [address]'
+exports.command = 'grant [grantees..]'
 exports.describe = 'Grant an address permission to create new versions in this package'
 
 exports.builder = function (yargs) {
-  return yargs.positional('address', {
-    description: 'The address being granted the permission to publish to the repo'
+  return yargs.positional('grantees', {
+    description: 'The address being granted the permission to publish to the repo',
+    array: true,
+    default: []
   })
 }
 
@@ -19,7 +21,7 @@ exports.handler = async function ({
   module,
   apm: apmOptions,
   // Arguments
-  address
+  grantees
 }) {
   const web3 = await ensureWeb3(network)
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
@@ -32,25 +34,32 @@ exports.handler = async function ({
     throw new Error(`Repository ${module.appName} does not exist and it's registry does not exist`)
   }
 
-  reporter.info(`Granting permission to publish on ${module.appName} for ${address}`)
-
-  // Decode sender
-  const accounts = await web3.eth.getAccounts()
-  const from = accounts[0]
-
-  // Build transaction
-  const transaction = await acl.grant(repo.options.address, address)
-
-  transaction.nonce = await web3.eth.getTransactionCount(from)
-  transaction.from = from
-
-  try {
-    const receipt = await web3.eth.sendTransaction(transaction)
-    reporter.success(`Successful transaction (${receipt.transactionHash})`)
-  } catch (e) {
-    reporter.error(`${e}\nTransaction failed`)
+  if (grantees.length === 0) {
+    reporter.warning('No grantee addresses provided')
   }
-  process.exit()
 
-  // reporter.debug(JSON.stringify(receipt))
+  for (const address of grantees) {
+    reporter.info(`Granting permission to publish on ${module.appName} for ${address}`)
+
+    // Decode sender
+    const accounts = await web3.eth.getAccounts()
+    const from = accounts[0]
+
+    // Build transaction
+    const transaction = await acl.grant(repo.options.address, address)
+
+    const DEFAULT_GAS_PRICE = require('../../../package.json').aragon.defaultGasPrice
+    transaction.from = from
+    transaction.gasPrice = network.gasPrice || DEFAULT_GAS_PRICE
+
+    try {
+      const receipt = await web3.eth.sendTransaction(transaction)
+      reporter.success(`Successful transaction (${receipt.transactionHash})`)
+    } catch (e) {
+      reporter.error(`${e}\nTransaction failed`)
+      process.exit(1)
+    }
+  }
+
+  process.exit(0)
 }
