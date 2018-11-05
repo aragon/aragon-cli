@@ -2,7 +2,7 @@ const Web3 = require('web3')
 const { getTruffleConfig } = require('../helpers/truffle-config')
 
 const FRAME_ENDPOINT = 'ws://localhost:1248'
-const ORIGIN = 'AragonCLI'
+const FRAME_ORIGIN = 'AragonCLI'
 
 const configureNetwork = (argv, network) => {
   // Catch commands that dont require network and return
@@ -24,7 +24,7 @@ const configureNetwork = (argv, network) => {
   if (argv.useFrame) {
     const providerOptions = {
       headers: {
-        origin: ORIGIN
+        origin: FRAME_ORIGIN
       }
     }
     return {
