@@ -1,6 +1,9 @@
 const Web3 = require('web3')
 const { getTruffleConfig } = require('../helpers/truffle-config')
 
+const FRAME_ENDPOINT = 'ws://localhost:1248'
+const ORIGIN = 'AragonCLI'
+
 const configureNetwork = (argv, network) => {
   // Catch commands that dont require network and return
   const skipNetworkSubcommands = new Set(['version']) // 'aragon apm version'
@@ -19,9 +22,14 @@ const configureNetwork = (argv, network) => {
   }
 
   if (argv.useFrame) {
+    const providerOptions = {
+      headers: {
+        origin: ORIGIN
+      }
+    }
     return {
       name: `frame-${network}`,
-      provider: new Web3.providers.WebsocketProvider('ws://localhost:1248')
+      provider: new Web3.providers.WebsocketProvider(FRAME_ENDPOINT, providerOptions)
     }
   }
 
