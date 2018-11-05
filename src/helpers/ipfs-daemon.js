@@ -15,7 +15,7 @@ const ensureIPFSInitialized = async () => {
 }
 
 const startIPFSDaemon = () => {
-  const IPFS_START_TIMEOUT = 7500 // 7.5s for timeout, may need to be tweaked
+  const IPFS_START_TIMEOUT = 20000 // 20s for timeout, may need to be tweaked
 
   let startOutput = ''
 
