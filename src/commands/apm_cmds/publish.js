@@ -278,7 +278,7 @@ exports.task = function ({
     {
       title: 'Check IPFS',
       task: () => startIPFS.task({ apmOptions }),
-      enabled: () => !http && ipfsCheck
+      enabled: () => !http && ipfsCheck && apmOptions.ipfs.defaultRPC
     },
     {
       title: `Applying version bump (${bump})`,
@@ -456,7 +456,7 @@ exports.task = function ({
       task: async (ctx, task) => {
         ctx.contractInstance = null // clean up deploy sub-command artifacts
 
-        task.output = 'Generating transaction and waiting for confirmation'
+        task.output = 'Publishing content, generating transaction and waiting for confirmation'
         const accounts = await web3.eth.getAccounts()
         const from = accounts[0]
 

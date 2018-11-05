@@ -57,7 +57,7 @@
     "global-modules-path": "^2.3.0",
     "go-ipfs": "0.4.17",
     "ignore": "^3.3.7",
-    "ipfs-api": "^21.0.0",
+    "ipfs-api": "^26.1.2",
     "js-sha3": "^0.7.0",
     "listr": "^0.13.0",
     "listr-input": "0.1.3",

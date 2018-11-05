@@ -14,25 +14,27 @@ exports.command = 'ipfs'
 exports.describe = 'Start IPFS daemon configured to work with Aragon'
 
 exports.task = ({ apmOptions }) => {
+  const ipfsOptions = apmOptions.ipfs
+  const ipfsRPC = `${ipfsOptions.protocol}://${ipfsOptions.host}:${ipfsOptions.port}`
+
   return new TaskList([
     {
       title: 'Start IPFS',
       task: async (ctx, task) => {
         // If the dev manually set their IPFS node, skip install and running check
-        if (apmOptions.ipfs.rpc.default) {
-          const running = await isPortTaken(apmOptions.ipfs.rpc.port)
+        if (apmOptions.ipfs.defaultRPC) {
+          const running = await isPortTaken(ipfsOptions.port)
           if (!running) {
-            task.output = 'Starting IPFS at port: ' + apmOptions.ipfs.rpc.port
+            task.output = 'Starting IPFS at port: ' + ipfsOptions.port
             await startIPFSDaemon()
             ctx.started = true
             await setIPFSCORS(apmOptions.ipfs.rpc)
           } else {
             task.output = 'IPFS is started, checking CORS config'
             await setIPFSCORS(apmOptions.ipfs.rpc)
-            return 'Connected to IPFS daemon at port: ' + apmOptions.ipfs.rpc.port
+            return 'Connected to IPFS daemon at port: ' + ipfsOptions.port
           }
         } else {
-          await isIPFSCORS(apmOptions.ipfs.rpc)
           return 'Connecting to provided IPFS daemon'
         }
       }
@@ -40,7 +42,7 @@ exports.task = ({ apmOptions }) => {
     {
       title: 'Add local files',
       task: (ctx) => {
-        const ipfs = IPFS('localhost', '5001', { protocol: 'http' })
+        const ipfs = IPFS(ipfsOptions)
         const files = path.resolve(require.resolve('@aragon/aragen'), '../ipfs-cache')
 
         return new Promise((resolve, reject) => {

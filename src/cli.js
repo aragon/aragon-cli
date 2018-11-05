@@ -75,25 +75,37 @@ cmd.option('apm.ens-registry', {
   description: 'Address of the ENS registry. This will be overwritten if the selected \'--environment\' from your arapp.json includes a `registry` property',
   default: require('@aragon/aragen').ens
 })
-cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
+cmd.group(['apm.ens-registry'], 'APM:')
 
 cmd.option('apm.ipfs.rpc', {
   description: 'An URI to the IPFS node used to publish files',
   default: 'http://localhost:5001#default'
 })
-cmd.group('apm.ipfs.rpc', 'APM providers:')
+
+cmd.option('apm.ipfs.authorization', {
+  description: 'Authorization token for the IPFS node',
+  default: null
+})
+cmd.group(['apm.ipfs.rpc', 'apm.ipfs.authorization'], 'APM providers:')
 
 cmd.option('apm', {
   coerce: (apm) => {
     if (apm.ipfs && apm.ipfs.rpc) {
       const uri = url.parse(apm.ipfs.rpc)
-      apm.ipfs.rpc = {
-        protocol: uri.protocol.replace(':', ''),
+
+      const headers = apm.ipfs.authorization
+        ? { authorization: `Bearer ${apm.ipfs.authorization}` }
+        : {}
+
+      const protocol = uri.protocol.replace(':', '')
+      const port = parseInt(uri.port)
+
+      apm.ipfs = {
         host: uri.hostname,
-        port: parseInt(uri.port)
-      }
-      if (uri.hash === '#default') {
-        apm.ipfs.rpc.default = true
+        port: port ? port : protocol === 'http' ? 80 : 443,
+        defaultRPC: uri.hash === '#default',
+        protocol,
+        headers
       }
     }
     return apm
