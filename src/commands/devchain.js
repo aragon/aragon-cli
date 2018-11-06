@@ -122,5 +122,6 @@ exports.handler = async ({ reporter, port, reset, accounts }) => {
   exports.printMnemonic(reporter, mnemonic)
   exports.printResetNotice(reporter, reset)
 
+  reporter.info("ENS instance deployed at 0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1\n")
   reporter.info(`Devchain running: ${chalk.bold('http://localhost:' + port)}.`)
 }
