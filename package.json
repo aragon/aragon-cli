@@ -36,8 +36,8 @@
   "homepage": "https://github.com/aragon/aragon-dev-cli#readme",
   "dependencies": {
     "@aragon/apm": "^2.0.2",
-    "@aragon/aragen": "2.0.0-beta.1",
-    "@aragon/os": "4.0.0-beta.1",
+    "@aragon/aragen": "^2.0.0",
+    "@aragon/os": "^4.0.0",
     "@aragon/templates-beta": "^1.1.3",
     "@aragon/wrapper": "^2.0.0",
     "@babel/polyfill": "^7.0.0",
@@ -73,10 +73,10 @@
     "yargs": "^10.1.0"
   },
   "devDependencies": {
-    "@aragon/apps-finance": "2.0.0-beta.2",
-    "@aragon/apps-token-manager": "2.0.0-beta.2",
-    "@aragon/apps-vault": "3.0.0-beta.2",
-    "@aragon/apps-voting": "2.0.0-beta.2",
+    "@aragon/apps-finance": "^2.0.0",
+    "@aragon/apps-token-manager": "^2.0.0",
+    "@aragon/apps-vault": "^3.0.0",
+    "@aragon/apps-voting": "^2.0.0",
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
     "@babel/node": "^7.0.0",
@@ -108,7 +108,7 @@
     ]
   },
   "aragon": {
-    "clientVersion": "526a1966d547f719030dcdd7867a5f5ea3808312",
+    "clientVersion": "2d79d2b9373d8b89bb28a7ecd613fb6373ac2d43",
     "clientPort": "3000",
     "defaultGasPrice": "10000000000"
   },
