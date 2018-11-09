@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "5.2.0-beta.1",
+  "version": "5.2.0",
   "description": "Aragon command-line tools",
   "main": "dist/cli.js",
   "bin": {
@@ -55,7 +55,7 @@
     "get-installed-path": "^4.0.8",
     "git-clone": "^0.1.0",
     "global-modules-path": "^2.3.0",
-    "go-ipfs": "^0.4.17",
+    "go-ipfs": "0.4.17",
     "ignore": "^3.3.7",
     "ipfs-api": "^21.0.0",
     "js-sha3": "^0.7.0",

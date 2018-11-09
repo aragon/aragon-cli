@@ -486,7 +486,7 @@ exports.task = function ({
     },
     {
       title: 'Fetch published repo',
-      task: getRepoTask.task({ apmRepo: module.appName, apm })
+      task: getRepoTask.task({ artifactRequired: false, apmRepo: module.appName, apm })
     }
   ],{
     renderer: ListrRenderer(silent, debug)

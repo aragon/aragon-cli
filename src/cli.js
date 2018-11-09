@@ -49,6 +49,12 @@ cmd.option('cwd', {
   }
 })
 
+cmd.option('use-frame', {
+  description: 'Use frame as a signing provider and web3 provider',
+  boolean: true,
+  default: false
+})
+
 // network coerce is called multiple times, only warn once
 let warnedDeprecatedNetwork = false
 
