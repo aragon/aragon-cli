@@ -71,7 +71,7 @@ exports.handler = function ({ reporter, name, template, silent, debug }) {
       title: 'Installing package dependencies',
       task: async (ctx, task) => installDeps(basename, task)
     }
-  ],{
+  ], {
     renderer: ListrRenderer(silent, debug)
   })
 

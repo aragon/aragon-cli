@@ -76,8 +76,8 @@ module.exports = async function (dao, getTransactionPath, { reporter, apm, netwo
           })
         })
       }
-    },
-  ],{
+    }
+  ], {
     renderer: ListrRenderer(silent, debug)
   })
 

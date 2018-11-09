@@ -47,8 +47,8 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
 
         return setApp.send({ from: ctx.accounts[0], gasLimit: 1e6 })
       }
-    },
-  ],{
+    }
+  ], {
     renderer: ListrRenderer(silent, debug)
   })
 

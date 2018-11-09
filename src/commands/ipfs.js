@@ -52,7 +52,7 @@ exports.task = ({ apmOptions, silent, debug }) => {
         })
       }
     }
-  ],{
+  ], {
     renderer: ListrRenderer(silent, debug)
   })
 }

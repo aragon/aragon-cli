@@ -110,7 +110,7 @@ exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions
         delete ctx.transactionHash
       }
     }
-  ],{
+  ], {
     renderer: ListrRenderer(silent, debug)
   })
   return tasks

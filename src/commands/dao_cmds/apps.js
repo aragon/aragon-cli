@@ -55,7 +55,7 @@ exports.handler = async function ({ reporter, dao, network, apm: apmOptions, mod
         })
       }
     }
-  ],{
+  ], {
     renderer: ListrRenderer(silent, debug)
   })
 

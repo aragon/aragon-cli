@@ -85,7 +85,7 @@ exports.task = async function ({ port = 8545, reset = false, showAccounts = 2, s
           { key: ganacheAccounts[address.toLowerCase()].secretKey.toString('hex'), address }
         ))
       }
-    }],{
+    }], {
       renderer: ListrRenderer(silent, debug)
     })
 

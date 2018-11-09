@@ -80,7 +80,7 @@ exports.task = async ({ web3, reporter, apmOptions, kit, kitVersion, fn, fnArgs,
         ctx.appManagerRole = await kernel.methods.APP_MANAGER_ROLE().call()
       }
     }
-  ],{
+  ], {
     renderer: ListrRenderer(silent, debug)
   })
 

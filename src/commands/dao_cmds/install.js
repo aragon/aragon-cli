@@ -108,7 +108,7 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
         )
       }
     }
-  ],{
+  ], {
     renderer: ListrRenderer(silent, debug)
   })
 

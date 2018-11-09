@@ -290,7 +290,7 @@ exports.handler = function ({
       ]),
       enabled: () => client === true
     }
-  ],{
+  ], {
     renderer: ListrRenderer(silent, debug)
   })
 
