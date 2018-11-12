@@ -1,4 +1,4 @@
-const execHandler = require('./utils/execHandler')
+const execHandler = require('./utils/execHandler').handler
 const daoArg = require('./utils/daoArg')
 
 exports.command = 'exec <dao> <proxy-address> <fn> [fn-args..]'

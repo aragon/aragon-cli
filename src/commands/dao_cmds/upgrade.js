@@ -1,3 +1,5 @@
+const execTask = require('./utils/execHandler').task
+const { resolveEnsDomain } = require('./utils/aragonjs-wrapper')
 const TaskList = require('listr')
 const daoArg = require('./utils/daoArg')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
@@ -15,12 +17,14 @@ exports.builder = function (yargs) {
   return getRepoTask.args(daoArg(yargs))
 }
 
-exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, repo }) => {
+exports.task = async ({ wsProvider, web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, repo }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
   apmRepo = defaultAPMName(apmRepo)
-  // TODO: Resolve DAO ens name
+  dao = /0x[a-fA-F0-9]{40}/.test(dao)
+    ? dao
+    : await resolveEnsDomain(dao, { provider: web3.currentProvider, registryAddress: apmOptions.ensRegistryAddress })
 
   const tasks = new TaskList([
     {
@@ -36,15 +40,14 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
           dao
         )
 
-        if (!ctx.accounts) {
-          ctx.accounts = await web3.eth.getAccounts()
-        }
-
         const basesNamespace = await kernel.methods.APP_BASES_NAMESPACE().call()
 
-        const setApp = kernel.methods.setApp(basesNamespace, ctx.repo.appId, ctx.repo.contractAddress)
+        const getTransactionPath = (wrapper) => {
+          const fnArgs = [basesNamespace, ctx.repo.appId, ctx.repo.contractAddress]
+          return wrapper.getTransactionPath(dao, 'setApp', fnArgs)
+        }
 
-        return setApp.send({ from: ctx.accounts[0], gasLimit: 1e6 })
+        return execTask(dao, getTransactionPath, { reporter, apm: apmOptions, web3, wsProvider })
       }
     }
   ], { repo })
@@ -52,14 +55,14 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
   return tasks
 }
 
-exports.handler = async function ({ reporter, dao, network, apm: apmOptions, apmRepo, apmRepoVersion }) {
+exports.handler = async function ({ reporter, dao, network, wsProvider, apm: apmOptions, apmRepo, apmRepoVersion }) {
   const web3 = await ensureWeb3(network)
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
-  const task = await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion })
+  const task = await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, wsProvider })
   return task.run()
     .then((ctx) => {
-      reporter.success(`Upgraded ${apmRepo} to ${chalk.bold(ctx.repo.version)}`)
+      reporter.success(`Successfully executed: "${ctx.transactionPath[0].description}"`)
       process.exit()
     })
 }

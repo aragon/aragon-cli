@@ -1,4 +1,4 @@
-const execHandler = require('../../utils/execHandler')
+const execHandler = require('../../utils/execHandler').handler
 const { keccak256 } = require('js-sha3')
 
 module.exports = async function (dao, method, params, { reporter, apm, network, role }) {
