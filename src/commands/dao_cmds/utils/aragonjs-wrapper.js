@@ -49,9 +49,9 @@ const initWrapper = async (
     onPermissions = noop
   } = {}
 ) => {
-  const isDomain = /[a-z0-9]+\.eth/.test(dao)
+  const isDomain = (dao) => /[a-z0-9]+\.eth/.test(dao)
 
-  const daoAddress = isDomain
+  const daoAddress = isDomain(dao)
     ? await resolveEnsDomain(dao, {
       provider,
       registryAddress: ensRegistryAddress
