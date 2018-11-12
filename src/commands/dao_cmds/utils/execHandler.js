@@ -32,8 +32,8 @@ module.exports = async function (dao, getTransactionPath, { reporter, apm, netwo
           }
 
           initAragonJS(dao, apm['ens-registry'], {
-            accounts: ctx.accounts,
-            provider: web3.currentProvider,
+            provider: wsProvider || web3.currentProvider,
+            accounts,
             onApps: async apps => {
               appsLoaded = true
               await tryFindTransactionPath()
@@ -55,32 +55,30 @@ module.exports = async function (dao, getTransactionPath, { reporter, apm, netwo
     {
       title: `Sending transaction`,
       task: async (ctx, task) => {
-        task.output = `Waiting for response...`
         let tx = ctx.transactionPath[0] // TODO: Support choosing between possible transaction paths
 
         if (!tx) {
           throw new Error('Cannot find transaction path for executing action')
         }
 
-        const estimatedGas = await web3.eth.estimateGas(ctx.transactionPath[0])
-        tx.gas = parseInt(GAS_ESTIMATE_FUZZ_FACTOR * estimatedGas)
-        return new Promise((resolve, reject) => {
-          web3.eth.sendTransaction(ctx.transactionPath[0], (err, res) => {
-            if (err) {
-              reject(err)
-              return
-            }
-            ctx.res = res
-            resolve()
-          })
-        })
+        task.output = `Waiting for transaction to be mined...`
+        ctx.receipt = await web3.eth.sendTransaction(ctx.transactionPath[0])
       }
     }
   ])
+}
+
+exports.handler = async function (dao, getTransactionPath, args) {
+  args = {
+    ...args,
+    web3: await ensureWeb3(args.network)
+  }
+
+  const tasks = await module.task(dao, getTransactionPath, args)
 
   return tasks.run()
     .then((ctx) => {
-      reporter.success(`Successfully sent executed action starting with transaction: ` + JSON.stringify(ctx.transactionPath[0].description))
+      reporter.success(`Successfully executed: "${ctx.transactionPath[0].description}"`)
       process.exit()
     })
 }
