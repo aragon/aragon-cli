@@ -35,7 +35,13 @@ cmd.option('silent', {
 
 cmd.option('debug', {
   description: 'Show more output to terminal',
-  default: false
+  default: false,
+  coerce: (debug) => {
+    if (debug || process.env.DEBUG) {
+      global.DEBUG_MODE = true
+      return true
+    }
+  }
 })
 
 cmd.option('cwd', {
