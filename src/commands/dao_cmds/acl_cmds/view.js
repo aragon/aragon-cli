@@ -6,6 +6,7 @@ const { rolesForApps } = require('./utils/knownRoles')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 
 const Table = require('cli-table')
+const chalk = require('chalk')
 
 const knownRoles = rolesForApps()
 const ANY_ENTITY = '0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF'
@@ -98,7 +99,7 @@ exports.handler = async function ({ reporter, dao, network, apm, module }) {
       // filter according to cli params will happen here
 
       const table = new Table({
-        head: ['App', 'Action', 'Allowed entities', 'Manager'].map(x => x.white)
+        head: ['App', 'Action', 'Allowed entities', 'Manager'].map(x => chalk.white(x))
       })
 
       const tos = Object.keys(acl)
