@@ -220,7 +220,7 @@ exports.handler = function ({
       title: 'Open DAO',
       task: (ctx, task) => new TaskList([
         {
-          title: 'Download wrapper',
+          title: 'Download client',
           skip: () => !!clientPath,
           task: (ctx, task) => {
             clientVersion = clientVersion || DEFAULT_CLIENT_VERSION
@@ -229,7 +229,7 @@ exports.handler = function ({
 
             // Make sure we haven't already downloaded the wrapper
             if (fs.existsSync(path.resolve(CLIENT_PATH))) {
-              task.skip('Wrapper already downloaded')
+              task.skip('Client already downloaded')
               ctx.wrapperAvailable = true
               return
             }
@@ -244,7 +244,7 @@ exports.handler = function ({
           }
         },
         {
-          title: 'Install wrapper dependencies',
+          title: 'Install client dependencies',
           task: async (ctx, task) => installDeps(ctx.wrapperPath, task),
           enabled: (ctx) => !ctx.wrapperAvailable && !clientPath
         },
@@ -268,7 +268,7 @@ exports.handler = function ({
           }
         },
         {
-          title: 'Open wrapper',
+          title: 'Open client',
           task: (ctx, task) => {
             // Check until the wrapper is served
             const checkWrapperReady = () => {
