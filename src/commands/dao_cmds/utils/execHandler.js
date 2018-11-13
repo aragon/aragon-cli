@@ -67,11 +67,11 @@ exports.handler = async function (dao, getTransactionPath, args) {
     web3: await ensureWeb3(args.network)
   }
 
-  const tasks = await module.task(dao, getTransactionPath, args)
+  const tasks = await exports.task(dao, getTransactionPath, args)
 
   return tasks.run()
     .then((ctx) => {
-      reporter.success(`Successfully executed: "${ctx.transactionPath[0].description}"`)
+      args.reporter.success(`Successfully executed: "${ctx.transactionPath[0].description}"`)
       process.exit()
     })
 }

@@ -50,7 +50,7 @@ const formatRow = ({ to, role, allowedEntities, manager }, apps) => {
   return [formattedTo, formattedRole, formattedAllowed, formattedManager]
 }
 
-exports.handler = async function ({ reporter, dao, network, apm, module }) {
+exports.handler = async function ({ reporter, dao, network, apm, wsProvider, module }) {
   knownApps = listApps([module.appName])
   const web3 = await ensureWeb3(network)
 
@@ -68,7 +68,7 @@ exports.handler = async function ({ reporter, dao, network, apm, module }) {
           }
 
           initAragonJS(dao, apm['ens-registry'], {
-            provider: web3.currentProvider,
+            provider: wsProvider || web3.currentProvider,
             onPermissions: permissions => {
               ctx.acl = permissions
               resolveIfReady()

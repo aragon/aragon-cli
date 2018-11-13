@@ -11,8 +11,8 @@ exports.builder = function (yargs) {
   return daoArg(yargs)
 }
 
-exports.handler = async function ({ reporter, dao, app, role, newManager, network, apm }) {
+exports.handler = async function ({ reporter, dao, app, role, newManager, network, wsProvider, apm }) {
   const method = 'setPermissionManager'
   const params = [newManager, app, role]
-  return aclExecHandler(dao, method, params, { reporter, apm, network, role })
+  return aclExecHandler(dao, method, params, { reporter, apm, network, wsProvider, role })
 }

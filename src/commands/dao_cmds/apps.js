@@ -27,7 +27,7 @@ const printContent = (content) => {
   return `${content.provider}:${content.location}`.slice(0, 25) + '...'
 }
 
-exports.handler = async function ({ reporter, dao, network, apm: apmOptions, module }) {
+exports.handler = async function ({ reporter, dao, network, apm: apmOptions, wsProvider, module }) {
   knownApps = listApps([module.appName])
   const web3 = await ensureWeb3(network)
 
@@ -39,7 +39,7 @@ exports.handler = async function ({ reporter, dao, network, apm: apmOptions, mod
 
         return new Promise((resolve, reject) => {
           initAragonJS(dao, apmOptions['ens-registry'], {
-            provider: web3.currentProvider,
+            provider: wsProvider || web3.currentProvider,
             onApps: apps => {
               ctx.apps = apps
               resolve()
