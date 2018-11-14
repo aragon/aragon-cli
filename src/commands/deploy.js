@@ -7,7 +7,7 @@ const { findProjectRoot } = require('../util')
 const { ensureWeb3 } = require('../helpers/web3-fallback')
 const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
 const DEFAULT_GAS_PRICE = require('../../package.json').aragon.defaultGasPrice
-const ListrRenderer = require('../reporters/ListrRenderer')
+const listrOpts = require('../helpers/listr-options')
 
 exports.command = 'deploy [contract]'
 
@@ -110,9 +110,10 @@ exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions
         delete ctx.transactionHash
       }
     }
-  ], {
-    renderer: ListrRenderer(silent, debug)
-  })
+  ],
+    listrOpts(silent, debug)
+  )
+
   return tasks
 }
 

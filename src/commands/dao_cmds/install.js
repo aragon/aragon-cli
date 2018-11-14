@@ -8,7 +8,7 @@ const getRepoTask = require('./utils/getRepoTask')
 const encodeInitPayload = require('./utils/encodeInitPayload')
 const upgrade = require('./upgrade')
 const { getContract, ANY_ENTITY } = require('../../util')
-const ListrRenderer = require('../../reporters/ListrRenderer')
+const listrOpts = require('../../helpers/listr-options')
 
 const setPermissions = async (web3, sender, aclAddress, permissions) => {
   const acl = new web3.eth.Contract(
@@ -108,9 +108,9 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
         )
       }
     }
-  ], {
-    renderer: ListrRenderer(silent, debug)
-  })
+  ],
+    listrOpts(silent, debug)
+  )
 
   return tasks
 }

@@ -6,7 +6,7 @@ const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
 const getRepoTask = require('./utils/getRepoTask')
 const { getContract } = require('../../util')
-const ListrRenderer = require('../../reporters/ListrRenderer')
+const listrOpts = require('../../helpers/listr-options')
 
 exports.command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
 
@@ -48,9 +48,9 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
         return setApp.send({ from: ctx.accounts[0], gasLimit: 1e6 })
       }
     }
-  ], {
-    renderer: ListrRenderer(silent, debug)
-  })
+  ],
+    listrOpts(silent, debug)
+  )
 
   return tasks
 }

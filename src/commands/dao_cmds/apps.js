@@ -4,7 +4,7 @@ const chalk = require('chalk')
 const daoArg = require('./utils/daoArg')
 const { listApps } = require('./utils/knownApps')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const ListrRenderer = require('../../reporters/ListrRenderer')
+const listrOpts = require('../../helpers/listr-options')
 
 const Table = require('cli-table')
 
@@ -55,16 +55,16 @@ exports.handler = async function ({ reporter, dao, network, apm: apmOptions, mod
         })
       }
     }
-  ], {
-    renderer: ListrRenderer(silent, debug)
-  })
+  ],
+    listrOpts(silent, debug)
+  )
 
   return tasks.run()
     .then((ctx) => {
       reporter.success(`Successfully fetched DAO apps for ${ctx.daoAddress}`)
       const appsContent = ctx.apps.map(
         ({ appId, proxyAddress, codeAddress, content, appName, version }) =>
-          ([ appName ? `${appName}@v${version}` : printAppName(appId), proxyAddress, printContent(content) ])
+          ([appName ? `${appName}@v${version}` : printAppName(appId), proxyAddress, printContent(content)])
       )
 
       // filter registry name to make it shorter

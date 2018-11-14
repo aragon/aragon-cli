@@ -5,7 +5,7 @@ const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
 const { getContract } = require('../../util')
 const getRepoTask = require('./utils/getRepoTask')
-const ListrRenderer = require('../../reporters/ListrRenderer')
+const listrOpts = require('../../helpers/listr-options')
 
 exports.BARE_KIT = defaultAPMName('bare-kit')
 exports.BARE_INSTANCE_FUNCTION = 'newBareInstance'
@@ -22,23 +22,23 @@ exports.builder = yargs => {
     description: 'Name of the kit to use creating the DAO',
     default: exports.BARE_KIT
   })
-  .positional('kit-version', {
-    description: 'Version of the kit to be used',
-    default: 'latest'
-  })
-  .option('fn-args', {
-    description: 'Arguments to be passed to the newInstance function (or the function passed with --fn)',
-    array: true,
-    default: []
-  })
-  .option('fn', {
-    description: 'Function to be called to create instance',
-    default: exports.BARE_INSTANCE_FUNCTION
-  })
-  .option('deploy-event', {
-    description: 'Event name that the kit will fire on success',
-    default: exports.BARE_KIT_DEPLOY_EVENT
-  })
+    .positional('kit-version', {
+      description: 'Version of the kit to be used',
+      default: 'latest'
+    })
+    .option('fn-args', {
+      description: 'Arguments to be passed to the newInstance function (or the function passed with --fn)',
+      array: true,
+      default: []
+    })
+    .option('fn', {
+      description: 'Function to be called to create instance',
+      default: exports.BARE_INSTANCE_FUNCTION
+    })
+    .option('deploy-event', {
+      description: 'Event name that the kit will fire on success',
+      default: exports.BARE_KIT_DEPLOY_EVENT
+    })
 }
 
 exports.task = async ({ web3, reporter, apmOptions, kit, kitVersion, fn, fnArgs, skipChecks, deployEvent, kitInstance, silent, debug }) => {
@@ -80,9 +80,9 @@ exports.task = async ({ web3, reporter, apmOptions, kit, kitVersion, fn, fnArgs,
         ctx.appManagerRole = await kernel.methods.APP_MANAGER_ROLE().call()
       }
     }
-  ], {
-    renderer: ListrRenderer(silent, debug)
-  })
+  ],
+    listrOpts(silent, debug)
+  )
 
   return tasks
 }

@@ -9,7 +9,7 @@ const rimraf = require('rimraf')
 const mkdirp = require('mkdirp')
 const chalk = require('chalk')
 const fs = require('fs')
-const ListrRenderer = require('../reporters/ListrRenderer')
+const listrOpts = require('../helpers/listr-options')
 
 const { BLOCK_GAS_LIMIT, MNEMONIC } = require('../helpers/ganache-vars')
 
@@ -85,9 +85,10 @@ exports.task = async function ({ port = 8545, reset = false, showAccounts = 2, s
           { key: ganacheAccounts[address.toLowerCase()].secretKey.toString('hex'), address }
         ))
       }
-    }], {
-      renderer: ListrRenderer(silent, debug)
-    })
+    }
+  ],
+    listrOpts(silent, debug)
+  )
 
   return tasks
 }

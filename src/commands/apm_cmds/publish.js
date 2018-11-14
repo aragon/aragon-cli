@@ -19,7 +19,7 @@ const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
 const startIPFS = require('../ipfs')
 const getRepoTask = require('../dao_cmds/utils/getRepoTask')
-const ListrRenderer = require('../../reporters/ListrRenderer')
+const listrOpts = require('../../helpers/listr-options')
 
 const DEFAULT_GAS_PRICE = require('../../../package.json').aragon.defaultGasPrice
 const MANIFEST_FILE = 'manifest.json'
@@ -166,7 +166,7 @@ async function copyCurrentApplicationArtifacts (outputPath, apm, repo, newVersio
     })
     .forEach(({ fileName, filePath, fileContent }) =>
       fs.writeFileSync(filePath, fileContent)
-  )
+    )
 }
 
 /**
@@ -488,9 +488,9 @@ exports.task = function ({
       title: 'Fetch published repo',
       task: getRepoTask.task({ artifactRequired: false, apmRepo: module.appName, apm })
     }
-  ], {
-    renderer: ListrRenderer(silent, debug)
-  })
+  ],
+    listrOpts(silent, debug)
+  )
 }
 
 exports.handler = async (args) => {

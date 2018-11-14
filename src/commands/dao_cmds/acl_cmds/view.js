@@ -5,7 +5,7 @@ const daoArg = require('../utils/daoArg')
 const { listApps } = require('../utils/knownApps')
 const { rolesForApps } = require('./utils/knownRoles')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
-const ListrRenderer = require('../../../reporters/ListrRenderer')
+const listrOpts = require('../../../helpers/listr-options')
 
 const Table = require('cli-table')
 
@@ -89,9 +89,9 @@ exports.handler = async function ({ reporter, dao, network, apm, module, silent,
         })
       }
     }
-  ], {
-    renderer: ListrRenderer(silent, debug)
-  })
+  ],
+    listrOpts(silent, debug)
+  )
 
   return tasks.run()
     .then((ctx) => {

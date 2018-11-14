@@ -8,7 +8,7 @@ const {
 } = require('../helpers/ipfs-daemon')
 
 const IPFS = require('ipfs-api')
-const ListrRenderer = require('../reporters/ListrRenderer')
+const listrOpts = require('../helpers/listr-options')
 
 exports.command = 'ipfs'
 
@@ -52,9 +52,9 @@ exports.task = ({ apmOptions, silent, debug }) => {
         })
       }
     }
-  ], {
-    renderer: ListrRenderer(silent, debug)
-  })
+  ],
+    listrOpts(silent, debug)
+  )
 }
 
 exports.handler = function ({ reporter, apm: apmOptions }) {
