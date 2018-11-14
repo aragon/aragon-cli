@@ -1,4 +1,5 @@
 import initAragonJS from '../utils/aragonjs-wrapper'
+const chalk = require('chalk')
 const TaskList = require('listr')
 const daoArg = require('../utils/daoArg')
 const { listApps } = require('../utils/knownApps')
@@ -101,7 +102,7 @@ exports.handler = async function ({ reporter, dao, network, apm, module, silent,
       // filter according to cli params will happen here
 
       const table = new Table({
-        head: ['App', 'Action', 'Allowed entities', 'Manager'].map(x => x.white)
+        head: ['App', 'Action', 'Allowed entities', 'Manager'].map(x => chalk.white(x))
       })
 
       const tos = Object.keys(acl)

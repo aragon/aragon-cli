@@ -3,10 +3,10 @@ const TaskList = require('listr')
 const {
   startIPFSDaemon,
   isIPFSCORS,
-  setIPFSCORS
+  setIPFSCORS,
+  isIPFSRunning
 } = require('../helpers/ipfs-daemon')
 
-const { isPortTaken } = require('../util')
 const IPFS = require('ipfs-api')
 const ListrRenderer = require('../reporters/ListrRenderer')
 
@@ -21,7 +21,7 @@ exports.task = ({ apmOptions, silent, debug }) => {
       task: async (ctx, task) => {
         // If the dev manually set their IPFS node, skip install and running check
         if (apmOptions.ipfs.rpc.default) {
-          const running = await isPortTaken(apmOptions.ipfs.rpc.port)
+          const running = await isIPFSRunning(apmOptions.ipfs.rpc)
           if (!running) {
             task.output = 'Starting IPFS at port: ' + apmOptions.ipfs.rpc.port
             await startIPFSDaemon()
