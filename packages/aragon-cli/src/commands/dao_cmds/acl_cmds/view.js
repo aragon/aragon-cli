@@ -5,6 +5,7 @@ const daoArg = require('../utils/daoArg')
 const { listApps } = require('../utils/knownApps')
 const { rolesForApps } = require('./utils/knownRoles')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
+const listrOpts = require('../../../helpers/listr-options')
 
 const Table = require('cli-table')
 
@@ -51,7 +52,7 @@ const formatRow = ({ to, role, allowedEntities, manager }, apps) => {
   return [formattedTo, formattedRole, formattedAllowed, formattedManager]
 }
 
-exports.handler = async function ({ reporter, dao, network, apm, module }) {
+exports.handler = async function ({ reporter, dao, network, apm, module, silent, debug }) {
   knownApps = listApps([module.appName])
   const web3 = await ensureWeb3(network)
 
@@ -88,7 +89,9 @@ exports.handler = async function ({ reporter, dao, network, apm, module }) {
         })
       }
     }
-  ])
+  ],
+    listrOpts(silent, debug)
+  )
 
   return tasks.run()
     .then((ctx) => {

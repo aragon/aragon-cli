@@ -7,6 +7,7 @@ const { findProjectRoot } = require('../util')
 const { ensureWeb3 } = require('../helpers/web3-fallback')
 const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
 const DEFAULT_GAS_PRICE = require('../../package.json').aragon.defaultGasPrice
+const listrOpts = require('../helpers/listr-options')
 
 exports.command = 'deploy [contract]'
 
@@ -29,7 +30,7 @@ exports.builder = yargs => {
   })
 }
 
-exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions }) => {
+exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions, silent, debug }) => {
   if (!contract) {
     contract = exports.arappContract()
   }
@@ -109,12 +110,15 @@ exports.task = async ({ reporter, network, cwd, contract, init, web3, apmOptions
         delete ctx.transactionHash
       }
     }
-  ])
+  ],
+    listrOpts(silent, debug)
+  )
+
   return tasks
 }
 
-exports.handler = async ({ reporter, network, cwd, contract, init, apm: apmOptions }) => {
-  const task = await exports.task({ reporter, network, cwd, contract, init, apmOptions })
+exports.handler = async ({ reporter, network, cwd, contract, init, apm: apmOptions, silent, debug }) => {
+  const task = await exports.task({ reporter, network, cwd, contract, init, apmOptions, silent, debug })
   const ctx = await task.run()
 
   reporter.success(`Successfully deployed ${ctx.contractName} at: ${chalk.bold(ctx.contract)}`)

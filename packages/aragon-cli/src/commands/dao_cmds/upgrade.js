@@ -6,6 +6,7 @@ const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
 const getRepoTask = require('./utils/getRepoTask')
 const { getContract } = require('../../util')
+const listrOpts = require('../../helpers/listr-options')
 
 exports.command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
 
@@ -15,7 +16,7 @@ exports.builder = function (yargs) {
   return getRepoTask.args(daoArg(yargs))
 }
 
-exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, repo }) => {
+exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, repo, silent, debug }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
@@ -47,16 +48,18 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
         return setApp.send({ from: ctx.accounts[0], gasLimit: 1e6 })
       }
     }
-  ], { repo })
+  ],
+    listrOpts(silent, debug)
+  )
 
   return tasks
 }
 
-exports.handler = async function ({ reporter, dao, network, apm: apmOptions, apmRepo, apmRepoVersion }) {
+exports.handler = async function ({ reporter, dao, network, apm: apmOptions, apmRepo, apmRepoVersion, silent, debug }) {
   const web3 = await ensureWeb3(network)
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
-  const task = await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion })
+  const task = await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, silent, debug })
   return task.run()
     .then((ctx) => {
       reporter.success(`Upgraded ${apmRepo} to ${chalk.bold(ctx.repo.version)}`)
