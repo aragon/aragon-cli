@@ -15,6 +15,7 @@ const fs = require('fs-extra')
 const opn = require('opn')
 const execa = require('execa')
 const pkg = require('../../package.json')
+const listrOpts = require('../helpers/listr-options')
 
 const {
   findProjectRoot,
@@ -90,29 +91,31 @@ exports.builder = function (yargs) {
 }
 
 exports.handler = function ({
-    // Globals
-    reporter,
-    cwd,
-    apm: apmOptions,
-    network,
-    module,
-    client,
-    files,
-    port,
-    accounts,
-    reset,
-    kit,
-    kitInit,
-    kitDeployEvent,
-    buildScript,
-    http,
-    httpServedFrom,
-    appInit,
-    appInitArgs,
-    clientVersion,
-    clientPort,
-    clientPath
-  }) {
+  // Globals
+  reporter,
+  cwd,
+  apm: apmOptions,
+  silent,
+  debug,
+  network,
+  module,
+  client,
+  files,
+  port,
+  accounts,
+  reset,
+  kit,
+  kitInit,
+  kitDeployEvent,
+  buildScript,
+  http,
+  httpServedFrom,
+  appInit,
+  appInitArgs,
+  clientVersion,
+  clientPort,
+  clientPath
+}) {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   clientPort = clientPort || DEFAULT_CLIENT_PORT
@@ -287,7 +290,9 @@ exports.handler = function ({
       ]),
       enabled: () => client === true
     }
-  ])
+  ],
+    listrOpts(silent, debug)
+  )
 
   const manifestPath = path.resolve(findProjectRoot(), 'manifest.json')
   let manifest
@@ -326,9 +331,9 @@ exports.handler = function ({
     ${chalk.bold('DAO address')}: ${ctx.daoAddress}
 
     ${(client !== false)
-      ? `Opening http://localhost:${clientPort}/#/${ctx.daoAddress} to view your DAO`
-      : `Use "aragon dao <command> ${ctx.daoAddress}" to interact with your DAO`
-    }`)
+        ? `Opening http://localhost:${clientPort}/#/${ctx.daoAddress} to view your DAO`
+        : `Use "aragon dao <command> ${ctx.daoAddress}" to interact with your DAO`
+      }`)
 
     if (!manifest) {
       reporter.warning('No front-end detected (no manifest.json)')

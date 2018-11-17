@@ -8,6 +8,7 @@ const getRepoTask = require('./utils/getRepoTask')
 const encodeInitPayload = require('./utils/encodeInitPayload')
 const upgrade = require('./upgrade')
 const { getContract, ANY_ENTITY } = require('../../util')
+const listrOpts = require('../../helpers/listr-options')
 
 const setPermissions = async (web3, sender, aclAddress, permissions) => {
   const acl = new web3.eth.Contract(
@@ -40,7 +41,7 @@ exports.builder = function (yargs) {
     })
 }
 
-exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, appInit, appInitArgs }) => {
+exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, appInit, appInitArgs, silent, debug }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
@@ -107,15 +108,17 @@ exports.task = async ({ web3, reporter, dao, network, apmOptions, apmRepo, apmRe
         )
       }
     }
-  ])
+  ],
+    listrOpts(silent, debug)
+  )
 
   return tasks
 }
 
-exports.handler = async function ({ reporter, dao, network, apm: apmOptions, apmRepo, apmRepoVersion, appInit, appInitArgs }) {
+exports.handler = async function ({ reporter, dao, network, apm: apmOptions, apmRepo, apmRepoVersion, appInit, appInitArgs, silent, debug }) {
   const web3 = await ensureWeb3(network)
 
-  const task = await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, appInit, appInitArgs })
+  const task = await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, appInit, appInitArgs, silent, debug })
   return task.run()
     .then((ctx) => {
       reporter.success(`Installed ${apmRepo} at: ${chalk.bold(ctx.appAddress)}`)
