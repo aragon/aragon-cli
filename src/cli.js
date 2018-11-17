@@ -33,6 +33,17 @@ cmd.option('silent', {
   default: false
 })
 
+cmd.option('debug', {
+  description: 'Show more output to terminal',
+  default: false,
+  coerce: (debug) => {
+    if (debug || process.env.DEBUG) {
+      global.DEBUG_MODE = true
+      return true
+    }
+  }
+})
+
 cmd.option('cwd', {
   description: 'The project working directory',
   default: () => {

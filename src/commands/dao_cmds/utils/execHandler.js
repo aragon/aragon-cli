@@ -1,10 +1,11 @@
 import initAragonJS from './aragonjs-wrapper'
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
+const listrOpts = require('../../../helpers/listr-options')
 
 const GAS_ESTIMATE_FUZZ_FACTOR = 2
 
-module.exports = async function (dao, getTransactionPath, { reporter, apm, network }) {
+module.exports = async function (dao, getTransactionPath, { reporter, apm, network, silent, debug }) {
   const web3 = await ensureWeb3(network)
 
   const tasks = new TaskList([
@@ -40,15 +41,15 @@ module.exports = async function (dao, getTransactionPath, { reporter, apm, netwo
             },
             onError: err => reject(err)
           })
-          .then(async (initializedWrapper) => {
-            wrapper = initializedWrapper
-            await tryFindTransactionPath()
-          })
-          .catch(err => {
-            reporter.error('Error inspecting DAO')
-            reporter.debug(err)
-            process.exit(1)
-          })
+            .then(async (initializedWrapper) => {
+              wrapper = initializedWrapper
+              await tryFindTransactionPath()
+            })
+            .catch(err => {
+              reporter.error('Error inspecting DAO')
+              reporter.debug(err)
+              process.exit(1)
+            })
         })
       }
     },
@@ -76,7 +77,9 @@ module.exports = async function (dao, getTransactionPath, { reporter, apm, netwo
         })
       }
     }
-  ])
+  ],
+    listrOpts(silent, debug)
+  )
 
   return tasks.run()
     .then((ctx) => {
