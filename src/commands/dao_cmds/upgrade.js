@@ -8,6 +8,7 @@ const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
 const getRepoTask = require('./utils/getRepoTask')
 const { getContract } = require('../../util')
+const listrOpts = require('../../helpers/listr-options')
 
 exports.command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
 
@@ -17,7 +18,7 @@ exports.builder = function (yargs) {
   return getRepoTask.args(daoArg(yargs))
 }
 
-exports.task = async ({ wsProvider, web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, repo }) => {
+exports.task = async ({ wsProvider, web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, repo, silent, debug }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
@@ -50,16 +51,19 @@ exports.task = async ({ wsProvider, web3, reporter, dao, network, apmOptions, ap
         return execTask(dao, getTransactionPath, { reporter, apm: apmOptions, web3, wsProvider })
       }
     }
-  ], { repo })
+  ],
+    listrOpts(silent, debug)
+  )
 
   return tasks
 }
 
-exports.handler = async function ({ reporter, dao, network, wsProvider, apm: apmOptions, apmRepo, apmRepoVersion }) {
+exports.handler = async function ({ reporter, dao, network, wsProvider, apm: apmOptions, apmRepo, apmRepoVersion, silent, debug }) {
   const web3 = await ensureWeb3(network)
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
-  const task = await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, wsProvider })
+  const task = await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, wsProvider, silent, debug })
+
   return task.run()
     .then((ctx) => {
       reporter.success(`Successfully executed: "${ctx.transactionPath[0].description}"`)

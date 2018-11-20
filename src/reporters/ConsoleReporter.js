@@ -28,7 +28,7 @@ module.exports = class ConsoleReporter {
   }
 
   debug (message) {
-    if (process.env.DEBUG) this.message('debug', message)
+    if (global.DEBUG_MODE) this.message('debug', message)
   }
 
   info (message) {

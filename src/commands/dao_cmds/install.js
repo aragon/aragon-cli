@@ -11,9 +11,11 @@ const encodeInitPayload = require('./utils/encodeInitPayload')
 const upgrade = require('./upgrade')
 const { getContract, ANY_ENTITY } = require('../../util')
 const kernelABI = require('@aragon/wrapper/abi/aragon/Kernel')
+const listrOpts = require('../../helpers/listr-options')
 
 const addressesEqual = (a, b) => a.toLowerCase() === b.toLowerCase()
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
+
 
 const setPermissions = async (web3, sender, aclAddress, permissions) => {
   const acl = new web3.eth.Contract(
@@ -50,7 +52,7 @@ exports.builder = function (yargs) {
     })
 }
 
-exports.task = async ({ wsProvider, web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, appInit, appInitArgs, setPermissions }) => {
+exports.task = async ({ wsProvider, web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, appInit, appInitArgs, setPermissions, silent, debug }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
@@ -160,15 +162,17 @@ exports.task = async ({ wsProvider, web3, reporter, dao, network, apmOptions, ap
         )
       }
     }
-  ])
+  ],
+    listrOpts(silent, debug)
+  )
 
   return tasks
 }
 
-exports.handler = async function ({ reporter, dao, network, apm: apmOptions, apmRepo, apmRepoVersion, appInit, appInitArgs, setPermissions, wsProvider }) {
+exports.handler = async function ({ reporter, dao, network, apm: apmOptions, apmRepo, apmRepoVersion, appInit, appInitArgs, setPermissions, wsProvider, silent, debug }) {
   const web3 = await ensureWeb3(network)
+  const task = await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, appInit, appInitArgs, setPermissions, wsProvider, silent, debug })
 
-  const task = await exports.task({ web3, reporter, dao, network, apmOptions, apmRepo, apmRepoVersion, appInit, appInitArgs, setPermissions, wsProvider })
   return task.run()
     .then((ctx) => {
       reporter.info(`Successfully executed: "${ctx.transactionPath[0].description}"`)

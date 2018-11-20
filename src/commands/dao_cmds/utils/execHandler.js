@@ -1,8 +1,9 @@
 import initAragonJS from './aragonjs-wrapper'
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
+const listrOpts = require('../../../helpers/listr-options')
 
-exports.task = async function (dao, getTransactionPath, { reporter, apm, web3, wsProvider }) {
+exports.task = async function (dao, getTransactionPath, { reporter, apm, web3, wsProvider, silent, debug }) {
   const accounts = await web3.eth.getAccounts()
   return new TaskList([
     {
@@ -33,15 +34,15 @@ exports.task = async function (dao, getTransactionPath, { reporter, apm, web3, w
             },
             onError: err => reject(err)
           })
-          .then(async (initializedWrapper) => {
-            wrapper = initializedWrapper
-            await tryFindTransactionPath()
-          })
-          .catch(err => {
-            reporter.error('Error inspecting DAO')
-            reporter.debug(err)
-            process.exit(1)
-          })
+            .then(async (initializedWrapper) => {
+              wrapper = initializedWrapper
+              await tryFindTransactionPath()
+            })
+            .catch(err => {
+              reporter.error('Error inspecting DAO')
+              reporter.debug(err)
+              process.exit(1)
+            })
         })
       }
     },
@@ -58,7 +59,9 @@ exports.task = async function (dao, getTransactionPath, { reporter, apm, web3, w
         ctx.receipt = await web3.eth.sendTransaction(ctx.transactionPath[0])
       }
     }
-  ])
+  ],
+    listrOpts(silent, debug)
+  )
 }
 
 exports.handler = async function (dao, getTransactionPath, args) {

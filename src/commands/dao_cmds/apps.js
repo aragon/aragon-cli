@@ -4,6 +4,7 @@ const chalk = require('chalk')
 const daoArg = require('./utils/daoArg')
 const { listApps } = require('./utils/knownApps')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const listrOpts = require('../../helpers/listr-options')
 
 const Table = require('cli-table')
 
@@ -27,7 +28,7 @@ const printContent = (content) => {
   return `${content.provider}:${content.location}`.slice(0, 25) + '...'
 }
 
-exports.handler = async function ({ reporter, dao, network, apm: apmOptions, wsProvider, module }) {
+exports.handler = async function ({ reporter, dao, network, apm: apmOptions, wsProvider, module, silent, debug }) {
   knownApps = listApps([module.appName])
   const web3 = await ensureWeb3(network)
 
@@ -54,14 +55,16 @@ exports.handler = async function ({ reporter, dao, network, apm: apmOptions, wsP
         })
       }
     }
-  ])
+  ],
+    listrOpts(silent, debug)
+  )
 
   return tasks.run()
     .then((ctx) => {
       reporter.success(`Successfully fetched DAO apps for ${ctx.daoAddress}`)
       const appsContent = ctx.apps.map(
         ({ appId, proxyAddress, codeAddress, content, appName, version }) =>
-          ([ appName ? `${appName}@v${version}` : printAppName(appId), proxyAddress, printContent(content) ])
+          ([appName ? `${appName}@v${version}` : printAppName(appId), proxyAddress, printContent(content)])
       )
 
       // filter registry name to make it shorter

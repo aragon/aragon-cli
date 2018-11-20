@@ -3,24 +3,25 @@ const TaskList = require('listr')
 const {
   startIPFSDaemon,
   isIPFSCORS,
-  setIPFSCORS
+  setIPFSCORS,
+  isIPFSRunning
 } = require('../helpers/ipfs-daemon')
 
-const { isPortTaken } = require('../util')
 const IPFS = require('ipfs-api')
+const listrOpts = require('../helpers/listr-options')
 
 exports.command = 'ipfs'
 
 exports.describe = 'Start IPFS daemon configured to work with Aragon'
 
-exports.task = ({ apmOptions }) => {
+exports.task = ({ apmOptions, silent, debug }) => {
   return new TaskList([
     {
       title: 'Start IPFS',
       task: async (ctx, task) => {
         // If the dev manually set their IPFS node, skip install and running check
         if (apmOptions.ipfs.rpc.default) {
-          const running = await isPortTaken(apmOptions.ipfs.rpc.port)
+          const running = await isIPFSRunning(apmOptions.ipfs.rpc)
           if (!running) {
             task.output = 'Starting IPFS at port: ' + apmOptions.ipfs.rpc.port
             await startIPFSDaemon()
@@ -51,7 +52,9 @@ exports.task = ({ apmOptions }) => {
         })
       }
     }
-  ])
+  ],
+    listrOpts(silent, debug)
+  )
 }
 
 exports.handler = function ({ reporter, apm: apmOptions }) {
