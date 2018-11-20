@@ -33,8 +33,6 @@ export async function resolveEnsDomain (domain, opts) {
   }
 }
 
-let cachedWrapper
-
 const initWrapper = async (
   dao,
   ensRegistryAddress,
@@ -79,12 +77,10 @@ const initWrapper = async (
   })
 
   try {
-    await wrapper.init({ accounts: { providedAccounts: accounts }})
+    await wrapper.init({ accounts: { providedAccounts: accounts } })
   } catch (err) {
     if (err.message === 'connection not open') {
-      onError(
-        new Error('The wrapper can not be initialized without a connection')
-      )
+      onError(new Error('The wrapper can not be initialized without a connection'))
       return
     }
     throw err
@@ -103,8 +99,6 @@ const initWrapper = async (
       }
     })
   }
-
-  cachedWrapper = wrapper
 
   return wrapper
 }

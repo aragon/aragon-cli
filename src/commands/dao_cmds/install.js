@@ -8,7 +8,6 @@ const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
 const getRepoTask = require('./utils/getRepoTask')
 const encodeInitPayload = require('./utils/encodeInitPayload')
-const upgrade = require('./upgrade')
 const { getContract, ANY_ENTITY } = require('../../util')
 const kernelABI = require('@aragon/wrapper/abi/aragon/Kernel')
 const listrOpts = require('../../helpers/listr-options')
@@ -16,8 +15,7 @@ const listrOpts = require('../../helpers/listr-options')
 const addressesEqual = (a, b) => a.toLowerCase() === b.toLowerCase()
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
-
-const setPermissions = async (web3, sender, aclAddress, permissions) => {
+const setPermissionsWithoutTransactionPathing = async (web3, sender, aclAddress, permissions) => {
   const acl = new web3.eth.Contract(
     getContract('@aragon/os', 'ACL').abi,
     aclAddress
@@ -153,8 +151,8 @@ exports.task = async ({ wsProvider, web3, reporter, dao, network, apmOptions, ap
         const permissions = ctx.repo.roles
           .map((role) => [ANY_ENTITY, ctx.appAddress, role.bytes])
 
-        return // TODO: fix
-        return setPermissions(
+        // TODO: setPermissions should use ACL functions with transaction pathing
+        return setPermissionsWithoutTransactionPathing(
           web3,
           ctx.accounts[0],
           aclAddress,
