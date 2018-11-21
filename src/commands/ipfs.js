@@ -41,7 +41,7 @@ exports.task = ({ apmOptions, silent, debug }) => {
     {
       title: 'Add local files',
       task: (ctx) => {
-        const ipfs = IPFS('localhost', '5001', { protocol: 'http' })
+        const ipfs = IPFS(apmOptions.ipfs.rpc)
         const files = path.resolve(require.resolve('@aragon/aragen'), '../ipfs-cache')
 
         return new Promise((resolve, reject) => {
