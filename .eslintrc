@@ -1,0 +1,24 @@
+{
+    "env": {
+      "browser": true,
+      "es6": true,
+      "node": true
+    },
+    "extends": [
+      "standard",
+      "standard-react",
+      "eslint-config-prettier",
+      "plugin:prettier/recommended",
+      "plugin:ava/recommended",
+      "prettier/react"
+    ],
+    "plugins": ["prettier", "react"],
+    "parser": "babel-eslint",
+    "rules": {
+      "valid-jsdoc": "error",
+      "no-console": "off",
+      "react/prop-types": 0,
+      "linebreak-style": ["error", "unix"]
+    }
+  }
+  

@@ -1,22 +1,22 @@
 const flatten = require('truffle-flattener')
 const { getTruffleConfig } = require('./truffle-config')
 
-module.exports = async (contractArtifacts) => {
+module.exports = async contractArtifacts => {
   const {
     contractName,
     sourcePath,
     updatedAt: compiledAt,
-    compiler
+    compiler,
   } = contractArtifacts
 
   const solcConfig = getTruffleConfig().solc
   compiler.optimizer = solcConfig ? solcConfig.optimizer : { enabled: false }
-  const flattenedCode = await flatten([ sourcePath ])
+  const flattenedCode = await flatten([sourcePath])
 
   return {
     contractName,
     compiledAt,
     compiler,
-    flattenedCode
+    flattenedCode,
   }
 }
