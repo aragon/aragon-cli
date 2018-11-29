@@ -146,13 +146,15 @@
     }
   },
   "lint-staged": {
-    "*.js": [
-      "eslint"
-    ],
-    "**/*.+(js|jsx|json)": [
-      "prettier --write",
-      "git add"
-    ]
+    "linters": {
+      "*.js": [
+        "eslint"
+      ],
+      "**/*.+(js|jsx|json)": [
+        "prettier --write",
+        "git add"
+      ]
+    }
   },
   "eslintIgnore": [
     "node_modules",
