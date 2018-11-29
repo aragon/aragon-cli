@@ -104,7 +104,7 @@ cmd.group('apm.ipfs.rpc', 'APM providers:')
 cmd.option('apm', {
   coerce: apm => {
     if (apm.ipfs && apm.ipfs.rpc) {
-      const uri = url.URL(apm.ipfs.rpc)
+      const uri = new url.URL(apm.ipfs.rpc)
       apm.ipfs.rpc = {
         protocol: uri.protocol.replace(':', ''),
         host: uri.hostname,
