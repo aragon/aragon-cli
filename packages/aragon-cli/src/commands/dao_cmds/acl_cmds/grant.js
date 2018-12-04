@@ -5,13 +5,22 @@ const aclExecHandler = require('./utils/aclExecHandler')
 //       better with other CLI commands
 exports.command = 'grant <dao> <app> <role> <entity>'
 
-exports.describe = 'Grant a permission in a DAO (only permission manager can do it)'
+exports.describe =
+  'Grant a permission in a DAO (only permission manager can do it)'
 
-exports.builder = function (yargs) {
+exports.builder = function(yargs) {
   return daoArg(yargs)
 }
 
-exports.handler = async function ({ reporter, dao, app, role, entity, network, apm }) {
+exports.handler = async function({
+  reporter,
+  dao,
+  app,
+  role,
+  entity,
+  network,
+  apm,
+}) {
   const method = 'grantPermission'
   const params = [entity, app, role]
   return aclExecHandler(dao, method, params, { reporter, apm, network, role })

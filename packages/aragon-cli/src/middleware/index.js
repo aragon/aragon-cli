@@ -5,5 +5,5 @@ const environmentMiddleware = require('./environment')
 module.exports = {
   manifestMiddleware,
   moduleMiddleware,
-  environmentMiddleware
+  environmentMiddleware,
 }

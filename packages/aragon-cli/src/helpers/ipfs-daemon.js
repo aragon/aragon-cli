@@ -30,12 +30,12 @@ const startIPFSDaemon = () => {
     await ensureIPFSInitialized()
     const ipfsProc = execa(ipfsBin, ['daemon', '--migrate'])
 
-    ipfsProc.stdout.on('data', (data) => {
+    ipfsProc.stdout.on('data', data => {
       startOutput = `${startOutput}${data.toString()}\n`
       if (data.toString().includes('Daemon is ready')) resolve()
     })
 
-    ipfsProc.stderr.on('data', (data) => {
+    ipfsProc.stderr.on('data', data => {
       reject(new Error(`Starting IPFS failed: ${data.toString()}`))
     })
   })
@@ -45,15 +45,18 @@ const startIPFSDaemon = () => {
 
 let ipfsNode
 
-const IPFSCORS = [{
-  key: 'API.HTTPHeaders.Access-Control-Allow-Origin',
-  value: ['*']
-}, {
-  key: 'API.HTTPHeaders.Access-Control-Allow-Methods',
-  value: ['PUT', 'GET', 'POST']
-}]
+const IPFSCORS = [
+  {
+    key: 'API.HTTPHeaders.Access-Control-Allow-Origin',
+    value: ['*'],
+  },
+  {
+    key: 'API.HTTPHeaders.Access-Control-Allow-Methods',
+    value: ['PUT', 'GET', 'POST'],
+  },
+]
 
-const isIPFSCORS = async (ipfsRpc) => {
+const isIPFSCORS = async ipfsRpc => {
   if (!ipfsNode) ipfsNode = ipfsAPI(ipfsRpc)
   const conf = await ipfsNode.config.get('API.HTTPHeaders')
   const allowOrigin = IPFSCORS[0].key.split('.').pop()
@@ -68,15 +71,14 @@ const isIPFSCORS = async (ipfsRpc) => {
   }
 }
 
-const setIPFSCORS = (ipfsRpc) => {
+const setIPFSCORS = ipfsRpc => {
   if (!ipfsNode) ipfsNode = ipfsAPI(ipfsRpc)
   return Promise.all(
-    IPFSCORS.map(({ key, value }) =>
-      ipfsNode.config.set(key, value))
+    IPFSCORS.map(({ key, value }) => ipfsNode.config.set(key, value))
   )
 }
 
-const isIPFSRunning = async (ipfsRpc) => {
+const isIPFSRunning = async ipfsRpc => {
   const portTaken = await isPortTaken(ipfsRpc.port)
 
   if (portTaken) {

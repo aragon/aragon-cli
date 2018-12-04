@@ -2,7 +2,7 @@ const path = require('path')
 const fs = require('fs-extra')
 const { findProjectRoot } = require('../util')
 
-module.exports = function manifestMiddleware (argv) {
+module.exports = function manifestMiddleware(argv) {
   const runsInCwd = argv['_'] === 'init'
   if (!runsInCwd) {
     try {

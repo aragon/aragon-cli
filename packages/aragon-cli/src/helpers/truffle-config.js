@@ -21,7 +21,7 @@ const getTruffleConfig = () => {
   throw new Error(`Didn't find any truffle.js file`)
 }
 
-const getENSAddress = (network) => {
+const getENSAddress = network => {
   const truffleConfig = getTruffleConfig()
   const def = '0xB9462EF3441346dBc6E49236Edbb0dF207db09B7'
   if (!truffleConfig) {

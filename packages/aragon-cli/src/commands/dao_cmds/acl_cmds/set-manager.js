@@ -5,13 +5,22 @@ const aclExecHandler = require('./utils/aclExecHandler')
 //       better with other CLI commands
 exports.command = 'set-manager <dao> <app> <role> <new-manager>'
 
-exports.describe = 'Set the permission manager for a permission (only the current permission manager can do it)'
+exports.describe =
+  'Set the permission manager for a permission (only the current permission manager can do it)'
 
-exports.builder = function (yargs) {
+exports.builder = function(yargs) {
   return daoArg(yargs)
 }
 
-exports.handler = async function ({ reporter, dao, app, role, newManager, network, apm }) {
+exports.handler = async function({
+  reporter,
+  dao,
+  app,
+  role,
+  newManager,
+  network,
+  apm,
+}) {
   const method = 'setPermissionManager'
   const params = [newManager, app, role]
   return aclExecHandler(dao, method, params, { reporter, apm, network, role })
