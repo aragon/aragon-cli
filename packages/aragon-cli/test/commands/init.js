@@ -34,11 +34,11 @@ test('prepare project template', async t => {
   await fs.ensureFile(packageJsonPath)
   await fs.ensureFile(licensePath)
   await fs.writeJson(arappPath, {
-    appName: 'boilerplate-placeholder'
+    appName: 'boilerplate-placeholder',
   })
   await fs.writeJson(packageJsonPath, {
     license: 'MIT',
-    version: '0.0.1'
+    version: '0.0.1',
   })
 
   await prepareTemplate(projectPath, appName)

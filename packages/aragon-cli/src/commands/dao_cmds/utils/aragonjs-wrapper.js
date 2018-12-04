@@ -1,6 +1,4 @@
-import Aragon, {
-  ensResolve
-} from '@aragon/wrapper'
+import Aragon, { ensResolve } from '@aragon/wrapper'
 
 const noop = () => {}
 
@@ -16,7 +14,7 @@ const subscribe = (
     connectedApp: null,
     forwarders: forwarders.subscribe(onForwarders),
     transactions: transactions.subscribe(onTransaction),
-    permissions: permissions.subscribe(onPermissions)
+    permissions: permissions.subscribe(onPermissions),
   }
 
   return subscriptions
@@ -46,16 +44,16 @@ const initWrapper = async (
     onForwarders = noop,
     onTransaction = noop,
     onDaoAddress = noop,
-    onPermissions = noop
+    onPermissions = noop,
   } = {}
 ) => {
   const isDomain = /[a-z0-9]+\.eth/.test(dao)
 
   const daoAddress = isDomain
     ? await resolveEnsDomain(dao, {
-      provider,
-      registryAddress: ensRegistryAddress
-    })
+        provider,
+        registryAddress: ensRegistryAddress,
+      })
     : dao
 
   if (!daoAddress) {
@@ -68,7 +66,7 @@ const initWrapper = async (
   const wrapper = new Aragon(daoAddress, {
     ensRegistryAddress,
     provider,
-    apm: { ipfs: ipfsConf }
+    apm: { ipfs: ipfsConf },
   })
 
   try {

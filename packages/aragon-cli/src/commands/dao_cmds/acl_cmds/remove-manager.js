@@ -5,13 +5,14 @@ const aclExecHandler = require('./utils/aclExecHandler')
 //       better with other CLI commands
 exports.command = 'remove-manager <dao> <app> <role>'
 
-exports.describe = 'Remove permission manager for a permission (can be recreated)'
+exports.describe =
+  'Remove permission manager for a permission (can be recreated)'
 
-exports.builder = function (yargs) {
+exports.builder = function(yargs) {
   return daoArg(yargs)
 }
 
-exports.handler = async function ({ reporter, dao, app, role, network, apm }) {
+exports.handler = async function({ reporter, dao, app, role, network, apm }) {
   const method = 'removePermissionManager'
   const params = [app, role]
   return aclExecHandler(dao, method, params, { reporter, apm, network, role })
