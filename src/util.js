@@ -22,7 +22,7 @@ const findProjectRoot = () => {
 }
 
 const isPortTaken = async (port, opts) => {
-  opts = Object.assign({timeout: 1000}, opts)
+  opts = Object.assign({ timeout: 1000 }, opts)
 
   return new Promise(resolve => {
     const socket = new net.Socket()
@@ -36,10 +36,14 @@ const isPortTaken = async (port, opts) => {
     socket.on('error', onError)
     socket.on('timeout', onError)
 
-    socket.connect(port, opts.host, () => {
-      socket.end()
-      resolve(true)
-    })
+    socket.connect(
+      port,
+      opts.host,
+      () => {
+        socket.end()
+        resolve(true)
+      }
+    )
   })
 }
 
@@ -50,22 +54,34 @@ const getNodePackageManager = () => {
 const installDeps = (cwd, task) => {
   const bin = getNodePackageManager()
   const installTask = execa(bin, ['install'], { cwd })
-  installTask.stdout.on('data', (log) => {
+  installTask.stdout.on('data', log => {
     if (!log) return
     task.output = log
   })
 
-  return installTask.catch((err) => {
-    throw new Error(`${err.message}\n${err.stderr}\n\nFailed to install dependencies. See above output.`)
+  return installTask.catch(err => {
+    throw new Error(
+      `${err.message}\n${
+        err.stderr
+      }\n\nFailed to install dependencies. See above output.`
+    )
   })
 }
 
 const getNPMBinary = (packageName, relativeBinaryPath) => {
   let binaryPath
   try {
-    binaryPath = `${path.join(getInstalledPathSync(packageName, { local: true }), relativeBinaryPath)}`
+    binaryPath = `${path.join(
+      getInstalledPathSync(packageName, { local: true }),
+      relativeBinaryPath
+    )}`
   } catch (e) {
-    binaryPath = `${path.join(pathToPackage('@aragon/cli'), 'node_modules', packageName, path.normalize(relativeBinaryPath))}`
+    binaryPath = `${path.join(
+      pathToPackage('@aragon/cli'),
+      'node_modules',
+      packageName,
+      path.normalize(relativeBinaryPath)
+    )}`
   }
   return binaryPath
 }
@@ -77,4 +93,12 @@ const getContract = (pkg, contract) => {
 
 const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
 
-module.exports = { findProjectRoot, isPortTaken, installDeps, getNodePackageManager, getNPMBinary, getContract, ANY_ENTITY }
+module.exports = {
+  findProjectRoot,
+  isPortTaken,
+  installDeps,
+  getNodePackageManager,
+  getNPMBinary,
+  getContract,
+  ANY_ENTITY,
+}

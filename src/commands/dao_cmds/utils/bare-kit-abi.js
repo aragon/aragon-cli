@@ -1,67 +1,67 @@
 module.exports = [
   {
-    'constant': false,
-    'inputs': [
+    constant: false,
+    inputs: [
       {
-        'name': 'appId',
-        'type': 'bytes32'
+        name: 'appId',
+        type: 'bytes32',
       },
       {
-        'name': 'roles',
-        'type': 'bytes32[]'
+        name: 'roles',
+        type: 'bytes32[]',
       },
       {
-        'name': 'authorizedAddress',
-        'type': 'address'
+        name: 'authorizedAddress',
+        type: 'address',
       },
       {
-        'name': 'initializeCalldata',
-        'type': 'bytes'
-      }
+        name: 'initializeCalldata',
+        type: 'bytes',
+      },
     ],
-    'name': 'newInstance',
-    'outputs': [
+    name: 'newInstance',
+    outputs: [
       {
-        'name': 'dao',
-        'type': 'address'
+        name: 'dao',
+        type: 'address',
       },
       {
-        'name': 'proxy',
-        'type': 'address'
-      }
+        name: 'proxy',
+        type: 'address',
+      },
     ],
-    'payable': false,
-    'stateMutability': 'nonpayable',
-    'type': 'function'
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
-    'constant': false,
-    'inputs': [],
-    'name': 'newBareInstance',
-    'outputs': [
+    constant: false,
+    inputs: [],
+    name: 'newBareInstance',
+    outputs: [
       {
-        'name': 'dao',
-        'type': 'address'
+        name: 'dao',
+        type: 'address',
       },
       {
-        'name': 'proxy',
-        'type': 'address'
-      }
+        name: 'proxy',
+        type: 'address',
+      },
     ],
-    'payable': false,
-    'stateMutability': 'nonpayable',
-    'type': 'function'
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
-    'anonymous': false,
-    'inputs': [
+    anonymous: false,
+    inputs: [
       {
-        'indexed': false,
-        'name': 'dao',
-        'type': 'address'
-      }
+        indexed: false,
+        name: 'dao',
+        type: 'address',
+      },
     ],
-    'name': 'DeployInstance',
-    'type': 'event'
-  }
+    name: 'DeployInstance',
+    type: 'event',
+  },
 ]
