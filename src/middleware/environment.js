@@ -24,12 +24,15 @@ const configureNetwork = (argv, network) => {
   if (argv.useFrame) {
     const providerOptions = {
       headers: {
-        origin: FRAME_ORIGIN
-      }
+        origin: FRAME_ORIGIN,
+      },
     }
     return {
       name: `frame-${network}`,
-      provider: new Web3.providers.WebsocketProvider(FRAME_ENDPOINT, providerOptions)
+      provider: new Web3.providers.WebsocketProvider(
+        FRAME_ENDPOINT,
+        providerOptions
+      ),
     }
   }
 
@@ -49,9 +52,7 @@ const configureNetwork = (argv, network) => {
       provider = truffleNetwork.provider
     }
   } else if (truffleNetwork.host && truffleNetwork.port) {
-    provider = new Web3.providers.WebsocketProvider(
-      `${truffleNetwork.host}`
-    )
+    provider = new Web3.providers.WebsocketProvider(`${truffleNetwork.host}`)
   } else {
     provider = new Web3.providers.HttpProvider(`http://localhost:8545`)
   }
@@ -62,7 +63,7 @@ const configureNetwork = (argv, network) => {
 }
 
 // TODO this can be cleaned up once --network is no longer supported
-module.exports = function environmentMiddleware (argv) {
+module.exports = function environmentMiddleware(argv) {
   const runsInCwd = argv['_'] === 'init'
   const { reporter, module, apm } = argv
   let { environment, network } = argv
@@ -70,20 +71,24 @@ module.exports = function environmentMiddleware (argv) {
   const isTruffleFwd = argv._[0] === 'contracts'
 
   if (environment && network && !isTruffleFwd) {
-    reporter.error('Arguments \'--network\' and \'--environment\' are mutually exclusive. Using \'--network\'  has been deprecated and  \'--environment\' should be used instead.')
+    reporter.error(
+      "Arguments '--network' and '--environment' are mutually exclusive. Using '--network'  has been deprecated and  '--environment' should be used instead."
+    )
     process.exit(1)
   }
 
   if (!runsInCwd && module) {
     if (network && module.environments && !isTruffleFwd) {
       reporter.error(
-        'Your arapp.json contains an `environments` property. The use of \'--network\' is deprecated and \'--environment\' should be used instead.'
+        "Your arapp.json contains an `environments` property. The use of '--network' is deprecated and '--environment' should be used instead."
       )
       process.exit(1)
     }
     if (!module.environments) {
       if (environment) {
-        reporter.error('Your arapp.json does not contain an `environments` property. The use of \'--environment\'  is not supported.')
+        reporter.error(
+          "Your arapp.json does not contain an `environments` property. The use of '--environment'  is not supported."
+        )
         process.exit(1)
       }
       if (!network) network = 'development'
@@ -95,18 +100,20 @@ module.exports = function environmentMiddleware (argv) {
     const env = module.environments[environment]
 
     if (!env) {
-      reporter.error(`${environment} environment was not defined in your arapp.json.`)
+      reporter.error(
+        `${environment} environment was not defined in your arapp.json.`
+      )
       process.exit(1)
     }
 
     // only include the selected environment in the module
     module.environments = {
-      [environment]: env
+      [environment]: env,
     }
 
     const resp = {
       module: Object.assign({}, module, { appName: env.appName }),
-      network: configureNetwork(argv, env.network)
+      network: configureNetwork(argv, env.network),
     }
 
     if (env.registry) {

@@ -1,6 +1,6 @@
 const Web3 = require('web3')
 
-const ensureWeb3 = async (network) => {
+const ensureWeb3 = async network => {
   let web3
 
   try {

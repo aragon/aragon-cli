@@ -7,7 +7,10 @@ module.exports = (web3, abi, initFunctionName, initArgs) => {
     try {
       return web3.eth.abi.encodeFunctionCall(methodABI, initArgs)
     } catch (e) {
-      throw new Error('Invalid initialization params for app. Check the arguments passed with the --app-init-args flag\n' + e.message)
+      throw new Error(
+        'Invalid initialization params for app. Check the arguments passed with the --app-init-args flag\n' +
+          e.message
+      )
     }
   }
 }

@@ -1,6 +1,4 @@
-import Aragon, {
-  ensResolve
-} from '@aragon/wrapper'
+import Aragon, { ensResolve } from '@aragon/wrapper'
 
 const noop = () => {}
 
@@ -16,13 +14,13 @@ const subscribe = (
     connectedApp: null,
     forwarders: forwarders.subscribe(onForwarders),
     transactions: transactions.subscribe(onTransaction),
-    permissions: permissions.subscribe(onPermissions)
+    permissions: permissions.subscribe(onPermissions),
   }
 
   return subscriptions
 }
 
-export async function resolveEnsDomain (domain, opts) {
+export async function resolveEnsDomain(domain, opts) {
   try {
     return await ensResolve(domain, opts)
   } catch (err) {
@@ -46,16 +44,16 @@ const initWrapper = async (
     onForwarders = noop,
     onTransaction = noop,
     onDaoAddress = noop,
-    onPermissions = noop
+    onPermissions = noop,
   } = {}
 ) => {
-  const isDomain = (dao) => /[a-z0-9]+\.eth/.test(dao)
+  const isDomain = dao => /[a-z0-9]+\.eth/.test(dao)
 
   const daoAddress = isDomain(dao)
     ? await resolveEnsDomain(dao, {
-      provider,
-      registryAddress: ensRegistryAddress
-    })
+        provider,
+        registryAddress: ensRegistryAddress,
+      })
     : dao
 
   if (!daoAddress) {
@@ -72,15 +70,17 @@ const initWrapper = async (
     defaultGasPriceFn: () => String(5e9), // gwei
     apm: {
       ipfs: ipfsConf,
-      ensRegistryAddress
-    }
+      ensRegistryAddress,
+    },
   })
 
   try {
     await wrapper.init({ accounts: { providedAccounts: accounts } })
   } catch (err) {
     if (err.message === 'connection not open') {
-      onError(new Error('The wrapper can not be initialized without a connection'))
+      onError(
+        new Error('The wrapper can not be initialized without a connection')
+      )
       return
     }
     throw err

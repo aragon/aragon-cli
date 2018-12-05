@@ -2,11 +2,11 @@ const chalk = require('chalk')
 const figures = require('figures')
 
 module.exports = class ConsoleReporter {
-  constructor (opts = { silent: false }) {
+  constructor(opts = { silent: false }) {
     this.silent = opts.silent
   }
 
-  message (category = 'info', message) {
+  message(category = 'info', message) {
     if (this.silent) return
 
     const color = {
@@ -14,36 +14,36 @@ module.exports = class ConsoleReporter {
       info: 'blue',
       warning: 'yellow',
       error: 'red',
-      success: 'green'
+      success: 'green',
     }[category]
     const symbol = {
       debug: figures.pointer,
       info: figures.info,
       warning: figures.warning,
       error: figures.cross,
-      success: figures.tick
+      success: figures.tick,
     }[category]
     const icon = chalk[color](symbol)
     console.log(` ${icon} ${message}`)
   }
 
-  debug (message) {
+  debug(message) {
     if (global.DEBUG_MODE) this.message('debug', message)
   }
 
-  info (message) {
+  info(message) {
     this.message('info', message)
   }
 
-  warning (message) {
+  warning(message) {
     this.message('warning', message)
   }
 
-  error (message) {
+  error(message) {
     this.message('error', message)
   }
 
-  success (message) {
+  success(message) {
     this.message('success', message)
   }
 }

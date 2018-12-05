@@ -7,12 +7,27 @@ exports.command = 'revoke <dao> <app> <role> <entity>'
 
 exports.describe = 'Revoke a permission in a DAO'
 
-exports.builder = function (yargs) {
+exports.builder = function(yargs) {
   return daoArg(yargs)
 }
 
-exports.handler = async function ({ reporter, dao, app, role, entity, network, wsProvider, apm }) {
+exports.handler = async function({
+  reporter,
+  dao,
+  app,
+  role,
+  entity,
+  network,
+  wsProvider,
+  apm,
+}) {
   const method = 'revokePermission'
   const params = [entity, app, role]
-  return aclExecHandler(dao, method, params, { reporter, apm, network, wsProvider, role })
+  return aclExecHandler(dao, method, params, {
+    reporter,
+    apm,
+    network,
+    wsProvider,
+    role,
+  })
 }
