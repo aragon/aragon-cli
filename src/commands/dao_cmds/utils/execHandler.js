@@ -3,7 +3,7 @@ const TaskList = require('listr')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 const listrOpts = require('../../../helpers/listr-options')
 
-module.exports = async function(
+exports.task = async function(
   dao,
   getTransactionPath,
   { reporter, apm, web3, wsProvider, network, silent, debug }
