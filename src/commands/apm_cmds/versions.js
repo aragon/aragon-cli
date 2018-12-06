@@ -30,7 +30,11 @@ exports.handler = async function({
         `${version.version}: ${version.contractAddress} ${version.error}`
       )
     } else {
-      reporter.error('Version not found in provider')
+      reporter.error(
+        `${version.version}: ${
+          version.contractAddress
+        } Version not found in provider`
+      )
     }
   })
   process.exit()
