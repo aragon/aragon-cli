@@ -7,23 +7,8 @@ const chalk = require('chalk')
 const getRepoTask = require('./utils/getRepoTask')
 const encodeInitPayload = require('./utils/encodeInitPayload')
 const upgrade = require('./upgrade')
-const { getContract, ANY_ENTITY } = require('../../util')
+const { getContract } = require('../../util')
 const listrOpts = require('../../helpers/listr-options')
-
-const setPermissions = async (web3, sender, aclAddress, permissions) => {
-  const acl = new web3.eth.Contract(
-    getContract('@aragon/os', 'ACL').abi,
-    aclAddress
-  )
-  return Promise.all(
-    permissions.map(([who, where, what]) =>
-      acl.methods.createPermission(who, where, what, who).send({
-        from: sender,
-        gasLimit: 1e6,
-      })
-    )
-  )
-}
 
 exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'
 
@@ -123,26 +108,13 @@ exports.task = async ({
         },
       },
       {
-        title: 'Set permissions',
+        title: 'Check roles',
         task: async (ctx, task) => {
           if (!ctx.repo.roles || ctx.repo.roles.length === 0) {
             throw new Error(
-              'You have no permissions defined in your arapp.json\nThis is required for your app to properly show up.'
+              'You have no roles defined in your arapp.json\nThis is required for your app to properly show up.\nYou also need to assign the permissions you create.'
             )
           }
-
-          const permissions = ctx.repo.roles.map(role => [
-            ANY_ENTITY,
-            ctx.appAddress,
-            role.bytes,
-          ])
-
-          return setPermissions(
-            web3,
-            ctx.accounts[0],
-            ctx.aclAddress,
-            permissions
-          )
         },
       },
     ],
