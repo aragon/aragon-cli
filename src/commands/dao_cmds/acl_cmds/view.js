@@ -12,6 +12,8 @@ const Table = require('cli-table')
 const knownRoles = rolesForApps()
 const ANY_ENTITY = '0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF'
 const ANY_ENTITY_TEXT = 'Any entity'
+const { NO_MANAGER } = require('../../../util')
+const NO_MANAGER_TEXT = 'No Manager'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -27,6 +29,7 @@ exports.builder = function(yargs) {
 
 const printAppName = (appId, addr) => {
   if (addr === ANY_ENTITY) return ANY_ENTITY_TEXT
+  if (addr === NO_MANAGER) return NO_MANAGER_TEXT
   return knownApps[appId]
     ? `${knownApps[appId].split('.')[0]} (${addr.slice(0, 6)})`
     : addr.slice(0, 16) + '...'
@@ -58,10 +61,14 @@ const formatRow = ({ to, role, allowedEntities, manager }, apps) => {
       return acc + '\n' + allowedEmoji + '  ' + allowedName
     }, '')
     .slice(1) // remove first newline
-  const formattedManager = printAppName(
-    appFromProxyAddress(manager, apps).appId,
-    manager
-  )
+  const formattedManager = (() => {
+    const managerName = printAppName(
+      appFromProxyAddress(manager, apps).appId,
+      manager
+    )
+    const managerEmoji = managerName === NO_MANAGER_TEXT ? '🆓' : ''
+    return managerEmoji + '  ' + managerName
+  })()
 
   return [formattedTo, formattedRole, formattedAllowed, formattedManager]
 }
