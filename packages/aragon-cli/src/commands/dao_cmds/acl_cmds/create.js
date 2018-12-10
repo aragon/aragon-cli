@@ -21,8 +21,15 @@ exports.handler = async function({
   role,
   entity,
   manager,
+  wsProvider,
 }) {
   const method = 'createPermission'
   const params = [entity, app, role, manager]
-  return aclExecHandler(dao, method, params, { reporter, apm, network, role })
+  return aclExecHandler(dao, method, params, {
+    reporter,
+    apm,
+    network,
+    wsProvider,
+    role,
+  })
 }

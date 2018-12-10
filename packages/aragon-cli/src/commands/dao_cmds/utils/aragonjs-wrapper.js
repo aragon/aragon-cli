@@ -20,7 +20,7 @@ const subscribe = (
   return subscriptions
 }
 
-const resolveEnsDomain = async (domain, opts) => {
+export async function resolveEnsDomain(domain, opts) {
   try {
     return await ensResolve(domain, opts)
   } catch (err) {
@@ -47,9 +47,9 @@ const initWrapper = async (
     onPermissions = noop,
   } = {}
 ) => {
-  const isDomain = /[a-z0-9]+\.eth/.test(dao)
+  const isDomain = dao => /[a-z0-9]+\.eth/.test(dao)
 
-  const daoAddress = isDomain
+  const daoAddress = isDomain(dao)
     ? await resolveEnsDomain(dao, {
         provider,
         registryAddress: ensRegistryAddress,
@@ -63,14 +63,19 @@ const initWrapper = async (
 
   onDaoAddress(daoAddress)
 
+  // TODO: don't reinitialize if cached
+
   const wrapper = new Aragon(daoAddress, {
-    ensRegistryAddress,
     provider,
-    apm: { ipfs: ipfsConf },
+    defaultGasPriceFn: () => String(5e9), // gwei
+    apm: {
+      ipfs: ipfsConf,
+      ensRegistryAddress,
+    },
   })
 
   try {
-    await wrapper.init(accounts || [accounts])
+    await wrapper.init({ accounts: { providedAccounts: accounts } })
   } catch (err) {
     if (err.message === 'connection not open') {
       onError(

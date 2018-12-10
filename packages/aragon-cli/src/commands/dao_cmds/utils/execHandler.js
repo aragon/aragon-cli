@@ -3,25 +3,18 @@ const TaskList = require('listr')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 const listrOpts = require('../../../helpers/listr-options')
 
-const GAS_ESTIMATE_FUZZ_FACTOR = 2
-
-module.exports = async function(
+exports.task = async function(
   dao,
   getTransactionPath,
-  { reporter, apm, network, silent, debug }
+  { reporter, apm, web3, wsProvider, network, silent, debug }
 ) {
-  const web3 = await ensureWeb3(network)
-
-  const tasks = new TaskList(
+  const accounts = await web3.eth.getAccounts()
+  return new TaskList(
     [
       {
         title: 'Generating transaction',
         task: async (ctx, task) => {
           task.output = `Fetching DAO at ${dao}...`
-
-          if (!ctx.accounts) {
-            ctx.accounts = await web3.eth.getAccounts()
-          }
 
           return new Promise((resolve, reject) => {
             let wrapper, appsLoaded
@@ -38,8 +31,8 @@ module.exports = async function(
             }
 
             initAragonJS(dao, apm['ens-registry'], {
-              accounts: ctx.accounts,
-              provider: web3.currentProvider,
+              provider: wsProvider || web3.currentProvider,
+              accounts,
               onApps: async apps => {
                 appsLoaded = true
                 await tryFindTransactionPath()
@@ -61,37 +54,32 @@ module.exports = async function(
       {
         title: `Sending transaction`,
         task: async (ctx, task) => {
-          task.output = `Waiting for response...`
           let tx = ctx.transactionPath[0] // TODO: Support choosing between possible transaction paths
 
           if (!tx) {
             throw new Error('Cannot find transaction path for executing action')
           }
 
-          const estimatedGas = await web3.eth.estimateGas(
-            ctx.transactionPath[0]
-          )
-          tx.gas = parseInt(GAS_ESTIMATE_FUZZ_FACTOR * estimatedGas)
-          return new Promise((resolve, reject) => {
-            web3.eth.sendTransaction(ctx.transactionPath[0], (err, res) => {
-              if (err) {
-                reject(err)
-                return
-              }
-              ctx.res = res
-              resolve()
-            })
-          })
+          task.output = `Waiting for transaction to be mined...`
+          ctx.receipt = await web3.eth.sendTransaction(ctx.transactionPath[0])
         },
       },
     ],
     listrOpts(silent, debug)
   )
+}
+
+exports.handler = async function(dao, getTransactionPath, args) {
+  args = {
+    ...args,
+    web3: await ensureWeb3(args.network),
+  }
+
+  const tasks = await exports.task(dao, getTransactionPath, args)
 
   return tasks.run().then(ctx => {
-    reporter.success(
-      `Successfully sent executed action starting with transaction: ` +
-        JSON.stringify(ctx.transactionPath[0].description)
+    args.reporter.success(
+      `Successfully executed: "${ctx.transactionPath[0].description}"`
     )
     process.exit()
   })

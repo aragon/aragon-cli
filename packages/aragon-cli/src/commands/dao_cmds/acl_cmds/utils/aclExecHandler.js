@@ -1,11 +1,11 @@
-const execHandler = require('../../utils/execHandler')
+const execHandler = require('../../utils/execHandler').handler
 const { keccak256 } = require('js-sha3')
 
 module.exports = async function(
   dao,
   method,
   params,
-  { reporter, apm, network, role }
+  { reporter, apm, network, wsProvider, role }
 ) {
   const getTransactionPath = async wrapper => {
     let processedParams
@@ -22,5 +22,10 @@ module.exports = async function(
 
     return wrapper.getACLTransactionPath(method, processedParams)
   }
-  return execHandler(dao, getTransactionPath, { reporter, apm, network })
+  return execHandler(dao, getTransactionPath, {
+    reporter,
+    apm,
+    wsProvider,
+    network,
+  })
 }
