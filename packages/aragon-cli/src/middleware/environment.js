@@ -117,11 +117,16 @@ module.exports = function environmentMiddleware(argv) {
       module: Object.assign({}, module, { appName: env.appName }),
       network: configureNetwork(argv, env.network),
     }
+
     if (env.registry) {
       resp.apmEnsRegistry = env.registry
       if (apm) {
         apm['ens-registry'] = env.registry
       }
+    }
+
+    if (env.wsRPC) {
+      resp.wsProvider = new Web3.providers.WebsocketProvider(env.wsRPC)
     }
 
     return resp

@@ -35,6 +35,7 @@ exports.handler = async function({
   dao,
   network,
   apm: apmOptions,
+  wsProvider,
   module,
   silent,
   debug,
@@ -51,7 +52,7 @@ exports.handler = async function({
 
           return new Promise((resolve, reject) => {
             initAragonJS(dao, apmOptions['ens-registry'], {
-              provider: web3.currentProvider,
+              provider: wsProvider || web3.currentProvider,
               onApps: apps => {
                 ctx.apps = apps
                 resolve()
