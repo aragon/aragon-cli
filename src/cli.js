@@ -119,7 +119,7 @@ cmd.option('apm', {
 })
 
 // Add epilogue
-cmd.epilogue('For more information, check out https://hack.aragon.one')
+cmd.epilogue('For more information, check out https://hack.aragon.org')
 
 // Run
 const reporter = new ConsoleReporter()

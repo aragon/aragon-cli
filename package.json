@@ -23,13 +23,13 @@
     "aragon",
     "ethereum"
   ],
-  "author": "Aragon Institution MTU <contact@aragon.one>",
+  "author": "Aragon Association <legal@aragon.org>",
   "contributors": [
     "Jorge Izquierdo <jorge@aragon.one>",
     "Luis Cuende <luis@aragon.one>",
     "Oliver Nordbjerg <oliver@aragon.one>"
   ],
-  "license": "GPL-3.0",
+  "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/aragon/aragon-dev-cli/issues"
   },
