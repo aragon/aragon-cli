@@ -196,6 +196,10 @@ exports.task = async ({
             role.bytes,
           ])
 
+          if (!ctx.accounts) {
+            ctx.accounts = await web3.eth.getAccounts()
+          }
+
           // TODO: setPermissions should use ACL functions with transaction pathing
           return setPermissionsWithoutTransactionPathing(
             web3,
