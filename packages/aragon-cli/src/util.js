@@ -92,6 +92,7 @@ const getContract = (pkg, contract) => {
 }
 
 const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
+const NO_MANAGER = '0x0000000000000000000000000000000000000000'
 
 module.exports = {
   findProjectRoot,
@@ -101,4 +102,5 @@ module.exports = {
   getNPMBinary,
   getContract,
   ANY_ENTITY,
+  NO_MANAGER,
 }

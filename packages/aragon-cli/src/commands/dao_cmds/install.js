@@ -8,7 +8,7 @@ const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
 const getRepoTask = require('./utils/getRepoTask')
 const encodeInitPayload = require('./utils/encodeInitPayload')
-const { getContract, ANY_ENTITY } = require('../../util')
+const { getContract, ANY_ENTITY, NO_MANAGER } = require('../../util')
 const kernelABI = require('@aragon/wrapper/abi/aragon/Kernel')
 const listrOpts = require('../../helpers/listr-options')
 
@@ -26,8 +26,8 @@ const setPermissionsWithoutTransactionPathing = async (
     aclAddress
   )
   return Promise.all(
-    permissions.map(([who, where, what]) =>
-      acl.methods.createPermission(who, where, what, who).send({
+    permissions.map(([who, where, what, manager]) =>
+      acl.methods.createPermission(who, where, what, manager).send({
         from: sender,
         gasLimit: 1e6,
       })
@@ -194,6 +194,7 @@ exports.task = async ({
             ANY_ENTITY,
             ctx.appAddress,
             role.bytes,
+            NO_MANAGER,
           ])
 
           if (!ctx.accounts) {
