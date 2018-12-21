@@ -70,7 +70,7 @@ exports.task = async ({
   kit = defaultAPMName(kit)
 
   const tasks = new TaskList(
-    [ 
+    [
       {
         title: 'Check IPFS',
         task: () => startIPFS.task({ apmOptions }),
