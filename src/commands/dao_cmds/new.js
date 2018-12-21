@@ -74,7 +74,7 @@ exports.task = async ({
       {
         title: 'Check IPFS',
         task: () => startIPFS.task({ apmOptions }),
-        enabled: () => !http && ipfsCheck,
+        enabled: () => ipfsCheck,
       },
       {
         title: `Fetching kit ${chalk.bold(kit)}@${kitVersion}`,
