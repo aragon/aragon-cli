@@ -41,8 +41,9 @@ const appFromProxyAddress = (proxyAddress, apps) => {
 
 const formatRow = ({ to, role, allowedEntities, manager }, apps) => {
   if (
-    manager === ZERO_ADDRESS &&
-    (!allowedEntities || allowedEntities.length === 0)
+    manager === ZERO_ADDRESS ||
+    !allowedEntities ||
+    allowedEntities.length === 0
   ) {
     return null
   }
