@@ -1,0 +1,105 @@
+{
+  "name": "create-aragon-app",
+  "version": "1.0.0",
+  "description": "Aragon command-line tool to create aragon apps",
+  "main": "dist/cli.js",
+  "bin": {
+    "aragon-cli": "./dist/cli.js",
+    "create-aragon-app": "./aliases/create-aragon-app"
+  },
+  "scripts": {
+    "build": "babel -d dist src --copy-files",
+    "test": "ava",
+    "lint": "eslint src test && documentation lint src test"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "create-aragon-app",
+    "aragon",
+    "ethereum"
+  ],
+  "author": "Aragon Association <legal@aragon.org>",
+  "contributors": [
+    "Gabriel Garcia <gabrielpk.18@gmail.com>"
+  ],
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "dependencies": {
+    "@babel/polyfill": "^7.0.0",
+    "chalk": "^2.1.0",
+    "colors": "^1.2.4",
+    "execa": "^0.10.0",
+    "figures": "^2.0.0",
+    "fs-extra": "^4.0.2",
+    "git-clone": "^0.1.0",
+    "listr": "^0.13.0",
+    "listr-silent-renderer": "^1.1.1",
+    "listr-update-renderer": "^0.4.0",
+    "listr-verbose-renderer": "^0.4.1",
+    "yargs": "^10.1.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/node": "^7.0.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/register": "^7.0.0",
+    "ava": "^0.22.0",
+    "babel-eslint": "^10.0.1",
+    "coveralls": "^3.0.0",
+    "documentation": "^9.0.0-alpha.0",
+    "eslint": "^5.9.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-ava": "^5.1.1",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "husky": "^1.2.0",
+    "lint-staged": "^8.1.0",
+    "prettier": "^1.15.3"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "ava": {
+    "require": [
+      "@babel/polyfill",
+      "@babel/register"
+    ],
+    "files": [
+      "test/**/*.js"
+    ]
+  },
+  "yargs": {
+    "short-option-groups": true,
+    "camel-case-expansion": true,
+    "dot-notation": true,
+    "parse-numbers": false,
+    "boolean-negation": true
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run lint && npm run test"
+    }
+  },
+  "lint-staged": {
+    "linters": {
+      "*.js": [
+        "eslint --fix",
+        "documentation lint",
+        "git add"
+      ]
+    }
+  }
+}
