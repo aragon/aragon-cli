@@ -19,8 +19,8 @@ create-aragon-app [app-name] [boilerplate]
 ## Quick Overview
 
 ```sh
-npx create-aragon-app app
-cd app
+npx create-aragon-app myapp
+cd myapp
 npm start
 ```
 
