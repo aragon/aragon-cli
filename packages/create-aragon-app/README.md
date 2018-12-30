@@ -1,8 +1,8 @@
 # Create Aragon App
 
-Create Aragon apps with no build configuration.
-
 Will set up an Aragon app project so you can start building your app from a functional boilerplate.
+
+## Command
 
 ```
 create-aragon-app [app-name] [boilerplate]
@@ -16,9 +16,9 @@ create-aragon-app [app-name] [boilerplate]
 	- `react-kit`: it is a variation of the `react` boilerplate that also comes with a DAO Kit which will allow for using your app to interact with other Aragon apps like the Voting app. You can read more about DAO Kits [here](https://github.com/aragon/hack/blob/master/docs/kits-intro.md).
 	- `bare`: this boilerplate will just set up your app directory structure but contains no functional code.
 
-## Quick Overview
+## Example
 
-```sh
+```
 npx create-aragon-app myapp
 cd myapp
 npm start
@@ -28,3 +28,4 @@ _([npx](https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner-55f7
 
 Then open [http://localhost:3000/](http://localhost:3000/) to see your app.<br>
 When you’re ready to deploy bundle with `npm run build`.
+
