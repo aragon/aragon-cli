@@ -4,8 +4,7 @@
   "description": "Aragon command-line tool to create aragon apps",
   "main": "dist/cli.js",
   "bin": {
-    "aragon-cli": "./dist/cli.js",
-    "create-aragon-app": "./aliases/create-aragon-app"
+    "create-aragon-app": "./dist/cli.js"
   },
   "scripts": {
     "build": "babel -d dist src --copy-files",
