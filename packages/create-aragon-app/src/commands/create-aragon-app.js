@@ -6,7 +6,7 @@ const { installDeps } = require('../util')
 const defaultAPMName = require('../helpers/default-apm')
 const listrOpts = require('../helpers/listr-options')
 
-exports.command = 'create-aragon-app <name> [template]'
+exports.command = '* <name> [template]'
 
 exports.describe = 'Create a new aragon application'
 
