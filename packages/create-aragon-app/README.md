@@ -5,7 +5,7 @@ Will set up an Aragon app project so you can start building your app from a func
 ## Command
 
 ```
-create-aragon-app [app-name] [boilerplate]
+create-aragon-app <app-name> [boilerplate]
 ```
 
 - `app-name`: The name or ENS domain name for your app in an aragonPM Registry (e.g. `myapp` or `myapp.aragonpm.eth`). If only the name is provided it will create your app on the default `aragonpm.eth` registry.
