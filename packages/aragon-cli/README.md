@@ -135,5 +135,5 @@ Starts a local ganache test chain for development. This is done automatically wi
 
 #### `.ipfsignore`
 
-Use a .ipfsignore file to keep out any specified files or paths from the bundle published to ipfs. If there’s no .ipfsignore file, but there is a .gitignore file, then CLI will ignore the stuff matched by the .gitignore file. If you want to include something that is excluded by your .gitignore file, you can create an empty .ipfsignore file to override it.
+Use a .ipfsignore file to keep out any specified files or paths from the bundle published to ipfs. If there’s no .ipfsignore file, but there is a .gitignore file, then the CLI will ignore the stuff matched by the .gitignore file. If you want to include something that is excluded by your .gitignore file, you can create an empty .ipfsignore file to override it.
 
