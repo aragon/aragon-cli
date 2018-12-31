@@ -44,7 +44,7 @@ exports.builder = function(yargs) {
     .args(daoArg(yargs))
     .option('app-init', {
       description:
-        'Name of the function that will be called to initialize an app',
+        'Name of the function that will be called to initialize an app. Set it to "none" to skip initialization',
       default: 'initialize',
     })
     .option('app-init-args', {
