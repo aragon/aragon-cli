@@ -132,3 +132,8 @@ Shows the roles defined in your DAO with all the relevant info: where they are d
 #### `aragon devchain`
 
 Starts a local ganache test chain for development. This is done automatically with `aragon run` also if you don't have one already running.
+
+#### `.ipfsignore`
+
+Use a .ipfsignore file to keep out any specified files or paths from the bundle published to ipfs. If there’s no .ipfsignore file, but there is a .gitignore file, then cli will ignore the stuff matched by the .gitignore file. If you want to include something that is excluded by your .gitignore file, you can create an empty .ipfsignore file to override it.
+
