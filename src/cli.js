@@ -27,6 +27,9 @@ const cmd = require('yargs').commandDir('./commands', {
 cmd.alias('h', 'help')
 cmd.alias('v', 'version')
 
+// blank scriptName so that help text doesn't display "aragon" before each command
+cmd.scriptName("")
+
 // Configure CLI behaviour
 cmd.demandCommand(1, 'You need to specify a command')
 
