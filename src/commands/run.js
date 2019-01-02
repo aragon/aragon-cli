@@ -251,7 +251,7 @@ exports.handler = function({
             {
               title: 'Download client',
               skip: () => !!clientPath,
-              task: (ctx, task) => {
+              task: async (ctx, task) => {
                 clientVersion = clientVersion || DEFAULT_CLIENT_VERSION
                 const CLIENT_PATH = `${os.homedir()}/.aragon/wrapper-${clientVersion}`
                 ctx.wrapperPath = CLIENT_PATH
@@ -270,7 +270,7 @@ exports.handler = function({
                 fs.ensureDirSync(CLIENT_PATH)
 
                 // Clone wrapper
-                clone('https://github.com/aragon/aragon', CLIENT_PATH, {
+                await clone('https://github.com/aragon/aragon', CLIENT_PATH, {
                   checkout: clientVersion,
                 })
 
