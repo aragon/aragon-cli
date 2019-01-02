@@ -260,6 +260,9 @@ exports.handler = function({
                 if (fs.existsSync(path.resolve(CLIENT_PATH))) {
                   task.skip('Client already downloaded')
                   ctx.wrapperAvailable = true
+                  ctx.wrapperPreBuild = fs.existsSync(
+                    path.resolve(CLIENT_PATH, '/build')
+                  )
                   return
                 }
 
@@ -267,15 +270,21 @@ exports.handler = function({
                 fs.ensureDirSync(CLIENT_PATH)
 
                 // Clone wrapper
-                return clone('https://github.com/aragon/aragon', CLIENT_PATH, {
+                clone('https://github.com/aragon/aragon', CLIENT_PATH, {
                   checkout: clientVersion,
                 })
+
+                // Check if wrapper pre build exist
+                ctx.wrapperPreBuild = fs.existsSync(
+                  path.resolve(CLIENT_PATH, '/build')
+                )
               },
             },
             {
               title: 'Install client dependencies',
               task: async (ctx, task) => installDeps(ctx.wrapperPath, task),
-              enabled: ctx => !ctx.wrapperAvailable && !clientPath,
+              enabled: ctx =>
+                !ctx.wrapperAvailable && !clientPath && !ctx.wrapperPreBuild,
             },
             {
               title: 'Start Aragon client',
@@ -290,6 +299,7 @@ exports.handler = function({
                   env: {
                     REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens,
                     REACT_APP_PORT: clientPort,
+                    REACT_APP_PRE_BUILD: ctx.wrapperPreBuild,
                   },
                 }
 
