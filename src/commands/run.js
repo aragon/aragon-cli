@@ -251,7 +251,7 @@ exports.handler = function({
             {
               title: 'Download client',
               skip: () => !!clientPath,
-              task: async (ctx, task) => {
+              task: (ctx, task) => {
                 clientVersion = clientVersion || DEFAULT_CLIENT_VERSION
                 const CLIENT_PATH = `${os.homedir()}/.aragon/wrapper-${clientVersion}`
                 ctx.wrapperPath = CLIENT_PATH
