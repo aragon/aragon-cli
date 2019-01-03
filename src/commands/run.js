@@ -275,7 +275,10 @@ exports.handler = function({
             {
               title: 'Install client dependencies',
               skip: ctx => {
-                ctx.wrapperPreBuild = !fs.existsSync(path.resolve(ctx.wrapperPath), 'build')
+                ctx.wrapperPreBuild = !fs.existsSync(
+                  path.resolve(ctx.wrapperPath),
+                  'build'
+                )
                 return ctx.wrapperAvailable || clientPath || ctx.wrapperPreBuild
               },
               task: async (ctx, task) => installDeps(ctx.wrapperPath, task),
