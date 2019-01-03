@@ -223,7 +223,7 @@ async function prepareFilesForPublishing(
   function createFilter(files, ignorePath) {
     let f = fs.readFileSync(ignorePath).toString()
     files.forEach(file => {
-      f = f.concat(`!${file}\n`)
+      f = f.concat(`\n!${file}`)
     })
     return f
   }
