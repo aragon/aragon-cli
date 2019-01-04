@@ -43,7 +43,7 @@ exports.builder = yargs => {
       default: exports.BARE_KIT_DEPLOY_EVENT,
     })
     .option('ipfs-check', {
-      description: 'Whether to have publish start IPFS if not started',
+      description: 'Whether to have new start IPFS if not started',
       boolean: true,
       default: true,
     })
@@ -72,6 +72,7 @@ exports.task = async ({
   const tasks = new TaskList(
     [
       {
+        // IPFS is a dependency of getRepoTask which uses IPFS to fetch the contract ABI
         title: 'Check IPFS',
         task: () => startIPFS.task({ apmOptions }),
         enabled: () => ipfsCheck,
