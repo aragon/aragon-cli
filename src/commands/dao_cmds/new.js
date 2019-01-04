@@ -6,6 +6,7 @@ const chalk = require('chalk')
 const { getContract } = require('../../util')
 const getRepoTask = require('./utils/getRepoTask')
 const listrOpts = require('../../helpers/listr-options')
+const startIPFS = require('../ipfs')
 
 exports.BARE_KIT = defaultAPMName('bare-kit')
 exports.BARE_INSTANCE_FUNCTION = 'newBareInstance'
@@ -41,6 +42,11 @@ exports.builder = yargs => {
       description: 'Event name that the kit will fire on success',
       default: exports.BARE_KIT_DEPLOY_EVENT,
     })
+    .option('ipfs-check', {
+      description: 'Whether to have new start IPFS if not started',
+      boolean: true,
+      default: true,
+    })
 }
 
 exports.task = async ({
@@ -56,6 +62,7 @@ exports.task = async ({
   kitInstance,
   silent,
   debug,
+  ipfsCheck,
 }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
@@ -64,6 +71,12 @@ exports.task = async ({
 
   const tasks = new TaskList(
     [
+      {
+        // IPFS is a dependency of getRepoTask which uses IPFS to fetch the contract ABI
+        title: 'Check IPFS',
+        task: () => startIPFS.task({ apmOptions }),
+        enabled: () => ipfsCheck,
+      },
       {
         title: `Fetching kit ${chalk.bold(kit)}@${kitVersion}`,
         task: getRepoTask.task({
