@@ -220,14 +220,21 @@ async function prepareFilesForPublishing(
   const filter = ignore().add(ignorePatterns)
   const projectRoot = findProjectRoot()
 
+  function createFilter(files, ignorePath) {
+    let f = fs.readFileSync(ignorePath).toString()
+    files.forEach(file => {
+      f = f.concat(`\n!${file}`)
+    })
+    return f
+  }
+
   const ipfsignorePath = path.resolve(projectRoot, '.ipfsignore')
   if (pathExistsSync(ipfsignorePath)) {
-    filter.add(fs.readFileSync(ipfsignorePath).toString())
+    filter.add(createFilter(files, ipfsignorePath))
   } else {
     const gitignorePath = path.resolve(projectRoot, '.gitignore')
-
     if (pathExistsSync(gitignorePath)) {
-      filter.add(fs.readFileSync(gitignorePath).toString())
+      filter.add(createFilter(files, gitignorePath))
     }
   }
 
