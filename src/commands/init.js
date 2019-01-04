@@ -8,7 +8,8 @@ const listrOpts = require('../helpers/listr-options')
 
 exports.command = 'init <name> [template]'
 
-exports.describe = 'Initialise a new application'
+exports.describe =
+  '(deprecated) Initialise a new application. Deprecated in favor of `npx create-aragon-app <name> [template]`'
 
 exports.builder = yargs => {
   return yargs
@@ -76,9 +77,10 @@ exports.handler = function({ reporter, name, template, silent, debug }) {
     listrOpts(silent, debug)
   )
 
-  return tasks
-    .run()
-    .then(() =>
-      reporter.success(`Created new application ${name} in ${basename}`)
+  return tasks.run().then(() => {
+    reporter.success(`Created new application ${name} in ${basename}.`)
+    reporter.info(
+      `Use of \`aragon init\` is deprecated and has been replaced with \`npx create-aragon-app\`.`
     )
+  })
 }
