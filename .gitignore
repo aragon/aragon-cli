@@ -13,4 +13,4 @@ dist
 lerna-debug.log
 
 # Extra
-src/knownRoles.json
+packages/aragon-cli/src/knownRoles.json
