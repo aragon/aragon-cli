@@ -5,7 +5,7 @@
 [![NPM version](https://img.shields.io/npm/v/@aragon/cli.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli)
 [![Downloads](https://img.shields.io/npm/dm/@aragon/cli.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli)
 
-Aragon CLI is a tool for creating, testing and publishing [Aragon 
+Aragon CLI is a monorepo for creating, testing and publishing [Aragon
 applications](https://hack.aragon.org).
 
 ## Installation
@@ -87,7 +87,7 @@ If `--skip-confirm` is specified the command will not wait for the transaction t
 $ aragon apm version <BUMP>
 ```
 
-Bumps the version of your Aragon app, where a valid `BUMP` is either *major*, *minor* or *patch*.
+Bumps the version of your Aragon app, where a valid `BUMP` is either _major_, _minor_ or _patch_.
 
 Note that you are only allowed to release a version with a new smart contract address if the bump specified is major.
 
@@ -136,4 +136,3 @@ Starts a local ganache test chain for development. This is done automatically wi
 #### `.ipfsignore`
 
 Use a .ipfsignore file to keep out any specified files or paths from the bundle published to ipfs. If there’s no .ipfsignore file, but there is a .gitignore file, then the CLI will ignore the stuff matched by the .gitignore file. If you want to include something that is excluded by your .gitignore file, you can create an empty .ipfsignore file to override it.
-
