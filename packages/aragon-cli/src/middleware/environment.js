@@ -12,7 +12,7 @@ const configureNetwork = (argv, network) => {
       return {}
     }
   }
-
+  // TODO remove init when commmand not longer supported
   const skipNetworkCommands = new Set(['init', 'devchain', 'ipfs', 'contracts'])
 
   if (argv._.length >= 1) {
