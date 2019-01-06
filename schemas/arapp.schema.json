@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://hack.aragon.org/schemas/arapp.schema.json",
+  "title": "AragonApp configuration file",
+  "type": "object",
+  "properties": {
+    "path": {
+      "description": "The path to the main contract in your app.",
+      "type": "string"
+    },
+    "roles": {
+      "description": "An array of all the roles that your app has.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/role"
+      },
+      "minItems": 1
+    },
+    "environments": {
+      "description": "An object containing deploy environment configurations.",
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/environment"
+        }
+      },
+      "minProperties": 1
+    }
+  },
+  "definitions": {
+    "role": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The identifier of the role as it is defined in the contract.",
+          "type": "string"
+        },
+        "name": {
+          "description": "A description of the role in the app.",
+          "type": "string"
+        },
+        "params": {
+          "description": "The names of any parameters for the role.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "params"
+      ]
+    },
+    "environment": {
+      "description": "An object containing the configuration for a specific environment. Can have any name you choose",
+      "type": "object",
+      "properties": {
+        "appName": {
+          "description": "The ENS name of your app where the aragonPM repo can be located.",
+          "type": "string"
+        },
+        "network": {
+          "description": "The truffle network to use for this environment.",
+          "type": "string"
+        },
+        "registry": {
+          "description": "The address of the ENS registry for this environment. If omitted defaults to the Aragon ENS registry for this network.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "appName",
+        "network"
+      ]
+    }
+  },
+  "required": [
+    "path",
+    "roles",
+    "environments"
+  ]
+}
