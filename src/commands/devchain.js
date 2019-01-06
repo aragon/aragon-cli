@@ -10,6 +10,7 @@ const mkdirp = require('mkdirp')
 const chalk = require('chalk')
 const fs = require('fs')
 const listrOpts = require('../helpers/listr-options')
+const pjson = require('../../package.json')
 
 const { BLOCK_GAS_LIMIT, MNEMONIC } = require('../helpers/ganache-vars')
 
@@ -43,7 +44,10 @@ exports.task = async function({
   const mkDir = promisify(mkdirp)
   const recursiveCopy = promisify(ncp)
 
-  const snapshotPath = path.join(os.homedir(), `.aragon/ganache-db-${port}`)
+  const snapshotPath = path.join(
+    os.homedir(),
+    `.aragon/ganache-db-${pjson.version}`
+  )
 
   const tasks = new TaskList(
     [
