@@ -47,7 +47,10 @@ exports.task = async ({
       {
         title: 'Deploy the MiniMeTokenFactory contract',
         task: async (ctx, task) => {
-          let artifact = getContract('@aragon/os', 'MiniMeTokenFactory')
+          let artifact = getContract(
+            '@aragon/apps-shared-minime',
+            'MiniMeTokenFactory'
+          )
           let contract = new web3.eth.Contract(artifact.abi)
 
           const deployTx = contract.deploy({ data: artifact.bytecode })
@@ -72,7 +75,10 @@ exports.task = async ({
       {
         title: 'Deploy the MiniMeToken contract',
         task: async (ctx, task) => {
-          let artifact = getContract('@aragon/os', 'MiniMeToken')
+          let artifact = getContract(
+            '@aragon/apps-shared-minime',
+            'MiniMeToken'
+          )
           let contract = new web3.eth.Contract(artifact.abi)
 
           const deployTx = contract.deploy({
