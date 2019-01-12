@@ -3,6 +3,8 @@ const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const { getContract } = require('../../util')
 const listrOpts = require('../../helpers/listr-options')
 
+const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
+
 exports.command =
   'token <token-name> <symbol> [decimal-units] [transfer-enabled]'
 
@@ -36,7 +38,7 @@ exports.task = async ({
   silent,
   debug,
 }) => {
-  let token
+  let tokenAddress, factoryAddress
 
   const tasks = new TaskList(
     [
@@ -45,23 +47,47 @@ exports.task = async ({
         task: async (ctx, task) => {
           try {
             let miniMeFactory = getContract('@aragon/os', 'MiniMeTokenFactory')
-            let factory = await miniMeFactory.new()
-            let miniMeToken = getContract('@aragon/os', 'MiniMeToken')
-            token = await miniMeToken.new(
-              factory.address,
-              0x0,
-              0,
-              tokenName,
-              decimalUnits,
-              symbol,
-              transferEnabled
+            let factory = new web3.eth.Contract(miniMeFactory.abi)
+            await factory
+              .deploy({ data: '0x0' })
+              .send({ from: '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7' })
+              .on('error', function(error) {
+                throw error
+              })
+              .on('receipt', function(receipt) {
+                factoryAddress = receipt.contractAddress
+              })
+
+            let miniMeToken = new web3.eth.Contract(
+              getContract('@aragon/os', 'MiniMeToken').abi
             )
+            await miniMeToken
+              .deploy({
+                data: '0x0',
+                arguments: [
+                  factoryAddress,
+                  ZERO_ADDR,
+                  0,
+                  tokenName,
+                  decimalUnits,
+                  symbol,
+                  transferEnabled,
+                ],
+              })
+              .send({ from: '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7' })
+              .on('error', function(error) {
+                throw error
+              })
+              .on('receipt', function(receipt) {
+                tokenAddress = receipt.contractAddress
+              })
           } catch (e) {
-            reporter.error('Error deploying token')
+            reporter.error('Error deploying token test', e)
+            reporter.error(e)
             reporter.debug(e)
             process.exit(1)
           }
-          ctx.tokenAddress = token.address
+          ctx.tokenAddress = tokenAddress
         },
       },
     ],
