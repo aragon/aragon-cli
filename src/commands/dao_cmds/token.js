@@ -40,6 +40,10 @@ exports.task = async ({
 }) => {
   let tokenAddress, factoryAddress
 
+  // Decode sender
+  const accounts = await web3.eth.getAccounts()
+  const from = accounts[0]
+
   const tasks = new TaskList(
     [
       {
@@ -50,7 +54,7 @@ exports.task = async ({
             let factory = new web3.eth.Contract(miniMeFactory.abi)
             await factory
               .deploy({ data: '0x0' })
-              .send({ from: '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7' })
+              .send({ from: from })
               .on('error', function(error) {
                 throw error
               })
@@ -74,7 +78,7 @@ exports.task = async ({
                   transferEnabled,
                 ],
               })
-              .send({ from: '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7' })
+              .send({ from: from })
               .on('error', function(error) {
                 throw error
               })
