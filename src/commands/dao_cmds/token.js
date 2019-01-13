@@ -2,6 +2,7 @@ const TaskList = require('listr')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const { getContract } = require('../../util')
 const listrOpts = require('../../helpers/listr-options')
+const chalk = require('chalk')
 
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
@@ -38,67 +39,76 @@ exports.task = async ({
   silent,
   debug,
 }) => {
-  let tokenAddress, factoryAddress
-
   // Decode sender
   const accounts = await web3.eth.getAccounts()
   const from = accounts[0]
 
-  const tasks = new TaskList(
+  return new TaskList(
     [
       {
-        title: 'Deploy Token',
+        title: 'Deploy the MiniMeTokenFactory contract',
         task: async (ctx, task) => {
-          try {
-            let miniMeFactory = getContract('@aragon/os', 'MiniMeTokenFactory')
-            let factory = new web3.eth.Contract(miniMeFactory.abi)
-            await factory
-              .deploy({ data: '0x0' })
-              .send({ from: from })
-              .on('error', function(error) {
-                throw error
-              })
-              .on('receipt', function(receipt) {
-                factoryAddress = receipt.contractAddress
-              })
+          let artifact = getContract('@aragon/os', 'MiniMeTokenFactory')
+          let contract = new web3.eth.Contract(artifact.abi)
 
-            let miniMeToken = new web3.eth.Contract(
-              getContract('@aragon/os', 'MiniMeToken').abi
-            )
-            await miniMeToken
-              .deploy({
-                data: '0x0',
-                arguments: [
-                  factoryAddress,
-                  ZERO_ADDR,
-                  0,
-                  tokenName,
-                  decimalUnits,
-                  symbol,
-                  transferEnabled,
-                ],
-              })
-              .send({ from: from })
-              .on('error', function(error) {
-                throw error
-              })
-              .on('receipt', function(receipt) {
-                tokenAddress = receipt.contractAddress
-              })
-          } catch (e) {
-            reporter.error('Error deploying token test', e)
-            reporter.error(e)
-            reporter.debug(e)
-            process.exit(1)
-          }
-          ctx.tokenAddress = tokenAddress
+          const deployTx = contract.deploy({ data: artifact.bytecode })
+          const gas = await deployTx.estimateGas()
+
+          const deployPromise = deployTx.send({ from, gas })
+          deployPromise
+            .on('receipt', function(receipt) {
+              ctx.factoryAddress = receipt.contractAddress
+            })
+            .on('transactionHash', transactionHash => {
+              ctx.factoryTxHash = transactionHash
+            })
+            .on('error', function(error) {
+              throw error
+            })
+
+          task.output = `Waiting for the transaction to be mined...`
+          return deployPromise
+        },
+      },
+      {
+        title: 'Deploy the MiniMeToken contract',
+        task: async (ctx, task) => {
+          let artifact = getContract('@aragon/os', 'MiniMeToken')
+          let contract = new web3.eth.Contract(artifact.abi)
+
+          const deployTx = contract.deploy({
+            data: artifact.bytecode,
+            arguments: [
+              ctx.factoryAddress,
+              ZERO_ADDR,
+              0,
+              tokenName,
+              decimalUnits,
+              symbol,
+              transferEnabled,
+            ],
+          })
+          const gas = await deployTx.estimateGas()
+
+          const deployPromise = deployTx.send({ from, gas: gas + 1e6 })
+          deployPromise
+            .on('receipt', function(receipt) {
+              ctx.tokenAddress = receipt.contractAddress
+            })
+            .on('transactionHash', transactionHash => {
+              ctx.tokenTxHash = transactionHash
+            })
+            .on('error', function(error) {
+              throw error
+            })
+
+          task.output = `Waiting for the transaction to be mined...`
+          return deployPromise
         },
       },
     ],
     listrOpts(silent, debug)
   )
-
-  return tasks
 }
 
 exports.handler = async function({
@@ -124,7 +134,17 @@ exports.handler = async function({
     debug,
   })
   return task.run().then(ctx => {
-    reporter.success(`Successfully deployed token at ${ctx.tokenAddress}`)
+    reporter.success(
+      `Successfully deployed the token at ${chalk.bold(ctx.tokenAddress)}`
+    )
+    reporter.info(`Token transaction hash: ${ctx.tokenTxHash}`)
+
+    reporter.success(
+      `Successfully deployed the token factory at ${chalk.bold(
+        ctx.factoryAddress
+      )}`
+    )
+    reporter.info(`Token factory transaction hash: ${ctx.factoryTxHash}`)
 
     process.exit()
   })
