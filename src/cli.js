@@ -16,13 +16,10 @@ const MIDDLEWARES = [
 ]
 
 // Set up commands
-const cmd = require('yargs').commandDir('./commands', {
-  visit: cmd => {
-    // Add middlewares
-    cmd.middlewares = MIDDLEWARES
-    return cmd
-  },
-}) // .strict()
+const cmd = require('yargs').commandDir('./commands')
+// .strict()
+
+cmd.middleware(MIDDLEWARES)
 
 cmd.alias('h', 'help')
 cmd.alias('v', 'version')
