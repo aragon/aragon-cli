@@ -40,7 +40,7 @@ exports.handler = async function({
   silent,
   debug,
 }) {
-  knownApps = listApps([module.appName])
+  knownApps = listApps(module ? [module.appName] : [])
   const web3 = await ensureWeb3(network)
 
   const tasks = new TaskList(
