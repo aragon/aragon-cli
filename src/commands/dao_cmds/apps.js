@@ -85,7 +85,7 @@ exports.handler = async function({
           )
 
           const events = await kernel.getPastEvents('NewAppProxy', {
-            fromBlock: 0,
+            fromBlock: await kernel.methods.getInitializationBlock().call(),
             toBlock: 'latest',
           })
 
@@ -131,16 +131,16 @@ exports.handler = async function({
     console.log(table.toString())
 
     // Print permisionless apps
-    const table2 = new Table({
+    const tableForPermissionlessApps = new Table({
       head: ['Permissionless app', 'Proxy address'].map(x => chalk.white(x)),
     })
     ctx.appsWithoutPermissions.forEach(app =>
-      table2.push([
+      tableForPermissionlessApps.push([
         printAppName(app.appId).replace('.aragonpm.eth', ''),
         app.proxyAddress,
       ])
     )
-    console.log(table2.toString())
+    console.log(tableForPermissionlessApps.toString())
 
     process.exit() // force exit, as aragonjs hangs
   })
