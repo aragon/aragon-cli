@@ -141,13 +141,20 @@ module.exports = function environmentMiddleware(argv) {
     const defaultNetworks = require('../../config/truffle.default')
 
     let { environment, apm } = argv
-    let env
+    const env = defaultEnvironments[environment || 'aragon:local']
 
-    if (!environment) {
-      env = defaultEnvironments['aragon:local']
-    } else {
-      env = defaultEnvironments[environment]
+    if (environment && !env) {
+      reporter.error(
+        `Could not find the ${environment} environment. Try using aragon:local, aragon:rinkeby or aragon:mainnet.`
+      )
+      process.exit(1)
     }
+
+    reporter.debug(
+      `Could not find 'arapp.json'. Using the default configuration to connect to ${
+        env.network
+      }.`
+    )
 
     if (apm && env.registry) {
       apm['ens-registry'] = env.registry

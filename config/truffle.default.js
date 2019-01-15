@@ -43,7 +43,7 @@ const providerForNetwork = network => () => {
 }
 module.exports = {
   networks: {
-    development: {
+    localhost: {
       host: 'localhost',
       port: 8545,
       network_id: '*',
