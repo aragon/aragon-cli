@@ -1,12 +1,12 @@
 const TaskList = require('listr')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const { getContract } = require('../../util')
-const listrOpts = require('../../helpers/listr-options')
+const { ensureWeb3 } = require('../../../helpers/web3-fallback')
+const { getContract } = require('../../../util')
+const listrOpts = require('../../../helpers/listr-options')
 const chalk = require('chalk')
 
 exports.command = 'change-controller <token-address> <new-controller>'
 
-exports.describe = 'Change the controller of a minime token'
+exports.describe = 'Change the controller of a MiniMe token'
 
 exports.builder = yargs => {
   return yargs
