@@ -23,7 +23,7 @@ module.exports = function moduleMiddleware(argv) {
         process.exit(1)
       }
 
-      // hack: we need to access the module in downstream middleware, but
+      // hack: we need to access the module in downstream middleware (environmentMiddleware), but
       // yargs does not update the `argv` param until all middleware have
       // ran, so we directly mutate the `argv` param
       // https://github.com/yargs/yargs/issues/1232

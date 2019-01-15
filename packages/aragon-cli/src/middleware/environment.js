@@ -4,7 +4,11 @@ const { getTruffleConfig } = require('../helpers/truffle-config')
 const FRAME_ENDPOINT = 'ws://localhost:1248'
 const FRAME_ORIGIN = 'AragonCLI'
 
-const configureNetwork = (argv, network) => {
+const configureNetwork = (
+  argv,
+  network,
+  truffleConfig = getTruffleConfig()
+) => {
   // Catch commands that dont require network and return
   const skipNetworkSubcommands = new Set(['version']) // 'aragon apm version'
   if (argv._.length >= 2) {
@@ -36,8 +40,6 @@ const configureNetwork = (argv, network) => {
     }
   }
 
-  const truffleConfig = getTruffleConfig()
-
   const truffleNetwork = truffleConfig.networks[network]
   if (!truffleNetwork) {
     throw new Error(
@@ -66,7 +68,7 @@ const configureNetwork = (argv, network) => {
 
 // TODO this can be cleaned up once --network is no longer supported
 module.exports = function environmentMiddleware(argv) {
-  const runsInCwd = argv['_'] === 'init'
+  const runsInCwd = argv._[0] === 'init'
   const { reporter, module, apm } = argv
   let { environment, network } = argv
 
@@ -131,5 +133,39 @@ module.exports = function environmentMiddleware(argv) {
 
     return resp
   }
+
+  // if there is no arapp.json and the command is not init default to the "global" config
+  // designed for the dao commands including dao acl
+  if (!module && !runsInCwd) {
+    const defaultEnvironments = require('../../config/environments.default')
+    const defaultNetworks = require('../../config/truffle.default')
+
+    let { environment, apm } = argv
+    const env = defaultEnvironments[environment || 'aragon:local']
+
+    if (environment && !env) {
+      reporter.error(
+        `Could not find the ${environment} environment. Try using aragon:local, aragon:rinkeby or aragon:mainnet.`
+      )
+      process.exit(1)
+    }
+
+    reporter.debug(
+      `Could not find 'arapp.json'. Using the default configuration to connect to ${
+        env.network
+      }.`
+    )
+
+    if (apm && env.registry) {
+      apm['ens-registry'] = env.registry
+    }
+
+    return {
+      apmEnsRegistry: env.registry,
+      network: configureNetwork(argv, env.network, defaultNetworks),
+      wsProvider: env.wsRPC && new Web3.providers.WebsocketProvider(env.wsRPC),
+    }
+  }
+
   return {}
 }
