@@ -5,8 +5,12 @@ const { findProjectRoot } = require('../../../../util')
 const defaultAppsRoles = require('../../../../knownRoles.json')
 
 const currentAppRoles = () => {
-  const arappPath = path.resolve(findProjectRoot(), 'arapp.json')
-  return require(arappPath).roles
+  try {
+    const arappPath = path.resolve(findProjectRoot(), 'arapp.json')
+    return require(arappPath).roles
+  } catch (_) {
+    return []
+  }
 }
 
 // TODO: add support for user apps

@@ -3,7 +3,7 @@ const isValidAragonID = dao => /[a-z0-9]+\.eth/.test(dao)
 
 module.exports = yargs => {
   return yargs.positional('dao', {
-    description: 'Address of the Kernel or AragonID)',
+    description: 'Address of the Kernel or AragonID',
     type: 'string',
     coerce: dao =>
       !isAddress(dao) && !isValidAragonID(dao)

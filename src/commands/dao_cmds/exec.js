@@ -28,8 +28,14 @@ exports.handler = async function({
   proxyAddress,
   fn,
   fnArgs,
+  wsProvider,
 }) {
   const getTransactionPath = wrapper =>
     wrapper.getTransactionPath(proxyAddress, fn, fnArgs)
-  return execHandler(dao, getTransactionPath, { reporter, apm, network })
+  return execHandler(dao, getTransactionPath, {
+    reporter,
+    apm,
+    network,
+    wsProvider,
+  })
 }
