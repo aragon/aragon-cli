@@ -36,6 +36,7 @@
   "homepage": "https://github.com/aragon/aragon-dev-cli#readme",
   "dependencies": {
     "@aragon/apm": "^2.0.2",
+    "@aragon/apps-shared-minime": "^1.0.1",
     "@aragon/aragen": "^2.0.3",
     "@aragon/os": "^4.0.0",
     "@aragon/templates-beta": "^1.1.3",

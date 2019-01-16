@@ -28,7 +28,10 @@ exports.task = async ({ web3, tokenAddress, newController, silent, debug }) => {
       {
         title: 'Changing the MiniMe token controller',
         task: async (ctx, task) => {
-          let artifact = getContract('@aragon/os', 'MiniMeToken')
+          let artifact = getContract(
+            '@aragon/apps-shared-minime',
+            'MiniMeToken'
+          )
           let contract = new web3.eth.Contract(artifact.abi, tokenAddress)
 
           const tx = contract.methods.changeController(newController)
