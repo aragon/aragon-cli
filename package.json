@@ -53,7 +53,7 @@
     "figures": "^2.0.0",
     "find-up": "^2.1.0",
     "fs-extra": "^4.0.2",
-    "ganache-core": "^2.3.2",
+    "ganache-core": "^2.2.1",
     "get-installed-path": "^4.0.8",
     "git-clone": "^0.1.0",
     "global-modules-path": "^2.3.0",
