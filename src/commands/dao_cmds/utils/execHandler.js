@@ -6,7 +6,7 @@ const listrOpts = require('../../../helpers/listr-options')
 exports.task = async function(
   dao,
   getTransactionPath,
-  { reporter, apm, web3, wsProvider, network, silent, debug }
+  { reporter, apm, web3, wsProvider, silent, debug }
 ) {
   const accounts = await web3.eth.getAccounts()
   return new TaskList(

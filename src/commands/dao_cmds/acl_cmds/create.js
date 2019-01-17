@@ -22,6 +22,8 @@ exports.handler = async function({
   entity,
   manager,
   wsProvider,
+  silent,
+  debug,
 }) {
   const method = 'createPermission'
   const params = [entity, app, role, manager]
@@ -31,5 +33,7 @@ exports.handler = async function({
     network,
     wsProvider,
     role,
+    silent,
+    debug,
   })
 }

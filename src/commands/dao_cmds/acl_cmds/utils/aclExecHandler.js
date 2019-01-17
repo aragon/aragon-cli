@@ -5,7 +5,7 @@ module.exports = async function(
   dao,
   method,
   params,
-  { reporter, apm, network, wsProvider, role }
+  { reporter, apm, network, wsProvider, role, silent, debug }
 ) {
   const getTransactionPath = async wrapper => {
     let processedParams
@@ -27,5 +27,7 @@ module.exports = async function(
     apm,
     wsProvider,
     network,
+    silent,
+    debug,
   })
 }
