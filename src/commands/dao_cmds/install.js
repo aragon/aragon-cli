@@ -126,6 +126,8 @@ exports.task = async ({
             apm: apmOptions,
             web3,
             wsProvider,
+            silent,
+            debug,
           })
         },
       },
@@ -182,15 +184,21 @@ exports.task = async ({
           return Promise.all(
             permissions.map(params => {
               const getTransactionPath = async wrapper => {
-                wrapper.getACLTransactionPath('createPermission', params)
+                return wrapper.getACLTransactionPath('createPermission', params)
               }
 
-              return execTask(dao, getTransactionPath, {
-                reporter,
-                apm: apmOptions,
-                web3,
-                wsProvider,
-              })
+              return (
+                execTask(dao, getTransactionPath, {
+                  reporter,
+                  apm: apmOptions,
+                  web3,
+                  wsProvider,
+                  silent,
+                  debug,
+                })
+                  // execTask returns a TaskList not a promise
+                  .then(tasks => tasks.run())
+              )
             })
           )
         },
