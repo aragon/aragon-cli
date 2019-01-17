@@ -15,26 +15,6 @@ const listrOpts = require('../../helpers/listr-options')
 const addressesEqual = (a, b) => a.toLowerCase() === b.toLowerCase()
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
-const setPermissionsWithoutTransactionPathing = async (
-  web3,
-  sender,
-  aclAddress,
-  permissions
-) => {
-  const acl = new web3.eth.Contract(
-    getContract('@aragon/os', 'ACL').abi,
-    aclAddress
-  )
-  return Promise.all(
-    permissions.map(([who, where, what, manager]) =>
-      acl.methods.createPermission(who, where, what, manager).send({
-        from: sender,
-        gasLimit: 1e6,
-      })
-    )
-  )
-}
-
 exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'
 
 exports.describe = 'Install an app into a DAO'
@@ -53,9 +33,9 @@ exports.builder = function(yargs) {
       default: [],
     })
     .options('set-permissions', {
-      description: 'Whether to set permissions in the app',
-      boolean: true,
-      default: true,
+      description:
+        'Whether to set permissions in the app. Set it to "open" to allow ANY_ENTITY on all roles.',
+      choices: ['open'],
     })
 }
 
@@ -146,6 +126,8 @@ exports.task = async ({
             apm: apmOptions,
             web3,
             wsProvider,
+            silent,
+            debug,
           })
         },
       },
@@ -180,10 +162,8 @@ exports.task = async ({
       },
       {
         title: 'Set permissions',
-        enabled: ctx => setPermissions && ctx.appAddress,
+        enabled: ctx => setPermissions === 'open' && ctx.appAddress,
         task: async (ctx, task) => {
-          const aclAddress = await kernel.methods.acl().call()
-
           if (!ctx.repo.roles || ctx.repo.roles.length === 0) {
             throw new Error(
               'You have no permissions defined in your arapp.json\nThis is required for your app to properly show up.'
@@ -201,12 +181,25 @@ exports.task = async ({
             ctx.accounts = await web3.eth.getAccounts()
           }
 
-          // TODO: setPermissions should use ACL functions with transaction pathing
-          return setPermissionsWithoutTransactionPathing(
-            web3,
-            ctx.accounts[0],
-            aclAddress,
-            permissions
+          return Promise.all(
+            permissions.map(params => {
+              const getTransactionPath = async wrapper => {
+                return wrapper.getACLTransactionPath('createPermission', params)
+              }
+
+              return (
+                execTask(dao, getTransactionPath, {
+                  reporter,
+                  apm: apmOptions,
+                  web3,
+                  wsProvider,
+                  silent,
+                  debug,
+                })
+                  // execTask returns a TaskList not a promise
+                  .then(tasks => tasks.run())
+              )
+            })
           )
         },
       },

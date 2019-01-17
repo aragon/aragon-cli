@@ -131,16 +131,18 @@ exports.handler = async function({
     console.log(table.toString())
 
     // Print permisionless apps
-    const tableForPermissionlessApps = new Table({
-      head: ['Permissionless app', 'Proxy address'].map(x => chalk.white(x)),
-    })
-    ctx.appsWithoutPermissions.forEach(app =>
-      tableForPermissionlessApps.push([
-        printAppName(app.appId).replace('.aragonpm.eth', ''),
-        app.proxyAddress,
-      ])
-    )
-    console.log(tableForPermissionlessApps.toString())
+    if (ctx.appsWithoutPermissions) {
+      const tableForPermissionlessApps = new Table({
+        head: ['Permissionless app', 'Proxy address'].map(x => chalk.white(x)),
+      })
+      ctx.appsWithoutPermissions.forEach(app =>
+        tableForPermissionlessApps.push([
+          printAppName(app.appId).replace('.aragonpm.eth', ''),
+          app.proxyAddress,
+        ])
+      )
+      console.log(tableForPermissionlessApps.toString())
+    }
 
     process.exit() // force exit, as aragonjs hangs
   })
