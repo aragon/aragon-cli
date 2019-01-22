@@ -166,7 +166,6 @@ exports.handler = function({
         title: 'Publish app to APM',
         task: async ctx => {
           const publishParams = {
-            alreadyCompiled: true,
             provider: 'ipfs',
             files,
             ignore: ['node_modules'],
@@ -180,7 +179,6 @@ exports.handler = function({
             web3: ctx.web3,
             apm: apmOptions,
             bump: 'major',
-            getRepo: true,
             http,
             httpServedFrom,
           }
