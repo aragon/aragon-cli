@@ -330,7 +330,12 @@ exports.task = function({
         task: async ctx => {
           let isValid = true
           try {
-            ctx.initialRepo = await apm.getLatestVersion(module.appName)
+            const ipfsTimeout = 1000 * 60 * 5 // 5min
+            reporter.info('Fetching latest version from aragonPM...')
+            ctx.initialRepo = await apm.getLatestVersion(
+              module.appName,
+              ipfsTimeout
+            )
             ctx.version = semver.valid(bump)
               ? semver.valid(bump)
               : semver.inc(ctx.initialRepo.version, bump)
