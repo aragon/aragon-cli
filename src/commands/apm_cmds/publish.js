@@ -320,7 +320,6 @@ exports.task = function({
 
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
-  let repo = { version: '0.0.0' }
 
   return new TaskList(
     [
@@ -334,39 +333,44 @@ exports.task = function({
         task: async ctx => {
           let isValid = true
           try {
-            repo = await apm.getLatestVersion(module.appName)
+            ctx.initialRepo = await apm.getLatestVersion(module.appName)
             ctx.version = semver.valid(bump)
               ? semver.valid(bump)
-              : semver.inc(repo.version, bump)
-
-            const getMajor = version => version.split('.')[0]
-            ctx.isMajor = getMajor(repo.version) !== getMajor(ctx.version)
+              : semver.inc(ctx.initialRepo.version, bump)
 
             isValid = await apm.isValidBump(
               module.appName,
-              repo.version,
+              ctx.initialRepo.version,
               ctx.version
             )
+            if (!isValid) {
+              throw new Error(
+                "Version bump is not valid, you have to respect APM's versioning policy. Check the version upgrade rules in the documentation: https://hack.aragon.org/docs/apm-ref.html#version-upgrade-rules"
+              )
+            }
+
+            const getMajor = version => version.split('.')[0]
+            ctx.shouldDeployContract =
+              getMajor(ctx.initialRepo.version) !== getMajor(ctx.version)
           } catch (e) {
             if (e.message.indexOf('Invalid content URI') === 0) {
               return
             }
+
+            // Repo doesn't exist yet, deploy the first version
             ctx.version = semver.valid(bump)
               ? semver.valid(bump)
-              : semver.inc(repo.version, bump)
+              : semver.inc('0.0.0', bump) // All valid initial versions are a version bump from 0.0.0
+
             if (apm.validInitialVersions.indexOf(ctx.version) === -1) {
               throw new Error(
-                'Invalid initial version, it can only be 0.0.1, 0.1.0 or 1.0.0.'
+                `Invalid initial version (${
+                  ctx.version
+                }). It can only be 0.0.1, 0.1.0 or 1.0.0.`
               )
-            } else {
-              ctx.isMajor = true // consider first version as major
             }
-          }
 
-          if (!isValid) {
-            throw new Error(
-              'Version bump is not valid, you have to respect APM bumps policy. Check version upgrade rules in documentation https://hack.aragon.org/docs/aragonos-ref.html#631-version-upgrade-rules'
-            )
+            ctx.shouldDeployContract = true // assume first version should deploy a contract
           }
         },
       },
@@ -393,7 +397,7 @@ exports.task = function({
         enabled: ctx =>
           !onlyContent &&
           ((contract && !web3Utils.isAddress(contract)) ||
-            (!contract && ctx.isMajor && !reuse)),
+            (!contract && ctx.shouldDeployContract && !reuse)),
       },
       {
         title: 'Determine contract address for version',
@@ -517,10 +521,12 @@ exports.task = function({
               await copyCurrentApplicationArtifacts(
                 dir,
                 apm,
-                ctx.repo,
+                ctx.initialRepo,
                 ctx.version
               )
-              return task.skip(`Using artifacts from v${ctx.repo.version}`)
+              return task.skip(
+                `Using artifacts from v${ctx.initialRepo.version}`
+              )
             } catch (e) {
               return taskInput(
                 "Couldn't fetch existing artifact, generate now? [y]es/[a]bort",
