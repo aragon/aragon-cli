@@ -8,7 +8,8 @@ const knownApps = ['voting', 'token-manager', 'vault', 'finance']
 
 const getAppRoles = app => {
   const arapp = require(`${getAppNPMPackage(app)}/arapp`)
-  return arapp.roles.map(({ name, id }) => ({ name, id }))
+  const roles = arapp.roles || []
+  return roles.map(({ name, id }) => ({ name, id }))
 }
 
 const flatten = list =>
