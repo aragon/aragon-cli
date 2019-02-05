@@ -16,7 +16,7 @@ exports.command = 'dao <command>'
 exports.describe = 'Manage your Aragon DAO'
 
 exports.builder = function(yargs) {
-  if (process.argv[3] !== 'new') {
+  if (process.argv[3] !== 'new' && process.argv[3] !== 'act') {
     yargs = daoArg(yargs)
   }
 
