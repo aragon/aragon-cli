@@ -144,9 +144,11 @@ async function generateApplicationArtifact(
   // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
   artifact.functions = await extract(path.resolve(cwd, artifact.path))
 
-  artifact.roles = artifact.roles.map(role =>
-    Object.assign(role, { bytes: '0x' + keccak256(role.id) })
-  )
+  if (artifact.roles) {
+    artifact.roles = artifact.roles.map(role =>
+      Object.assign(role, { bytes: '0x' + keccak256(role.id) })
+    )
+  }
 
   // Save artifact
   await writeJson(path.resolve(outputPath, 'artifact.json'), artifact, {
