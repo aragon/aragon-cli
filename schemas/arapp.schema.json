@@ -13,8 +13,7 @@
       "type": "array",
       "items": {
         "$ref": "#/definitions/role"
-      },
-      "minItems": 1
+      }
     },
     "environments": {
       "description": "An object containing deploy environment configurations.",
@@ -77,8 +76,6 @@
     }
   },
   "required": [
-    "path",
-    "roles",
     "environments"
   ]
 }

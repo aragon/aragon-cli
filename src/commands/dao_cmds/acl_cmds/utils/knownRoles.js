@@ -7,7 +7,7 @@ const defaultAppsRoles = require('../../../../knownRoles.json')
 const currentAppRoles = () => {
   try {
     const arappPath = path.resolve(findProjectRoot(), 'arapp.json')
-    return require(arappPath).roles
+    return require(arappPath).roles || []
   } catch (_) {
     return []
   }

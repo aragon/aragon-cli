@@ -207,7 +207,9 @@ exports.handler = function({
       {
         title: 'Create DAO',
         task: ctx => {
-          const roles = ctx.repo.roles.map(role => role.bytes)
+          const roles = ctx.repo.roles || []
+          const rolesBytes = roles.map(role => role.bytes)
+
           let fnArgs
 
           if (ctx.contractInstance) {
@@ -226,7 +228,7 @@ exports.handler = function({
               ctx.notInitialized = true
             }
 
-            fnArgs = [ctx.repo.appId, roles, ctx.accounts[0], initPayload]
+            fnArgs = [ctx.repo.appId, rolesBytes, ctx.accounts[0], initPayload]
           }
 
           const newDAOParams = {
