@@ -66,8 +66,6 @@ Note: We should write tests as we fix these to ensure no regressions!
     - with features needed by flock/nest teams
     - together with the community, by having this document public and by having a "sprint/milestone" every 2 weeks which people can "influence" during the all devs call or directly in GitHub ([aragon-cli#milestones](https://github.com/aragon/aragon-cli/milestones?direction=asc&sort=due_date))
 
-    Note: These documents should be moved to GitHub
-
 [aragonCLI specification](https://www.notion.so/0eda0bfd145b4d15b6aaa874aadf6d97)
 
 [JavaScript project practices](https://www.notion.so/ae5c9f94e9e3432fb31ad9d997962f56)
