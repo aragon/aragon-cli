@@ -7,6 +7,7 @@ const { getContract } = require('../../util')
 const getRepoTask = require('./utils/getRepoTask')
 const listrOpts = require('../../helpers/listr-options')
 const startIPFS = require('../ipfs')
+const { getRecommendedGasLimit } = require('../../util')
 
 exports.BARE_KIT = defaultAPMName('bare-kit')
 exports.BARE_INSTANCE_FUNCTION = 'newBareInstance'
@@ -99,10 +100,11 @@ exports.task = async ({
           const kit =
             kitInstance || new web3.eth.Contract(abi, ctx.repo.contractAddress)
           const newInstanceTx = kit.methods[fn](...fnArgs)
+          const estimatedGas = await newInstanceTx.estimateGas()
 
           const { events } = await newInstanceTx.send({
             from: ctx.accounts[0],
-            gas: 15e6,
+            gas: await getRecommendedGasLimit(web3, estimatedGas),
           })
           ctx.daoAddress = events[deployEvent].returnValues.dao
         },
