@@ -8,6 +8,7 @@ const { ensureWeb3 } = require('../helpers/web3-fallback')
 const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
 const DEFAULT_GAS_PRICE = require('../../package.json').aragon.defaultGasPrice
 const listrOpts = require('../helpers/listr-options')
+const { getRecommendedGasLimit } = require('../util')
 
 exports.command = 'deploy [contract]'
 
@@ -104,7 +105,10 @@ exports.task = async ({
           const accounts = await web3.eth.getAccounts()
 
           const deployTx = contract.deploy({ arguments: processedInit })
-          const gas = await deployTx.estimateGas()
+          const gas = await getRecommendedGasLimit(
+            web3,
+            await deployTx.estimateGas()
+          )
 
           const args = {
             from: accounts[0],
