@@ -111,14 +111,11 @@ const getRecommendedGasLimit = async (
   const blockGasLimit = latestBlock.gasLimit
 
   const upperGasLimit = Math.round(blockGasLimit * LAST_BLOCK_GAS_LIMIT_FACTOR)
-  // if estimatedGas is above upperGasLimit, dont modify it
   if (estimatedGas > upperGasLimit) return estimatedGas // TODO print a warning?
 
   const bufferedGasLimit = Math.round(estimatedGas * gasFuzzFactor)
 
-  // if bufferedGasLimit is below blockGasLimit, use bufferedGasLimit
   if (bufferedGasLimit < upperGasLimit) return bufferedGasLimit
-  // otherwise use blockGasLimit
   return upperGasLimit
 }
 

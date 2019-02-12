@@ -1,6 +1,7 @@
 const APM = require('@aragon/apm')
 const ACL = require('../../acl')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const { getRecommendedGasLimit } = require('../../util')
 
 exports.command = 'grant [grantees..]'
 exports.describe =
@@ -60,6 +61,10 @@ exports.handler = async function({
       .defaultGasPrice
     transaction.from = from
     transaction.gasPrice = network.gasPrice || DEFAULT_GAS_PRICE
+    transaction.gas = await getRecommendedGasLimit(
+      web3,
+      await transaction.estimateGas()
+    )
 
     try {
       const receipt = await web3.eth.sendTransaction(transaction)
