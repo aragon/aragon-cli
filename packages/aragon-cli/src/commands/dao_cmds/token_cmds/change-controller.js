@@ -3,6 +3,7 @@ const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 const { getContract } = require('../../../util')
 const listrOpts = require('../../../helpers/listr-options')
 const chalk = require('chalk')
+const { getRecommendedGasLimit } = require('../../../util')
 
 exports.command = 'change-controller <token-address> <new-controller>'
 
@@ -36,7 +37,10 @@ exports.task = async ({ web3, tokenAddress, newController, silent, debug }) => {
 
           const tx = contract.methods.changeController(newController)
           // this fails if from is not passed
-          const gas = await tx.estimateGas({ from })
+          const gas = await getRecommendedGasLimit(
+            web3,
+            await tx.estimateGas({ from })
+          )
 
           const sendPromise = tx.send({ from, gas })
           sendPromise

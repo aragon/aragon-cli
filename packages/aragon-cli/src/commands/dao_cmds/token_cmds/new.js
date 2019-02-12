@@ -3,6 +3,7 @@ const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 const { getContract } = require('../../../util')
 const listrOpts = require('../../../helpers/listr-options')
 const chalk = require('chalk')
+const { getRecommendedGasLimit } = require('../../../util')
 
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
@@ -54,9 +55,13 @@ exports.task = async ({
           let contract = new web3.eth.Contract(artifact.abi)
 
           const deployTx = contract.deploy({ data: artifact.bytecode })
-          const gas = await deployTx.estimateGas()
+          const estimatedGas = await deployTx.estimateGas()
 
-          const deployPromise = deployTx.send({ from, gas })
+          const deployPromise = deployTx.send({
+            from,
+            gas: await getRecommendedGasLimit(web3, estimatedGas),
+          })
+
           deployPromise
             .on('receipt', function(receipt) {
               ctx.factoryAddress = receipt.contractAddress
@@ -93,9 +98,13 @@ exports.task = async ({
               transferEnabled,
             ],
           })
-          const gas = await deployTx.estimateGas()
+          const estimatedGas = await deployTx.estimateGas()
 
-          const deployPromise = deployTx.send({ from, gas: gas + 1e6 })
+          const deployPromise = deployTx.send({
+            from,
+            gas: await getRecommendedGasLimit(web3, estimatedGas),
+          })
+
           deployPromise
             .on('receipt', function(receipt) {
               ctx.tokenAddress = receipt.contractAddress

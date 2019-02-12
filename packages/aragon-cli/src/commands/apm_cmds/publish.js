@@ -20,6 +20,7 @@ const deploy = require('../deploy')
 const startIPFS = require('../ipfs')
 const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 const listrOpts = require('../../helpers/listr-options')
+const { getRecommendedGasLimit } = require('../../util')
 
 const DEFAULT_GAS_PRICE = require('../../../package.json').aragon
   .defaultGasPrice
@@ -577,6 +578,10 @@ exports.task = function({
 
             transaction.from = from
             transaction.gasPrice = network.gasPrice || DEFAULT_GAS_PRICE
+            transaction.gas = await getRecommendedGasLimit(
+              web3,
+              await transaction.estimateGas()
+            )
 
             ctx.receipt = await web3.eth.sendTransaction(transaction)
           } catch (e) {

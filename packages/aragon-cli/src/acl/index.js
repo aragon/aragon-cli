@@ -1,4 +1,5 @@
 const DEFAULT_GAS_PRICE = require('../../package.json').aragon.defaultGasPrice
+const { getRecommendedGasLimit } = require('../util')
 
 module.exports = ({ web3, network }) => {
   const getACL = async repoAddr => {
@@ -34,10 +35,12 @@ module.exports = ({ web3, network }) => {
       const roleId = await getRoleId(repoAddr)
 
       const call = acl.methods.grantPermission(grantee, repoAddr, roleId)
+      const estimatedGas = call.estimatedGas()
+
       return {
         to: acl.options.address,
         data: call.encodeABI(),
-        gas: web3.utils.toHex(5e5),
+        gas: await getRecommendedGasLimit(web3, estimatedGas),
         gasPrice: network.gasPrice || DEFAULT_GAS_PRICE,
       }
     },

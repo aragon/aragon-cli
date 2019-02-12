@@ -36,14 +36,10 @@ const isPortTaken = async (port, opts) => {
     socket.on('error', onError)
     socket.on('timeout', onError)
 
-    socket.connect(
-      port,
-      opts.host,
-      () => {
-        socket.end()
-        resolve(true)
-      }
-    )
+    socket.connect(port, opts.host, () => {
+      socket.end()
+      resolve(true)
+    })
   })
 }
 
@@ -93,6 +89,35 @@ const getContract = (pkg, contract) => {
 
 const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
 const NO_MANAGER = '0x0000000000000000000000000000000000000000'
+const DEFAULT_GAS_FUZZ_FACTOR = 1.5
+const LAST_BLOCK_GAS_LIMIT_FACTOR = 0.95
+
+/**
+ *
+ * Calculate the recommended gas limit
+ *
+ * @param {*} web3 eth provider to get the last block gas limit
+ * @param {number} estimatedGas estimated gas
+ * @param {number} gasFuzzFactor defaults to 1.5
+ * @returns {number} gasLimit
+ */
+const getRecommendedGasLimit = async (
+  web3,
+  estimatedGas,
+  gasFuzzFactor = DEFAULT_GAS_FUZZ_FACTOR
+) => {
+  // TODO print these values if --debug is passed
+  const latestBlock = await web3.eth.getBlock('latest')
+  const blockGasLimit = latestBlock.gasLimit
+
+  const upperGasLimit = Math.round(blockGasLimit * LAST_BLOCK_GAS_LIMIT_FACTOR)
+  if (estimatedGas > upperGasLimit) return estimatedGas // TODO print a warning?
+
+  const bufferedGasLimit = Math.round(estimatedGas * gasFuzzFactor)
+
+  if (bufferedGasLimit < upperGasLimit) return bufferedGasLimit
+  return upperGasLimit
+}
 
 module.exports = {
   findProjectRoot,
@@ -103,4 +128,5 @@ module.exports = {
   getContract,
   ANY_ENTITY,
   NO_MANAGER,
+  getRecommendedGasLimit,
 }
