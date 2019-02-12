@@ -8,9 +8,9 @@ E.g.: the [`MiniMeToken`](https://github.com/aragon/aragon-apps/blob/master/shar
 
 Considering the above-mentioned behavior, the CLI should calculate the recommended gas limit as follows:
 - `recommendedGas = estimatedGas`, if `estimatedGas > upperGasLimit` or
-- `recommendedGas = estimatedGas * LAST_BLOCK_GAS_LIMIT_FACTOR` with a maximum value of `upperGasLimit`
+- `recommendedGas = estimatedGas * DEFAULT_GAS_FUZZ_FACTOR` with a maximum value of `upperGasLimit`
 
-Where `upperGasLimit = latestBlock.gasLimit * LAST_BLOCK_GAS_LIMIT_FACTOR`, `LAST_BLOCK_GAS_LIMIT_FACTOR = 1.5` and `LAST_BLOCK_GAS_LIMIT_FACTOR = 0.95`.
+Where `upperGasLimit = latestBlock.gasLimit * LAST_BLOCK_GAS_LIMIT_FACTOR`, `DEFAULT_GAS_FUZZ_FACTOR = 1.5` and `LAST_BLOCK_GAS_LIMIT_FACTOR = 0.95`.
 
 See `src/util.js#getRecommendedGasLimit`. (This should probably be its own library)
 
