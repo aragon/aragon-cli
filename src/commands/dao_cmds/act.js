@@ -4,10 +4,11 @@ const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const ABI = require('web3-eth-abi')
 
 const EXECUTE_FUNCTION_NAME = 'execute'
+const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
 exports.command = 'act <agent-address> <target> <signature> [call-args..]'
 
-exports.describe = 'Executes a call from the Agent app'
+exports.describe = 'Executes an action from the Agent app'
 
 exports.builder = function(yargs) {
   return yargs
@@ -59,7 +60,12 @@ exports.handler = async function({
   const web3 = await ensureWeb3(network)
   const dao = await getAppKernel(web3, agentAddress)
 
-  // TODO: assert dao != 0x00...00
+  if (dao === ZERO_ADDR) {
+    throw new Error(
+      'Invalid Agent app address, cannot find Kernel reference in contract'
+    )
+  }
+
   const fnArgs = [target, 0, encodeCalldata(signature, callArgs)]
 
   const getTransactionPath = wrapper =>
