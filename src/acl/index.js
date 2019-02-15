@@ -35,7 +35,7 @@ module.exports = ({ web3, network }) => {
       const roleId = await getRoleId(repoAddr)
 
       const call = acl.methods.grantPermission(grantee, repoAddr, roleId)
-      const estimatedGas = call.estimatedGas()
+      const estimatedGas = call.estimateGas()
 
       return {
         to: acl.options.address,
