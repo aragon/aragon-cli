@@ -12,8 +12,8 @@ export async function prepareTemplate(basename, appName) {
   defaultEnv.appName = appName
   Object.assign(arapp.environments.default, defaultEnv)
 
-  stagingEnv.appName = stagingEnv.appName.replace(/^app/, basename)
-  productionEnv.appName = productionEnv.appName.replace(/^app/, basename)
+  stagingEnv.appName = stagingEnv.appName.replace(/^app/, appName)
+  productionEnv.appName = productionEnv.appName.replace(/^app/, appName)
 
   Object.assign(arapp.environments.staging, stagingEnv)
   Object.assign(arapp.environments.production, productionEnv)
