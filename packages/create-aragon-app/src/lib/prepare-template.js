@@ -5,25 +5,18 @@ export async function prepareTemplate(basename, appName) {
   const arappPath = path.resolve(basename, 'arapp.json')
   const arapp = await fs.readJson(arappPath)
 
-  // TODO remove once the old arapp.json is no longer supported
-  if (!arapp.environments) {
-    arapp.environments = {}
-  }
+  const defaultEnv = arapp.environments.default
+  const stagingEnv = arapp.environments.staging
+  const productionEnv = arapp.environments.production
 
-  const props = {
-    network: 'development',
-    appName: appName,
-  }
+  defaultEnv.appName = appName
+  Object.assign(arapp.environments.default, defaultEnv)
 
-  if (arapp.environments.default) {
-    Object.assign(arapp.environments.default, props)
-  } else {
-    arapp.environments.default = props
-  }
+  stagingEnv.appName = stagingEnv.appName.replace(/^app/, appName)
+  productionEnv.appName = productionEnv.appName.replace(/^app/, appName)
 
-  // remove old arapp.json props
-  delete arapp.appName
-  delete arapp.version
+  Object.assign(arapp.environments.staging, stagingEnv)
+  Object.assign(arapp.environments.production, productionEnv)
 
   const gitFolderPath = path.resolve(basename, '.git')
   const licensePath = path.resolve(basename, 'LICENSE')
