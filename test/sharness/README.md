@@ -42,7 +42,7 @@ Please do not change anything in the "lib/sharness" directory.
 
 ## Writing Tests
 
-Start with the [sharnes API](https://github.com/chriscool/sharness/blob/master/API.md) and then please have a look at existing tests and try to follow their example.
+Start with the [sharness API](https://github.com/chriscool/sharness/blob/master/API.md) and then please have a look at existing tests and try to follow their example.
 
 It should be possible to put most of the code inside `test_expect_success`,
 or sometimes `test_expect_failure`, blocks, and to chain all the commands
