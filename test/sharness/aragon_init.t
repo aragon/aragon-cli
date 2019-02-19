@@ -12,12 +12,13 @@ test_expect_success "'aragon init' succeeds" '
 
 # test arapp.json have app name updated
 test_expect_success "arapp.json appName updated" '
-  grep "\"appName\": \""$APP_NAME".*.aragonpm.eth" "$APP_NAME"/arapp.json 
+  echo 3 > result
+  grep "\"appName\": \""$APP_NAME".*.aragonpm.eth" "$APP_NAME"/arapp.json -c > matchs
+  test_cmp result matchs
 '
 
 #test if project already exists
 test_expect_success "project already exists" '
-  mkdir "$APP_NAME" &&
   test_must_fail aragon init "$APP_NAME" > output.txt &&
   grep "Project with name "$APP_NAME" already exists" output.txt
 '
