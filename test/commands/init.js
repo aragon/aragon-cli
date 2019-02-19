@@ -27,14 +27,24 @@ test('prepare project template', async t => {
   const arappPath = `${projectPath}/arapp.json`
   const packageJsonPath = `${projectPath}/package.json`
   const licensePath = `${projectPath}/LICENSE`
-  const appName = 'TestApp'
+  const appName = 'aragon-app.aragonpm.eth'
 
   await fs.ensureDir(repoPath)
   await fs.ensureFile(arappPath)
   await fs.ensureFile(packageJsonPath)
   await fs.ensureFile(licensePath)
   await fs.writeJson(arappPath, {
-    appName: 'boilerplate-placeholder',
+    environments: {
+      default: {
+        appName: 'app.aragonpm.eth',
+      },
+      staging: {
+        appName: 'app.open.aragonpm.eth',
+      },
+      production: {
+        appName: 'app.open.aragonpm.eth',
+      },
+    },
   })
   await fs.writeJson(packageJsonPath, {
     license: 'MIT',
@@ -48,5 +58,7 @@ test('prepare project template', async t => {
   t.falsy(await fs.pathExists(repoPath))
   t.is(undefined, packageJson.license)
   t.falsy(fs.pathExistsSync(licensePath))
-  t.is(appName, project.environments.default.appName)
+  t.is(`${appName}`, project.environments.default.appName)
+  t.is(`${appName}.open.aragonpm.eth`, project.environments.staging.appName)
+  t.is(`${appName}.open.aragonpm.eth`, project.environments.production.appName)
 })

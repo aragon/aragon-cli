@@ -116,7 +116,7 @@
       "@babel/register"
     ],
     "files": [
-      "test/**/*.js"
+      "test/commands/**/*.js"
     ]
   },
   "aragon": {
