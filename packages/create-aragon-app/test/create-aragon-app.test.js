@@ -3,6 +3,8 @@ import fs from 'fs-extra'
 
 import { checkProjectExists, prepareTemplate } from '../src/lib'
 
+import defaultAPMName from '../src/helpers/default-apm'
+
 const projectPath = './.tmp/aragon-app'
 
 test.beforeEach(t => {
@@ -27,7 +29,8 @@ test('prepare project template', async t => {
   const arappPath = `${projectPath}/arapp.json`
   const packageJsonPath = `${projectPath}/package.json`
   const licensePath = `${projectPath}/LICENSE`
-  const appName = 'aragon-app.aragonpm.eth'
+  const appName = defaultAPMName('TestApp')
+  const basename = appName.split('.')[0]
 
   await fs.ensureDir(repoPath)
   await fs.ensureFile(arappPath)
@@ -59,6 +62,6 @@ test('prepare project template', async t => {
   t.is(undefined, packageJson.license)
   t.falsy(fs.pathExistsSync(licensePath))
   t.is(`${appName}`, project.environments.default.appName)
-  t.is(`${appName}.open.aragonpm.eth`, project.environments.staging.appName)
-  t.is(`${appName}.open.aragonpm.eth`, project.environments.production.appName)
+  t.is(`${basename}.open.aragonpm.eth`, project.environments.staging.appName)
+  t.is(`${basename}.open.aragonpm.eth`, project.environments.production.appName)
 })

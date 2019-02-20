@@ -1,8 +1,9 @@
 import path from 'path'
 import fs from 'fs-extra'
 
-export async function prepareTemplate(basename, appName) {
-  const arappPath = path.resolve(basename, 'arapp.json')
+export async function prepareTemplate(dir, appName) {
+  const basename = appName.split('.')[0]
+  const arappPath = path.resolve(dir, 'arapp.json')
   const arapp = await fs.readJson(arappPath)
 
   const defaultEnv = arapp.environments.default
@@ -10,18 +11,17 @@ export async function prepareTemplate(basename, appName) {
   const productionEnv = arapp.environments.production
 
   defaultEnv.appName = appName
+  stagingEnv.appName = stagingEnv.appName.replace(/^app/, basename)
+  productionEnv.appName = productionEnv.appName.replace(/^app/, basename)
+
   Object.assign(arapp.environments.default, defaultEnv)
-
-  stagingEnv.appName = stagingEnv.appName.replace(/^app/, appName)
-  productionEnv.appName = productionEnv.appName.replace(/^app/, appName)
-
   Object.assign(arapp.environments.staging, stagingEnv)
   Object.assign(arapp.environments.production, productionEnv)
 
-  const gitFolderPath = path.resolve(basename, '.git')
-  const licensePath = path.resolve(basename, 'LICENSE')
+  const gitFolderPath = path.resolve(dir, '.git')
+  const licensePath = path.resolve(dir, 'LICENSE')
 
-  const packageJsonPath = path.resolve(basename, 'package.json')
+  const packageJsonPath = path.resolve(dir, 'package.json')
   const packageJson = await fs.readJson(packageJsonPath)
   delete packageJson.license
 
