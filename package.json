@@ -11,7 +11,7 @@
     "build": "npm run extract-roles && babel -d dist src --copy-files",
     "prepare": "npm run build",
     "test": "ava",
-    "lint": "eslint src test && documentation lint src test",
+    "lint": "eslint src test/commands && documentation lint src test/commands",
     "extract-roles": "node scripts/extract-roles"
   },
   "repository": {
@@ -116,7 +116,7 @@
       "@babel/register"
     ],
     "files": [
-      "test/**/*.js"
+      "test/commands/**/*.js"
     ]
   },
   "aragon": {
