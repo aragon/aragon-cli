@@ -35,3 +35,7 @@ test_fsh() {
 test_cmp() {
 	diff -q "$@" >/dev/null || test_fsh diff -u "$@"
 }
+
+test_get_pgid_from_pid() {
+  awk '{print $5}' < /proc/$1/stat
+}
