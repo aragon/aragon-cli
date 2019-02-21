@@ -17,7 +17,7 @@ exports.builder = function(yargs) {
       type: 'string',
     })
     .positional('target', {
-      description: 'Function to be executed',
+      description: 'Address where the action is being executed',
       type: 'string',
     })
     .positional('signature', {
