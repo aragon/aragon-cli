@@ -3,6 +3,8 @@ import fs from 'fs-extra'
 
 import { checkProjectExists, prepareTemplate } from '../../src/lib/init'
 
+import defaultAPMName from '../../src/helpers/default-apm'
+
 const projectPath = './.tmp/aragon-app'
 
 test.beforeEach(t => {
@@ -27,14 +29,25 @@ test('prepare project template', async t => {
   const arappPath = `${projectPath}/arapp.json`
   const packageJsonPath = `${projectPath}/package.json`
   const licensePath = `${projectPath}/LICENSE`
-  const appName = 'TestApp'
+  const appName = defaultAPMName('TestApp')
+  const basename = appName.split('.')[0]
 
   await fs.ensureDir(repoPath)
   await fs.ensureFile(arappPath)
   await fs.ensureFile(packageJsonPath)
   await fs.ensureFile(licensePath)
   await fs.writeJson(arappPath, {
-    appName: 'boilerplate-placeholder',
+    environments: {
+      default: {
+        appName: 'app.aragonpm.eth',
+      },
+      staging: {
+        appName: 'app.open.aragonpm.eth',
+      },
+      production: {
+        appName: 'app.open.aragonpm.eth',
+      },
+    },
   })
   await fs.writeJson(packageJsonPath, {
     license: 'MIT',
@@ -48,5 +61,7 @@ test('prepare project template', async t => {
   t.falsy(await fs.pathExists(repoPath))
   t.is(undefined, packageJson.license)
   t.falsy(fs.pathExistsSync(licensePath))
-  t.is(appName, project.environments.default.appName)
+  t.is(`${appName}`, project.environments.default.appName)
+  t.is(`${basename}.open.aragonpm.eth`, project.environments.staging.appName)
+  t.is(`${basename}.open.aragonpm.eth`, project.environments.production.appName)
 })

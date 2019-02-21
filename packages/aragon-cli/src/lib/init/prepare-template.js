@@ -1,34 +1,27 @@
 import path from 'path'
 import fs from 'fs-extra'
 
-export async function prepareTemplate(basename, appName) {
-  const arappPath = path.resolve(basename, 'arapp.json')
+export async function prepareTemplate(dir, appName) {
+  const basename = appName.split('.')[0]
+  const arappPath = path.resolve(dir, 'arapp.json')
   const arapp = await fs.readJson(arappPath)
 
-  // TODO remove once the old arapp.json is no longer supported
-  if (!arapp.environments) {
-    arapp.environments = {}
-  }
+  const defaultEnv = arapp.environments.default
+  const stagingEnv = arapp.environments.staging
+  const productionEnv = arapp.environments.production
 
-  const props = {
-    network: 'development',
-    appName: appName,
-  }
+  defaultEnv.appName = appName
+  stagingEnv.appName = stagingEnv.appName.replace(/^app/, basename)
+  productionEnv.appName = productionEnv.appName.replace(/^app/, basename)
 
-  if (arapp.environments.default) {
-    Object.assign(arapp.environments.default, props)
-  } else {
-    arapp.environments.default = props
-  }
+  Object.assign(arapp.environments.default, defaultEnv)
+  Object.assign(arapp.environments.staging, stagingEnv)
+  Object.assign(arapp.environments.production, productionEnv)
 
-  // remove old arapp.json props
-  delete arapp.appName
-  delete arapp.version
+  const gitFolderPath = path.resolve(dir, '.git')
+  const licensePath = path.resolve(dir, 'LICENSE')
 
-  const gitFolderPath = path.resolve(basename, '.git')
-  const licensePath = path.resolve(basename, 'LICENSE')
-
-  const packageJsonPath = path.resolve(basename, 'package.json')
+  const packageJsonPath = path.resolve(dir, 'package.json')
   const packageJson = await fs.readJson(packageJsonPath)
   delete packageJson.license
 
