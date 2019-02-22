@@ -11,7 +11,7 @@
     "build": "npm run extract-roles && babel -d dist src --copy-files",
     "prepare": "npm run build",
     "test": "ava",
-    "lint": "eslint src test/commands && documentation lint src test/commands",
+    "lint": "eslint src test/commands && documentation lint src",
     "extract-roles": "node scripts/extract-roles"
   },
   "repository": {
@@ -40,7 +40,7 @@
     "@aragon/aragen": "^2.0.3",
     "@aragon/os": "^4.0.0",
     "@aragon/templates-beta": "^1.1.3",
-    "@aragon/wrapper": "^3.0.0-beta.3",
+    "@aragon/wrapper": "^3.0.0-beta.4",
     "@babel/polyfill": "^7.0.0",
     "ajv": "^6.6.2",
     "bignumber.js": "^7.1.0",
