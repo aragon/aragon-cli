@@ -9,7 +9,7 @@ const chalk = require('chalk')
 const getRepoTask = require('./utils/getRepoTask')
 const encodeInitPayload = require('./utils/encodeInitPayload')
 const { getContract, ANY_ENTITY, NO_MANAGER } = require('../../util')
-const kernelABI = require('@aragon/wrapper/abi/aragon/Kernel')
+const kernelABI = require('@aragon/wrapper/artifacts/aragon/Kernel')
 const listrOpts = require('../../helpers/listr-options')
 
 const addressesEqual = (a, b) => a.toLowerCase() === b.toLowerCase()
