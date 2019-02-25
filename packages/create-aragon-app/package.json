@@ -9,7 +9,7 @@
   "scripts": {
     "build": "babel -d dist src --copy-files",
     "test": "ava",
-    "lint": "eslint src test && documentation lint src test"
+    "lint": "eslint src test && documentation lint src"
   },
   "repository": {
     "type": "git",
