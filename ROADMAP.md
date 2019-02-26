@@ -8,7 +8,7 @@
 
 🚧 Finish the `aragon start` command [here](https://github.com/aragon/aragon-cli/pull/255/files) which is intended to be more development friendly that `aragon run`, i.e. [doesn't create a new dao every time](https://github.com/aragon/aragon-cli/issues/311), uses http rather than ipfs (to have hot/live reload for the frontends, and maybe something similar for the contracts, a watch → compile loop) 
 
-👾 [E2E tests with sharness](https://github.com/aragon/aragon-cli/issues/358)
+👾 [E2E tests with node](https://github.com/aragon/aragon-cli/issues/376)
 
 👾 Bugfixes, see all [here](https://github.com/aragon/aragon-cli/labels/bug)
 
@@ -35,15 +35,10 @@ Note: We should write tests as we fix these to ensure no regressions!
 ## Long-term
 
 - Types (use Flow or Typescript) because it will allow us to catch more "errors" at compile time, having commands silently fail without noticing (like [this](https://github.com/aragon/aragon-cli/pull/334#discussion_r248659171)) less often. Using Typescript is also great for intellisense support (having auto-completion from IDEs) and refactoring
-- Improve smart contract tooling using new Ethereum dev tools from 0x:
-    - `[sol-trace](https://sol-trace.com)`: Human-readable stack traces
-    - `[sol-coverage](https://sol-coverage.com)`*:* Solidity code coverage
-    - `[sol-profiler](https://sol-profiler.com)`: Gas profiling for Solidity
-    - `[sol-compiler](https://sol-compiler.com)`: Solidity compilation
+- Update truffle to v5
+- We plan to prioritize replace `solidity-coverage` in the boilerplates
 
-    We plan to prioritize `sol-trace` and to look into the benefits that the others tools could have on the developer experience and decide whether to work on that *short-term*.
-
-- Identify contracts like the `MiniMeTokenFactory` which do not need to be deployed every time, but rather reused, and publish them to `aragonpm.eth` (just like the `dao-kits`)
+- Identify contracts like the `MiniMeTokenFactory` which do not need to be deployed every time, but rather reused, and publish them to `aragonpm.eth` (just like the `dao-kits`, we will hardcode an address in aragen like we do with the root ENS)
 
 - Wizard onboarding 🧙‍♂️
     - The goal of this tool will be to help new users create a custom DAO
@@ -56,6 +51,8 @@ Note: We should write tests as we fix these to ensure no regressions!
     `dao token new --interactive` though, would output this:
     
     ![alt text](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/ba2b8fd3-400b-425e-8d71-59381a0f76d8/Untitled.png?AWSAccessKeyId=ASIAT73L2G45MUQUGMXG&Expires=1549812298&Signature=jzG2sPDgeYcB9Zd9varZlqIRzF4%3D&x-amz-security-token=FQoGZXIvYXdzEB0aDKFd0gNValJVyxjuWSK3Ax0SjqEaNpRBlQtp9%2BSAGi1RNhFEpHI9dkZx%2BJA2%2BgdHr7z4IMAQRGHemmf28rttDLHuyQlvXVmNwF6OLMCl2sYyPsZCjmm2yDw5W8FSighcYlvushqFJKDTWlhMz%2Fzy3heWBDhH59obwLk3gibWiKvbyNkwtEPR2CKOIBQ1CryNgbjxqw9yyhX2JDUkQqQ7JToESHZi3xMKFvpbyS3PoQfchaC9jjZ7weDJ1xh4Db9qu7CEJm8wGohxRcIegtL56O7VUmoCZzNKnDoODZsllIqFS64HOKTOOPOyXfFkf4WDyTNZKpqihJ9xaes4Lv1WujW5rIl5vd0sO%2FPrdWKHdNvze6CbLVsLH%2FabwdM3R8FuYwuR7SQqcDZCDRxVgb7DQzFR%2F0KC%2BURzVPcsLbTp9HQYA4XmDWDYH5uIvTmVZoCVaDEnGSCka7j7Oiv%2FG7ewkv7w0U1lhAkBw%2FEBaRDSqMSyXIeuz%2Be3Qu6k6BZvQBlom%2BHMFGkYpwawkQ7iZ6pxMvmC5UjTIB84XPvmhup2khU1sSbHOSUX6fsp6Xpyqfl%2BbKW5FwbVoIItg6dyY44NykiZDqAVLLko7%2Fv64gU%3D)
+    
+Note: We should be able to do get the initialize function's params from the artifact.json if it's published onto an aragonPM instance.
     
 ## Ongoing
 
