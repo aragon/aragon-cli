@@ -1,3 +1,16 @@
+# Editor files
+.vscode
+
+# Dependencies
 node_modules
+
+# Artifacts
 dist
-src/knownRoles.json
+
+# Tests and coverage
+
+# Tools
+lerna-debug.log
+
+# Extra
+packages/aragon-cli/src/knownRoles.json
