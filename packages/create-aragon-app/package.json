@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/aragon/aragon-cli/tree/master/packages/create-aragon-app"
   },
   "keywords": [
     "create-aragon-app",
