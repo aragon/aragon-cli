@@ -76,9 +76,10 @@ exports.handler = function({ reporter, name, template, silent, debug }) {
     listrOpts(silent, debug)
   )
 
-  return tasks
-    .run()
-    .then(() =>
-      reporter.success(`Created new application ${name} in ${basename}`)
+  return tasks.run().then(() => {
+    reporter.success(`Created new application ${name} in ${basename}.`)
+    reporter.info(
+      `Use of \`aragon init\` is deprecated and has been replaced with \`npx create-aragon-app\`.`
     )
+  })
 }
