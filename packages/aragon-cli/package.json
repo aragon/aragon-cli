@@ -10,13 +10,14 @@
   "scripts": {
     "build": "npm run extract-roles && babel -d dist src --copy-files",
     "prepare": "npm run build",
+    "link": "npm link",
     "test": "ava",
     "lint": "eslint src test/commands && documentation lint src",
     "extract-roles": "node scripts/extract-roles"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aragon/aragon-dev-cli.git"
+    "url": "https://github.com/aragon/aragon-cli/tree/master/packages/aragon-cli"
   },
   "keywords": [
     "cli",
@@ -31,9 +32,9 @@
   ],
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/aragon/aragon-dev-cli/issues"
+    "url": "https://github.com/aragon/aragon-cli/issues"
   },
-  "homepage": "https://github.com/aragon/aragon-dev-cli#readme",
+  "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
     "@aragon/apm": "^2.0.2",
     "@aragon/apps-shared-minime": "^1.0.1",
