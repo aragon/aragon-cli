@@ -1,6 +1,6 @@
 {
   "name": "create-aragon-app",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "description": "Aragon command-line tool to create aragon apps",
   "main": "dist/cli.js",
   "bin": {
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/aragon/aragon-cli/tree/master/packages/create-aragon-app"
   },
   "keywords": [
     "create-aragon-app",
