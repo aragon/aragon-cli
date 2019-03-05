@@ -3,11 +3,14 @@
 
 # Dependencies
 node_modules
+*ipfs.cmd*
+*package-lock*
 
 # Artifacts
 dist
 
 # Tests and coverage
+*.tmp*
 
 # Tools
 lerna-debug.log
