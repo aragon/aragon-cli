@@ -89,6 +89,8 @@ export function normalizeOutput (stdout) {
     .replace(/ℹ/g, 'i')
     // TODO: remove after https://github.com/aragon/aragon-cli/issues/367 is fixed 
     .replace(/cli.js/g, 'aragon')
+    // sometimes there's an extra LF
+    .trim()
 
   return next
 }
