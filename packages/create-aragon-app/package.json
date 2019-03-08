@@ -1,13 +1,15 @@
 {
   "name": "create-aragon-app",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "Aragon command-line tool to create aragon apps",
   "main": "dist/cli.js",
   "bin": {
     "create-aragon-app": "./dist/cli.js"
   },
   "scripts": {
+    "prepare": "npm run build",
     "build": "babel -d dist src --copy-files",
+    "link": "npm link",
     "test": "ava",
     "lint": "eslint src test && documentation lint src"
   },
@@ -26,9 +28,9 @@
   ],
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": ""
+    "url": "https://github.com/aragon/aragon-cli/issues"
   },
-  "homepage": "",
+  "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
     "chalk": "^2.1.0",

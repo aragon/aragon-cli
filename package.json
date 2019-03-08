@@ -9,6 +9,8 @@
     "test": "lerna run test",
     "install": "npm run bootstrap",
     "bootstrap": "lerna bootstrap --no-ci",
-    "build": "lerna run build"
+    "build": "lerna run build",
+    "link": "lerna run link",
+    "clean": "git clean -fdxi"
   }
 }

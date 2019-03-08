@@ -10,13 +10,14 @@
   "scripts": {
     "build": "npm run extract-roles && babel -d dist src --copy-files",
     "prepare": "npm run build",
+    "link": "npm link",
     "test": "ava",
     "lint": "eslint src test/commands && documentation lint src",
     "extract-roles": "node scripts/extract-roles"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aragon/aragon-dev-cli.git"
+    "url": "https://github.com/aragon/aragon-cli/tree/master/packages/aragon-cli"
   },
   "keywords": [
     "cli",
@@ -31,9 +32,9 @@
   ],
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/aragon/aragon-dev-cli/issues"
+    "url": "https://github.com/aragon/aragon-cli/issues"
   },
-  "homepage": "https://github.com/aragon/aragon-dev-cli#readme",
+  "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
     "@aragon/apm": "^2.0.2",
     "@aragon/apps-shared-minime": "^1.0.1",
@@ -77,7 +78,7 @@
     "truffle-hdwallet-provider": "^1.0.2",
     "truffle-hdwallet-provider-privkey": "^0.3.0",
     "web3": "1.0.0-beta.34",
-    "yargs": "^10.1.0"
+    "yargs": "12.0.5"
   },
   "devDependencies": {
     "@aragon/apps-finance": "^2.0.0",

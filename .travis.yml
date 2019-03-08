@@ -9,8 +9,8 @@ before_script:
 install:
   - npm install
 script:
+  - npm run link
   - npm run lint
   - npm run test
-  - npm run build
 after_success:
   - ./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls

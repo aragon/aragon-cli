@@ -1,15 +1,4 @@
 const daoArg = require('./dao_cmds/utils/daoArg')
-const {
-  manifestMiddleware,
-  moduleMiddleware,
-  environmentMiddleware,
-} = require('../middleware')
-
-const MIDDLEWARES = [
-  manifestMiddleware,
-  moduleMiddleware,
-  environmentMiddleware,
-]
 
 exports.command = 'dao <command>'
 
@@ -19,15 +8,7 @@ exports.builder = function(yargs) {
   if (process.argv[3] !== 'new' && process.argv[3] !== 'act') {
     yargs = daoArg(yargs)
   }
-
-  const cmd = yargs.commandDir('dao_cmds', {
-    visit: cmd => {
-      // Add middlewares
-      cmd.middlewares = MIDDLEWARES
-      return cmd
-    },
-  })
-  cmd.demandCommand(1, 'You need to specify a command')
-
-  return cmd
+  return yargs
+    .commandDir('dao_cmds')
+    .demandCommand(1, 'You need to specify a command')
 }
