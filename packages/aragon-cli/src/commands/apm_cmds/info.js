@@ -11,7 +11,12 @@ exports.describe = 'Get information about a package'
 
 exports.builder = getRepoTask.args
 
-exports.handler = async function ({ apmRepo, apm: apmOptions, apmRepoVersion, network }) {
+exports.handler = async function({
+  apmRepo,
+  apm: apmOptions,
+  apmRepoVersion,
+  network,
+}) {
   const web3 = await ensureWeb3(network)
   apmRepo = defaultAPMName(apmRepo)
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
@@ -20,16 +25,20 @@ exports.handler = async function ({ apmRepo, apm: apmOptions, apmRepoVersion, ne
   const tasks = new TaskList([
     {
       title: `Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`,
-      task: getRepoTask.task({ apm, apmRepo, apmRepoVersion, artifactRequired: false })
-    }
+      task: getRepoTask.task({
+        apm,
+        apmRepo,
+        apmRepoVersion,
+        artifactRequired: false,
+      }),
+    },
   ])
 
-  return tasks.run()
-    .then((ctx) => {
-      delete ctx.repo.abi
-      delete ctx.repo.environments
+  return tasks.run().then(ctx => {
+    delete ctx.repo.abi
+    delete ctx.repo.environments
 
-      console.log(JSON.stringify(ctx.repo, null, 2))
-      process.exit()
-    })
+    console.log(JSON.stringify(ctx.repo, null, 2))
+    process.exit()
+  })
 }
