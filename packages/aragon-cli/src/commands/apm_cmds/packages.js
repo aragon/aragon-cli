@@ -4,13 +4,21 @@ const Table = require('cli-table')
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 
-exports.command = 'packages'
+exports.command = 'packages [apmRegistry]'
 
 exports.describe = 'List all packages in the registry'
 
+exports.builder = function(yargs) {
+  return yargs.option('apmRegistry', {
+    description: 'The registry to inspect',
+    type: 'string',
+    default: 'aragonpm.eth',
+  })
+}
+
 exports.handler = async function({
   reporter,
-  module,
+  apmRegistry,
   network,
   apm: apmOptions,
 }) {
@@ -21,9 +29,10 @@ exports.handler = async function({
 
   const tasks = new TaskList([
     {
-      title: 'Fetching APM Registry',
+      title: `Fetching APM Registry: ${apmRegistry}`,
       task: async (ctx, task) => {
-        ctx.registry = await apm.getRepoRegistry(module.appName)
+        // TODO add a new method to APM to allow fetching a registry without appId
+        ctx.registry = await apm.getRepoRegistry(`vault.${apmRegistry}`)
       },
     },
     {
@@ -40,11 +49,7 @@ exports.handler = async function({
   ])
 
   return tasks.run().then(ctx => {
-    const repoId = module.appName
-      .split('.')
-      .slice(1)
-      .join('.')
-    reporter.success(`Successfully fetched packages for ${repoId}`)
+    reporter.success('Successfully fetched packages')
 
     const rows = ctx.versions.map((info, index) => {
       return [ctx.names[index], info.version]
