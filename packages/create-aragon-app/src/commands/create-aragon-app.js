@@ -27,6 +27,7 @@ exports.builder = yargs => {
           bare: 'aragon/aragon-bare-boilerplate',
           react: 'aragon/aragon-react-boilerplate',
           'react-kit': 'aragon/aragon-react-kit-boilerplate',
+          tutorial: 'aragon/your-first-aragon-app',
         }
 
         if (!tmpl.includes('/')) {
@@ -67,6 +68,7 @@ exports.handler = function({ reporter, name, template, silent, debug }) {
           task.output = 'Initiliazing arapp.json and removing Git repository'
           await prepareTemplate(basename, name)
         },
+        enabled: () => !template.includes('your-first-aragon-app'),
       },
       {
         title: 'Installing package dependencies',
@@ -78,8 +80,5 @@ exports.handler = function({ reporter, name, template, silent, debug }) {
 
   return tasks.run().then(() => {
     reporter.success(`Created new application ${name} in ${basename}.`)
-    reporter.info(
-      `Use of \`aragon init\` is deprecated and has been replaced with \`npx create-aragon-app\`.`
-    )
   })
 }
