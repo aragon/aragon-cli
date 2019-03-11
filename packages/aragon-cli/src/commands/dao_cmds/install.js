@@ -166,7 +166,7 @@ exports.task = async ({
         task: async (ctx, task) => {
           if (!ctx.repo.roles || ctx.repo.roles.length === 0) {
             throw new Error(
-              'You have no roles defined in your arapp.json.\nThis is required for your app to be properly installed.\nSee https://hack.aragon.org/docs/cli-usage.html#global-configuration for more information.'
+              'You have no roles defined in your arapp.json.\nThis is required for your app to be properly installed.\nSee https://hack.aragon.org/docs/cli-global-confg#the-arappjson-file for more information.'
             )
           }
 

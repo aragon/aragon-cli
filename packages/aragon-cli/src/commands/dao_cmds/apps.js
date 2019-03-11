@@ -24,7 +24,7 @@ exports.builder = function(yargs) {
 }
 
 const printAppName = appId => {
-  return knownApps[appId] ? knownApps[appId] : appId.slice(0, 10) + '...'
+  return knownApps[appId] ? knownApps[appId] : appId
 }
 
 const printContent = content => {
@@ -32,7 +32,7 @@ const printContent = content => {
     return '(No UI available)'
   }
 
-  return `${content.provider}:${content.location}`.slice(0, 25) + '...'
+  return `${content.provider}:${content.location}`
 }
 
 exports.handler = async function({
