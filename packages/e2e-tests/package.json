@@ -1,6 +1,6 @@
 {
   "name": "@aragon/e2e-tests",
-  "version": "0.1.0",
+  "private": true,
   "description": "End-to-end tests for Aragon",
   "scripts": {
     "test": "cross-env DEBUG=true ava",
