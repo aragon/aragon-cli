@@ -50,7 +50,7 @@ Note: We should write tests as we fix these to ensure no regressions!
 
     `dao token new --interactive` though, would output this:
     
-    ![alt text](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/ba2b8fd3-400b-425e-8d71-59381a0f76d8/Untitled.png?AWSAccessKeyId=ASIAT73L2G45FYX3U2VZ&Expires=1551792810&Signature=8k8WWMOD1aHJ6k3TG370SjS%2BVIY%3D&x-amz-security-token=FQoGZXIvYXdzEEIaDMBYDZ2dB5WU4Kc1HiK3A1iY164JmbS7MhJuPGnevHs1T3iMh%2FLD60FDwdL%2F9U6rb2YLY0Eie0qRPXNy1zrrTsMOssgV9T1j7g5FdFq8CoCckD5i8kmkr75%2FcLf%2FvKstSVQA9HFEN2xEKleE42S3Chk9AVmH93YQqRPEfHbcd%2FuHVEFIPsbPFPW6knWYwJMadRysNGIEB4VDcxHu5olrJWH%2FsRgM8UVuMWZcoeR2Ano%2FMg18Tnmg6uo30HV2rT%2BKxay%2Fvhz5CgYT3Rd85OCBGRzKM%2FxlGJK0wq6HIdU4fcnnmfF8jZaitZov67Nl%2FMj5P0a804lOELn6TxDdW9ALHB1sYjaN%2B%2BOXGVAWF8MHMQk5MszOVfKVng91TruxrTKPGTnuBIhlCN174qLoyjuwj7nJiKb8V7TGmVWF3067IB%2BzRhEDCjzP7y2sTEBU6OrzrrqHp3av7M14%2Bz6a6xiWdaoEKip2ipnj949r0l%2BCZfz26dI%2BRqBRZ3P8J1RPJC7Fe9iGjBWFTBe9OPthl3y8NM0wo2VyRsxJ6RGvYiw0GVYzMvYEyw2u3T%2BH49WmfH1Dc1Vk6ZxC4NJzr1tt9WtlwLC9L2iRsQko8cfz4wU%3D)
+    ![alt text](https://user-images.githubusercontent.com/26041347/54289799-77540100-45b2-11e9-8798-bc737048e018.png)
     
 Note: We should be able to do get the initialize function's params from the artifact.json if it's published onto an aragonPM instance.
     
