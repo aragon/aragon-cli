@@ -4,15 +4,15 @@
 
 - There are usually 10-15 open PRs going stale which is inefficient because they require plenty of work to update (when there's conflicts) and sometimes they get duplicated like [this](https://github.com/aragon/aragon-cli/pull/254) and [this](https://github.com/aragon/aragon-cli/pull/272)
 
-🚧 [Implement a mono repo structure with `lerna`](https://github.com/aragon/aragon-cli/pull/325) 
+✔️ [Implement a mono repo structure with `lerna`](https://github.com/aragon/aragon-cli/pull/325) 
 
 🚧 Finish the `aragon start` command [here](https://github.com/aragon/aragon-cli/pull/255/files) which is intended to be more development friendly that `aragon run`, i.e. [doesn't create a new dao every time](https://github.com/aragon/aragon-cli/issues/311), uses http rather than ipfs (to have hot/live reload for the frontends, and maybe something similar for the contracts, a watch → compile loop) 
 
-👾 [E2E tests with node](https://github.com/aragon/aragon-cli/issues/376)
+✔️ [E2E tests with node](https://github.com/aragon/aragon-cli/issues/376)
 
-👾 Bugfixes, see all [here](https://github.com/aragon/aragon-cli/labels/bug)
+🚧 Bugfixes, see all [here](https://github.com/aragon/aragon-cli/labels/bug)
 
-- [gasLimit](https://github.com/aragon/aragon-cli/issues/346) issue
+- [gasLimit](https://github.com/aragon/aragon-cli/issues/346) issue ✔️
 - [gas issue on dao acl grant](https://github.com/aragon/aragon-cli/issues/350)
 - [dao new fails with ganache 2.3](https://github.com/aragon/aragon-cli/issues/321) (low priority because pinning works alright at the moment)
 
