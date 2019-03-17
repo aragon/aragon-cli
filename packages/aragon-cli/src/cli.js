@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 require('@babel/polyfill')
+require('source-map-support/register')
+
 const {
   environmentMiddleware,
   manifestMiddleware,
