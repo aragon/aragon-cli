@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "npm run extract-roles && npm run compile:src",
-    "watch": "npm run build -- -- --watch",
+    "build:watch": "npm run build -- -- --watch",
     "prepare": "npm run build",
     "link": "npm link",
     "test": "ava",
