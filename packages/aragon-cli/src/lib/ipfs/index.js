@@ -7,7 +7,7 @@ import fetch from 'node-fetch'
 const FETCH_TIMEOUT = 20000 // 20s
 const FETCH_TIMEOUT_ERR = 'Request timed out'
 
-export async function ensureIPFS(rpc) {
+export async function ensureConnection(rpc) {
   try {
     const client = connectToAPI(rpc)
     await client.id()

@@ -1,7 +1,7 @@
 import TaskList from 'listr'
 //
 import {
-  ensureIPFS,
+  ensureConnection,
   getMerkleDAG,
   extractCIDsFromMerkleDAG,
   propagateFiles,
@@ -10,11 +10,11 @@ import listrOpts from '../../helpers/listr-options'
 
 exports.command = 'propagate <cid>'
 exports.describe =
-  'Request the cid and its contents at several gateways, making the files easier to be discovered'
+  'Request the content and its links at several gateways, making the files more distributed within the network.'
 
 exports.builder = yargs => {
   return yargs.positional('cid', {
-    description: 'IPFS cid of the file',
+    description: 'A self-describing content-addressed identifier',
   })
 }
 
@@ -24,7 +24,7 @@ exports.task = ({ apmOptions, silent, debug, cid }) => {
       {
         title: 'Connect to IPFS',
         task: async ctx => {
-          ctx.ipfs = await ensureIPFS(apmOptions.ipfs.rpc)
+          ctx.ipfs = await ensureConnection(apmOptions.ipfs.rpc)
         },
       },
       {
