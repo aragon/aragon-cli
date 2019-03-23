@@ -6,7 +6,7 @@ const chalk = require('chalk')
 const { getContract } = require('../../util')
 const getRepoTask = require('./utils/getRepoTask')
 const listrOpts = require('../../helpers/listr-options')
-const startIPFS = require('../ipfs')
+const startIPFS = require('../ipfs_cmds/start')
 const { getRecommendedGasLimit } = require('../../util')
 
 exports.BARE_KIT = defaultAPMName('bare-kit')
