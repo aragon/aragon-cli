@@ -17,7 +17,7 @@ const execa = require('execa')
 const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
-const startIPFS = require('../ipfs')
+const startIPFS = require('../ipfs_cmds/start')
 const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 const listrOpts = require('../../helpers/listr-options')
 
