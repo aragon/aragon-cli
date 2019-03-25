@@ -27,11 +27,14 @@ exports.builder = yargs => {
         const aliases = {
           bare: 'aragon/aragon-bare-boilerplate',
           react: 'aragon/aragon-react-boilerplate',
-          'react-kit': 'aragon/aragon-react-kit-boilerplate',
         }
 
         if (!tmpl.includes('/')) {
-          if (!aliases[tmpl]) {
+          if (tmpl === 'react-kit') {
+            throw new Error(
+              `Template 'react-kit' was merged with 'react' template.`
+            )
+          } else if (!aliases[tmpl]) {
             throw new Error(`No template named ${tmpl} exists`)
           }
           tmpl = aliases[tmpl]
@@ -79,7 +82,7 @@ exports.handler = function({ reporter, name, template, silent, debug }) {
 
   return tasks.run().then(() => {
     reporter.success(`Created new application ${name} in ${basename}.`)
-    reporter.info(
+    reporter.warning(
       `Use of \`aragon init\` is deprecated and has been replaced with \`npx create-aragon-app\`.`
     )
   })

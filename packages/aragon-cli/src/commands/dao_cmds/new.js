@@ -9,13 +9,13 @@ const listrOpts = require('../../helpers/listr-options')
 const startIPFS = require('../ipfs_cmds/start')
 const { getRecommendedGasLimit } = require('../../util')
 
-exports.BARE_KIT = defaultAPMName('bare-kit')
+exports.BARE_TEMPLATE = defaultAPMName('bare-kit')
 exports.BARE_INSTANCE_FUNCTION = 'newBareInstance'
-exports.BARE_KIT_DEPLOY_EVENT = 'DeployInstance'
+exports.BARE_TEMPLATE_DEPLOY_EVENT = 'DeployInstance'
 
-const BARE_KIT_ABI = require('./utils/bare-kit-abi')
+const BARE_TEMPLATE_ABI = require('./utils/bare-template-abi')
 
-exports.command = 'new [kit] [kit-version]'
+exports.command = 'new [template] [template-version]'
 
 exports.describe = 'Create a new DAO'
 
@@ -23,10 +23,16 @@ exports.builder = yargs => {
   return yargs
     .positional('kit', {
       description: 'Name of the kit to use creating the DAO',
-      default: exports.BARE_KIT,
     })
     .positional('kit-version', {
       description: 'Version of the kit to be used',
+    })
+    .positional('template', {
+      description: 'Name of the template to use creating the DAO',
+      default: exports.BARE_TEMPLATE,
+    })
+    .positional('template-version', {
+      description: 'Version of the template to be used',
       default: 'latest',
     })
     .option('fn-args', {
@@ -40,8 +46,8 @@ exports.builder = yargs => {
       default: exports.BARE_INSTANCE_FUNCTION,
     })
     .option('deploy-event', {
-      description: 'Event name that the kit will fire on success',
-      default: exports.BARE_KIT_DEPLOY_EVENT,
+      description: 'Event name that the template will fire on success',
+      default: exports.BARE_TEMPLATE_DEPLOY_EVENT,
     })
     .option('ipfs-check', {
       description: 'Whether to have new start IPFS if not started',
@@ -54,13 +60,13 @@ exports.task = async ({
   web3,
   reporter,
   apmOptions,
-  kit,
-  kitVersion,
+  template,
+  templateVersion,
   fn,
   fnArgs,
   skipChecks,
   deployEvent,
-  kitInstance,
+  templateInstance,
   silent,
   debug,
   ipfsCheck,
@@ -68,7 +74,7 @@ exports.task = async ({
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
-  kit = defaultAPMName(kit)
+  template = defaultAPMName(template)
 
   const tasks = new TaskList(
     [
@@ -79,27 +85,28 @@ exports.task = async ({
         enabled: () => ipfsCheck,
       },
       {
-        title: `Fetching kit ${chalk.bold(kit)}@${kitVersion}`,
+        title: `Fetching template ${chalk.bold(template)}@${templateVersion}`,
         task: getRepoTask.task({
           apm,
-          apmRepo: kit,
-          apmRepoVersion: kitVersion,
+          apmRepo: template,
+          apmRepoVersion: templateVersion,
           artifactRequired: false,
         }),
-        enabled: () => !kitInstance,
+        enabled: () => !templateInstance,
       },
       {
-        title: 'Create new DAO from kit',
+        title: 'Create new DAO from template',
         task: async (ctx, task) => {
           if (!ctx.accounts) {
             ctx.accounts = await web3.eth.getAccounts()
           }
 
           // TODO: Remove hack once https://github.com/aragon/aragen/pull/15 is finished and published
-          const abi = ctx.repo.abi || BARE_KIT_ABI
-          const kit =
-            kitInstance || new web3.eth.Contract(abi, ctx.repo.contractAddress)
-          const newInstanceTx = kit.methods[fn](...fnArgs)
+          const abi = ctx.repo.abi || BARE_TEMPLATE_ABI
+          const template =
+            templateInstance ||
+            new web3.eth.Contract(abi, ctx.repo.contractAddress)
+          const newInstanceTx = template.methods[fn](...fnArgs)
           const estimatedGas = await newInstanceTx.estimateGas()
 
           const { events } = await newInstanceTx.send({
@@ -133,6 +140,8 @@ exports.handler = async function({
   network,
   kit,
   kitVersion,
+  template,
+  templateVersion,
   fn,
   fnArgs,
   deployEvent,
@@ -142,13 +151,17 @@ exports.handler = async function({
 }) {
   const web3 = await ensureWeb3(network)
 
+  // TODO: this can be cleaned up once kits is no longer supported
+  template = kit || template
+  templateVersion = kitVersion || templateVersion
+
   const task = await exports.task({
     web3,
     reporter,
     network,
     apmOptions,
-    kit,
-    kitVersion,
+    template,
+    templateVersion,
     fn,
     fnArgs,
     deployEvent,
@@ -158,6 +171,11 @@ exports.handler = async function({
   })
   return task.run().then(ctx => {
     reporter.success(`Created DAO: ${chalk.bold(ctx.daoAddress)}`)
+    if (kit || kitVersion) {
+      reporter.warning(
+        `The use of kits is deprecated and templates should be used instead. The new options for 'dao new' are '--template' and '--template-version'`
+      )
+    }
 
     process.exit()
   })
