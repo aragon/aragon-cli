@@ -27,11 +27,14 @@ exports.builder = yargs => {
         const aliases = {
           bare: 'aragon/aragon-bare-boilerplate',
           react: 'aragon/aragon-react-boilerplate',
-          'react-kit': 'aragon/aragon-react-kit-boilerplate',
         }
 
         if (!tmpl.includes('/')) {
-          if (!aliases[tmpl]) {
+          if (tmpl === 'react-kit') {
+            throw new Error(
+              `Template 'react-kit' was merged with 'react' template.`
+            )
+          } else if (!aliases[tmpl]) {
             throw new Error(`No template named ${tmpl} exists`)
           }
           tmpl = aliases[tmpl]
