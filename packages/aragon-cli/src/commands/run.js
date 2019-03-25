@@ -405,7 +405,7 @@ exports.handler = function({
 
     if (kit || kitInit || kitDeployEvent) {
       reporter.warning(
-        `The use of kits is deprecated and templates should be used instead. The new options are '--template', '--template-init' and 'template-deploy-event'`
+        `The use of kits is deprecated and templates should be used instead. The new options for 'aragon run' are '--template', '--template-init' and 'template-deploy-event'`
       )
     }
   })

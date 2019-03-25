@@ -173,7 +173,7 @@ exports.handler = async function({
     reporter.success(`Created DAO: ${chalk.bold(ctx.daoAddress)}`)
     if (kit || kitVersion) {
       reporter.warning(
-        `The use of kits is deprecated and templates should be used instead. The new options are '--template' and '--template-version'`
+        `The use of kits is deprecated and templates should be used instead. The new options for 'dao new' are '--template' and '--template-version'`
       )
     }
 
