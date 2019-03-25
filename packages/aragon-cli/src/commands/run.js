@@ -60,17 +60,27 @@ exports.builder = function(yargs) {
       description: 'Reset devchain to snapshot',
     })
     .option('kit', {
-      default: newDAO.BARE_KIT,
-      description: 'Kit contract name',
+      description: '(deprecated) Kit contract name',
     })
     .option('kit-init', {
-      description: 'Arguments to be passed to the kit constructor',
+      description: '(deprecated) Arguments to be passed to the kit constructor',
+      array: true,
+    })
+    .option('kit-deploy-event', {
+      description: '(deprecated) Arguments to be passed to the kit constructor',
+    })
+    .option('template', {
+      default: newDAO.BARE_TEMPLATE,
+      description: 'Template contract name',
+    })
+    .option('template-init', {
+      description: 'Arguments to be passed to the template constructor',
       array: true,
       default: [],
     })
-    .option('kit-deploy-event', {
-      description: 'Arguments to be passed to the kit constructor',
-      default: newDAO.BARE_KIT_DEPLOY_EVENT,
+    .option('template-deploy-event', {
+      description: 'Arguments to be passed to the template constructor',
+      default: newDAO.BARE_TEMPLATE_DEPLOY_EVENT,
     })
     .option('build-script', {
       description: 'The npm script that will be run when building the app',
@@ -126,6 +136,9 @@ exports.handler = function({
   kit,
   kitInit,
   kitDeployEvent,
+  template,
+  templateInit,
+  templateDeployEvent,
   buildScript,
   http,
   httpServedFrom,
@@ -138,6 +151,11 @@ exports.handler = function({
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   clientPort = clientPort || DEFAULT_CLIENT_PORT
+
+  // TODO: this can be cleaned up once kits is no longer supported
+  template = kit || template
+  templateInit = kitInit || templateInit
+  templateDeployEvent = kitDeployEvent || templateDeployEvent
 
   const showAccounts = accounts
 
@@ -160,7 +178,7 @@ exports.handler = function({
       {
         title: 'Check IPFS',
         task: () => startIPFS.task({ apmOptions }),
-        enabled: () => !http || kit,
+        enabled: () => !http || template,
       },
       {
         title: 'Publish app to APM',
@@ -188,12 +206,12 @@ exports.handler = function({
         },
       },
       {
-        title: 'Deploy Kit',
-        enabled: () => kit !== newDAO.BARE_KIT,
+        title: 'Deploy Template',
+        enabled: () => template !== newDAO.BARE_TEMPLATE,
         task: ctx => {
           const deployParams = {
-            contract: kit,
-            init: kitInit,
+            contract: template,
+            init: templateInit,
             reporter,
             network,
             cwd,
@@ -213,7 +231,7 @@ exports.handler = function({
           let fnArgs
 
           if (ctx.contractInstance) {
-            // If no kit was deployed, use default params
+            // If no template was deployed, use default params
             fnArgs = []
           } else {
             // TODO: Report warning when app wasn't initialized
@@ -232,12 +250,12 @@ exports.handler = function({
           }
 
           const newDAOParams = {
-            kit,
-            kitVersion: 'latest',
-            kitInstance: ctx.contractInstance,
+            template,
+            templateVersion: 'latest',
+            templateInstance: ctx.contractInstance,
             fn: 'newInstance',
             fnArgs,
-            deployEvent: kitDeployEvent,
+            deployEvent: templateDeployEvent,
             web3: ctx.web3,
             reporter,
             apmOptions,
@@ -383,6 +401,12 @@ exports.handler = function({
       reporter.warning('No front-end detected (no manifest.json)')
     } else if (!manifest.start_url) {
       reporter.warning('No front-end detected (no start_url defined)')
+    }
+
+    if (kit || kitInit || kitDeployEvent) {
+      reporter.warning(
+        `The use of kits is deprecated and templates should be used instead. The new options are '--template', '--template-init' and 'template-deploy-event'`
+      )
     }
   })
 }
