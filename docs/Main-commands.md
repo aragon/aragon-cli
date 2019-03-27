@@ -1,4 +1,4 @@
-This are general purpose commands that will help you to set up and interact with your development environment.
+These are general purpose commands that will help you to set up and interact with your development environment.
 
 ## aragon run
 
@@ -12,16 +12,16 @@ These are all the things that running `aragon run` will do for you:
 
 1. It checks whether **IPFS** and a local **Ethereum development chain** (devchain) are running and if not it will start them. Once aragon is terminated, any IPFS or dev chain it started will also be terminated.
 2. It will **publish your app** to the local aragonPM registry running in your devchain. This step executes the `aragon apm publish` internally. You can check the options and how the command works in depth [here](cli-apm-commands.md).
-3. Once the package is published it will **create a DAO** with your app installed. If you are running your app without a Kit it will grant permissions to the first account printed in the console to perform all the actions protected by the ACL in your app.
+3. Once the package is published it will **create a DAO** with your app installed. If you are running your app without a Template it will grant permissions to the first account printed in the console to perform all the actions protected by the ACL in your app.
 4. After the DAO is created it will download the [Aragon client](https://github.com/aragon/aragon), install its dependencies and start it up so you can interact with the DAO in your web browser.
 
 Available options to customize the `run` command:
 
 - `--reset`: If reset is present it will reset the devchain before running. The chain will then start from scratch and all published packages will need to be recreated.
 - `--port`: The port where the devchain will be started.
-- `--kit`: The name of the contract that will be deployed as the [DAO kit](kits-intro.md) that will be used to create your DAO. If no Kit is provided it will use a default Kit that sets up the DAO with just your app (`bare-kit.aragonpm.eth`).
-- `--kit-init [argument1 ... argumentN]`: The constructor arguments for the Kit contract, each separated by a space. See the [deploy command](#aragon-deploy) for more information on constructor arguments.
-- `--kit-deploy-event`: Arguments to be passed to the kit constructor. Defaults to `DeployInstance`.
+- `--template`: The name of the contract that will be deployed as the [DAO template](templates-intro.md) that will be used to create your DAO. If no Template is provided it will use a default Template that sets up the DAO with just your app (`bare-template.aragonpm.eth`).
+- `--template-init [argument1 ... argumentN]`: The constructor arguments for the Template contract, each separated by a space. See the [deploy command](#aragon-deploy) for more information on constructor arguments.
+- `--template-deploy-event`: Arguments to be passed to the template constructor. Defaults to `DeployInstance`.
 - `--build-script`: The name of the NPM script in your app that will be used for building the webapp.
 - `--client`: Whether to start the Aragon client or not. Defaults to `true`.
 - `--client-version`: Version of Aragon client used to run your sandboxed app.
@@ -51,6 +51,8 @@ However, when **making changes to the background script** of your app, a refresh
 
 The [React boilerplate](https://github.com/aragon/aragon-react-boilerplate) supports serving your app using HTTP.
 
+> **Note**<br>
+> The `kits` has been deprecated and `templates` should be used instead. You may find the `kits` notation in some places while we make the transition.
 
 ## aragon devchain
 
@@ -62,7 +64,7 @@ aragon devchain
 
 It uses [aragen](https://github.com/aragon/aragen) for setting up the snapshot from which the chain starts. At any point `aragon devchain --reset` can be run which will reset the devchain to the original snapshot.
 
-This snapshot contains a local instance of ENS, the first-party [Aragon apps](https://github.com/aragon/aragon-apps) published to aragonPM (e.g. `voting.aragonpm.eth` or `token-manager.aragonpm.eth`) and the first-party [DAO Kits](https://github.com/aragon/dao-kits) (e.g. `bare-kit.aragonpm.eth`).
+This snapshot contains a local instance of ENS, the first-party [Aragon apps](https://github.com/aragon/aragon-apps) published to aragonPM (e.g. `voting.aragonpm.eth` or `token-manager.aragonpm.eth`) and the first-party [DAO Templates](https://github.com/aragon/dao-kits) (e.g. `bare-template.aragonpm.eth`).
 
 Devchains can be started on different ports and will keep their state independent from other chains.
 

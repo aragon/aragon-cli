@@ -3,20 +3,22 @@ The `aragon dao` commands can be used for interacting with your DAO directly fro
 
 ## dao new
 
-Uses a DAO Kit to create a new DAO and prints its address.
+Uses a DAO Template to create a new DAO and prints its address.
 
 ```sh
 dao new
 ```
 
 Options:
-- `--kit`: The aragonPM repo name of the kit that is used to create the DAO. Defaults to `bare-kit.aragonpm.eth`.
-- `--kit-version [version-number|latest]`: The version of the repo that will be used to create the DAO. Defaults to `latest`.
-- `--fn`: The function on the kit that is called to create a new DAO. Defaults to the `newBareInstance` function for `bare-kit.aragonpm.eth`.
-- `--fn-args`: The arguments that the function to create the kit is called with. Defaults to an array of arguments.
+- `--template`: The aragonPM repo name of the template that is used to create the DAO. Defaults to `bare-template.aragonpm.eth`.
+- `--template-version [version-number|latest]`: The version of the repo that will be used to create the DAO. Defaults to `latest`.
+- `--fn`: The function on the template that is called to create a new DAO. Defaults to the `newBareInstance` function for `bare-template.aragonpm.eth`.
+- `--fn-args`: The arguments that the function to create the template is called with. Defaults to an array of arguments.
 - `--deploy-event`: The name of the event that is emitted when the DAO is created. The DAO address must be a return argument in the event log named `dao`. Defaults to `DeployInstance`.
 - `--ipfs-check`: Whether to have start IPFS if not started. Defaults to `true`.
 
+> **Note**<br>
+> The `kits` has been deprecated and `templates` should be used instead. You may find the `kits` notation in some places while we make the transition.
 
 ## dao apps
 
