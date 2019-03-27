@@ -1,9 +1,3 @@
----
-id: cli-global-confg
-title: Global configuration
-sidebar_label: Global configuration
----
-
 ## The arapp.json file
 
 The arapp.json file contains metadata for your app. This are the fields need to be present:

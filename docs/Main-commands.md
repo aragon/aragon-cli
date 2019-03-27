@@ -1,9 +1,3 @@
----
-id: cli-main-commands
-title: Main commands
-sidebar_label: Main commands
----
-
 This are general purpose commands that will help you to set up and interact with your development environment.
 
 ## aragon run

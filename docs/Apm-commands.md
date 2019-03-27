@@ -1,9 +1,3 @@
----
-id: cli-apm-commands
-title: aragonPM commands
-sidebar_label: aragonPM commands
----
-
 The `aragon apm` commands are the easiest way to manage aragonPM repositories.
 
 ## aragon apm versions

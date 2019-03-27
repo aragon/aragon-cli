@@ -1,10 +1,3 @@
----
-id: cli-intro
-title: Using the aragonCLI
-sidebar_label: Introduction
-hide_title: true
----
-
 ![](/docs/assets/brand/aragoncli.png)
 
 The aragonCLI (Command Line Interface) is used to create and develop Aragon apps.

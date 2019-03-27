@@ -1,9 +1,3 @@
----
-id: cli-dao-commands
-title: DAO commands
-sidebar_label: DAO commands
----
-
 The `aragon dao` commands can be used for interacting with your DAO directly from the command line. These commands are also available directly using the `dao` alias.
 
 
