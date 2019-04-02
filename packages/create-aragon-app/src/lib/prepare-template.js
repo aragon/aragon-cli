@@ -7,16 +7,16 @@ export async function prepareTemplate(dir, appName) {
   const arapp = await fs.readJson(arappPath)
 
   const defaultEnv = arapp.environments.default
-  const stagingEnv = arapp.environments.staging
-  const productionEnv = arapp.environments.production
+  const stagingEnv = arapp.environments["aragon:staging"]
+  const productionEnv = arapp.environments["aragon:mainnet"]
 
   defaultEnv.appName = appName
   stagingEnv.appName = stagingEnv.appName.replace(/^app/, basename)
   productionEnv.appName = productionEnv.appName.replace(/^app/, basename)
 
   Object.assign(arapp.environments.default, defaultEnv)
-  Object.assign(arapp.environments.staging, stagingEnv)
-  Object.assign(arapp.environments.production, productionEnv)
+  Object.assign(arapp.environments["aragon:staging"], stagingEnv)
+  Object.assign(arapp.environments["aragon:mainnet"], productionEnv)
 
   const gitFolderPath = path.resolve(dir, '.git')
   const licensePath = path.resolve(dir, 'LICENSE')
