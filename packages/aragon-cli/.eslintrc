@@ -10,7 +10,7 @@
   ],
   "parser": "babel-eslint",
   "rules": {
-    "valid-jsdoc": "off",
+    "valid-jsdoc": "error",
     "no-console": "off",
     "linebreak-style": [
       "error",

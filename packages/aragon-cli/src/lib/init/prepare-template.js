@@ -8,6 +8,7 @@ import replace from 'replace'
  *
  * @param {string} dir - for example `foo`
  * @param {string} appName - for example `foo.myApmRegistry.eth`
+ * @returns {void}
  */
 export async function prepareTemplate(dir, appName) {
   /**
