@@ -19,10 +19,9 @@ const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
 const startIPFS = require('../ipfs_cmds/start')
 const getRepoTask = require('../dao_cmds/utils/getRepoTask')
+const execTask = require('../dao_cmds/utils/execHandler').task
 const listrOpts = require('../../helpers/listr-options')
 
-const DEFAULT_GAS_PRICE = require('../../../package.json').aragon
-  .defaultGasPrice
 const MANIFEST_FILE = 'manifest.json'
 const ARTIFACT_FILE = 'artifact.json'
 const SOLIDITY_FILE = 'code.sol'
@@ -290,6 +289,7 @@ exports.task = function({
   cwd,
   web3,
   network,
+  wsProvider,
   module,
   apm: apmOptions,
   silent,
@@ -337,6 +337,8 @@ exports.task = function({
           let isValid = true
           try {
             repo = await apm.getLatestVersion(module.appName)
+            ctx.initialVersion = repo.version
+
             ctx.version = semver.valid(bump)
               ? semver.valid(bump)
               : semver.inc(repo.version, bump)
@@ -560,26 +562,31 @@ exports.task = function({
         task: async (ctx, task) => {
           ctx.contractInstance = null // clean up deploy sub-command artifacts
 
-          task.output = 'Generating transaction and waiting for confirmation'
           const accounts = await web3.eth.getAccounts()
           const from = accounts[0]
 
           try {
-            const transaction = await apm.publishVersion(
+            const intent = await apm.publishVersionIntent(
               from,
               module.appName,
               ctx.version,
               http ? 'http' : provider,
               http || ctx.pathToPublish,
-              ctx.contract,
-              from
+              ctx.contract
             )
 
-            transaction.from = from
-            transaction.gasPrice = network.gasPrice || DEFAULT_GAS_PRICE
-            // apm.js already calculates the recommended gas
+            const { dao, proxyAddress, name, params } = intent
 
-            ctx.receipt = await web3.eth.sendTransaction(transaction)
+            const getTransactionPath = wrapper => {
+              return wrapper.getTransactionPath(proxyAddress, name, params)
+            }
+
+            return execTask(dao, getTransactionPath, {
+              reporter,
+              apm: apmOptions,
+              web3,
+              wsProvider,
+            })
           } catch (e) {
             throw e
           }
@@ -616,11 +623,18 @@ exports.handler = async args => {
       if (!status) {
         reporter.error(`Publish transaction reverted:`)
       } else {
-        reporter.success(`Successfully published ${appName} v${version}: `)
-        if (!onlyContent) {
-          reporter.info(`Contract address: ${contractAddress}`)
+        // If the version is still the same, the publish intent was forwarded but not immediately executed (p.e. Voting)
+        if (ctx.initialVersion === version) {
+          reporter.success(
+            `Successfully executed: "${ctx.transactionPath[0].description}"`
+          )
+        } else {
+          reporter.success(`Successfully published ${appName} v${version}: `)
+          if (!onlyContent) {
+            reporter.info(`Contract address: ${contractAddress}`)
+          }
+          reporter.info(`Content (${content.provider}): ${content.location}`)
         }
-        reporter.info(`Content (${content.provider}): ${content.location}`)
       }
 
       reporter.info(`Transaction hash: ${transactionHash}`)
