@@ -70,9 +70,7 @@ If you need help, please reach out to Aragon core contributors and community mem
 
 ## Style Guide
 
-[Prettier](https://prettier.io) will catch most styling issues that may exist in your code.
-
-However, there are still some styles that Prettier cannot pick up.
+[Prettier](https://prettier.io) and [ESLint](https://eslint.org) will catch most styling and linting issues that may exist in your code.
 
 ## Semantic Commit Messages
 
@@ -110,24 +108,3 @@ The various types of commits:
 - Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
 - Limit the first line to 72 characters or less
 - Reference issues and pull requests liberally after the first line
-
-## JavaScript
-
-All JavaScript must adhere to [JavaScript Standard Style](https://standardjs.com/).
-
-- Prefer the object spread operator (`{...anotherObj}`) to `Object.assign()`
-- Inline `export`s with expressions whenever possible
-
-```
-  js
-  // Use this:
-  export default class ClassName {
-
-  }
-
-  // Instead of:
-  class ClassName {
-
-  }
-  export default ClassName
-```
