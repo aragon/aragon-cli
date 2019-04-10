@@ -23,6 +23,7 @@ export async function prepareTemplate(dir, appName) {
   const packageJsonPath = path.resolve(dir, 'package.json')
   const packageJson = await fs.readJson(packageJsonPath)
   delete packageJson.license
+  await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 })
 
   /**
    * Replace the default registries with the preferred one
@@ -54,9 +55,5 @@ export async function prepareTemplate(dir, appName) {
     silent: true,
   })
 
-  return Promise.all([
-    fs.writeJson(packageJsonPath, packageJson, { spaces: 2 }),
-    fs.remove(gitFolderPath),
-    fs.remove(licensePath),
-  ])
+  return Promise.all([fs.remove(gitFolderPath), fs.remove(licensePath)])
 }
