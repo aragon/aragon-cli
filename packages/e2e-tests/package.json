@@ -29,8 +29,7 @@
       "@babel/register"
     ],
     "files": [
-      "src/**/*.js",
-      "!src/util.js"
+      "src/**/*.test.js"
     ]
   }
 }

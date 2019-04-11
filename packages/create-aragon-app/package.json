@@ -80,7 +80,7 @@
       "@babel/register"
     ],
     "files": [
-      "test/**/*.js"
+      "test/**/*.test.js"
     ]
   },
   "yargs": {
