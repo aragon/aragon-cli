@@ -12,7 +12,8 @@
     "build:watch": "npm run build -- -- --watch",
     "prepare": "npm run build",
     "link": "npm link",
-    "test": "ava",
+    "test": "nyc ava",
+    "test:watch": "ava --watch",
     "lint": "eslint src test/commands && documentation lint src",
     "compile:src": "babel src --out-dir dist --copy-files --source-maps",
     "extract-roles": "node scripts/extract-roles"
@@ -112,7 +113,9 @@
     "eslint-plugin-standard": "^4.0.0",
     "husky": "^1.2.0",
     "lint-staged": "^8.1.0",
-    "prettier": "^1.15.3"
+    "nyc": "^13.3.0",
+    "prettier": "^1.15.3",
+    "sinon": "^7.3.1"
   },
   "engines": {
     "node": ">=8.0.0"
@@ -123,7 +126,7 @@
       "@babel/register"
     ],
     "files": [
-      "test/commands/**/*.js"
+      "test/commands/**/*.test.js"
     ]
   },
   "aragon": {
