@@ -2,7 +2,10 @@
 
 We have two different processes. One for running [unit](https://en.wikipedia.org/wiki/Unit_testing) and [integration tests](https://en.wikipedia.org/wiki/Integration_testing) and another one for [functional tests](https://en.wikipedia.org/wiki/Functional_testing) (also called end-to-end tests). This is because functional tests usually take longer.
 
-![](/docs/assets/brand/testing-pyramid.png)
+<p align="center">
+  <img src="/docs/assets/testing-pyramid.png" width="550" height="280">
+</p>
+
 
 ## Testing environment
 
