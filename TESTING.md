@@ -1,12 +1,16 @@
 # Testing
 
-We have two different processes. One for running unit and integration tests and another one for functional tests. This is because functional tests usually take longer.
+We have two different processes. One for running [unit](https://en.wikipedia.org/wiki/Unit_testing) and [integration tests](https://en.wikipedia.org/wiki/Integration_testing) and another one for [functional tests](https://en.wikipedia.org/wiki/Functional_testing) (also called end-to-end tests). This is because functional tests usually take longer.
+
+![](/docs/assets/brand/testing-pyramid.png)
+
+## Testing environment
 
 Unit + integration test are included on each package under test folder on root (e.g. [aragon-cli](https://github.com/aragon/aragon-cli/tree/master/packages/aragon-cli/test/)). Functional test have their own package [`e2e-tests`](https://github.com/aragon/aragon-cli/tree/master/packages/e2e-tests).
 
 We suggest to run unit + integration test on every change, functional tests only before commits.
 
-## Testing environment
+The notation of tests follow the patter `*.test.js`.
 
 The testing environment consist of the following tools:
 
@@ -15,7 +19,7 @@ The testing environment consist of the following tools:
 3. Mocks, spies, and stubs -> [Sinon.JS](https://sinonjs.org)
 4. Code coverage -> [Istanbul](https://istanbul.js.org) with [nyc](https://github.com/istanbuljs/nyc) wrapper. We also use [Coveralls](https://coveralls.io) for adding coverage reporting to [Travis CI](https://travis-ci.org) flow.
 
-**Note:** In some instances you might found useful to use [proxyquire](https://github.com/thlorenz/proxyquire) to mock an Aragon wrapper.
+**Note:** In some instances you might found useful to use [proxyquire](https://github.com/thlorenz/proxyquire) to mock dependencies that should not be evaluated.
 
 ### Running tests
 
@@ -26,7 +30,7 @@ Each package comes with the following scripts to run unit and integration tests:
 ```json
 {
   "test": "nyc ava",
-  "watch": "ava --watch"
+  "test:watch": "ava --watch"
 }
 ```
 
@@ -35,12 +39,12 @@ The `e2e-tests` package have this scripts to run functional test:
 ```json
 {
   "test": "cross-env DEBUG=true ava",
-  "watch": "cross-env DEBUG=true ava --watch",
+  "test:watch": "cross-env DEBUG=true ava --watch",
   "update:snapshots": "ava --update-snapshots"
 }
 ```
 
-**Note:** Use `npm run watch` if you want to let them automatically run on change.
+**Note:** Use `npm run test:watch` if you want to let them automatically run on change.
 
 #### Snapshots
 
@@ -64,7 +68,7 @@ To solve part of this issue we defined the function [`startBackgroundProcess`](h
 
 [`create-aragon-app`](https://github.com/aragon/aragon-cli/tree/master/packages/e2e-tests/src/create-aragon-app)
 
-**Note:** If you are intereseted in an example on how to use `proxyquire` on the context of Aragon, [check this tests](https://github.com/aragon/aragon.js/blob/master/packages/aragon-wrapper/src/index.test.js#L20) from `aragonAPI`.
+**Note:** If you are intereseted in an example on how to use `proxyquire`, [check this tests](https://github.com/aragon/aragon.js/blob/master/packages/aragon-wrapper/src/index.test.js#L20) from `aragonAPI`.
 
 ### Debugging
 

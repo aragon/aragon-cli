@@ -4,7 +4,7 @@
   "description": "End-to-end tests for Aragon",
   "scripts": {
     "test": "cross-env DEBUG=true ava",
-    "watch": "cross-env DEBUG=true ava --watch",
+    "test:watch": "cross-env DEBUG=true ava --watch",
     "update:snapshots": "ava --update-snapshots",
     "reset:cache": "ava --reset-cache"
   },

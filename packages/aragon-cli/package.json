@@ -13,7 +13,7 @@
     "prepare": "npm run build",
     "link": "npm link",
     "test": "nyc ava",
-    "watch": "ava --watch",
+    "test:watch": "ava --watch",
     "lint": "eslint src test/commands && documentation lint src",
     "compile:src": "babel src --out-dir dist --copy-files --source-maps",
     "extract-roles": "node scripts/extract-roles"

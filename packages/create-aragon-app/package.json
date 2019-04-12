@@ -11,7 +11,7 @@
     "build": "babel -d dist src --copy-files",
     "link": "npm link",
     "test": "nyc ava",
-    "watch": "ava --watch",
+    "test:watch": "ava --watch",
     "lint": "eslint src test && documentation lint src"
   },
   "repository": {
