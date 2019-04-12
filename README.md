@@ -1,9 +1,11 @@
-# Aragon CLI
+# aragonCLI
 
-[![Build Status](https://img.shields.io/travis/aragon/aragon-dev-cli/master.svg?style=flat-square)](https://travis-ci.org/aragon/aragon-dev-cli)
-[![Test Coverage](https://img.shields.io/coveralls/aragon/aragon-dev-cli.svg?style=flat-square)](https://coveralls.io/github/aragon/aragon-dev-cli)
-[![NPM version](https://img.shields.io/npm/v/@aragon/cli.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli)
-[![Downloads](https://img.shields.io/npm/dm/@aragon/cli.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli)
+## Packages
+
+| Package                 | Version   | Downloads   | Build | Coverage |
+| ----------------------- | --------- | ----------- | ----- | -------- |
+| `@aragon/cli` | [![NPM version](https://img.shields.io/npm/v/@aragon/cli.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli) | [![Downloads](https://img.shields.io/npm/dm/@aragon/cli.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli) | [![Build Status](https://img.shields.io/travis/aragon/aragon-cli/master.svg?style=flat-square)](https://travis-ci.org/aragon/aragon-cli) | [![Test Coverage](https://img.shields.io/coveralls/aragon/aragon-dev-cli.svg?style=flat-square)](https://coveralls.io/github/aragon/aragon-dev-cli) |
+| `create-aragon-app` | [![NPM version](https://img.shields.io/npm/v/create-aragon-app.svg?style=flat-square)](https://npmjs.org/package/create-aragon-app) | [![Downloads](https://img.shields.io/npm/dm/create-aragon-app.svg?style=flat-square)](https://npmjs.org/package/create-aragon-app) | [![Build Status](https://img.shields.io/travis/aragon/aragon-cli/master.svg?style=flat-square)](https://travis-ci.org/aragon/aragon-cli) | [![Test Coverage](https://img.shields.io/coveralls/aragon/aragon-dev-cli.svg?style=flat-square)](https://coveralls.io/github/aragon/aragon-dev-cli) |
 
 Aragon CLI is a monorepo for creating, testing and publishing [Aragon
 applications](https://hack.aragon.org).
