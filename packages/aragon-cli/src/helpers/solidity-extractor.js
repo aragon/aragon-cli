@@ -13,9 +13,11 @@ const typeOrAddress = type => {
   return types.filter(t => type.indexOf(t) === 0).length > 0 ? type : 'address'
 }
 
-// extracts function signature from function declaration
+/// extracts function signature from function declaration
 const getSignature = declaration => {
-  let [name, params] = declaration.match(/function ([^]*?)\)/)[1].split('(')
+  let [name, params] = declaration
+    .match(/^\s*function ([^]*?)\)/m)[1]
+    .split('(')
 
   if (!name) {
     return 'fallback'
