@@ -14,21 +14,22 @@ action "bootstrap" {
   needs = ["install"]
 }
 
-action "link" {
-  uses = "actions/npm@master"
-  args = "run link"
-  needs = ["bootstrap"]
-}
-
 action "build" {
   uses = "actions/npm@master"
   args = "run build"
-  needs = ["link"]
+  needs = ["bootstrap"]
 }
+
+action "link" {
+  uses = "actions/npm@master"
+  args = "run link"
+  needs = ["build"]
+}
+
 action "lint" {
   uses = "actions/npm@master"
   args = "run lint"
-  needs = ["link"]
+  needs = ["bootstrap"]
 }
 
 action "test" {
