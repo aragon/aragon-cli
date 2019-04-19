@@ -16,22 +16,22 @@ Start an IPFS daemon configured to work with Aragon.
 aragon ipfs start
 ```
 
-## ipfs propagate
+## aragon ipfs propagate
 
 Request the content and its links at several gateways, making the files more distributed within the network.
 
 ```sh
-ipfs propagate <cid>
+aragon ipfs propagate <cid>
 ```
 
 - `cid`: A self-describing content-addressed identifier
 
-## ipfs view
+## aragon ipfs view
 
 Display metadata about the content, such as size, links, etc.
 
 ```sh
-ipfs propagate <cid>
+aragon ipfs propagate <cid>
 ```
 
 - `cid`: A self-describing content-addressed identifier
