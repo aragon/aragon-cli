@@ -1,12 +1,12 @@
 {
   "name": "@aragon/e2e-tests",
   "private": true,
-  "description": "End-to-end tests for Aragon",
+  "description": "End-to-end tests for aragonCLI",
   "scripts": {
     "test": "cross-env DEBUG=true ava",
     "test:watch": "cross-env DEBUG=true ava --watch",
-    "update:snapshots": "ava --update-snapshots",
-    "reset:cache": "ava --reset-cache"
+    "update-snapshots": "ava --update-snapshots",
+    "reset-cache": "ava --reset-cache"
   },
   "author": "Aragon Association <legal@aragon.org>",
   "license": "GPL-3.0-or-later",

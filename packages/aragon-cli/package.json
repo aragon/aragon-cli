@@ -8,15 +8,16 @@
     "dao": "./aliases/dao"
   },
   "scripts": {
-    "build": "npm run extract-roles && npm run compile:src",
-    "build:watch": "npm run build -- -- --watch",
     "prepare": "npm run build",
     "link": "npm link",
-    "test": "nyc ava",
-    "test:watch": "ava --watch",
+    "unlink": "npm unlink",
+    "compile-src": "babel src --out-dir dist --source-maps --copy-files",
+    "extract-roles": "node scripts/extract-roles",
+    "build": "npm run extract-roles && npm run compile-src",
+    "build:watch": "npm run build -- -- --watch",
     "lint": "eslint src test/commands && documentation lint src",
-    "compile:src": "babel src --out-dir dist --copy-files --source-maps",
-    "extract-roles": "node scripts/extract-roles"
+    "test": "nyc ava",
+    "test:watch": "ava --watch"
   },
   "repository": {
     "type": "git",

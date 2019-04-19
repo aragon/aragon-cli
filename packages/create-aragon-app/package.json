@@ -8,11 +8,13 @@
   },
   "scripts": {
     "prepare": "npm run build",
-    "build": "babel -d dist src --copy-files",
     "link": "npm link",
+    "unlink": "npm unlink",
+    "build": "babel src --out-dir dist --source-maps",
+    "build:watch": "npm run build -- --watch",
+    "lint": "eslint src test && documentation lint src",
     "test": "nyc ava",
-    "test:watch": "ava --watch",
-    "lint": "eslint src test && documentation lint src"
+    "test:watch": "ava --watch"
   },
   "repository": {
     "type": "git",
