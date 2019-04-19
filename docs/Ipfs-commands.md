@@ -31,7 +31,7 @@ aragon ipfs propagate <cid>
 Display metadata about the content, such as size, links, etc.
 
 ```sh
-aragon ipfs propagate <cid>
+aragon ipfs view <cid>
 ```
 
 - `cid`: A self-describing content-addressed identifier
