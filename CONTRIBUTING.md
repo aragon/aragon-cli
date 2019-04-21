@@ -62,7 +62,7 @@ Working on your first Pull Request? You can learn how from this free video serie
 
 Unsure where to begin contributing? You can start by looking through these `good first issue` issues:
 
-- [Good first issue](https://github.com/aragon/aragon-cli/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) - issues which should only require a few lines of code, and a test or two.
+- [Good first issue](https://github.com/aragon/aragon-cli/labels/%3Apray%3A%20good%20first%20issue) - issues which should only require a few lines of code, and a test or two.
 
 ## Getting help
 
