@@ -9,7 +9,7 @@ Current state of things:
 - [../packages/create-aragon-app/README.md](/packages/create-aragon-app/README.md) - ??
 - [Specification](/docs-internal/Specification.md) - the technical architecture and implementation details
 - [Testing](/docs-internal/Testing.md) - the testing approach
-- [Labels](/docs-internal/Testing.md) - the issue labeling system
+- [Labels](/docs-internal/Labels.md) - the issue labeling system
 
 Where we want to go:
 
