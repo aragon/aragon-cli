@@ -7,7 +7,7 @@ Having automated CI setup allows us to:
 
 ## GitHub Actions
 
-The setup file is located at `.github/continous-integration.workflow`.
+The setup file is located at `.github/main.workflow`.
 
 ## Travis CI
 
