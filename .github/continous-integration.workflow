@@ -8,16 +8,16 @@ action "install" {
   args = "install"
 }
 
-action "bootstrap" {
+action "prepare" {
   uses = "actions/npm@master"
-  args = "run bootstrap"
+  args = "run prepare"
   needs = ["install"]
 }
 
 action "build" {
   uses = "actions/npm@master"
   args = "run build"
-  needs = ["bootstrap"]
+  needs = ["prepare"]
 }
 
 action "link" {
@@ -29,7 +29,7 @@ action "link" {
 action "lint" {
   uses = "actions/npm@master"
   args = "run lint"
-  needs = ["bootstrap"]
+  needs = ["prepare"]
 }
 
 action "test" {

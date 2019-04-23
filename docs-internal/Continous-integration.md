@@ -7,7 +7,7 @@ Having automated CI setup allows us to:
 
 ## GitHub Actions
 
-The setup file is located at `.github/ci.workflow`.
+The setup file is located at `.github/continous-integration.workflow`.
 
 ## Travis CI
 
@@ -43,14 +43,11 @@ and [npm's `prepare` script](https://docs.npmjs.com/misc/scripts).
 
 ### GitHub Actions and the `prepare` script
 
-According to the [npm docs](https://docs.npmjs.com/misc/scripts) the prepare script is supposed to
-run on "local `npm install` without any arguments".
-
-Our `install` action is supposed to call the bootstrap script, but it fails with:
+Our `install` action is unable to call the `prepare` script automatically, it fails with:
 
 ```sh
 npm WARN lifecycle @aragon/cli-monorepo@~prepare: cannot run in wd @aragon/cli-monorepo@ npm run bootstrap (wd=/github/workspace)
 ```
 
 This is most likely a permission issue, but an easy solution is to call this script manually (see
-the `bootstrap` action).
+the `prepare` action).
