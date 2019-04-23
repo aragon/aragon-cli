@@ -1,5 +1,5 @@
 {
-  "name": "@aragon/e2e-tests",
+  "name": "@aragon/cli-e2e-tests",
   "private": true,
   "description": "End-to-end tests for aragonCLI",
   "scripts": {
@@ -12,12 +12,14 @@
   "license": "GPL-3.0-or-later",
   "devDependencies": {},
   "dependencies": {
+    "@aragon/cli": "file:../aragon-cli",
     "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
     "@babel/polyfill": "^7.2.5",
     "@babel/preset-env": "^7.3.4",
     "@babel/register": "^7.0.0",
     "ava": "^1.2.1",
     "cross-env": "^5.2.0",
+    "create-aragon-app": "file:../create-aragon-app",
     "execa": "^1.0.0",
     "fs-extra": "^7.0.1",
     "node-fetch": "^2.3.0",

@@ -1,13 +1,14 @@
 {
-  "name": "aragon-cli-monorepo",
+  "name": "@aragon/cli-monorepo",
   "private": true,
   "devDependencies": {
     "lerna": "^3.8.4"
   },
   "scripts": {
-    "clean": "git clean -fdxi",
-    "prepare": "npm run bootstrap",
-    "bootstrap": "lerna bootstrap --no-ci",
+    "clean": "git clean -fixd",
+    "prepare": "npm run bootstrap && npm run bootstrap-e2e-tests",
+    "bootstrap": "lerna bootstrap --no-ci --ignore @aragon/cli-e2e-tests",
+    "bootstrap-e2e-tests": "lerna bootstrap --no-ci --scope @aragon/cli-e2e-tests",
     "link": "lerna run link",
     "unlink": "lerna run unlink",
     "build": "lerna run build",
