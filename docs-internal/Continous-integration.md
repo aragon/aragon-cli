@@ -46,8 +46,9 @@ and [npm's `prepare` script](https://docs.npmjs.com/misc/scripts).
 Our `install` action is unable to call the `prepare` script automatically, it fails with:
 
 ```sh
-npm WARN lifecycle @aragon/cli-monorepo@~prepare: cannot run in wd @aragon/cli-monorepo@ npm run bootstrap (wd=/github/workspace)
+npm WARN lifecycle @aragon/cli-monorepo@~prepare: cannot run in wd @aragon/cli-monorepo@ npm run bootstrap && npm run bootstrap-e2e-tests (wd=/github/workspace)
 ```
 
-This is most likely a permission issue, but an easy solution is to call this script manually (see
-the `prepare` action).
+This is most likely because of `go-ipfs` and `gyp`, see [running Aragon in docker for development](https://github.com/aragon/aragon-cli/issues/374).
+
+The solution is to use the [`--unsafe-perm` flag](https://docs.npmjs.com/misc/config#unsafe-perm).
