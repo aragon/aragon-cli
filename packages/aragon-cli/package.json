@@ -130,7 +130,7 @@
     ]
   },
   "aragon": {
-    "clientVersion": "e9d706a1d809444a3bec105b179d0c6b43a43dff",
+    "clientVersion": "b8955ef92856b90600fe5bb5c7f96724043bde86",
     "clientPort": "3000",
     "defaultGasPrice": "10000000000"
   },
