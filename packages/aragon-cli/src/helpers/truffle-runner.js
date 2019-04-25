@@ -1,8 +1,8 @@
 const execa = require('execa')
 const devnull = require('dev-null')
-const { getNPMBinary } = require('../util')
+const { getDependentBinary } = require('../util')
 
-const truffleBin = getNPMBinary('truffle', 'build/cli.bundled.js')
+const truffleBin = getDependentBinary('truffle')
 
 const runTruffle = (args, { stdout, stderr, stdin }) => {
   return new Promise((resolve, reject) => {
