@@ -4,13 +4,16 @@
   "description": "End-to-end tests for aragonCLI",
   "scripts": {
     "test": "cross-env DEBUG=true ava",
+    "test:clean": "shx rm -rf .tmp && npm run reset-cache",
     "test:watch": "cross-env DEBUG=true ava --watch",
     "update-snapshots": "ava --update-snapshots",
     "reset-cache": "ava --reset-cache"
   },
   "author": "Aragon Association <legal@aragon.org>",
   "license": "GPL-3.0-or-later",
-  "devDependencies": {},
+  "devDependencies": {
+    "shx": "^0.3.2"
+  },
   "dependencies": {
     "@aragon/cli": "file:../aragon-cli",
     "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
