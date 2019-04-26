@@ -6,14 +6,15 @@ const { installDeps } = require('../util')
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 
-exports.command = 'start'
+exports.command = 'start [client-version]'
 
 exports.describe = 'Start Aragon client'
 
 exports.builder = yargs => {
   return yargs
-    .option('client-version', {
-      description: 'Version of Aragon client used to run your sandboxed app',
+    .positional('client-version', {
+      description:
+        'Version of Aragon client used to run your sandboxed app (commit hash, branch name or tag name)',
       default: DEFAULT_CLIENT_VERSION,
     })
     .option('client-port', {
@@ -68,5 +69,9 @@ exports.handler = async ({
   const task = await exports.task({ clientVersion, clientPort, clientPath })
   return task
     .run()
-    .then(() => reporter.info(`Aragon client started on port: ${clientPort}`))
+    .then(() =>
+      reporter.info(
+        `Aragon client version ${clientVersion}, started on port ${clientPort}`
+      )
+    )
 }
