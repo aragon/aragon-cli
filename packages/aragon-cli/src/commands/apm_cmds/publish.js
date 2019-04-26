@@ -575,10 +575,14 @@ exports.task = function({
               ctx.contract
             )
 
-            const { dao, proxyAddress, name, params } = intent
+            const { dao, proxyAddress, methodName, params } = intent
 
             const getTransactionPath = wrapper => {
-              return wrapper.getTransactionPath(proxyAddress, name, params)
+              return wrapper.getTransactionPath(
+                proxyAddress,
+                methodName,
+                params
+              )
             }
 
             return execTask(dao, getTransactionPath, {
