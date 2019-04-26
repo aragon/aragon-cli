@@ -8,7 +8,7 @@ const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 
 exports.command = 'start'
 
-exports.describe = 'Open DAO'
+exports.describe = 'Start Aragon client'
 
 exports.builder = yargs => {
   return yargs
@@ -65,14 +65,8 @@ exports.handler = async ({
   clientPort,
   clientPath,
 }) => {
-  clientPort = clientPort || DEFAULT_CLIENT_PORT
-  clientVersion = clientVersion || DEFAULT_CLIENT_VERSION
   const task = await exports.task({ clientVersion, clientPort, clientPath })
   return task
     .run()
-    .then(() =>
-      reporter.info(
-        `Aragon client opened with wrapper version ${clientVersion}`
-      )
-    )
+    .then(() => reporter.info(`Aragon client started on port: ${clientPort}`))
 }

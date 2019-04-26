@@ -7,6 +7,7 @@ export async function openWrapper(ctx, clientPort) {
     setTimeout(async () => {
       const portTaken = await isPortTaken(clientPort)
       if (portTaken) {
+        // TODO: Include ctx.daoAddress only if ctx.daoAddress exist
         opn(`http://localhost:${clientPort}/#/${ctx.daoAddress}`)
       } else {
         checkWrapperReady()

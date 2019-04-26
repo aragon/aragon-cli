@@ -4,30 +4,22 @@ const chalk = require('chalk')
 const path = require('path')
 const publish = require('./apm_cmds/publish')
 const devchain = require('./devchain')
+const start = require('./start')
 const deploy = require('./deploy')
 const newDAO = require('./dao_cmds/new')
 const startIPFS = require('./ipfs_cmds/start')
 const encodeInitPayload = require('./dao_cmds/utils/encodeInitPayload')
-const { promisify } = require('util')
-const clone = promisify(require('git-clone'))
-const os = require('os')
 const fs = require('fs-extra')
-const opn = require('opn')
-const execa = require('execa')
 const pkg = require('../../package.json')
 const listrOpts = require('../helpers/listr-options')
 
-const {
-  findProjectRoot,
-  isPortTaken,
-  installDeps,
-  getNodePackageManager,
-} = require('../util')
+const { findProjectRoot, isPortTaken } = require('../util')
 
 const url = require('url')
 
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
+// TODO: gasPrice parameter (?)
 
 exports.command = 'run'
 
@@ -150,8 +142,6 @@ exports.handler = function({
 }) {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
-  clientPort = clientPort || DEFAULT_CLIENT_PORT
-
   // TODO: this can be cleaned up once kits is no longer supported
   template = kit || template
   templateInit = kitInit || templateInit
@@ -266,79 +256,9 @@ exports.handler = function({
       },
       {
         title: 'Open DAO',
-        task: (ctx, task) =>
-          new TaskList([
-            {
-              title: 'Download client',
-              skip: () => !!clientPath,
-              task: (ctx, task) => {
-                clientVersion = clientVersion || DEFAULT_CLIENT_VERSION
-                const CLIENT_PATH = `${os.homedir()}/.aragon/wrapper-${clientVersion}`
-                ctx.wrapperPath = CLIENT_PATH
-
-                // Make sure we haven't already downloaded the wrapper
-                if (fs.existsSync(path.resolve(CLIENT_PATH))) {
-                  task.skip('Client already downloaded')
-                  ctx.wrapperAvailable = true
-                  return
-                }
-
-                // Ensure folder exists
-                fs.ensureDirSync(CLIENT_PATH)
-
-                // Clone wrapper
-                return clone('https://github.com/aragon/aragon', CLIENT_PATH, {
-                  checkout: clientVersion,
-                })
-              },
-            },
-            {
-              title: 'Install client dependencies',
-              task: async (ctx, task) => installDeps(ctx.wrapperPath, task),
-              enabled: ctx => !ctx.wrapperAvailable && !clientPath,
-            },
-            {
-              title: 'Start Aragon client',
-              task: async (ctx, task) => {
-                if (await isPortTaken(clientPort)) {
-                  ctx.portOpen = true
-                  return
-                }
-                const bin = getNodePackageManager()
-                const startArguments = {
-                  cwd: clientPath || ctx.wrapperPath,
-                  env: {
-                    REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens,
-                    REACT_APP_PORT: clientPort,
-                  },
-                }
-
-                execa(bin, ['run', 'start:local'], startArguments).catch(
-                  err => {
-                    throw new Error(err)
-                  }
-                )
-              },
-            },
-            {
-              title: 'Open client',
-              task: (ctx, task) => {
-                // Check until the wrapper is served
-                const checkWrapperReady = () => {
-                  setTimeout(async () => {
-                    const portTaken = await isPortTaken(clientPort)
-                    if (portTaken) {
-                      opn(`http://localhost:${clientPort}/#/${ctx.daoAddress}`)
-                    } else {
-                      checkWrapperReady()
-                    }
-                  }, 250)
-                }
-                checkWrapperReady()
-              },
-            },
-          ]),
         enabled: () => client === true,
+        task: async (ctx, task) =>
+          start.task({ clientVersion, clientPort, clientPath }),
       },
     ],
     listrOpts(silent, debug)
