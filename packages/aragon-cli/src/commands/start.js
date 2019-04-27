@@ -8,7 +8,7 @@ const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 
 exports.command = 'start [client-version]'
 
-exports.describe = 'Start Aragon client'
+exports.describe = 'Start the Aragon GUI (graphical user interface)'
 
 exports.builder = yargs => {
   return yargs
