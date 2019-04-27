@@ -54,6 +54,21 @@ The [React boilerplate](https://github.com/aragon/aragon-react-boilerplate) supp
 > **Note**<br>
 > The `kits` has been deprecated and `templates` should be used instead. You may find the `kits` notation in some places while we make the transition.
 
+## aragon start
+
+Start the Aragon GUI (graphical user interface)
+
+```sh
+aragon start [client-version]
+```
+
+- `client-version`: Version of Aragon client used to run your sandboxed app (commit hash, branch name or tag name)
+
+Options:
+
+- `--client-port`: Port being used by Aragon client.
+- `--client-path`: A path pointing to an existing Aragon client installation.
+
 ## aragon devchain
 
 The `devchain` command is used for starting a local development testnet with all the required components already deployed and ready to use. 
