@@ -1,5 +1,19 @@
 The `aragon apm` commands are the easiest way to manage aragonPM repositories.
 
+## aragon apm extract-functions
+
+Extract function information from a Solidity file.
+
+```sh
+aragon apm extract-functions [contract]
+```
+
+- `contract`: Path to the Solidity file to extract functions from.
+
+Options:
+
+- `--output`: Path of the directory where the output file will be saved to.
+
 ## aragon apm versions
 
 Shows all the previously published versions of your package (defined in `arapp.json`).
