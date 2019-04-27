@@ -1,16 +1,16 @@
-![](/docs/assets/brand/aragoncli.png)
+![aragonCLI logo](/docs/assets/brand/aragoncli.png)
 
 The aragonCLI (Command Line Interface) is used to create and develop Aragon apps.
 
 ## Install
 
-The aragonCLI can be installed directly from NPM:
+The aragonCLI can be installed from NPM:
 
 ```sh
 npm install -g @aragon/cli
 ```
 
-It can also be installed directly from source:
+It can also be built and installed from source:
 
 ```sh
 git clone https://github.com/aragon/aragon-cli.git

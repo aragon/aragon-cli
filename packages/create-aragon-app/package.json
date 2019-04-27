@@ -8,10 +8,13 @@
   },
   "scripts": {
     "prepare": "npm run build",
-    "build": "babel -d dist src --copy-files",
     "link": "npm link",
-    "test": "ava",
-    "lint": "eslint src test && documentation lint src"
+    "unlink": "npm unlink",
+    "build": "babel src --out-dir dist --source-maps",
+    "build:watch": "npm run build -- --watch",
+    "lint": "eslint src test && documentation lint src",
+    "test": "nyc ava",
+    "test:watch": "ava --watch"
   },
   "repository": {
     "type": "git",
@@ -68,6 +71,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "husky": "^1.2.0",
     "lint-staged": "^8.1.0",
+    "nyc": "^13.3.0",
     "prettier": "^1.15.3"
   },
   "engines": {
@@ -79,7 +83,7 @@
       "@babel/register"
     ],
     "files": [
-      "test/**/*.js"
+      "test/**/*.test.js"
     ]
   },
   "yargs": {

@@ -8,7 +8,7 @@ const {
   moduleMiddleware,
 } = require('./middleware')
 const { findProjectRoot } = require('./util')
-const ConsoleReporter = require('./reporters/ConsoleReporter')
+const { ConsoleReporter, ens } = require('@aragon/aragen')
 const url = require('url')
 
 const MIDDLEWARES = [
@@ -18,13 +18,17 @@ const MIDDLEWARES = [
 ]
 
 // Set up commands
-const cmd = require('yargs').commandDir('./commands')
-// .strict()
+const cmd = require('yargs')
+  .usage(`Usage: aragon <command> [options]`)
+  .commandDir('./commands')
 
 cmd.middleware(MIDDLEWARES)
 
 cmd.alias('h', 'help')
 cmd.alias('v', 'version')
+
+// blank scriptName so that help text doesn't display "aragon" before each command
+cmd.scriptName('')
 
 // Configure CLI behaviour
 cmd.demandCommand(1, 'You need to specify a command')
@@ -90,7 +94,7 @@ cmd.option('environment', {
 cmd.option('apm.ens-registry', {
   description:
     "Address of the ENS registry. This will be overwritten if the selected '--environment' from your arapp.json includes a `registry` property",
-  default: require('@aragon/aragen').ens,
+  default: ens,
 })
 cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
 
