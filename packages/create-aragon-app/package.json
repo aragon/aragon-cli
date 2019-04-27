@@ -46,6 +46,7 @@
     "listr-silent-renderer": "^1.1.1",
     "listr-update-renderer": "^0.4.0",
     "listr-verbose-renderer": "^0.4.1",
+    "replace": "^1.1.0",
     "yargs": "^10.1.0"
   },
   "devDependencies": {

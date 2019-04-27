@@ -30,7 +30,6 @@ test('prepare project template', async t => {
   const packageJsonPath = `${projectPath}/package.json`
   const licensePath = `${projectPath}/LICENSE`
   const appName = defaultAPMName('TestApp')
-  const basename = appName.split('.')[0]
 
   await fs.ensureDir(repoPath)
   await fs.ensureFile(arappPath)
@@ -39,13 +38,13 @@ test('prepare project template', async t => {
   await fs.writeJson(arappPath, {
     environments: {
       default: {
-        appName: 'app.aragonpm.eth',
+        appName: 'placeholder-app-name.aragonpm.eth',
       },
       staging: {
-        appName: 'app.open.aragonpm.eth',
+        appName: 'placeholder-app-name.open.aragonpm.eth',
       },
       production: {
-        appName: 'app.open.aragonpm.eth',
+        appName: 'placeholder-app-name.open.aragonpm.eth',
       },
     },
   })
@@ -62,6 +61,9 @@ test('prepare project template', async t => {
   t.is(undefined, packageJson.license)
   t.falsy(fs.pathExistsSync(licensePath))
   t.is(`${appName}`, project.environments.default.appName)
-  t.is(`${basename}.open.aragonpm.eth`, project.environments.staging.appName)
-  t.is(`${basename}.open.aragonpm.eth`, project.environments.production.appName)
+  t.is(`${projectPath}.open.aragonpm.eth`, project.environments.staging.appName)
+  t.is(
+    `${projectPath}.open.aragonpm.eth`,
+    project.environments.production.appName
+  )
 })
