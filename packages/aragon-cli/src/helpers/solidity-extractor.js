@@ -2,15 +2,31 @@ const fs = require('fs')
 const { promisify } = require('util')
 const readFile = promisify(fs.readFile)
 
+// See https://solidity.readthedocs.io/en/v0.4.24/abi-spec.html#types
+const SOLIDITY_SHORTHAND_TYPES_MAP = {
+  address: 'address',
+  bytes: 'bytes',
+  uint: 'uint256',
+  int: 'int256',
+  ufixed: 'ufixed128x18',
+  fixed: 'fixed128x18',
+  bool: 'bool',
+  string: 'string',
+}
+const SOLIDITY_BASIC_TYPES = Object.keys(SOLIDITY_SHORTHAND_TYPES_MAP)
+
 const modifiesStateAndIsPublic = declaration =>
   !declaration.match(/\b(internal|private|view|pure|constant)\b/)
 
+// Check if the type starts with any of the basic types, otherwise it is probably
+// a typed contract, so we need to return address for the signature
 const typeOrAddress = type => {
-  const types = ['address', 'byte', 'uint', 'int', 'bool', 'string']
+  return SOLIDITY_BASIC_TYPES.some(t => type.startsWith(t)) ? type : 'address'
+}
 
-  // check if the type starts with any of the above types, otherwise it is probably
-  // a typed contract, so we need to return address for the signature
-  return types.filter(t => type.indexOf(t) === 0).length > 0 ? type : 'address'
+// Expand shorthands into their full types for calculating function signatures
+const expandTypeForSignature = type => {
+  return SOLIDITY_SHORTHAND_TYPES_MAP[type] || type
 }
 
 // extracts function signature from function declaration
@@ -31,6 +47,7 @@ const getSignature = declaration => {
       .split(',')
       .map(param => param.split(' ').filter(s => s.length > 0)[0])
       .map(type => typeOrAddress(type))
+      .map(type => expandTypeForSignature(type))
       .join(',')
   }
 
