@@ -2,8 +2,7 @@ const findUp = require('find-up')
 const path = require('path')
 const execa = require('execa')
 const net = require('net')
-const pathToPackage = require('global-modules-path').getPath
-const { getInstalledPathSync } = require('get-installed-path')
+const fs = require('fs')
 
 let cachedProjectRoot
 
@@ -64,22 +63,37 @@ const installDeps = (cwd, task) => {
   })
 }
 
-const getNPMBinary = (packageName, relativeBinaryPath) => {
-  let binaryPath
-  try {
-    binaryPath = `${path.join(
-      getInstalledPathSync(packageName, { local: true }),
-      relativeBinaryPath
-    )}`
-  } catch (e) {
-    binaryPath = `${path.join(
-      pathToPackage('@aragon/cli'),
-      'node_modules',
-      packageName,
-      path.normalize(relativeBinaryPath)
-    )}`
+const getDependentBinary = binaryName => {
+  // check local node_modules
+  let binaryPath = path.join(
+    __dirname,
+    '..', // because __dirname will evaluate to project_root/dist/
+    'node_modules',
+    '.bin',
+    binaryName
+  )
+
+  if (fs.existsSync(binaryPath)) {
+    return binaryPath
   }
-  return binaryPath
+
+  // check parent node_modules
+  binaryPath = path.join(__dirname, '..', '.bin', binaryName)
+
+  if (fs.existsSync(binaryPath)) {
+    return binaryPath
+  }
+
+  // check parent node_modules if this module is scoped (e.g.: @scope/package)
+  binaryPath = path.join(__dirname, '..', '..', '.bin', binaryName)
+
+  if (fs.existsSync(binaryPath)) {
+    return binaryPath
+  }
+
+  throw new Error(
+    `Cannot find the ${binaryName} dependency. Has this module installed correctly?`
+  )
 }
 
 const getContract = (pkg, contract) => {
@@ -124,7 +138,7 @@ module.exports = {
   isPortTaken,
   installDeps,
   getNodePackageManager,
-  getNPMBinary,
+  getDependentBinary,
   getContract,
   ANY_ENTITY,
   NO_MANAGER,

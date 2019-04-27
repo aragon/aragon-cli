@@ -15,7 +15,9 @@ const typeOrAddress = type => {
 
 // extracts function signature from function declaration
 const getSignature = declaration => {
-  let [name, params] = declaration.match(/function ([^]*?)\)/)[1].split('(')
+  let [name, params] = declaration
+    .match(/^\s*function ([^]*?)\)/m)[1]
+    .split('(')
 
   if (!name) {
     return 'fallback'

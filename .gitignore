@@ -11,6 +11,8 @@ dist
 
 # Tests and coverage
 *.tmp*
+coverage
+.nyc_output
 
 # Tools
 lerna-debug.log

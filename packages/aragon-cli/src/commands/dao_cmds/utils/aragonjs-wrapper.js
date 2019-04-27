@@ -1,4 +1,6 @@
 import Aragon, { ensResolve } from '@aragon/wrapper'
+const DEFAULT_GAS_PRICE = require('../../../../package.json').aragon
+  .defaultGasPrice
 
 const noop = () => {}
 
@@ -67,7 +69,7 @@ const initWrapper = async (
 
   const wrapper = new Aragon(daoAddress, {
     provider,
-    defaultGasPriceFn: () => String(5e9), // gwei
+    defaultGasPriceFn: () => DEFAULT_GAS_PRICE,
     apm: {
       ipfs: ipfsConf,
       ensRegistryAddress,
