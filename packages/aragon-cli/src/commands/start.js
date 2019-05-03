@@ -3,6 +3,9 @@ const TaskList = require('listr')
 const pkg = require('../../package.json')
 const { installDeps } = require('../util')
 
+const isAddress = addr => /0x[a-fA-F0-9]{40}/.test(addr)
+const isValidAragonID = dao => /[a-z0-9]+\.eth/.test(dao)
+
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 
@@ -17,6 +20,14 @@ exports.builder = yargs => {
         'Version of Aragon client used to run your sandboxed app (commit hash, branch name or tag name)',
       default: DEFAULT_CLIENT_VERSION,
     })
+    .option('dao', {
+      description: 'Address of the Kernel or AragonID',
+      coerce: dao =>
+        !isAddress(dao) && !isValidAragonID(dao)
+          ? `${dao}.aragonid.eth` // append aragonid.eth if needed
+          : dao,
+      default: null,
+    })
     .option('client-port', {
       description: 'Port being used by Aragon client',
       default: DEFAULT_CLIENT_PORT,
@@ -27,7 +38,7 @@ exports.builder = yargs => {
     })
 }
 
-exports.task = async function({ clientVersion, clientPort, clientPath }) {
+exports.task = async function({ clientVersion, dao, clientPort, clientPath }) {
   const tasks = new TaskList([
     {
       title: 'Downloading wrapper',
@@ -53,7 +64,8 @@ exports.task = async function({ clientVersion, clientPort, clientPath }) {
       title: 'Opening wrapper',
       task: async (ctx, task) => {
         task.output = 'Opening wrapper'
-        await openWrapper(ctx, clientPort)
+        console.log(dao)
+        await openWrapper(dao, clientPort)
       },
     },
   ])
