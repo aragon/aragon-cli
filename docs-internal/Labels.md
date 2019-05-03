@@ -18,10 +18,10 @@ easier.
 
 Aragon-specific labels:
 
-| Name              | Description                                                                              |
-| ----------------- | ---------------------------------------------------------------------------------------- |
-| 📌 priority: high | A signal from the Flock/Nest teams to mark the importance of an issue to the maintainers |
-| Aragon One        | A issue/PR assigned to the A1 team                                                       |
+| Name                        | Description                                                                              |
+| --------------------------- | ---------------------------------------------------------------------------------------- |
+| 🦅 flock/nest high priority | A signal from the Flock/Nest teams to mark the importance of an issue to the maintainers |
+| Aragon One                  | A issue/PR assigned to the A1 team                                                       |
 
 Project-specific labels:
 
