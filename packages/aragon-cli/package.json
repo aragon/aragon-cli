@@ -115,6 +115,7 @@
     "lint-staged": "^8.1.0",
     "nyc": "^13.3.0",
     "prettier": "^1.15.3",
+    "proxyquire": "^2.1.0",
     "sinon": "^7.3.1"
   },
   "engines": {
@@ -126,7 +127,8 @@
       "@babel/register"
     ],
     "files": [
-      "test/commands/**/*.test.js"
+      "src/**/*.test.js",
+      "test/**/*.test.js"
     ]
   },
   "aragon": {
