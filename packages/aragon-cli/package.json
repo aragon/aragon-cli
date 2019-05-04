@@ -127,7 +127,6 @@
       "@babel/register"
     ],
     "files": [
-      "src/**/*.test.js",
       "test/**/*.test.js"
     ]
   },
