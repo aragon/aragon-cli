@@ -78,14 +78,14 @@ const getDependentBinary = binaryName => {
   }
 
   // check parent node_modules
-  binaryPath = path.join(__dirname, '..', '.bin', binaryName)
+  binaryPath = path.join(__dirname, '..', '..', '.bin', binaryName)
 
   if (fs.existsSync(binaryPath)) {
     return binaryPath
   }
 
   // check parent node_modules if this module is scoped (e.g.: @scope/package)
-  binaryPath = path.join(__dirname, '..', '..', '.bin', binaryName)
+  binaryPath = path.join(__dirname, '..', '..', '..', '.bin', binaryName)
 
   if (fs.existsSync(binaryPath)) {
     return binaryPath
