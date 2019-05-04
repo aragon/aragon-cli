@@ -64,8 +64,10 @@ node_modules
 In this case the binaries will be available at `node_modules/aragon-cli/node_modules/.bin`.
 
 Having this said, we need an utility to calculate the correct path. This utility should check
-whether the binary exists in `project_root` + `node_modules/.bin`, and if it does not,
+whether the binary exists in `project_root` + `./node_modules/.bin`, and if it does not,
 it should go up once or twice (if scoped) and look into the `.bin` directory. This can be achieved
-using [`__dirname`](https://nodejs.org/docs/latest/api/globals.html#globals_dirname).
+using [`__dirname`][dirname-docs].
 
 See `src/util.js#getDependentBinary`.
+
+[dirname-docs]: https://nodejs.org/docs/latest/api/globals.html#globals_dirname

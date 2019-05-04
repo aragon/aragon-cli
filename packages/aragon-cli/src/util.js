@@ -63,29 +63,29 @@ const installDeps = (cwd, task) => {
   })
 }
 
-const getDependentBinary = binaryName => {
+const getDependentBinary = (binaryName, projectRoot) => {
+  if (!projectRoot) {
+    // __dirname evaluates to the directory of this file (util.js)
+    // e.g.: `../dist/` or `../src/`
+    projectRoot = path.join(__dirname, '..')
+  }
+
   // check local node_modules
-  let binaryPath = path.join(
-    __dirname,
-    '..', // because __dirname will evaluate to project_root/dist/
-    'node_modules',
-    '.bin',
-    binaryName
-  )
+  let binaryPath = path.join(projectRoot, 'node_modules', '.bin', binaryName)
 
   if (fs.existsSync(binaryPath)) {
     return binaryPath
   }
 
   // check parent node_modules
-  binaryPath = path.join(__dirname, '..', '.bin', binaryName)
+  binaryPath = path.join(projectRoot, '..', '.bin', binaryName)
 
   if (fs.existsSync(binaryPath)) {
     return binaryPath
   }
 
   // check parent node_modules if this module is scoped (e.g.: @scope/package)
-  binaryPath = path.join(__dirname, '..', '..', '.bin', binaryName)
+  binaryPath = path.join(projectRoot, '..', '..', '.bin', binaryName)
 
   if (fs.existsSync(binaryPath)) {
     return binaryPath
