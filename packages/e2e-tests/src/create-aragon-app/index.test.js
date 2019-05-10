@@ -38,6 +38,4 @@ test('should create a new aragon app', async t => {
   t.is(`${name}.aragonpm.eth`, arapp.environments.default.appName)
   t.is(`${name}.open.aragonpm.eth`, arapp.environments.staging.appName)
   t.is(`${name}.open.aragonpm.eth`, arapp.environments.production.appName)
-
-  // TODO we can try aragon run with startBackgroundProcess and assert that the app loads
 })

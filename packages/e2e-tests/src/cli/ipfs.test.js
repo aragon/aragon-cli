@@ -6,7 +6,11 @@ test('should spawn ipfs', async t => {
   t.plan(2)
 
   // act
-  const { exit, stdout } = await startBackgroundProcess('aragon', ['ipfs', '--debug'], 'IPFS daemon is now running.')
+  const { exit, stdout } = await startBackgroundProcess({
+    cmd: 'aragon', 
+    args: ['ipfs', '--debug'],
+    readyOutput: 'IPFS daemon is now running.'
+  })
   const res = await fetch('http://localhost:5001/api/v0/version')
   const body = await res.text()
 
