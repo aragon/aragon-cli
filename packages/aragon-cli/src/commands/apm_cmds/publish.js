@@ -109,7 +109,7 @@ exports.builder = function(yargs) {
 
 const getMajor = version => version.split('.')[0]
 
-async function getDeprecatedFunctions(lastVersion, functions) {
+async function getDeprecatedFunctions(apm, artifact) {
   // Iterate on each major version
   //    get repo
   //    retrive functions of that repo version
@@ -118,18 +118,22 @@ async function getDeprecatedFunctions(lastVersion, functions) {
   //        was not previously added on other version
   //        that is not in the last version function
   //            add to array of deprecated with the version
+  // const functions = artifact.functions
+  // const deprecated = {}
+  // const versions = await apm.getAllVersions(artifact.appName)
+  // versions.map(version => {
+  //   if (version && version.content) {
+  //   }
+  // })
   // const repo = await apm.getVersion(module.appName, version)
-  // const functions = repo.functions.map
   // // Example return from extract function
-  // return funcDecs
-  //   .filter(dec => modifiesStateAndIsPublic(dec))
-  //   .map(dec => ({
-  //     version: {
-  //       sig: getSignature(dec),
-  //       roles: getRoles(dec),
-  //       notice: getNotice(dec),
-  //     }
-  //   }))
+  // return deprecated.map(version => ({
+  //   version: {
+  //     sig: getSignature(dec),
+  //     roles: getRoles(dec),
+  //     notice: getNotice(dec),
+  //   },
+  // }))
 }
 
 async function generateApplicationArtifact(
@@ -172,7 +176,7 @@ async function generateApplicationArtifact(
   // Consult old (major) version's artifacts and return an array
   // of deprecated functions per version
   // > "deprecated": { "1.0.0": [{}], "2.0.0": [{}] }
-  artifact.deprecated = await getDeprecatedFunctions(apm, artifact.functions)
+  artifact.deprecated = await getDeprecatedFunctions(apm, artifact)
 
   if (artifact.roles) {
     artifact.roles = artifact.roles.map(role =>
