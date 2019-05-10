@@ -258,8 +258,12 @@ exports.handler = function({
         title: 'Open DAO',
         enabled: () => client === true,
         task: async (ctx, task) => {
-          const dao = ctx.daoAddress
-          start.task({ clientVersion, dao, clientPort, clientPath })
+          start.task({
+            dao: ctx.daoAddress,
+            clientVersion,
+            clientPort,
+            clientPath,
+          })
         },
       },
     ],

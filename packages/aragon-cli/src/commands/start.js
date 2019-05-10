@@ -1,5 +1,6 @@
 import { downloadWrapper, startClient, openWrapper } from '../lib/start'
 const TaskList = require('listr')
+const chalk = require('chalk')
 const pkg = require('../../package.json')
 const { installDeps } = require('../util')
 
@@ -9,24 +10,24 @@ const isValidAragonID = dao => /[a-z0-9]+\.eth/.test(dao)
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 
-exports.command = 'start [client-version]'
+exports.command = 'start [dao]'
 
 exports.describe = 'Start the Aragon GUI (graphical user interface)'
 
 exports.builder = yargs => {
   return yargs
-    .positional('client-version', {
-      description:
-        'Version of Aragon client used to run your sandboxed app (commit hash, branch name or tag name)',
-      default: DEFAULT_CLIENT_VERSION,
-    })
-    .option('dao', {
+    .positional('dao', {
       description: 'Address of the Kernel or AragonID',
       coerce: dao =>
-        !isAddress(dao) && !isValidAragonID(dao)
+        !isAddress(dao) && !isValidAragonID(dao) && null
           ? `${dao}.aragonid.eth` // append aragonid.eth if needed
           : dao,
       default: null,
+    })
+    .option('client-version', {
+      description:
+        'Version of Aragon client used to run your sandboxed app (commit hash, branch name or tag name)',
+      default: DEFAULT_CLIENT_VERSION,
     })
     .option('client-port', {
       description: 'Port being used by Aragon client',
@@ -38,7 +39,7 @@ exports.builder = yargs => {
     })
 }
 
-exports.task = async function({ clientVersion, dao, clientPort, clientPath }) {
+exports.task = async function({ dao, clientVersion, clientPort, clientPath }) {
   const tasks = new TaskList([
     {
       title: 'Downloading wrapper',
@@ -63,8 +64,8 @@ exports.task = async function({ clientVersion, dao, clientPort, clientPath }) {
     {
       title: 'Opening wrapper',
       task: async (ctx, task) => {
+        // TODO: Add environments for rinkeby and mainnet
         task.output = 'Opening wrapper'
-        console.log(dao)
         await openWrapper(dao, clientPort)
       },
     },
@@ -74,16 +75,22 @@ exports.task = async function({ clientVersion, dao, clientPort, clientPath }) {
 
 exports.handler = async ({
   reporter,
+  dao,
   clientVersion,
   clientPort,
   clientPath,
 }) => {
-  const task = await exports.task({ clientVersion, clientPort, clientPath })
-  return task
-    .run()
-    .then(() =>
-      reporter.info(
-        `Aragon client version ${clientVersion}, started on port ${clientPort}`
-      )
-    )
+  const task = await exports.task({
+    dao,
+    clientVersion,
+    clientPort,
+    clientPath,
+  })
+  return task.run().then(() => {
+    reporter.info(`Starting...
+    ${dao ? chalk.bold('DAO') + ': ' + dao : ''}
+    ${chalk.bold('Client Version')}: ${clientVersion}
+    ${chalk.bold(`Port`)}: ${clientPort}
+    `)
+  })
 }
