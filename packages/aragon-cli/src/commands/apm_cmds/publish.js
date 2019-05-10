@@ -107,8 +107,34 @@ exports.builder = function(yargs) {
     })
 }
 
+const getMajor = version => version.split('.')[0]
+
+async function getDeprecatedFunctions(lastVersion, functions) {
+  // Iterate on each major version
+  //    get repo
+  //    retrive functions of that repo version
+  //    compare existent last functios with functions in version retrived
+  //    if exist a diferent function that:
+  //        was not previously added on other version
+  //        that is not in the last version function
+  //            add to array of deprecated with the version
+  // const repo = await apm.getVersion(module.appName, version)
+  // const functions = repo.functions.map
+  // // Example return from extract function
+  // return funcDecs
+  //   .filter(dec => modifiesStateAndIsPublic(dec))
+  //   .map(dec => ({
+  //     version: {
+  //       sig: getSignature(dec),
+  //       roles: getRoles(dec),
+  //       notice: getNotice(dec),
+  //     }
+  //   }))
+}
+
 async function generateApplicationArtifact(
   cwd,
+  apm,
   outputPath,
   module,
   deployArtifacts
@@ -143,6 +169,11 @@ async function generateApplicationArtifact(
   // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
   artifact.functions = await extract(path.resolve(cwd, artifact.path))
 
+  // Consult old (major) version's artifacts and return an array
+  // of deprecated functions per version
+  // > "deprecated": { "1.0.0": [{}], "2.0.0": [{}] }
+  artifact.deprecated = await getDeprecatedFunctions(apm, artifact.functions)
+
   if (artifact.roles) {
     artifact.roles = artifact.roles.map(role =>
       Object.assign(role, { bytes: '0x' + keccak256(role.id) })
@@ -150,7 +181,7 @@ async function generateApplicationArtifact(
   }
 
   // Save artifact
-  await writeJson(path.resolve(outputPath, 'artifact.json'), artifact, {
+  await writeJson(path.resolve(outputPath, ARTIFACT_FILE), artifact, {
     spaces: '\t',
   })
 
@@ -343,7 +374,6 @@ exports.task = function({
               ? semver.valid(bump)
               : semver.inc(repo.version, bump)
 
-            const getMajor = version => version.split('.')[0]
             ctx.isMajor = getMajor(repo.version) !== getMajor(ctx.version)
 
             isValid = await apm.isValidBump(
@@ -369,7 +399,7 @@ exports.task = function({
 
           if (!isValid) {
             throw new Error(
-              'Version bump is not valid, you have to respect APM bumps policy. Check version upgrade rules in documentation https://hack.aragon.org/docs/aragonos-ref.html#631-version-upgrade-rules'
+              'Version bump is not valid, you have to respect APM bumps policy. Check version upgrade rules in documentation https://hack.aragon.org/docs/apm-ref#version-upgrade-rules'
             )
           }
         },
@@ -534,6 +564,7 @@ exports.task = function({
                     if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
                       await generateApplicationArtifact(
                         cwd,
+                        apm,
                         dir,
                         module,
                         ctx.deployArtifacts
@@ -548,6 +579,7 @@ exports.task = function({
           }
           await generateApplicationArtifact(
             cwd,
+            apm,
             dir,
             module,
             ctx.deployArtifacts
