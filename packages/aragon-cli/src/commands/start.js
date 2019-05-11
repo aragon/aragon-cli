@@ -19,7 +19,7 @@ exports.builder = yargs => {
     .positional('dao', {
       description: 'Address of the Kernel or AragonID',
       coerce: dao =>
-        !isAddress(dao) && !isValidAragonID(dao) && null
+        dao != null && !isAddress(dao) && !isValidAragonID(dao)
           ? `${dao}.aragonid.eth` // append aragonid.eth if needed
           : dao,
       default: null,
@@ -64,7 +64,7 @@ exports.task = async function({ dao, clientVersion, clientPort, clientPath }) {
     {
       title: 'Opening wrapper',
       task: async (ctx, task) => {
-        // TODO: Add environments for rinkeby and mainnet
+        // TODO: Add environments (e.g. rinkeby)
         task.output = 'Opening wrapper'
         await openWrapper(dao, clientPort)
       },
@@ -89,8 +89,10 @@ exports.handler = async ({
   return task.run().then(() => {
     reporter.info(`Starting...
     ${dao ? chalk.bold('DAO') + ': ' + dao : ''}
-    ${chalk.bold('Client Version')}: ${clientVersion}
-    ${chalk.bold(`Port`)}: ${clientPort}
+    ${
+      clientVersion ? chalk.bold('Client Version') : chalk.bold('Client Path')
+    }: ${clientVersion || clientPath}
+    ${chalk.bold(`Client Port`)}: ${clientPort}
     `)
   })
 }
