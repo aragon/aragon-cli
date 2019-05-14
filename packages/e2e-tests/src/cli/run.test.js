@@ -29,6 +29,9 @@ test('should create a new aragon app and run it successfully', async t => {
     readyOutput: 'Opening http://localhost:3000/#/',
   })
 
+  // hack, we need to install the dependencies of the app
+  await execa('npm', ['install'], { cwd: `${testSandbox}/${projectName}/app` })
+
   // hack so the wrapper has time to start
   await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000))
 
