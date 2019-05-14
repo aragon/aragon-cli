@@ -50,7 +50,7 @@ You can browse our [issue tracker](https://github.com/aragon/aragon-cli/issues) 
 11. In the description of the pull request, explain the changes that you made, any issues you think exist with the pull request you made, and any questions you have for the maintainer. It's OK if your pull request is not perfect (no pull request is). The reviewer will be able to help you fix any problems and improve it!
 12. Wait for the pull request to be reviewed by a maintainer.
 13. Make changes to the pull request if the maintainer recommends them.
-14. Celebrate your success after your pull request is merged!
+14. Celebrate your success after your pull request is merged by making some noise in the #dev channel! :tada:
 
 ## Your First Code Contribution
 
@@ -62,7 +62,7 @@ Working on your first Pull Request? You can learn how from this free video serie
 
 Unsure where to begin contributing? You can start by looking through these `good first issue` issues:
 
-- [Good first issue](https://github.com/aragon/aragon-cli/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) - issues which should only require a few lines of code, and a test or two.
+- [Good first issue](https://github.com/aragon/aragon-cli/labels/%3Apray%3A%20good%20first%20issue) - issues which should only require a few lines of code, and a test or two.
 
 ## Getting help
 

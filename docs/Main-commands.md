@@ -54,6 +54,21 @@ The [React boilerplate](https://github.com/aragon/aragon-react-boilerplate) supp
 > **Note**<br>
 > The `kits` has been deprecated and `templates` should be used instead. You may find the `kits` notation in some places while we make the transition.
 
+## aragon start
+
+Start the Aragon GUI (graphical user interface)
+
+```sh
+aragon start [client-version]
+```
+
+- `client-version`: Version of Aragon client used to run your sandboxed app (commit hash, branch name or tag name)
+
+Options:
+
+- `--client-port`: Port being used by Aragon client.
+- `--client-path`: A path pointing to an existing Aragon client installation.
+
 ## aragon devchain
 
 The `devchain` command is used for starting a local development testnet with all the required components already deployed and ready to use. 
@@ -75,15 +90,6 @@ Options:
 
 > **Note**<br>
 > The ENS instance is used both for the aragonPM registry `aragonpm.eth` and for the [aragon-id](https://github.com/aragon/aragon-id) `aragonid.eth`.
-
-
-## aragon ipfs
-
-The `ipfs` command is used to start an [IPFS](https://docs.ipfs.io/introduction/overview/) daemon. It adds from [aragen](https://github.com/aragon/aragen) some required files for the first-party Aragon apps to work, so it doesn't have to try and fetch them over the network.
-
-```sh
-aragon ipfs
-```
 
 ## aragon deploy
 
