@@ -26,8 +26,6 @@
     <img src="https://badges.greenkeeper.io/aragon/aragon-cli.svg?style=flat-square"
       alt="Greenkeeper" />
   </a>
-  [![Greenkeeper badge](https://badges.greenkeeper.io/aragon/aragon-cli.svg)](https://greenkeeper.io/)
-
 </div>
 
 <div align="center">
