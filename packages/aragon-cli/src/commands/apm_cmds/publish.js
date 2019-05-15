@@ -109,31 +109,43 @@ exports.builder = function(yargs) {
 
 const getMajor = version => version.split('.')[0]
 
+function getFunctionsAbi(functions, abi) {
+  functions.forEach(f => {
+    f.abi = abi.find(method => method.name === f.sig.match(/(.*)\(/)[1])
+  })
+}
+
 async function getDeprecatedFunctions(apm, artifact) {
-  // Iterate on each major version
-  //    get repo
-  //    retrive functions of that repo version
-  //    compare existent last functios with functions in version retrived
-  //    if exist a diferent function that:
-  //        was not previously added on other version
-  //        that is not in the last version function
-  //            add to array of deprecated with the version
-  // const functions = artifact.functions
-  // const deprecated = {}
-  // const versions = await apm.getAllVersions(artifact.appName)
-  // versions.map(version => {
-  //   if (version && version.content) {
-  //   }
-  // })
-  // const repo = await apm.getVersion(module.appName, version)
-  // // Example return from extract function
-  // return deprecated.map(version => ({
-  //   version: {
-  //     sig: getSignature(dec),
-  //     roles: getRoles(dec),
-  //     notice: getNotice(dec),
-  //   },
-  // }))
+  let deprecated = []
+  try {
+    let deprecatedOnVersion = []
+    const deprecatedFunctionsSig = []
+    const versions = await apm.getAllVersions(artifact.appName)
+    let lastMajor = -1
+    versions.forEach(async repo => {
+      // iterate on major versions
+      if (getMajor(repo.version) !== lastMajor) {
+        lastMajor = getMajor(repo.version)
+        repo.functions.forEach(f => {
+          if (
+            !artifact.functions.some(obj => obj.sig === f.sig) &&
+            !deprecatedFunctionsSig.includes(f.sig)
+          ) {
+            deprecatedOnVersion.push(f)
+            deprecatedFunctionsSig.push(f.sig)
+          }
+        })
+        if (deprecatedOnVersion.length) {
+          deprecated[`${lastMajor}.0.0`] = deprecatedOnVersion
+          getFunctionsAbi(deprecatedOnVersion, repo.abi)
+          deprecatedOnVersion = []
+        }
+      }
+    })
+    return deprecated
+  } catch (e) {
+    // Catch ENS error on first version
+  }
 }
 
 async function generateApplicationArtifact(
@@ -172,10 +184,13 @@ async function generateApplicationArtifact(
   // Analyse contract functions and returns an array
   // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
   artifact.functions = await extract(path.resolve(cwd, artifact.path))
+  // extract abi for each function
+  // > [{ sig: , role: , notice: , abi: }]
+  getFunctionsAbi(artifact.functions, artifact.abi)
 
   // Consult old (major) version's artifacts and return an array
   // of deprecated functions per version
-  // > "deprecated": { "1.0.0": [{}], "2.0.0": [{}] }
+  // > "deprecated": [ "1.0.0": [{}], "2.0.0": [{}] ]
   artifact.deprecated = await getDeprecatedFunctions(apm, artifact)
 
   if (artifact.roles) {
