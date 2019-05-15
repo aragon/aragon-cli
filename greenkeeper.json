@@ -1,6 +1,6 @@
 {
   "groups": {
-    "default": {
+    "all": {
       "packages": [
         "package.json",
         "packages/aragon-cli/package.json",

@@ -86,13 +86,6 @@
       "test/**/*.test.js"
     ]
   },
-  "yargs": {
-    "short-option-groups": true,
-    "camel-case-expansion": true,
-    "dot-notation": true,
-    "parse-numbers": false,
-    "boolean-negation": true
-  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
