@@ -116,13 +116,13 @@ function getFunctionsAbi(functions, abi) {
 }
 
 async function getDeprecatedFunctions(apm, artifact) {
-  let deprecated = []
+  let deprecated = {}
   try {
     let deprecatedOnVersion = []
     const deprecatedFunctionsSig = []
     const versions = await apm.getAllVersions(artifact.appName)
     let lastMajor = -1
-    versions.forEach(async repo => {
+    versions.reverse().forEach(async repo => {
       // iterate on major versions
       if (getMajor(repo.version) !== lastMajor) {
         lastMajor = getMajor(repo.version)
