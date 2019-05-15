@@ -4,7 +4,8 @@
       "packages": [
         "package.json",
         "packages/aragon-cli/package.json",
-        "packages/create-aragon-app/package.json"
+        "packages/create-aragon-app/package.json",
+        "packages/e2e-tests/package.json"
       ]
     }
   }
