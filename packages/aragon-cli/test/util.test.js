@@ -30,7 +30,7 @@ test('getDependentBinary should find the binary path from the local node_modules
   // act
   const path = util.getDependentBinary('truff', 'project_root')
   // assert
-  t.is(path, 'project_root/node_modules/.bin/truff')
+  t.is(normalizePath(path), 'project_root/node_modules/.bin/truff')
 })
 
 test('getDependentBinary should find the binary path from the parent node_modules', t => {
@@ -46,7 +46,7 @@ test('getDependentBinary should find the binary path from the parent node_module
     'parent/node_modules/project_root'
   )
   // assert
-  t.is(path, 'parent/node_modules/.bin/truff')
+  t.is(normalizePath(path), 'parent/node_modules/.bin/truff')
 })
 
 test("getDependentBinary should find the binary path from the parent node_modules even when it's scoped", t => {
@@ -63,5 +63,11 @@ test("getDependentBinary should find the binary path from the parent node_module
     'parent/node_modules/@scope/project_root'
   )
   // assert
-  t.is(path, 'parent/node_modules/.bin/truff')
+  t.is(normalizePath(path), 'parent/node_modules/.bin/truff')
 })
+
+function normalizePath(path) {
+  // on Windows the directory separator is '\' not '/'
+  const next = path.replace(/\\/g, '/')
+  return next
+}
