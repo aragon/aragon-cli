@@ -24,7 +24,7 @@
     "cross-env": "^5.2.0",
     "create-aragon-app": "file:../create-aragon-app",
     "execa": "^1.0.0",
-    "fs-extra": "^7.0.1",
+    "fs-extra": "^8.0.1",
     "node-fetch": "^2.3.0",
     "ps-tree": "^1.2.0"
   },
