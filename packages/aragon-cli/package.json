@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "5.7.1",
+  "version": "5.8.0",
   "description": "Aragon command-line tools",
   "main": "dist/cli.js",
   "bin": {
@@ -131,7 +131,7 @@
     ]
   },
   "aragon": {
-    "clientVersion": "b8955ef92856b90600fe5bb5c7f96724043bde86",
+    "clientVersion": "e08deb62080e17fe652fa83f60dc81a02c455c41",
     "clientPort": "3000",
     "defaultGasPrice": "10000000000"
   },
