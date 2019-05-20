@@ -19,6 +19,13 @@ const MIDDLEWARES = [
 
 // Set up commands
 const cmd = require('yargs')
+  .parserConfiguration({
+    'short-option-groups': true,
+    'camel-case-expansion': true,
+    'dot-notation': true,
+    'parse-numbers': false,
+    'boolean-negation': true,
+  })
   .usage(`Usage: aragon <command> [options]`)
   .commandDir('./commands')
 

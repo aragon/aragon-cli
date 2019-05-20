@@ -3,7 +3,10 @@ cache: npm
 notifications:
   email: false
 node_js:
-  - 'lts/*'
+  - '11'
+  - '10'
+  - '9'
+  - '8'
 before_script:
   - npm prune
 install:
