@@ -62,7 +62,7 @@
     "go-ipfs": "^0.4.18-hacky2",
     "ignore": "^5.0.6",
     "ipfs-api": "^26.1.2",
-    "ipfs-http-client": "^31.0.0",
+    "ipfs-http-client": "^32.0.0",
     "js-sha3": "^0.8.0",
     "listr": "^0.14.3",
     "listr-input": "0.1.3",
