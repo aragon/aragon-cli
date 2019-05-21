@@ -17,7 +17,7 @@ test('should create a new aragon app', async t => {
 
   // arrange
   const name = 'foobar'
-  const projectPath = `${testSandbox}${name}`
+  const projectPath = `${testSandbox}/${name}`
   const repoPath = `${projectPath}/.git`
   const arappPath = `${projectPath}/arapp.json`
   const packageJsonPath = `${projectPath}/package.json`
