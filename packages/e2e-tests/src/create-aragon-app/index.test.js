@@ -2,7 +2,7 @@ import test from 'ava'
 import execa from 'execa'
 import fs from 'fs-extra'
 
-const testSandbox = './.tmp/'
+const testSandbox = './.tmp/create-aragon-app'
 
 test.beforeEach(() => {
   fs.ensureDirSync(testSandbox)
