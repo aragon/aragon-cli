@@ -78,7 +78,7 @@
     "semver": "^6.0.0",
     "source-map-support": "^0.5.11",
     "stringify-tree": "^1.0.2",
-    "tmp-promise": "^1.1.0",
+    "tmp-promise": "^2.0.1",
     "truffle": "^5.0.17",
     "truffle-flattener": "^1.2.9",
     "truffle-hdwallet-provider": "^1.0.2",
