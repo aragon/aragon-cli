@@ -22,8 +22,6 @@ test('should create a new aragon app and run it successfully', async t => {
   await execa('create-aragon-app', [projectName], { cwd: testSandbox })
   // hack, we need to install the dependencies of the app
   await execa('npm', ['install'], { cwd: `${testSandbox}/${projectName}/app` })
-  // temp hack
-  await execa('npm', ['install', '-D', 'rsync'], { cwd: `${testSandbox}/${projectName}/app` })
 
   // act
   const runProcess = await startBackgroundProcess({
