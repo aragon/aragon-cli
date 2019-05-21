@@ -1,23 +1,34 @@
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const APM = require('@aragon/apm')
+const defaultAPMName = require('../../helpers/default-apm')
 
-exports.command = 'versions'
+exports.command = 'versions [apmRepo]'
 
-exports.describe = 'List all versions of the package'
+exports.describe = 'List all versions published of the package'
+
+exports.builder = function(yargs) {
+  return yargs.option('apmRepo', {
+    description: 'The repo to inspect',
+    type: 'string',
+    default: null,
+  })
+}
 
 exports.handler = async function({
   reporter,
+  apmRepo,
   module,
-  bump,
-  cwd,
   network,
   apm: apmOptions,
 }) {
   const web3 = await ensureWeb3(network)
-
+  const repoName = apmRepo ? defaultAPMName(apmRepo) : module.appName
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
-  const versions = await APM(web3, apmOptions).getAllVersions(module.appName)
-  reporter.info(`${module.appName} has ${versions.length} published versions`)
+
+  const versions = await APM(web3, apmOptions).getAllVersions(repoName)
+
+  reporter.info(`${repoName} has ${versions.length} published versions`)
+
   versions.map(version => {
     if (version && version.content) {
       reporter.success(
