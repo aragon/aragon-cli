@@ -36,6 +36,6 @@ test('should create a new aragon app', async t => {
   t.falsy(fs.pathExistsSync(licensePath))
   t.is(undefined, packageJson.license)
   t.is(`${name}.aragonpm.eth`, arapp.environments.default.appName)
-  t.is(`${name}.open.aragonpm.eth`, arapp.environments.staging.appName)
-  t.is(`${name}.open.aragonpm.eth`, arapp.environments.production.appName)
+  t.is(`${name}.open.aragonpm.eth`, arapp.environments.rinkeby.appName)
+  t.is(`${name}.open.aragonpm.eth`, arapp.environments.mainnet.appName)
 })
