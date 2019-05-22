@@ -44,12 +44,19 @@ test('should create a new aragon app and run it successfully', async t => {
   // cleanup
   await runProcess.exit()
 
-  // delete the output part of building the frontend
+  // delete some output sections that are not deterministic
   const appBuildOutput = runProcess.stdout.substring(
     runProcess.stdout.indexOf('Building frontend [started]'),
     runProcess.stdout.indexOf('Building frontend [completed]')
   )
-  const outputToSnapshot = runProcess.stdout.replace(appBuildOutput, '')
+  const wrapperInstallOutput = runProcess.stdout.substring(
+    runProcess.stdout.indexOf('Installing wrapper dependencies [started]'),
+    runProcess.stdout.indexOf('Installing wrapper dependencies [completed]')
+  )
+
+  const outputToSnapshot = runProcess.stdout
+    .replace(appBuildOutput, '')
+    .replace(wrapperInstallOutput, '')
 
   // assert
   t.snapshot(normalizeOutput(outputToSnapshot))
