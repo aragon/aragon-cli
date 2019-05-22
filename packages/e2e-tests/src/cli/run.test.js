@@ -50,8 +50,8 @@ test('should create a new aragon app and run it successfully', async t => {
     runProcess.stdout.indexOf('Building frontend [completed]')
   )
   const wrapperInstallOutput = runProcess.stdout.substring(
-    runProcess.stdout.indexOf('Installing wrapper dependencies [started]'),
-    runProcess.stdout.indexOf('Installing wrapper dependencies [completed]')
+    runProcess.stdout.indexOf('Downloading wrapper [started]'),
+    runProcess.stdout.indexOf('Starting Aragon client [started]')
   )
 
   const outputToSnapshot = runProcess.stdout
