@@ -7,8 +7,9 @@
   "scripts": {
     "clean": "git clean -fixd",
     "prepare": "npm run bootstrap && npm run bootstrap-e2e-tests",
-    "bootstrap": "lerna bootstrap --no-ci --ignore @aragon/cli-e2e-tests",
-    "bootstrap-e2e-tests": "lerna bootstrap --no-ci --scope @aragon/cli-e2e-tests",
+    "bootstrap": "lerna exec --ignore @aragon/cli-e2e-tests -- npm install",
+    "bootstrap-e2e-tests": "lerna exec --scope @aragon/cli-e2e-tests -- npm install",
+    "shrinkwrap": "lerna exec -- npm shrinkwrap",
     "link": "lerna run link",
     "unlink": "lerna run unlink",
     "build": "lerna run build",
