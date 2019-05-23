@@ -7056,8 +7056,8 @@
       },
       "dependencies": {
         "async-eventemitter": {
-          "version": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
-          "from": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
+          "version": "0.2.3",
+          "resolved": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
           "requires": {
             "async": "^2.4.0"
           }
@@ -10649,8 +10649,8 @@
           },
           "dependencies": {
             "async-eventemitter": {
-              "version": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
-              "from": "async-eventemitter@github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
+              "version": "0.2.3",
+              "resolved": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
               "requires": {
                 "async": "^2.4.0"
               }
@@ -10665,7 +10665,7 @@
               "resolved": "https://registry.npmjs.org/eth-block-tracker/-/eth-block-tracker-2.3.1.tgz",
               "integrity": "sha512-NamWuMBIl8kmkJFVj8WzGatySTzQPQag4Xr677yFxdVtIxACFbL/dQowk0MzEqIKk93U1TwY3MjVU6mOcwZnKA==",
               "requires": {
-                "async-eventemitter": "async-eventemitter@github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
+                "async-eventemitter": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
                 "eth-query": "^2.1.0",
                 "ethereumjs-tx": "^1.3.3",
                 "ethereumjs-util": "^5.1.3",
