@@ -2,7 +2,7 @@ import test from 'ava'
 import execa from 'execa'
 import fs from 'fs-extra'
 
-const testSandbox = './.tmp/'
+const testSandbox = './.tmp/create-aragon-app'
 
 test.beforeEach(() => {
   fs.ensureDirSync(testSandbox)
@@ -17,7 +17,7 @@ test('should create a new aragon app', async t => {
 
   // arrange
   const name = 'foobar'
-  const projectPath = `${testSandbox}${name}`
+  const projectPath = `${testSandbox}/${name}`
   const repoPath = `${projectPath}/.git`
   const arappPath = `${projectPath}/arapp.json`
   const packageJsonPath = `${projectPath}/package.json`
@@ -36,8 +36,6 @@ test('should create a new aragon app', async t => {
   t.falsy(fs.pathExistsSync(licensePath))
   t.is(undefined, packageJson.license)
   t.is(`${name}.aragonpm.eth`, arapp.environments.default.appName)
-  t.is(`${name}.open.aragonpm.eth`, arapp.environments.staging.appName)
-  t.is(`${name}.open.aragonpm.eth`, arapp.environments.production.appName)
-
-  // TODO we can try aragon run with startBackgroundProcess and assert that the app loads
+  t.is(`${name}.open.aragonpm.eth`, arapp.environments.rinkeby.appName)
+  t.is(`${name}.open.aragonpm.eth`, arapp.environments.mainnet.appName)
 })
