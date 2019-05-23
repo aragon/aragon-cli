@@ -11,15 +11,24 @@ The configuration file is located at `greenkeeper.json`.
 
 We are using [npm shrinkwrap][shrinkwrap-home] for the reasons described [here][shrinkwrap-issue].
 
-### Regenerate a lock file
+### Regenerate the lockfiles
 
 Example:
 
 ```sh
-rm packages/aragon-cli/npm-shrinkwrap.json
-npm install
-cd packages/aragon-cli
-npm shrinkwrap
+npm run delete-lockfiles
+npm run bootstrap
+npm run bootstrap
+npm run create-lockfiles
+```
+
+Why do we run bootstrap twice?
+
+`npm` will actually fix the lockfiles the second time around, e.g.:
+
+```diff
+-            "websocket": "websocket@git://github.com/frozeman/WebSocket-Node.git#6c72925e3f8aaaea8dc8450f97627e85263999f2"
++            "websocket": "git://github.com/frozeman/WebSocket-Node.git#browserifyCompatible"
 ```
 
 ## Out of date dependencies
@@ -116,7 +125,7 @@ npm install --save --save-exact web3@1.0.0-beta.34
 npm install --save ignore@4
 ```
 
-Note: sometimes you need to [regenerate the lockfiles](#regenerate-a-lock-file) when you install
+Note: sometimes you need to [regenerate the lockfiles](#regenerate-the-lockfiles) when you install
 a new package, because the automatic updates prove very unreliable.
 
 [greenkeeper-home]: https://greenkeeper.io
