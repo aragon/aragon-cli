@@ -2,7 +2,7 @@
   "name": "@aragon/cli-monorepo",
   "private": true,
   "devDependencies": {
-    "lerna": "^3.8.4"
+    "lerna": "^3.14.1"
   },
   "scripts": {
     "clean": "git clean -fixd",
