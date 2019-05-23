@@ -5,7 +5,11 @@ exports.command = 'dao <command>'
 exports.describe = 'Manage your Aragon DAO'
 
 exports.builder = function(yargs) {
-  if (process.argv[3] !== 'new' && process.argv[3] !== 'act') {
+  if (
+    process.argv[3] !== 'new' &&
+    process.argv[3] !== 'act' &&
+    process.argv[3] !== 'token'
+  ) {
     yargs = daoArg(yargs)
   }
   return yargs

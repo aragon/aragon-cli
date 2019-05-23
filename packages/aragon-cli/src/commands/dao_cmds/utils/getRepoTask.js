@@ -1,4 +1,6 @@
+const pkg = require('../../../../package.json')
 const LATEST_VERSION = 'latest'
+const DEFAULT_IPFS_TIMEOUT = pkg.aragon.defaultIpfsTimeout
 
 module.exports = {
   args: yargs => {
@@ -19,9 +21,13 @@ module.exports = {
   }) => {
     return async ctx => {
       if (apmRepoVersion === LATEST_VERSION) {
-        ctx.repo = await apm.getLatestVersion(apmRepo)
+        ctx.repo = await apm.getLatestVersion(apmRepo, DEFAULT_IPFS_TIMEOUT)
       } else {
-        ctx.repo = await apm.getVersion(apmRepo, apmRepoVersion.split('.'))
+        ctx.repo = await apm.getVersion(
+          apmRepo,
+          apmRepoVersion.split('.'),
+          DEFAULT_IPFS_TIMEOUT
+        )
       }
 
       // appId is loaded from artifact.json in IPFS
