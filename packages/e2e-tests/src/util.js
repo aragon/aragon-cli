@@ -5,16 +5,17 @@ import psTree from 'ps-tree'
 const defaultKillSignal = 'SIGINT'
 const defaultLogger = process.env.DEBUG ? console.log : () => { }
 
-export async function startBackgroundProcess (
+export async function startBackgroundProcess ({
   cmd,
   args,
+  execaOpts,
   readyOutput,
   logger = defaultLogger,
   killSignal = defaultKillSignal
-) {
+}) {
   return new Promise((resolve, reject) => {
     // start the process
-    const subprocess = execa(cmd, args)
+    const subprocess = execa(cmd, args, execaOpts)
     logger(cmd, 'spawned with PID: ', subprocess.pid)
     let stdout = ''
     let stderr = ''
