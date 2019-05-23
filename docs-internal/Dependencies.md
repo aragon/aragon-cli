@@ -11,6 +11,17 @@ The configuration file is located at `greenkeeper.json`.
 
 We are using [npm shrinkwrap][shrinkwrap-home] for the reasons described [here][shrinkwrap-issue].
 
+### Regenerate a lock file
+
+Example:
+
+```sh
+rm packages/aragon-cli/npm-shrinkwrap.json
+npm install
+cd packages/aragon-cli
+npm shrinkwrap
+```
+
 ## Out of date dependencies
 
 ### truffle
@@ -105,7 +116,8 @@ npm install --save --save-exact web3@1.0.0-beta.34
 npm install --save ignore@4
 ```
 
-Note: sometimes you need to run `npm shrinkwrap` to ensure the lock file has been updated.
+Note: sometimes you need to [regenerate the lockfiles](#regenerate-a-lock-file) when you install
+a new package, because the automatic updates prove very unreliable.
 
 [greenkeeper-home]: https://greenkeeper.io
 [shrinkwrap-home]: https://docs.npmjs.com/cli/shrinkwrap.html
