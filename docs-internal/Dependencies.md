@@ -16,9 +16,9 @@ We are using [npm shrinkwrap][shrinkwrap-home] for the reasons described [here][
 Example:
 
 ```sh
-rm packages/aragon-cli/npm-shrinkwrap.json
-npm install
 cd packages/aragon-cli
+rm -rf npm-shrinkwrap.json node_modules
+npm install
 npm shrinkwrap
 ```
 
