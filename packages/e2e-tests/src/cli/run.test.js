@@ -27,7 +27,17 @@ test('should create a new aragon app and run it successfully', async t => {
   const runProcess = await startBackgroundProcess({
     cmd: 'aragon',
     args: ['run', '--debug', '--reset'],
-    execaOpts: { cwd: `${testSandbox}/${projectName}` },
+    execaOpts: {
+      cwd: `${testSandbox}/${projectName}`,
+      /**
+       * By default execa will run the aragon binary that is located at '.tmp/run/foobarfoo/node_modules'.
+       * That is coming from npm and is not the one we want to test.
+       *
+       * We need to tell it to use the one we just built locally and installed in the e2e-tests package
+       */
+      preferLocal: true,
+      localDir: '.'
+    },
     readyOutput: 'Opening http://localhost:3000/#/',
   })
 
