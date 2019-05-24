@@ -16,11 +16,13 @@ Options:
 
 ## aragon apm versions
 
-Shows all the previously published versions of your package (defined in `arapp.json`).
+Shows all the previously published versions of a given repository.
 
 ```sh
-aragon apm versions
+aragon apm versions [apmRepo]
 ```
+
+- `apmRepo`: Name of the APM repository. Defaults to the current project's repo (defined in `arapp.json`).
 
 ## aragon apm packages
 
@@ -40,7 +42,7 @@ Shows information about a repository.
 aragon apm info <apmRepo> [apmRepoVersion]
 ```
 
-- `apmRepo`: Name of the APM repo.
+- `apmRepo`: Name of the APM repository.
 - `apmRepoVersion`: Version of the repo. Defaults to `latest`.
 
 ## aragon apm grant

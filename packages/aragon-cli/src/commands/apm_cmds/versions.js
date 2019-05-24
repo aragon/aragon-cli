@@ -4,11 +4,12 @@ const defaultAPMName = require('../../helpers/default-apm')
 
 exports.command = 'versions [apmRepo]'
 
-exports.describe = 'List all versions published of the package'
+exports.describe =
+  'Shows all the previously published versions of a given repository'
 
 exports.builder = function(yargs) {
   return yargs.option('apmRepo', {
-    description: 'The repo to inspect',
+    description: 'Name of the APM repository',
     type: 'string',
     default: null,
   })
