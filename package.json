@@ -11,6 +11,7 @@
     "bootstrap-e2e-tests": "lerna exec --scope @aragon/cli-e2e-tests -- npm install",
     "delete-lockfiles": "lerna exec -- rm npm-shrinkwrap.json",
     "create-lockfiles": "lerna exec -- npm shrinkwrap",
+    "fix-lockfiles": "lerna run fix-lockfile",
     "link": "lerna run link",
     "unlink": "lerna run unlink",
     "build": "lerna run build",

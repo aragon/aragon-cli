@@ -20,6 +20,7 @@ npm run delete-lockfiles
 npm run bootstrap
 npm run bootstrap
 npm run create-lockfiles
+npm run fix-lockfiles
 ```
 
 Why do we run bootstrap twice?
@@ -27,9 +28,20 @@ Why do we run bootstrap twice?
 `npm` will actually fix the lockfiles the second time around, e.g.:
 
 ```diff
--            "websocket": "websocket@git://github.com/frozeman/WebSocket-Node.git#6c72925e3f8aaaea8dc8450f97627e85263999f2"
-+            "websocket": "git://github.com/frozeman/WebSocket-Node.git#browserifyCompatible"
+-    "websocket": "websocket@git://github.com/frozeman/WebSocket-Node.git#6c72925e3f8aaaea8dc8450f97627e85263999f2"
++    "websocket": "git://github.com/frozeman/WebSocket-Node.git#browserifyCompatible"
 ```
+
+Why do we need the `fix-lockfile` script?
+
+Some packages like `async-eventemitter` are still getting messed up by `npm`, e.g.:
+
+```diff
+-    "from": "async-eventemitter@github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c"
++    "resolved": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
+```
+
+(Green is how they should look like)
 
 ## Out of date dependencies
 

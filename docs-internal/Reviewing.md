@@ -22,13 +22,14 @@ Note: the remote `refs/pulls` is read-only, we cannot push commits.
 
 ### Testing and adding commits
 
-If the pull request creator has [allowed edits from maintaners][allow-edits-docs], and we wish to
+If the pull request creator has [allowed edits from maintainers][allow-edits-docs], and we wish to
 add some commits as well, we can proceed like this:
 
 - Add a new remote and switch to a branch tracking it:
 
   ```sh
   git remote add REMOTE_NAME git@github.com:USER/REPO.git
+  git fetch REMOTE_NAME
   git checkout -t REMOTE_NAME/BRANCHNAME
   ```
 

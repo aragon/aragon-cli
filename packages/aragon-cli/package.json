@@ -8,8 +8,9 @@
     "dao": "./aliases/dao"
   },
   "scripts": {
-    "postinstall": "npm run clean-modules",
+    "postinstall": "npm run clean-modules && npm run fix-lockfile",
     "clean-modules": "del-cli './node_modules/**/.git'",
+    "fix-lockfile": "node scripts/fix-lockfile",
     "prepare": "npm run build",
     "link": "npm link",
     "unlink": "npm unlink",
