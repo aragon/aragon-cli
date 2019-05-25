@@ -7,11 +7,11 @@ Having automated CI setup allows us to:
 
 ## GitHub Actions
 
-The setup file is located at `.github/main.workflow`.
+The configuration file is located at `.github/main.workflow`.
 
 ## Travis CI
 
-The setup file is located at `.travis.yml`.
+The configuration file is located at `.travis.yml`.
 
 ## Known issues
 

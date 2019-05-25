@@ -3,8 +3,8 @@
 
 # Dependencies
 node_modules
+# this is created by windows when installing go-ipfs
 *ipfs.cmd*
-*package-lock*
 
 # Artifacts
 dist

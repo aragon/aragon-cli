@@ -4,15 +4,15 @@
 
 ## 🚨 Test instructions
 
-<!-- In case it is difficult or not straightforward to test this feature/fix,
+<!-- In case it is difficult or not straightforward to test this change,
 please provide test instructions! -->
 
 ## ✔️ PR Todo
 
-- [ ] Included links to related issues/PRs
-- [ ] Added/updated unit tests for this change
-- [ ] Added/updated the necessary documentation
-- [ ] Cleared dependencies on other modules that have to be released before merging this
+- [ ] Include links to related issues/PRs
+- [ ] Update unit tests for this change
+- [ ] Update the relevant documentation
+- [ ] Clear dependencies on other modules that have to be released before merging this
 
 <!--
 Thank you for contributing! 

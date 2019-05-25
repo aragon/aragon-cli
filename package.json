@@ -2,13 +2,16 @@
   "name": "@aragon/cli-monorepo",
   "private": true,
   "devDependencies": {
-    "lerna": "^3.8.4"
+    "lerna": "^3.14.1"
   },
   "scripts": {
     "clean": "git clean -fixd",
     "prepare": "npm run bootstrap && npm run bootstrap-e2e-tests",
-    "bootstrap": "lerna bootstrap --no-ci --ignore @aragon/cli-e2e-tests",
-    "bootstrap-e2e-tests": "lerna bootstrap --no-ci --scope @aragon/cli-e2e-tests",
+    "bootstrap": "lerna exec --ignore @aragon/cli-e2e-tests -- npm install",
+    "bootstrap-e2e-tests": "lerna exec --scope @aragon/cli-e2e-tests -- npm install",
+    "delete-lockfiles": "lerna exec -- rm npm-shrinkwrap.json",
+    "create-lockfiles": "lerna exec -- npm shrinkwrap",
+    "fix-lockfiles": "lerna run fix-lockfile",
     "link": "lerna run link",
     "unlink": "lerna run unlink",
     "build": "lerna run build",
