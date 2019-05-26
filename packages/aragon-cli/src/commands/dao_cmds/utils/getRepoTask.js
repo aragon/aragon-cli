@@ -32,6 +32,8 @@ module.exports = {
 
       // appId is loaded from artifact.json in IPFS
       if (artifactRequired && !ctx.repo.appId) {
+        // TODO: load ipfs aragon node and fetch repo again. If this time we have the artifact then return otherwise throw Error.
+
         throw new Error(
           'Cannot find artifacts in APM repo. Please make sure the package is published and IPFS or your HTTP server running.'
         )
