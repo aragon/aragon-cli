@@ -133,7 +133,6 @@ exports.task = async ({
       },
       {
         title: 'Fetching deployed app',
-        enabled: () => setPermissions,
         task: async (ctx, task) => {
           const logABI = kernelABI.find(
             ({ type, name }) => type === 'event' && name === 'NewAppProxy'
