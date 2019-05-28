@@ -22,6 +22,18 @@ exports.arappContract = () => {
   return contractName
 }
 
+exports.links = () => {
+  const linked =
+    require(path.resolve(findProjectRoot(), 'arapp.json')).linked || {}
+  let replace = {}
+  for (let lib in linked) {
+    let address =
+      linked[lib].slice(0, 2) === '0x' ? linked[lib].slice(2) : linked[lib]
+    replace[`__${lib}${'_'.repeat(38 - lib.length)}`] = address
+  }
+  return replace
+}
+
 exports.builder = yargs => {
   return yargs
     .positional('contract', {
@@ -91,7 +103,8 @@ exports.task = async ({
             )
           }
 
-          const { abi, bytecode } = ctx.contractArtifacts
+          const { abi } = ctx.contractArtifacts
+          let { bytecode } = ctx.contractArtifacts
 
           if (!bytecode || bytecode === '0x') {
             throw new Error(
@@ -100,6 +113,15 @@ exports.task = async ({
           }
 
           task.output = `Deploying '${contractName}' to network`
+
+          console.log(bytecode)
+          let links = exports.links(network)
+          console.log(links)
+          for (let name in links) {
+            let re = new RegExp(name, 'g')
+            bytecode = bytecode.replace(re, links[name])
+          }
+          console.log(bytecode)
 
           const contract = new web3.eth.Contract(abi, { data: bytecode })
           const accounts = await web3.eth.getAccounts()
