@@ -156,6 +156,7 @@ exports.task = async ({
 }
 
 exports.handler = async ({
+  module,
   reporter,
   network,
   cwd,
@@ -166,6 +167,7 @@ exports.handler = async ({
   debug,
 }) => {
   const task = await exports.task({
+    module,
     reporter,
     network,
     cwd,
