@@ -8,7 +8,7 @@ const { ensureWeb3 } = require('../helpers/web3-fallback')
 const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
 const DEFAULT_GAS_PRICE = require('../../package.json').aragon.defaultGasPrice
 const listrOpts = require('../helpers/listr-options')
-const { getRecommendedGasLimit } = require('../util')
+const { getRecommendedGasLimit, expandLink } = require('../util')
 
 exports.command = 'deploy [contract]'
 
@@ -20,18 +20,6 @@ exports.arappContract = () => {
   const contractName = path.basename(contractPath).split('.')[0]
 
   return contractName
-}
-
-exports.links = () => {
-  const linked =
-    require(path.resolve(findProjectRoot(), 'arapp.json')).linked || {}
-  let replace = {}
-  for (let lib in linked) {
-    let address =
-      linked[lib].slice(0, 2) === '0x' ? linked[lib].slice(2) : linked[lib]
-    replace[`__${lib}${'_'.repeat(38 - lib.length)}`] = address
-  }
-  return replace
 }
 
 exports.builder = yargs => {
@@ -48,6 +36,7 @@ exports.builder = yargs => {
 }
 
 exports.task = async ({
+  module,
   reporter,
   network,
   cwd,
@@ -114,14 +103,12 @@ exports.task = async ({
 
           task.output = `Deploying '${contractName}' to network`
 
-          console.log(bytecode)
-          let links = exports.links(network)
-          console.log(links)
-          for (let name in links) {
-            let re = new RegExp(name, 'g')
-            bytecode = bytecode.replace(re, links[name])
-          }
-          console.log(bytecode)
+          let environment = Object.values(module.environments)[0]
+          environment.links &&
+            environment.links.map(expandLink).forEach(l => {
+              console.log('linking', l.name)
+              bytecode = bytecode.replace(l.regex, l.addressBytes)
+            })
 
           const contract = new web3.eth.Contract(abi, { data: bytecode })
           const accounts = await web3.eth.getAccounts()
