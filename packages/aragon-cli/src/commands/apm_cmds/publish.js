@@ -383,6 +383,7 @@ exports.task = function({
         title: 'Deploy contract',
         task: async ctx => {
           const deployTaskParams = {
+            module,
             contract,
             init,
             reporter,

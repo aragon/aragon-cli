@@ -8,7 +8,7 @@ const { ensureWeb3 } = require('../helpers/web3-fallback')
 const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
 const DEFAULT_GAS_PRICE = require('../../package.json').aragon.defaultGasPrice
 const listrOpts = require('../helpers/listr-options')
-const { getRecommendedGasLimit } = require('../util')
+const { getRecommendedGasLimit, expandLink } = require('../util')
 
 exports.command = 'deploy [contract]'
 
@@ -36,6 +36,7 @@ exports.builder = yargs => {
 }
 
 exports.task = async ({
+  module,
   reporter,
   network,
   cwd,
@@ -91,7 +92,8 @@ exports.task = async ({
             )
           }
 
-          const { abi, bytecode } = ctx.contractArtifacts
+          const { abi } = ctx.contractArtifacts
+          let { bytecode } = ctx.contractArtifacts
 
           if (!bytecode || bytecode === '0x') {
             throw new Error(
@@ -100,6 +102,13 @@ exports.task = async ({
           }
 
           task.output = `Deploying '${contractName}' to network`
+
+          let environment = Object.values(module.environments)[0]
+          environment.links &&
+            environment.links.map(expandLink).forEach(l => {
+              console.log('linking', l.name)
+              bytecode = bytecode.replace(l.regex, l.addressBytes)
+            })
 
           const contract = new web3.eth.Contract(abi, { data: bytecode })
           const accounts = await web3.eth.getAccounts()
@@ -147,6 +156,7 @@ exports.task = async ({
 }
 
 exports.handler = async ({
+  module,
   reporter,
   network,
   cwd,
@@ -157,6 +167,7 @@ exports.handler = async ({
   debug,
 }) => {
   const task = await exports.task({
+    module,
     reporter,
     network,
     cwd,
