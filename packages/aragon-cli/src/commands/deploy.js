@@ -103,12 +103,14 @@ exports.task = async ({
 
           task.output = `Deploying '${contractName}' to network`
 
-          let environment = Object.values(module.environments)[0]
-          environment.links &&
-            environment.links.map(expandLink).forEach(l => {
-              console.log('linking', l.name)
-              bytecode = bytecode.replace(l.regex, l.addressBytes)
-            })
+          if (module) {
+            let env = module.env
+            env.links &&
+              env.links.map(expandLink).forEach(l => {
+                console.log('linking', l.name)
+                bytecode = bytecode.replace(l.regex, l.addressBytes)
+              })
+          }
 
           const contract = new web3.eth.Contract(abi, { data: bytecode })
           const accounts = await web3.eth.getAccounts()
