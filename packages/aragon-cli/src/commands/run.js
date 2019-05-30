@@ -171,7 +171,7 @@ exports.handler = function({
         enabled: () => !http || template,
       },
       {
-        title: 'Publish app to APM',
+        title: 'Publish app to aragonPM',
         task: async ctx => {
           const publishParams = {
             alreadyCompiled: true,
@@ -304,7 +304,7 @@ exports.handler = function({
     reporter.info(`This is the configuration for your development deployment:
     ${chalk.bold('Ethereum Node')}: ${network.provider.connection._url}
     ${chalk.bold('ENS registry')}: ${ctx.ens}
-    ${chalk.bold(`APM registry`)}: ${registry}
+    ${chalk.bold(`aragonPM registry`)}: ${registry}
     ${chalk.bold('DAO address')}: ${ctx.daoAddress}
 
     ${

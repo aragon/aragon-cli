@@ -2,17 +2,12 @@ const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const fs = require('fs')
 const tmp = require('tmp-promise')
 const path = require('path')
-const { promisify } = require('util')
-const { copy, readJson, writeJson, pathExistsSync } = require('fs-extra')
-const extract = require('../../helpers/solidity-extractor')
+const { readJson, writeJson, pathExistsSync } = require('fs-extra')
 const APM = require('@aragon/apm')
 const semver = require('semver')
-const namehash = require('eth-ens-namehash')
-const { keccak256 } = require('js-sha3')
 const TaskList = require('listr')
 const taskInput = require('listr-input')
 const { findProjectRoot, getNodePackageManager } = require('../../util')
-const ignore = require('ignore')
 const execa = require('execa')
 const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
@@ -22,9 +17,17 @@ const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 const execTask = require('../dao_cmds/utils/execHandler').task
 const listrOpts = require('../../helpers/listr-options')
 
-const MANIFEST_FILE = 'manifest.json'
-const ARTIFACT_FILE = 'artifact.json'
-const SOLIDITY_FILE = 'code.sol'
+const {
+  prepareFilesForPublishing,
+  MANIFEST_FILE,
+  ARTIFACT_FILE,
+} = require('./util/preprare-files')
+
+const {
+  getMajor,
+  generateApplicationArtifact,
+  copyCurrentApplicationArtifacts,
+} = require('./util/generate-artifact')
 
 exports.command = 'publish <bump> [contract]'
 
@@ -48,7 +51,7 @@ exports.builder = function(yargs) {
       boolean: true,
     })
     .option('provider', {
-      description: 'The APM storage provider to publish files to',
+      description: 'The aragonPM storage provider to publish files to',
       default: 'ipfs',
       choices: ['ipfs'],
     })
@@ -105,227 +108,6 @@ exports.builder = function(yargs) {
         'Directory where your files is being served from e.g. ./dist',
       default: null,
     })
-}
-
-const getMajor = version => version.split('.')[0]
-
-function getFunctionsAbi(functions, abi) {
-  functions.forEach(f => {
-    f.abi = abi.find(method => method.name === f.sig.match(/(.*)\(/)[1])
-  })
-}
-
-async function getDeprecatedFunctions(apm, artifact) {
-  let deprecated = {}
-  try {
-    let deprecatedOnVersion = []
-    const deprecatedFunctionsSig = []
-    const versions = await apm.getAllVersions(artifact.appName)
-    let lastMajor = -1
-    versions.reverse().forEach(async repo => {
-      // iterate on major versions
-      if (getMajor(repo.version) !== lastMajor) {
-        lastMajor = getMajor(repo.version)
-        repo.functions.forEach(f => {
-          if (
-            !artifact.functions.some(obj => obj.sig === f.sig) &&
-            !deprecatedFunctionsSig.includes(f.sig)
-          ) {
-            deprecatedOnVersion.push(f)
-            deprecatedFunctionsSig.push(f.sig)
-          }
-        })
-        if (deprecatedOnVersion.length) {
-          deprecated[`${lastMajor}.0.0`] = deprecatedOnVersion
-          getFunctionsAbi(deprecatedOnVersion, repo.abi)
-          deprecatedOnVersion = []
-        }
-      }
-    })
-    return deprecated
-  } catch (e) {
-    // Catch ENS error on first version
-  }
-}
-
-async function generateApplicationArtifact(
-  cwd,
-  apm,
-  outputPath,
-  module,
-  deployArtifacts
-) {
-  let artifact = Object.assign({}, module)
-  const contractPath = artifact.path
-  const contractInterfacePath = path.resolve(
-    cwd,
-    'build/contracts',
-    path.basename(contractPath, '.sol') + '.json'
-  )
-
-  // Set `appId`
-  artifact.appId = namehash.hash(artifact.appName)
-
-  // Set ABI
-  const contractInterface = await readJson(contractInterfacePath)
-  artifact.abi = contractInterface.abi
-
-  if (deployArtifacts) {
-    artifact.deployment = deployArtifacts
-    if (deployArtifacts.flattenedCode) {
-      fs.writeFileSync(
-        path.resolve(outputPath, SOLIDITY_FILE),
-        artifact.deployment.flattenedCode
-      )
-      artifact.deployment.flattenedCode = `./${SOLIDITY_FILE}`
-    }
-  }
-
-  // Analyse contract functions and returns an array
-  // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
-  artifact.functions = await extract(path.resolve(cwd, artifact.path))
-  // extract abi for each function
-  // > [{ sig: , role: , notice: , abi: }]
-  getFunctionsAbi(artifact.functions, artifact.abi)
-
-  // Consult old (major) version's artifacts and return an array
-  // of deprecated functions per version
-  // > "deprecated": [ "1.0.0": [{}], "2.0.0": [{}] ]
-  artifact.deprecated = await getDeprecatedFunctions(apm, artifact)
-
-  if (artifact.roles) {
-    artifact.roles = artifact.roles.map(role =>
-      Object.assign(role, { bytes: '0x' + keccak256(role.id) })
-    )
-  }
-
-  // Save artifact
-  await writeJson(path.resolve(outputPath, ARTIFACT_FILE), artifact, {
-    spaces: '\t',
-  })
-
-  return artifact
-}
-
-async function copyCurrentApplicationArtifacts(
-  outputPath,
-  apm,
-  repo,
-  newVersion
-) {
-  const copyingFiles = [ARTIFACT_FILE, SOLIDITY_FILE]
-  const { content } = repo
-  const uri = `${content.provider}:${content.location}`
-
-  const copy = await Promise.all(
-    copyingFiles.map(async file => {
-      try {
-        return {
-          filePath: path.resolve(outputPath, file),
-          fileContent: await apm.getFile(uri, file),
-          fileName: file,
-        }
-      } catch (e) {
-        // Only throw if fetching artifact fails, if code can't be found
-        // continue as it could be fetched from previous versions
-        if (file === ARTIFACT_FILE) {
-          throw e
-        }
-      }
-    })
-  )
-
-  const updateArtifactVersion = (file, version) => {
-    const newContent = JSON.parse(file.fileContent)
-    newContent.version = version
-    return { ...file, fileContent: JSON.stringify(newContent, null, 2) }
-  }
-
-  copy
-    .filter(item => item)
-    .map(file => {
-      if (file.fileName === ARTIFACT_FILE) {
-        return updateArtifactVersion(file, newVersion)
-      }
-      return file
-    })
-    .forEach(({ fileName, filePath, fileContent }) =>
-      fs.writeFileSync(filePath, fileContent)
-    )
-}
-
-/**
- * Moves the specified files to a temporary directory and returns the path to
- * the temporary directory.
- * @param {string} tmpDir Temporary directory
- * @param {Array<string>} files An array of file paths to include
- * @param {string} ignorePatterns An array of glob-like pattern of files to ignore
- * @return {string} The path to the temporary directory
- */
-async function prepareFilesForPublishing(
-  tmpDir,
-  files = [],
-  ignorePatterns = null
-) {
-  // Ignored files filter
-  const filter = ignore().add(ignorePatterns)
-  const projectRoot = findProjectRoot()
-
-  function createFilter(files, ignorePath) {
-    let f = fs.readFileSync(ignorePath).toString()
-    files.forEach(file => {
-      f = f.concat(`\n!${file}`)
-    })
-    return f
-  }
-
-  const ipfsignorePath = path.resolve(projectRoot, '.ipfsignore')
-  if (pathExistsSync(ipfsignorePath)) {
-    filter.add(createFilter(files, ipfsignorePath))
-  } else {
-    const gitignorePath = path.resolve(projectRoot, '.gitignore')
-    if (pathExistsSync(gitignorePath)) {
-      filter.add(createFilter(files, gitignorePath))
-    }
-  }
-
-  const replaceRootRegex = new RegExp(`^${projectRoot}`)
-  function filterIgnoredFiles(src) {
-    const relativeSrc = src.replace(replaceRootRegex, '.')
-    return !filter.ignores(relativeSrc)
-  }
-
-  // Copy files
-  await Promise.all(
-    files.map(async file => {
-      const stats = await promisify(fs.lstat)(file)
-
-      let destination = tmpDir
-      if (stats.isFile()) {
-        destination = path.resolve(tmpDir, file)
-      }
-
-      return copy(file, destination, {
-        filter: filterIgnoredFiles,
-      })
-    })
-  )
-
-  const manifestOrigin = path.resolve(projectRoot, MANIFEST_FILE)
-  const manifestDst = path.resolve(tmpDir, MANIFEST_FILE)
-
-  if (!pathExistsSync(manifestDst) && pathExistsSync(manifestOrigin)) {
-    await copy(manifestOrigin, manifestDst)
-  }
-
-  const artifactOrigin = path.resolve(projectRoot, ARTIFACT_FILE)
-  const artifactDst = path.resolve(tmpDir, ARTIFACT_FILE)
-
-  if (!pathExistsSync(artifactDst) && pathExistsSync(artifactOrigin)) {
-    await copy(artifactOrigin, artifactDst)
-  }
-
-  return tmpDir
 }
 
 const POSITIVE_ANSWERS = ['yes', 'y']
@@ -418,7 +200,7 @@ exports.task = function({
 
           if (!isValid) {
             throw new Error(
-              'Version bump is not valid, you have to respect APM bumps policy. Check version upgrade rules in documentation https://hack.aragon.org/docs/apm-ref#version-upgrade-rules'
+              'Version bump is not valid, you have to respect aragonPM bumps policy. Check version upgrade rules in documentation https://hack.aragon.org/docs/apm-ref#version-upgrade-rules'
             )
           }
         },
@@ -586,7 +368,9 @@ exports.task = function({
                         apm,
                         dir,
                         module,
-                        ctx.deployArtifacts
+                        ctx.deployArtifacts,
+                        web3,
+                        reporter
                       )
                       return `Saved artifact in ${dir}/artifact.json`
                     }
@@ -601,7 +385,9 @@ exports.task = function({
             apm,
             dir,
             module,
-            ctx.deployArtifacts
+            ctx.deployArtifacts,
+            web3,
+            reporter
           )
           return `Saved artifact in ${dir}/artifact.json`
         },
