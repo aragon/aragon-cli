@@ -16,7 +16,7 @@ const ARTIFACT_FILE = 'artifact.json'
  * @param {string} ignorePatterns An array of glob-like pattern of files to ignore
  * @return {string} The path to the temporary directory
  */
-module.exports = async function prepareFilesForPublishing(
+async function prepareFilesForPublishing(
   tmpDir,
   files = [],
   ignorePatterns = null
@@ -81,3 +81,5 @@ module.exports = async function prepareFilesForPublishing(
 
   return tmpDir
 }
+
+module.exports = { MANIFEST_FILE, ARTIFACT_FILE, prepareFilesForPublishing }

@@ -5,7 +5,7 @@ const extract = require('../../../helpers/solidity-extractor')
 const namehash = require('eth-ens-namehash')
 const { keccak256 } = require('js-sha3')
 
-const ARTIFACT_FILE = require('./preprare-files')
+const { ARTIFACT_FILE } = require('./preprare-files')
 const SOLIDITY_FILE = 'code.sol'
 
 const getMajor = version => version.split('.')[0]
@@ -171,7 +171,8 @@ async function copyCurrentApplicationArtifacts(
 }
 
 module.exports = {
+  SOLIDITY_FILE,
   getMajor,
-  copyCurrentApplicationArtifacts,
   generateApplicationArtifact,
+  copyCurrentApplicationArtifacts,
 }
