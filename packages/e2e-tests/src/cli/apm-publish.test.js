@@ -1,7 +1,10 @@
 import test from 'ava'
 import fs from 'fs-extra'
+const path = require('path')
 import execa from 'execa'
 import { startBackgroundProcess, normalizeOutput } from '../util'
+
+const ARTIFACT_FILE = 'artifact.json'
 
 const testSandbox = './.tmp/apm'
 
@@ -14,10 +17,12 @@ test.afterEach(() => {
 })
 
 test('should publish an aragon app directory successfully', async t => {
-  t.plan(1)
+  t.plan(2)
 
   // arrange
   const projectName = 'foobarfoo'
+  const publishDirPath = path.resolve(`${testSandbox}/publish-dir`)
+
   await execa('create-aragon-app', [projectName], { cwd: testSandbox })
   // hack, we need to install the dependencies of the app
   await execa('npm', ['install'], { cwd: `${testSandbox}/${projectName}/app` })
@@ -25,7 +30,16 @@ test('should publish an aragon app directory successfully', async t => {
   // act
   const runProcess = await startBackgroundProcess({
     cmd: 'aragon',
-    args: ['apm publish major', '--debug', '--reset'],
+    args: [
+      'apm',
+      'publish',
+      'major',
+      '--build',
+      'false',
+      '--publish-dir',
+      publishDirPath,
+      '--debug',
+    ],
     execaOpts: {
       cwd: `${testSandbox}/${projectName}`,
       /**
@@ -40,36 +54,25 @@ test('should publish an aragon app directory successfully', async t => {
     readyOutput: 'Published directory:',
   })
 
-  // hack so the wrapper has time to start
-  // await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000))
-
-  // finding the DAO address
-  // const daoAddress = runProcess.stdout.match(
-  //   /DAO address: (0x[a-fA-F0-9]{40})/
-  // )[1]
-
-  // TODO fetch the counter app instead
-  // const fetchResult = await fetch(`http://localhost:3000/#/${daoAddress}`)
-  // const fetchBody = await fetchResult.text()
-
-  // cleanup
-  await runProcess.exit()
+  // Check generated artifact
+  const artifactPath = path.resolve(publishDirPath, ARTIFACT_FILE)
+  const artifact = JSON.parse(fs.readFileSync(artifactPath))
 
   // delete some output sections that are not deterministic
   const appBuildOutput = runProcess.stdout.substring(
     runProcess.stdout.indexOf('Building frontend [started]'),
     runProcess.stdout.indexOf('Building frontend [completed]')
   )
-  // const wrapperInstallOutput = runProcess.stdout.substring(
-  //   runProcess.stdout.indexOf('Downloading wrapper [started]'),
-  //   runProcess.stdout.indexOf('Starting Aragon client [started]')
-  // )
 
-  const outputToSnapshot = runProcess.stdout.replace(appBuildOutput, '')
-  // .replace(wrapperInstallOutput, '')
+  const publishDirOutput = runProcess.stdout.substring(
+    runProcess.stdout.indexOf('Published directory:')
+  )
+
+  const outputToSnapshot = runProcess.stdout
+    .replace(appBuildOutput, '')
+    .replace(publishDirOutput, '')
 
   // assert
   t.snapshot(normalizeOutput(outputToSnapshot))
-  // t.snapshot(fetchResult.status)
-  // t.snapshot(fetchBody)
+  t.snapshot(artifact)
 })
