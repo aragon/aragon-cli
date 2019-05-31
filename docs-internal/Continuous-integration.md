@@ -1,17 +1,42 @@
-# Continous Integration
+# Continuous Integration
 
 Having automated CI setup allows us to:
 
 - reduce the feedback loop between the contributor and the reviewer
 - make the reviewing task less time-consuming and less prone to human errors
 
-## GitHub Actions
+## Setup
+
+### GitHub Actions
 
 The configuration file is located at `.github/main.workflow`.
 
-## Travis CI
+### Travis CI
 
 The configuration file is located at `.travis.yml`.
+
+### Coverage
+
+We record the test coverage history using [Coveralls](https://coveralls.io).
+
+Each project has script to run the tests and report them in the `lcov` format.
+(see [available reporters](https://istanbul.js.org/docs/advanced/alternative-reporters/))
+
+```json
+    "test:coverage:ci": "nyc --all --reporter=lcovonly ava"
+```
+
+Notes:
+
+- we use the `--all` flag to include all the files (not just the ones touched by our tests)  
+- the coverage is only calculated for unit & integration tests.
+
+Because we are using a monorepo structure, we need to merge the lcov results before passing them to
+coveralls.
+
+```json
+    "report-coverage": "lcov-result-merger 'packages/*/coverage/lcov.info' | coveralls",
+```
 
 ## Known issues
 
