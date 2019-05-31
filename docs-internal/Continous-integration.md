@@ -31,8 +31,8 @@ The solution is to split the bootstrapping process in two:
 
 ```json
     "prepare": "npm run bootstrap && npm run bootstrap-e2e-tests",
-    "bootstrap": "lerna bootstrap --no-ci --ignore @aragon/e2e-tests",
-    "bootstrap-e2e-tests": "lerna bootstrap --no-ci --scope @aragon/e2e-tests",
+    "bootstrap": "lerna exec --ignore @aragon/e2e-tests -- npm install",
+    "bootstrap-e2e-tests": "lerna exec --scope @aragon/e2e-tests -- npm install",
 ```
 
 Note: this works because when we bootstrap a package, it will get built right after thanks to the

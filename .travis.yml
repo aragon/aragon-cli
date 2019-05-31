@@ -12,7 +12,8 @@ before_script:
 install:
   - npm install
 script:
-  - npm run link
   - npm run lint
   - npm run test:coverage
   - travis_wait 30 npm run test:e2e
+after_success:
+  - npm run coverage:merge-report
