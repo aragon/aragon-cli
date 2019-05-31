@@ -14,6 +14,7 @@ install:
 script:
   - npm run link
   - npm run lint
-  - travis_wait 30 npm run test
+  - npm run test:unit:coverage
+  - travis_wait 30 npm run test:e2e
 after_success:
-  - ./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls
+  - npm run coverage:merge-report

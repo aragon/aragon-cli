@@ -20,7 +20,8 @@
     "build:watch": "npm run build -- -- --watch",
     "lint": "eslint src test/commands && documentation lint src",
     "test": "nyc ava",
-    "test:watch": "ava --watch"
+    "test:watch": "ava --watch",
+    "test:coverage:ci": "nyc --reporter=lcovonly ava"
   },
   "repository": {
     "type": "git",
@@ -98,7 +99,6 @@
     "@babel/register": "^7.0.0",
     "ava": "^1.4.1",
     "babel-eslint": "^10.0.1",
-    "coveralls": "^3.0.0",
     "del-cli": "^1.1.0",
     "documentation": "^11.0.0",
     "eslint": "^5.9.0",

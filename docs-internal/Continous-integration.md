@@ -17,7 +17,7 @@ The configuration file is located at `.travis.yml`.
 
 ### Cannot bootstrap all packages concurrently
 
-Our `@aragon/cli-e2e-tests` package has the following dependencies:
+Our `@aragon/e2e-tests` package has the following dependencies:
 
 ```json
     "@aragon/cli": "file:../aragon-cli",
@@ -31,8 +31,8 @@ The solution is to split the bootstrapping process in two:
 
 ```json
     "prepare": "npm run bootstrap && npm run bootstrap-e2e-tests",
-    "bootstrap": "lerna bootstrap --no-ci --ignore @aragon/cli-e2e-tests",
-    "bootstrap-e2e-tests": "lerna bootstrap --no-ci --scope @aragon/cli-e2e-tests",
+    "bootstrap": "lerna bootstrap --no-ci --ignore @aragon/e2e-tests",
+    "bootstrap-e2e-tests": "lerna bootstrap --no-ci --scope @aragon/e2e-tests",
 ```
 
 Note: this works because when we bootstrap a package, it will get built right after thanks to the

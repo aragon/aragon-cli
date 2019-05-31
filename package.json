@@ -2,13 +2,15 @@
   "name": "@aragon/cli-monorepo",
   "private": true,
   "devDependencies": {
+    "coveralls": "^3.0.3",
+    "lcov-result-merger": "^3.1.0",
     "lerna": "^3.14.1"
   },
   "scripts": {
     "clean": "git clean -fixd",
     "prepare": "npm run bootstrap && npm run bootstrap-e2e-tests",
-    "bootstrap": "lerna exec --ignore @aragon/cli-e2e-tests -- npm install",
-    "bootstrap-e2e-tests": "lerna exec --scope @aragon/cli-e2e-tests -- npm install",
+    "bootstrap": "lerna exec --ignore @aragon/e2e-tests -- npm install",
+    "bootstrap-e2e-tests": "lerna exec --scope @aragon/e2e-tests -- npm install",
     "delete-lockfiles": "lerna exec -- rm npm-shrinkwrap.json",
     "create-lockfiles": "lerna exec -- npm shrinkwrap",
     "fix-lockfiles": "lerna run fix-lockfile",
@@ -16,7 +18,10 @@
     "unlink": "lerna run unlink",
     "build": "lerna run build",
     "lint": "lerna run lint",
-    "test": "lerna run test",
+    "test:e2e": "lerna run test --scope @aragon/e2e-tests",
+    "test:unit": "lerna run test --ignore @aragon/e2e-tests",
+    "test:unit:coverage": "lerna run test:coverage:ci --ignore @aragon/e2e-tests",
+    "coverage:merge-report": "lcov-result-merger 'packages/*/coverage/lcov.info' | coveralls",
     "publish": "lerna publish"
   }
 }

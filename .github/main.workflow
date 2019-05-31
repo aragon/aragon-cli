@@ -1,6 +1,6 @@
 workflow "lint, test, build" {
   on = "push"
-  resolves = ["build", "lint", "test"]
+  resolves = ["build", "lint", "test:unit", "test:e2e"]
 }
 
 action "install" {
@@ -20,8 +20,14 @@ action "lint" {
   needs = ["install"]
 }
 
-action "test" {
+action "test:unit" {
   uses = "actions/npm@master"
-  args = "run test"
+  args = "run test:unit:coverage"
+  needs = ["install"]
+}
+
+action "test:e2e" {
+  uses = "actions/npm@master"
+  args = "run test:e2e"
   needs = ["install"]
 }
