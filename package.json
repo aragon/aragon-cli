@@ -18,10 +18,10 @@
     "unlink": "lerna run unlink",
     "build": "lerna run build",
     "lint": "lerna run lint",
+    "test": "lerna run test --ignore @aragon/e2e-tests",
     "test:e2e": "lerna run test --scope @aragon/e2e-tests",
-    "test:unit": "lerna run test --ignore @aragon/e2e-tests",
-    "test:unit:coverage": "lerna run test:coverage:ci --ignore @aragon/e2e-tests",
-    "coverage:merge-report": "lcov-result-merger 'packages/*/coverage/lcov.info' | coveralls",
+    "test:coverage": "lerna run test:coverage:ci --ignore @aragon/e2e-tests",
+    "report-coverage": "lcov-result-merger 'packages/*/coverage/lcov.info' | coveralls",
     "publish": "lerna publish"
   }
 }
