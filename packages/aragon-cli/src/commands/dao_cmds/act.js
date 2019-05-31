@@ -21,7 +21,8 @@ exports.builder = function(yargs) {
       type: 'string',
     })
     .positional('signature', {
-      description: 'Function to be executed',
+      description:
+        'Signature of the function to be executed (e.g. "myMethod(uint256,string)"',
       type: 'string',
     })
     .option('call-args', {
@@ -29,22 +30,32 @@ exports.builder = function(yargs) {
       array: true,
       default: [],
     })
-  // TODO: Add an optional argument to provide the eth value for the execution
+    .option('eth-value', {
+      description:
+        'Amount of ETH from the contract that is sent with the action',
+      default: 0,
+    })
 }
 
 const encodeCalldata = (signature, params) => {
-  const sigBytes = ABI.encodeFunctionSignature(signature)
+  try {
+    const sigBytes = ABI.encodeFunctionSignature(signature)
 
-  const types = signature.replace(')', '').split('(')[1]
+    const types = signature.replace(')', '').split('(')[1]
 
-  // No params, return signature directly
-  if (types === '') {
-    return sigBytes
+    // No params, return signature directly
+    if (types === '') {
+      return sigBytes
+    }
+
+    const paramBytes = ABI.encodeParameters(types.split(','), params)
+
+    return `${sigBytes}${paramBytes.slice(2)}`
+  } catch (e) {
+    throw new Error(
+      'Invalid signature. You have to respect the function name including types and no spaces e.g. "myMethod(uint256,string,bool)"'
+    )
   }
-
-  const paramBytes = ABI.encodeParameters(types.split(','), params)
-
-  return `${sigBytes}${paramBytes.slice(2)}`
 }
 
 exports.handler = async function({
@@ -55,6 +66,7 @@ exports.handler = async function({
   target,
   signature,
   callArgs,
+  ethValue,
   wsProvider,
 }) {
   const web3 = await ensureWeb3(network)
@@ -66,7 +78,7 @@ exports.handler = async function({
     )
   }
 
-  const fnArgs = [target, 0, encodeCalldata(signature, callArgs)]
+  const fnArgs = [target, ethValue, encodeCalldata(signature, callArgs)]
 
   const getTransactionPath = wrapper =>
     wrapper.getTransactionPath(agentAddress, EXECUTE_FUNCTION_NAME, fnArgs)
