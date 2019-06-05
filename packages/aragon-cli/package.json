@@ -21,7 +21,7 @@
     "lint": "eslint src test/commands && documentation lint src",
     "test": "nyc ava",
     "test:watch": "ava --watch",
-    "test:coverage:ci": "nyc --all --reporter=lcovonly ava"
+    "test:coverage:ci": "nyc --all --reporter=lcovonly --exclude 'config/**' ava"
   },
   "repository": {
     "type": "git",
