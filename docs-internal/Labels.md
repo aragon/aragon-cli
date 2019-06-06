@@ -15,6 +15,7 @@ easier.
 | 💬 needs discussion   | A feature not yet agreed on that needs more discussion                                |
 | 🙏 good first issue   | An easy issue for a new contributor                                                   |
 | 🚧 tech debt          | A change that does not affect the API, but instead improves the health of the project |
+| 💰 funded             | An issue that has a bounty on the Projects app                                        |
 
 Aragon-specific labels:
 
