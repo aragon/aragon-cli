@@ -23,7 +23,7 @@ Where:
 - `LAST_BLOCK_GAS_LIMIT_FACTOR = 0.95`
 - `DEFAULT_GAS_FUZZ_FACTOR = 1.5`
 
-See `src/util.js#getRecommendedGasLimit`.
+See [`src/util.js#getRecommendedGasLimit`](https://github.com/aragon/aragon-cli/blob/master/packages/aragon-cli/src/util.js#L118).
 (This should probably be its own library since `aragon.js` uses it as well)
 
 Note: The CLI should ignore the `gas` property of the network from truffle config.
@@ -68,6 +68,6 @@ whether the binary exists in `project_root` + `./node_modules/.bin`, and if it d
 it should go up once or twice (if scoped) and look into the `.bin` directory. This can be achieved
 using [`__dirname`][dirname-docs].
 
-See `src/util.js#getDependentBinary`.
+See [`src/util.js#getDependentBinary`](https://github.com/aragon/aragon-cli/blob/master/packages/aragon-cli/src/util.js#L66).
 
 [dirname-docs]: https://nodejs.org/docs/latest/api/globals.html#globals_dirname
