@@ -20,6 +20,7 @@ after_success:
 before_deploy:
   - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc
 deploy:
+  skip_cleanup: true
   provider: script
   script: 'npm run publish:nightly'
   on:
