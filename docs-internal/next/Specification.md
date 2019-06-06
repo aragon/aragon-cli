@@ -131,7 +131,7 @@ Data viz:
 - `ensureConnection`
 - `hasAragonDeployements`
 - `deployAragon`
-- `start` -- should save stdout and stderr in some files to be outputed by `aragon devchain output`
+- `start` -- should save stdout and stderr in some files to be outputted by `aragon devchain output`
 
 ## Web3 `@aragon/web3-utils`
 

@@ -1,9 +1,9 @@
 # Continuous Integration
 
-Having automated CI setup allows us to:
+Having CI configured in an automated way, allows us to:
 
-- reduce the feedback loop between the contributor and the reviewer
 - make the reviewing task less time-consuming and less prone to human errors
+- reduce the feedback loop between the contributor and the reviewer
 
 ## Setup
 

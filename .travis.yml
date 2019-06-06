@@ -17,3 +17,12 @@ script:
   - travis_wait 30 npm run test:e2e
 after_success:
   - npm run report-coverage
+deploy:
+  provider: npm
+  api_key:
+    secure: UO/9KUzMStVfgR+pOjURKK+mCrjVsP2a9GhrbpclL9yCGyylHe0uyGX5/pF+crMHoSjgYoew00UZgKEfzSIdYiR7h2hs5J+wcTOnSjapevL4/NA0C608fQOilb7Fj5vmxSuYTjZHCUvEcmTVmGU+zpw+YHYtyl5rmONwWZXHKQzKSPflzl0rJL+HMTgJYjbOB3RqxwK7kcW58wWkJl+x1aFxK1KMTnqUHS8FOITo1c7Gn0wPEPSPogzkXh8RVOpA4xkNbOP2gqqfpfuzBuDhULK1MBxvnSnuvaXBHAFaF1a++wj65+f3mo8zpHOIm6n/rcAbQC5siRHZph83K4oszdPf+oxRXneuezFogdoHlUdKUFy7Kdmca/HYYZDlstH3ERrC/apKyh4+5MG7ElCf1V8xItG1XySbLpMnCs0EYsxnoo1XtLeIBJop2nPbsrpBQULkq6Z7zn+tIU8SSAd5hqnfsa+pkvMKbPirzhy7xdyhK2iV97P+y0EkEEI4MOhjGRbyHOyS5ATeXbKb+l3ZcooJ6+rJz9YvjVsF4Ivy0RDfdADKKR1RLQ3Pw1/MBooTGBAUuw4/RopO5h4h2ivyNpfxkWikS86fn8nyZrGZGQe1lJOIgZ8GEtUppYhmd70jilaY5VGRelXQGYrFt+eBAiDcqYGeMDmOa8ZaTjFSS9k=
+  email: jorge+npmci@aragon.one
+  on:
+    node_js: '11'
+    tags: true
+  tag: 'nightly'
