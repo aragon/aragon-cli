@@ -18,6 +18,11 @@ script:
 after_success:
   - npm run report-coverage
 before_deploy:
+  - echo 'Preparing to deploy to NPM'
+  - echo 'Cleaning any uncommitted changes'
+  - echo 'git --no-pager diff'
+  - git stash
+  - echo 'Setting up the npm auth token'
   - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc
 deploy:
   skip_cleanup: true
