@@ -23,6 +23,6 @@
     "test:coverage": "lerna run test:coverage:ci --ignore @aragon/e2e-tests",
     "report-coverage": "lcov-result-merger 'packages/*/coverage/lcov.info' | coveralls",
     "version": "lerna version",
-    "publish:nightly": "lerna publish from-git --dist-tag nightly"
+    "publish:nightly": "lerna publish from-git --dist-tag nightly --yes"
   }
 }
