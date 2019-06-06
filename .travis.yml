@@ -21,7 +21,7 @@ before_deploy:
   - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc
 deploy:
   provider: script
-  script: 'npm run publish'
+  script: 'npm run publish:nightly'
   on:
     node_js: '11'
     tags: true
