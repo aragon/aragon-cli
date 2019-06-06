@@ -1,23 +1,48 @@
-# Continous Integration
+# Continuous Integration
 
 Having automated CI setup allows us to:
 
 - reduce the feedback loop between the contributor and the reviewer
 - make the reviewing task less time-consuming and less prone to human errors
 
-## GitHub Actions
+## Setup
+
+### GitHub Actions
 
 The configuration file is located at `.github/main.workflow`.
 
-## Travis CI
+### Travis CI
 
 The configuration file is located at `.travis.yml`.
+
+### Coverage
+
+We record the test coverage history using [Coveralls](https://coveralls.io).
+
+Each project has script to run the tests and report them in the `lcov` format.
+(see [available reporters](https://istanbul.js.org/docs/advanced/alternative-reporters/))
+
+```json
+    "test:coverage:ci": "nyc --all --reporter=lcovonly ava"
+```
+
+Notes:
+
+- we use the `--all` flag to include all the files (not just the ones touched by our tests)  
+- the coverage is only calculated for unit & integration tests.
+
+Because we are using a monorepo structure, we need to merge the lcov results before passing them to
+coveralls.
+
+```json
+    "report-coverage": "lcov-result-merger 'packages/*/coverage/lcov.info' | coveralls",
+```
 
 ## Known issues
 
 ### Cannot bootstrap all packages concurrently
 
-Our `@aragon/cli-e2e-tests` package has the following dependencies:
+Our `@aragon/e2e-tests` package has the following dependencies:
 
 ```json
     "@aragon/cli": "file:../aragon-cli",
@@ -31,8 +56,8 @@ The solution is to split the bootstrapping process in two:
 
 ```json
     "prepare": "npm run bootstrap && npm run bootstrap-e2e-tests",
-    "bootstrap": "lerna bootstrap --no-ci --ignore @aragon/cli-e2e-tests",
-    "bootstrap-e2e-tests": "lerna bootstrap --no-ci --scope @aragon/cli-e2e-tests",
+    "bootstrap": "lerna exec --ignore @aragon/e2e-tests -- npm install",
+    "bootstrap-e2e-tests": "lerna exec --scope @aragon/e2e-tests -- npm install",
 ```
 
 Note: this works because when we bootstrap a package, it will get built right after thanks to the

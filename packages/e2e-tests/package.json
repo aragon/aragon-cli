@@ -1,5 +1,5 @@
 {
-  "name": "@aragon/cli-e2e-tests",
+  "name": "@aragon/e2e-tests",
   "private": true,
   "description": "End-to-end tests for aragonCLI",
   "scripts": {
