@@ -16,7 +16,7 @@
 
 🚧 Review bugfixes
 
-🚧 Keep improving new contributors workflow with feedback got form [forum post](https://forum.aragon.org/t/experimenting-with-bounties-using-the-projects-app/1016/6)
+🚧 Keep improving new contributors workflow with feedback got form [forum post](https://forum.aragon.org/t/experimenting-with-bounties-using-the-projects-app/1016/6):
 - Install Dot Voting app to [meshteam dao](https://rinkeby.aragon.org/#/meshteam/0x2b2290c2370cbc59e7c77bd36072f801d5e996c8)
 - Curate issue to be funded
 - Write on-boarding documentation to include in Contribution.md
@@ -27,7 +27,7 @@
 
 🚧 Wrong options provided by [`--help` for subcommands](https://github.com/aragon/aragon-cli/issues/282)
 
-🚧 Review pending issues --> tests as we go
+🚧 Review pending issues --> tests as we go:
 
 - dao apps showing undefined instead of latest
 - dao acl and install showing "Succesful execute: 'undefined'" (Show tx path with aragonCLI command (decode/describe tx path)?)
@@ -41,7 +41,7 @@
 
 🚧 [Claiming an aragonid](https://github.com/aragon/aragon-cli/issues/347)
 
-🚧 Display better error messages
+🚧 Display better error messages:
 
 - Error codes would be useful
 - Create a full list under hack#aragonCLI with all of them, similar to [this](https://docs.microsoft.com/en-us/windows/desktop/debug/system-error-codes)
@@ -53,7 +53,7 @@
 
 🚧 Guide about propagating content
 
-🚧 Update new features
+🚧 Update new features:
 
 - tx pathing in aragon apm publish [#425](https://github.com/aragon/aragon-cli/pull/425)
 - aragon apm extract-functions [#423](https://github.com/aragon/aragon-cli/pull/423)
