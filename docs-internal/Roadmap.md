@@ -95,6 +95,8 @@ Currently the CLI will try to connect to `[localhost:5001](http://localhost:5001
 
 ## New commands
 
+✔️ `npx create-aragon-appp`
+
 ✔️ `aragon ipfs propagate`
 
 ✔️ `aragon ipfs view`
