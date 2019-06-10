@@ -25,6 +25,7 @@ const {
 
 const {
   getMajor,
+  sanityCheck,
   generateApplicationArtifact,
   copyCurrentApplicationArtifacts,
 } = require('./util/generate-artifact')
@@ -132,16 +133,13 @@ exports.task = function({
   bump,
   contract,
   onlyArtifacts,
-  alreadyCompiled,
   reuse,
   provider,
-  key,
   files,
   ignore,
   ipfsCheck,
   publishDir,
   init,
-  getRepo,
   onlyContent,
   build,
   buildScript,
@@ -154,7 +152,6 @@ exports.task = function({
 
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
-  let repo = { version: '0.0.0' }
 
   return new TaskList(
     [
@@ -168,40 +165,48 @@ exports.task = function({
         task: async ctx => {
           let isValid = true
           try {
-            repo = await apm.getLatestVersion(module.appName)
-            ctx.initialVersion = repo.version
+            const ipfsTimeout = 1000 * 60 * 5 // 5min
+            reporter.info('Fetching latest version from aragonPM...')
+            ctx.initialRepo = await apm.getLatestVersion(
+              module.appName,
+              ipfsTimeout
+            )
+
+            ctx.initialVersion = ctx.initialRepo.version
 
             ctx.version = semver.valid(bump)
               ? semver.valid(bump)
-              : semver.inc(repo.version, bump)
-
-            ctx.isMajor = getMajor(repo.version) !== getMajor(ctx.version)
+              : semver.inc(ctx.initialVersion, bump)
 
             isValid = await apm.isValidBump(
               module.appName,
-              repo.version,
+              ctx.initialVersion,
               ctx.version
             )
+            if (!isValid) {
+              throw new Error(
+                "Version bump is not valid, you have to respect APM's versioning policy. Check the version upgrade rules in the documentation: https://hack.aragon.org/docs/apm-ref.html#version-upgrade-rules"
+              )
+            }
+
+            ctx.shouldDeployContract =
+              getMajor(ctx.initialVersion) !== getMajor(ctx.version)
           } catch (e) {
             if (e.message.indexOf('Invalid content URI') === 0) {
               return
             }
+            // Repo doesn't exist yet, deploy the first version
             ctx.version = semver.valid(bump)
               ? semver.valid(bump)
-              : semver.inc(repo.version, bump)
+              : semver.inc('0.0.0', bump) // All valid initial versions are a version bump from 0.0.0
             if (apm.validInitialVersions.indexOf(ctx.version) === -1) {
               throw new Error(
-                'Invalid initial version, it can only be 0.0.1, 0.1.0 or 1.0.0.'
+                `Invalid initial version  (${
+                  ctx.version
+                }). It can only be 0.0.1, 0.1.0 or 1.0.0.`
               )
-            } else {
-              ctx.isMajor = true // consider first version as major
             }
-          }
-
-          if (!isValid) {
-            throw new Error(
-              'Version bump is not valid, you have to respect aragonPM bumps policy. Check version upgrade rules in documentation https://hack.aragon.org/docs/apm-ref#version-upgrade-rules'
-            )
+            ctx.shouldDeployContract = true // assume first version should deploy a contract
           }
         },
       },
@@ -228,7 +233,7 @@ exports.task = function({
         enabled: ctx =>
           !onlyContent &&
           ((contract && !web3Utils.isAddress(contract)) ||
-            (!contract && ctx.isMajor && !reuse)),
+            (!contract && ctx.shouldDeployContract && !reuse)),
       },
       {
         title: 'Determine contract address for version',
@@ -338,10 +343,44 @@ exports.task = function({
         title: 'Generate application artifact',
         skip: () => onlyContent && !module.path,
         task: async (ctx, task) => {
+          async function invokeAction(answer) {
+            if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
+              await generateApplicationArtifact(
+                cwd,
+                dir,
+                module,
+                ctx.deployArtifacts
+              )
+              return `Saved artifact in ${dir}/${ARTIFACT_FILE}`
+            }
+            throw new Error('Aborting publication...')
+          }
+
           const dir = onlyArtifacts ? cwd : ctx.pathToPublish
 
           if (pathExistsSync(`${dir}/${ARTIFACT_FILE}`)) {
-            return task.skip('Using existent artifact')
+            const artifactPath = path.resolve(dir, ARTIFACT_FILE)
+            const artifact = await readJson(artifactPath)
+            const rebuild = await sanityCheck(
+              network.name,
+              module.appName,
+              module.registry,
+              module.path,
+              artifact
+            )
+            if (!rebuild) {
+              return task.skip('Using existent artifact')
+            } else {
+              return taskInput(
+                "Couldn't reuse artifact due to mismatches, regenerate now? [y]es/[a]bort",
+                {
+                  validate: value => {
+                    return ANSWERS.indexOf(value) > -1
+                  },
+                  done: async answer => invokeAction(answer),
+                }
+              )
+            }
           }
 
           if (onlyContent) {
@@ -350,34 +389,36 @@ exports.task = function({
               await copyCurrentApplicationArtifacts(
                 dir,
                 apm,
-                ctx.repo,
+                network.name,
+                module.appName,
+                module.registry,
+                module.path,
+                ctx.initialRepo,
                 ctx.version
               )
               return task.skip(`Using artifacts from v${ctx.repo.version}`)
             } catch (e) {
-              return taskInput(
-                "Couldn't fetch existing artifact, generate now? [y]es/[a]bort",
-                {
-                  validate: value => {
-                    return ANSWERS.indexOf(value) > -1
-                  },
-                  done: async answer => {
-                    if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
-                      await generateApplicationArtifact(
-                        cwd,
-                        apm,
-                        dir,
-                        module,
-                        ctx.deployArtifacts,
-                        web3,
-                        reporter
-                      )
-                      return `Saved artifact in ${dir}/artifact.json`
-                    }
-                    throw new Error('Aborting publication...')
-                  },
-                }
-              )
+              if (e.message === 'Artifact mismatch') {
+                return taskInput(
+                  "Couldn't reuse existing artifact due to mismatches, regenerate now? [y]es/[a]bort",
+                  {
+                    validate: value => {
+                      return ANSWERS.indexOf(value) > -1
+                    },
+                    done: async answer => invokeAction(answer),
+                  }
+                )
+              } else {
+                return taskInput(
+                  "Couldn't fetch existing artifact, generate now? [y]es/[a]bort",
+                  {
+                    validate: value => {
+                      return ANSWERS.indexOf(value) > -1
+                    },
+                    done: async answer => invokeAction(answer),
+                  }
+                )
+              }
             }
           }
           await generateApplicationArtifact(
@@ -458,7 +499,6 @@ exports.handler = async args => {
       const { transactionHash, status } = ctx.receipt
       const { version, content, contractAddress } = ctx.repo
 
-      console.log()
       if (!status) {
         reporter.error(`Publish transaction reverted:`)
       } else {

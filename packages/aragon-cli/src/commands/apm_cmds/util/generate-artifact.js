@@ -123,9 +123,35 @@ async function generateApplicationArtifact(
   return artifact
 }
 
+// Sanity check artifact.json
+function sanityCheck(
+  networkName,
+  moduleAppName,
+  moduleRegistry,
+  modulePath,
+  artifact
+) {
+  const { environments, contractPath } = artifact
+  let tof = false
+
+  for (let environment in environments) {
+    const { appName, registry, network } = environments[environment]
+    tof =
+      tof ||
+      networkName !== network ||
+      moduleAppName !== appName ||
+      moduleRegistry !== registry
+  }
+  return tof || modulePath !== contractPath
+}
+
 async function copyCurrentApplicationArtifacts(
   outputPath,
   apm,
+  networkName,
+  appName,
+  registry,
+  modulePath,
   repo,
   newVersion
 ) {
@@ -159,11 +185,26 @@ async function copyCurrentApplicationArtifacts(
 
   copy
     .filter(item => item)
-    .map(file => {
-      if (file.fileName === ARTIFACT_FILE) {
-        return updateArtifactVersion(file, newVersion)
+    .map(async file => {
+      try {
+        if (file.fileName === ARTIFACT_FILE) {
+          const rebuild = await sanityCheck(
+            networkName,
+            appName,
+            registry,
+            modulePath,
+            file.fileContent
+          )
+          if (rebuild) {
+            throw new Error('Artifact mismatch')
+          } else {
+            return updateArtifactVersion(file, newVersion)
+          }
+        }
+        return file
+      } catch (e) {
+        throw e
       }
-      return file
     })
     .forEach(({ fileName, filePath, fileContent }) =>
       fs.writeFileSync(filePath, fileContent)
@@ -174,5 +215,6 @@ module.exports = {
   SOLIDITY_FILE,
   getMajor,
   generateApplicationArtifact,
+  sanityCheck,
   copyCurrentApplicationArtifacts,
 }
