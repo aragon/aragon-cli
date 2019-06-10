@@ -33,7 +33,7 @@ exports.builder = function(yargs) {
     .option('eth-value', {
       description:
         'Amount of ETH from the contract that is sent with the action',
-      default: 0,
+      default: '0',
     })
 }
 
@@ -78,7 +78,9 @@ exports.handler = async function({
     )
   }
 
-  const fnArgs = [target, ethValue, encodeCalldata(signature, callArgs)]
+  const weiAmount = web3.utils.toWei(ethValue)
+
+  const fnArgs = [target, weiAmount, encodeCalldata(signature, callArgs)]
 
   const getTransactionPath = wrapper =>
     wrapper.getTransactionPath(agentAddress, EXECUTE_FUNCTION_NAME, fnArgs)
