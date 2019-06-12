@@ -48,11 +48,35 @@
   </h4>
 </div>
 
-# aragonCLI Basic Overview
+# aragonCLI
 
-The aragonCLI (Command Line Interface) is used to create and develop Aragon apps.
+The aragonCLI (Command Line Interface) is used to create and develop Aragon Apps, as well as to
+interact with DAOs (create, install apps, inspect permissions, etc.).
 
-| Package                 | Version   | Downloads   |
-| ----------------------- | --------- | ----------- |
-| `@aragon/cli` | [![NPM version](https://img.shields.io/npm/v/@aragon/cli.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli) | [![Downloads](https://img.shields.io/npm/dm/@aragon/cli.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli) |
-| `create-aragon-app` | [![NPM version](https://img.shields.io/npm/v/create-aragon-app.svg?style=flat-square)](https://npmjs.org/package/create-aragon-app) | [![Downloads](https://img.shields.io/npm/dm/create-aragon-app.svg?style=flat-square)](https://npmjs.org/package/create-aragon-app) |
+## Nightly builds
+
+Nightly builds may contain features in their early stages, expect things to break!
+
+**Get a sneak peek at the next version of the CLI, and help us making it better in the process!**
+**Please try it out and let us know early and often if you find any bugs or regressions. Thanks!**
+
+```sh
+npm install @aragon/cli@nightly
+```
+
+## Stable builds
+
+Periodically, after some testing has been done, we mark `nightly` builds as `stable`.
+This build is recommended to most people, especially devs that are getting started and not familiar
+with the stack, or anyone who values stability over the bleeding-edge features.
+
+```sh
+npm install @aragon/cli
+```
+
+## Package overview
+
+| Package | Version (latest/stable) | Version (nightly) | Downloads |
+| ------- | ----------------------- | ----------------- | --------- |
+| `@aragon/cli`       | [![NPM version](https://img.shields.io/npm/v/@aragon/cli/latest.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli) | [![NPM version](https://img.shields.io/npm/v/@aragon/cli/nightly.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli)            | [![Downloads](https://img.shields.io/npm/dm/@aragon/cli.svg?style=flat-square)](https://npmjs.org/package/@aragon/cli) |
+| `create-aragon-app` | [![NPM version](https://img.shields.io/npm/v/create-aragon-app/latest.svg?style=flat-square)](https://npmjs.org/package/create-aragon-app) | [![NPM version](https://img.shields.io/npm/v/create-aragon-app/nightly.svg?style=flat-square)](https://npmjs.org/package/create-aragon-app) | [![Downloads](https://img.shields.io/npm/dm/create-aragon-app.svg?style=flat-square)](https://npmjs.org/package/create-aragon-app) |

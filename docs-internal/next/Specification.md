@@ -129,7 +129,7 @@ Data viz:
 ### Devchain API
 
 - `ensureConnection`
-- `hasAragonDeployements`
+- `hasAragonDeployments`
 - `deployAragon`
 - `start` -- should save stdout and stderr in some files to be outputted by `aragon devchain output`
 
