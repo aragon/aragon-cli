@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "5.9.5",
+  "version": "5.9.6",
   "description": "Aragon command-line tools",
   "main": "dist/cli.js",
   "bin": {
@@ -83,8 +83,8 @@
     "truffle-flattener": "^1.2.9",
     "truffle-hdwallet-provider": "^1.0.2",
     "truffle-hdwallet-provider-privkey": "^0.3.0",
-    "web3": "1.0.0-beta.35",
-    "yargs": "^12.0.0"
+    "web3": "1.0.0-beta.34",
+    "yargs": "^13.2.4"
   },
   "devDependencies": {
     "@aragon/apps-finance": "^3.0.0",
@@ -135,18 +135,10 @@
     "defaultGasPrice": "10000000000",
     "defaultIpfsTimeout": "300000"
   },
-  "yargs": {
-    "short-option-groups": true,
-    "camel-case-expansion": true,
-    "dot-notation": true,
-    "parse-numbers": false,
-    "boolean-negation": true
-  },
   "greenkeeper": {
     "ignore": [
       "truffle",
-      "web3",
-      "yargs"
+      "web3"
     ]
   },
   "husky": {

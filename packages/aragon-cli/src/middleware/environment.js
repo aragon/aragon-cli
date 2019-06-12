@@ -3,6 +3,11 @@ const { getTruffleConfig } = require('../helpers/truffle-config')
 
 const FRAME_ENDPOINT = 'ws://localhost:1248'
 const FRAME_ORIGIN = 'AragonCLI'
+const ARAGON_GATEWAY = {
+  protocol: 'https',
+  host: 'ipfs.eth.aragon.network',
+  port: null,
+}
 
 const configureNetwork = (
   argv,
@@ -124,6 +129,9 @@ module.exports = function environmentMiddleware(argv) {
       resp.apmEnsRegistry = env.registry
       if (apm) {
         apm['ens-registry'] = env.registry
+        if (apm.ipfs.rpc.default) {
+          apm.ipfs.rpc = ARAGON_GATEWAY
+        }
       }
     }
 
@@ -158,6 +166,9 @@ module.exports = function environmentMiddleware(argv) {
 
     if (apm && env.registry) {
       apm['ens-registry'] = env.registry
+      if (apm.ipfs.rpc.default) {
+        apm.ipfs.rpc = ARAGON_GATEWAY
+      }
     }
 
     return {
