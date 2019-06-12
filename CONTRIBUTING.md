@@ -14,7 +14,7 @@ Look for the [💰funded](https://github.com/aragon/aragon-cli/issues?q=is%3Aiss
 
 You will apply to the boutnies on our own DAO, [follow the link to explore it.](https://rinkeby.aragon.org/#/meshteam/0x2b2290c2370cbc59e7c77bd36072f801d5e996c8)
 
-We will create a guide shortly with an walkthrough the whole process. Stay tuned 🙌
+We will create a guide shortly with a walkthrough the whole process. Stay tuned 🙌
 
 ## Get Involved
 
