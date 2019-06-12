@@ -337,9 +337,8 @@ exports.task = function({
           let isValid = true
           try {
             repo = await apm.getLatestVersion(module.appName)
-            
             ctx.initialVersion = repo.version
-            
+
             ctx.version = semver.valid(bump)
               ? semver.valid(bump)
               : semver.inc(repo.version, bump)
@@ -562,7 +561,7 @@ exports.task = function({
         title: `Publish ${module.appName}`,
         task: async (ctx, task) => {
           ctx.contractInstance = null // clean up deploy sub-command artifacts
-          
+
           const accounts = await web3.eth.getAccounts()
           const from = accounts[0]
 
@@ -601,7 +600,7 @@ exports.task = function({
       {
         title: 'Fetch published repo',
         task: getRepoTask.task({
-          artifactRequired: false,
+          artifactRequired: onlyContent,
           apmRepo: module.appName,
           apm,
         }),
