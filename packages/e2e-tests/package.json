@@ -1,0 +1,40 @@
+{
+  "name": "@aragon/e2e-tests",
+  "private": true,
+  "description": "End-to-end tests for aragonCLI",
+  "scripts": {
+    "test": "cross-env DEBUG=true ava",
+    "test:clean": "shx rm -rf .tmp && npm run reset-cache",
+    "test:watch": "cross-env DEBUG=true ava --watch",
+    "update-snapshots": "ava --update-snapshots",
+    "reset-cache": "ava --reset-cache"
+  },
+  "author": "Aragon Association <legal@aragon.org>",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "shx": "^0.3.2"
+  },
+  "dependencies": {
+    "@aragon/cli": "file:../aragon-cli",
+    "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
+    "@babel/polyfill": "^7.2.5",
+    "@babel/preset-env": "^7.3.4",
+    "@babel/register": "^7.0.0",
+    "ava": "^1.2.1",
+    "cross-env": "^5.2.0",
+    "create-aragon-app": "file:../create-aragon-app",
+    "execa": "^1.0.0",
+    "fs-extra": "^8.0.1",
+    "node-fetch": "^2.3.0",
+    "ps-tree": "^1.2.0"
+  },
+  "ava": {
+    "require": [
+      "@babel/polyfill",
+      "@babel/register"
+    ],
+    "files": [
+      "src/**/*.test.js"
+    ]
+  }
+}

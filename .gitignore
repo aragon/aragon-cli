@@ -1,3 +1,21 @@
+# Editor files
+.vscode
+
+# Dependencies
 node_modules
+# this is created by windows when installing go-ipfs
+*ipfs.cmd*
+
+# Artifacts
 dist
-src/knownRoles.json
+
+# Tests and coverage
+*.tmp*
+coverage
+.nyc_output
+
+# Tools
+lerna-debug.log
+
+# Extra
+packages/aragon-cli/src/knownRoles.json

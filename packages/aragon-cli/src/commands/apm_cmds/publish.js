@@ -17,12 +17,11 @@ const execa = require('execa')
 const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
-const startIPFS = require('../ipfs')
+const startIPFS = require('../ipfs_cmds/start')
 const getRepoTask = require('../dao_cmds/utils/getRepoTask')
+const execTask = require('../dao_cmds/utils/execHandler').task
 const listrOpts = require('../../helpers/listr-options')
 
-const DEFAULT_GAS_PRICE = require('../../../package.json').aragon
-  .defaultGasPrice
 const MANIFEST_FILE = 'manifest.json'
 const ARTIFACT_FILE = 'artifact.json'
 const SOLIDITY_FILE = 'code.sol'
@@ -144,9 +143,11 @@ async function generateApplicationArtifact(
   // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
   artifact.functions = await extract(path.resolve(cwd, artifact.path))
 
-  artifact.roles = artifact.roles.map(role =>
-    Object.assign(role, { bytes: '0x' + keccak256(role.id) })
-  )
+  if (artifact.roles) {
+    artifact.roles = artifact.roles.map(role =>
+      Object.assign(role, { bytes: '0x' + keccak256(role.id) })
+    )
+  }
 
   // Save artifact
   await writeJson(path.resolve(outputPath, 'artifact.json'), artifact, {
@@ -288,6 +289,7 @@ exports.task = function({
   cwd,
   web3,
   network,
+  wsProvider,
   module,
   apm: apmOptions,
   silent,
@@ -335,6 +337,9 @@ exports.task = function({
           let isValid = true
           try {
             repo = await apm.getLatestVersion(module.appName)
+            
+            ctx.initialVersion = repo.version
+            
             ctx.version = semver.valid(bump)
               ? semver.valid(bump)
               : semver.inc(repo.version, bump)
@@ -557,26 +562,36 @@ exports.task = function({
         title: `Publish ${module.appName}`,
         task: async (ctx, task) => {
           ctx.contractInstance = null // clean up deploy sub-command artifacts
-
-          task.output = 'Generating transaction and waiting for confirmation'
+          
           const accounts = await web3.eth.getAccounts()
           const from = accounts[0]
 
           try {
-            const transaction = await apm.publishVersion(
+            const intent = await apm.publishVersionIntent(
               from,
               module.appName,
               ctx.version,
               http ? 'http' : provider,
               http || ctx.pathToPublish,
-              ctx.contract,
-              from
+              ctx.contract
             )
 
-            transaction.from = from
-            transaction.gasPrice = network.gasPrice || DEFAULT_GAS_PRICE
+            const { dao, proxyAddress, methodName, params } = intent
 
-            ctx.receipt = await web3.eth.sendTransaction(transaction)
+            const getTransactionPath = wrapper => {
+              return wrapper.getTransactionPath(
+                proxyAddress,
+                methodName,
+                params
+              )
+            }
+
+            return execTask(dao, getTransactionPath, {
+              reporter,
+              apm: apmOptions,
+              web3,
+              wsProvider,
+            })
           } catch (e) {
             throw e
           }
@@ -586,7 +601,7 @@ exports.task = function({
       {
         title: 'Fetch published repo',
         task: getRepoTask.task({
-          artifactRequired: onlyContent,
+          artifactRequired: false,
           apmRepo: module.appName,
           apm,
         }),
@@ -613,11 +628,18 @@ exports.handler = async args => {
       if (!status) {
         reporter.error(`Publish transaction reverted:`)
       } else {
-        reporter.success(`Successfully published ${appName} v${version}: `)
-        if (!onlyContent) {
-          reporter.info(`Contract address: ${contractAddress}`)
+        // If the version is still the same, the publish intent was forwarded but not immediately executed (p.e. Voting)
+        if (ctx.initialVersion === version) {
+          reporter.success(
+            `Successfully executed: "${ctx.transactionPath[0].description}"`
+          )
+        } else {
+          reporter.success(`Successfully published ${appName} v${version}: `)
+          if (!onlyContent) {
+            reporter.info(`Contract address: ${contractAddress}`)
+          }
+          reporter.info(`Content (${content.provider}): ${content.location}`)
         }
-        reporter.info(`Content (${content.provider}): ${content.location}`)
       }
 
       reporter.info(`Transaction hash: ${transactionHash}`)

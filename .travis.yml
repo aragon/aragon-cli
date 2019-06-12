@@ -1,16 +1,19 @@
 language: node_js
-cache:
-  directories:
-    - node_modules
+cache: npm
 notifications:
   email: false
 node_js:
-  - '8'
+  - '11'
+  - '10'
   - '9'
+  - '8'
 before_script:
   - npm prune
+install:
+  - npm install
 script:
   - npm run lint
-  - npm run test
+  - npm run test:coverage
+  - travis_wait 30 npm run test:e2e
 after_success:
-  - ./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls
+  - npm run report-coverage
