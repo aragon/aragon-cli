@@ -17,3 +17,17 @@ script:
   - travis_wait 30 npm run test:e2e
 after_success:
   - npm run report-coverage
+before_deploy:
+  - echo 'Preparing to deploy to NPM'
+  - echo 'Cleaning any uncommitted changes'
+  - echo 'git --no-pager diff'
+  - git stash
+  - echo 'Setting up the npm auth token'
+  - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: 'npm run publish:nightly'
+  on:
+    node_js: '11'
+    tags: true
