@@ -459,9 +459,7 @@ exports.task = function({
 
           return buildTask.catch(err => {
             throw new Error(
-              `${err.message}\n${
-                err.stderr
-              }\n\nFailed to build. See above output.`
+              `${err.message}\n${err.stderr}\n\nFailed to build. See above output.`
             )
           })
         },

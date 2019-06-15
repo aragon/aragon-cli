@@ -161,9 +161,7 @@ module.exports = function environmentMiddleware(argv) {
     }
 
     reporter.debug(
-      `Could not find 'arapp.json'. Using the default configuration to connect to ${
-        env.network
-      }.`
+      `Could not find 'arapp.json'. Using the default configuration to connect to ${env.network}.`
     )
 
     // Override apm options that we find in the environment

@@ -34,9 +34,7 @@ exports.handler = async function({
   const repo = await apm.getRepository(module.appName).catch(() => null)
   if (repo === null) {
     throw new Error(
-      `Repository ${
-        module.appName
-      } does not exist and it's registry does not exist`
+      `Repository ${module.appName} does not exist and it's registry does not exist`
     )
   }
 

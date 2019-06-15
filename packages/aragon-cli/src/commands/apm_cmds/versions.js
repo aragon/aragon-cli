@@ -33,9 +33,7 @@ exports.handler = async function({
   versions.map(version => {
     if (version && version.content) {
       reporter.success(
-        `${version.version}: ${version.contractAddress} ${
-          version.content.provider
-        }:${version.content.location}`
+        `${version.version}: ${version.contractAddress} ${version.content.provider}:${version.content.location}`
       )
     } else if (version && version.error) {
       reporter.warning(
@@ -43,9 +41,7 @@ exports.handler = async function({
       )
     } else {
       reporter.error(
-        `${version.version}: ${
-          version.contractAddress
-        } Version not found in provider`
+        `${version.version}: ${version.contractAddress} Version not found in provider`
       )
     }
   })
