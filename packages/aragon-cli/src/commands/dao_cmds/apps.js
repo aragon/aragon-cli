@@ -23,8 +23,12 @@ exports.builder = function(yargs) {
   })
 }
 
-const printAppName = appId => {
+const printAppNameFromAppId = appId => {
   return knownApps[appId] ? knownApps[appId] : appId
+}
+
+const printAppNameAndVersion = (appName, version) => {
+  return version ? `${appName}@v${version}` : appName
 }
 
 const printContent = content => {
@@ -112,7 +116,9 @@ exports.handler = async function({
     const appsContent = ctx.apps
       .map(
         ({ appId, proxyAddress, codeAddress, content, appName, version }) => [
-          appName ? `${appName}@v${version}` : printAppName(appId),
+          appName
+            ? printAppNameAndVersion(appName, version)
+            : printAppNameFromAppId(appId),
           proxyAddress,
           printContent(content),
         ]
@@ -137,7 +143,7 @@ exports.handler = async function({
       })
       ctx.appsWithoutPermissions.forEach(app =>
         tableForPermissionlessApps.push([
-          printAppName(app.appId).replace('.aragonpm.eth', ''),
+          printAppNameFromAppId(app.appId).replace('.aragonpm.eth', ''),
           app.proxyAddress,
         ])
       )

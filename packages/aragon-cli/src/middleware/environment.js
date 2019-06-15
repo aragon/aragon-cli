@@ -1,13 +1,9 @@
 const Web3 = require('web3')
+const merge = require('lodash.merge')
 const { getTruffleConfig } = require('../helpers/truffle-config')
 
 const FRAME_ENDPOINT = 'ws://localhost:1248'
 const FRAME_ORIGIN = 'AragonCLI'
-const ARAGON_GATEWAY = {
-  protocol: 'https',
-  host: 'ipfs.eth.aragon.network',
-  port: null,
-}
 
 const configureNetwork = (
   argv,
@@ -74,8 +70,8 @@ const configureNetwork = (
 // TODO this can be cleaned up once --network is no longer supported
 module.exports = function environmentMiddleware(argv) {
   const runsInCwd = argv._[0] === 'init'
-  const { reporter, module, apm } = argv
-  let { environment, network } = argv
+  const { reporter, module } = argv
+  let { environment, network, apm } = argv
 
   const isTruffleFwd = argv._[0] === 'contracts'
 
@@ -120,26 +116,32 @@ module.exports = function environmentMiddleware(argv) {
       [environment]: env,
     }
 
-    const resp = {
+    const response = {
       module: Object.assign({}, module, { appName: env.appName }),
       network: configureNetwork(argv, env.network),
     }
 
-    if (env.registry) {
-      resp.apmEnsRegistry = env.registry
-      if (apm) {
+    // Override apm options that we find in the environment
+    // TODO (daniel) : it should be the other way around though (cli params to override env)
+    if (apm) {
+      if (env.registry) {
         apm['ens-registry'] = env.registry
-        if (apm.ipfs.rpc.default) {
-          apm.ipfs.rpc = ARAGON_GATEWAY
-        }
+      }
+      if (env.apm) {
+        apm = merge(apm, env.apm)
       }
     }
 
-    if (env.wsRPC) {
-      resp.wsProvider = new Web3.providers.WebsocketProvider(env.wsRPC)
+    if (env.registry) {
+      // TODO (daniel) : remove this as it does not seem to be used
+      response.apmEnsRegistry = env.registry
     }
 
-    return resp
+    if (env.wsRPC) {
+      response.wsProvider = new Web3.providers.WebsocketProvider(env.wsRPC)
+    }
+
+    return response
   }
 
   // if there is no arapp.json and the command is not init default to the "global" config
@@ -164,14 +166,19 @@ module.exports = function environmentMiddleware(argv) {
       }.`
     )
 
-    if (apm && env.registry) {
-      apm['ens-registry'] = env.registry
-      if (apm.ipfs.rpc.default) {
-        apm.ipfs.rpc = ARAGON_GATEWAY
+    // Override apm options that we find in the environment
+    // TODO (daniel) : it should be the other way around though (cli params to override env)
+    if (apm) {
+      if (env.registry) {
+        apm['ens-registry'] = env.registry
+      }
+      if (env.apm) {
+        apm = merge(apm, env.apm)
       }
     }
 
     return {
+      // TODO (daniel) : remove this as it does not seem to be used
       apmEnsRegistry: env.registry,
       network: configureNetwork(argv, env.network, defaultNetworks),
       wsProvider: env.wsRPC && new Web3.providers.WebsocketProvider(env.wsRPC),

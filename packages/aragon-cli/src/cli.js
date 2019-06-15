@@ -19,18 +19,16 @@ const MIDDLEWARES = [
 
 // Set up commands
 const cmd = require('yargs')
+  .strict()
   .parserConfiguration({
-    'short-option-groups': true,
-    'camel-case-expansion': true,
-    'dot-notation': true,
     'parse-numbers': false,
-    'boolean-negation': true,
   })
   .usage(`Usage: aragon <command> [options]`)
   .commandDir('./commands')
 
 cmd.middleware(MIDDLEWARES)
 
+cmd.alias('env', 'environment')
 cmd.alias('h', 'help')
 cmd.alias('v', 'version')
 
@@ -43,11 +41,13 @@ cmd.demandCommand(1, 'You need to specify a command')
 // Set global options
 cmd.option('silent', {
   description: 'Silence output to terminal',
+  boolean: true,
   default: false,
 })
 
 cmd.option('debug', {
   description: 'Show more output to terminal',
+  boolean: true,
   default: false,
   coerce: debug => {
     if (debug || process.env.DEBUG) {
@@ -109,7 +109,11 @@ cmd.option('apm.ipfs.rpc', {
   description: 'An URI to the IPFS node used to publish files',
   default: 'http://localhost:5001#default',
 })
-cmd.group('apm.ipfs.rpc', 'APM providers:')
+cmd.option('apm.ipfs.gateway', {
+  description: 'An URI to the IPFS Gateway to read files from',
+  default: 'http://localhost:8080/ipfs',
+})
+cmd.group(['apm.ipfs.rpc', 'apm.ipfs.gateway'], 'APM providers:')
 
 cmd.option('apm', {
   coerce: apm => {
@@ -136,9 +140,14 @@ const reporter = new ConsoleReporter()
 reporter.debug(JSON.stringify(process.argv))
 cmd
   .fail((msg, err, yargs) => {
-    if (!err) yargs.showHelp()
     reporter.error(msg || err.message || 'An error occurred')
-    reporter.debug(err && err.stack)
+
+    if (!err) {
+      yargs.showHelp()
+    } else if (err.stack) {
+      reporter.debug(err.stack)
+    }
+
     process.exit(1)
   })
   .parse(process.argv.slice(2), {
