@@ -19,8 +19,9 @@ Before releasing let's make sure we are including the latest changes by updating
 
 Prepare the release notes:
 
-1. Draft a new release on GitHub: <https://github.com/aragon/aragon-cli/releases>
-2. Summarize the changes since the last release: <https://github.com/aragon/aragon-cli/commits/master>
+1. Edit the new release draft on GitHub: <https://github.com/aragon/aragon-cli/releases>
+   (these are created by [release-drafter](https://github.com/apps/release-drafter))
+2. Double check that it correctly summarizes the changes since the last release: <https://github.com/aragon/aragon-cli/commits/master>
 
 ## Release all packages that have been updated
 
