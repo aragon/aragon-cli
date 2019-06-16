@@ -14,7 +14,7 @@ Look for the [💰funded](https://github.com/aragon/aragon-cli/issues?q=is%3Aiss
 
 You will apply to the boutnies on our own DAO, [follow the link to explore it.](https://rinkeby.aragon.org/#/meshteam/0x2b2290c2370cbc59e7c77bd36072f801d5e996c8)
 
-We will create a guide shortly with an walkthrough the whole process. Stay tuned 🙌
+We will create a guide shortly with a walkthrough the whole process. Stay tuned 🙌
 
 ## Get Involved
 
@@ -49,7 +49,7 @@ You can browse our [issue tracker](https://github.com/aragon/aragon-cli/issues) 
 
 1. [Find an issue](https://github.com/aragon/aragon-cli/issues) that you are interested in addressing or a feature that you would like to add.
 2. Fork the repository to your local GitHub organization. This means that you will have a copy of the repository under `your-GitHub-username/hack`.
-3. Clone the repository to your local machine using `git clone https://github.com/github-username/aragon.js.git`.
+3. Clone the repository to your local machine using `git clone https://github.com/github-username/aragon-cli.git`.
 4. Create a new branch for your fix using `git checkout -b branch-name-here`.
 5. Make the appropriate changes for the issue you are trying to address or the feature that you want to add.
 6. Use `git add insert-paths-of-changed-files-here` to add the file contents of the changed files to the "snapshot" git uses to manage the state of the project, also known as the index.
