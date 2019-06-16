@@ -9,13 +9,13 @@ Terminology for this context:
 The act of making a new release is a manual step, as we need to assess whether we should bump a new
 major, minor or patch. (see [semver docs](https://semver.org/))
 
-## Preparing
+## Nightly
 
 Before releasing let's make sure we are including the latest changes by updating the local branch:
 
 1. `git checkout master`
 2. `git pull`
-3. `git checkout release/v6.0.0` (the next tag of the `@aragon/cli` package)
+3. `git checkout release/***` (where *** is the next next tag of the `@aragon/cli` package, e.g.: `v6.0.0`)
 
 Prepare the release notes:
 
