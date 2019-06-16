@@ -16,9 +16,7 @@ const installDeps = (cwd, task) => {
 
   return installTask.catch(err => {
     throw new Error(
-      `${err.message}\n${
-        err.stderr
-      }\n\nFailed to install dependencies. See above output.`
+      `${err.message}\n${err.stderr}\n\nFailed to install dependencies. See above output.`
     )
   })
 }
