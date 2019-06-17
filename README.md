@@ -33,6 +33,10 @@
       Documentation
     </a>
     <span> | </span>
+    <a href="CHANGELOG.md">
+      Changelog
+    </a>
+    <span> | </span>
     <a href="CONTRIBUTING.md">
       Contributing
     </a>
@@ -68,14 +72,28 @@ To install an older version:
 npm install --global @aragon/cli@5.6.2
 ```
 
-Older, stable versions:
+Stable versions:
 
-| Version | NPM page | Docs |
-| ------- | -------- | ---- |
-| `v5.7.0` | [![NPM](https://img.shields.io/badge/npm-v5.7.0-blue.svg?style=flat-square)](https://www.npmjs.com/package/@aragon/cli/v/5.7.0) | [![Docs](https://img.shields.io/badge/docs-v5.7.0-blue.svg?style=flat-square)](https://github.com/aragon/aragon-cli/blob/v5.7.0/docs/Intro.md) |
-| `v5.6.2` | [![NPM](https://img.shields.io/badge/npm-v5.6.2-blue.svg?style=flat-square)](https://www.npmjs.com/package/@aragon/cli/v/5.6.2) | [![Docs](https://img.shields.io/badge/docs-v5.6.2-blue.svg?style=flat-square)](https://github.com/aragon/aragon-cli/blob/v5.6.2/docs/Intro.md) |
+| Version | NPM page | Docs | Release date |
+| ------- | -------- | ---- | ------------ |
+| `v5.9.3` | [![NPM][593-npm-shield]][593-npm-link] | [![Docs][593-docs-shield]][593-docs-link] | 2019-05-27 |
+| `v5.8.0` | [![NPM][580-npm-shield]][580-npm-link] | [![Docs][580-docs-shield]][580-docs-link] | 2019-05-18 |
+| `v5.6.2` | [![NPM][562-npm-shield]][562-npm-link] | [![Docs][562-docs-shield]][562-docs-link] | 2019-04-17 |
 
-<!-- | `v5.9.3` | [![NPM](https://img.shields.io/badge/npm-v5.9.3-blue.svg?style=flat-square)](https://www.npmjs.com/package/@aragon/cli/v/5.9.3) | [![Docs](https://img.shields.io/badge/docs-v5.9.3-blue.svg?style=flat-square)](https://github.com/aragon/aragon-cli/blob/v5.9.3/docs/Intro.md) | -->
+[593-npm-shield]: https://img.shields.io/badge/npm-v5.9.3-blue.svg?style=flat-square
+[593-npm-link]: https://www.npmjs.com/package/@aragon/cli/v/5.9.3
+[593-docs-shield]: https://img.shields.io/badge/docs-v5.9.3-blue.svg?style=flat-square
+[593-docs-link]: https://github.com/aragon/aragon-cli/blob/v5.9.3/docs/Intro.md
+
+[580-npm-shield]: https://img.shields.io/badge/npm-v5.8.0-blue.svg?style=flat-square
+[580-npm-link]: https://www.npmjs.com/package/@aragon/cli/v/5.7.0
+[580-docs-shield]: https://img.shields.io/badge/docs-v5.8.0-blue.svg?style=flat-square
+[580-docs-link]: https://github.com/aragon/aragon-cli/blob/v5.8.0/docs/Intro.md
+
+[562-npm-shield]: https://img.shields.io/badge/npm-v5.6.2-blue.svg?style=flat-square
+[562-npm-link]: https://www.npmjs.com/package/@aragon/cli/v/5.6.2
+[562-docs-shield]: https://img.shields.io/badge/docs-v5.6.2-blue.svg?style=flat-square
+[562-docs-link]: https://github.com/aragon/aragon-cli/blob/fcaca8be1cb1833ceef515d3eae34b2e1f2ef88d/docs/Intro.md
 
 ## Nightly builds 🌒
 

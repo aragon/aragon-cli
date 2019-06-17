@@ -23,6 +23,10 @@ Prepare the release notes:
    (these are created by [release-drafter](https://github.com/apps/release-drafter))
 2. Double check that it correctly summarizes the changes since the last release: <https://github.com/aragon/aragon-cli/commits/master>
 
+Notes:
+
+- If you updated the README file, make sure to update /packages/aragon-cli/README.md as well.
+
 ## Release all packages that have been updated
 
 1. Run `npm run version` and bump the versions according to the release summary.
