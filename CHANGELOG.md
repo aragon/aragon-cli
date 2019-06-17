@@ -2,30 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
-- [Changelog](#changelog)
+- [Changelog](#Changelog)
   - [v5.10.0](#v5100)
-    - [What’s changed in aragonCLI](#whats-changed-in-aragoncli)
-    - [🚀 New features](#%F0%9F%9A%80-new-features)
-    - [💡 Feature updates](#%F0%9F%92%A1-feature-updates)
-    - [🐛 Bug Fixes](#%F0%9F%90%9B-bug-fixes)
-    - [🛠️ Maintenance & internal changes](#%F0%9F%9B%A0%EF%B8%8F-maintenance--internal-changes)
+    - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI)
+    - [🚀 New features](#%F0%9F%9A%80-New-features)
+    - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates)
+    - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes)
+    - [🛠️ Maintenance & internal changes](#%F0%9F%9B%A0%EF%B8%8F-Maintenance--internal-changes)
   - [v5.9.6](#v596)
-    - [What’s changed in aragonCLI](#whats-changed-in-aragoncli-1)
-    - [💡 Feature updates](#%F0%9F%92%A1-feature-updates-1)
-    - [🛠️ Maintenance & internal changes](#%F0%9F%9B%A0%EF%B8%8F-maintenance--internal-changes-1)
+    - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-1)
+    - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates-1)
+    - [🛠️ Maintenance & internal changes](#%F0%9F%9B%A0%EF%B8%8F-Maintenance--internal-changes-1)
   - [v5.9.5](#v595)
-    - [What’s changed in aragonCLI](#whats-changed-in-aragoncli-2)
-    - [🛠️ Maintenance & internal changes](#%F0%9F%9B%A0%EF%B8%8F-maintenance--internal-changes-2)
+    - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-2)
+    - [🛠️ Maintenance & internal changes](#%F0%9F%9B%A0%EF%B8%8F-Maintenance--internal-changes-2)
   - [v5.9.4](#v594)
-    - [What’s changed in aragonCLI](#whats-changed-in-aragoncli-3)
-    - [💡 Feature updates](#%F0%9F%92%A1-feature-updates-2)
-    - [🐛 Bug Fixes](#%F0%9F%90%9B-bug-fixes-1)
+    - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-3)
+    - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates-2)
+    - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-1)
   - [v5.9.3](#v593)
-    - [What’s changed in aragonCLI](#whats-changed-in-aragoncli-4)
-    - [🐛 Bug Fixes](#%F0%9F%90%9B-bug-fixes-2)
+    - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-4)
+    - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-2)
   - [v5.9.2](#v592)
   - [v5.9.1](#v591)
   - [v5.9.0](#v590)
+    - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-5)
+    - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates-3)
+    - [🛠️ Maintenance & internal changes](#%F0%9F%9B%A0%EF%B8%8F-Maintenance--internal-changes-3)
   - [v5.8.0](#v580)
   - [v5.7.2](#v572)
   - [v5.7.1](#v571)
@@ -148,6 +151,21 @@ Release date: **2019-05-24**
 
 Release date: **2019-05-24**  
 [Compare code changes][v5.9.0]
+
+### What’s changed in aragonCLI
+
+### 💡 Feature updates
+
+* `aragon apm versions` now accepts a `[apmRepo]` parameter to inspect packages, other than the one in `arapp.json` (#458)
+* the APM timeout has been increased to 5 minutes and made configurable in the `package.json` of the CLI (you can tweak it by building from source) (#481)
+
+### 🛠️ Maintenance & internal changes
+
+* Update dependencies (#483)
+* Add shrinkwrap files (#483)
+* `aragon run` now has an end-to-end test (#483)
+
+---
 
 ## v5.8.0
 
