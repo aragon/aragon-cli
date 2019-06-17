@@ -27,12 +27,18 @@ Notes:
 
 - If you updated the README file, make sure to update /packages/aragon-cli/README.md as well.
 
-## Release all packages that have been updated
+### Release all packages that have been updated
 
 1. Run `npm run version` and bump the versions according to the release summary.
 2. On GitHub Releases, choose the project-wide tag (`@aragon/cli`'s version) and publish.
 3. Wait for the CD agent to finish the automatic deployment. (see [`Continuous-deployment.md`](/docs-internal/Continuous-deployment.md))
 4. Make some noise on the `#dev` channel.
+
+## Stable
+
+Notes:
+
+- Remember to update the README files
 
 ## Distribution tags
 
