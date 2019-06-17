@@ -31,7 +31,8 @@ Options that change the behaviour of the command:
 - `--use-frame`: Use frame as a signing provider and web3 provider.
 - `--environment`: The [environment](/docs/cli-global-confg.html#the-arappjson-file) in your arapp.json that you want to use.
 - `--apm.ens-registry`: Address of the ENS registry. This will be overwritten if the selected environment from your arapp.json includes a `registry` property.
-- `--apm.ipfs.rpc`: An URI to the IPFS node used to publish files.
+- `--apm.ipfs.gateway`: An URI to the IPFS Gateway to read files from. Defaults to `http://localhost:8080/ipfs`.
+- `--apm.ipfs.rpc`: An URI to the IPFS node used to publish files. Defaults to `http://localhost:5001#default`.
 
 ### Example
 

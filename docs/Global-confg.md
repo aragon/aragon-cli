@@ -12,9 +12,13 @@ The arapp.json file contains metadata for your app. This are the fields need to 
     - `network`: The network to use for this environment.
     - `wsRPC`: (optional) If present is used by aragon.js as its data provider.
     - `registry`: (optional) The address of the ENS registry for this environment. Defaults to the default ENS registry for this network.
+    - `apm`: An object containing apm options.
+      - `ipfs`
+        - `gateway`: An URI to the IPFS Gateway to read files from. Defaults to `http://localhost:8080/ipfs`.
+        - `rpc`: An URI to the IPFS node used to publish files. Defaults to `http://localhost:5001#default`.
 - `path`: The path to the main contract in your app.
 
-### Example 
+### Example
 
 This is the arapp.json of the app build in the [tutorial](tutorial.md) configure with rinkeby and mainnet environments.
 
@@ -55,7 +59,6 @@ This is the arapp.json of the app build in the [tutorial](tutorial.md) configure
 ### How to use environments
 
 If you want to learn how use environments in practice check the guides to learn [how to publish in diferent environments](guides-publish.md).
-
 
 ## The manifest.json file
 
