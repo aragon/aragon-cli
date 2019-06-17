@@ -38,7 +38,8 @@ Notes:
 
 Notes:
 
-- Remember to update the README files
+- Remember to update the README files section regarding stable versions
+- Deploy the docs to aragon/hack
 
 ## Distribution tags
 
