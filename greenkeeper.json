@@ -1,12 +1,22 @@
 {
   "groups": {
-    "all": {
+    "public": {
+      "packages": [
+        "packages/aragon-cli/package.json",
+        "packages/create-aragon-app/package.json"
+      ]
+    },
+    "private": {
       "packages": [
         "package.json",
-        "packages/aragon-cli/package.json",
-        "packages/create-aragon-app/package.json",
         "packages/e2e-tests/package.json"
       ]
     }
-  }
+  },
+  "ignore": [
+    "go-ipfs",
+    "ignore",
+    "truffle",
+    "web3"
+  ]
 }
