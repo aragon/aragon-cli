@@ -15,6 +15,9 @@ The configuration file is located at `.github/main.workflow`.
 
 The configuration file is located at `.travis.yml`.
 
+Travis CI is also configured in [Settings > Cron Jobs][travis-ci-settings] to build the `master`
+branch daily, if nothing else triggered a build within this time frame.
+
 ### Coverage
 
 We record the test coverage history using [Coveralls](https://coveralls.io).
@@ -77,3 +80,5 @@ npm WARN lifecycle @aragon/cli-monorepo@~prepare: cannot run in wd @aragon/cli-m
 This is most likely because of `go-ipfs` and `gyp`, see [running Aragon in docker for development](https://github.com/aragon/aragon-cli/issues/374).
 
 The solution is to use the [`--unsafe-perm` flag](https://docs.npmjs.com/misc/config#unsafe-perm).
+
+[travis-ci-settings]: https://travis-ci.org/aragon/aragon-cli/settings

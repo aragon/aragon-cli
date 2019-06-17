@@ -7,14 +7,15 @@ easier.
 | Name                  | Description                                                                           |
 | --------------------- | ------------------------------------------------------------------------------------- |
 | 💥 breaking change    | A change that will break the API                                                      |
-| 🐛 bug                | An unexpected behavior                                                                |
+| 🐛 bug                | An unexpected behavior of the API                                                     |
 | 📚 docs               | An addition or correction of the API documentation                                    |
-| 🚀 enhancement        | A new feature or request                                                              |
-| 🔮 epic               | A collection of enhancements                                                          |
+| 🚀 new feature        | A change that adds new functionality to the API                                       |
+| 💡 feature update     | An update to existing functionality of the API                                        |
+| 🔮 epic               | A collection of new features                                                          |
 | 🔬 needs confirmation | A bug that needs to be replicated                                                     |
 | 💬 needs discussion   | A feature not yet agreed on that needs more discussion                                |
 | 🙏 good first issue   | An easy issue for a new contributor                                                   |
-| 🚧 tech debt          | A change that does not affect the API, but instead improves the health of the project |
+| 🛠️ maintenance       | A change that does not affect the API, but instead improves the health of the project |
 | 💰 funded             | An issue that has a bounty on the Projects app                                        |
 
 Aragon-specific labels:

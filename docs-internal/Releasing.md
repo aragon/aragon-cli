@@ -9,13 +9,13 @@ Terminology for this context:
 The act of making a new release is a manual step, as we need to assess whether we should bump a new
 major, minor or patch. (see [semver docs](https://semver.org/))
 
-## Preparing
+## Nightly
 
 Before releasing let's make sure we are including the latest changes by updating the local branch:
 
 1. `git checkout master`
 2. `git pull`
-3. `git checkout release/v6.0.0` (the next tag of the `@aragon/cli` package)
+3. `git checkout release/***` (where *** is the next next tag of the `@aragon/cli` package, e.g.: `v6.0.0`)
 
 Prepare the release notes:
 
@@ -23,12 +23,23 @@ Prepare the release notes:
    (these are created by [release-drafter](https://github.com/apps/release-drafter))
 2. Double check that it correctly summarizes the changes since the last release: <https://github.com/aragon/aragon-cli/commits/master>
 
-## Release all packages that have been updated
+Notes:
+
+- If you updated the README file, make sure to update /packages/aragon-cli/README.md as well.
+
+### Release all packages that have been updated
 
 1. Run `npm run version` and bump the versions according to the release summary.
 2. On GitHub Releases, choose the project-wide tag (`@aragon/cli`'s version) and publish.
 3. Wait for the CD agent to finish the automatic deployment. (see [`Continuous-deployment.md`](/docs-internal/Continuous-deployment.md))
 4. Make some noise on the `#dev` channel.
+
+## Stable
+
+Notes:
+
+- Remember to update the README files section regarding stable versions
+- Deploy the docs to aragon/hack
 
 ## Distribution tags
 

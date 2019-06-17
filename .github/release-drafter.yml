@@ -1,6 +1,17 @@
 # Configuration for https://probot.github.io/apps/release-drafter
 
+name-template: v$NEXT_PATCH_VERSION
+tag-template: v$NEXT_PATCH_VERSION
+categories:
+  - title: 🚀 New features
+    label: 🚀 new feature
+  - title: 💡 Feature updates
+    label: 💡 feature update
+  - title: 🐛 Bug Fixes
+    label: 🐛 bug
+  - title: 🛠️ Maintenance & internal changes
+    label: 🛠️ maintenance
 template: |
-  ## What’s changed in aragonCLI
+  ### What’s changed in aragonCLI
 
   $CHANGES
