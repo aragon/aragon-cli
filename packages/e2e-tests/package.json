@@ -20,7 +20,7 @@
     "@babel/polyfill": "^7.2.5",
     "@babel/preset-env": "^7.3.4",
     "@babel/register": "^7.0.0",
-    "ava": "^1.2.1",
+    "ava": "^2.0.0",
     "cross-env": "^5.2.0",
     "create-aragon-app": "file:../create-aragon-app",
     "execa": "^1.0.0",
