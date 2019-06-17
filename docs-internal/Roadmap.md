@@ -352,3 +352,6 @@ Note: perhaps this is better suited for `aragonAPI`.
 Example: To create a new MiniMe token, you would use the `dao token new` command, which takes the following arguments `<token-name> <symbol> [decimal-units] [transfer-enabled]`, e.g.: `dao token new "Aragon Network Token" "ANT" 18 true`. Using `dao token new --interactive`
 
 Note: We should be able to do get the initialize function's params from the artifact.json if it's published onto an aragonPM instance.
+
+Explore other alternative as [Shadowlands.](https://shadowlands.readthedocs.io/en/latest/Tutorial.html)
+
