@@ -9,7 +9,7 @@ categories:
     label: 💡 feature update
   - title: 🐛 Bug Fixes
     label: 🐛 bug
-  - title: 🛠️ Maintenance & internal changes
+  - title: 🛠️ Maintenance (non-API changes)
     label: 🛠️ maintenance
 template: |
   ### What’s changed in aragonCLI

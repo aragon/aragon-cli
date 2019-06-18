@@ -45,6 +45,26 @@ Some packages like `async-eventemitter` are still getting messed up by `npm`, e.
 
 ## Out of date dependencies
 
+To check outdated dependencies:
+
+```sh
+npm outdated
+```
+
+### @aragon/wrapper
+
+Issue described here: <https://github.com/aragon/aragon.js/issues/325>  
+Solution: pin to `5.0.0-rc.9`.
+
+### go-ipfs
+
+The latest version: `0.4.21` is throwing:  
+`ERROR    p2pnode: mdns error:  could not determine host IP addresses`  
+This error is tracked here: <https://github.com/ipfs/go-ipfs/issues/6359>  
+Seems to be fixed, but not released.  
+
+Solution: pin to the only older version published to npm: `0.4.18-hacky2`.
+
 ### truffle
 
 We cannot use `truffle@v5` nor `truffle@v4.1.15`, because the `aragonOS` contracts need to be
@@ -53,88 +73,48 @@ compiled with `solidity@v0.4.24`.
 - Version `5.x.x` is bundling `solidity@v0.5`.
 - Version `4.1.15` is bundling `solidity@v0.4.25`.
 
+A better solution is to upgrade to `v5` and allow compilers configs: <https://github.com/aragon/aragon-cli/issues/498>
+
 ### ignore
 
 Version 5 breaks our tool: [travis-log][ignore-fail-log]
 
 Migration guide: [4x to 5x][ignore-migration-guide]
 
-### ganache
+### ganache (aragen dependency)
 
-Version `2.5.5` seems to break the publish process:
+Version `2.5.5` seems to break the publish process with:  
+`TypeError: Cannot read property '0' of undefined`  
+This error is tracked here: <https://github.com/trufflesuite/ganache-core/issues/417>  
+Seems to affect `2.5.6` too.  
 
-```sh
-daniel@zen5-ub:~/r/aragon/pg/foo$ aragon run --debug
-  ✔ Start a local Ethereum network
-  ✔ Check IPFS
-  ❯ Publish app to APM
-    ✔ Applying version bump (major)
-    ✔ Deploy contract
-    ✔ Determine contract address for version
-    ✔ Building frontend
-    ✔ Prepare files for publishing
-    ✔ Generate application artifact
-    ❯ Publish foo.aragonpm.eth
-      ⠼ Generating transaction
-        → Fetching DAO at 0x983b4Df4E8458D56CFDC51B9d2149381AF80308A...
-        Sending transaction
-      Fetch published repo
-    Create DAO
-    Open DAO
-
-/home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/lib/utils/gasEstimation.js:88
-      rootBegin: steps.systemOps[begin][0],
-                                       ^
-TypeError: Cannot read property '0' of undefined
-    at findRootScope (/home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/lib/utils/gasEstimation.js:88:40)
-    at getTotal (/home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/lib/utils/gasEstimation.js:155:36)
-    at getTotal (/home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/lib/utils/gasEstimation.js:221:23)
-    at getTotal (/home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/lib/utils/gasEstimation.js:192:25)
-    at /home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/lib/utils/gasEstimation.js:42:21
-    at /home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/node_modules/ethereumjs-vm/dist/runTx.js:70:9
-    at /home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/node_modules/async/dist/async.js:969:16
-    at next (/home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/node_modules/async/dist/async.js:5225:18)
-    at /home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/node_modules/ethereumjs-vm/dist/cache.js:160:13
-    at /home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/node_modules/merkle-patricia-tree/util.js:51:36
-    at /home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/node_modules/merkle-patricia-tree/node_modules/async/lib/async.js:52:16
-    at done (/home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/node_modules/merkle-patricia-tree/node_modules/async/lib/async.js:246:17)
-    at /home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/node_modules/merkle-patricia-tree/node_modules/async/lib/async.js:44:16
-    at /home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/lib/database/levelupobjectadapter.js:110:7
-    at /home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/node_modules/async/dist/async.js:473:16
-    at iteratorCallback (/home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/node_modules/async/dist/async.js:1064:13)
-    at /home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/node_modules/async/dist/async.js:969:16
-    at /home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/node_modules/level-sublevel/shell.js:53:51
-    at /home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/node_modules/level-sublevel/nut.js:109:13
-    at /home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/lib/database/filedown.js:64:7
-    at /home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/node_modules/async/dist/async.js:473:16
-    at iteratorCallback (/home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/node_modules/async/dist/async.js:1064:13)
-    at /home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/ganache-core/node_modules/async/dist/async.js:969:16
-    at /home/daniel/r/aragon/aragon-cli/packages/aragon-cli/node_modules/graceful-fs/graceful-fs.js:45:10
-    at FSReqCallback.args [as oncomplete] (fs.js:145:20)
-```
-
-Solution: pin to `2.2.1` which is the latest we've tested.
+Solution: pin to `2.5.3` for `ganache-core` and & `~6.2.2` for `ganache-cli`.
 
 ### web3
 
-Because `ganache@2.2.1` is using `web3@1.0.0-beta.34` we ought to do the same, otherwise we get:
-
-`Error: Method [object Object] not supported`
-
-See more details [here][web3-gh-issue].
+Because `ganache@2.2.1` is using `web3@1.0.0-beta.34` we ought to do the same, otherwise we get:  
+`Error: Method [object Object] not supported`  
+See more details [here][web3-gh-issue].  
+Update: `1.0.0-beta.35` seems to work as well.
 
 ## Tips
 
 - To pin a dependency:
 
 ```sh
-npm install --save --save-exact web3@1.0.0-beta.34
+npm install --save-exact web3@1.0.0-beta.34
 ```
 
 - To downgrade a dependency:
 
 ```sh
 npm install --save ignore@4
+```
+
+- To upgrade a dependency:
+
+```sh
+npm install --save ignore@latest
 ```
 
 Note: sometimes you need to [regenerate the lockfiles](#regenerate-the-lockfiles) when you install
