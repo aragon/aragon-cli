@@ -27,6 +27,16 @@ test('should publish an aragon app directory successfully', async t => {
   // hack, we need to install the dependencies of the app
   await execa('npm', ['install'], { cwd: `${testSandbox}/${projectName}/app` })
 
+  // start local chain
+  const runDevchain = await startBackgroundProcess({
+    cmd: 'aragon',
+    args: ['devchain', '--reset'],
+    execaOpts: {
+      cwd: `${testSandbox}`,
+    },
+    readyOutput: 'Local chain started',
+  })
+
   // act
   const runProcess = await startBackgroundProcess({
     cmd: 'aragon',
@@ -53,6 +63,9 @@ test('should publish an aragon app directory successfully', async t => {
     },
     readyOutput: 'Published directory:',
   })
+
+  // cleanup
+  await runDevchain.exit()
 
   // Check generated artifact
   const artifactPath = path.resolve(publishDirPath, ARTIFACT_FILE)
