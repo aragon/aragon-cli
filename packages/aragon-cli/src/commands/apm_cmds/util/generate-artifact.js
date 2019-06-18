@@ -48,9 +48,7 @@ async function deprecatedFunctions(apm, artifact, web3, reporter) {
           }
         } else {
           reporter.warning(
-            `Cannot find artifacts for version ${
-              version.version
-            }  in aragonPM repo. Please make sure the package was published and IPFS or your HTTP server running.`
+            `Cannot find artifacts for version ${version.version}  in aragonPM repo. Please make sure the package was published and IPFS or your HTTP server running.`
           )
           return deprecated
         }
@@ -132,17 +130,14 @@ function sanityCheck(
   artifact
 ) {
   const { environments, contractPath } = artifact
-  let tof = false
+  const { appName, registry, network } = environments[0]
 
-  for (let environment in environments) {
-    const { appName, registry, network } = environments[environment]
-    tof =
-      tof ||
-      networkName !== network ||
-      moduleAppName !== appName ||
-      moduleRegistry !== registry
-  }
-  return tof || modulePath !== contractPath
+  return (
+    networkName !== network ||
+    moduleAppName !== appName ||
+    moduleRegistry !== registry ||
+    modulePath !== contractPath
+  )
 }
 
 async function copyCurrentApplicationArtifacts(
