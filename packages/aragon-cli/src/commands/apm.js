@@ -1,6 +1,6 @@
 exports.command = 'apm <command>'
 
-exports.describe = 'Publish and manage your APM package'
+exports.describe = 'Publish and manage your aragonPM package'
 
 exports.aliases = ['package']
 

@@ -3,15 +3,15 @@ import psTree from 'ps-tree'
 
 // let's try gracefully, otherwise we can do SIGTERM or SIGKILL
 const defaultKillSignal = 'SIGINT'
-const defaultLogger = process.env.DEBUG ? console.log : () => { }
+const defaultLogger = process.env.DEBUG ? console.log : () => {}
 
-export async function startBackgroundProcess ({
+export async function startBackgroundProcess({
   cmd,
   args,
   execaOpts,
   readyOutput,
   logger = defaultLogger,
-  killSignal = defaultKillSignal
+  killSignal = defaultKillSignal,
 }) {
   return new Promise((resolve, reject) => {
     // start the process
@@ -21,18 +21,20 @@ export async function startBackgroundProcess ({
     let stderr = ''
 
     // return this function so the process can be killed
-    const exit = () => new Promise((resolve, reject) => {
-      psTree(subprocess.pid, (err, children) => {
-        if (err) reject(err)
+    const exit = () =>
+      new Promise((resolve, reject) => {
+        psTree(subprocess.pid, (err, children) => {
+          if (err) reject(err)
 
-        children.map(child => { // each child has the properties: COMMAND, PPID, PID, STAT
-          logger(cmd, 'killing child: ', child)
-          process.kill(child.PID, killSignal)
+          children.map(child => {
+            // each child has the properties: COMMAND, PPID, PID, STAT
+            logger(cmd, 'killing child: ', child)
+            process.kill(child.PID, killSignal)
+          })
+
+          resolve()
         })
-
-        resolve()
       })
-    })
 
     subprocess.stdout.on('data', data => {
       // parse
@@ -45,7 +47,7 @@ export async function startBackgroundProcess ({
       if (data.includes(readyOutput)) {
         resolve({
           exit,
-          stdout
+          stdout,
         })
       }
     })
@@ -63,10 +65,12 @@ export async function startBackgroundProcess ({
       // log
       logger(cmd, 'closing with code:', code, 'and signal:', signal)
 
-      // reject only if the promise did not previously resolve 
+      // reject only if the promise did not previously resolve
       // which means this is probably getting killed by the test which is ok
       if (!stdout.includes(readyOutput)) {
-        const err = new Error(`Process closed unexpectedly with code ${code} and signal ${signal}`)
+        const err = new Error(
+          `Process closed unexpectedly with code ${code} and signal ${signal}`
+        )
         err.stdout = stdout
         err.stderr = stderr
         reject(err)
@@ -81,14 +85,14 @@ export async function startBackgroundProcess ({
 
 /**
  * Some characters are rendered differently depending on the OS.
- * 
- * @param {string} stdout 
+ *
+ * @param {string} stdout
  */
-export function normalizeOutput (stdout) {
+export function normalizeOutput(stdout) {
   const next = stdout
     .replace(/❯/g, '>')
     .replace(/ℹ/g, 'i')
-    // TODO: remove after https://github.com/aragon/aragon-cli/issues/367 is fixed 
+    // TODO: remove after https://github.com/aragon/aragon-cli/issues/367 is fixed
     .replace(/cli.js/g, 'aragon')
     // sometimes there's an extra LF
     .trim()

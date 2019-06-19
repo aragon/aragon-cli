@@ -36,7 +36,7 @@ test('should create a new aragon app and run it successfully', async t => {
        * We need to tell it to use the one we just built locally and installed in the e2e-tests package
        */
       preferLocal: true,
-      localDir: '.'
+      localDir: '.',
     },
     readyOutput: 'Opening http://localhost:3000/#/',
   })
@@ -45,9 +45,11 @@ test('should create a new aragon app and run it successfully', async t => {
   await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000))
 
   // finding the DAO address
-  const daoAddress = runProcess.stdout.match(/DAO address: (0x[a-fA-F0-9]{40})/)[1]
+  const daoAddress = runProcess.stdout.match(
+    /DAO address: (0x[a-fA-F0-9]{40})/
+  )[1]
 
-  // TODO fetch the counter app instead
+  // TODO: fetch the counter app instead
   const fetchResult = await fetch(`http://localhost:3000/#/${daoAddress}`)
   const fetchBody = await fetchResult.text()
 
