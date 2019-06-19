@@ -12,9 +12,9 @@ There are many ways to contribute to Aragon, and many of them do not involve wri
 
 - Does everything work as expected? If not, we're always looking for improvements. Let us know by [opening an issue](#reporting-new-issues).
 - Look through the [open issues](https://github.com/aragon/aragon-cli/issues). Provide workarounds, ask for clarification, or suggest labels.
-- If you find an issue you would like to fix, [open a pull request](#your-first-code-contribution). Issues tagged as [_Good first issue_](https://github.com/aragon/aragon-cli/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) are a good place to get started.
+- If you find an issue you would like to fix, [open a pull request](#your-first-code-contribution). Issues tagged as [_Good first issue_](https://github.com/aragon/aragon-cli/issues?q=is%3Aissue+is%3Aopen+label%3A%22%3Apray%3A+good+first+issue%22) are a good place to get started.
 - Read through [Aragon documentation](https://hack.aragon.org/docs/cli-intro.html). If you find anything that is confusing or can be improved, you can make edits by clicking "Edit" at the top of most docs.
-- Take a look at the [features requested](https://github.com/aragon/aragon-cli/labels/enhancement) by others in the community and consider opening a pull request if you see something you want to work on.
+- Take a look at the [features requested](https://github.com/aragon/aragon-cli/issues?q=is%3Aissue+is%3Aopen+label%3A%22🚀+new+feature%22) by others in the community and consider opening a pull request if you see something you want to work on.
 
 Contributions are very welcome.
 
@@ -22,7 +22,7 @@ Contributions are very welcome.
 
 We use [GitHub Issues](https://github.com/aragon/aragon-cli/issues) for our public bugs. If you would like to report a problem, take a look around and see if someone already opened an issue about it. If you a are certain this is a new, unreported bug, you can submit a [bug report](#reporting-new-issues).
 
-You can also file issues as [feature requests or enhancements](https://github.com/aragon/aragon-cli/labels/enhancement). If you see anything you'd like to be implemented, create an issue with [feature template](https://raw.githubusercontent.com/aragon/aragon-cli/master/.github/ISSUE_TEMPLATE/feature.md).
+You can also file issues as [feature requests or enhancements](https://github.com/aragon/aragon-cli/issues?q=is%3Aissue+is%3Aopen+label%3A%22🚀+new+feature%22). If you see anything you'd like to be implemented, create an issue with [feature template](https://raw.githubusercontent.com/aragon/aragon-cli/master/.github/ISSUE_TEMPLATE/feature.md).
 
 Do your best to include as many details as needed in order for someone else to fix the problem and resolve the issue.
 
