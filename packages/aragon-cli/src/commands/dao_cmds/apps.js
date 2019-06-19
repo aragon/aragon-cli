@@ -61,7 +61,7 @@ exports.handler = async function({
           task.output = `Fetching apps for ${dao}...`
 
           return new Promise((resolve, reject) => {
-            initAragonJS(dao, apmOptions['ens-registry'], {
+            initAragonJS(dao, apmOptions.ensRegistryAddress, {
               provider: wsProvider || web3.currentProvider,
               onApps: apps => {
                 ctx.apps = apps

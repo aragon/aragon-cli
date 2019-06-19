@@ -12,9 +12,7 @@ const {
   moduleMiddleware,
 } = require('./middleware')
 const { findProjectRoot } = require('./util')
-const { ens } = require('@aragon/aragen')
 const ConsoleReporter = require('@aragon/cli-utils/src/reporters/ConsoleReporter')
-const url = require('url')
 
 const MIDDLEWARES = [
   manifestMiddleware,
@@ -87,63 +85,21 @@ cmd.option('use-frame', {
   default: false,
 })
 
-// network coerce is called multiple times, only warn once
-let warnedDeprecatedNetwork = false
-
-// Ethereum
-cmd.option('network', {
-  description:
-    '(deprecated) The network in your truffle.js that you want to use. Deprecated in favor of `--environment`',
-  coerce: network => {
-    if (warnedDeprecatedNetwork) {
-      return network
-    }
-    warnedDeprecatedNetwork = true
-    reporter.info(
-      'Use of `--network` is deprecated and has been replaced with `--environment`. You may need to update your arapp.json'
-    )
-  },
-})
-
 cmd.option('environment', {
   description: 'The environment in your arapp.json that you want to use',
   // default: 'default'
 })
 
 // APM
-cmd.option('apm.ens-registry', {
-  description:
-    "Address of the ENS registry. This will be overwritten if the selected '--environment' from your arapp.json includes a `registry` property",
-  default: ens,
-})
-cmd.group(['apm.ens-registry'], 'APM:')
-
-cmd.option('apm.ipfs.rpc', {
+cmd.option('ipfs-rpc', {
   description: 'An URI to the IPFS node used to publish files',
   default: 'http://localhost:5001#default',
 })
-cmd.option('apm.ipfs.gateway', {
+cmd.option('ipfs-gateway', {
   description: 'An URI to the IPFS Gateway to read files from',
   default: 'http://localhost:8080/ipfs',
 })
-cmd.group(['apm.ipfs.rpc', 'apm.ipfs.gateway'], 'APM providers:')
-
-cmd.option('apm', {
-  coerce: apm => {
-    if (apm.ipfs && apm.ipfs.rpc) {
-      const uri = new url.URL(apm.ipfs.rpc)
-      apm.ipfs.rpc = {
-        protocol: uri.protocol.replace(':', ''),
-        host: uri.hostname,
-        port: parseInt(uri.port),
-      }
-      if (uri.hash === '#default') {
-        apm.ipfs.rpc.default = true
-      }
-    }
-    return apm
-  },
-})
+cmd.group(['ipfs-rpc', 'ipfs-gateway'], 'APM:')
 
 // Add epilogue
 cmd.epilogue('For more information, check out https://hack.aragon.org')
