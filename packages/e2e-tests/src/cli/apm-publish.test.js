@@ -5,6 +5,7 @@ import execa from 'execa'
 import { startBackgroundProcess, normalizeOutput } from '../util'
 
 const ARTIFACT_FILE = 'artifact.json'
+const MANIFEST_FILE = 'manifest.json'
 
 const testSandbox = './.tmp/apm'
 
@@ -17,7 +18,7 @@ test.afterEach(() => {
 })
 
 test('should publish an aragon app directory successfully', async t => {
-  t.plan(2)
+  t.plan(3)
 
   // arrange
   const projectName = 'foobarfoo'
@@ -27,15 +28,15 @@ test('should publish an aragon app directory successfully', async t => {
   // hack, we need to install the dependencies of the app
   await execa('npm', ['install'], { cwd: `${testSandbox}/${projectName}/app` })
 
-  // start local chain
-  const runDevchain = await startBackgroundProcess({
-    cmd: 'aragon',
-    args: ['devchain', '--reset'],
-    execaOpts: {
-      cwd: `${testSandbox}`,
-    },
-    readyOutput: 'Local chain started',
-  })
+  // no need to run a local devchain, run test already ran it
+  // const runDevchain = await startBackgroundProcess({
+  //   cmd: 'aragon',
+  //   args: ['devchain', '--reset'],
+  //   execaOpts: {
+  //     cwd: `${testSandbox}`,
+  //   },
+  //   readyOutput: 'Local chain started',
+  // })
 
   // act
   const runProcess = await startBackgroundProcess({
@@ -61,15 +62,22 @@ test('should publish an aragon app directory successfully', async t => {
       preferLocal: true,
       localDir: '.',
     },
-    readyOutput: 'Published directory:',
+    readyOutput:
+      ' ✔ Successfully published foobarfoo.open.aragonpm.eth v1.0.0:',
   })
 
   // cleanup
-  await runDevchain.exit()
+  // await runDevchain.exit()
 
   // Check generated artifact
   const artifactPath = path.resolve(publishDirPath, ARTIFACT_FILE)
-  const artifact = JSON.parse(fs.readFileSync(artifactPath))
+  let artifact = JSON.parse(fs.readFileSync(artifactPath))
+  // delete not deterministic values
+  delete artifact.deployment
+
+  // Check generated manifest
+  const manifestPath = path.resolve(publishDirPath, MANIFEST_FILE)
+  const manifest = JSON.parse(fs.readFileSync(manifestPath))
 
   // delete some output sections that are not deterministic
   const appBuildOutput = runProcess.stdout.substring(
@@ -77,15 +85,10 @@ test('should publish an aragon app directory successfully', async t => {
     runProcess.stdout.indexOf('Building frontend [completed]')
   )
 
-  const publishDirOutput = runProcess.stdout.substring(
-    runProcess.stdout.indexOf('Published directory:')
-  )
-
-  const outputToSnapshot = runProcess.stdout
-    .replace(appBuildOutput, '')
-    .replace(publishDirOutput, '')
+  const outputToSnapshot = runProcess.stdout.replace(appBuildOutput, '')
 
   // assert
   t.snapshot(normalizeOutput(outputToSnapshot))
   t.snapshot(artifact)
+  t.snapshot(manifest)
 })
