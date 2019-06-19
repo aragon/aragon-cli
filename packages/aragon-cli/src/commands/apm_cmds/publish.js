@@ -394,7 +394,7 @@ exports.task = function({
                 ctx.initialRepo,
                 ctx.version
               )
-              return task.skip(`Using artifacts from v${ctx.repo.version}`)
+              return task.skip(`Using artifacts from v${ctx.initialVersion}`)
             } catch (e) {
               if (e.message === 'Artifact mismatch') {
                 return taskInput(
