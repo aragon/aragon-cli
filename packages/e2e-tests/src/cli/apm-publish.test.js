@@ -28,15 +28,14 @@ test('should publish an aragon app directory successfully', async t => {
   // hack, we need to install the dependencies of the app
   await execa('npm', ['install'], { cwd: `${testSandbox}/${projectName}/app` })
 
-  // no need to run a local devchain, run test already ran it
-  // const runDevchain = await startBackgroundProcess({
-  //   cmd: 'aragon',
-  //   args: ['devchain', '--reset'],
-  //   execaOpts: {
-  //     cwd: `${testSandbox}`,
-  //   },
-  //   readyOutput: 'Local chain started',
-  // })
+  const runDevchain = await startBackgroundProcess({
+    cmd: 'aragon',
+    args: ['devchain', '--reset'],
+    execaOpts: {
+      cwd: `${testSandbox}`,
+    },
+    readyOutput: 'Local chain started',
+  })
 
   // act
   const runProcess = await startBackgroundProcess({

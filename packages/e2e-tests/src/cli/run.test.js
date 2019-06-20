@@ -4,7 +4,7 @@ import fetch from 'node-fetch'
 import execa from 'execa'
 import { startBackgroundProcess, normalizeOutput } from '../util'
 
-const testSandbox = './.tmp/run'
+const testSandbox = './.tmp/cli'
 
 test.beforeEach(() => {
   fs.ensureDirSync(testSandbox)
