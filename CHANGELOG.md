@@ -24,9 +24,13 @@ All notable changes to this project will be documented in this file.
     - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-4)
     - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-2)
   - [v5.9.2](#v592)
-  - [v5.9.1](#v591)
-  - [v5.9.0](#v590)
     - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-5)
+    - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-3)
+  - [v5.9.1](#v591)
+    - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-6)
+    - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-4)
+  - [v5.9.0](#v590)
+    - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-7)
     - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates-3)
     - [🛠️ Maintenance & internal changes](#%F0%9F%9B%A0%EF%B8%8F-Maintenance--internal-changes-3)
   - [v5.8.0](#v580)
@@ -142,10 +146,26 @@ Release date: **2019-05-27**
 Release date: **2019-05-26**  
 [Compare code changes][v5.9.2]
 
+### What’s changed in aragonCLI
+
+### 🐛 Bug Fixes
+
+* Downgrade yargs to v12 because v13 caused `--silent` and `--debug` to not work (#484 ) (Fixed in `v5.10.0`)
+
+---
+
 ## v5.9.1
 
 Release date: **2019-05-24**  
 [Compare code changes][v5.9.1]
+
+### What’s changed in aragonCLI
+
+### 🐛 Bug Fixes
+
+* Re-published because `lerna` [screwed up the lock file](https://github.com/aragon/aragon-cli/blob/v5.9.1/docs-internal/Dependencies.md#regenerate-the-lockfiles) when publishing (`async-eventemitter`) making `v5.9.0` uninstallable.
+
+---
 
 ## v5.9.0
 
