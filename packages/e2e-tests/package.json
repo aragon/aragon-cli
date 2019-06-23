@@ -9,7 +9,7 @@
     "test:watch": "ava --watch",
     "test:debug": "cross-env DEBUG=true npm run test",
     "test:clean": "npm run posttest && npm run reset-cache",
-    "update-snapshots": "ava --update-snapshots",
+    "update-snapshots": "npm run test -- --update-snapshots",
     "reset-cache": "ava --reset-cache"
   },
   "author": "Aragon Association <legal@aragon.org>",
@@ -27,7 +27,8 @@
     "fs-extra": "^8.0.1",
     "kill-port": "^1.5.1",
     "node-fetch": "^2.3.0",
-    "ps-tree": "^1.2.0"
+    "ps-tree": "^1.2.0",
+    "semver-regex": "^3.1.0"
   },
   "ava": {
     "require": [

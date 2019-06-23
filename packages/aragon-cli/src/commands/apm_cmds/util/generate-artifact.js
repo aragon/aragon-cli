@@ -129,14 +129,13 @@ function sanityCheck(
   modulePath,
   artifact
 ) {
-  const { environments, contractPath } = artifact
-  const { appName, registry, network } = environments[0]
-
+  const { environments, path } = artifact
+  const { appName, registry, network } = environments['default']
   return (
     networkName !== network ||
     moduleAppName !== appName ||
     moduleRegistry !== registry ||
-    modulePath !== contractPath
+    modulePath !== path
   )
 }
 

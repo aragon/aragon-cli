@@ -21,7 +21,7 @@ test('should create a new aragon app', async t => {
   const { stdout } = await startBackgroundProcess({
     cmd: 'create-aragon-app',
     args: [projectName],
-    readyOutput: 'Devchain running',
+    readyOutput: 'Created new application',
     // keep this process alive after the test finished
     execaOpts: { cwd: testSandbox }
   })

@@ -1,4 +1,5 @@
 import test from 'ava'
+import fetch from 'node-fetch'
 import { startBackgroundProcess, normalizeOutput } from '../util'
 
 const testSandbox = './.tmp'
@@ -51,8 +52,9 @@ test('should run an aragon app successfully', async t => {
   )
 
   const outputToSnapshot = runProcess.stdout
-    .replace(appBuildOutput, '')
-    .replace(wrapperInstallOutput, '')
+    .replace(appBuildOutput, '[deleted-app-build-output]')
+    .replace(wrapperInstallOutput, '[deleted-wrapper-install-output]')
+    .replace(new RegExp(daoAddress, 'g'), '[deleted-dao-address]')
 
   // assert
   t.snapshot(normalizeOutput(outputToSnapshot))

@@ -1,7 +1,7 @@
 import test from 'ava'
 import fs from 'fs-extra'
-const path = require('path')
-import execa from 'execa'
+import path from 'path'
+import semverRegex from 'semver-regex'
 import { startBackgroundProcess, normalizeOutput } from '../util'
 
 const ARTIFACT_FILE = 'artifact.json'
@@ -10,7 +10,7 @@ const MANIFEST_FILE = 'manifest.json'
 const testSandbox = './.tmp'
 const projectName = 'foobar'
 
-test('should publish an aragon app directory successfully', async t => {
+test.skip('should publish an aragon app directory successfully', async t => {
   t.plan(3)
 
   const publishDirPath = path.resolve(`${testSandbox}/publish-dir`)
@@ -55,13 +55,7 @@ test('should publish an aragon app directory successfully', async t => {
   const manifestPath = path.resolve(publishDirPath, MANIFEST_FILE)
   const manifest = JSON.parse(fs.readFileSync(manifestPath))
 
-  // delete some output sections that are not deterministic
-  const appBuildOutput = publishProcess.stdout.substring(
-    publishProcess.stdout.indexOf('Building frontend [started]'),
-    publishProcess.stdout.indexOf('Building frontend [completed]')
-  )
-
-  const outputToSnapshot = publishProcess.stdout.replace(appBuildOutput, '')
+  const outputToSnapshot = publishProcess.stdout.replace(semverRegex(), '[deleted-app-version]')
 
   // assert
   t.snapshot(normalizeOutput(outputToSnapshot))
