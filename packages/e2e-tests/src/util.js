@@ -16,9 +16,17 @@ export async function startBackgroundProcess({
   return new Promise((resolve, reject) => {
     // start the process
     const subprocess = execa(cmd, args, execaOpts)
-    logger(cmd, 'spawned with PID: ', subprocess.pid)
+    
     let stdout = ''
     let stderr = ''
+    let logPrefix 
+    if(args && args.length > 0) {
+      logPrefix = `${cmd} ${args[0]}` 
+    } else {
+      logPrefix = cmd
+    }
+
+    logger(logPrefix, 'spawned with PID: ', subprocess.pid)
 
     // return this function so the process can be killed
     const exit = () =>
@@ -28,7 +36,7 @@ export async function startBackgroundProcess({
 
           children.map(child => {
             // each child has the properties: COMMAND, PPID, PID, STAT
-            logger(cmd, 'killing child: ', child)
+            logger(logPrefix, 'killing child: ', child)
             process.kill(child.PID, killSignal)
           })
 
@@ -40,7 +48,7 @@ export async function startBackgroundProcess({
       // parse
       data = data.toString()
       // log
-      logger(cmd, 'stdout:', data)
+      logger(logPrefix, 'stdout:', data)
       // build output stream
       stdout += data
       // check for ready signal
@@ -56,14 +64,14 @@ export async function startBackgroundProcess({
       // parse
       data = data.toString()
       // log
-      logger(cmd, 'stderr:', data)
+      logger(logPrefix, 'stderr:', data)
       // build error stream
       stderr += data
     })
 
     subprocess.on('close', (code, signal) => {
       // log
-      logger(cmd, 'closing with code:', code, 'and signal:', signal)
+      logger(logPrefix, 'closing with code:', code, 'and signal:', signal)
 
       // reject only if the promise did not previously resolve
       // which means this is probably getting killed by the test which is ok
@@ -78,7 +86,7 @@ export async function startBackgroundProcess({
     })
 
     subprocess.on('exit', (code, signal) => {
-      logger(cmd, 'exiting with code:', code, 'and signal:', signal)
+      logger(logPrefix, 'exiting with code:', code, 'and signal:', signal)
     })
   })
 }
