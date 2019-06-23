@@ -8,15 +8,12 @@
     "test": "ava",
     "test:watch": "ava --watch",
     "test:debug": "cross-env DEBUG=true npm run test",
-    "test:clean": "shx rm -rf '.tmp' && npm run reset-cache",
+    "test:clean": "npm run posttest && npm run reset-cache",
     "update-snapshots": "ava --update-snapshots",
     "reset-cache": "ava --reset-cache"
   },
   "author": "Aragon Association <legal@aragon.org>",
   "license": "GPL-3.0-or-later",
-  "devDependencies": {
-    "shx": "^0.3.2"
-  },
   "dependencies": {
     "@aragon/cli": "file:../aragon-cli",
     "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
