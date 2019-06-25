@@ -3,11 +3,13 @@ const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 const { getContract } = require('../../../util')
 const listrOpts = require('../../../helpers/listr-options')
 const chalk = require('chalk')
+const web3Utils = require('web3-utils')
 const { getRecommendedGasLimit } = require('../../../util')
 
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
-exports.command = 'new <token-name> <symbol> [decimal-units] [transfer-enabled]'
+exports.command =
+  'new <token-name> <symbol> [decimal-units] [transfer-enabled] [token-factory-address]'
 
 exports.describe = 'Create a new MiniMe token'
 
@@ -19,23 +21,28 @@ exports.builder = yargs => {
     .positional('symbol', {
       description: 'Symbol of the new Token',
     })
-    .option('transfer-enabled', {
-      description: 'Whether the new token will have transfers enabled',
-      default: true,
-    })
     .option('decimal-units', {
       description: 'Total decimal units the new token will use',
       default: 18,
+    })
+    .option('transfer-enabled', {
+      description: 'Whether the new token will have transfers enabled',
+      boolean: true,
+      default: true,
+    })
+    .option('token-factory-address', {
+      description: 'Address of the MiniMeTokenFactory',
+      type: 'string',
     })
 }
 
 exports.task = async ({
   web3,
-  reporter,
   tokenName,
   symbol,
   transferEnabled,
   decimalUnits,
+  tokenFactoryAddress,
   silent,
   debug,
 }) => {
@@ -47,6 +54,7 @@ exports.task = async ({
     [
       {
         title: 'Deploy the MiniMeTokenFactory contract',
+        enabled: () => !web3Utils.isAddress(tokenFactoryAddress),
         task: async (ctx, task) => {
           let artifact = getContract(
             '@aragon/apps-shared-minime',
@@ -89,7 +97,7 @@ exports.task = async ({
           const deployTx = contract.deploy({
             data: artifact.bytecode,
             arguments: [
-              ctx.factoryAddress,
+              ctx.factoryAddress || tokenFactoryAddress,
               ZERO_ADDR,
               0,
               tokenName,
@@ -132,6 +140,7 @@ exports.handler = async function({
   symbol,
   transferEnabled,
   decimalUnits,
+  tokenFactoryAddress,
   silent,
   debug,
 }) {
@@ -139,11 +148,11 @@ exports.handler = async function({
 
   const task = await exports.task({
     web3,
-    reporter,
     tokenName,
     symbol,
     transferEnabled,
     decimalUnits,
+    tokenFactoryAddress,
     silent,
     debug,
   })
@@ -153,12 +162,14 @@ exports.handler = async function({
     )
     reporter.info(`Token transaction hash: ${ctx.tokenTxHash}`)
 
-    reporter.success(
-      `Successfully deployed the token factory at ${chalk.bold(
-        ctx.factoryAddress
-      )}`
-    )
-    reporter.info(`Token factory transaction hash: ${ctx.factoryTxHash}`)
+    if (ctx.factoryAddress) {
+      reporter.success(
+        `Successfully deployed the token factory at ${chalk.bold(
+          ctx.factoryAddress
+        )}`
+      )
+      reporter.info(`Token factory transaction hash: ${ctx.factoryTxHash}`)
+    }
 
     process.exit()
   })
