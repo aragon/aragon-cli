@@ -3,6 +3,7 @@ const path = require('path')
 const execa = require('execa')
 const net = require('net')
 const fs = require('fs')
+const web3Utils = require('web3-utils')
 
 let cachedProjectRoot
 
@@ -135,8 +136,8 @@ const getRecommendedGasLimit = async (
  *
  * Parse a String to Number, or throw an error.
  *
- * @param {String} target must be a string
- * @returns {Number} the parsed value
+ * @param {string} target must be a string
+ * @returns {number} the parsed value
  */
 const parseAsNumber = target => {
   if (typeof target !== 'string') {
@@ -160,8 +161,8 @@ const parseAsNumber = target => {
  *
  * The check is **case insensitive**! (Passing `"TRue"` will return `true`)
  *
- * @param {String} target must be a string
- * @returns {Boolean} the parsed value
+ * @param {string} target must be a string
+ * @returns {boolean} the parsed value
  */
 const parseAsBoolean = target => {
   if (typeof target !== 'string') {
@@ -186,7 +187,7 @@ const parseAsBoolean = target => {
 /**
  * Parse a String to Array, or throw an error.
  *
- * @param {String} target must be a string
+ * @param {string} target must be a string
  * @returns {Array} the parsed value
  */
 const parseAsArray = target => {
@@ -209,13 +210,15 @@ const parseAsArray = target => {
 /**
  * Parse a String to Number or Boolean or Array, or throw an error.
  *
- * @param {String} target must be a string
- * @returns {Number|Boolean|Array} the parsed value
+ * @param {string} target must be a string
+ * @returns {number|boolean|Array} the parsed value
  */
 const parseStringIfPossible = target => {
   // convert to number: '1' to 1
   try {
-    return parseAsNumber(target)
+    if (!web3Utils.isAddress(target)) {
+      return parseAsNumber(target)
+    }
   } catch (e) {}
 
   // convert to boolean: 'false' to false
