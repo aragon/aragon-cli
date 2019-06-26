@@ -131,7 +131,110 @@ const getRecommendedGasLimit = async (
   return upperGasLimit
 }
 
+/**
+ *
+ * Parse a String to Number, or throw an error.
+ *
+ * @param {String} target must be a string
+ * @returns {Number} the parsed value
+ */
+const parseAsNumber = target => {
+  if (typeof target !== 'string') {
+    throw new Error(
+      `Expected ${target} to be of type string, not ${typeof target}`
+    )
+  }
+
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number
+  const number = Number(target)
+
+  if (isNaN(number)) {
+    throw new Error(`Cannot parse ${target} as number`)
+  }
+
+  return number
+}
+
+/**
+ * Parse a String to Boolean, or throw an error.
+ *
+ * The check is **case insensitive**! (Passing `"TRue"` will return `true`)
+ *
+ * @param {String} target must be a string
+ * @returns {Boolean} the parsed value
+ */
+const parseAsBoolean = target => {
+  if (typeof target !== 'string') {
+    throw new Error(
+      `Expected ${target} to be of type string, not ${typeof target}`
+    )
+  }
+
+  const lowercase = target.toLowerCase()
+
+  if (lowercase === 'true') {
+    return true
+  }
+
+  if (lowercase === 'false') {
+    return false
+  }
+
+  throw new Error(`Cannot parse ${target} as boolean`)
+}
+
+/**
+ * Parse a String to Array, or throw an error.
+ *
+ * @param {String} target must be a string
+ * @returns {Array} the parsed value
+ */
+const parseAsArray = target => {
+  if (typeof target !== 'string') {
+    throw new Error(
+      `Expected ${target} to be of type string, not ${typeof target}`
+    )
+  }
+
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
+  const json = JSON.parse(target)
+
+  if (Array.isArray(json)) {
+    return json
+  }
+
+  throw new Error(`Cannot parse ${target} as array`)
+}
+
+/**
+ * Parse a String to Number or Boolean or Array, or throw an error.
+ *
+ * @param {String} target must be a string
+ * @returns {Number|Boolean|Array} the parsed value
+ */
+const parseStringIfPossible = target => {
+  // convert to number: '1' to 1
+  try {
+    return parseAsNumber(target)
+  } catch (e) {}
+
+  // convert to boolean: 'false' to false
+  try {
+    return parseAsBoolean(target)
+  } catch (e) {}
+
+  // convert to array: '["hello", 1, "true"]' to ["hello", 1, "true"]
+  // TODO convert children as well ??
+  try {
+    return parseAsArray(target)
+  } catch (e) {}
+
+  // nothing to parse
+  return target
+}
+
 module.exports = {
+  parseStringIfPossible,
   findProjectRoot,
   isPortTaken,
   installDeps,

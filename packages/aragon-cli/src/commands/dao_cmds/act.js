@@ -1,7 +1,8 @@
+const ABI = require('web3-eth-abi')
 const execHandler = require('./utils/execHandler').handler
 const getAppKernel = require('./utils/app-kernel')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const ABI = require('web3-eth-abi')
+const { parseStringIfPossible } = require('../../util')
 
 const EXECUTE_FUNCTION_NAME = 'execute'
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
@@ -57,6 +58,11 @@ exports.handler = async function({
   callArgs,
   wsProvider,
 }) {
+  // TODO (daniel) refactor ConsoleReporter so we can do reporter.debug instead
+  if (global.DEBUG_MODE) console.log('call-args before parsing', callArgs)
+  callArgs = callArgs.map(parseStringIfPossible)
+  if (global.DEBUG_MODE) console.log('call-args after parsing', callArgs)
+
   const web3 = await ensureWeb3(network)
   const dao = await getAppKernel(web3, agentAddress)
 
