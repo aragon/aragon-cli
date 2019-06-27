@@ -47,9 +47,10 @@ async function deprecatedFunctions(apm, artifact, web3, reporter) {
             deprecatedOnVersion = []
           }
         } else {
-          reporter.warning(
-            `Cannot find artifacts for version ${version.version}  in aragonPM repo. Please make sure the package was published and IPFS or your HTTP server running.`
-          )
+          // TODO: (Gabi) Handle warning messages
+          // reporter.warning(
+          //   `Cannot find artifacts for version ${version.version} in aragonPM repo. Please make sure the package was published and your IPFS or  HTTP server are running.`
+          // )
           return deprecated
         }
       }
