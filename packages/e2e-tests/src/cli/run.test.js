@@ -1,36 +1,21 @@
 import test from 'ava'
-import fs from 'fs-extra'
 import fetch from 'node-fetch'
-import execa from 'execa'
 import { startBackgroundProcess, normalizeOutput } from '../util'
 
-const testSandbox = './.tmp/run'
+const testSandbox = './.tmp'
+const projectName = 'foobar'
 
-test.beforeEach(() => {
-  fs.ensureDirSync(testSandbox)
-})
-
-test.afterEach(() => {
-  fs.removeSync(testSandbox)
-})
-
-test('should create a new aragon app and run it successfully', async t => {
+test('should run an aragon app successfully', async t => {
   t.plan(3)
-
-  // arrange
-  const projectName = 'foobarfoo'
-  await execa('create-aragon-app', [projectName], { cwd: testSandbox })
-  // hack, we need to install the dependencies of the app
-  await execa('npm', ['install'], { cwd: `${testSandbox}/${projectName}/app` })
 
   // act
   const runProcess = await startBackgroundProcess({
     cmd: 'aragon',
-    args: ['run', '--debug', '--reset'],
+    args: ['run', '--debug'],
     execaOpts: {
       cwd: `${testSandbox}/${projectName}`,
       /**
-       * By default execa will run the aragon binary that is located at '.tmp/run/foobarfoo/node_modules'.
+       * By default execa will run the aragon binary that is located at '.tmp/foobar/node_modules'.
        * That is coming from npm and is not the one we want to test.
        *
        * We need to tell it to use the one we just built locally and installed in the e2e-tests package
@@ -42,7 +27,7 @@ test('should create a new aragon app and run it successfully', async t => {
   })
 
   // hack so the wrapper has time to start
-  await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000))
+  await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000)) // TODO move to utils
 
   // finding the DAO address
   const daoAddress = runProcess.stdout.match(
@@ -67,8 +52,9 @@ test('should create a new aragon app and run it successfully', async t => {
   )
 
   const outputToSnapshot = runProcess.stdout
-    .replace(appBuildOutput, '')
-    .replace(wrapperInstallOutput, '')
+    .replace(appBuildOutput, '[deleted-app-build-output]')
+    .replace(wrapperInstallOutput, '[deleted-wrapper-install-output]')
+    .replace(new RegExp(daoAddress, 'g'), '[deleted-dao-address]')
 
   // assert
   t.snapshot(normalizeOutput(outputToSnapshot))

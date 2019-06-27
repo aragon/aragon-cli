@@ -6,16 +6,15 @@ test('should spawn ipfs', async t => {
   t.plan(2)
 
   // act
-  const { exit, stdout } = await startBackgroundProcess({
-    cmd: 'aragon', 
+  const { stdout } = await startBackgroundProcess({
+    cmd: 'aragon',
     args: ['ipfs', '--debug'],
-    readyOutput: 'IPFS daemon is now running.'
+    readyOutput: 'IPFS daemon is now running.',
+    // keep this process alive after the test finished
+    execaOpts: { detached: true }
   })
   const res = await fetch('http://localhost:5001/api/v0/version')
   const body = await res.text()
-
-  // cleanup
-  await exit()
 
   // assert
   t.snapshot(normalizeOutput(stdout))

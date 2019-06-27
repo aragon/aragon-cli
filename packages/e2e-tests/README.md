@@ -1,4 +1,25 @@
 # End-to-end tests
 
 To test only one file, try:
-`npm test -- src/cli/ipfs.test.js`
+
+```sh
+npm test -- src/cli/version.test.js
+```
+
+## Local environment
+
+Some commands like `aragon run` depend on a local dev environment (ipfs, ganache).
+
+We set up this up during the `pretest` hook & tear it down during the `posttest` hook.
+
+Pretest:
+
+* Start IPFS
+* Start Ganache
+* Create a test app
+
+Posttest:
+
+* Stop IPFS
+* Stop Ganache
+* Delete the test app
