@@ -1,7 +1,6 @@
 import test from 'ava'
 import fs from 'fs-extra'
 import path from 'path'
-import semverRegex from 'semver-regex'
 import { startBackgroundProcess, normalizeOutput } from '../util'
 
 const ARTIFACT_FILE = 'artifact.json'
@@ -10,7 +9,7 @@ const MANIFEST_FILE = 'manifest.json'
 const testSandbox = './.tmp'
 const projectName = 'foobar'
 
-test.skip('should publish an aragon app directory successfully', async t => {
+test('should publish an aragon app directory successfully', async t => {
   t.plan(3)
 
   const publishDirPath = path.resolve(`${testSandbox}/publish-dir`)
@@ -26,6 +25,8 @@ test.skip('should publish an aragon app directory successfully', async t => {
       'false',
       '--publish-dir',
       publishDirPath,
+      '--env',
+      'rinkeby',
       '--debug',
     ],
     execaOpts: {
@@ -39,7 +40,7 @@ test.skip('should publish an aragon app directory successfully', async t => {
       preferLocal: true,
       localDir: '.',
     },
-    readyOutput: 'Successfully published'
+    readyOutput: 'Successfully published',
   })
 
   // cleanup
@@ -55,7 +56,15 @@ test.skip('should publish an aragon app directory successfully', async t => {
   const manifestPath = path.resolve(publishDirPath, MANIFEST_FILE)
   const manifest = JSON.parse(fs.readFileSync(manifestPath))
 
-  const outputToSnapshot = publishProcess.stdout.replace(semverRegex(), '[deleted-app-version]')
+  // delete some output sections that are not deterministic
+  const appDeploymentOutput = publishProcess.stdout.substring(
+    publishProcess.stdout.indexOf('Fetch published repo [completed]')
+  )
+
+  const outputToSnapshot = publishProcess.stdout.replace(
+    appDeploymentOutput,
+    'Fetch published repo [completed][deleted-app-deployment-output]'
+  )
 
   // assert
   t.snapshot(normalizeOutput(outputToSnapshot))

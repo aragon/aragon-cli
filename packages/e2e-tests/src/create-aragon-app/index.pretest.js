@@ -1,7 +1,7 @@
 import test from 'ava'
 import execa from 'execa'
 import fs from 'fs-extra'
-import { startBackgroundProcess } from '../util';
+import { startBackgroundProcess, normalizeOutput } from '../util'
 
 const testSandbox = './.tmp'
 
@@ -23,7 +23,7 @@ test('should create a new aragon app', async t => {
     args: [projectName],
     readyOutput: 'Created new application',
     // keep this process alive after the test finished
-    execaOpts: { cwd: testSandbox }
+    execaOpts: { cwd: testSandbox },
   })
 
   // hack, we need to install the dependencies of the app
@@ -32,8 +32,19 @@ test('should create a new aragon app', async t => {
   const packageJson = await fs.readJson(packageJsonPath)
   const arapp = await fs.readJson(arappPath)
 
+  // delete some output sections that are not deterministic
+  const installingDependenciesOutput = stdout.substring(
+    stdout.indexOf('Installing package dependencies [started]'),
+    stdout.indexOf('Installing package dependencies [completed]')
+  )
+
+  const outputToSnapshot = stdout.replace(
+    installingDependenciesOutput,
+    '[deleted-installing-dependencies-output]'
+  )
+
   // assert
-  t.snapshot(stdout)
+  t.snapshot(normalizeOutput(outputToSnapshot))
   t.true(await fs.pathExists(projectPath))
   t.true(await fs.pathExists(arappPath))
   t.falsy(await fs.pathExists(repoPath))
