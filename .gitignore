@@ -4,13 +4,13 @@
 # Dependencies
 node_modules
 # this is created by windows when installing go-ipfs
-*ipfs.cmd*
+ipfs.cmd
 
 # Artifacts
 dist
 
 # Tests and coverage
-*.tmp*
+.tmp
 coverage
 .nyc_output
 
@@ -19,3 +19,6 @@ lerna-debug.log
 
 # Extra
 packages/aragon-cli/src/knownRoles.json
+
+## Lockfiles that are not shrinkwraps
+package-lock.json

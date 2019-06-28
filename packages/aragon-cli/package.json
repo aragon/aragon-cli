@@ -19,9 +19,9 @@
     "build": "npm run extract-roles && npm run compile-src",
     "build:watch": "npm run build -- -- --watch",
     "lint": "eslint src test/commands && documentation lint src",
-    "test": "nyc ava",
+    "test": "ava",
     "test:watch": "ava --watch",
-    "test:coverage:ci": "nyc --all --reporter=lcovonly --exclude 'config/**' --exclude '**/*.test.js' ava"
+    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly --exclude 'config/**' --exclude '**/*.test.js' npm run test"
   },
   "repository": {
     "type": "git",
