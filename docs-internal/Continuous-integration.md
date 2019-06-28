@@ -22,16 +22,18 @@ branch daily, if nothing else triggered a build within this time frame.
 
 We record the test coverage history using [Coveralls](https://coveralls.io).
 
-Each project has script to run the tests and report them in the `lcov` format.
+Each project has a script to run the tests and report them in the `lcov` format for `coveralls`,
+as well as `text` for humans.
 (see [available reporters](https://istanbul.js.org/docs/advanced/alternative-reporters/))
 
 ```json
-    "test:coverage:ci": "nyc --all --reporter=lcovonly ava"
+    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly --exclude 'config/**' --exclude '**/*.test.js' npm run test"
 ```
 
 Notes:
 
 - we use the `--all` flag to include all the files (not just the ones touched by our tests)  
+- we use the `--exclude` flag to not include files like configs in the coverage reports
 - the coverage is only calculated for unit & integration tests.
 
 Because we are using a monorepo structure, we need to merge the lcov results before passing them to
