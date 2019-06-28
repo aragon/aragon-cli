@@ -31,6 +31,7 @@ exports.task = async function(
             }
 
             initAragonJS(dao, apm['ens-registry'], {
+              ipfsConf: apm.ipfs,
               provider: wsProvider || web3.currentProvider,
               accounts,
               onApps: async apps => {
