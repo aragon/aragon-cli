@@ -17,6 +17,7 @@
     "link": "lerna run link",
     "unlink": "lerna run unlink",
     "build": "lerna run build",
+    "build:watch": "lerna run --parallel build:watch",
     "lint": "lerna run lint",
     "test": "lerna run test --ignore @aragon/e2e-tests",
     "test:e2e": "lerna run test --scope @aragon/e2e-tests",
