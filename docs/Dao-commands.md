@@ -1,6 +1,5 @@
 The `aragon dao` commands can be used for interacting with your DAO directly from the command line. These commands are also available directly using the `dao` alias.
 
-
 ## dao new
 
 Uses a DAO Template to create a new DAO and prints its address.
@@ -10,6 +9,7 @@ dao new
 ```
 
 Options:
+
 - `--template`: The aragonPM repo name of the template that is used to create the DAO. Defaults to `bare-template.aragonpm.eth`.
 - `--template-version [version-number|latest]`: The version of the repo that will be used to create the DAO. Defaults to `latest`.
 - `--fn`: The function on the template that is called to create a new DAO. Defaults to the `newBareInstance` function for `bare-template.aragonpm.eth`.
@@ -31,7 +31,8 @@ dao apps <dao-addr>
 - `dao-addr`: The main address of the DAO (Kernel).
 
 Options:
-- `--all`: To include apps without permissions in the report. 
+
+- `--all`: To include apps without permissions in the report.
 
 ## dao install
 
@@ -50,6 +51,7 @@ In [aragonOS](/docs/aragonos-ref.html#app-installation) an app is considered to 
 The `dao install` command will create an instance of the app and assign permissions to the main account to perform all the protected actions in the app.
 
 Options:
+
 - `--app-init`: Name of the function that will be called to initialize an app. If you want to skip app initialization (which is not generally recommended), you can do it by set it to `none`. By default it will initialize the app using `initialize` function.
 - `--app-init-args`: Arguments for calling the app init function.
 - `--set-permissions`: Whether to set permissions in the app. Set it to `open` to allow `ANY_ENTITY` on all roles.
@@ -69,8 +71,7 @@ dao upgrade <dao-addr> <app-apm-repo> [repo-version]
 - `app-apm-repo`: The repo name of the app being upgraded (e.g. `voting` or `voting.aragonpm.eth`).
 - `repo-version`: Version of the repo that the app will be upgraded to; can be a version number or `latest` for the newest published version (defaults to `latest`).
 
-aragonOS protects against having different instances of a particular app running with different versions (e.g. all the Voting app instances run the same version).  Performing a `dao upgrade` will upgrade all instances of the app to the version specified.
-
+aragonOS protects against having different instances of a particular app running with different versions (e.g. all the Voting app instances run the same version). Performing a `dao upgrade` will upgrade all instances of the app to the version specified.
 
 ## dao exec
 
@@ -85,7 +86,6 @@ dao exec <dao-addr> <app-proxy-addr> <method> [argument1 ... argumentN]
 - `method`: Name of the method being executed in the app (e.g. `withdrawTokens`).
 - `arguments`: The arguments that the method will be executed with (each separated by a space).
 
-
 ## dao act
 
 Provides some syntax sugar over `dao exec` for executing actions using [Agent app](https://blog.aragon.one/aragon-agent-beta-release/) instances in a DAO.
@@ -99,7 +99,6 @@ dao act <agent-proxy> <target-addr> <method> [argument1 ... argumentN]
 - `method`: Name of the method being executed in the app (e.g. `transfer`).
 - `arguments`: The arguments that the method will be executed with (each separated by a space).
 
-
 ## dao token
 
 Commands used to create and interact with the tokens your DAO will use.
@@ -109,13 +108,14 @@ Commands used to create and interact with the tokens your DAO will use.
 Create a new [MiniMe](https://github.com/Giveth/minime) token.
 
 ```sh
-dao token new <token-name> <symbol> [decimal-units] [transfer-enabled]
+dao token new <token-name> <symbol> [decimal-units] [transfer-enabled] [token-factory-address]
 ```
+
 - `token-name`: Full name of the new Token.
 - `symbol`: Symbol of the new Token.
 - `decimal-units`: Total decimal units the new token will use. Defaults to `18`.
 - `transfer-enabled`: Whether the new token will have transfers enabled. Defaults to `true`.
-
+- `token-factory-address`: Address of a MiniMe Token Factory deployed on the network. Defaults to an existing Minime Factory address for Rinkeby and Mainnet.
 
 ### dao token change-controller
 
@@ -135,8 +135,8 @@ Used to inspect the ACL state in a DAO to check its permissions.
 ```sh
 dao acl <dao-addr>
 ```
-- `dao-addr`: The main address of the DAO (Kernel).
 
+- `dao-addr`: The main address of the DAO (Kernel).
 
 ### dao acl create
 
@@ -152,7 +152,6 @@ dao acl create <dao-addr> <app-proxy-addr> <role> <entity> <manager>
 - `entity`: The address of the entity that is being granted the permission by creating it.
 - `manager`: The address of the entity that will be able to grant that permission or revoke it.
 
-
 ### dao acl grant
 
 Used to grant a permission in the ACL.
@@ -165,7 +164,6 @@ dao acl grant <dao-addr> <app-proxy-addr> <role> <entity>
 - `app-proxy-addr`: The address of the app whose permissions are being managed. You can find the proxy address by checking [`dao apps`](#dao-apps).
 - `role`: The identifier for the role. Can be the `bytes32` identifier of the role or its name (e.g. `INCREMENT_ROLE`).
 - `entity`: The address of entity that is being granted the permission.
-
 
 ### dao acl revoke
 
@@ -180,7 +178,6 @@ dao acl revoke <dao-addr> <app-proxy-addr> <role> <entity>
 - `role`: The identifier for the role. Can be the `bytes32` identifier of the role or its name (e.g. `INCREMENT_ROLE`).
 - `entity`: The address of entity that is being revoked the permission.
 
-
 ### dao acl set-manager
 
 Used to change the manager of a permission in the ACL.
@@ -193,7 +190,6 @@ dao acl set-manager <dao-addr> <app-proxy-addr> <role> <manager>
 - `app-proxy-addr`: The address of the app whose permissions are being managed. You can find the proxy address by checking [`dao apps`](#dao-apps).
 - `role`: The identifier for the role. Can be the `bytes32` identifier of the role or its name (e.g. `INCREMENT_ROLE`).
 - `manager`: The new manager for the permission.
-
 
 ### dao acl remove-manager
 

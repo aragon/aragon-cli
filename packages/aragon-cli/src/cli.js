@@ -137,7 +137,7 @@ cmd.epilogue('For more information, check out https://hack.aragon.org')
 
 // Run
 const reporter = new ConsoleReporter()
-reporter.debug(JSON.stringify(process.argv))
+reporter.debug(JSON.stringify(process.argv)) // TODO: this ain't working (DEBUG_MODE not set yet?)
 cmd
   .fail((msg, err, yargs) => {
     reporter.error(msg || err.message || 'An error occurred')
