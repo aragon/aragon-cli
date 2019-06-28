@@ -115,7 +115,7 @@ dao token new <token-name> <symbol> [decimal-units] [transfer-enabled] [token-fa
 - `symbol`: Symbol of the new Token.
 - `decimal-units`: Total decimal units the new token will use. Defaults to `18`.
 - `transfer-enabled`: Whether the new token will have transfers enabled. Defaults to `true`.
-- `token-factory-address`: Address of a MiniMe Token Factory deployed on the network.
+- `token-factory-address`: Address of a MiniMe Token Factory deployed on the network. Defaults to an existing Minime Factory address for Rinkeby and Mainnet.
 
 ### dao token change-controller
 
