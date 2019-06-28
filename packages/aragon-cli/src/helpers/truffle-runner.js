@@ -1,8 +1,8 @@
 const execa = require('execa')
 const devnull = require('dev-null')
-const { getDependentBinary } = require('../util')
+const { getBinary } = require('../util')
 
-const truffleBin = getDependentBinary('truffle')
+const truffleBin = getBinary('truffle')
 
 const runTruffle = (args, { stdout, stderr, stdin }) => {
   return new Promise((resolve, reject) => {

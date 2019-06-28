@@ -3,9 +3,9 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 const ipfsAPI = require('ipfs-api')
-const { getDependentBinary, isPortTaken } = require('../util')
+const { getBinary, isPortTaken } = require('../util')
 
-const ipfsBin = getDependentBinary('ipfs')
+const ipfsBin = getBinary('ipfs')
 
 const ensureIPFSInitialized = async () => {
   if (!fs.existsSync(path.join(os.homedir(), '.ipfs'))) {
