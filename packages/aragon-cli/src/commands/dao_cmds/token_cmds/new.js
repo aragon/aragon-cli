@@ -4,9 +4,17 @@ const { getContract } = require('../../../util')
 const listrOpts = require('../../../helpers/listr-options')
 const chalk = require('chalk')
 const web3Utils = require('web3-utils')
-const { getRecommendedGasLimit } = require('../../../util')
+const {
+  getRecommendedGasLimit,
+  parseStringIfPossible,
+} = require('../../../util')
 
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
+
+const MAINNET_MINIME_TOKEN_FACTORY =
+  '0x909d05f384d0663ed4be59863815ab43b4f347ec'
+const RINKEBY_MINIME_TOKEN_FACTORY =
+  '0xad991658443c56b3dE2D7d7f5d8C68F339aEef29'
 
 exports.command =
   'new <token-name> <symbol> [decimal-units] [transfer-enabled] [token-factory-address]'
@@ -32,7 +40,6 @@ exports.builder = yargs => {
     .option('token-factory-address', {
       description: 'Address of the MiniMeTokenFactory',
       type: 'string',
-      // default: coerce to default on rinkeby or mainnet or null
     })
 }
 
@@ -49,6 +56,17 @@ exports.task = async ({
   // Decode sender
   const accounts = await web3.eth.getAccounts()
   const from = accounts[0]
+
+  // Get chain id
+  const chainId = await web3.eth.net.getId()
+
+  if (chainId === 1)
+    tokenFactoryAddress = tokenFactoryAddress || MAINNET_MINIME_TOKEN_FACTORY
+
+  if (chainId === 4)
+    tokenFactoryAddress = tokenFactoryAddress || RINKEBY_MINIME_TOKEN_FACTORY
+
+  transferEnabled = parseStringIfPossible(transferEnabled)
 
   return new TaskList(
     [
