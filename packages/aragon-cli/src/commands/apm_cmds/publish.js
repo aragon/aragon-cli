@@ -506,7 +506,7 @@ exports.handler = async args => {
             `Successfully executed: "${ctx.transactionPath[0].description}"`
           )
         } else {
-          reporter.success(`Successfully published ${appName} v${version}: `)
+          reporter.success(`Successfully published ${appName} v${version} : `)
           if (!onlyContent) {
             reporter.info(`Contract address: ${contractAddress}`)
           }
