@@ -27,12 +27,12 @@ exports.builder = yargs => {
     })
     .option('transfer-enabled', {
       description: 'Whether the new token will have transfers enabled',
-      boolean: true,
       default: true,
     })
     .option('token-factory-address', {
       description: 'Address of the MiniMeTokenFactory',
       type: 'string',
+      // default: coerce to default on rinkeby or mainnet or null
     })
 }
 
