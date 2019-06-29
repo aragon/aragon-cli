@@ -3,6 +3,8 @@ import 'core-js/stable'
 import 'regenerator-runtime/runtime'
 require('source-map-support/register')
 
+const DEFAULT_GAS_PRICE = require('./package.json').aragon.defaultGasPrice
+
 const {
   environmentMiddleware,
   manifestMiddleware,
@@ -54,6 +56,21 @@ cmd.option('debug', {
     if (debug || process.env.DEBUG) {
       global.DEBUG_MODE = true
       return true
+    }
+  },
+})
+
+cmd.option('gas-price', {
+  description: 'The project working directory',
+  default: async () => {
+    try {
+      // Fetch gas station API
+      const { safeLow } = await fetch(
+        'https://ethgasstation.info/json/ethgasAPI.json'
+      )
+      return safeLow
+    } catch (_) {
+      return DEFAULT_GAS_PRICE
     }
   },
 })
