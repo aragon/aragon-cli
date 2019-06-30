@@ -27,6 +27,7 @@ const {
   getMajor,
   sanityCheck,
   generateApplicationArtifact,
+  generateFlattenedCode,
   copyCurrentApplicationArtifacts,
 } = require('./util/generate-artifact')
 
@@ -341,14 +342,18 @@ exports.task = function({
         title: 'Generate application artifact',
         skip: () => onlyContent && !module.path,
         task: async (ctx, task) => {
-          async function invokeAction(answer) {
+          async function invokeArtifactGeneration(answer) {
             if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
               await generateApplicationArtifact(
                 cwd,
+                apm,
                 dir,
                 module,
-                ctx.deployArtifacts
+                ctx.deployArtifacts,
+                web3,
+                reporter
               )
+              await generateFlattenedCode(dir, module.path)
               return `Saved artifact in ${dir}/${ARTIFACT_FILE}`
             }
             throw new Error('Aborting publication...')
@@ -356,46 +361,50 @@ exports.task = function({
 
           const dir = onlyArtifacts ? cwd : ctx.pathToPublish
 
+          // If an artifact file exist we check it to reuse
           if (pathExistsSync(`${dir}/${ARTIFACT_FILE}`)) {
-            const artifactPath = path.resolve(dir, ARTIFACT_FILE)
-            const artifact = await readJson(artifactPath)
+            const existingArtifactPath = path.resolve(dir, ARTIFACT_FILE)
+            const existingArtifact = await readJson(existingArtifactPath)
             const rebuild = await sanityCheck(
+              cwd,
               network.name,
-              module.appName,
-              module.registry,
-              module.path,
-              artifact
+              module,
+              existingArtifact
             )
-            if (!rebuild) {
-              return task.skip('Using existent artifact')
-            } else {
+            if (rebuild) {
               return taskInput(
-                "Couldn't reuse artifact due to mismatches, regenerate now? [y]es/[a]bort",
+                `Couldn't reuse artifact due to mismatches, regenerate now? [y]es/[a]bort`,
                 {
                   validate: value => {
                     return ANSWERS.indexOf(value) > -1
                   },
-                  done: async answer => invokeAction(answer),
+                  done: async answer => invokeArtifactGeneration(answer),
                 }
               )
+            } else {
+              return task.skip('Using existent artifact')
             }
           }
 
-          if (onlyContent) {
+          // If only content we fetch artifacts from previous version
+          if (
+            onlyContent &
+            (apm.validInitialVersions.indexOf(ctx.version) === -1)
+          ) {
             try {
               task.output = 'Fetching artifacts from previous version'
               await copyCurrentApplicationArtifacts(
+                cwd,
                 dir,
                 apm,
-                network.name,
-                module.appName,
-                module.registry,
-                module.path,
                 ctx.initialRepo,
-                ctx.version
+                ctx.version,
+                network.name,
+                module
               )
               return task.skip(`Using artifacts from v${ctx.initialVersion}`)
             } catch (e) {
+              console.log(e.message)
               if (e.message === 'Artifact mismatch') {
                 return taskInput(
                   "Couldn't reuse existing artifact due to mismatches, regenerate now? [y]es/[a]bort",
@@ -403,31 +412,25 @@ exports.task = function({
                     validate: value => {
                       return ANSWERS.indexOf(value) > -1
                     },
-                    done: async answer => invokeAction(answer),
+                    done: async answer => invokeArtifactGeneration(answer),
                   }
                 )
               } else {
                 return taskInput(
-                  "Couldn't fetch existing artifact, generate now? [y]es/[a]bort",
+                  "Couldn't fetch current artifact version to copy it. Please make sure your IPFS or HTTP server are running. Otherwise, generate now? [y]es/[a]bort",
                   {
                     validate: value => {
                       return ANSWERS.indexOf(value) > -1
                     },
-                    done: async answer => invokeAction(answer),
+                    done: async answer => invokeArtifactGeneration(answer),
                   }
                 )
               }
             }
           }
-          await generateApplicationArtifact(
-            cwd,
-            apm,
-            dir,
-            module,
-            ctx.deployArtifacts,
-            web3,
-            reporter
-          )
+
+          await invokeArtifactGeneration('yes')
+
           return `Saved artifact in ${dir}/artifact.json`
         },
       },

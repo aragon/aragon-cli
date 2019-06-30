@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const { readJson, writeJson } = require('fs-extra')
+const flatten = require('truffle-flattener')
 const extract = require('../../../helpers/solidity-extractor')
 const namehash = require('eth-ens-namehash')
 const { keccak256 } = require('js-sha3')
@@ -9,6 +10,16 @@ const { ARTIFACT_FILE } = require('./preprare-files')
 const SOLIDITY_FILE = 'code.sol'
 
 const getMajor = version => version.split('.')[0]
+
+async function getContractAbi(cwd, contractPath) {
+  const contractInterfacePath = path.resolve(
+    cwd,
+    'build/contracts',
+    path.basename(contractPath, '.sol') + '.json'
+  )
+  const contractInterface = await readJson(contractInterfacePath)
+  return contractInterface.abi
+}
 
 function decorateFunctionsWithAbi(functions, abi, web3) {
   functions.forEach(f => {
@@ -47,18 +58,16 @@ async function deprecatedFunctions(apm, artifact, web3, reporter) {
             deprecatedOnVersion = []
           }
         } else {
-          // TODO: (Gabi) Handle warning messages
-          // reporter.warning(
-          //   `Cannot find artifacts for version ${version.version} in aragonPM repo. Please make sure the package was published and your IPFS or  HTTP server are running.`
-          // )
-          return deprecated
+          reporter.warning(
+            `Cannot find artifacts for version ${version.version} in aragonPM repo. Please make sure the package was published and your IPFS or HTTP server are running.`
+          )
         }
       }
     })
-    return deprecated
   } catch (e) {
     // Catch ENS error on first version
   }
+  return deprecated
 }
 
 async function generateApplicationArtifact(
@@ -71,29 +80,16 @@ async function generateApplicationArtifact(
   reporter
 ) {
   let artifact = Object.assign({}, module)
-  const contractPath = artifact.path
-  const contractInterfacePath = path.resolve(
-    cwd,
-    'build/contracts',
-    path.basename(contractPath, '.sol') + '.json'
-  )
 
   // Set `appId`
   artifact.appId = namehash.hash(artifact.appName)
 
   // Set ABI
-  const contractInterface = await readJson(contractInterfacePath)
-  artifact.abi = contractInterface.abi
+  artifact.abi = await getContractAbi(cwd, artifact.path)
 
   if (deployArtifacts) {
     artifact.deployment = deployArtifacts
-    if (deployArtifacts.flattenedCode) {
-      fs.writeFileSync(
-        path.resolve(outputPath, SOLIDITY_FILE),
-        artifact.deployment.flattenedCode
-      )
-      artifact.deployment.flattenedCode = `./${SOLIDITY_FILE}`
-    }
+    artifact.deployment.flattenedCode = `./${SOLIDITY_FILE}`
   }
 
   // Analyse contract functions and returns an array
@@ -122,33 +118,36 @@ async function generateApplicationArtifact(
   return artifact
 }
 
+async function generateFlattenedCode(dir, sourcePath) {
+  const flattenedCode = await flatten([sourcePath])
+  fs.writeFileSync(path.resolve(dir, SOLIDITY_FILE), flattenedCode)
+}
+
 // Sanity check artifact.json
-function sanityCheck(
-  networkName,
-  moduleAppName,
-  moduleRegistry,
-  modulePath,
-  artifact
-) {
-  const { environments, path } = artifact
-  const { appName, registry, network } = environments['default']
+async function sanityCheck(cwd, newNetworkName, newArtifact, oldArtifact) {
+  const { environments, abi } = oldArtifact
+  const firstKey = Object.keys(environments)[0]
+  const { appName, registry, network } = environments[firstKey]
+
+  const newContractAbi = await getContractAbi(cwd, newArtifact.path)
+
   return (
-    networkName !== network ||
-    moduleAppName !== appName ||
-    moduleRegistry !== registry ||
-    modulePath !== path
+    JSON.stringify(newContractAbi) !== JSON.stringify(abi) ||
+    newNetworkName !== network ||
+    newArtifact.appName !== appName ||
+    newArtifact.registry !== registry ||
+    newArtifact.path !== oldArtifact.path
   )
 }
 
 async function copyCurrentApplicationArtifacts(
+  cwd,
   outputPath,
   apm,
-  networkName,
-  appName,
-  registry,
-  modulePath,
   repo,
-  newVersion
+  newVersion,
+  networkName,
+  module
 ) {
   const copyingFiles = [ARTIFACT_FILE, SOLIDITY_FILE]
   const { content } = repo
@@ -159,7 +158,7 @@ async function copyCurrentApplicationArtifacts(
       try {
         return {
           filePath: path.resolve(outputPath, file),
-          fileContent: await apm.getFile(uri, file),
+          fileContent: JSON.parse(await apm.getFile(uri, file)),
           fileName: file,
         }
       } catch (e) {
@@ -173,35 +172,33 @@ async function copyCurrentApplicationArtifacts(
   )
 
   const updateArtifactVersion = (file, version) => {
-    const newContent = JSON.parse(file.fileContent)
+    const newContent = file.fileContent
     newContent.version = version
     return { ...file, fileContent: JSON.stringify(newContent, null, 2) }
   }
 
+  const evaluateFile = async file => {
+    if (file.fileName === ARTIFACT_FILE) {
+      const rebuild = await sanityCheck(
+        cwd,
+        networkName,
+        module,
+        file.fileContent
+      )
+      if (rebuild) {
+        throw new Error('Artifact mismatch')
+      } else {
+        return updateArtifactVersion(file, newVersion)
+      }
+    }
+    return file
+  }
+
   copy
     .filter(item => item)
-    .map(async file => {
-      try {
-        if (file.fileName === ARTIFACT_FILE) {
-          const rebuild = await sanityCheck(
-            networkName,
-            appName,
-            registry,
-            modulePath,
-            file.fileContent
-          )
-          if (rebuild) {
-            throw new Error('Artifact mismatch')
-          } else {
-            return updateArtifactVersion(file, newVersion)
-          }
-        }
-        return file
-      } catch (e) {
-        throw e
-      }
-    })
+    .map(file => evaluateFile(file))
     .forEach(({ fileName, filePath, fileContent }) =>
+      // TODO: (Gabi) fix error with information lost on map
       fs.writeFileSync(filePath, fileContent)
     )
 }
@@ -210,6 +207,7 @@ module.exports = {
   SOLIDITY_FILE,
   getMajor,
   generateApplicationArtifact,
+  generateFlattenedCode,
   sanityCheck,
   copyCurrentApplicationArtifacts,
 }
