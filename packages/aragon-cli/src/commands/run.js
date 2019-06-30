@@ -74,9 +74,25 @@ exports.builder = function(yargs) {
       description: 'Arguments to be passed to the template constructor',
       default: newDAO.BARE_TEMPLATE_DEPLOY_EVENT,
     })
+    .option('build', {
+      description:
+        'Whether publish should try to build the app before publishing, running the script specified in --build-script',
+      default: true,
+      boolean: true,
+    })
     .option('build-script', {
       description: 'The npm script that will be run when building the app',
       default: 'build',
+    })
+    .option('prepublish', {
+      description:
+        'Whether publish should run prepublish script specified in --prepublish-script before publishing',
+      default: true,
+      boolean: true,
+    })
+    .option('prepublish-script', {
+      description: 'The npm script that will be run before publishing the app',
+      default: 'prepublish',
     })
     .option('http', {
       description: 'URL for where your app is served from e.g. localhost:1234',
@@ -131,7 +147,10 @@ exports.handler = function({
   template,
   templateInit,
   templateDeployEvent,
+  build,
   buildScript,
+  prepublish,
+  prepublishScript,
   http,
   httpServedFrom,
   appInit,
@@ -182,7 +201,9 @@ exports.handler = function({
             network,
             module,
             buildScript,
-            build: true,
+            build,
+            prepublishScript,
+            prepublish,
             contract: deploy.arappContract(),
             web3: ctx.web3,
             apm: apmOptions,

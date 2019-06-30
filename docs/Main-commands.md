@@ -2,7 +2,7 @@ These are general purpose commands that will help you to set up and interact wit
 
 ## aragon run
 
-The `run` command takes care of completely setting up the environment needed for running your Aragon app. 
+The `run` command takes care of completely setting up the environment needed for running your Aragon app.
 
 ```sh
 aragon run
@@ -22,14 +22,16 @@ Available options to customize the `run` command:
 - `--template`: The name of the contract that will be deployed as the [DAO template](templates-intro.md) that will be used to create your DAO. If no Template is provided it will use a default Template that sets up the DAO with just your app (`bare-template.aragonpm.eth`).
 - `--template-init [argument1 ... argumentN]`: The constructor arguments for the Template contract, each separated by a space. See the [deploy command](#aragon-deploy) for more information on constructor arguments.
 - `--template-deploy-event`: Arguments to be passed to the template constructor. Defaults to `DeployInstance`.
+- `--build`: A flag to specify whether the webapp should be built while publishing, running the script specified in `build-script` of `package.json`. Defaults to `true`.
 - `--build-script`: The name of the NPM script in your app that will be used for building the webapp.
+- `--prepublish`: A flag to specify whether to run a prepublish script specified in `prepublish-script` of `package.json`. Defaults to `true`.
+- `--prepublish-script`: The name of the NPM script in your app that will be run before publishing the app.
 - `--client`: Whether to start the Aragon client or not. Defaults to `true`.
 - `--client-version`: Version of Aragon client used to run your sandboxed app.
 - `--client-port`: Port being used by Aragon client.
 - `--client-path`: A path pointing to an existing Aragon client installation.
 - `--app-init`: Name of the function that will be called to initialize an app. Defaults to `initialize`.
 - `--app-init-args`: Arguments for calling the app init function.
-
 
 ### Running your app from a development HTTP server
 
@@ -71,7 +73,7 @@ Options:
 
 ## aragon devchain
 
-The `devchain` command is used for starting a local development testnet with all the required components already deployed and ready to use. 
+The `devchain` command is used for starting a local development testnet with all the required components already deployed and ready to use.
 
 ```sh
 aragon devchain
@@ -84,6 +86,7 @@ This snapshot contains a local instance of ENS, the first-party [Aragon apps](ht
 Devchains can be started on different ports and will keep their state independent from other chains.
 
 Options:
+
 - `--reset`: Resets the devchain to the snapshot.
 - `--port`: The port number where the devchain will be started.
 - `--verbose`: Enable verbose output. Similar to ganache-cli.

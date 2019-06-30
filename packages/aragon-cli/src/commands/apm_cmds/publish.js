@@ -1,5 +1,4 @@
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const fs = require('fs')
 const tmp = require('tmp-promise')
 const path = require('path')
 const { readJson, writeJson, pathExistsSync } = require('fs-extra')
@@ -7,8 +6,7 @@ const APM = require('@aragon/apm')
 const semver = require('semver')
 const TaskList = require('listr')
 const taskInput = require('listr-input')
-const { findProjectRoot, getNodePackageManager } = require('../../util')
-const execa = require('execa')
+const { findProjectRoot, runScriptTask } = require('../../util')
 const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
@@ -100,6 +98,16 @@ exports.builder = function(yargs) {
       description: 'The npm script that will be run when building the app',
       default: 'build',
     })
+    .option('prepublish', {
+      description:
+        'Whether publish should run prepublish script specified in --prepublish-script before publishing',
+      default: true,
+      boolean: true,
+    })
+    .option('prepublish-script', {
+      description: 'The npm script that will be run before publishing the app',
+      default: 'prepublish',
+    })
     .option('http', {
       description: 'URL for where your app is served e.g. localhost:1234',
       default: null,
@@ -143,6 +151,8 @@ exports.task = function({
   onlyContent,
   build,
   buildScript,
+  prepublish,
+  prepublishScript,
   http,
   httpServedFrom,
 }) {
@@ -155,6 +165,11 @@ exports.task = function({
 
   return new TaskList(
     [
+      {
+        title: 'Running prepublish script',
+        enabled: () => prepublish,
+        task: async (ctx, task) => runScriptTask(task, prepublishScript),
+      },
       {
         title: 'Check IPFS',
         task: () => startIPFS.task({ apmOptions }),
@@ -270,33 +285,7 @@ exports.task = function({
       {
         title: 'Building frontend',
         enabled: () => build && !http,
-        task: async (ctx, task) => {
-          if (!fs.existsSync('package.json')) {
-            task.skip('No package.json found')
-            return
-          }
-
-          const packageJson = await readJson('package.json')
-          const scripts = packageJson.scripts || {}
-          if (!scripts[buildScript]) {
-            task.skip('Build script not defined in package.json')
-            return
-          }
-
-          const bin = getNodePackageManager()
-          const buildTask = execa(bin, ['run', buildScript])
-
-          buildTask.stdout.on('data', log => {
-            if (!log) return
-            task.output = `npm run ${buildScript}: ${log}`
-          })
-
-          return buildTask.catch(err => {
-            throw new Error(
-              `${err.message}\n${err.stderr}\n\nFailed to build. See above output.`
-            )
-          })
-        },
+        task: async (ctx, task) => runScriptTask(task, buildScript),
       },
       {
         title: 'Prepare files for publishing',

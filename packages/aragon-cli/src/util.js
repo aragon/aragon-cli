@@ -3,6 +3,7 @@ const path = require('path')
 const execa = require('execa')
 const net = require('net')
 const fs = require('fs')
+const { readJson } = require('fs-extra')
 const web3Utils = require('web3-utils')
 
 let cachedProjectRoot
@@ -58,6 +59,34 @@ const installDeps = (cwd, task) => {
   return installTask.catch(err => {
     throw new Error(
       `${err.message}\n${err.stderr}\n\nFailed to install dependencies. See above output.`
+    )
+  })
+}
+
+const runScriptTask = async (task, scritpName) => {
+  if (!fs.existsSync('package.json')) {
+    task.skip('No package.json found')
+    return
+  }
+
+  const packageJson = await readJson('package.json')
+  const scripts = packageJson.scripts || {}
+  if (!scripts[scritpName]) {
+    task.skip('Build script not defined in package.json')
+    return
+  }
+
+  const bin = getNodePackageManager()
+  const scriptTask = execa(bin, ['run', scritpName])
+
+  scriptTask.stdout.on('data', log => {
+    if (!log) return
+    task.output = `npm run ${scritpName}: ${log}`
+  })
+
+  return scriptTask.catch(err => {
+    throw new Error(
+      `${err.message}\n${err.stderr}\n\nFailed to build. See above output.`
     )
   })
 }
@@ -241,6 +270,7 @@ module.exports = {
   findProjectRoot,
   isPortTaken,
   installDeps,
+  runScriptTask,
   getNodePackageManager,
   getDependentBinary,
   getContract,
