@@ -171,6 +171,10 @@ async function copyCurrentApplicationArtifacts(
     })
   )
 
+  copy.forEach(e => {
+    console.log(e.filePath)
+  })
+
   const updateArtifactVersion = (file, version) => {
     const newContent = file.fileContent
     newContent.version = version
@@ -194,13 +198,14 @@ async function copyCurrentApplicationArtifacts(
     return file
   }
 
-  copy
-    .filter(item => item)
-    .map(file => evaluateFile(file))
-    .forEach(({ fileName, filePath, fileContent }) =>
-      // TODO: (Gabi) fix error with information lost on map
-      fs.writeFileSync(filePath, fileContent)
-    )
+  const copyFiles = await Promise.all(
+    // TODO: (Gabi) Fix async map handling
+    copy.filter(item => item).map(file => evaluateFile(file))
+  )
+
+  copyFiles.forEach(({ fileName, filePath, fileContent }) =>
+    fs.writeFileSync(filePath, fileContent)
+  )
 }
 
 module.exports = {

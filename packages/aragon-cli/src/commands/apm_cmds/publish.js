@@ -29,6 +29,7 @@ const {
   generateApplicationArtifact,
   generateFlattenedCode,
   copyCurrentApplicationArtifacts,
+  SOLIDITY_FILE,
 } = require('./util/generate-artifact')
 
 exports.command = 'publish <bump> [contract]'
@@ -402,6 +403,9 @@ exports.task = function({
                 network.name,
                 module
               )
+              if (!pathExistsSync(`${dir}/${SOLIDITY_FILE}`)) {
+                await generateFlattenedCode(dir, module.path)
+              }
               return task.skip(`Using artifacts from v${ctx.initialVersion}`)
             } catch (e) {
               console.log(e.message)
