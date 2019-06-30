@@ -408,7 +408,6 @@ exports.task = function({
               }
               return task.skip(`Using artifacts from v${ctx.initialVersion}`)
             } catch (e) {
-              console.log(e.message)
               if (e.message === 'Artifact mismatch') {
                 return taskInput(
                   "Couldn't reuse existing artifact due to mismatches, regenerate now? [y]es/[a]bort",

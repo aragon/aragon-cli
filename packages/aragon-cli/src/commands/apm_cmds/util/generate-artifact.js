@@ -171,10 +171,6 @@ async function copyCurrentApplicationArtifacts(
     })
   )
 
-  copy.forEach(e => {
-    console.log(e.filePath)
-  })
-
   const updateArtifactVersion = (file, version) => {
     const newContent = file.fileContent
     newContent.version = version
