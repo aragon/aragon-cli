@@ -445,12 +445,14 @@ exports.task = function({
           reporter.info(
             `Contract address: ${ctx.contract ? ctx.contract : ZERO_ADDRESS}`
           )
-          reporter.info(
-            `Content (${http ? 'http' : provider}): ${http ||
-              ctx.pathToPublish}`
-          )
 
-          viewIPFSContent.task(reporter, apmOptions, cid, debug, silent)
+          // Upload files to storage provider
+          const contentURI = Buffer.from(
+            await providers[provider].uploadFiles(http || ctx.pathToPublish)
+          ).toString('hex')
+          reporter.info(`Content (${http ? 'http' : provider}): ${contentURI}`)
+
+          viewIPFSContent.task(reporter, apmOptions, contentURI, debug, silent)
           return taskInput(
             `Do you want to procced with publishing the app to ${module.appName}repo? [y]es/[a]bort`,
             {
