@@ -8,12 +8,16 @@ const defaultAPMName = require('../../helpers/default-apm')
 const chalk = require('chalk')
 const getRepoTask = require('./utils/getRepoTask')
 const encodeInitPayload = require('./utils/encodeInitPayload')
-const { getContract, ANY_ENTITY, NO_MANAGER } = require('../../util')
+const {
+  getContract,
+  ANY_ENTITY,
+  NO_MANAGER,
+  ZERO_ADDRESS,
+} = require('../../util')
 const kernelABI = require('@aragon/os/abi/Kernel').abi
 const listrOpts = require('../../helpers/listr-options')
 
 const addressesEqual = (a, b) => a.toLowerCase() === b.toLowerCase()
-const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
 exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'
 
@@ -86,7 +90,7 @@ exports.task = async ({
           const currentBase = await kernel.methods
             .getApp(basesNamespace, ctx.repo.appId)
             .call()
-          if (currentBase === ZERO_ADDR) {
+          if (currentBase === ZERO_ADDRESS) {
             task.skip(`Installing the first instance of ${apmRepo} in DAO`)
             return
           }

@@ -2,10 +2,9 @@ const ABI = require('web3-eth-abi')
 const execHandler = require('./utils/execHandler').handler
 const getAppKernel = require('./utils/app-kernel')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const { parseStringIfPossible } = require('../../util')
+const { parseStringIfPossible, ZERO_ADDRESS } = require('../../util')
 
 const EXECUTE_FUNCTION_NAME = 'execute'
-const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
 exports.command = 'act <agent-address> <target> <signature> [call-args..]'
 
@@ -66,7 +65,7 @@ exports.handler = async function({
   const web3 = await ensureWeb3(network)
   const dao = await getAppKernel(web3, agentAddress)
 
-  if (dao === ZERO_ADDR) {
+  if (dao === ZERO_ADDRESS) {
     throw new Error(
       'Invalid Agent app address, cannot find Kernel reference in contract'
     )

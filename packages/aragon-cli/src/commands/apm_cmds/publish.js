@@ -7,12 +7,17 @@ const APM = require('@aragon/apm')
 const semver = require('semver')
 const TaskList = require('listr')
 const taskInput = require('listr-input')
-const { findProjectRoot, getNodePackageManager } = require('../../util')
+const {
+  findProjectRoot,
+  getNodePackageManager,
+  ZERO_ADDRESS,
+} = require('../../util')
 const execa = require('execa')
 const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
 const startIPFS = require('../ipfs_cmds/start')
+const viewIPFSContent = require('../ipfs_cmds/view')
 const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 const execTask = require('../dao_cmds/utils/execHandler').task
 const listrOpts = require('../../helpers/listr-options')
@@ -147,7 +152,7 @@ exports.task = function({
   httpServedFrom,
 }) {
   if (onlyContent) {
-    contract = '0x0000000000000000000000000000000000000000'
+    contract = ZERO_ADDRESS
   }
 
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
@@ -429,6 +434,32 @@ exports.task = function({
             reporter
           )
           return `Saved artifact in ${dir}/artifact.json`
+        },
+      },
+      {
+        title: `Output publish information`,
+        enabled: () => !onlyArtifacts,
+        task: async (ctx, task) => {
+          reporter.info('The following information will be published:')
+
+          reporter.info(
+            `Contract address: ${ctx.contract ? ctx.contract : ZERO_ADDRESS}`
+          )
+          reporter.info(
+            `Content (${http ? 'http' : provider}): ${http ||
+              ctx.pathToPublish}`
+          )
+
+          viewIPFSContent.task(reporter, apmOptions, cid, debug, silent)
+          return taskInput(
+            `Do you want to procced with publishing the app to ${module.appName}repo? [y]es/[a]bort`,
+            {
+              validate: value => {
+                return ANSWERS.indexOf(value) > -1
+              },
+              done: async answer => answer,
+            }
+          )
         },
       },
       {

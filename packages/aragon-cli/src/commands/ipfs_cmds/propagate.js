@@ -8,6 +8,8 @@ import {
 } from '../../lib/ipfs'
 import listrOpts from '../../helpers/listr-options'
 
+const startIPFS = require('./start')
+
 exports.command = 'propagate <cid>'
 exports.describe =
   'Request the content and its links at several gateways, making the files more distributed within the network.'
@@ -21,6 +23,10 @@ exports.builder = yargs => {
 exports.task = ({ apmOptions, silent, debug, cid }) => {
   return new TaskList(
     [
+      {
+        title: 'Check IPFS',
+        task: () => startIPFS.task({ apmOptions }),
+      },
       {
         title: 'Connect to IPFS',
         task: async ctx => {
