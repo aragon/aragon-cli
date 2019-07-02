@@ -446,20 +446,37 @@ exports.task = function({
             `Contract address: ${ctx.contract ? ctx.contract : ZERO_ADDRESS}`
           )
 
+          // TODO: Use ipfs add instead
           // Upload files to storage provider
-          const contentURI = Buffer.from(
-            await providers[provider].uploadFiles(http || ctx.pathToPublish)
-          ).toString('hex')
+          // const contentURI = Buffer.from(
+          //   await providers[provider].uploadFiles(http || ctx.pathToPublish)
+          // ).toString('hex')
+
           reporter.info(`Content (${http ? 'http' : provider}): ${contentURI}`)
 
-          viewIPFSContent.task(reporter, apmOptions, contentURI, debug, silent)
+          if (!http) {
+            reporter.info(``)
+            viewIPFSContent.task(
+              reporter,
+              apmOptions,
+              contentURI,
+              debug,
+              silent
+            )
+          }
+
           return taskInput(
-            `Do you want to procced with publishing the app to ${module.appName}repo? [y]es/[a]bort`,
+            `Confirm publish to ${module.appName} repo? [y]es/[a]bort`,
             {
               validate: value => {
                 return ANSWERS.indexOf(value) > -1
               },
-              done: async answer => answer,
+              done: async answer => {
+                if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
+                  return
+                }
+                throw new Error('Aborting publication...')
+              },
             }
           )
         },
