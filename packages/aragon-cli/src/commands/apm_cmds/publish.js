@@ -440,26 +440,28 @@ exports.task = function({
         title: `Output publish information`,
         enabled: () => !onlyArtifacts,
         task: async (ctx, task) => {
+          const contentProvider = http ? 'http' : provider
           reporter.info('The following information will be published:')
 
           reporter.info(
             `Contract address: ${ctx.contract ? ctx.contract : ZERO_ADDRESS}`
           )
 
-          // TODO: Use ipfs add instead
-          // Upload files to storage provider
-          // const contentURI = Buffer.from(
-          //   await providers[provider].uploadFiles(http || ctx.pathToPublish)
-          // ).toString('hex')
+          const contentURI = await apm.uploadFilesToStorageProvider(
+            contentProvider,
+            ctx.pathToPublish
+          )
 
-          reporter.info(`Content (${http ? 'http' : provider}): ${contentURI}`)
+          const contentLocation = contentURI.split(/:(.+)/)[1]
+
+          reporter.info(`Content (${contentProvider}): ${contentLocation}`)
 
           if (!http) {
-            reporter.info(``)
-            viewIPFSContent.task(
+            reporter.info(`IPFS content tree:`)
+            await viewIPFSContent.task(
               reporter,
               apmOptions,
-              contentURI,
+              contentLocation,
               debug,
               silent
             )
