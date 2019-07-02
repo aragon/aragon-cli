@@ -158,7 +158,7 @@ async function copyCurrentApplicationArtifacts(
       try {
         return {
           filePath: path.resolve(outputPath, file),
-          fileContent: JSON.parse(await apm.getFile(uri, file)),
+          fileContent: await apm.getFile(uri, file),
           fileName: file,
         }
       } catch (e) {
@@ -172,7 +172,7 @@ async function copyCurrentApplicationArtifacts(
   )
 
   const updateArtifactVersion = (file, version) => {
-    const newContent = file.fileContent
+    const newContent = JSON.parse(file.fileContent)
     newContent.version = version
     return { ...file, fileContent: JSON.stringify(newContent, null, 2) }
   }
@@ -183,7 +183,7 @@ async function copyCurrentApplicationArtifacts(
         cwd,
         networkName,
         module,
-        file.fileContent
+        JSON.parse(file.fileContent)
       )
       if (rebuild) {
         throw new Error('Artifact mismatch')
@@ -194,12 +194,11 @@ async function copyCurrentApplicationArtifacts(
     return file
   }
 
-  const copyFiles = await Promise.all(
-    // TODO: (Gabi) Fix async map handling
+  const copyArray = await Promise.all(
     copy.filter(item => item).map(file => evaluateFile(file))
   )
 
-  copyFiles.forEach(({ fileName, filePath, fileContent }) =>
+  copyArray.forEach(({ fileName, filePath, fileContent }) =>
     fs.writeFileSync(filePath, fileContent)
   )
 }
