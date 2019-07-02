@@ -383,7 +383,7 @@ exports.task = function({
                 }
               )
             } else {
-              return task.skip('Using existent artifact')
+              return task.skip('Using existing artifact')
             }
           }
 
