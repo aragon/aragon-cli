@@ -1,5 +1,4 @@
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const fs = require('fs')
 const tmp = require('tmp-promise')
 const path = require('path')
 const { readJson, writeJson, pathExistsSync } = require('fs-extra')
@@ -7,12 +6,7 @@ const APM = require('@aragon/apm')
 const semver = require('semver')
 const TaskList = require('listr')
 const taskInput = require('listr-input')
-const {
-  findProjectRoot,
-  getNodePackageManager,
-  ZERO_ADDRESS,
-} = require('../../util')
-const execa = require('execa')
+const { findProjectRoot, runScriptTask, ZERO_ADDRESS } = require('../../util')
 const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
@@ -33,7 +27,9 @@ const {
   getMajor,
   sanityCheck,
   generateApplicationArtifact,
+  generateFlattenedCode,
   copyCurrentApplicationArtifacts,
+  SOLIDITY_FILE,
 } = require('./util/generate-artifact')
 
 exports.command = 'publish <bump> [contract]'
@@ -106,6 +102,16 @@ exports.builder = function(yargs) {
       description: 'The npm script that will be run when building the app',
       default: 'build',
     })
+    .option('prepublish', {
+      description:
+        'Whether publish should run prepublish script specified in --prepublish-script before publishing',
+      default: true,
+      boolean: true,
+    })
+    .option('prepublish-script', {
+      description: 'The npm script that will be run before publishing the app',
+      default: 'prepublish',
+    })
     .option('http', {
       description: 'URL for where your app is served e.g. localhost:1234',
       default: null,
@@ -149,6 +155,8 @@ exports.task = function({
   onlyContent,
   build,
   buildScript,
+  prepublish,
+  prepublishScript,
   http,
   httpServedFrom,
 }) {
@@ -161,6 +169,11 @@ exports.task = function({
 
   return new TaskList(
     [
+      {
+        title: 'Running prepublish script',
+        enabled: () => prepublish,
+        task: async (ctx, task) => runScriptTask(task, prepublishScript),
+      },
       {
         title: 'Check IPFS',
         task: () => startIPFS.task({ apmOptions }),
@@ -276,33 +289,7 @@ exports.task = function({
       {
         title: 'Building frontend',
         enabled: () => build && !http,
-        task: async (ctx, task) => {
-          if (!fs.existsSync('package.json')) {
-            task.skip('No package.json found')
-            return
-          }
-
-          const packageJson = await readJson('package.json')
-          const scripts = packageJson.scripts || {}
-          if (!scripts[buildScript]) {
-            task.skip('Build script not defined in package.json')
-            return
-          }
-
-          const bin = getNodePackageManager()
-          const buildTask = execa(bin, ['run', buildScript])
-
-          buildTask.stdout.on('data', log => {
-            if (!log) return
-            task.output = `npm run ${buildScript}: ${log}`
-          })
-
-          return buildTask.catch(err => {
-            throw new Error(
-              `${err.message}\n${err.stderr}\n\nFailed to build. See above output.`
-            )
-          })
-        },
+        task: async (ctx, task) => runScriptTask(task, buildScript),
       },
       {
         title: 'Prepare files for publishing',
@@ -347,14 +334,18 @@ exports.task = function({
         title: 'Generate application artifact',
         skip: () => onlyContent && !module.path,
         task: async (ctx, task) => {
-          async function invokeAction(answer) {
+          async function invokeArtifactGeneration(answer) {
             if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
               await generateApplicationArtifact(
                 cwd,
+                apm,
                 dir,
                 module,
-                ctx.deployArtifacts
+                ctx.deployArtifacts,
+                web3,
+                reporter
               )
+              await generateFlattenedCode(dir, module.path)
               return `Saved artifact in ${dir}/${ARTIFACT_FILE}`
             }
             throw new Error('Aborting publication...')
@@ -362,44 +353,50 @@ exports.task = function({
 
           const dir = onlyArtifacts ? cwd : ctx.pathToPublish
 
+          // If an artifact file exist we check it to reuse
           if (pathExistsSync(`${dir}/${ARTIFACT_FILE}`)) {
-            const artifactPath = path.resolve(dir, ARTIFACT_FILE)
-            const artifact = await readJson(artifactPath)
+            const existingArtifactPath = path.resolve(dir, ARTIFACT_FILE)
+            const existingArtifact = await readJson(existingArtifactPath)
             const rebuild = await sanityCheck(
+              cwd,
               network.name,
-              module.appName,
-              module.registry,
-              module.path,
-              artifact
+              module,
+              existingArtifact
             )
-            if (!rebuild) {
-              return task.skip('Using existent artifact')
-            } else {
+            if (rebuild) {
               return taskInput(
-                "Couldn't reuse artifact due to mismatches, regenerate now? [y]es/[a]bort",
+                `Couldn't reuse artifact due to mismatches, regenerate now? [y]es/[a]bort`,
                 {
                   validate: value => {
                     return ANSWERS.indexOf(value) > -1
                   },
-                  done: async answer => invokeAction(answer),
+                  done: async answer => invokeArtifactGeneration(answer),
                 }
               )
+            } else {
+              return task.skip('Using existing artifact')
             }
           }
 
-          if (onlyContent) {
+          // If only content we fetch artifacts from previous version
+          if (
+            onlyContent &
+            (apm.validInitialVersions.indexOf(ctx.version) === -1)
+          ) {
             try {
               task.output = 'Fetching artifacts from previous version'
               await copyCurrentApplicationArtifacts(
+                cwd,
                 dir,
                 apm,
-                network.name,
-                module.appName,
-                module.registry,
-                module.path,
                 ctx.initialRepo,
-                ctx.version
+                ctx.version,
+                network.name,
+                module
               )
+              if (!pathExistsSync(`${dir}/${SOLIDITY_FILE}`)) {
+                await generateFlattenedCode(dir, module.path)
+              }
               return task.skip(`Using artifacts from v${ctx.initialVersion}`)
             } catch (e) {
               if (e.message === 'Artifact mismatch') {
@@ -409,31 +406,25 @@ exports.task = function({
                     validate: value => {
                       return ANSWERS.indexOf(value) > -1
                     },
-                    done: async answer => invokeAction(answer),
+                    done: async answer => invokeArtifactGeneration(answer),
                   }
                 )
               } else {
                 return taskInput(
-                  "Couldn't fetch existing artifact, generate now? [y]es/[a]bort",
+                  "Couldn't fetch current artifact version to copy it. Please make sure your IPFS or HTTP server are running. Otherwise, generate now? [y]es/[a]bort",
                   {
                     validate: value => {
                       return ANSWERS.indexOf(value) > -1
                     },
-                    done: async answer => invokeAction(answer),
+                    done: async answer => invokeArtifactGeneration(answer),
                   }
                 )
               }
             }
           }
-          await generateApplicationArtifact(
-            cwd,
-            apm,
-            dir,
-            module,
-            ctx.deployArtifacts,
-            web3,
-            reporter
-          )
+
+          await invokeArtifactGeneration('yes')
+
           return `Saved artifact in ${dir}/artifact.json`
         },
       },
