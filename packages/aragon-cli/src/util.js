@@ -272,11 +272,8 @@ const parseStringIfPossible = target => {
 }
 
 module.exports = {
-<<<<<<< HEAD
   parseStringIfPossible,
-=======
   debugLogger,
->>>>>>> Remove go-ipfs
   findProjectRoot,
   isPortTaken,
   installDeps,
