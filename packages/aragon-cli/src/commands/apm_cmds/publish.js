@@ -17,6 +17,7 @@ const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
 const startIPFS = require('../ipfs_cmds/start')
+const propagateIPFS = require('../ipfs_cmds/propagate')
 const viewIPFSContent = require('../ipfs_cmds/view')
 const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 const execTask = require('../dao_cmds/utils/execHandler').task
@@ -441,27 +442,28 @@ exports.task = function({
         enabled: () => !onlyArtifacts,
         task: async (ctx, task) => {
           const contentProvider = http ? 'http' : provider
+          const dir = http || ctx.pathToPublish
           reporter.info('The following information will be published:')
 
           reporter.info(
             `Contract address: ${ctx.contract ? ctx.contract : ZERO_ADDRESS}`
           )
 
-          const contentURI = await apm.uploadFilesToStorageProvider(
+          ctx.contentURI = await apm.uploadFilesToStorageProvider(
             contentProvider,
-            ctx.pathToPublish
+            dir
           )
 
-          const contentLocation = contentURI.split(/:(.+)/)[1]
+          ctx.contentLocation = ctx.contentURI.split(/:(.+)/)[1]
 
-          reporter.info(`Content (${contentProvider}): ${contentLocation}`)
+          reporter.info(`Content (${contentProvider}): ${ctx.contentLocation}`)
 
           if (!http) {
             reporter.info(`IPFS content tree:`)
             await viewIPFSContent.task(
               reporter,
               apmOptions,
-              contentLocation,
+              ctx.contentLocation,
               debug,
               silent
             )
@@ -496,8 +498,7 @@ exports.task = function({
               from,
               module.appName,
               ctx.version,
-              http ? 'http' : provider,
-              http || ctx.pathToPublish,
+              ctx.contentURI,
               ctx.contract
             )
 
@@ -530,6 +531,25 @@ exports.task = function({
           apmRepo: module.appName,
           apm,
         }),
+      },
+      {
+        title: 'Propagate content',
+        task: async ctx =>
+          taskInput('Propagate the content to the apm node [y]es/[a]bort', {
+            validate: value => {
+              return ANSWERS.indexOf(value) > -1
+            },
+            done: async answer => {
+              if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
+                return propagateIPFS.task({
+                  apmOptions,
+                  cid: ctx.contentLocation,
+                })
+              }
+              throw new Error('Aborting publication...')
+            },
+          }),
+        enabled: () => !onlyArtifacts,
       },
     ],
     listrOpts(silent, debug)
