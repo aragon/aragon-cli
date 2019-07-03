@@ -3,13 +3,12 @@
   "private": true,
   "description": "End-to-end tests for aragonCLI",
   "scripts": {
-    "pretest": "ava src/**/*.pretest.js",
-    "posttest": "ava src/**/*.posttest.js",
-    "test": "ava",
+    "pretest": "ava src/**/*.pretest.js --update-snapshots",
+    "posttest": "ava src/**/*.posttest.js --update-snapshots",
+    "test": "ava --update-snapshots",
     "test:watch": "ava --watch",
     "test:debug": "cross-env DEBUG=true npm run test",
     "test:clean": "npm run posttest && npm run reset-cache",
-    "update-snapshots": "npm run test -- --update-snapshots",
     "reset-cache": "ava --reset-cache"
   },
   "author": "Aragon Association <legal@aragon.org>",

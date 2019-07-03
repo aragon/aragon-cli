@@ -23,3 +23,5 @@ Posttest:
 * Stop IPFS
 * Stop Ganache
 * Delete the test app
+
+**Tip**: Did a test fail and the local environment was not torn down? Try `npm run posttest`.

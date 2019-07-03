@@ -27,7 +27,7 @@ exports.builder = yargs => {
       default: 'https://dist.ipfs.io',
     })
     .option('local', {
-      description: 'Whether to install IPFS in a local project',
+      description: 'Whether to install IPFS as a project dependency',
       boolean: true,
       default: false,
     })
