@@ -298,7 +298,7 @@ const runSetupTask = ({
       },
     ],
     listrOpts(silent, debug)
-  ).run({ web3 })
+  ).run()
 }
 
 const runPrepareForPublishTask = ({
@@ -500,7 +500,7 @@ const runPrepareForPublishTask = ({
       },
     ],
     listrOpts(silent, debug)
-  ).run({ web3 })
+  ).run()
 }
 
 const runPublishTask = ({
@@ -570,7 +570,7 @@ const runPublishTask = ({
       },
     ],
     listrOpts(silent, debug)
-  ).run({ web3 })
+  ).run()
 }
 
 exports.handler = async function({
