@@ -8,6 +8,7 @@ import {
 } from '../../lib/ipfs'
 import listrOpts from '../../helpers/listr-options'
 
+const chalk = require('chalk')
 const startIPFS = require('./start')
 
 exports.command = 'propagate <cid>'
@@ -74,11 +75,18 @@ exports.handler = async function({
 
   const ctx = await task.run()
 
-  reporter.info(
-    `Queried ${ctx.CIDs.length} CIDs at ${ctx.result.gateways.length} gateways`
+  console.log(
+    '\n',
+    `Queried ${chalk.blue(ctx.CIDs.length)} CIDs at ${chalk.blue(
+      ctx.result.gateways.length
+    )} gateways`,
+    '\n',
+    `Requests succeeded: ${chalk.green(ctx.result.succeeded)}`,
+    '\n',
+    `Requests failed: ${chalk.red(ctx.result.failed)}`,
+    '\n'
   )
-  reporter.info(`Requests succeeded: ${ctx.result.succeeded}`)
-  reporter.info(`Requests failed: ${ctx.result.failed}`)
+
   reporter.debug(`Gateways: ${ctx.result.gateways.join(', ')}`)
   reporter.debug(
     `Errors: \n${ctx.result.errors.map(JSON.stringify).join('\n')}`

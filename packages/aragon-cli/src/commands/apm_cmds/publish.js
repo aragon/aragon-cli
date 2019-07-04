@@ -266,12 +266,12 @@ const runSetupTask = ({
         title: 'Determine contract address for version',
         task: async (ctx, task) => {
           if (web3Utils.isAddress(contract)) {
-            ctx.contractAddress = contract
+            ctx.contract = contract
           }
 
           // Check if we can fall back to a previous contract address
           if (
-            !ctx.contractAddress &&
+            !ctx.contract &&
             apm.validInitialVersions.indexOf(ctx.version) === -1
           ) {
             task.output = 'No contract address provided, using previous one'
@@ -280,15 +280,15 @@ const runSetupTask = ({
               const { contractAddress } = await apm.getLatestVersion(
                 module.appName
               )
-              ctx.contractAddress = contractAddress
-              return `Using ${ctx.contractAddress}`
+              ctx.contract = contractAddress
+              return `Using ${ctx.contract}`
             } catch (err) {
               throw new Error('Could not determine previous contract')
             }
           }
 
           // Contract address required for initial version
-          if (!ctx.contractAddress) {
+          if (!ctx.contract) {
             throw new Error('No contract address supplied for initial version')
           }
 
@@ -389,6 +389,7 @@ const runPrepareForPublishTask = ({
         title: 'Generate application artifact',
         skip: () => onlyContent && !module.path,
         task: async (ctx, task) => {
+          // TODO: (Gabi) Use inquier to handle confirmation
           async function invokeArtifactGeneration(answer) {
             if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
               await generateApplicationArtifact(
@@ -516,6 +517,11 @@ const runPublishTask = ({
   // Arguments
   /// Conditionals
   onlyArtifacts,
+
+  // Context
+  version,
+  contentURI,
+  contractAddress,
 }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
@@ -535,9 +541,9 @@ const runPublishTask = ({
             const intent = await apm.publishVersionIntent(
               from,
               module.appName,
-              ctx.version,
-              ctx.contentURI,
-              ctx.contractAddress
+              version,
+              contentURI,
+              contractAddress
             )
 
             const { dao, proxyAddress, methodName, params } = intent
@@ -606,7 +612,7 @@ exports.handler = async function({
     initialRepo,
     initialVersion,
     version,
-    contractAddress,
+    contract: contractAddress,
     deployArtifacts,
   } = await runSetupTask({
     reporter,
@@ -709,43 +715,33 @@ exports.handler = async function({
   let propagateContent = false
 
   if (!status) {
-    reporter.error(`Publish transaction reverted:`)
+    reporter.error(`\nPublish transacti'on reverted:\n`)
   } else {
     // If the version is still the same, the publish intent was forwarded but not immediately executed (p.e. Voting)
     if (initialVersion === version) {
-      reporter.success(
+      console.log(
+        '\n',
         `Successfully executed: "${chalk.green(
           transactionPath[0].description
-        )}"`
+        )}"`,
+        '\n'
       )
     } else {
       propagateContent = true
 
-      reporter.success(
-        `Successfully published ${appName} v${chalk.green(version)} : `
-      )
-      if (!onlyContent) {
-        console.log(
-          '\n',
-          `Contract address: ${chalk.blue(contractAddress)}`,
-          '\n'
-        )
-      }
+      const logVersion = 'v' + version
+
       console.log(
         '\n',
-        `Content (${http ? 'http' : provider}): ${chalk.blue(contentLocation)}`,
+        `Successfully published ${appName} ${chalk.green(logVersion)} :`,
         '\n'
       )
     }
   }
 
-  console.log('\n', `Transaction hash: ${chalk.blue(transactionHash)}`, '\n')
+  console.log(`Transaction hash: ${chalk.blue(transactionHash)}`, '\n')
 
-  reporter.debug(
-    '\n',
-    `Published directory: ${chalk.blue(pathToPublish)}`,
-    '\n'
-  )
+  reporter.debug(`Published directory: ${chalk.blue(pathToPublish)}\n`)
 
   // Propagate content
 
@@ -762,29 +758,9 @@ exports.handler = async function({
     if (!confirmation) return
   }
 
-  const ctx = await propagateIPFS
-    .task({
-      apmOptions,
-      cid: contentLocation,
-    })
-    .run()
-
-  console.log(
-    '\n',
-    `Queried ${chalk.blue(ctx.CIDs.length)} CIDs at ${chalk.blue(
-      ctx.result.gateways.length
-    )} gateways`,
-    '\n',
-    `Requests succeeded: ${chalk.green(ctx.result.succeeded)}`,
-    '\n',
-    `Requests failed: ${chalk.red(ctx.result.failed)}`,
-    '\n'
-  )
-
-  reporter.debug(`Gateways: ${ctx.result.gateways.join(', ')}`)
-  reporter.debug(
-    `Errors: \n${ctx.result.errors.map(JSON.stringify).join('\n')}`
-  )
-
-  process.exit(status ? 0 : 1)
+  await propagateIPFS.handler({
+    reporter,
+    apm: apmOptions,
+    cid: contentLocation,
+  })
 }

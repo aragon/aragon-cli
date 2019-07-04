@@ -94,3 +94,4 @@ The command has the following parameters:
 - `--http-served-from`: Path to the directory that the HTTP server exposes (e.g. ./dist). Some artifacts are generated and placed in this directory during the publishing process of your app.
 - `--ipfs-check`: Whether to have start IPFS if not started. Defaults to `true`.
 - `--reuse`: Whether to reuse the previous version contract and skip deployment on non-major versions. Defaults to `false`.
+- `--skip-confirmation`: Whether to skip the confirmation step. Defaults to `false`.

@@ -26,6 +26,7 @@ Available options to customize the `run` command:
 - `--build-script`: The name of the NPM script in your app that will be used for building the webapp.
 - `--prepublish`: A flag to specify whether to run a prepublish script specified in `prepublish-script` of `package.json`. Defaults to `true`.
 - `--prepublish-script`: The name of the NPM script in your app that will be run before publishing the app.
+- `bump`: Type of bump (major, minor or patch) or version number to publish the app.
 - `--client`: Whether to start the Aragon client or not. Defaults to `true`.
 - `--client-version`: Version of Aragon client used to run your sandboxed app.
 - `--client-port`: Port being used by Aragon client.
