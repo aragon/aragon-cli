@@ -36,7 +36,6 @@ exports.builder = yargs => {
 }
 
 exports.task = async ({
-  reporter,
   network,
   cwd,
   contract,
@@ -157,7 +156,6 @@ exports.handler = async ({
   debug,
 }) => {
   const task = await exports.task({
-    reporter,
     network,
     cwd,
     contract,

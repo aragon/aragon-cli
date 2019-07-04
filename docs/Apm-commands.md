@@ -81,6 +81,7 @@ The command has the following parameters:
 
 - `--only-content`: For minor and patch upgrades; whether to skip contract compilation, deployment and contract artifact generation.
 - `--only-artifacts`: Whether just generate artifacts file without publishing.
+- `--init`: Arguments to be passed to contract constructor on deploy. Need to be separated by a space. The `@ARAGON_ENS` alias can be used and it will be replaced by the address of the ENS registry in the devchain.
 - `--provider`: The provider where the files of the package will be published to. Defaults to `ipfs`.
 - `--files`: The path to the files that will be published. Defaults to the current directory.
 - `--ignore`: A gitignore pattern of files to ignore. Specify multiple times to add multiple patterns. Defaults to just the `node_modules` directory.
