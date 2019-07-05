@@ -30,7 +30,7 @@ Note: The CLI should ignore the `gas` property of the network from truffle confi
 
 ## Node/npm API
 
-- `getDependentBinary`
+- `getLocalBinary`
   
 This packages relies on dependencies like `go-ipfs`, `truffle` and `ganache-cli` that expose one
 or more binaries.
@@ -68,6 +68,6 @@ whether the binary exists in `project_root` + `./node_modules/.bin`, and if it d
 it should go up once or twice (if scoped) and look into the `.bin` directory. This can be achieved
 using [`__dirname`][dirname-docs].
 
-See [`src/util.js#getDependentBinary`](https://github.com/aragon/aragon-cli/blob/master/packages/aragon-cli/src/util.js#L66).
+See [`src/util.js#getLocalBinary`](https://github.com/aragon/aragon-cli/blob/master/packages/aragon-cli/src/util.js#L66).
 
 [dirname-docs]: https://nodejs.org/docs/latest/api/globals.html#globals_dirname

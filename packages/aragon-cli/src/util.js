@@ -5,10 +5,12 @@ const net = require('net')
 const fs = require('fs')
 const { readJson } = require('fs-extra')
 const web3Utils = require('web3-utils')
+const which = require('which')
 
 let cachedProjectRoot
 
 const PGK_MANAGER_BIN_NPM = 'npm'
+const debugLogger = process.env.DEBUG ? console.log : () => {}
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -65,6 +67,72 @@ const installDeps = (cwd, task) => {
   })
 }
 
+/**
+ * Attempts to find the binary path locally and then globally.
+ *
+ * @param {string} binaryName e.g.: `ipfs`
+ * @returns {string} the path to the binary, `null` if unsuccessful
+ */
+const getBinary = binaryName => {
+  let binaryPath = getLocalBinary(binaryName)
+
+  if (binaryPath === null) {
+    binaryPath = getGlobalBinary(binaryName)
+  }
+
+  if (binaryPath === null) {
+    debugLogger(`Cannot find binary ${binaryName}.`)
+  } else {
+    debugLogger(`Found binary ${binaryName} at ${binaryPath}.`)
+  }
+
+  return binaryPath
+}
+
+const getLocalBinary = (binaryName, projectRoot) => {
+  if (!projectRoot) {
+    // __dirname evaluates to the directory of this file (util.js)
+    // e.g.: `../dist/` or `../src/`
+    projectRoot = path.join(__dirname, '..')
+  }
+
+  // check local node_modules
+  let binaryPath = path.join(projectRoot, 'node_modules', '.bin', binaryName)
+
+  debugLogger(`Searching binary ${binaryName} at ${binaryPath}`)
+  if (fs.existsSync(binaryPath)) {
+    return binaryPath
+  }
+
+  // check parent node_modules
+  binaryPath = path.join(projectRoot, '..', '.bin', binaryName)
+
+  debugLogger(`Searching binary ${binaryName} at ${binaryPath}.`)
+  if (fs.existsSync(binaryPath)) {
+    return binaryPath
+  }
+
+  // check parent node_modules if this module is scoped (e.g.: @scope/package)
+  binaryPath = path.join(projectRoot, '..', '..', '.bin', binaryName)
+
+  debugLogger(`Searching binary ${binaryName} at ${binaryPath}.`)
+  if (fs.existsSync(binaryPath)) {
+    return binaryPath
+  }
+
+  return null
+}
+
+const getGlobalBinary = binaryName => {
+  debugLogger(`Searching binary ${binaryName} in the global PATH variable.`)
+
+  try {
+    return which.sync(binaryName)
+  } catch {
+    return null
+  }
+}
+
 const runScriptTask = async (task, scriptName) => {
   if (!fs.existsSync('package.json')) {
     task.skip('No package.json found')
@@ -91,39 +159,6 @@ const runScriptTask = async (task, scriptName) => {
       `${err.message}\n${err.stderr}\n\nFailed to build. See above output.`
     )
   })
-}
-
-const getDependentBinary = (binaryName, projectRoot) => {
-  if (!projectRoot) {
-    // __dirname evaluates to the directory of this file (util.js)
-    // e.g.: `../dist/` or `../src/`
-    projectRoot = path.join(__dirname, '..')
-  }
-
-  // check local node_modules
-  let binaryPath = path.join(projectRoot, 'node_modules', '.bin', binaryName)
-
-  if (fs.existsSync(binaryPath)) {
-    return binaryPath
-  }
-
-  // check parent node_modules
-  binaryPath = path.join(projectRoot, '..', '.bin', binaryName)
-
-  if (fs.existsSync(binaryPath)) {
-    return binaryPath
-  }
-
-  // check parent node_modules if this module is scoped (e.g.: @scope/package)
-  binaryPath = path.join(projectRoot, '..', '..', '.bin', binaryName)
-
-  if (fs.existsSync(binaryPath)) {
-    return binaryPath
-  }
-
-  throw new Error(
-    `Cannot find the ${binaryName} dependency. Has this module installed correctly?`
-  )
 }
 
 const getContract = (pkg, contract) => {
@@ -269,12 +304,15 @@ const parseStringIfPossible = target => {
 
 module.exports = {
   parseStringIfPossible,
+  debugLogger,
   findProjectRoot,
   isPortTaken,
   installDeps,
   runScriptTask,
   getNodePackageManager,
-  getDependentBinary,
+  getBinary,
+  getLocalBinary,
+  getGlobalBinary,
   getContract,
   ANY_ENTITY,
   NO_MANAGER,
