@@ -65,7 +65,7 @@ const installDeps = (cwd, task) => {
   })
 }
 
-const runScriptTask = async (task, scritpName) => {
+const runScriptTask = async (task, scriptName) => {
   if (!fs.existsSync('package.json')) {
     task.skip('No package.json found')
     return
@@ -73,17 +73,17 @@ const runScriptTask = async (task, scritpName) => {
 
   const packageJson = await readJson('package.json')
   const scripts = packageJson.scripts || {}
-  if (!scripts[scritpName]) {
+  if (!scripts[scriptName]) {
     task.skip('Build script not defined in package.json')
     return
   }
 
   const bin = getNodePackageManager()
-  const scriptTask = execa(bin, ['run', scritpName])
+  const scriptTask = execa(bin, ['run', scriptName])
 
   scriptTask.stdout.on('data', log => {
     if (!log) return
-    task.output = `npm run ${scritpName}: ${log}`
+    task.output = `npm run ${scriptName}: ${log}`
   })
 
   return scriptTask.catch(err => {

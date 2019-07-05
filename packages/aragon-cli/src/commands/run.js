@@ -220,7 +220,7 @@ exports.handler = function({
             skipConfirmation: true,
           }
           // TODO: (Gabi) Prevent propagate content as default
-          return publish.handler(publishParams)
+          ctx.repo = await publish.handler(publishParams)
         },
       },
       {

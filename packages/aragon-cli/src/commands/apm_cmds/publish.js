@@ -12,6 +12,7 @@ const { findProjectRoot, runScriptTask, ZERO_ADDRESS } = require('../../util')
 const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
+const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 const startIPFS = require('../ipfs_cmds/start')
 const propagateIPFS = require('../ipfs_cmds/propagate')
 const execTask = require('../dao_cmds/utils/execHandler').task
@@ -519,6 +520,7 @@ const runPublishTask = ({
   // Arguments
   /// Conditionals
   onlyArtifacts,
+  onlyContent,
 
   /// Context
   dao,
@@ -526,6 +528,8 @@ const runPublishTask = ({
   methodName,
   params,
 }) => {
+  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
+  const apm = APM(web3, apmOptions)
   return new TaskList(
     [
       {
@@ -551,6 +555,14 @@ const runPublishTask = ({
           }
         },
         enabled: () => !onlyArtifacts,
+      },
+      {
+        title: 'Fetch published repo',
+        task: getRepoTask.task({
+          artifactRequired: onlyContent,
+          apmRepo: module.appName,
+          apm,
+        }),
       },
     ],
     listrOpts(silent, debug)
@@ -682,7 +694,7 @@ exports.handler = async function({
     if (!confirmation) return
   }
 
-  const { receipt, transactionPath } = await runPublishTask({
+  const { receipt, transactionPath, repo } = await runPublishTask({
     reporter,
     web3,
     wsProvider,
@@ -691,6 +703,7 @@ exports.handler = async function({
     silent,
     debug,
     onlyArtifacts,
+    onlyContent,
     // context
     dao,
     proxyAddress,
@@ -743,7 +756,7 @@ exports.handler = async function({
     ])
     // new line after confirm
     console.log()
-    if (!confirmation) return
+    if (!confirmation) return repo
   }
 
   await propagateIPFS.handler({
@@ -751,4 +764,6 @@ exports.handler = async function({
     apm: apmOptions,
     cid: contentLocation,
   })
+
+  return repo
 }
