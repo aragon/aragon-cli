@@ -42,6 +42,11 @@ test('should run an aragon app successfully', async t => {
   await exit()
 
   // delete some output sections that are not deterministic
+  const prepublishScriptOutput = stdout.substring(
+    stdout.indexOf('Running prepublish script [started]'),
+    stdout.indexOf('Running prepublish script [completed]')
+  )
+
   const appBuildOutput = stdout.substring(
     stdout.indexOf('Building frontend [started]'),
     stdout.indexOf('Building frontend [completed]')
@@ -52,6 +57,7 @@ test('should run an aragon app successfully', async t => {
   )
 
   const outputToSnapshot = stdout
+    .replace(prepublishScriptOutput, '[deleted-prepublish-script-output]')
     .replace(appBuildOutput, '[deleted-app-build-output]')
     .replace(wrapperInstallOutput, '[deleted-wrapper-install-output]')
     .replace(new RegExp(daoAddress, 'g'), '[deleted-dao-address]')
