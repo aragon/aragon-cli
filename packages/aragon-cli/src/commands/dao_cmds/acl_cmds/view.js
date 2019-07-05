@@ -12,10 +12,8 @@ const Table = require('cli-table')
 const knownRoles = rolesForApps()
 const ANY_ENTITY = '0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF'
 const ANY_ENTITY_TEXT = 'Any entity'
-const { NO_MANAGER } = require('../../../util')
+const { NO_MANAGER, ZERO_ADDRESS } = require('../../../util')
 const NO_MANAGER_TEXT = 'No Manager'
-
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 let knownApps
 

@@ -6,12 +6,15 @@ const APM = require('@aragon/apm')
 const semver = require('semver')
 const TaskList = require('listr')
 const taskInput = require('listr-input')
-const { findProjectRoot, runScriptTask } = require('../../util')
+const inquirer = require('inquirer')
+const chalk = require('chalk')
+const { findProjectRoot, runScriptTask, ZERO_ADDRESS } = require('../../util')
 const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
-const startIPFS = require('../ipfs_cmds/start')
 const getRepoTask = require('../dao_cmds/utils/getRepoTask')
+const startIPFS = require('../ipfs_cmds/start')
+const propagateIPFS = require('../ipfs_cmds/propagate')
 const execTask = require('../dao_cmds/utils/execHandler').task
 const listrOpts = require('../../helpers/listr-options')
 
@@ -28,6 +31,8 @@ const {
   generateFlattenedCode,
   copyCurrentApplicationArtifacts,
   SOLIDITY_FILE,
+  POSITIVE_ANSWERS,
+  ANSWERS,
 } = require('./util/generate-artifact')
 
 exports.command = 'publish <bump> [contract]'
@@ -45,6 +50,11 @@ exports.builder = function(yargs) {
       description:
         "The address or name of the contract to publish in this version. If it isn't provided, it will default to the current version's contract.",
       type: 'string',
+    })
+    .option('init', {
+      description: 'Arguments to be passed to contract constructor',
+      array: true,
+      default: [],
     })
     .option('only-artifacts', {
       description: 'Whether just generate artifacts file without publishing',
@@ -108,7 +118,7 @@ exports.builder = function(yargs) {
     })
     .option('prepublish-script', {
       description: 'The npm script that will be run before publishing the app',
-      default: 'prepublish',
+      default: 'prepublishOnly',
     })
     .option('http', {
       description: 'URL for where your app is served e.g. localhost:1234',
@@ -119,20 +129,25 @@ exports.builder = function(yargs) {
         'Directory where your files is being served from e.g. ./dist',
       default: null,
     })
+    .option('propagate-content', {
+      description: 'Whether to propagate the content once published',
+      boolean: true,
+      default: true,
+    })
+    .option('skip-confirmation', {
+      description: 'Whether to skip the confirmation step',
+      boolean: true,
+      default: false,
+    })
 }
 
-const POSITIVE_ANSWERS = ['yes', 'y']
-const NEGATIVE_ANSWERS = ['no', 'n', 'abort', 'a']
-const ANSWERS = POSITIVE_ANSWERS.concat(NEGATIVE_ANSWERS)
-
-exports.task = function({
+const runSetupTask = ({
   reporter,
 
   // Globals
   cwd,
   web3,
   network,
-  wsProvider,
   module,
   apm: apmOptions,
   silent,
@@ -140,28 +155,29 @@ exports.task = function({
 
   // Arguments
 
-  bump,
-  contract,
-  onlyArtifacts,
-  reuse,
-  provider,
-  files,
-  ignore,
-  ipfsCheck,
-  publishDir,
-  init,
-  onlyContent,
-  build,
-  buildScript,
+  /// Scritps
   prepublish,
   prepublishScript,
-  http,
-  httpServedFrom,
-}) {
-  if (onlyContent) {
-    contract = '0x0000000000000000000000000000000000000000'
-  }
+  build,
+  buildScript,
 
+  /// Version
+  bump,
+
+  /// Contract
+  contract,
+  init,
+  reuse,
+
+  /// Conditionals
+  onlyContent,
+  onlyArtifacts,
+  ipfsCheck,
+  http,
+}) => {
+  if (onlyContent) {
+    contract = ZERO_ADDRESS
+  }
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
 
@@ -226,6 +242,11 @@ exports.task = function({
         },
       },
       {
+        title: 'Building frontend',
+        enabled: () => build && !http,
+        task: async (ctx, task) => runScriptTask(task, buildScript),
+      },
+      {
         title: 'Compile contracts',
         task: async () => compileContracts(),
         enabled: () => !onlyContent && web3Utils.isAddress(contract),
@@ -236,7 +257,6 @@ exports.task = function({
           const deployTaskParams = {
             contract,
             init,
-            reporter,
             network,
             cwd,
             web3,
@@ -284,11 +304,53 @@ exports.task = function({
         },
         enabled: () => !onlyArtifacts,
       },
-      {
-        title: 'Building frontend',
-        enabled: () => build && !http,
-        task: async (ctx, task) => runScriptTask(task, buildScript),
-      },
+    ],
+    listrOpts(silent, debug)
+  ).run()
+}
+
+const runPrepareForPublishTask = ({
+  reporter,
+
+  // Globals
+  cwd,
+  web3,
+  network,
+  module,
+  apm: apmOptions,
+  silent,
+  debug,
+
+  // Arguments
+
+  /// Files
+  publishDir,
+  files,
+  ignore,
+
+  /// Http
+  httpServedFrom,
+
+  /// Storage
+  provider,
+
+  /// Conditionals
+  onlyArtifacts,
+  onlyContent,
+  http,
+
+  // Context
+  initialRepo,
+  initialVersion,
+  version,
+  contractAddress,
+  deployArtifacts,
+}) => {
+  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
+  const apm = APM(web3, apmOptions)
+
+  return new TaskList(
+    [
       {
         title: 'Prepare files for publishing',
         task: async (ctx, task) => {
@@ -332,6 +394,7 @@ exports.task = function({
         title: 'Generate application artifact',
         skip: () => onlyContent && !module.path,
         task: async (ctx, task) => {
+          // TODO: (Gabi) Use inquier to handle confirmation
           async function invokeArtifactGeneration(answer) {
             if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
               await generateApplicationArtifact(
@@ -339,7 +402,7 @@ exports.task = function({
                 apm,
                 dir,
                 module,
-                ctx.deployArtifacts,
+                deployArtifacts,
                 web3,
                 reporter
               )
@@ -379,7 +442,7 @@ exports.task = function({
           // If only content we fetch artifacts from previous version
           if (
             onlyContent &
-            (apm.validInitialVersions.indexOf(ctx.version) === -1)
+            (apm.validInitialVersions.indexOf(version) === -1)
           ) {
             try {
               task.output = 'Fetching artifacts from previous version'
@@ -387,15 +450,15 @@ exports.task = function({
                 cwd,
                 dir,
                 apm,
-                ctx.initialRepo,
-                ctx.version,
+                initialRepo,
+                version,
                 network.name,
                 module
               )
               if (!pathExistsSync(`${dir}/${SOLIDITY_FILE}`)) {
                 await generateFlattenedCode(dir, module.path)
               }
-              return task.skip(`Using artifacts from v${ctx.initialVersion}`)
+              return task.skip(`Using artifacts from v${initialVersion}`)
             } catch (e) {
               if (e.message === 'Artifact mismatch') {
                 return taskInput(
@@ -427,25 +490,55 @@ exports.task = function({
         },
       },
       {
-        title: `Publish ${module.appName}`,
+        title: `Publish intent`,
         task: async (ctx, task) => {
-          ctx.contractInstance = null // clean up deploy sub-command artifacts
-
           const accounts = await web3.eth.getAccounts()
           const from = accounts[0]
+          ctx.intent = await apm.publishVersionIntent(
+            from,
+            module.appName,
+            version,
+            provider,
+            publishDir,
+            contractAddress
+          )
+        },
+      },
+    ],
+    listrOpts(silent, debug)
+  ).run()
+}
 
+const runPublishTask = ({
+  reporter,
+
+  // Globals
+  web3,
+  wsProvider,
+  module,
+  apm: apmOptions,
+  silent,
+  debug,
+
+  // Arguments
+  /// Conditionals
+  onlyArtifacts,
+  onlyContent,
+
+  /// Context
+  dao,
+  proxyAddress,
+  methodName,
+  params,
+}) => {
+  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
+  const apm = APM(web3, apmOptions)
+  return new TaskList(
+    [
+      {
+        title: `Publish ${module.appName}`,
+        task: async (ctx, task) => {
           try {
-            const intent = await apm.publishVersionIntent(
-              from,
-              module.appName,
-              ctx.version,
-              http ? 'http' : provider,
-              http || ctx.pathToPublish,
-              ctx.contract
-            )
-
-            const { dao, proxyAddress, methodName, params } = intent
-
             const getTransactionPath = wrapper => {
               return wrapper.getTransactionPath(
                 proxyAddress,
@@ -476,44 +569,200 @@ exports.task = function({
       },
     ],
     listrOpts(silent, debug)
-  )
+  ).run()
 }
 
-exports.handler = async args => {
-  const { reporter, network, module, onlyContent } = args
+exports.handler = async function({
+  reporter,
 
+  // Globals
+  cwd,
+  network,
+  wsProvider,
+  module,
+  apm: apmOptions,
+  silent,
+  debug,
+
+  // Arguments
+
+  bump,
+  contract,
+  onlyArtifacts,
+  reuse,
+  provider,
+  files,
+  ignore,
+  ipfsCheck,
+  publishDir,
+  init,
+  onlyContent,
+  build,
+  buildScript,
+  prepublish,
+  prepublishScript,
+  http,
+  httpServedFrom,
+  propagateContent,
+  skipConfirmation,
+}) {
   const web3 = await ensureWeb3(network)
 
-  return exports
-    .task({ ...args, web3 })
-    .run({ web3 })
-    .then(ctx => {
-      const { appName } = module
-      const { transactionHash, status } = ctx.receipt
-      const { version, content, contractAddress } = ctx.repo
+  const {
+    initialRepo,
+    initialVersion,
+    version,
+    contract: contractAddress,
+    deployArtifacts,
+  } = await runSetupTask({
+    reporter,
+    cwd,
+    web3,
+    network,
+    module,
+    apm: apmOptions,
+    silent,
+    debug,
+    prepublish,
+    prepublishScript,
+    build,
+    buildScript,
+    bump,
+    contract,
+    init,
+    reuse,
+    onlyContent,
+    onlyArtifacts,
+    ipfsCheck,
+    http,
+  })
 
-      if (!status) {
-        reporter.error(`Publish transaction reverted:`)
-      } else {
-        // If the version is still the same, the publish intent was forwarded but not immediately executed (p.e. Voting)
-        if (ctx.initialVersion === version) {
-          reporter.success(
-            `Successfully executed: "${ctx.transactionPath[0].description}"`
-          )
-        } else {
-          reporter.success(`Successfully published ${appName} v${version} : `)
-          if (!onlyContent) {
-            reporter.info(`Contract address: ${contractAddress}`)
-          }
-          reporter.info(`Content (${content.provider}): ${content.location}`)
-        }
-      }
+  const { pathToPublish, intent } = await runPrepareForPublishTask({
+    reporter,
+    cwd,
+    web3,
+    network,
+    module,
+    apm: apmOptions,
+    silent,
+    debug,
+    publishDir,
+    files,
+    ignore,
+    httpServedFrom,
+    provider,
+    onlyArtifacts,
+    onlyContent,
+    http,
+    // context
+    initialRepo,
+    initialVersion,
+    version,
+    contractAddress,
+    deployArtifacts,
+  })
 
-      reporter.info(`Transaction hash: ${transactionHash}`)
-      reporter.debug(`Published directory: ${ctx.pathToPublish}`)
-      process.exit(status ? 0 : 1)
+  // Output publish info
+
+  const { appName } = module
+  const { dao, proxyAddress, methodName, params } = intent
+
+  const contentURI = web3.utils.hexToAscii(params[params.length - 1])
+  const [contentProvier, contentLocation] = contentURI.split(/:(.+)/)
+
+  console.log(
+    '\n',
+    `The following information will be published:`,
+    '\n',
+    `Contract address: ${chalk.blue(contractAddress || ZERO_ADDRESS)}`,
+    '\n',
+    `Content (${contentProvier}): ${chalk.blue(contentLocation)}`,
+    '\n'
+    // TODO: (Gabi) Add extra relevant info (e.g. size)
+    // `Size: ${chalk.blue()}`,
+    // '\n',
+    // `Number of files: ${chalk.blue()}`,
+    // '\n'
+  )
+
+  if (!skipConfirmation) {
+    const { confirmation } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'confirmation',
+        message: chalk.green(`Publish to ${appName} repo`),
+      },
+    ])
+    // new line after confirm
+    console.log()
+    if (!confirmation) return
+  }
+
+  const { receipt, transactionPath, repo } = await runPublishTask({
+    reporter,
+    web3,
+    wsProvider,
+    module,
+    apm: apmOptions,
+    silent,
+    debug,
+    onlyArtifacts,
+    onlyContent,
+    // context
+    dao,
+    proxyAddress,
+    methodName,
+    params,
+  })
+
+  const { transactionHash, status } = receipt
+
+  if (!status) {
+    reporter.error(`\nPublish transaction reverted:\n`)
+  } else {
+    // If the version is still the same, the publish intent was forwarded but not immediately executed (p.e. Voting)
+    if (initialVersion === version) {
+      console.log(
+        '\n',
+        `Successfully executed: "${chalk.green(
+          transactionPath[0].description
+        )}"`,
+        '\n'
+      )
+    } else {
+      const logVersion = 'v' + version
+
+      console.log(
+        '\n',
+        `Successfully published ${appName} ${chalk.green(logVersion)} :`,
+        '\n'
+      )
+    }
+  }
+
+  console.log(`Transaction hash: ${chalk.blue(transactionHash)}`, '\n')
+
+  reporter.debug(`Published directory: ${chalk.blue(pathToPublish)}\n`)
+
+  // Propagate content
+
+  if (!skipConfirmation && propagateContent) {
+    const { confirmation } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'confirmation',
+        message: chalk.green(`Propagate content`),
+      },
+    ])
+    // new line after confirm
+    console.log()
+    if (!confirmation) return repo
+
+    await propagateIPFS.handler({
+      reporter,
+      apm: apmOptions,
+      cid: contentLocation,
     })
-    .catch(() => {
-      process.exit(1)
-    })
+  }
+  return repo
 }

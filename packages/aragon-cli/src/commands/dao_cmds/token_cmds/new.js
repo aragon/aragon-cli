@@ -7,9 +7,8 @@ const web3Utils = require('web3-utils')
 const {
   getRecommendedGasLimit,
   parseStringIfPossible,
+  ZERO_ADDRESS,
 } = require('../../../util')
-
-const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
 const MAINNET_MINIME_TOKEN_FACTORY =
   '0x909d05f384d0663ed4be59863815ab43b4f347ec'
@@ -116,7 +115,7 @@ exports.task = async ({
             data: artifact.bytecode,
             arguments: [
               ctx.factoryAddress || tokenFactoryAddress,
-              ZERO_ADDR,
+              ZERO_ADDRESS,
               0,
               tokenName,
               decimalUnits,

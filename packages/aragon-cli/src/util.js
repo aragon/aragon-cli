@@ -12,6 +12,8 @@ let cachedProjectRoot
 const PGK_MANAGER_BIN_NPM = 'npm'
 const debugLogger = process.env.DEBUG ? console.log : () => {}
 
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+
 const findProjectRoot = () => {
   if (!cachedProjectRoot) {
     try {
@@ -314,5 +316,6 @@ module.exports = {
   getContract,
   ANY_ENTITY,
   NO_MANAGER,
+  ZERO_ADDRESS,
   getRecommendedGasLimit,
 }

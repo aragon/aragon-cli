@@ -7,6 +7,8 @@ import {
 } from '../../lib/ipfs'
 import listrOpts from '../../helpers/listr-options'
 
+const startIPFS = require('./start')
+
 exports.command = 'view <cid>'
 exports.describe =
   'Display metadata about the content, such as size, links, etc.'
@@ -22,6 +24,10 @@ exports.task = ({ apmOptions, silent, debug, cid }) => {
   return new TaskList(
     [
       // TODO validation of the CID
+      {
+        title: 'Check IPFS',
+        task: () => startIPFS.task({ apmOptions }),
+      },
       {
         title: 'Connect to IPFS',
         task: async ctx => {

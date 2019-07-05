@@ -57,14 +57,22 @@ test.skip('should publish an aragon app directory successfully', async t => {
   const manifest = JSON.parse(fs.readFileSync(manifestPath))
 
   // delete some output sections that are not deterministic
+  // TODO: Delete propagate content output
+  const prepublishScriptOutput = stdout.substring(
+    stdout.indexOf('Running prepublish script [started]'),
+    stdout.indexOf('Running prepublish script [completed]')
+  )
+
   const appDeploymentOutput = publishProcess.stdout.substring(
     publishProcess.stdout.indexOf('Fetch published repo [completed]')
   )
 
-  const outputToSnapshot = publishProcess.stdout.replace(
-    appDeploymentOutput,
-    'Fetch published repo [completed][deleted-app-deployment-output]'
-  )
+  const outputToSnapshot = publishProcess.stdout
+    .replace(prepublishScriptOutput, '[deleted-prepublish-script-output]')
+    .replace(
+      appDeploymentOutput,
+      'Fetch published repo [completed][deleted-app-deployment-output]'
+    )
 
   // assert
   t.snapshot(normalizeOutput(outputToSnapshot))

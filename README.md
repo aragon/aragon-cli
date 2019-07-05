@@ -11,11 +11,6 @@
     <img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square"
       alt="Standard" />
   </a>
-  <!-- Greenkeeper -->
-  <a href="https://greenkeeper.io">
-    <img src="https://badges.greenkeeper.io/aragon/aragon-cli.svg?style=flat-square"
-      alt="Greenkeeper" />
-  </a>
   <!-- Lerna -->
   <a href="https://lerna.js.org/">
     <img src="https://img.shields.io/badge/maintained%20with-lerna-blueviolet.svg?style=flat-square"
@@ -83,17 +78,14 @@ Stable versions:
 [latest-stable-npm-badge]: https://img.shields.io/npm/v/@aragon/cli/stable.svg?style=flat-square
 [latest-stable-docs-badge]: https://img.shields.io/badge/docs-latest%20stable-blue.svg?style=flat-square
 [latest-stable-docs-link]: https://hack.aragon.org/docs/cli-intro.html
-
 [593-npm-badge]: https://img.shields.io/badge/npm-v5.9.3-blue.svg?style=flat-square
 [593-npm-link]: https://www.npmjs.com/package/@aragon/cli/v/5.9.3
 [593-docs-badge]: https://img.shields.io/badge/docs-v5.9.3-blue.svg?style=flat-square
 [593-docs-link]: https://github.com/aragon/aragon-cli/blob/v5.9.3/docs/Intro.md
-
 [580-npm-badge]: https://img.shields.io/badge/npm-v5.8.0-blue.svg?style=flat-square
 [580-npm-link]: https://www.npmjs.com/package/@aragon/cli/v/5.7.0
 [580-docs-badge]: https://img.shields.io/badge/docs-v5.8.0-blue.svg?style=flat-square
 [580-docs-link]: https://github.com/aragon/aragon-cli/blob/v5.8.0/docs/Intro.md
-
 [562-npm-badge]: https://img.shields.io/badge/npm-v5.6.2-blue.svg?style=flat-square
 [562-npm-link]: https://www.npmjs.com/package/@aragon/cli/v/5.6.2
 [562-docs-badge]: https://img.shields.io/badge/docs-v5.6.2-blue.svg?style=flat-square
@@ -131,7 +123,6 @@ npm run link
 [nightly-coverage-link]: https://coveralls.io/github/aragon/aragon-cli
 [nightly-build-badge]: https://img.shields.io/travis/aragon/aragon-cli/master.svg?style=flat-square
 [nightly-build-link]: https://travis-ci.org/aragon/aragon-cli/branches
-
 [npm-link]: https://npmjs.org/package/@aragon/cli
 [stability-stable-badge]: https://img.shields.io/badge/stability-stable-brightgreen.svg?style=flat-square
 [stability-experimental-badge]: https://img.shields.io/badge/stability-experimental-orange.svg?style=flat-square

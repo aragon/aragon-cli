@@ -92,7 +92,13 @@ exports.builder = function(yargs) {
     })
     .option('prepublish-script', {
       description: 'The npm script that will be run before publishing the app',
-      default: 'prepublish',
+      default: 'prepublishOnly',
+    })
+    .option('bump', {
+      description:
+        'Type of bump (major, minor or patch) or version number to publish the app',
+      type: 'string',
+      default: 'major',
     })
     .option('http', {
       description: 'URL for where your app is served from e.g. localhost:1234',
@@ -151,6 +157,7 @@ exports.handler = function({
   buildScript,
   prepublish,
   prepublishScript,
+  bump,
   http,
   httpServedFrom,
   appInit,
@@ -207,11 +214,14 @@ exports.handler = function({
             contract: deploy.arappContract(),
             web3: ctx.web3,
             apm: apmOptions,
-            bump: 'major',
+            bump,
             http,
             httpServedFrom,
+            propagateContet: false,
+            skipConfirmation: true,
           }
-          return publish.task(publishParams)
+          // TODO: (Gabi) Prevent propagate content as default
+          ctx.repo = await publish.handler(publishParams)
         },
       },
       {
