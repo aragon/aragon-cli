@@ -92,7 +92,7 @@ exports.builder = function(yargs) {
     })
     .option('prepublish-script', {
       description: 'The npm script that will be run before publishing the app',
-      default: 'prepublish',
+      default: 'prepublishOnly',
     })
     .option('bump', {
       description:

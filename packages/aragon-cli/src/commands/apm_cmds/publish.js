@@ -118,7 +118,7 @@ exports.builder = function(yargs) {
     })
     .option('prepublish-script', {
       description: 'The npm script that will be run before publishing the app',
-      default: 'prepublish',
+      default: 'prepublishOnly',
     })
     .option('http', {
       description: 'URL for where your app is served e.g. localhost:1234',

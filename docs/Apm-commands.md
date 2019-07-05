@@ -89,7 +89,7 @@ The command has the following parameters:
 - `--build`: A flag to specify whether the webapp should be built while publishing, running the script specified in `build-script` of `package.json`. Defaults to `true`.
 - `--build-script`: The name of the NPM script in your app that will be used for building the webapp.
 - `--prepublish`: A flag to specify whether to run a prepublish script specified in `prepublish-script` of `package.json`. Defaults to `true`.
-- `--prepublish-script`: The name of the NPM script in your app that will be run before publishing the app.
+- `--prepublish-script`: The name of the NPM script in your app that will be run before publishing the app. Defaults to `prepublishOnly`.
 - `--http`: The URI for the HTTP server that will be serving your app files (e.g. localhost:1234). See [instructions on running from HTTP](#running-your-app-from-a-development-http-server) for more information.
 - `--http-served-from`: Path to the directory that the HTTP server exposes (e.g. ./dist). Some artifacts are generated and placed in this directory during the publishing process of your app.
 - `--ipfs-check`: Whether to have start IPFS if not started. Defaults to `true`.
