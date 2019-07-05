@@ -3,6 +3,7 @@ const path = require('path')
 const execa = require('execa')
 const net = require('net')
 const fs = require('fs')
+const { readJson } = require('fs-extra')
 const web3Utils = require('web3-utils')
 const which = require('which')
 
@@ -128,6 +129,34 @@ const getGlobalBinary = binaryName => {
   } catch {
     return null
   }
+}
+
+const runScriptTask = async (task, scriptName) => {
+  if (!fs.existsSync('package.json')) {
+    task.skip('No package.json found')
+    return
+  }
+
+  const packageJson = await readJson('package.json')
+  const scripts = packageJson.scripts || {}
+  if (!scripts[scriptName]) {
+    task.skip('Build script not defined in package.json')
+    return
+  }
+
+  const bin = getNodePackageManager()
+  const scriptTask = execa(bin, ['run', scriptName])
+
+  scriptTask.stdout.on('data', log => {
+    if (!log) return
+    task.output = `npm run ${scriptName}: ${log}`
+  })
+
+  return scriptTask.catch(err => {
+    throw new Error(
+      `${err.message}\n${err.stderr}\n\nFailed to build. See above output.`
+    )
+  })
 }
 
 const getContract = (pkg, contract) => {
@@ -277,6 +306,7 @@ module.exports = {
   findProjectRoot,
   isPortTaken,
   installDeps,
+  runScriptTask,
   getNodePackageManager,
   getBinary,
   getLocalBinary,
