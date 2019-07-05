@@ -63,7 +63,7 @@
     "get-folder-size": "^2.0.1",
     "git-clone": "^0.1.0",
     "go-platform": "^1.0.0",
-    "ignore": "^4.0.6",
+    "ignore": "^5.1.2",
     "inquirer": "^6.4.1",
     "internal-ip": "^4.3.0",
     "ipfs-api": "^26.1.2",
