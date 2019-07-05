@@ -9,7 +9,7 @@
     "test:watch": "ava --watch",
     "test:debug": "cross-env DEBUG=true npm run test",
     "test:clean": "npm run posttest && npm run reset-cache",
-    "update-snapshots": "npm run pretest -- --update-snapshots && ava --update-snapshots && npm run posttest -- --update-snapshots",
+    "update-snapshots": "npm run test:clean && npm run pretest -- --update-snapshots && ava --update-snapshots && npm run posttest -- --update-snapshots",
     "reset-cache": "ava --reset-cache"
   },
   "author": "Aragon Association <legal@aragon.org>",

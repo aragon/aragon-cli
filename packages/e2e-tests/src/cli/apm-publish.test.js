@@ -9,7 +9,7 @@ const MANIFEST_FILE = 'manifest.json'
 const testSandbox = './.tmp'
 const projectName = 'foobar'
 
-test.skip('should publish an aragon app directory successfully', async t => {
+test('should publish an aragon app directory successfully', async t => {
   t.plan(3)
 
   const publishDirPath = path.resolve(`${testSandbox}/publish-dir`)
