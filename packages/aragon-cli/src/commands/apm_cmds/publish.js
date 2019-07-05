@@ -335,6 +335,7 @@ const runPrepareForPublishTask = ({
   initialRepo,
   initialVersion,
   version,
+  contractAddress,
   deployArtifacts,
 }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
@@ -485,17 +486,18 @@ const runPrepareForPublishTask = ({
         },
       },
       {
-        title: `Upload files to provider`,
-        enabled: () => !onlyArtifacts,
+        title: `Publish intent`,
         task: async (ctx, task) => {
-          const contentProvider = http ? 'http' : provider
-          const dir = http || ctx.pathToPublish
-
-          ctx.contentURI = await apm.uploadFilesToStorageProvider(
-            contentProvider,
-            dir
+          const accounts = await web3.eth.getAccounts()
+          const from = accounts[0]
+          ctx.intent = await apm.publishVersionIntent(
+            from,
+            module.appName,
+            version,
+            provider,
+            publishDir,
+            contractAddress
           )
-          return `Files uploaded to ${ctx.contentURI}`
         },
       },
     ],
@@ -518,36 +520,18 @@ const runPublishTask = ({
   /// Conditionals
   onlyArtifacts,
 
-  // Context
-  version,
-  contentURI,
-  contractAddress,
+  /// Context
+  dao,
+  proxyAddress,
+  methodName,
+  params,
 }) => {
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
-  const apm = APM(web3, apmOptions)
-
   return new TaskList(
     [
       {
         title: `Publish ${module.appName}`,
         task: async (ctx, task) => {
-          // TODO: (Gabi) Check if still necesary
-          // ctx.contractInstance = null // clean up deploy sub-command artifacts
-
-          const accounts = await web3.eth.getAccounts()
-          const from = accounts[0]
-
           try {
-            const intent = await apm.publishVersionIntent(
-              from,
-              module.appName,
-              version,
-              contentURI,
-              contractAddress
-            )
-
-            const { dao, proxyAddress, methodName, params } = intent
-
             const getTransactionPath = wrapper => {
               return wrapper.getTransactionPath(
                 proxyAddress,
@@ -637,7 +621,7 @@ exports.handler = async function({
     http,
   })
 
-  const { pathToPublish, contentURI } = await runPrepareForPublishTask({
+  const { pathToPublish, intent } = await runPrepareForPublishTask({
     reporter,
     cwd,
     web3,
@@ -658,14 +642,17 @@ exports.handler = async function({
     initialRepo,
     initialVersion,
     version,
+    contractAddress,
     deployArtifacts,
   })
 
   // Output publish info
 
   const { appName } = module
+  const { dao, proxyAddress, methodName, params } = intent
 
-  const contentLocation = contentURI.split(/:(.+)/)[1]
+  const contentURI = web3.utils.hexToAscii(params[params.length - 1])
+  const [contentProvier, contentLocation] = contentURI.split(/:(.+)/)
 
   console.log(
     '\n',
@@ -673,7 +660,7 @@ exports.handler = async function({
     '\n',
     `Contract address: ${chalk.blue(contractAddress || ZERO_ADDRESS)}`,
     '\n',
-    `Content (${http ? 'http' : provider}): ${chalk.blue(contentLocation)}`,
+    `Content (${contentProvier}): ${chalk.blue(contentLocation)}`,
     '\n'
     // TODO: (Gabi) Add extra relevant info (e.g. size)
     // `Size: ${chalk.blue()}`,
@@ -705,9 +692,10 @@ exports.handler = async function({
     debug,
     onlyArtifacts,
     // context
-    version,
-    contentURI,
-    contractAddress,
+    dao,
+    proxyAddress,
+    methodName,
+    params,
   })
 
   const { transactionHash, status } = receipt
@@ -715,7 +703,7 @@ exports.handler = async function({
   let propagateContent = false
 
   if (!status) {
-    reporter.error(`\nPublish transacti'on reverted:\n`)
+    reporter.error(`\nPublish transaction reverted:\n`)
   } else {
     // If the version is still the same, the publish intent was forwarded but not immediately executed (p.e. Voting)
     if (initialVersion === version) {
