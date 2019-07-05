@@ -31,6 +31,8 @@ const {
   generateFlattenedCode,
   copyCurrentApplicationArtifacts,
   SOLIDITY_FILE,
+  POSITIVE_ANSWERS,
+  ANSWERS,
 } = require('./util/generate-artifact')
 
 exports.command = 'publish <bump> [contract]'
@@ -341,10 +343,6 @@ const runPrepareForPublishTask = ({
 }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
-
-  const POSITIVE_ANSWERS = ['yes', 'y']
-  const NEGATIVE_ANSWERS = ['no', 'n', 'abort', 'a']
-  const ANSWERS = POSITIVE_ANSWERS.concat(NEGATIVE_ANSWERS)
 
   return new TaskList(
     [

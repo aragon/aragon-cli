@@ -4,10 +4,15 @@ const { readJson, writeJson } = require('fs-extra')
 const flatten = require('truffle-flattener')
 const extract = require('../../../helpers/solidity-extractor')
 const namehash = require('eth-ens-namehash')
+const taskInput = require('listr-input')
 const { keccak256 } = require('js-sha3')
 
 const { ARTIFACT_FILE } = require('./preprare-files')
 const SOLIDITY_FILE = 'code.sol'
+
+const POSITIVE_ANSWERS = ['yes', 'y']
+const NEGATIVE_ANSWERS = ['no', 'n', 'abort', 'a']
+const ANSWERS = POSITIVE_ANSWERS.concat(NEGATIVE_ANSWERS)
 
 const getMajor = version => version.split('.')[0]
 
@@ -59,8 +64,18 @@ async function deprecatedFunctions(apm, artifact, web3, reporter) {
           }
         } else {
           reporter.warning(
-            `Cannot find artifacts for version ${version.version} in aragonPM repo. Please make sure the package was published and your IPFS or HTTP server are running.`
+            `Cannot find artifacts for version ${version.version} in aragonPM. Please make sure the package was published and your IPFS or HTTP server are running.\n`
           )
+          return taskInput(`Abort publication? [y]es/[n]o`, {
+            validate: value => {
+              return ANSWERS.indexOf(value) > -1
+            },
+            done: async answer => {
+              if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
+                throw new Error('Aborting publication...')
+              }
+            },
+          })
         }
       }
     })
@@ -204,6 +219,9 @@ async function copyCurrentApplicationArtifacts(
 }
 
 module.exports = {
+  POSITIVE_ANSWERS,
+  NEGATIVE_ANSWERS,
+  ANSWERS,
   SOLIDITY_FILE,
   getMajor,
   generateApplicationArtifact,
