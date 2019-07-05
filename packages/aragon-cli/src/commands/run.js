@@ -217,6 +217,7 @@ exports.handler = function({
             bump,
             http,
             httpServedFrom,
+            propagateContet: false,
             skipConfirmation: true,
           }
           // TODO: (Gabi) Prevent propagate content as default

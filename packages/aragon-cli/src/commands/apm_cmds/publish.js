@@ -129,6 +129,11 @@ exports.builder = function(yargs) {
         'Directory where your files is being served from e.g. ./dist',
       default: null,
     })
+    .option('propagate-content', {
+      description: 'Whether to propagate the content once published',
+      boolean: true,
+      default: true,
+    })
     .option('skip-confirmation', {
       description: 'Whether to skip the confirmation step',
       boolean: true,
@@ -598,6 +603,7 @@ exports.handler = async function({
   prepublishScript,
   http,
   httpServedFrom,
+  propagateContent,
   skipConfirmation,
 }) {
   const web3 = await ensureWeb3(network)
@@ -711,8 +717,6 @@ exports.handler = async function({
 
   const { transactionHash, status } = receipt
 
-  let propagateContent = false
-
   if (!status) {
     reporter.error(`\nPublish transaction reverted:\n`)
   } else {
@@ -726,8 +730,6 @@ exports.handler = async function({
         '\n'
       )
     } else {
-      propagateContent = true
-
       const logVersion = 'v' + version
 
       console.log(
@@ -755,13 +757,12 @@ exports.handler = async function({
     // new line after confirm
     console.log()
     if (!confirmation) return repo
+
+    await propagateIPFS.handler({
+      reporter,
+      apm: apmOptions,
+      cid: contentLocation,
+    })
   }
-
-  await propagateIPFS.handler({
-    reporter,
-    apm: apmOptions,
-    cid: contentLocation,
-  })
-
   return repo
 }
