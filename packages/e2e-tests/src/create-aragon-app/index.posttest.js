@@ -1,13 +1,13 @@
 import test from 'ava'
-import fs from 'fs-extra'
+import { remove } from 'fs-extra'
 
-const testSandbox = './.tmp'
+const testSandbox = './.tmp/foobar'
 
 test('should clean the aragon app created for tests', async t => {
   t.plan(1)
 
   // act
-  fs.removeSync(testSandbox)
+  await remove(testSandbox)
 
   // assert
   t.pass()

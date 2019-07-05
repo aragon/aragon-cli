@@ -9,7 +9,7 @@ test('should run an aragon app successfully', async t => {
   t.plan(3)
 
   // act
-  const runProcess = await startBackgroundProcess({
+  const { stdout, exit } = await startBackgroundProcess({
     cmd: 'aragon',
     args: ['run', '--debug'],
     execaOpts: {
@@ -30,7 +30,7 @@ test('should run an aragon app successfully', async t => {
   await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000)) // TODO move to utils
 
   // finding the DAO address
-  const daoAddress = runProcess.stdout.match(
+  const daoAddress = stdout.match(
     /DAO address: (0x[a-fA-F0-9]{40})/
   )[1]
 
@@ -39,19 +39,25 @@ test('should run an aragon app successfully', async t => {
   const fetchBody = await fetchResult.text()
 
   // cleanup
-  await runProcess.exit()
+  await exit()
 
   // delete some output sections that are not deterministic
-  const appBuildOutput = runProcess.stdout.substring(
-    runProcess.stdout.indexOf('Building frontend [started]'),
-    runProcess.stdout.indexOf('Building frontend [completed]')
-  )
-  const wrapperInstallOutput = runProcess.stdout.substring(
-    runProcess.stdout.indexOf('Downloading wrapper [started]'),
-    runProcess.stdout.indexOf('Starting Aragon client [started]')
+  const prepublishScriptOutput = stdout.substring(
+    stdout.indexOf('Running prepublish script [started]'),
+    stdout.indexOf('Running prepublish script [completed]')
   )
 
-  const outputToSnapshot = runProcess.stdout
+  const appBuildOutput = stdout.substring(
+    stdout.indexOf('Building frontend [started]'),
+    stdout.indexOf('Building frontend [completed]')
+  )
+  const wrapperInstallOutput = stdout.substring(
+    stdout.indexOf('Downloading wrapper [started]'),
+    stdout.indexOf('Starting Aragon client [started]')
+  )
+
+  const outputToSnapshot = stdout
+    .replace(prepublishScriptOutput, '[deleted-prepublish-script-output]')
     .replace(appBuildOutput, '[deleted-app-build-output]')
     .replace(wrapperInstallOutput, '[deleted-wrapper-install-output]')
     .replace(new RegExp(daoAddress, 'g'), '[deleted-dao-address]')

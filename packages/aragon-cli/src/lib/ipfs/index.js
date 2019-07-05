@@ -3,24 +3,64 @@ import byteSize from 'byte-size'
 import { stringifyTree } from 'stringify-tree'
 import ipfsAPI from 'ipfs-http-client' // TODO: import only submodules?
 import fetch from 'node-fetch'
+import { readJson } from 'fs-extra'
+import { join as joinPath } from 'path'
+import { homedir } from 'os'
+import { isPortTaken } from '../../util'
+import getFolderSize from 'get-folder-size'
+import url from 'url'
 
 const FETCH_TIMEOUT = 20000 // 20s
 const FETCH_TIMEOUT_ERR = 'Request timed out'
 
-export async function ensureConnection(rpc) {
+export async function ensureConnection(apiAddress) {
   try {
-    const client = connectToAPI(rpc)
+    const client = connectToAPI(apiAddress)
     await client.id()
     return {
       client,
     }
   } catch (e) {
-    throw new Error(`Could not connect to IPFS at ${JSON.stringify(rpc)}`)
+    throw new Error(
+      `Could not connect to the IPFS API at ${JSON.stringify(apiAddress)}`
+    )
   }
 }
 
-export function connectToAPI(rpc) {
-  return ipfsAPI(rpc)
+export function connectToAPI(apiAddress) {
+  return ipfsAPI(apiAddress)
+}
+
+export function parseAddressAsURL(address) {
+  const uri = new url.URL(address)
+  return {
+    protocol: uri.protocol.replace(':', ''),
+    host: uri.hostname,
+    port: parseInt(uri.port),
+  }
+}
+
+/**
+ * Check whether the daemon is running by connecting to the API.
+ *
+ * @param {URL} apiAddress a `URL` object
+ * @returns {boolean} true if it is running
+ */
+export async function isDaemonRunning(apiAddress) {
+  const portTaken = await isPortTaken(apiAddress.port)
+
+  if (!portTaken) {
+    return false
+  }
+
+  try {
+    // if port is taken, connect to the API,
+    // otherwise we can assume the port is taken by a different process
+    await ensureConnection(apiAddress)
+    return true
+  } catch (e) {
+    return false
+  }
 }
 
 export async function getMerkleDAG(client, cid, opts = {}) {
@@ -166,4 +206,52 @@ export async function propagateFiles(CIDs, logger = () => {}) {
     failed: results.reduce((prev, current) => prev + current.failed, 0),
     errors: results.reduce((prev, current) => [...prev, ...current.errors], []),
   }
+}
+
+export function getDefaultRepoPath() {
+  const homedirPath = homedir()
+  return joinPath(homedirPath, '.ipfs')
+}
+
+export async function getRepoVersion(repoLocation) {
+  const versionFilePath = joinPath(repoLocation, 'version')
+  const version = await readJson(versionFilePath)
+  return version
+}
+
+export async function getRepoSize(repoLocation) {
+  return new Promise((resolve, reject) => {
+    getFolderSize(repoLocation, (err, size) => {
+      if (err) {
+        reject(err)
+      } else {
+        const humanReadableSize = byteSize(size)
+        resolve(humanReadableSize)
+      }
+    })
+  })
+}
+
+export async function getRepoConfig(repoLocation) {
+  const configFilePath = joinPath(repoLocation, 'config')
+  const config = await readJson(configFilePath)
+  return config
+}
+
+export function getPortsConfig(repoConfig) {
+  return {
+    // default: "/ip4/127.0.0.1/tcp/5001"
+    api: repoConfig.Addresses.API.split('/').pop(),
+    // default: "/ip4/127.0.0.1/tcp/8080"
+    gateway: repoConfig.Addresses.Gateway.split('/').pop(),
+    // default: [
+    //   "/ip4/0.0.0.0/tcp/4001"
+    //   "/ip6/::/tcp/4001"
+    // ]
+    swarm: repoConfig.Addresses.Swarm[0].split('/').pop(),
+  }
+}
+
+export function getPeerIDConfig(repoConfig) {
+  return repoConfig.Identity.PeerID
 }

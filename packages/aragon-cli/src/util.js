@@ -5,10 +5,12 @@ const net = require('net')
 const fs = require('fs')
 const { readJson } = require('fs-extra')
 const web3Utils = require('web3-utils')
+const which = require('which')
 
 let cachedProjectRoot
 
 const PGK_MANAGER_BIN_NPM = 'npm'
+const debugLogger = process.env.DEBUG ? console.log : () => {}
 
 const findProjectRoot = () => {
   if (!cachedProjectRoot) {
@@ -63,35 +65,29 @@ const installDeps = (cwd, task) => {
   })
 }
 
-const runScriptTask = async (task, scritpName) => {
-  if (!fs.existsSync('package.json')) {
-    task.skip('No package.json found')
-    return
+/**
+ * Attempts to find the binary path locally and then globally.
+ *
+ * @param {string} binaryName e.g.: `ipfs`
+ * @returns {string} the path to the binary, `null` if unsuccessful
+ */
+const getBinary = binaryName => {
+  let binaryPath = getLocalBinary(binaryName)
+
+  if (binaryPath === null) {
+    binaryPath = getGlobalBinary(binaryName)
   }
 
-  const packageJson = await readJson('package.json')
-  const scripts = packageJson.scripts || {}
-  if (!scripts[scritpName]) {
-    task.skip('Build script not defined in package.json')
-    return
+  if (binaryPath === null) {
+    debugLogger(`Cannot find binary ${binaryName}.`)
+  } else {
+    debugLogger(`Found binary ${binaryName} at ${binaryPath}.`)
   }
 
-  const bin = getNodePackageManager()
-  const scriptTask = execa(bin, ['run', scritpName])
-
-  scriptTask.stdout.on('data', log => {
-    if (!log) return
-    task.output = `npm run ${scritpName}: ${log}`
-  })
-
-  return scriptTask.catch(err => {
-    throw new Error(
-      `${err.message}\n${err.stderr}\n\nFailed to build. See above output.`
-    )
-  })
+  return binaryPath
 }
 
-const getDependentBinary = (binaryName, projectRoot) => {
+const getLocalBinary = (binaryName, projectRoot) => {
   if (!projectRoot) {
     // __dirname evaluates to the directory of this file (util.js)
     // e.g.: `../dist/` or `../src/`
@@ -101,6 +97,7 @@ const getDependentBinary = (binaryName, projectRoot) => {
   // check local node_modules
   let binaryPath = path.join(projectRoot, 'node_modules', '.bin', binaryName)
 
+  debugLogger(`Searching binary ${binaryName} at ${binaryPath}`)
   if (fs.existsSync(binaryPath)) {
     return binaryPath
   }
@@ -108,6 +105,7 @@ const getDependentBinary = (binaryName, projectRoot) => {
   // check parent node_modules
   binaryPath = path.join(projectRoot, '..', '.bin', binaryName)
 
+  debugLogger(`Searching binary ${binaryName} at ${binaryPath}.`)
   if (fs.existsSync(binaryPath)) {
     return binaryPath
   }
@@ -115,13 +113,50 @@ const getDependentBinary = (binaryName, projectRoot) => {
   // check parent node_modules if this module is scoped (e.g.: @scope/package)
   binaryPath = path.join(projectRoot, '..', '..', '.bin', binaryName)
 
+  debugLogger(`Searching binary ${binaryName} at ${binaryPath}.`)
   if (fs.existsSync(binaryPath)) {
     return binaryPath
   }
 
-  throw new Error(
-    `Cannot find the ${binaryName} dependency. Has this module installed correctly?`
-  )
+  return null
+}
+
+const getGlobalBinary = binaryName => {
+  debugLogger(`Searching binary ${binaryName} in the global PATH variable.`)
+
+  try {
+    return which.sync(binaryName)
+  } catch {
+    return null
+  }
+}
+
+const runScriptTask = async (task, scriptName) => {
+  if (!fs.existsSync('package.json')) {
+    task.skip('No package.json found')
+    return
+  }
+
+  const packageJson = await readJson('package.json')
+  const scripts = packageJson.scripts || {}
+  if (!scripts[scriptName]) {
+    task.skip('Build script not defined in package.json')
+    return
+  }
+
+  const bin = getNodePackageManager()
+  const scriptTask = execa(bin, ['run', scriptName])
+
+  scriptTask.stdout.on('data', log => {
+    if (!log) return
+    task.output = `npm run ${scriptName}: ${log}`
+  })
+
+  return scriptTask.catch(err => {
+    throw new Error(
+      `${err.message}\n${err.stderr}\n\nFailed to build. See above output.`
+    )
+  })
 }
 
 const getContract = (pkg, contract) => {
@@ -267,12 +302,15 @@ const parseStringIfPossible = target => {
 
 module.exports = {
   parseStringIfPossible,
+  debugLogger,
   findProjectRoot,
   isPortTaken,
   installDeps,
   runScriptTask,
   getNodePackageManager,
-  getDependentBinary,
+  getBinary,
+  getLocalBinary,
+  getGlobalBinary,
   getContract,
   ANY_ENTITY,
   NO_MANAGER,
