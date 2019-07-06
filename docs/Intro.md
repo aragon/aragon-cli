@@ -1,8 +1,30 @@
 ![aragonCLI logo](/docs/assets/brand/aragoncli.png)
 
-The aragonCLI (Command Line Interface) is used to create and develop Aragon apps.
+The aragonCLI (Command Line Interface) is used to create, develop, configure and manage Aragon DAOs and Applications.
 
-## Install
+## Installation
+
+### Installation pre-requisites
+
+The following must be installed prior to installation:
+
+- Node + npm
+  - Version of Node we recommend to be [the latest LTS version, available to download here](https://nodejs.org/en/).
+  - After downloading and unpacking, you must add the /bin folder to you $PATH. 
+  
+For Linux:
+- git
+  - Install this using the command `sudo apt install git`
+- python
+  - Install this using the command `sudo apt install python`
+  
+For Mac:
+- git
+  - Install this using the [official installer](http://sourceforge.net/projects/git-osx-installer/). We recommend using the package manager [Homebrew](https://brew.sh), in this case use the command `brew install git`.
+
+Note: Python comes pre-installed on Mac.
+
+### Install aragonCLI
 
 The aragonCLI can be installed from NPM:
 
