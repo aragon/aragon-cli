@@ -60,7 +60,7 @@ All notable changes to this project will be documented in this file.
 Release date: **2019-07-05**  
 [Compare code changes](https://github.com/aragon/aragon-cli/compare/v5.10.0...@aragon/cli@6.0.0)
 
-### What’s changed in aragonCL
+### What’s changed in aragonCLI
 
 ### 🚀 New features
 
