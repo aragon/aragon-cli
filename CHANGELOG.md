@@ -26,7 +26,7 @@ All notable changes to this project will be documented in this file.
     - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-4)
     - [💡 Feature updates](#-feature-updates-3)
     - [🐛 Bug Fixes](#-bug-fixes-2)
-  - [v5.9.3](#v593)
+  - [v5.9.3](#v593)(🌳 STABLE)
     - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-5)
     - [🐛 Bug Fixes](#-bug-fixes-3)
   - [v5.9.2](#v592)
