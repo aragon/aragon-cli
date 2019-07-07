@@ -3,36 +3,42 @@
 All notable changes to this project will be documented in this file.
 
 - [Changelog](#Changelog)
-  - [v5.10.0](#v5100)
+  - [v6.0.0](#v600)
     - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI)
-    - [🚀 New features](#%F0%9F%9A%80-New-features)
-    - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates)
-    - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes)
-    - [🛠️ Maintenance & internal changes](#%F0%9F%9B%A0%EF%B8%8F-Maintenance--internal-changes)
-  - [v5.9.6](#v596)
+    - [🚀 New features](#-new-features)
+    - [💡 Feature updates](#-feature-updates)
+    - [🐛 Bug Fixes](#-bug-Fixes)
+    - [🛠️ Maintenance & internal changes](#-maintenance--internal-changes)
+  - [v5.10.0](#v5100)
     - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-1)
-    - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates-1)
-    - [🛠️ Maintenance & internal changes](#%F0%9F%9B%A0%EF%B8%8F-Maintenance--internal-changes-1)
-  - [v5.9.5](#v595)
+    - [🚀 New features](#-new-features-1)
+    - [💡 Feature updates](#-feature-updates-1)
+    - [🐛 Bug Fixes](#-bug-fixes-1)
+    - [🛠️ Maintenance & internal changes](#-maintenance--internal-changes-1)
+  - [v5.9.6](#v596)
     - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-2)
-    - [🛠️ Maintenance & internal changes](#%F0%9F%9B%A0%EF%B8%8F-Maintenance--internal-changes-2)
-  - [v5.9.4](#v594)
+    - [💡 Feature updates](#-feature-updates-2)
+    - [🛠️ Maintenance & internal changes](#-maintenance--internal-changes-2)
+  - [v5.9.5](#v595)
     - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-3)
-    - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates-2)
-    - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-1)
-  - [v5.9.3](#v593)
+    - [🛠️ Maintenance & internal changes](#-maintenance--internal-changes-3)
+  - [v5.9.4](#v594)
     - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-4)
-    - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-2)
-  - [v5.9.2](#v592)
+    - [💡 Feature updates](#-feature-updates-3)
+    - [🐛 Bug Fixes](#-bug-fixes-2)
+  - [v5.9.3](#v593)(🌳 STABLE)
     - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-5)
-    - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-3)
-  - [v5.9.1](#v591)
+    - [🐛 Bug Fixes](#-bug-fixes-3)
+  - [v5.9.2](#v592)
     - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-6)
-    - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-4)
-  - [v5.9.0](#v590)
+    - [🐛 Bug Fixes](#-bug-fixes-4)
+  - [v5.9.1](#v591)
     - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-7)
-    - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates-3)
-    - [🛠️ Maintenance & internal changes](#%F0%9F%9B%A0%EF%B8%8F-Maintenance--internal-changes-3)
+    - [🐛 Bug Fixes](#-bug-fixes-5)
+  - [v5.9.0](#v590)
+    - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-8)
+    - [💡 Feature updates](#-feature-updates-4)
+    - [🛠️ Maintenance & internal changes](#-maintenance--internal-changes-4)
   - [v5.8.0](#v580)
   - [v5.7.2](#v572)
   - [v5.7.1](#v571)
@@ -47,6 +53,44 @@ All notable changes to this project will be documented in this file.
   - [v5.3.1](#v531)
   - [v5.3.0](#v530)
   
+---
+
+## v6.0.0
+
+Release date: **2019-07-05**  
+[Compare code changes](https://github.com/aragon/aragon-cli/compare/v5.10.0...@aragon/cli@6.0.0)
+
+### What’s changed in aragonCLI
+
+### 🚀 New features
+
+* Make go-ipfs optional (#528) @0x6431346e
+   * Introduce three new IPFS commands: `aragon ipfs install`, `aragon ipfs uninstall` and `aragon ipfs status`
+* Output publish information before publishing when using `aragon apm publish` (#574) @0xGabi
+   * Refactor the whole publish process prompting the user to decide if:
+      1. Publish the content to aragonPM repo
+      2. Propagate the content through IPFS (if applicable)
+* Sanity check `artifact.json` generation and include the `deprecated` key on `artifact.json`. This new key have the information of the deprecated functions between different contract version published (#426) @0xGabi
+
+### 💡 Feature updates
+* Update `dao token new` options to use a deployed `minimeTokenFactory` in Rinkeby and Mainnet as default (#555) @0xGabi
+* Refactor artifact generation & improve sanity check (#570) @0xGabi
+* New prepublish option for `aragon apm publish` that allow to run a script before publish the app (#571) @0xGabi
+* Pass apm opts to @aragon/wrapper (#567) @0x6431346e
+
+### 🐛 Bug Fixes
+
+* Update dao token new options (#555) @0xGabi
+
+### 🛠️ Maintenance (non-API changes)
+* Include documentation about links (#543) @0xGabi
+* Update apm docs (#525) @0x6431346e
+* Add appveyor.yml (#562) @0xGabi
+* Fix e2e test setup (#545) @0xGabi
+* Fix lockfiles (#550) @0x6431346e
+* Update dependencies (#526) @0x6431346e
+* Add CHANGELOG.md (#523) @0x6431346e
+
 ---
 
 ## v5.10.0
