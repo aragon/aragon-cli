@@ -19,7 +19,7 @@ Example:
 npm run delete-lockfiles
 npm run bootstrap
 npm run bootstrap
-npm run create-lockfiles
+npm run convert-lockfiles
 npm run fix-lockfiles
 ```
 

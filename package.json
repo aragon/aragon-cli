@@ -12,7 +12,7 @@
     "bootstrap": "lerna exec --ignore @aragon/e2e-tests -- npm install",
     "bootstrap-e2e-tests": "lerna exec --scope @aragon/e2e-tests -- npm install --no-package-lock",
     "delete-lockfiles": "lerna exec --ignore @aragon/e2e-tests -- rm npm-shrinkwrap.json",
-    "create-lockfiles": "lerna exec --ignore @aragon/e2e-tests -- npm shrinkwrap",
+    "convert-lockfiles": "lerna exec --ignore @aragon/e2e-tests -- npm shrinkwrap",
     "fix-lockfiles": "lerna run fix-lockfile",
     "link": "lerna run link",
     "unlink": "lerna run unlink",
