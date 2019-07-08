@@ -16,6 +16,7 @@ All changes to this project will be documented in this file.
     - [🛠️ Maintenance (non-API changes)](#%F0%9F%9B%A0%EF%B8%8F-Maintenance-non-API-changes-2)
   - [v6.0.0](#v600)
     - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-4)
+    - [💥 Breaking changes](#%F0%9F%92%A5-Breaking-changes)
     - [🚀 New features](#%F0%9F%9A%80-New-features)
     - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates)
     - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes)
@@ -129,6 +130,11 @@ Release date: **2019-07-05**
 [Compare code changes][v6.0.0]
 
 ### What’s changed in aragonCLI
+
+### 💥 Breaking changes
+
+- `ipfs` is no longer installed by default, you need to call `aragon ipfs install`.
+- `aragon apm publish` now requires confirmation, use the `--skip-confirmation` flag to migrate your scripts or CI configs.
 
 ### 🚀 New features
 
