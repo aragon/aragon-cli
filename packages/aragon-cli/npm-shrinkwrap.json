@@ -6590,9 +6590,9 @@
       }
     },
     "eslint-config-prettier": {
-      "version": "5.1.0",
-      "resolved": "https://registry.npmjs.org/eslint-config-prettier/-/eslint-config-prettier-5.1.0.tgz",
-      "integrity": "sha512-+tpiaLm3wl6fPW5nq0dDyVowQM0FT61lAdWZ+sDWgk6kKzgbOnCDwlcbwI38cyCBhq+Z3ret5Iofp6/gZpO0zw==",
+      "version": "6.0.0",
+      "resolved": "https://registry.npmjs.org/eslint-config-prettier/-/eslint-config-prettier-6.0.0.tgz",
+      "integrity": "sha512-vDrcCFE3+2ixNT5H83g28bO/uYAwibJxerXPj+E7op4qzBCsAV36QfvdAyVOoNxKAH2Os/e01T/2x++V0LPukA==",
       "dev": true,
       "requires": {
         "get-stdin": "^6.0.0"
@@ -7000,8 +7000,8 @@
       },
       "dependencies": {
         "async-eventemitter": {
-          "version": "0.2.3",
-          "resolved": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
+          "version": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
+          "from": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
           "requires": {
             "async": "^2.4.0"
           }
@@ -10679,8 +10679,8 @@
               },
               "dependencies": {
                 "async-eventemitter": {
-                  "version": "0.2.3",
-                  "resolved": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
+                  "version": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
+                  "from": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
                   "requires": {
                     "async": "^2.4.0"
                   }
