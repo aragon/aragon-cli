@@ -1135,9 +1135,9 @@
       }
     },
     "@babel/plugin-proposal-object-rest-spread": {
-      "version": "7.5.1",
-      "resolved": "https://registry.npmjs.org/@babel/plugin-proposal-object-rest-spread/-/plugin-proposal-object-rest-spread-7.5.1.tgz",
-      "integrity": "sha512-PVGXx5LYHcT7L4MdoE+rM5uq68IKlvU9lljVQ4OXY6aUEnGvezcGbM4VNY57Ug+3R2Zg/nYHlEdiWoIBoRA0mw==",
+      "version": "7.5.2",
+      "resolved": "https://registry.npmjs.org/@babel/plugin-proposal-object-rest-spread/-/plugin-proposal-object-rest-spread-7.5.2.tgz",
+      "integrity": "sha512-C/JU3YOx5J4d9s0GGlJlYXVwsbd5JmqQ0AvB7cIDAx7nN57aDTnlJEsZJPuSskeBtMGFWSWU5Q+piTiDe0s7FQ==",
       "dev": true,
       "requires": {
         "@babel/helper-plugin-utils": "^7.0.0",
@@ -7000,8 +7000,8 @@
       },
       "dependencies": {
         "async-eventemitter": {
-          "version": "0.2.3",
-          "resolved": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
+          "version": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
+          "from": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
           "requires": {
             "async": "^2.4.0"
           }
@@ -10679,8 +10679,8 @@
               },
               "dependencies": {
                 "async-eventemitter": {
-                  "version": "0.2.3",
-                  "resolved": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
+                  "version": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
+                  "from": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
                   "requires": {
                     "async": "^2.4.0"
                   }
