@@ -48,7 +48,7 @@
     "@aragon/apps-shared-minime": "^1.0.1",
     "@aragon/aragen": "^4.0.0",
     "@aragon/os": "^4.0.0",
-    "@aragon/wrapper": "5.0.0-rc.9",
+    "@aragon/wrapper": "^5.0.0-rc.9",
     "@babel/polyfill": "^7.0.0",
     "ajv": "^6.6.2",
     "byte-size": "^5.0.1",
