@@ -3,12 +3,10 @@
     [
       "@babel/preset-env",
       {
-        "useBuiltIns": "entry",
-        "corejs": "2"
+        "useBuiltIns": "usage",
+        "corejs": "3"
       }
     ]
   ],
-  "plugins": [
-    "@babel/plugin-proposal-object-rest-spread"
-  ]
+  "plugins": ["@babel/plugin-proposal-object-rest-spread"]
 }
