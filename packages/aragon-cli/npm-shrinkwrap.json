@@ -31,6 +31,52 @@
       "requires": {
         "@aragon/apps-vault": "^4.0.0",
         "@aragon/os": "4.2.0"
+      },
+      "dependencies": {
+        "@aragon/os": {
+          "version": "4.2.0",
+          "resolved": "https://registry.npmjs.org/@aragon/os/-/os-4.2.0.tgz",
+          "integrity": "sha512-p0CGev++Ku0oxv+6vvViaPxHYwCVSJxleqJNzf06b9L8VaiWAs0zTwVspebD3mMQqtGJgO7A63Y0LhvsHFw5IA==",
+          "dev": true,
+          "requires": {
+            "homedir": "^0.6.0",
+            "mkdirp": "^0.5.1",
+            "truffle-flattener": "^1.2.9",
+            "truffle-hdwallet-provider": "0.0.3",
+            "truffle-hdwallet-provider-privkey": "0.3.0"
+          }
+        },
+        "truffle-hdwallet-provider": {
+          "version": "0.0.3",
+          "resolved": "https://registry.npmjs.org/truffle-hdwallet-provider/-/truffle-hdwallet-provider-0.0.3.tgz",
+          "integrity": "sha1-Dh3gIQS3PTh14c9wkzBbTqii2EM=",
+          "dev": true,
+          "requires": {
+            "bip39": "^2.2.0",
+            "ethereumjs-wallet": "^0.6.0",
+            "web3": "^0.18.2",
+            "web3-provider-engine": "^8.4.0"
+          }
+        },
+        "utf8": {
+          "version": "2.1.2",
+          "resolved": "https://registry.npmjs.org/utf8/-/utf8-2.1.2.tgz",
+          "integrity": "sha1-H6DZJw6b6FDZsFAn9jUZv0ZFfZY=",
+          "dev": true
+        },
+        "web3": {
+          "version": "0.18.4",
+          "resolved": "https://registry.npmjs.org/web3/-/web3-0.18.4.tgz",
+          "integrity": "sha1-gewXhBRUkfLqqJVbMcBgSeB8Xn0=",
+          "dev": true,
+          "requires": {
+            "bignumber.js": "git+https://github.com/debris/bignumber.js.git#94d7146671b9719e00a09c29b01a691bc85048c2",
+            "crypto-js": "^3.1.4",
+            "utf8": "^2.1.1",
+            "xhr2": "*",
+            "xmlhttprequest": "*"
+          }
+        }
       }
     },
     "@aragon/apps-shared-minime": {
@@ -53,6 +99,50 @@
           "resolved": "https://registry.npmjs.org/@aragon/apps-shared-minime/-/apps-shared-minime-1.0.0.tgz",
           "integrity": "sha512-DC0ylnEcsqED8eQIxriDbRTmSmqdUYWJrGmysI/UTuHvdSfsAy9awbx4Ea6To1Acd3F6kca5oPn6m9WjCAhlxQ==",
           "dev": true
+        },
+        "@aragon/os": {
+          "version": "4.2.0",
+          "resolved": "https://registry.npmjs.org/@aragon/os/-/os-4.2.0.tgz",
+          "integrity": "sha512-p0CGev++Ku0oxv+6vvViaPxHYwCVSJxleqJNzf06b9L8VaiWAs0zTwVspebD3mMQqtGJgO7A63Y0LhvsHFw5IA==",
+          "dev": true,
+          "requires": {
+            "homedir": "^0.6.0",
+            "mkdirp": "^0.5.1",
+            "truffle-flattener": "^1.2.9",
+            "truffle-hdwallet-provider": "0.0.3",
+            "truffle-hdwallet-provider-privkey": "0.3.0"
+          }
+        },
+        "truffle-hdwallet-provider": {
+          "version": "0.0.3",
+          "resolved": "https://registry.npmjs.org/truffle-hdwallet-provider/-/truffle-hdwallet-provider-0.0.3.tgz",
+          "integrity": "sha1-Dh3gIQS3PTh14c9wkzBbTqii2EM=",
+          "dev": true,
+          "requires": {
+            "bip39": "^2.2.0",
+            "ethereumjs-wallet": "^0.6.0",
+            "web3": "^0.18.2",
+            "web3-provider-engine": "^8.4.0"
+          }
+        },
+        "utf8": {
+          "version": "2.1.2",
+          "resolved": "https://registry.npmjs.org/utf8/-/utf8-2.1.2.tgz",
+          "integrity": "sha1-H6DZJw6b6FDZsFAn9jUZv0ZFfZY=",
+          "dev": true
+        },
+        "web3": {
+          "version": "0.18.4",
+          "resolved": "https://registry.npmjs.org/web3/-/web3-0.18.4.tgz",
+          "integrity": "sha1-gewXhBRUkfLqqJVbMcBgSeB8Xn0=",
+          "dev": true,
+          "requires": {
+            "bignumber.js": "git+https://github.com/debris/bignumber.js.git#94d7146671b9719e00a09c29b01a691bc85048c2",
+            "crypto-js": "^3.1.4",
+            "utf8": "^2.1.1",
+            "xhr2": "*",
+            "xmlhttprequest": "*"
+          }
         }
       }
     },
@@ -63,6 +153,52 @@
       "dev": true,
       "requires": {
         "@aragon/os": "4.2.0"
+      },
+      "dependencies": {
+        "@aragon/os": {
+          "version": "4.2.0",
+          "resolved": "https://registry.npmjs.org/@aragon/os/-/os-4.2.0.tgz",
+          "integrity": "sha512-p0CGev++Ku0oxv+6vvViaPxHYwCVSJxleqJNzf06b9L8VaiWAs0zTwVspebD3mMQqtGJgO7A63Y0LhvsHFw5IA==",
+          "dev": true,
+          "requires": {
+            "homedir": "^0.6.0",
+            "mkdirp": "^0.5.1",
+            "truffle-flattener": "^1.2.9",
+            "truffle-hdwallet-provider": "0.0.3",
+            "truffle-hdwallet-provider-privkey": "0.3.0"
+          }
+        },
+        "truffle-hdwallet-provider": {
+          "version": "0.0.3",
+          "resolved": "https://registry.npmjs.org/truffle-hdwallet-provider/-/truffle-hdwallet-provider-0.0.3.tgz",
+          "integrity": "sha1-Dh3gIQS3PTh14c9wkzBbTqii2EM=",
+          "dev": true,
+          "requires": {
+            "bip39": "^2.2.0",
+            "ethereumjs-wallet": "^0.6.0",
+            "web3": "^0.18.2",
+            "web3-provider-engine": "^8.4.0"
+          }
+        },
+        "utf8": {
+          "version": "2.1.2",
+          "resolved": "https://registry.npmjs.org/utf8/-/utf8-2.1.2.tgz",
+          "integrity": "sha1-H6DZJw6b6FDZsFAn9jUZv0ZFfZY=",
+          "dev": true
+        },
+        "web3": {
+          "version": "0.18.4",
+          "resolved": "https://registry.npmjs.org/web3/-/web3-0.18.4.tgz",
+          "integrity": "sha1-gewXhBRUkfLqqJVbMcBgSeB8Xn0=",
+          "dev": true,
+          "requires": {
+            "bignumber.js": "git+https://github.com/debris/bignumber.js.git#94d7146671b9719e00a09c29b01a691bc85048c2",
+            "crypto-js": "^3.1.4",
+            "utf8": "^2.1.1",
+            "xhr2": "*",
+            "xmlhttprequest": "*"
+          }
+        }
       }
     },
     "@aragon/apps-voting": {
@@ -80,6 +216,50 @@
           "resolved": "https://registry.npmjs.org/@aragon/apps-shared-minime/-/apps-shared-minime-1.0.0.tgz",
           "integrity": "sha512-DC0ylnEcsqED8eQIxriDbRTmSmqdUYWJrGmysI/UTuHvdSfsAy9awbx4Ea6To1Acd3F6kca5oPn6m9WjCAhlxQ==",
           "dev": true
+        },
+        "@aragon/os": {
+          "version": "4.2.0",
+          "resolved": "https://registry.npmjs.org/@aragon/os/-/os-4.2.0.tgz",
+          "integrity": "sha512-p0CGev++Ku0oxv+6vvViaPxHYwCVSJxleqJNzf06b9L8VaiWAs0zTwVspebD3mMQqtGJgO7A63Y0LhvsHFw5IA==",
+          "dev": true,
+          "requires": {
+            "homedir": "^0.6.0",
+            "mkdirp": "^0.5.1",
+            "truffle-flattener": "^1.2.9",
+            "truffle-hdwallet-provider": "0.0.3",
+            "truffle-hdwallet-provider-privkey": "0.3.0"
+          }
+        },
+        "truffle-hdwallet-provider": {
+          "version": "0.0.3",
+          "resolved": "https://registry.npmjs.org/truffle-hdwallet-provider/-/truffle-hdwallet-provider-0.0.3.tgz",
+          "integrity": "sha1-Dh3gIQS3PTh14c9wkzBbTqii2EM=",
+          "dev": true,
+          "requires": {
+            "bip39": "^2.2.0",
+            "ethereumjs-wallet": "^0.6.0",
+            "web3": "^0.18.2",
+            "web3-provider-engine": "^8.4.0"
+          }
+        },
+        "utf8": {
+          "version": "2.1.2",
+          "resolved": "https://registry.npmjs.org/utf8/-/utf8-2.1.2.tgz",
+          "integrity": "sha1-H6DZJw6b6FDZsFAn9jUZv0ZFfZY=",
+          "dev": true
+        },
+        "web3": {
+          "version": "0.18.4",
+          "resolved": "https://registry.npmjs.org/web3/-/web3-0.18.4.tgz",
+          "integrity": "sha1-gewXhBRUkfLqqJVbMcBgSeB8Xn0=",
+          "dev": true,
+          "requires": {
+            "bignumber.js": "git+https://github.com/debris/bignumber.js.git#94d7146671b9719e00a09c29b01a691bc85048c2",
+            "crypto-js": "^3.1.4",
+            "utf8": "^2.1.1",
+            "xhr2": "*",
+            "xmlhttprequest": "*"
+          }
         }
       }
     },
@@ -238,9 +418,9 @@
       }
     },
     "@aragon/os": {
-      "version": "4.2.0",
-      "resolved": "https://registry.npmjs.org/@aragon/os/-/os-4.2.0.tgz",
-      "integrity": "sha512-p0CGev++Ku0oxv+6vvViaPxHYwCVSJxleqJNzf06b9L8VaiWAs0zTwVspebD3mMQqtGJgO7A63Y0LhvsHFw5IA==",
+      "version": "4.2.1",
+      "resolved": "https://registry.npmjs.org/@aragon/os/-/os-4.2.1.tgz",
+      "integrity": "sha512-w3LWZx8SRbyyEYCXcDFockyAxEIE8nMIX/C0L2QXnP9N4g8S725198XqDfGyUmg4xf7N8cWSsJVQX4CtrhWX2Q==",
       "requires": {
         "homedir": "^0.6.0",
         "mkdirp": "^0.5.1",
