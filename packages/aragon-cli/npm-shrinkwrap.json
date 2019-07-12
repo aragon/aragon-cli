@@ -15942,9 +15942,9 @@
       }
     },
     "ipfs-http-client": {
-      "version": "33.0.1",
-      "resolved": "https://registry.npmjs.org/ipfs-http-client/-/ipfs-http-client-33.0.1.tgz",
-      "integrity": "sha512-Z+kOsOIKJ9BS5Lr4jhyj3JR8ko7lHG4MZReizKaDaSBCLShxmCbr6pAxQUDj3srMDKaQVHOySwHyRNnsoXX6bQ==",
+      "version": "33.1.0",
+      "resolved": "https://registry.npmjs.org/ipfs-http-client/-/ipfs-http-client-33.1.0.tgz",
+      "integrity": "sha512-hkS8nXay3DGKb/KXU1RDvTyxnvkAdhS5enlXxNXaS7yKvADlf5SEuQGYjW+VknkPPQ4FNbY3JttQ3YW+LTuoRA==",
       "requires": {
         "async": "^2.6.1",
         "bignumber.js": "^9.0.0",
@@ -15963,6 +15963,7 @@
         "ipfs-utils": "~0.0.3",
         "ipld-dag-cbor": "~0.15.0",
         "ipld-dag-pb": "~0.17.3",
+        "ipld-raw": "^4.0.0",
         "is-ipfs": "~0.6.1",
         "is-pull-stream": "0.0.0",
         "is-stream": "^2.0.0",
@@ -16290,6 +16291,58 @@
         "pull-stream": "^3.6.9",
         "pull-traverse": "^1.0.3",
         "stable": "~0.1.8"
+      }
+    },
+    "ipld-raw": {
+      "version": "4.0.0",
+      "resolved": "https://registry.npmjs.org/ipld-raw/-/ipld-raw-4.0.0.tgz",
+      "integrity": "sha512-yNQG5zQqm/RH8aNQxcvcsAdHJW4q+LJ3cPfFzHOtujEa/PRlT5YCOVpAFh61HfpsWFm2GJrb2G+HHgtDDlFSMw==",
+      "requires": {
+        "cids": "~0.7.0",
+        "multicodec": "~0.5.0",
+        "multihashing-async": "~0.7.0"
+      },
+      "dependencies": {
+        "base-x": {
+          "version": "3.0.4",
+          "resolved": "https://registry.npmjs.org/base-x/-/base-x-3.0.4.tgz",
+          "integrity": "sha512-UYOadoSIkEI/VrRGSG6qp93rp2WdokiAiNYDfGW5qURAY8GiAQkvMbwNNSDYiVJopqv4gCna7xqf4rrNGp+5AA==",
+          "requires": {
+            "safe-buffer": "^5.0.1"
+          }
+        },
+        "cids": {
+          "version": "0.7.1",
+          "resolved": "https://registry.npmjs.org/cids/-/cids-0.7.1.tgz",
+          "integrity": "sha512-qEM4j2GKE/BiT6WdUi6cfW8dairhSLTUE8tIdxJG6SvY33Mp/UPjw+xcO0n1zsllgo72BupzKF/44v+Bg8YPPg==",
+          "requires": {
+            "class-is": "^1.1.0",
+            "multibase": "~0.6.0",
+            "multicodec": "~0.5.1",
+            "multihashes": "~0.4.14"
+          }
+        },
+        "multibase": {
+          "version": "0.6.0",
+          "resolved": "https://registry.npmjs.org/multibase/-/multibase-0.6.0.tgz",
+          "integrity": "sha512-R9bNLQhbD7MsitPm1NeY7w9sDgu6d7cuj25snAWH7k5PSNPSwIQQBpcpj8jx1W96dLbdigZqmUWOdQRMnAmgjA==",
+          "requires": {
+            "base-x": "3.0.4"
+          }
+        },
+        "multihashing-async": {
+          "version": "0.7.0",
+          "resolved": "https://registry.npmjs.org/multihashing-async/-/multihashing-async-0.7.0.tgz",
+          "integrity": "sha512-SCbfl3f+DzJh+/5piukga9ofIOxwfT05t8R4jfzZIJ88YE9zU9+l3K2X+XB19MYyxqvyK9UJRNWbmQpZqQlbRA==",
+          "requires": {
+            "blakejs": "^1.1.0",
+            "buffer": "^5.2.1",
+            "err-code": "^1.1.2",
+            "js-sha3": "~0.8.0",
+            "multihashes": "~0.4.13",
+            "murmurhash3js-revisited": "^3.0.0"
+          }
+        }
       }
     },
     "irregular-plurals": {
