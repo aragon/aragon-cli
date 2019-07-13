@@ -577,6 +577,7 @@ exports.handler = async function({
 
   // Globals
   cwd,
+  web3,
   network,
   wsProvider,
   module,
@@ -606,7 +607,7 @@ exports.handler = async function({
   propagateContent,
   skipConfirmation,
 }) {
-  const web3 = await ensureWeb3(network)
+  web3 = web3 || (await ensureWeb3(network))
 
   const {
     initialRepo,
