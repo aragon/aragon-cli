@@ -55,8 +55,8 @@
     "cli-table": "^0.3.1",
     "colors": "^1.2.4",
     "core-js": "^3.1.4",
-    "dev-null": "^0.1.1",
     "del-cli": "^2.0.0",
+    "dev-null": "^0.1.1",
     "eth-ens-namehash": "^2.0.8",
     "execa": "^1.0.0",
     "find-up": "^4.0.0",
@@ -138,7 +138,7 @@
   "aragon": {
     "clientVersion": "c49ed53337c0bd254897d3e2b7c52275ef3e822d",
     "clientPort": "3000",
-    "defaultGasPrice": "10000000000",
+    "defaultGasPrice": "10",
     "defaultIpfsTimeout": "300000"
   },
   "husky": {

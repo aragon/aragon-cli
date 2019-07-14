@@ -19,7 +19,6 @@ const url = require('url')
 
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
-// TODO: gasPrice parameter (?)
 
 exports.command = 'run'
 
@@ -136,6 +135,7 @@ exports.builder = function(yargs) {
 exports.handler = function({
   // Globals
   reporter,
+  gasPrice,
   cwd,
   apm: apmOptions,
   silent,
@@ -204,6 +204,7 @@ exports.handler = function({
             files,
             ignore: ['node_modules'],
             reporter,
+            gasPrice,
             cwd,
             network,
             module,
@@ -231,6 +232,7 @@ exports.handler = function({
             contract: template,
             init: templateInit,
             reporter,
+            gasPrice,
             network,
             cwd,
             web3: ctx.web3,
@@ -274,6 +276,7 @@ exports.handler = function({
             fn: 'newInstance',
             fnArgs,
             deployEvent: templateDeployEvent,
+            gasPrice,
             web3: ctx.web3,
             reporter,
             apmOptions,

@@ -1,7 +1,6 @@
-const DEFAULT_GAS_PRICE = require('../../package.json').aragon.defaultGasPrice
 const { getRecommendedGasLimit } = require('../util')
 
-module.exports = ({ web3, network }) => {
+module.exports = ({ web3, gasPrice, network }) => {
   const getACL = async repoAddr => {
     const repo = new web3.eth.Contract(
       require('@aragon/os/build/contracts/AragonApp').abi,
@@ -41,7 +40,7 @@ module.exports = ({ web3, network }) => {
         to: acl.options.address,
         data: call.encodeABI(),
         gas: await getRecommendedGasLimit(web3, estimatedGas),
-        gasPrice: network.gasPrice || DEFAULT_GAS_PRICE,
+        gasPrice: network.gasPrice || gasPrice,
       }
     },
   }

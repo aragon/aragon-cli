@@ -18,6 +18,7 @@ exports.builder = function(yargs) {
 exports.handler = async function({
   // Globals
   reporter,
+  gasPrice,
   cwd,
   network,
   module,
@@ -54,10 +55,8 @@ exports.handler = async function({
     // Build transaction
     const transaction = await acl.grant(repo.options.address, address)
 
-    const DEFAULT_GAS_PRICE = require('../../../package.json').aragon
-      .defaultGasPrice
     transaction.from = from
-    transaction.gasPrice = network.gasPrice || DEFAULT_GAS_PRICE
+    transaction.gasPrice = network.gasPrice || gasPrice
     // the recommended gasLimit is already calculated by the ACL module
 
     try {

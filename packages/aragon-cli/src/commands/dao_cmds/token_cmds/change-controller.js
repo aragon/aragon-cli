@@ -19,7 +19,14 @@ exports.builder = yargs => {
     })
 }
 
-exports.task = async ({ web3, tokenAddress, newController, silent, debug }) => {
+exports.task = async ({
+  web3,
+  gasPrice,
+  tokenAddress,
+  newController,
+  silent,
+  debug,
+}) => {
   // Decode sender
   const accounts = await web3.eth.getAccounts()
   const from = accounts[0]
@@ -42,7 +49,7 @@ exports.task = async ({ web3, tokenAddress, newController, silent, debug }) => {
             await tx.estimateGas({ from })
           )
 
-          const sendPromise = tx.send({ from, gas })
+          const sendPromise = tx.send({ from, gas, gasPrice })
           sendPromise
             .on('transactionHash', transactionHash => {
               ctx.txHash = transactionHash
@@ -62,6 +69,7 @@ exports.task = async ({ web3, tokenAddress, newController, silent, debug }) => {
 
 exports.handler = async function({
   reporter,
+  gasPrice,
   network,
   tokenAddress,
   newController,
@@ -72,6 +80,7 @@ exports.handler = async function({
 
   const task = await exports.task({
     web3,
+    gasPrice,
     reporter,
     tokenAddress,
     newController,

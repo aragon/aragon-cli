@@ -22,6 +22,7 @@ exports.task = async ({
   wsProvider,
   web3,
   reporter,
+  gasPrice,
   dao,
   network,
   apmOptions,
@@ -72,6 +73,7 @@ exports.task = async ({
 
           return execTask(dao, getTransactionPath, {
             reporter,
+            gasPrice,
             apm: apmOptions,
             web3,
             wsProvider,
@@ -88,6 +90,7 @@ exports.task = async ({
 exports.handler = async function({
   reporter,
   dao,
+  gasPrice,
   network,
   wsProvider,
   apm: apmOptions,
@@ -103,6 +106,7 @@ exports.handler = async function({
     web3,
     reporter,
     dao,
+    gasPrice,
     network,
     apmOptions,
     apmRepo,

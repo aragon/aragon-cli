@@ -6,7 +6,6 @@ const { compileContracts } = require('../helpers/truffle-runner')
 const { findProjectRoot } = require('../util')
 const { ensureWeb3 } = require('../helpers/web3-fallback')
 const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
-const DEFAULT_GAS_PRICE = require('../../package.json').aragon.defaultGasPrice
 const listrOpts = require('../helpers/listr-options')
 const { getRecommendedGasLimit } = require('../util')
 
@@ -37,6 +36,7 @@ exports.builder = yargs => {
 
 exports.task = async ({
   network,
+  gasPrice,
   cwd,
   contract,
   init,
@@ -111,7 +111,7 @@ exports.task = async ({
 
           const args = {
             from: accounts[0],
-            gasPrice: network.gasPrice || DEFAULT_GAS_PRICE,
+            gasPrice: network.gasPrice || gasPrice,
             gas,
           }
 
@@ -147,6 +147,7 @@ exports.task = async ({
 
 exports.handler = async ({
   reporter,
+  gasPrice,
   network,
   cwd,
   contract,
@@ -156,6 +157,7 @@ exports.handler = async ({
   debug,
 }) => {
   const task = await exports.task({
+    gasPrice,
     network,
     cwd,
     contract,

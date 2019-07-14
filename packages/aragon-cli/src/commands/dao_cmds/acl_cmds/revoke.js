@@ -20,11 +20,13 @@ exports.handler = async function({
   network,
   wsProvider,
   apm,
+  gasPrice,
 }) {
   const method = 'revokePermission'
   const params = [entity, app, role]
   return aclExecHandler(dao, method, params, {
     reporter,
+    gasPrice,
     apm,
     network,
     wsProvider,

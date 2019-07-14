@@ -44,6 +44,7 @@ exports.builder = yargs => {
 
 exports.task = async ({
   web3,
+  gasPrice,
   tokenName,
   symbol,
   transferEnabled,
@@ -85,6 +86,7 @@ exports.task = async ({
           const deployPromise = deployTx.send({
             from,
             gas: await getRecommendedGasLimit(web3, estimatedGas),
+            gasPrice,
           })
 
           deployPromise
@@ -128,6 +130,7 @@ exports.task = async ({
           const deployPromise = deployTx.send({
             from,
             gas: await getRecommendedGasLimit(web3, estimatedGas),
+            gasPrice,
           })
 
           deployPromise
@@ -153,6 +156,7 @@ exports.task = async ({
 exports.handler = async function({
   reporter,
   network,
+  gasPrice,
   tokenName,
   symbol,
   transferEnabled,
@@ -165,6 +169,7 @@ exports.handler = async function({
 
   const task = await exports.task({
     web3,
+    gasPrice,
     tokenName,
     symbol,
     transferEnabled,
