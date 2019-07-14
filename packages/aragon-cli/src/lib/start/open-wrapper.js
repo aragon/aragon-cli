@@ -1,4 +1,4 @@
-import opn from 'opn'
+import open from 'open'
 import { isPortTaken } from '../../util'
 
 export async function openWrapper(ctx, clientPort) {
@@ -7,7 +7,7 @@ export async function openWrapper(ctx, clientPort) {
     setTimeout(async () => {
       const portTaken = await isPortTaken(clientPort)
       if (portTaken) {
-        opn(
+        open(
           `http://localhost:${clientPort}/#/${
             ctx.daoAddress ? ctx.daoAddress : ''
           }`

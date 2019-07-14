@@ -36,8 +36,8 @@
   },
   "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
-    "@babel/polyfill": "^7.0.0",
     "chalk": "^2.1.0",
+    "core-js": "^3.1.4",
     "execa": "^1.0.0",
     "figures": "^3.0.0",
     "fs-extra": "^8.0.1",
@@ -78,7 +78,7 @@
   },
   "ava": {
     "require": [
-      "@babel/polyfill",
+      "core-js",
       "@babel/register"
     ],
     "files": [
@@ -92,12 +92,10 @@
     }
   },
   "lint-staged": {
-    "linters": {
-      "*.js": [
-        "eslint --fix",
-        "documentation lint",
-        "git add"
-      ]
-    }
+    "*.js": [
+      "eslint --fix",
+      "documentation lint",
+      "git add"
+    ]
   }
 }
