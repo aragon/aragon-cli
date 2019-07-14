@@ -1,6 +1,6 @@
 {
   "name": "create-aragon-app",
-  "version": "2.2.9",
+  "version": "2.2.10",
   "description": "Aragon command-line tool to create aragon apps",
   "main": "dist/cli.js",
   "bin": {
