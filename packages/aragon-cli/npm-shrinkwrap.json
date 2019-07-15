@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "5.9.3",
+  "version": "5.9.7",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
