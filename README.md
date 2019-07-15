@@ -71,17 +71,17 @@ Stable versions:
 
 | Version  | NPM page                              | Docs                                     | Release date |
 | -------- | ------------------------------------- | ---------------------------------------- | ------------ |
-| `v5.9.3` | [![NPM][593-npm-badge]][593-npm-link] | [![Docs][593-docs-badge]][593-docs-link] | 2019-05-27   |
+| `v5.9.7` | [![NPM][597-npm-badge]][597-npm-link] | [![Docs][597-docs-badge]][597-docs-link] | 2019-07-15   |
 | `v5.8.0` | [![NPM][580-npm-badge]][580-npm-link] | [![Docs][580-docs-badge]][580-docs-link] | 2019-05-18   |
 | `v5.6.2` | [![NPM][562-npm-badge]][562-npm-link] | [![Docs][562-docs-badge]][562-docs-link] | 2019-04-17   |
 
 [latest-stable-npm-badge]: https://img.shields.io/npm/v/@aragon/cli/stable.svg?style=flat-square
 [latest-stable-docs-badge]: https://img.shields.io/badge/docs-latest%20stable-blue.svg?style=flat-square
 [latest-stable-docs-link]: https://hack.aragon.org/docs/cli-intro.html
-[593-npm-badge]: https://img.shields.io/badge/npm-v5.9.3-blue.svg?style=flat-square
-[593-npm-link]: https://www.npmjs.com/package/@aragon/cli/v/5.9.3
-[593-docs-badge]: https://img.shields.io/badge/docs-v5.9.3-blue.svg?style=flat-square
-[593-docs-link]: https://github.com/aragon/aragon-cli/blob/v5.9.3/docs/Intro.md
+[597-npm-badge]: https://img.shields.io/badge/npm-v5.9.7-blue.svg?style=flat-square
+[597-npm-link]: https://www.npmjs.com/package/@aragon/cli/v/5.9.7
+[597-docs-badge]: https://img.shields.io/badge/docs-v5.9.7-blue.svg?style=flat-square
+[597-docs-link]: https://github.com/aragon/aragon-cli/blob/v5.9.7/docs/Intro.md
 [580-npm-badge]: https://img.shields.io/badge/npm-v5.8.0-blue.svg?style=flat-square
 [580-npm-link]: https://www.npmjs.com/package/@aragon/cli/v/5.7.0
 [580-docs-badge]: https://img.shields.io/badge/docs-v5.8.0-blue.svg?style=flat-square
