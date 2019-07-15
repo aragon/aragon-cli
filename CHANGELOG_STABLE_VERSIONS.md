@@ -4,7 +4,7 @@ All **notable** changes between stable versions will be documented in this file.
 
 - [Changelog](#Changelog)
   - [v6.0.x (not marked as stable yet)](#v60x-not-marked-as-stable-yet)
-    - [What’s changed in aragonCLI since `v5.9.3`](#Whats-changed-in-aragonCLI-since-v593)
+    - [What’s changed in aragonCLI since `v5.9.7`](#Whats-changed-in-aragonCLI-since-v597)
     - [💥 Breaking changes](#%F0%9F%92%A5-Breaking-changes)
     - [🚀 New features](#%F0%9F%9A%80-New-features)
     - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates)
@@ -16,9 +16,9 @@ All **notable** changes between stable versions will be documented in this file.
 ## v6.0.x (not marked as stable yet)
 
 Release date: **2019-07-07**
-[Compare code changes][v6.0.4]
+[Compare code changes][v6.0.5]
 
-### What’s changed in aragonCLI since `v5.9.3`
+### What’s changed in aragonCLI since `v5.9.7`
 
 ### 💥 Breaking changes
 
@@ -60,4 +60,4 @@ Release date: **2019-07-07**
 * Update CONTRIBUTING.md with Bounties section 🦅 (#507)
 * Update aragonCLI Roadmap (#504)
 
-[v6.0.4]: https://github.com/aragon/aragon-cli/compare/v5.9.3...v6.0.4
+[v6.0.5]: https://github.com/aragon/aragon-cli/compare/v5.9.7...v6.0.5
