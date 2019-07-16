@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
-import fetch from 'node-fetch'
+// import fetch from 'node-fetch'
 require('source-map-support/register')
-const Web3 = require('web3')
+// const Web3 = require('web3')
 
 const DEFAULT_GAS_PRICE = require('../package.json').aragon.defaultGasPrice
 
@@ -65,22 +65,22 @@ cmd.option('debug', {
 cmd.option('gas-price', {
   description: 'Gas price in Gwei',
   default: DEFAULT_GAS_PRICE,
-  coerce: async gasPrice => {
-    // if the user did not override this, let's ask ethGasStation
-    if (gasPrice === DEFAULT_GAS_PRICE) {
-      try {
-        // Fetch gas station API
-        const result = await fetch(
-          'https://ethgasstation.info/json/ethgasAPI.json'
-        )
-        const { safeLow } = await result.json()
-        // divide by 10 to get the value in Gwei
-        // https://github.com/ethgasstation/ethgasstation-backend/issues/5
-        gasPrice = safeLow / 10
-      } catch (_) {}
-    }
-    return Web3.utils.toWei(gasPrice, 'gwei')
-  },
+  // coerce: async gasPrice => {
+  //   // if the user did not override this, let's ask ethGasStation
+  //   if (gasPrice === DEFAULT_GAS_PRICE) {
+  //     try {
+  //       // Fetch gas station API
+  //       const result = await fetch(
+  //         'https://ethgasstation.info/json/ethgasAPI.json'
+  //       )
+  //       const { safeLow } = await result.json()
+  //       // divide by 10 to get the value in Gwei
+  //       // https://github.com/ethgasstation/ethgasstation-backend/issues/5
+  //       gasPrice = (safeLow / 10).toString()
+  //     } catch (_) {}
+  //   }
+  //   return Web3.utils.toWei(gasPrice, 'gwei')
+  // },
 })
 
 cmd.option('cwd', {
