@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
-// import fetch from 'node-fetch'
+import fetch from 'node-fetch'
 require('source-map-support/register')
 const Web3 = require('web3')
 
@@ -65,21 +65,16 @@ cmd.option('debug', {
 cmd.option('gas-price', {
   description: 'Gas price in gwei',
   default: DEFAULT_GAS_PRICE,
-  // async () => {
-  //   //TODO: (Gabi) Fetch API
-  //   try {
-  //     // Fetch gas station API
-  //     console.log('entra')
-  //     const { safeLow } = await fetch(
-  //       'https://ethgasstation.info/json/ethgasAPI.json'
-  //     )
-  //     console.log(safeLow)
-  //     return safeLow
-  //   } catch (_) {
-  //     return DEFAULT_GAS_PRICE
-  //   }
-  // },
-  coerce: gasPrice => {
+  coerce: async gasPrice => {
+    // if the user did not override this, let's ask ethGasStation
+    if (gasPrice === DEFAULT_GAS_PRICE) {
+      // Fetch gas station API
+      const result = await fetch(
+        'https://ethgasstation.info/json/ethgasAPI.json'
+      )
+      const { safeLow } = await result.json()
+      gasPrice = safeLow
+    }
     return Web3.utils.toWei(gasPrice, 'gwei')
   },
 })
