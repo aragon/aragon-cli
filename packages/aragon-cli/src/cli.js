@@ -63,17 +63,21 @@ cmd.option('debug', {
 })
 
 cmd.option('gas-price', {
-  description: 'Gas price in gwei',
+  description: 'Gas price in Gwei',
   default: DEFAULT_GAS_PRICE,
   coerce: async gasPrice => {
     // if the user did not override this, let's ask ethGasStation
     if (gasPrice === DEFAULT_GAS_PRICE) {
-      // Fetch gas station API
-      const result = await fetch(
-        'https://ethgasstation.info/json/ethgasAPI.json'
-      )
-      const { safeLow } = await result.json()
-      gasPrice = safeLow
+      try {
+        // Fetch gas station API
+        const result = await fetch(
+          'https://ethgasstation.info/json/ethgasAPI.json'
+        )
+        const { safeLow } = await result.json()
+        // divide by 10 to get the value in Gwei
+        // https://github.com/ethgasstation/ethgasstation-backend/issues/5
+        gasPrice = safeLow / 10
+      } catch (_) {}
     }
     return Web3.utils.toWei(gasPrice, 'gwei')
   },
