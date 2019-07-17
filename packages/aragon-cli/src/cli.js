@@ -62,7 +62,7 @@ cmd.option('debug', {
 })
 
 cmd.option('gas-price', {
-  description: 'Gas price in gwei',
+  description: 'Gas price in Gwei',
   default: DEFAULT_GAS_PRICE,
   coerce: gasPrice => {
     return Web3.utils.toWei(gasPrice, 'gwei')
