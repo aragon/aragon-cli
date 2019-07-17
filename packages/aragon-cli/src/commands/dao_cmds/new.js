@@ -59,6 +59,7 @@ exports.builder = yargs => {
 exports.task = async ({
   web3,
   reporter,
+  gasPrice,
   apmOptions,
   template,
   templateVersion,
@@ -112,6 +113,7 @@ exports.task = async ({
           const { events } = await newInstanceTx.send({
             from: ctx.accounts[0],
             gas: await getRecommendedGasLimit(web3, estimatedGas),
+            gasPrice,
           })
           ctx.daoAddress = events[deployEvent].returnValues.dao
         },

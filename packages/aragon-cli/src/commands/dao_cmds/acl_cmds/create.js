@@ -15,6 +15,7 @@ exports.builder = function(yargs) {
 exports.handler = async function({
   reporter,
   network,
+  gasPrice,
   apm,
   dao,
   app,
@@ -29,6 +30,7 @@ exports.handler = async function({
   const params = [entity, app, role, manager]
   return aclExecHandler(dao, method, params, {
     reporter,
+    gasPrice,
     apm,
     network,
     wsProvider,

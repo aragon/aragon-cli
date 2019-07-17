@@ -145,6 +145,7 @@ const runSetupTask = ({
   reporter,
 
   // Globals
+  gasPrice,
   cwd,
   web3,
   network,
@@ -257,6 +258,7 @@ const runSetupTask = ({
           const deployTaskParams = {
             contract,
             init,
+            gasPrice,
             network,
             cwd,
             web3,
@@ -513,6 +515,7 @@ const runPublishTask = ({
   reporter,
 
   // Globals
+  gasPrice,
   web3,
   wsProvider,
   module,
@@ -549,6 +552,7 @@ const runPublishTask = ({
 
             return execTask(dao, getTransactionPath, {
               reporter,
+              gasPrice,
               apm: apmOptions,
               web3,
               wsProvider,
@@ -576,6 +580,7 @@ exports.handler = async function({
   reporter,
 
   // Globals
+  gasPrice,
   cwd,
   web3,
   network,
@@ -617,6 +622,7 @@ exports.handler = async function({
     deployArtifacts,
   } = await runSetupTask({
     reporter,
+    gasPrice,
     cwd,
     web3,
     network,
@@ -701,6 +707,7 @@ exports.handler = async function({
 
   const { receipt, transactionPath, repo } = await runPublishTask({
     reporter,
+    gasPrice,
     web3,
     wsProvider,
     module,

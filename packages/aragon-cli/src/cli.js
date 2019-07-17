@@ -2,6 +2,9 @@
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
 require('source-map-support/register')
+const Web3 = require('web3')
+
+const DEFAULT_GAS_PRICE = require('../package.json').aragon.defaultGasPrice
 
 const {
   environmentMiddleware,
@@ -55,6 +58,14 @@ cmd.option('debug', {
       global.DEBUG_MODE = true
       return true
     }
+  },
+})
+
+cmd.option('gas-price', {
+  description: 'Gas price in Gwei',
+  default: DEFAULT_GAS_PRICE,
+  coerce: gasPrice => {
+    return Web3.utils.toWei(gasPrice, 'gwei')
   },
 })
 

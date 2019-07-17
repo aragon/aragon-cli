@@ -6,7 +6,7 @@ const listrOpts = require('../../../helpers/listr-options')
 exports.task = async function(
   dao,
   getTransactionPath,
-  { reporter, apm, web3, wsProvider, silent, debug }
+  { reporter, apm, web3, wsProvider, gasPrice, silent, debug }
 ) {
   const accounts = await web3.eth.getAccounts()
   return new TaskList(
@@ -32,6 +32,7 @@ exports.task = async function(
 
             initAragonJS(dao, apm['ens-registry'], {
               ipfsConf: apm.ipfs,
+              gasPrice,
               provider: wsProvider || web3.currentProvider,
               accounts,
               onApps: async apps => {

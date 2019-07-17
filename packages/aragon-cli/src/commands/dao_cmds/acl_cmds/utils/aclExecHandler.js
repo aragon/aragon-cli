@@ -5,7 +5,7 @@ module.exports = async function(
   dao,
   method,
   params,
-  { reporter, apm, network, wsProvider, role, silent, debug }
+  { reporter, apm, network, gasPrice, wsProvider, role, silent, debug }
 ) {
   const getTransactionPath = async wrapper => {
     let processedParams
@@ -24,6 +24,7 @@ module.exports = async function(
   }
   return execHandler(dao, getTransactionPath, {
     reporter,
+    gasPrice,
     apm,
     wsProvider,
     network,

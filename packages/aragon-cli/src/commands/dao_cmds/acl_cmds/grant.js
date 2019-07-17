@@ -21,11 +21,13 @@ exports.handler = async function({
   network,
   wsProvider,
   apm,
+  gasPrice,
 }) {
   const method = 'grantPermission'
   const params = [entity, app, role]
   return aclExecHandler(dao, method, params, {
     reporter,
+    gasPrice,
     apm,
     network,
     wsProvider,
