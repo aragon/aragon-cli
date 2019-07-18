@@ -58,7 +58,7 @@ exports.handler = function({ reporter, name, template, silent, debug }) {
           if (!isValidEnsName(basename)) {
             throw new Error(
               reporter.error(
-                'Invalid project name. Please only use lowercase alphanumeric and "-" characters.'
+                'Invalid project name. Please only use lowercase alphanumeric and hyphen characters.'
               )
             )
           }
