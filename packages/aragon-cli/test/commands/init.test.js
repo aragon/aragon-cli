@@ -2,6 +2,7 @@ import test from 'ava'
 import fs from 'fs-extra'
 
 import { checkProjectExists, prepareTemplate } from '../../src/lib/init'
+import { isValidEnsName } from '../../src/util'
 
 import defaultAPMName from '../../src/helpers/default-apm'
 
@@ -22,6 +23,15 @@ test('check if project folder already exists', async t => {
   } catch (err) {
     t.pass()
   }
+})
+
+test('project name validation', t => {
+  t.is(isValidEnsName('testproject'), true)
+  t.is(isValidEnsName('project2'), true)
+
+  t.is(isValidEnsName('testProject'), false)
+  t.is(isValidEnsName('test-project'), false)
+  t.is(isValidEnsName('test_project'), false)
 })
 
 test('prepare project template', async t => {
