@@ -13,12 +13,11 @@ import {
 } from '../../util'
 
 exports.command = 'install'
-exports.describe = 'Download and install IPFS'
+exports.describe = 'Download and install the go-ipfs binaries.'
 
 exports.builder = yargs => {
   return yargs
     .option('dist-version', {
-      // TODO rename to version once aragon -v does not conflict anymore
       description: 'The version of IPFS that will be installed',
       default: '0.4.18-hacky2',
     })
@@ -38,7 +37,7 @@ exports.builder = yargs => {
     })
 }
 
-const runCheckTask = ({ silent, debug, local }) => {
+const runPrepareTask = ({ silent, debug, local }) => {
   return new TaskList(
     [
       {
@@ -61,10 +60,10 @@ const runCheckTask = ({ silent, debug, local }) => {
           if (local) {
             ctx.location = process.cwd()
             if (!existsSync('./package.json')) {
+              const packageFile = chalk.red('package.json')
+              const currentLocation = chalk.red(ctx.location)
               throw new Error(
-                `${ctx.location} does not have a ${chalk.red(
-                  'package.json'
-                )}. Did you wish to install globally?`
+                `${currentLocation} does not have a ${packageFile}. Did you wish to install IPFS globally?`
               )
             }
           } else {
@@ -91,13 +90,14 @@ const runInstallTask = ({ silent, debug, local, distUrl, distVersion }) => {
                */
               GO_IPFS_DIST_URL: distUrl,
               /*
-               *  specifying `distVersion` here throws:
+               *  specifying `TARGET_VERSION` here, will throw an error, because:
                *  https://github.com/ipfs/npm-go-ipfs/blob/master/link-ipfs.js#L49
                */
               // TARGET_VERSION: distVersion
             },
           }
           const npmArgs = ['install', `go-ipfs@${distVersion}`]
+
           if (local) {
             npmArgs.push('--save')
           } else {
@@ -135,59 +135,78 @@ exports.handler = async function({
   distVersion,
   distUrl,
   local,
+  reporter,
   skipConfirmation,
 }) {
-  const existingBinary = local
+  /**
+   * Check if it's already installed
+   */
+  const existingBinaryLocation = local
     ? getLocalBinary('ipfs', process.cwd())
     : getGlobalBinary('ipfs')
 
-  if (existingBinary) {
-    console.log(`IPFS is already installed: ${chalk.green(existingBinary)}`)
-    console.log(
-      `To install a different version, you must first run: ${chalk.yellow(
-        'aragon ipfs uninstall'
-      )}`
+  if (existingBinaryLocation) {
+    reporter.error(
+      'IPFS is already installed:',
+      chalk.red(existingBinaryLocation)
     )
-    return
+    reporter.newLine()
+
+    const uninstallCommand = local
+      ? 'aragon ipfs uninstall --local'
+      : 'aragon ipfs uninstall'
+    reporter.warning(
+      'To install a different version, you must first run:',
+      chalk.yellow(uninstallCommand)
+    )
+
+    if (!local) {
+      reporter.warning(
+        'To install IPFS in a project, use the --local flag:',
+        chalk.yellow('aragon ipfs install --local')
+      )
+    }
+    return process.exit(1)
   }
 
-  const { NODE_OS, NODE_ARCH, GO_OS, GO_ARCH, location } = await runCheckTask({
-    debug,
-    silent,
-    local,
-  })
+  /**
+   * Prepare confirmation details
+   */
+  reporter.info('Preparing:')
+  const { NODE_OS, NODE_ARCH, GO_OS, GO_ARCH, location } = await runPrepareTask(
+    {
+      debug,
+      silent,
+      local,
+    }
+  )
 
   // https://github.com/ipfs/npm-go-ipfs/blob/master/link-ipfs.js#L8
   // https://github.com/ipfs/npm-go-ipfs#publish-a-new-version-of-this-module-with-exact-same-go-ipfs-version
-  const distName = `go-ipfs_v${distVersion.replace(
-    /-hacky[0-9]+/,
-    ''
-  )}_${GO_OS}-${GO_ARCH}.tar.gz`
+  const actualVersion = distVersion.replace(/-hacky[0-9]+/, '')
+  const distName = `go-ipfs_v${actualVersion}_${GO_OS}-${GO_ARCH}.tar.gz`
 
-  console.log(
-    '\n',
-    `Platform & architecture: ${chalk.blue(NODE_OS)}, ${chalk.blue(NODE_ARCH)}`,
-    '\n',
-    `IPFS tarball: ${chalk.blue(distName)}`,
-    '\n',
-    `IPFS distributions url: ${chalk.blue(distUrl)}`,
-    '\n',
-    `NPM version: ${chalk.blue(distVersion)}`,
-    '\n',
-    `Location: ${chalk.blue(location)}`,
-    '\n'
+  reporter.newLine()
+  reporter.info(
+    `Platform & architecture: ${chalk.blue(NODE_OS)}, ${chalk.blue(NODE_ARCH)}`
   )
+  reporter.info(`IPFS tarball: ${chalk.blue(distName)}`)
+  reporter.info(`IPFS distributions url: ${chalk.blue(distUrl)}`)
+  reporter.info(`NPM version: ${chalk.blue(distVersion)}`)
+  reporter.info(`Location: ${chalk.blue(location)}`)
 
+  /**
+   * Confirm & install
+   */
+  reporter.newLine()
   if (!skipConfirmation) {
     const { confirmation } = await inquirer.prompt([
       {
         type: 'confirm',
         name: 'confirmation',
-        message: chalk.green('Install IPFS'),
+        message: `Are you sure you want to ${chalk.green('install IPFS')}?`,
       },
     ])
-    // new line after confirm
-    console.log()
     if (!confirmation) return
   }
 
@@ -199,11 +218,11 @@ exports.handler = async function({
     local,
   })
 
-  console.log(
-    '\n',
-    'Success!',
-    '\n',
-    'Try running:',
-    local ? chalk.green('npx ipfs version') : chalk.green('ipfs version')
+  reporter.newLine()
+  reporter.success('Success!')
+  reporter.info(
+    `Try it out with: ${chalk.blue(
+      local ? 'npx ipfs version' : 'ipfs version'
+    )}`
   )
 }
