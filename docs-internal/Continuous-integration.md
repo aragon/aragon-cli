@@ -50,8 +50,8 @@ coveralls.
 Our `@aragon/e2e-tests` package has the following dependencies:
 
 ```json
-    "@aragon/cli": "file:../aragon-cli",
-    "create-aragon-app": "file:../create-aragon-app",
+    "@aragon/cli": "*",
+    "create-aragon-app": "*",
 ```
 
 These dependencies need to be built **before** we install them, otherwise `npm` will not create
@@ -61,8 +61,8 @@ The solution is to split the bootstrapping process in two:
 
 ```json
     "prepare": "npm run bootstrap && npm run bootstrap-e2e-tests",
-    "bootstrap": "lerna exec --ignore @aragon/e2e-tests -- npm install",
-    "bootstrap-e2e-tests": "lerna exec --scope @aragon/e2e-tests -- npm install",
+    "bootstrap": "lerna bootstrap--ignore @aragon/e2e-tests",
+    "bootstrap-e2e-tests": "lerna bootstrap",
 ```
 
 Note: this works because when we bootstrap a package, it will get built right after thanks to the
