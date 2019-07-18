@@ -8,7 +8,7 @@ const HDWalletProvider = require('truffle-hdwallet-provider')
 const HDWalletProviderPrivkey = require('truffle-hdwallet-provider-privkey')
 
 const DEFAULT_MNEMONIC =
-  'stumble story behind hurt patient ball whisper art swift tongue ice alien'
+  'explain tackle mirror kit van hammer degree position ginger unfair soup bonus'
 
 const defaultRPC = network => `https://${network}.infura.io`
 

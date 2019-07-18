@@ -146,8 +146,7 @@ exports.handler = async function({
     console.log(
       `To install a different version, you must first run: ${chalk.yellow(
         'aragon ipfs uninstall'
-      )}`,
-      'To install ipfs in a node project, use the --local flag'
+      )}`
     )
     return
   }
