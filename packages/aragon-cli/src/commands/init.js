@@ -2,7 +2,7 @@ import { checkProjectExists, prepareTemplate } from '../lib/init'
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const TaskList = require('listr')
-const { installDeps, isValidEnsName } = require('../util')
+const { installDeps, isValidAragonId } = require('../util')
 const defaultAPMName = require('../helpers/default-apm')
 const listrOpts = require('../helpers/listr-options')
 
@@ -55,7 +55,7 @@ exports.handler = function({ reporter, name, template, silent, debug }) {
         title: 'Preparing initialization',
         task: async (ctx, task) => {
           task.output = 'Checking if project folder already exists...'
-          if (!isValidEnsName(basename)) {
+          if (!isValidAragonId(basename)) {
             throw new Error(
               reporter.error(
                 'Invalid project name. Please only use lowercase alphanumeric and hyphen characters.'

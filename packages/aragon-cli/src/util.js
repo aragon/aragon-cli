@@ -303,12 +303,12 @@ const parseStringIfPossible = target => {
 }
 
 /**
- * Validates an Aragon ENS subdomain name
- * @param {string} name Name
+ * Validates an Aragon Id
+ * @param {string} aragonId Aragon Id
  * @returns {boolean} `true` if valid
  */
-function isValidEnsName(name) {
-  return /^[a-z0-9-]+$/.test(name)
+function isValidAragonId(aragonId) {
+  return /^[a-z0-9-]+$/.test(aragonId)
 }
 
 module.exports = {
@@ -323,7 +323,7 @@ module.exports = {
   getLocalBinary,
   getGlobalBinary,
   getContract,
-  isValidEnsName,
+  isValidAragonId,
   ANY_ENTITY,
   NO_MANAGER,
   ZERO_ADDRESS,
