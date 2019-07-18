@@ -5,5 +5,5 @@ exports.builder = function(yargs) {
 }
 
 exports.command = 'ipfs'
-exports.describe = 'Shortcut for aragon ipfs start'
+exports.describe = 'Shortcut for `aragon ipfs start`.'
 exports.handler = startCommand.handler

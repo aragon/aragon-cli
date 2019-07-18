@@ -11,12 +11,12 @@ import {
 } from '../../util'
 
 exports.command = 'uninstall'
-exports.describe = 'Uninstall IPFS'
+exports.describe = 'Uninstall the go-ipfs binaries.'
 
 exports.builder = yargs => {
   return yargs
     .option('local', {
-      description: 'Whether to uninstall from the local project',
+      description: 'Whether to uninstall IPFS from the project dependencies',
       boolean: true,
       default: false,
     })
@@ -25,26 +25,6 @@ exports.builder = yargs => {
       boolean: true,
       default: false,
     })
-}
-
-const runCheckTask = ({ silent, debug, local }) => {
-  return new TaskList(
-    [
-      {
-        title: 'Check current installation',
-        task: ctx => {
-          ctx.ipfsBinPath = local
-            ? getLocalBinary('ipfs', process.cwd())
-            : getGlobalBinary('ipfs')
-
-          if (ctx.ipfsBinPath === null) {
-            throw new Error('IPFS is not installed')
-          }
-        },
-      },
-    ],
-    listrOpts(silent, debug)
-  ).run()
 }
 
 const runUninstallTask = ({ silent, debug, local }) => {
@@ -74,22 +54,42 @@ const runUninstallTask = ({ silent, debug, local }) => {
   ).run()
 }
 
-exports.handler = async function({ debug, silent, skipConfirmation, local }) {
-  const { ipfsBinPath } = await runCheckTask({ silent, debug, local })
+exports.handler = async function({
+  debug,
+  silent,
+  skipConfirmation,
+  local,
+  reporter,
+}) {
+  /**
+   * Check if it's installed
+   */
+  const ipfsBinPath = local
+    ? getLocalBinary('ipfs', process.cwd())
+    : getGlobalBinary('ipfs')
 
-  console.log('\n', `Location: ${chalk.blue(ipfsBinPath)}`, '\n')
+  if (!ipfsBinPath) {
+    reporter.error('IPFS is not installed')
+    return process.exit(1)
+  }
+  /**
+   * Print confirmation details
+   */
+  reporter.info(`Location: ${chalk.blue(ipfsBinPath)}`)
 
+  /**
+   * Confirm & uninstall
+   */
+  reporter.newLine()
   if (!skipConfirmation) {
     const { confirmation } = await inquirer.prompt([
       {
         type: 'confirm',
         name: 'confirmation',
         default: false,
-        message: chalk.red('Uninstall IPFS'),
+        message: `Are you sure you want to ${chalk.red('uninstall IPFS')}?`,
       },
     ])
-    // new line after confirm
-    console.log()
     if (!confirmation) return
   }
 
@@ -99,5 +99,6 @@ exports.handler = async function({ debug, silent, skipConfirmation, local }) {
     local,
   })
 
-  console.log('\n', 'Success!')
+  reporter.newLine()
+  reporter.success('Success!')
 }

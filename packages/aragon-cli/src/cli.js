@@ -12,7 +12,8 @@ const {
   moduleMiddleware,
 } = require('./middleware')
 const { findProjectRoot } = require('./util')
-const { ConsoleReporter, ens } = require('@aragon/aragen')
+const { ens } = require('@aragon/aragen')
+const ConsoleReporter = require('@aragon/cli-utils/src/reporters/ConsoleReporter')
 const url = require('url')
 
 const MIDDLEWARES = [
@@ -115,7 +116,7 @@ cmd.option('apm.ens-registry', {
     "Address of the ENS registry. This will be overwritten if the selected '--environment' from your arapp.json includes a `registry` property",
   default: ens,
 })
-cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
+cmd.group(['apm.ens-registry'], 'APM:')
 
 cmd.option('apm.ipfs.rpc', {
   description: 'An URI to the IPFS node used to publish files',

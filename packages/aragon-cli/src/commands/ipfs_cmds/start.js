@@ -11,8 +11,7 @@ const IPFS = require('ipfs-api')
 const listrOpts = require('../../helpers/listr-options')
 
 exports.command = 'start'
-
-exports.describe = 'Start an IPFS daemon configured to work with Aragon.'
+exports.describe = 'Start the IPFS daemon and configure it to work with Aragon.'
 
 exports.task = ({ apmOptions, silent, debug }) => {
   return new TaskList(
