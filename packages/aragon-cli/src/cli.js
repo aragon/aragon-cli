@@ -13,7 +13,7 @@ const {
 } = require('./middleware')
 const { findProjectRoot } = require('./util')
 const { ens } = require('@aragon/aragen')
-const ConsoleReporter = require('aragon-cli-utils/src/reporters/ConsoleReporter')
+const ConsoleReporter = require('@aragon/cli-utils/src/reporters/ConsoleReporter')
 const url = require('url')
 
 const MIDDLEWARES = [
