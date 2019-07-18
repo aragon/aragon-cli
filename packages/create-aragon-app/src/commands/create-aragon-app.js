@@ -57,7 +57,9 @@ exports.handler = function({ reporter, name, template, silent, debug }) {
           task.output = 'Checking if project folder already exists...'
           if (!isValidEnsName(basename)) {
             throw new Error(
-              'Invalid project name. Please only use lowercase alphanumeric characters.'
+              reporter.error(
+                'Invalid project name. Please only use lowercase alphanumeric and "-" characters.'
+              )
             )
           }
 

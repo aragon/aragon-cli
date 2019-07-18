@@ -28,9 +28,9 @@ test('check if project folder already exists', async t => {
 test('project name validation', t => {
   t.is(isValidEnsName('testproject'), true)
   t.is(isValidEnsName('project2'), true)
+  t.is(isValidEnsName('test-project'), true)
 
   t.is(isValidEnsName('testProject'), false)
-  t.is(isValidEnsName('test-project'), false)
   t.is(isValidEnsName('test_project'), false)
 })
 

@@ -27,7 +27,7 @@ const installDeps = (cwd, task) => {
  * @returns {boolean} `true` if valid
  */
 function isValidEnsName(name) {
-  return /^[a-z0-9]+$/.test(name)
+  return /^[a-z0-9-]+$/.test(name)
 }
 
 module.exports = {
