@@ -1,0 +1,27 @@
+{
+  "name": "aragon-cli-utils",
+  "version": "0.1.0",
+  "description": "Common building blocks for CLI tools",
+  "main": "",
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aragon/aragon-cli.git"
+  },
+  "keywords": [
+    "aragon",
+    "ethereum"
+  ],
+  "author": "Aragon Association <legal@aragon.org>",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/aragon/aragon-cli/issues"
+  },
+  "homepage": "https://github.com/aragon/aragon-cli#readme",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "figures": "^3.0.0"
+  }
+}
