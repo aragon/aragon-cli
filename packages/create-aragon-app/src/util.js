@@ -21,7 +21,17 @@ const installDeps = (cwd, task) => {
   })
 }
 
+/**
+ * Validates an Aragon ENS subdomain name
+ * @param {string} name Name
+ * @returns {boolean} `true` if valid
+ */
+function isValidEnsName(name) {
+  return /^[a-z0-9]+$/.test(name)
+}
+
 module.exports = {
   installDeps,
+  isValidEnsName,
   getNodePackageManager,
 }
