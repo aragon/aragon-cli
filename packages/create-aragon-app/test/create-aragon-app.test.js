@@ -16,7 +16,7 @@ test.afterEach(t => {
   fs.removeSync(projectPath)
 })
 
-test('check if project folder already exists', async t => {
+test.serial('check if project folder already exists', async t => {
   try {
     await checkProjectExists(projectPath)
     t.fail()
@@ -34,7 +34,7 @@ test('project name validation', t => {
   t.is(isValidAragonId('test_project'), false)
 })
 
-test('prepare project template', async t => {
+test.serial('prepare project template', async t => {
   const repoPath = `${projectPath}/.git`
   const arappPath = `${projectPath}/arapp.json`
   const packageJsonPath = `${projectPath}/package.json`
