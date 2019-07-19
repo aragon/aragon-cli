@@ -302,6 +302,15 @@ const parseStringIfPossible = target => {
   return target
 }
 
+/**
+ * Validates an Aragon Id
+ * @param {string} aragonId Aragon Id
+ * @returns {boolean} `true` if valid
+ */
+function isValidAragonId(aragonId) {
+  return /^[a-z0-9-]+$/.test(aragonId)
+}
+
 module.exports = {
   parseStringIfPossible,
   debugLogger,
@@ -314,6 +323,7 @@ module.exports = {
   getLocalBinary,
   getGlobalBinary,
   getContract,
+  isValidAragonId,
   ANY_ENTITY,
   NO_MANAGER,
   ZERO_ADDRESS,
