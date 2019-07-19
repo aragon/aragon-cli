@@ -9,12 +9,22 @@ const { keccak256 } = require('js-sha3')
 
 const { ARTIFACT_FILE } = require('./preprare-files')
 const SOLIDITY_FILE = 'code.sol'
+const ARAPP_FILE = 'arapp.json'
 
 const POSITIVE_ANSWERS = ['yes', 'y']
 const NEGATIVE_ANSWERS = ['no', 'n', 'abort', 'a']
 const ANSWERS = POSITIVE_ANSWERS.concat(NEGATIVE_ANSWERS)
 
 const getMajor = version => version.split('.')[0]
+
+const getRoles = roles =>
+  roles.map(role => Object.assign(role, { bytes: '0x' + keccak256(role.id) }))
+
+async function getEnvironments(cwd) {
+  const arappManifestPath = path.resolve(cwd, ARAPP_FILE)
+  const arappManifestFile = await readJson(arappManifestPath)
+  return arappManifestFile.environments
+}
 
 async function getContractAbi(cwd, contractPath) {
   const contractInterfacePath = path.resolve(
@@ -94,10 +104,14 @@ async function generateApplicationArtifact(
   web3,
   reporter
 ) {
+  // Set appName, path & roles
   let artifact = Object.assign({}, module)
 
   // Set `appId`
   artifact.appId = namehash.hash(artifact.appName)
+
+  // Set environments
+  artifact.environments = await getEnvironments(cwd)
 
   // Set ABI
   artifact.abi = await getContractAbi(cwd, artifact.path)
@@ -120,9 +134,7 @@ async function generateApplicationArtifact(
   artifact.deprecated = await deprecatedFunctions(apm, artifact, web3, reporter)
 
   if (artifact.roles) {
-    artifact.roles = artifact.roles.map(role =>
-      Object.assign(role, { bytes: '0x' + keccak256(role.id) })
-    )
+    getRoles(artifact.roles)
   }
 
   // Save artifact
@@ -139,19 +151,18 @@ async function generateFlattenedCode(dir, sourcePath) {
 }
 
 // Sanity check artifact.json
-async function sanityCheck(cwd, newNetworkName, newArtifact, oldArtifact) {
-  const { environments, abi } = oldArtifact
-  const firstKey = Object.keys(environments)[0]
-  const { appName, registry, network } = environments[firstKey]
+async function sanityCheck(cwd, newRoles, newContractPath, oldArtifact) {
+  const { roles, environments, abi, path } = oldArtifact
 
-  const newContractAbi = await getContractAbi(cwd, newArtifact.path)
+  const newContractRoles = await getRoles(newRoles)
+  const newContractEnvironments = await getEnvironments(cwd)
+  const newContractAbi = await getContractAbi(cwd, newContractPath)
 
   return (
+    JSON.stringify(newContractRoles) !== JSON.stringify(roles) ||
+    JSON.stringify(newContractEnvironments) !== JSON.stringify(environments) ||
     JSON.stringify(newContractAbi) !== JSON.stringify(abi) ||
-    newNetworkName !== network ||
-    newArtifact.appName !== appName ||
-    newArtifact.registry !== registry ||
-    newArtifact.path !== oldArtifact.path
+    newContractPath !== path
   )
 }
 
@@ -161,8 +172,8 @@ async function copyCurrentApplicationArtifacts(
   apm,
   repo,
   newVersion,
-  networkName,
-  module
+  roles,
+  contractPath
 ) {
   const copyingFiles = [ARTIFACT_FILE, SOLIDITY_FILE]
   const { content } = repo
@@ -196,8 +207,8 @@ async function copyCurrentApplicationArtifacts(
     if (file.fileName === ARTIFACT_FILE) {
       const rebuild = await sanityCheck(
         cwd,
-        networkName,
-        module,
+        roles,
+        contractPath,
         JSON.parse(file.fileContent)
       )
       if (rebuild) {

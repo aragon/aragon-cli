@@ -396,6 +396,11 @@ const runPrepareForPublishTask = ({
         title: 'Generate application artifact',
         skip: () => onlyContent && !module.path,
         task: async (ctx, task) => {
+          const dir = onlyArtifacts ? cwd : ctx.pathToPublish
+
+          const contractPath = module.path
+          const roles = module.roles
+
           // TODO: (Gabi) Use inquier to handle confirmation
           async function invokeArtifactGeneration(answer) {
             if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
@@ -408,13 +413,11 @@ const runPrepareForPublishTask = ({
                 web3,
                 reporter
               )
-              await generateFlattenedCode(dir, module.path)
+              await generateFlattenedCode(dir, contractPath)
               return `Saved artifact in ${dir}/${ARTIFACT_FILE}`
             }
             throw new Error('Aborting publication...')
           }
-
-          const dir = onlyArtifacts ? cwd : ctx.pathToPublish
 
           // If an artifact file exist we check it to reuse
           if (pathExistsSync(`${dir}/${ARTIFACT_FILE}`)) {
@@ -422,8 +425,8 @@ const runPrepareForPublishTask = ({
             const existingArtifact = await readJson(existingArtifactPath)
             const rebuild = await sanityCheck(
               cwd,
-              network.name,
-              module,
+              roles,
+              contractPath,
               existingArtifact
             )
             if (rebuild) {
@@ -454,11 +457,11 @@ const runPrepareForPublishTask = ({
                 apm,
                 initialRepo,
                 version,
-                network.name,
-                module
+                roles,
+                contractPath
               )
               if (!pathExistsSync(`${dir}/${SOLIDITY_FILE}`)) {
-                await generateFlattenedCode(dir, module.path)
+                await generateFlattenedCode(dir, contractPath)
               }
               return task.skip(`Using artifacts from v${initialVersion}`)
             } catch (e) {
