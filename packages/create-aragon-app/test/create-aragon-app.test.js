@@ -4,7 +4,7 @@ import fs from 'fs-extra'
 import { checkProjectExists, prepareTemplate } from '../src/lib'
 import { isValidAragonId } from '../src/util'
 
-import defaultAPMName from '../src/helpers/default-apm'
+const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 
 const projectPath = './.tmp/aragon-app'
 
