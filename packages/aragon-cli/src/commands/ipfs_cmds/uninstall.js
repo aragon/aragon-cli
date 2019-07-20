@@ -3,7 +3,7 @@ import execa from 'execa'
 import chalk from 'chalk'
 import inquirer from 'inquirer'
 //
-import listrOpts from '../../helpers/listr-options'
+import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
 import {
   getGlobalBinary,
   getLocalBinary,

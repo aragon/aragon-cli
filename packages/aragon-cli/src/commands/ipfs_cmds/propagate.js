@@ -6,7 +6,7 @@ import {
   extractCIDsFromMerkleDAG,
   propagateFiles,
 } from '../../lib/ipfs'
-import listrOpts from '../../helpers/listr-options'
+import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
 
 const chalk = require('chalk')
 const startIPFS = require('./start')

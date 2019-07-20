@@ -1,6 +1,6 @@
 const APM = require('@aragon/apm')
 const ACL = require('../../acl')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const { ensureWeb3 } = require('@aragon/cli-utils/src/helpers/web3-fallback')
 
 exports.command = 'grant [grantees..]'
 exports.describe =

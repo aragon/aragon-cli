@@ -4,9 +4,9 @@ const chalk = require('chalk')
 
 const { compileContracts } = require('../helpers/truffle-runner')
 const { findProjectRoot } = require('../util')
-const { ensureWeb3 } = require('../helpers/web3-fallback')
+const { ensureWeb3 } = require('@aragon/cli-utils/src/helpers/web3-fallback')
 const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
-const listrOpts = require('../helpers/listr-options')
+const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const { getRecommendedGasLimit } = require('../util')
 
 exports.command = 'deploy [contract]'

@@ -8,7 +8,7 @@ const {
 } = require('../../helpers/ipfs-daemon')
 
 const IPFS = require('ipfs-api')
-const listrOpts = require('../../helpers/listr-options')
+const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 exports.command = 'start'
 exports.describe = 'Start the IPFS daemon and configure it to work with Aragon.'

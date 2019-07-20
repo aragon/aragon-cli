@@ -4,8 +4,8 @@ const TaskList = require('listr')
 const daoArg = require('../utils/daoArg')
 const { listApps } = require('../utils/knownApps')
 const { rolesForApps } = require('./utils/knownRoles')
-const { ensureWeb3 } = require('../../../helpers/web3-fallback')
-const listrOpts = require('../../../helpers/listr-options')
+const { ensureWeb3 } = require('@aragon/cli-utils/src/helpers/web3-fallback')
+const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 const Table = require('cli-table')
 

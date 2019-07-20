@@ -1,7 +1,7 @@
 import initAragonJS from './aragonjs-wrapper'
 const TaskList = require('listr')
-const { ensureWeb3 } = require('../../../helpers/web3-fallback')
-const listrOpts = require('../../../helpers/listr-options')
+const { ensureWeb3 } = require('@aragon/cli-utils/src/helpers/web3-fallback')
+const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 exports.task = async function(
   dao,
