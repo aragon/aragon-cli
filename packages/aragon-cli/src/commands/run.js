@@ -11,7 +11,7 @@ const startIPFS = require('./ipfs_cmds/start')
 const encodeInitPayload = require('./dao_cmds/utils/encodeInitPayload')
 const fs = require('fs-extra')
 const pkg = require('../../package.json')
-const listrOpts = require('../helpers/listr-options')
+const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 const { findProjectRoot, isPortTaken } = require('../util')
 

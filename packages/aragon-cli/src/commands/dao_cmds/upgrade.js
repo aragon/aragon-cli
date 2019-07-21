@@ -2,13 +2,13 @@ const execTask = require('./utils/execHandler').task
 const { resolveEnsDomain } = require('./utils/aragonjs-wrapper')
 const TaskList = require('listr')
 const daoArg = require('./utils/daoArg')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const { ensureWeb3 } = require('@aragon/cli-utils/src/helpers/web3-fallback')
 const APM = require('@aragon/apm')
-const defaultAPMName = require('../../helpers/default-apm')
+const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 const chalk = require('chalk')
 const getRepoTask = require('./utils/getRepoTask')
 const { getContract } = require('../../util')
-const listrOpts = require('../../helpers/listr-options')
+const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 exports.command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
 

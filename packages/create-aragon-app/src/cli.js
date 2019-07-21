@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
-const ConsoleReporter = require('./reporters/ConsoleReporter')
+const ConsoleReporter = require('@aragon/cli-utils/src/reporters/ConsoleReporter')
 
 // Set up commands
 const cmd = require('yargs')

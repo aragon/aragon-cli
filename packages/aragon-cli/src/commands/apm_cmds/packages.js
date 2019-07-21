@@ -2,7 +2,7 @@ const APM = require('@aragon/apm')
 const chalk = require('chalk')
 const Table = require('cli-table')
 const TaskList = require('listr')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const { ensureWeb3 } = require('@aragon/cli-utils/src/helpers/web3-fallback')
 
 exports.command = 'packages [apmRegistry]'
 

@@ -1,4 +1,4 @@
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const { ensureWeb3 } = require('@aragon/cli-utils/src/helpers/web3-fallback')
 const tmp = require('tmp-promise')
 const path = require('path')
 const { readJson, writeJson, pathExistsSync } = require('fs-extra')
@@ -16,7 +16,7 @@ const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 const startIPFS = require('../ipfs_cmds/start')
 const propagateIPFS = require('../ipfs_cmds/propagate')
 const execTask = require('../dao_cmds/utils/execHandler').task
-const listrOpts = require('../../helpers/listr-options')
+const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 const {
   prepareFilesForPublishing,
