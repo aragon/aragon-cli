@@ -569,7 +569,7 @@ const runPublishTask = ({
       {
         title: 'Fetch published repo',
         task: getRepoTask.task({
-          artifactRequired: onlyContent,
+          artifactRequired: !onlyContent,
           apmRepo: module.appName,
           apm,
         }),
