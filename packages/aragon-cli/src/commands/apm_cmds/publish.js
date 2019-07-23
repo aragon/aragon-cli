@@ -235,9 +235,7 @@ const runSetupTask = ({
               : semver.inc('0.0.0', bump) // All valid initial versions are a version bump from 0.0.0
             if (apm.validInitialVersions.indexOf(ctx.version) === -1) {
               throw new Error(
-                `Invalid initial version  (${
-                  ctx.version
-                }). It can only be 0.0.1, 0.1.0 or 1.0.0.`
+                `Invalid initial version  (${ctx.version}). It can only be 0.0.1, 0.1.0 or 1.0.0.`
               )
             }
             ctx.shouldDeployContract = true // assume first version should deploy a contract
