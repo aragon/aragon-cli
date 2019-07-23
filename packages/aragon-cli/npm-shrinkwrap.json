@@ -2134,6 +2134,11 @@
         "regenerator-runtime": "^0.13.2"
       },
       "dependencies": {
+        "core-js": {
+          "version": "2.6.9",
+          "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz",
+          "integrity": "sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A=="
+        },
         "regenerator-runtime": {
           "version": "0.13.3",
           "resolved": "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.13.3.tgz",
@@ -3738,6 +3743,14 @@
         "espower-location-detector": "^1.0.0",
         "espurify": "^1.6.0",
         "estraverse": "^4.1.1"
+      },
+      "dependencies": {
+        "core-js": {
+          "version": "2.6.9",
+          "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz",
+          "integrity": "sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A==",
+          "dev": true
+        }
       }
     },
     "babel-plugin-syntax-async-functions": {
@@ -4062,6 +4075,11 @@
         "source-map-support": "^0.4.15"
       },
       "dependencies": {
+        "core-js": {
+          "version": "2.6.9",
+          "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz",
+          "integrity": "sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A=="
+        },
         "source-map-support": {
           "version": "0.4.18",
           "resolved": "https://registry.npmjs.org/source-map-support/-/source-map-support-0.4.18.tgz",
@@ -4079,6 +4097,18 @@
       "requires": {
         "core-js": "^2.4.0",
         "regenerator-runtime": "^0.11.0"
+      },
+      "dependencies": {
+        "core-js": {
+          "version": "2.6.9",
+          "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz",
+          "integrity": "sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A=="
+        },
+        "regenerator-runtime": {
+          "version": "0.11.1",
+          "resolved": "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.11.1.tgz",
+          "integrity": "sha512-MguG95oij0fC3QV3URf4V2SDYGJhJnJGqvIIgdECeODCT98wSWDAJ94SSuVpYQUoTcGUIL6L4yNB7j1DFFHSBg=="
+        }
       }
     },
     "babel-template": {
@@ -4827,6 +4857,14 @@
         "deep-equal": "^1.0.0",
         "espurify": "^1.6.0",
         "estraverse": "^4.0.0"
+      },
+      "dependencies": {
+        "core-js": {
+          "version": "2.6.9",
+          "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz",
+          "integrity": "sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A==",
+          "dev": true
+        }
       }
     },
     "call-signature": {
@@ -5490,9 +5528,10 @@
       }
     },
     "core-js": {
-      "version": "2.6.9",
-      "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz",
-      "integrity": "sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A=="
+      "version": "3.1.4",
+      "resolved": "https://registry.npmjs.org/core-js/-/core-js-3.1.4.tgz",
+      "integrity": "sha512-YNZN8lt82XIMLnLirj9MhKDFZHalwzzrL9YLt6eb0T5D0EDl4IQ90IGkua8mHbnxNrkj1d8hbdizMc0Qmg1WnQ==",
+      "dev": true
     },
     "core-js-compat": {
       "version": "3.1.4",
@@ -6652,6 +6691,14 @@
       "requires": {
         "call-signature": "0.0.2",
         "core-js": "^2.0.0"
+      },
+      "dependencies": {
+        "core-js": {
+          "version": "2.6.9",
+          "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz",
+          "integrity": "sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A==",
+          "dev": true
+        }
       }
     },
     "encodeurl": {
@@ -7316,6 +7363,14 @@
       "dev": true,
       "requires": {
         "core-js": "^2.0.0"
+      },
+      "dependencies": {
+        "core-js": {
+          "version": "2.6.9",
+          "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz",
+          "integrity": "sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A==",
+          "dev": true
+        }
       }
     },
     "esquery": {
@@ -11235,7 +11290,24 @@
               "version": "git+https://github.com/ethereumjs/ethereumjs-abi.git#d84a96796079c8595a0c78accd1e7709f2277215",
               "from": "git+https://github.com/ethereumjs/ethereumjs-abi.git",
               "requires": {
-                "bn.js": "^4.11.8"
+                "bn.js": "^4.11.8",
+                "ethereumjs-util": "^6.0.0"
+              },
+              "dependencies": {
+                "ethereumjs-util": {
+                  "version": "6.1.0",
+                  "resolved": "https://registry.npmjs.org/ethereumjs-util/-/ethereumjs-util-6.1.0.tgz",
+                  "integrity": "sha512-URESKMFbDeJxnAxPppnk2fN6Y3BIatn9fwn76Lm8bQlt+s52TpG8dN9M66MLPuRAiAOIqL3dfwqWJf0sd0fL0Q==",
+                  "requires": {
+                    "bn.js": "^4.11.0",
+                    "create-hash": "^1.1.2",
+                    "ethjs-util": "0.1.6",
+                    "keccak": "^1.0.2",
+                    "rlp": "^2.0.0",
+                    "safe-buffer": "^5.1.1",
+                    "secp256k1": "^3.0.1"
+                  }
+                }
               }
             },
             "ethereumjs-block": {
@@ -14921,7 +14993,24 @@
               "version": "git+https://github.com/ethereumjs/ethereumjs-abi.git#d84a96796079c8595a0c78accd1e7709f2277215",
               "from": "git+https://github.com/ethereumjs/ethereumjs-abi.git",
               "requires": {
-                "bn.js": "^4.11.8"
+                "bn.js": "^4.11.8",
+                "ethereumjs-util": "^6.0.0"
+              },
+              "dependencies": {
+                "ethereumjs-util": {
+                  "version": "6.1.0",
+                  "resolved": "https://registry.npmjs.org/ethereumjs-util/-/ethereumjs-util-6.1.0.tgz",
+                  "integrity": "sha512-URESKMFbDeJxnAxPppnk2fN6Y3BIatn9fwn76Lm8bQlt+s52TpG8dN9M66MLPuRAiAOIqL3dfwqWJf0sd0fL0Q==",
+                  "requires": {
+                    "bn.js": "^4.11.0",
+                    "create-hash": "^1.1.2",
+                    "ethjs-util": "0.1.6",
+                    "keccak": "^1.0.2",
+                    "rlp": "^2.0.0",
+                    "safe-buffer": "^5.1.1",
+                    "secp256k1": "^3.0.1"
+                  }
+                }
               }
             },
             "ethereumjs-block": {
@@ -21819,9 +21908,10 @@
       }
     },
     "regenerator-runtime": {
-      "version": "0.11.1",
-      "resolved": "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.11.1.tgz",
-      "integrity": "sha512-MguG95oij0fC3QV3URf4V2SDYGJhJnJGqvIIgdECeODCT98wSWDAJ94SSuVpYQUoTcGUIL6L4yNB7j1DFFHSBg=="
+      "version": "0.13.3",
+      "resolved": "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.13.3.tgz",
+      "integrity": "sha512-naKIZz2GQ8JWh///G7L3X6LaQUAMp2lvb1rvwwsURe/VXwD6VMfr+/1NuNw3ag8v2kY1aQ/go5SNn79O9JU7yw==",
+      "dev": true
     },
     "regenerator-transform": {
       "version": "0.10.1",

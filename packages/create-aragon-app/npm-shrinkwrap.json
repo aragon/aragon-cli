@@ -1109,6 +1109,14 @@
       "requires": {
         "core-js": "^2.6.5",
         "regenerator-runtime": "^0.13.2"
+      },
+      "dependencies": {
+        "core-js": {
+          "version": "2.6.9",
+          "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz",
+          "integrity": "sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A==",
+          "dev": true
+        }
       }
     },
     "@babel/preset-env": {
@@ -2134,6 +2142,14 @@
         "espower-location-detector": "^1.0.0",
         "espurify": "^1.6.0",
         "estraverse": "^4.1.1"
+      },
+      "dependencies": {
+        "core-js": {
+          "version": "2.6.9",
+          "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz",
+          "integrity": "sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A==",
+          "dev": true
+        }
       }
     },
     "babelify": {
@@ -2501,6 +2517,14 @@
         "deep-equal": "^1.0.0",
         "espurify": "^1.6.0",
         "estraverse": "^4.0.0"
+      },
+      "dependencies": {
+        "core-js": {
+          "version": "2.6.9",
+          "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz",
+          "integrity": "sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A==",
+          "dev": true
+        }
       }
     },
     "call-signature": {
@@ -3070,9 +3094,9 @@
       }
     },
     "core-js": {
-      "version": "2.6.9",
-      "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz",
-      "integrity": "sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A==",
+      "version": "3.1.4",
+      "resolved": "https://registry.npmjs.org/core-js/-/core-js-3.1.4.tgz",
+      "integrity": "sha512-YNZN8lt82XIMLnLirj9MhKDFZHalwzzrL9YLt6eb0T5D0EDl4IQ90IGkua8mHbnxNrkj1d8hbdizMc0Qmg1WnQ==",
       "dev": true
     },
     "core-js-compat": {
@@ -3675,6 +3699,14 @@
       "requires": {
         "call-signature": "0.0.2",
         "core-js": "^2.0.0"
+      },
+      "dependencies": {
+        "core-js": {
+          "version": "2.6.9",
+          "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz",
+          "integrity": "sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A==",
+          "dev": true
+        }
       }
     },
     "end-of-stream": {
@@ -4300,6 +4332,14 @@
       "dev": true,
       "requires": {
         "core-js": "^2.0.0"
+      },
+      "dependencies": {
+        "core-js": {
+          "version": "2.6.9",
+          "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz",
+          "integrity": "sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A==",
+          "dev": true
+        }
       }
     },
     "esquery": {
