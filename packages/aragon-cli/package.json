@@ -88,6 +88,11 @@
     "yargs": "^13.2.4"
   },
   "devDependencies": {
+    "@aragon/apps-agent": "^1.1.1",
+    "@aragon/apps-finance": "^3.0.0",
+    "@aragon/apps-token-manager": "^2.0.0",
+    "@aragon/apps-vault": "^4.0.0",
+    "@aragon/apps-voting": "^2.0.0",
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
     "@babel/node": "^7.0.0",
