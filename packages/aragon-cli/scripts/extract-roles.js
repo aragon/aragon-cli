@@ -4,7 +4,7 @@ const path = require('path')
 
 const getAppNPMPackage = appName => `@aragon/apps-${appName}`
 
-const knownApps = ['voting', 'token-manager', 'vault', 'finance']
+const knownApps = ['voting', 'token-manager', 'vault', 'finance', 'agent']
 
 const getAppRoles = app => {
   const arapp = require(`${getAppNPMPackage(app)}/arapp`)

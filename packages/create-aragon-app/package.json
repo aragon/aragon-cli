@@ -1,6 +1,6 @@
 {
   "name": "create-aragon-app",
-  "version": "2.2.11",
+  "version": "2.2.12",
   "description": "Aragon command-line tool to create aragon apps",
   "main": "dist/cli.js",
   "bin": {
@@ -36,12 +36,15 @@
   },
   "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
-    "@aragon/cli-utils": "^0.0.2",
-    "core-js": "^3.1.4",
+    "chalk": "^2.1.0",
     "execa": "^1.0.0",
+    "figures": "^3.0.0",
     "fs-extra": "^8.0.1",
     "git-clone": "^0.1.0",
     "listr": "^0.14.3",
+    "listr-silent-renderer": "^1.1.1",
+    "listr-update-renderer": "^0.5.0",
+    "listr-verbose-renderer": "^0.5.0",
     "replace": "^1.1.0",
     "yargs": "^13.2.4"
   },
@@ -54,6 +57,7 @@
     "@babel/register": "^7.0.0",
     "ava": "^2.0.0",
     "babel-eslint": "^10.0.1",
+    "core-js": "^3.1.4",
     "documentation": "^12.0.0",
     "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
@@ -67,7 +71,8 @@
     "husky": "^3.0.0",
     "lint-staged": "^9.1.0",
     "nyc": "^14.1.1",
-    "prettier": "^1.15.3"
+    "prettier": "^1.15.3",
+    "regenerator-runtime": "^0.13.3"
   },
   "engines": {
     "node": ">=8.0.0"
@@ -75,6 +80,7 @@
   "ava": {
     "require": [
       "core-js",
+      "regenerator-runtime",
       "@babel/register"
     ],
     "files": [

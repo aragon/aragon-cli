@@ -3,8 +3,8 @@ const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const TaskList = require('listr')
 const { installDeps, isValidAragonId } = require('../util')
-const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
+const defaultAPMName = require('../helpers/default-apm')
+const listrOpts = require('../helpers/listr-options')
 
 exports.command = '* <name> [template]'
 

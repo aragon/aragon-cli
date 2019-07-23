@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "6.1.0",
+  "version": "6.1.1",
   "description": "Aragon command-line tools",
   "main": "dist/cli.js",
   "bin": {
@@ -53,8 +53,6 @@
     "byte-size": "^5.0.1",
     "chalk": "^2.1.0",
     "cli-table": "^0.3.1",
-    "colors": "^1.2.4",
-    "core-js": "^3.1.4",
     "del-cli": "^2.0.0",
     "dev-null": "^0.1.1",
     "eth-ens-namehash": "^2.0.8",
@@ -73,7 +71,6 @@
     "listr": "^0.14.3",
     "listr-input": "0.1.3",
     "lodash.merge": "^4.6.1",
-    "mkdirp": "^0.5.1",
     "node-fetch": "^2.3.0",
     "open": "^6.0.0",
     "public-ip": "^3.1.0",
@@ -86,11 +83,12 @@
     "truffle-flattener": "^1.2.9",
     "truffle-hdwallet-provider": "^1.0.2",
     "truffle-hdwallet-provider-privkey": "^0.3.0",
-    "web3": "1.0.0-beta.37",
+    "web3": "^1.2.0",
     "which": "^1.3.1",
     "yargs": "^13.2.4"
   },
   "devDependencies": {
+    "@aragon/apps-agent": "^1.1.1",
     "@aragon/apps-finance": "^3.0.0",
     "@aragon/apps-token-manager": "^2.0.0",
     "@aragon/apps-vault": "^4.0.0",
@@ -103,6 +101,7 @@
     "@babel/register": "^7.0.0",
     "ava": "^2.1.0",
     "babel-eslint": "^10.0.1",
+    "core-js": "^3.1.4",
     "documentation": "^12.0.0",
     "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
@@ -118,6 +117,7 @@
     "nyc": "^14.1.1",
     "prettier": "^1.15.3",
     "proxyquire": "^2.1.0",
+    "regenerator-runtime": "^0.13.3",
     "sinon": "^7.3.1"
   },
   "engines": {
@@ -126,6 +126,7 @@
   "ava": {
     "require": [
       "core-js",
+      "regenerator-runtime",
       "@babel/register"
     ],
     "files": [
