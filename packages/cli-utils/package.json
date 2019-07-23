@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli-utils",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Common building blocks for CLI tools",
   "main": "",
   "scripts": {
@@ -26,6 +26,6 @@
     "listr-silent-renderer": "^1.1.1",
     "listr-update-renderer": "^0.5.0",
     "listr-verbose-renderer": "^0.5.0",
-    "web3": "1.0.0-beta.37"
+    "web3": "^1.2.0"
   }
 }
