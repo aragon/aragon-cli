@@ -47,7 +47,7 @@ function decorateFunctionsWithAbi(functions, abi, web3) {
 }
 
 async function deprecatedFunctions(apm, artifact, web3, reporter) {
-  let deprecatedFunctions = {}
+  const deprecatedFunctions = {}
   try {
     const deprecatedFunctionsSig = new Set()
     const versions = await apm.getAllVersions(artifact.appName)

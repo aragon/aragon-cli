@@ -15,9 +15,10 @@ const getAppRoles = app => {
 const flatten = list =>
   list.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), [])
 
-const aOSRoles = [
+const kernelRoles = [{ id: 'APP_MANAGER_ROLE', name: 'Manage DAO apps' }]
+
+const aclRoles = [
   { id: 'CREATE_PERMISSIONS_ROLE', name: 'Create new permissions' },
-  { id: 'APP_MANAGER_ROLE', name: 'Manage DAO apps' },
 ]
 
 const evmRegRoles = [
@@ -28,7 +29,8 @@ const evmRegRoles = [
 // TODO: Add support for user apps
 const rolesForDefaultApps = () => {
   const allRoles = flatten(knownApps.map(app => getAppRoles(app)))
-    .concat(aOSRoles)
+    .concat(kernelRoles)
+    .concat(aclRoles)
     .concat(evmRegRoles)
 
   return allRoles

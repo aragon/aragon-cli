@@ -37,9 +37,8 @@ async function prepareFilesForPublishing(
     }
   }
 
-  const replaceRootRegex = new RegExp(`^${projectRoot}`)
   function filterIgnoredFiles(src) {
-    const relativeSrc = src.replace(replaceRootRegex, '.')
+    const relativeSrc = path.relative(projectRoot, src)
     return !filter.ignores(relativeSrc)
   }
 
