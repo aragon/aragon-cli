@@ -24,11 +24,11 @@ exports.builder = function(yargs) {
 }
 
 const printAppNameFromAppId = appId => {
-  return knownApps[appId] ? knownApps[appId] : appId
+  return knownApps[appId] ? chalk.blue(knownApps[appId]) : appId
 }
 
 const printAppNameAndVersion = (appName, version) => {
-  return version ? `${appName}@v${version}` : appName
+  return version ? chalk.blue(`${appName}@v${version}`) : chalk.blue(appName)
 }
 
 const printContent = content => {
@@ -112,7 +112,9 @@ exports.handler = async function({
   )
 
   return tasks.run().then(ctx => {
-    reporter.success(`Successfully fetched DAO apps for ${ctx.daoAddress}`)
+    reporter.success(
+      `Successfully fetched DAO apps for ${chalk.green(ctx.daoAddress)}`
+    )
     const appsContent = ctx.apps
       .map(
         ({ appId, proxyAddress, codeAddress, content, appName, version }) => [

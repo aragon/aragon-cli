@@ -47,7 +47,7 @@ function decorateFunctionsWithAbi(functions, abi, web3) {
 }
 
 async function deprecatedFunctions(apm, artifact, web3, reporter) {
-  let deprecated = {}
+  const deprecatedFunctions = {}
   try {
     const deprecatedFunctionsSig = new Set()
     const versions = await apm.getAllVersions(artifact.appName)
@@ -68,7 +68,7 @@ async function deprecatedFunctions(apm, artifact, web3, reporter) {
             }
           })
           if (deprecatedOnVersion.length) {
-            deprecated[`${lastMajor}.0.0`] = deprecatedOnVersion
+            deprecatedFunctions[`${lastMajor}.0.0`] = deprecatedOnVersion
             decorateFunctionsWithAbi(deprecatedOnVersion, version.abi, web3)
             deprecatedOnVersion = []
           }
@@ -92,7 +92,7 @@ async function deprecatedFunctions(apm, artifact, web3, reporter) {
   } catch (e) {
     // Catch ENS error on first version
   }
-  return deprecated
+  return deprecatedFunctions
 }
 
 async function generateApplicationArtifact(
@@ -130,8 +130,13 @@ async function generateApplicationArtifact(
 
   // Consult old (major) version's artifacts and return an array
   // of deprecated functions per version
-  // > "deprecated": { "1.0.0": [{}], "2.0.0": [{}] }
-  artifact.deprecated = await deprecatedFunctions(apm, artifact, web3, reporter)
+  // > "deprecatedFunctions": { "1.0.0": [{}], "2.0.0": [{}] }
+  artifact.deprecatedFunctions = await deprecatedFunctions(
+    apm,
+    artifact,
+    web3,
+    reporter
+  )
 
   if (artifact.roles) {
     getRoles(artifact.roles)

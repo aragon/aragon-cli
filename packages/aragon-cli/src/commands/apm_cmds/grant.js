@@ -1,6 +1,7 @@
 const APM = require('@aragon/apm')
 const ACL = require('../../acl')
 const { ensureWeb3 } = require('@aragon/cli-utils/src/helpers/web3-fallback')
+const chalk = require('chalk')
 
 exports.command = 'grant [grantees..]'
 exports.describe =
@@ -45,7 +46,9 @@ exports.handler = async function({
 
   for (const address of grantees) {
     reporter.info(
-      `Granting permission to publish on ${module.appName} for ${address}`
+      `Granting permission to publish on ${chalk.blue(
+        module.appName
+      )} for ${chalk.green(address)}`
     )
 
     // Decode sender
@@ -61,9 +64,11 @@ exports.handler = async function({
 
     try {
       const receipt = await web3.eth.sendTransaction(transaction)
-      reporter.success(`Successful transaction (${receipt.transactionHash})`)
+      reporter.success(
+        `Successful transaction (${chalk.blue(receipt.transactionHash)})`
+      )
     } catch (e) {
-      reporter.error(`${e}\nTransaction failed`)
+      reporter.error(`${e}\n${chalk.red('Transaction failed')}`)
       process.exit(1)
     }
   }

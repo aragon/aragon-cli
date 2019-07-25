@@ -172,7 +172,7 @@ exports.handler = async function({
     debug,
   })
   return task.run().then(ctx => {
-    reporter.success(`Created DAO: ${chalk.bold(ctx.daoAddress)}`)
+    reporter.success(`Created DAO: ${chalk.green(ctx.daoAddress)}`)
     if (kit || kitVersion) {
       reporter.warning(
         `The use of kits is deprecated and templates should be used instead. The new options for 'dao new' are '--template' and '--template-version'`

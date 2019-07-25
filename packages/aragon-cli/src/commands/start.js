@@ -1,4 +1,5 @@
 import { downloadWrapper, startClient, openWrapper } from '../lib/start'
+const chalk = require('chalk')
 const TaskList = require('listr')
 const pkg = require('../../package.json')
 const { installDeps } = require('../util')
@@ -71,7 +72,9 @@ exports.handler = async ({
     .run()
     .then(() =>
       reporter.info(
-        `Aragon client version ${clientVersion}, started on port ${clientPort}`
+        `Aragon client version ${chalk.blue(
+          clientVersion
+        )}, started on port ${chalk.blue(clientPort)}`
       )
     )
 }

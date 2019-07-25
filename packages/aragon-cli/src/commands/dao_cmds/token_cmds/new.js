@@ -180,17 +180,19 @@ exports.handler = async function({
   })
   return task.run().then(ctx => {
     reporter.success(
-      `Successfully deployed the token at ${chalk.bold(ctx.tokenAddress)}`
+      `Successfully deployed the token at ${chalk.green(ctx.tokenAddress)}`
     )
-    reporter.info(`Token transaction hash: ${ctx.tokenTxHash}`)
+    reporter.info(`Token transaction hash: ${chalk.blue(ctx.tokenTxHash)}`)
 
     if (ctx.factoryAddress) {
       reporter.success(
-        `Successfully deployed the token factory at ${chalk.bold(
+        `Successfully deployed the token factory at ${chalk.green(
           ctx.factoryAddress
         )}`
       )
-      reporter.info(`Token factory transaction hash: ${ctx.factoryTxHash}`)
+      reporter.info(
+        `Token factory transaction hash: ${chalk.blue(ctx.factoryTxHash)}`
+      )
     }
 
     process.exit()

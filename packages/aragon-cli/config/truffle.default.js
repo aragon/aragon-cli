@@ -10,7 +10,7 @@ const HDWalletProviderPrivkey = require('truffle-hdwallet-provider-privkey')
 const DEFAULT_MNEMONIC =
   'explain tackle mirror kit van hammer degree position ginger unfair soup bonus'
 
-const defaultRPC = network => `https://${network}.infura.io`
+const defaultRPC = network => `https://${network}.eth.aragon.network`
 
 const configFilePath = filename => path.join(homedir(), `.aragon/${filename}`)
 
