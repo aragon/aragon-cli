@@ -304,7 +304,9 @@ exports.handler = function({
   return tasks.run({ ens: apmOptions['ens-registry'] }).then(async ctx => {
     if (ctx.portOpen) {
       reporter.warning(
-        `Server already listening at port ${clientPort}, skipped starting Aragon`
+        `Server already listening at port ${chalk.blue(
+          clientPort
+        )}, skipped starting Aragon`
       )
     }
 
@@ -331,17 +333,22 @@ exports.handler = function({
       .slice(1)
       .join('.')
 
-    console.log()
     reporter.info(`This is the configuration for your development deployment:
-    ${chalk.bold('Ethereum Node')}: ${network.provider.connection._url}
-    ${chalk.bold('ENS registry')}: ${ctx.ens}
-    ${chalk.bold(`aragonPM registry`)}: ${registry}
-    ${chalk.bold('DAO address')}: ${ctx.daoAddress}
+    ${chalk.bold('Ethereum Node')}: ${chalk.blue(
+      network.provider.connection._url
+    )}
+    ${chalk.bold('ENS registry')}: ${chalk.blue(ctx.ens)}
+    ${chalk.bold(`aragonPM registry`)}: ${chalk.blue(registry)}
+    ${chalk.bold('DAO address')}: ${chalk.green(ctx.daoAddress)}
 
     ${
       client !== false
-        ? `Opening http://localhost:${clientPort}/#/${ctx.daoAddress} to view your DAO`
-        : `Use "aragon dao <command> ${ctx.daoAddress}" to interact with your DAO`
+        ? `Opening ${chalk.bold(
+            `http://localhost:${clientPort}/#/${ctx.daoAddress}`
+          )} to view your DAO`
+        : `Use ${chalk.bold(
+            `"aragon dao <command> ${ctx.daoAddress}"`
+          )} to interact with your DAO`
     }`)
 
     if (!manifest) {

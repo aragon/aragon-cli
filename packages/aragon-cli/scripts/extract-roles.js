@@ -20,11 +20,16 @@ const aOSRoles = [
   { id: 'APP_MANAGER_ROLE', name: 'Manage DAO apps' },
 ]
 
+const evmRegRoles = [
+  { id: 'REGISTRY_ADD_EXECUTOR_ROLE', name: 'Add executors' },
+  { id: 'REGISTRY_MANAGER_ROLE', name: 'Enable and disable executors' },
+]
+
 // TODO: Add support for user apps
 const rolesForDefaultApps = () => {
-  const allRoles = flatten(knownApps.map(app => getAppRoles(app))).concat(
-    aOSRoles
-  )
+  const allRoles = flatten(knownApps.map(app => getAppRoles(app)))
+    .concat(aOSRoles)
+    .concat(evmRegRoles)
 
   return allRoles
 }

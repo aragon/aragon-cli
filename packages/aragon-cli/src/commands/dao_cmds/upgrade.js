@@ -118,7 +118,9 @@ exports.handler = async function({
 
   return task.run().then(ctx => {
     reporter.success(
-      `Successfully executed: "${ctx.transactionPath[0].description}"`
+      `Successfully executed: "${chalk.blue(
+        ctx.transactionPath[0].description
+      )}"`
     )
     process.exit()
   })

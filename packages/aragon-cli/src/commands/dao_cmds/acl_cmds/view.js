@@ -126,7 +126,9 @@ exports.handler = async function({
   )
 
   return tasks.run().then(ctx => {
-    reporter.success(`Successfully fetched DAO apps for ${ctx.daoAddress}`)
+    reporter.success(
+      `Successfully fetched DAO apps for ${chalk.green(ctx.daoAddress)}`
+    )
 
     let acl = ctx.acl
 

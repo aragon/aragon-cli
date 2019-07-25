@@ -251,11 +251,15 @@ exports.handler = async function({
 
   return task.run().then(ctx => {
     reporter.info(
-      `Successfully executed: "${ctx.transactionPath[0].description}"`
+      `Successfully executed: "${chalk.blue(
+        ctx.transactionPath[0].description
+      )}"`
     )
 
     if (ctx.appAddress) {
-      reporter.success(`Installed ${apmRepo} at: ${chalk.bold(ctx.appAddress)}`)
+      reporter.success(
+        `Installed ${chalk.blue(apmRepo)} at: ${chalk.green(ctx.appAddress)}`
+      )
     } else {
       reporter.warning(
         'After the app instance is created, you will need to assign permissions to it for it appear as an app in the DAO'

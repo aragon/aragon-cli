@@ -169,9 +169,13 @@ exports.handler = async ({
   const ctx = await task.run()
 
   reporter.success(
-    `Successfully deployed ${ctx.contractName} at: ${chalk.bold(ctx.contract)}`
+    `Successfully deployed ${chalk.blue(ctx.contractName)} at: ${chalk.green(
+      ctx.contract
+    )}`
   )
-  reporter.info(`Transaction hash: ${ctx.deployArtifacts.transactionHash}`)
+  reporter.info(
+    `Transaction hash: ${chalk.blue(ctx.deployArtifacts.transactionHash)}`
+  )
 
   process.exit()
 }

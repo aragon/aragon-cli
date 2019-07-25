@@ -89,9 +89,11 @@ exports.handler = async function({
   })
   return task.run().then(ctx => {
     reporter.success(
-      `Successfully changed the controller of ${tokenAddress} to ${newController}`
+      `Successfully changed the controller of ${chalk.green(
+        tokenAddress
+      )} to ${chalk.green(newController)}`
     )
-    reporter.info(`Transaction hash: ${chalk.bold(ctx.txHash)}`)
+    reporter.info(`Transaction hash: ${chalk.blue(ctx.txHash)}`)
 
     process.exit()
   })

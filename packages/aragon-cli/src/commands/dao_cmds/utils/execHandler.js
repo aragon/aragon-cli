@@ -1,4 +1,5 @@
 import initAragonJS from './aragonjs-wrapper'
+const chalk = require('chalk')
 const TaskList = require('listr')
 const { ensureWeb3 } = require('@aragon/cli-utils/src/helpers/web3-fallback')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
@@ -82,7 +83,9 @@ exports.handler = async function(dao, getTransactionPath, args) {
 
   return tasks.run().then(ctx => {
     args.reporter.success(
-      `Successfully executed: "${ctx.transactionPath[0].description}"`
+      `Successfully executed: "${chalk.blue(
+        ctx.transactionPath[0].description
+      )}"`
     )
     process.exit()
   })
