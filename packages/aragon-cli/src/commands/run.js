@@ -333,7 +333,7 @@ exports.handler = function({
       .slice(1)
       .join('.')
 
-    reporter.info(`This is the configuration for your development deployment:
+    reporter.info(`\nThis is the configuration for your development deployment:
     ${chalk.bold('Ethereum Node')}: ${chalk.blue(
       network.provider.connection._url
     )}
