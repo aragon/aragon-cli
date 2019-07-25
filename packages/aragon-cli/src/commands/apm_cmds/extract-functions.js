@@ -2,6 +2,7 @@ const path = require('path')
 const { keccak256 } = require('js-sha3')
 const { writeJson } = require('fs-extra')
 const extract = require('../../helpers/solidity-extractor')
+const chalk = require('chalk')
 
 exports.command = 'extract-functions [contract]'
 
@@ -53,5 +54,5 @@ exports.handler = async function({
 
   await writeJson(outputPath, content, { spaces: '\t' })
 
-  reporter.success(`Saved to ${outputPath}`)
+  reporter.success(`Saved to ${chalk.blue(outputPath)}`)
 }
