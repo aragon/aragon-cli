@@ -9,9 +9,9 @@ const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const startIPFS = require('../ipfs_cmds/start')
 const { getRecommendedGasLimit } = require('../../util')
 
-exports.BARE_TEMPLATE = defaultAPMName('bare-kit')
-exports.BARE_INSTANCE_FUNCTION = 'newBareInstance'
-exports.BARE_TEMPLATE_DEPLOY_EVENT = 'DeployInstance'
+exports.BARE_TEMPLATE = defaultAPMName('bare-template')
+exports.BARE_INSTANCE_FUNCTION = 'newInstance'
+exports.BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
 
 const BARE_TEMPLATE_ABI = require('./utils/bare-template-abi')
 
