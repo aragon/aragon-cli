@@ -37,10 +37,11 @@ async function getContractAbi(cwd, contractPath) {
 }
 
 function decorateFunctionsWithAbi(functions, abi, web3) {
+  const abiFunctions = abi.filter(elem => elem.type === 'function')
   functions.forEach(f => {
-    f.abi = abi.find(
-      interfaceObject =>
-        web3.eth.abi.encodeFunctionSignature(interfaceObject) ===
+    f.abi = abiFunctions.find(
+      elem =>
+        web3.eth.abi.encodeFunctionSignature(elem) ===
         web3.eth.abi.encodeFunctionSignature(f.sig)
     )
   })
