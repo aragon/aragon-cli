@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli-utils",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Common building blocks for CLI tools",
   "main": "",
   "scripts": {
