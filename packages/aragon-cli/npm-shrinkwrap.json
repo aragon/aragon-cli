@@ -19272,9 +19272,9 @@
       }
     },
     "ipfs-http-client": {
-      "version": "33.1.0",
-      "resolved": "https://registry.npmjs.org/ipfs-http-client/-/ipfs-http-client-33.1.0.tgz",
-      "integrity": "sha512-hkS8nXay3DGKb/KXU1RDvTyxnvkAdhS5enlXxNXaS7yKvADlf5SEuQGYjW+VknkPPQ4FNbY3JttQ3YW+LTuoRA==",
+      "version": "33.1.1",
+      "resolved": "https://registry.npmjs.org/ipfs-http-client/-/ipfs-http-client-33.1.1.tgz",
+      "integrity": "sha512-iwtLL3lOIzxXJFwLnOEtFUv1cYTuWJ0NauD7rpMEd/y4C7z6fuN6TSF4h547lxMh7sJWv+6Z0PmOA5N8FzUHJw==",
       "requires": {
         "async": "^2.6.1",
         "bignumber.js": "^9.0.0",
