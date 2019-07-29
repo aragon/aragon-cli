@@ -1,5 +1,5 @@
 const TaskList = require('listr')
-const { ensureWeb3 } = require('@aragon/cli-utils/src/helpers/web3-fallback')
+const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const APM = require('@aragon/apm')
 const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 const chalk = require('chalk')

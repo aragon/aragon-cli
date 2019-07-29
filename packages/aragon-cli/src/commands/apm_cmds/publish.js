@@ -1,4 +1,4 @@
-const { ensureWeb3 } = require('@aragon/cli-utils/src/helpers/web3-fallback')
+const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const tmp = require('tmp-promise')
 const path = require('path')
 const { readJson, writeJson, pathExistsSync } = require('fs-extra')
