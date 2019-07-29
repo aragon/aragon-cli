@@ -1,5 +1,5 @@
 const TaskList = require('listr')
-const { ensureWeb3 } = require('@aragon/cli-utils/src/helpers/web3-fallback')
+const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 const { getContract } = require('../../../util')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const chalk = require('chalk')
