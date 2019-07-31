@@ -18805,9 +18805,9 @@
       }
     },
     "husky": {
-      "version": "3.0.1",
-      "resolved": "https://registry.npmjs.org/husky/-/husky-3.0.1.tgz",
-      "integrity": "sha512-PXBv+iGKw23GHUlgELRlVX9932feFL407/wHFwtsGeArp0dDM4u+/QusSQwPKxmNgjpSL+ustbOdQ2jetgAZbA==",
+      "version": "3.0.2",
+      "resolved": "https://registry.npmjs.org/husky/-/husky-3.0.2.tgz",
+      "integrity": "sha512-WXCtaME2x0o4PJlKY4ap8BzLA+D0zlvefqAvLCPriOOu+x0dpO5uc5tlB7CY6/0SE2EESmoZsj4jW5D09KrJoA==",
       "dev": true,
       "requires": {
         "chalk": "^2.4.2",
@@ -19272,9 +19272,9 @@
       }
     },
     "ipfs-http-client": {
-      "version": "33.1.0",
-      "resolved": "https://registry.npmjs.org/ipfs-http-client/-/ipfs-http-client-33.1.0.tgz",
-      "integrity": "sha512-hkS8nXay3DGKb/KXU1RDvTyxnvkAdhS5enlXxNXaS7yKvADlf5SEuQGYjW+VknkPPQ4FNbY3JttQ3YW+LTuoRA==",
+      "version": "33.1.1",
+      "resolved": "https://registry.npmjs.org/ipfs-http-client/-/ipfs-http-client-33.1.1.tgz",
+      "integrity": "sha512-iwtLL3lOIzxXJFwLnOEtFUv1cYTuWJ0NauD7rpMEd/y4C7z6fuN6TSF4h547lxMh7sJWv+6Z0PmOA5N8FzUHJw==",
       "requires": {
         "async": "^2.6.1",
         "bignumber.js": "^9.0.0",
