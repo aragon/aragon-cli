@@ -66,7 +66,6 @@ exports.handler = async function({
   silent,
 }) {
   const task = await exports.task({
-    reporter,
     apmOptions,
     cid,
     debug,
@@ -92,4 +91,5 @@ exports.handler = async function({
     `Errors: \n${ctx.result.errors.map(JSON.stringify).join('\n')}`
   )
   // TODO add your own gateways
+  process.exit()
 }

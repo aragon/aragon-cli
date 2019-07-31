@@ -12,7 +12,6 @@ const { findProjectRoot, runScriptTask, ZERO_ADDRESS } = require('../../util')
 const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
-const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 const startIPFS = require('../ipfs_cmds/start')
 const propagateIPFS = require('../ipfs_cmds/propagate')
 const execTask = require('../dao_cmds/utils/execHandler').task
@@ -141,7 +140,7 @@ exports.builder = function(yargs) {
     })
 }
 
-const runSetupTask = ({
+exports.runSetupTask = ({
   reporter,
 
   // Globals
@@ -191,8 +190,8 @@ const runSetupTask = ({
       },
       {
         title: 'Check IPFS',
-        task: () => startIPFS.task({ apmOptions }),
         enabled: () => !http && ipfsCheck,
+        task: () => startIPFS.task({ apmOptions }),
       },
       {
         title: `Applying version bump (${bump})`,
@@ -249,11 +248,15 @@ const runSetupTask = ({
       },
       {
         title: 'Compile contracts',
-        task: async () => compileContracts(),
         enabled: () => !onlyContent && web3Utils.isAddress(contract),
+        task: async () => compileContracts(),
       },
       {
         title: 'Deploy contract',
+        enabled: ctx =>
+          !onlyContent &&
+          ((contract && !web3Utils.isAddress(contract)) ||
+            (!contract && ctx.shouldDeployContract && !reuse)),
         task: async ctx => {
           const deployTaskParams = {
             contract,
@@ -267,13 +270,10 @@ const runSetupTask = ({
 
           return deploy.task(deployTaskParams)
         },
-        enabled: ctx =>
-          !onlyContent &&
-          ((contract && !web3Utils.isAddress(contract)) ||
-            (!contract && ctx.shouldDeployContract && !reuse)),
       },
       {
         title: 'Determine contract address for version',
+        enabled: () => !onlyArtifacts,
         task: async (ctx, task) => {
           if (web3Utils.isAddress(contract)) {
             ctx.contract = contract
@@ -304,14 +304,13 @@ const runSetupTask = ({
 
           return `Using ${contract}`
         },
-        enabled: () => !onlyArtifacts,
       },
     ],
     listrOpts(silent, debug)
   ).run()
 }
 
-const runPrepareForPublishTask = ({
+exports.runPrepareForPublishTask = ({
   reporter,
 
   // Globals
@@ -355,6 +354,7 @@ const runPrepareForPublishTask = ({
     [
       {
         title: 'Prepare files for publishing',
+        enabled: () => !http,
         task: async (ctx, task) => {
           // Create temporary directory
           if (!publishDir) {
@@ -367,11 +367,11 @@ const runPrepareForPublishTask = ({
 
           return `Files copied to temporary directory: ${ctx.pathToPublish}`
         },
-        enabled: () => !http,
       },
       {
         title:
           'Check for --http-served-from argument and copy manifest.json to destination',
+        enabled: () => http,
         task: async (ctx, task) => {
           if (!httpServedFrom) {
             throw new Error('You need to provide --http-served-from argument')
@@ -390,7 +390,6 @@ const runPrepareForPublishTask = ({
 
           ctx.pathToPublish = httpServedFrom
         },
-        enabled: () => http,
       },
       {
         title: 'Generate application artifact',
@@ -497,6 +496,7 @@ const runPrepareForPublishTask = ({
       {
         title: `Publish intent`,
         task: async (ctx, task) => {
+          ctx.contractInstance = null // clean up deploy sub-command artifacts
           const accounts = await web3.eth.getAccounts()
           const from = accounts[0]
           ctx.intent = await apm.publishVersionIntent(
@@ -514,7 +514,7 @@ const runPrepareForPublishTask = ({
   ).run()
 }
 
-const runPublishTask = ({
+exports.runPublishTask = ({
   reporter,
 
   // Globals
@@ -538,11 +538,11 @@ const runPublishTask = ({
   params,
 }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
-  const apm = APM(web3, apmOptions)
   return new TaskList(
     [
       {
         title: `Publish ${module.appName}`,
+        enabled: () => !onlyArtifacts,
         task: async (ctx, task) => {
           try {
             const getTransactionPath = wrapper => {
@@ -564,15 +564,6 @@ const runPublishTask = ({
             throw e
           }
         },
-        enabled: () => !onlyArtifacts,
-      },
-      {
-        title: 'Fetch published repo',
-        task: getRepoTask.task({
-          artifactRequired: !onlyContent,
-          apmRepo: module.appName,
-          apm,
-        }),
       },
     ],
     listrOpts(silent, debug)
@@ -623,7 +614,7 @@ exports.handler = async function({
     version,
     contract: contractAddress,
     deployArtifacts,
-  } = await runSetupTask({
+  } = await exports.runSetupTask({
     reporter,
     gasPrice,
     cwd,
@@ -647,7 +638,7 @@ exports.handler = async function({
     http,
   })
 
-  const { pathToPublish, intent } = await runPrepareForPublishTask({
+  const { pathToPublish, intent } = await exports.runPrepareForPublishTask({
     reporter,
     cwd,
     web3,
@@ -700,15 +691,15 @@ exports.handler = async function({
       {
         type: 'confirm',
         name: 'confirmation',
-        message: chalk.green(`Publish to ${appName} repo`),
+        message: `${chalk.green(`Publish to ${appName} repo`)}`,
       },
     ])
     // new line after confirm
     console.log()
-    if (!confirmation) return
+    if (!confirmation) process.exit()
   }
 
-  const { receipt, transactionPath, repo } = await runPublishTask({
+  const { receipt, transactionPath } = await exports.runPublishTask({
     reporter,
     gasPrice,
     web3,
@@ -767,13 +758,32 @@ exports.handler = async function({
     ])
     // new line after confirm
     console.log()
-    if (!confirmation) return repo
-
-    await propagateIPFS.handler({
-      reporter,
-      apm: apmOptions,
-      cid: contentLocation,
-    })
+    if (!confirmation) process.exit()
   }
-  return repo
+
+  const propagateTask = await propagateIPFS.task({
+    apmOptions,
+    cid: contentLocation,
+    debug,
+    silent,
+  })
+
+  const { CIDs, result } = await propagateTask.run()
+
+  console.log(
+    '\n',
+    `Queried ${chalk.blue(CIDs.length)} CIDs at ${chalk.blue(
+      result.gateways.length
+    )} gateways`,
+    '\n',
+    `Requests succeeded: ${chalk.green(result.succeeded)}`,
+    '\n',
+    `Requests failed: ${chalk.red(result.failed)}`,
+    '\n'
+  )
+
+  reporter.debug(`Gateways: ${result.gateways.join(', ')}`)
+  reporter.debug(`Errors: \n${result.errors.map(JSON.stringify).join('\n')}`)
+  // TODO: add your own gateways
+  process.exit()
 }
