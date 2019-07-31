@@ -364,6 +364,8 @@ exports.handler = function({
       )
     }
 
+    reporter.newLine()
+
     reporter.info(`You are now ready to open your app in Aragon.`)
 
     reporter.newLine()

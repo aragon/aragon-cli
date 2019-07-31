@@ -677,14 +677,25 @@ exports.handler = async function({
     '\n',
     `Contract address: ${chalk.blue(contractAddress || ZERO_ADDRESS)}`,
     '\n',
-    `Content (${contentProvier}): ${chalk.blue(contentLocation)}`,
-    '\n'
+    `Content (${contentProvier}): ${chalk.blue(contentLocation)}`
     // TODO: (Gabi) Add extra relevant info (e.g. size)
     // `Size: ${chalk.blue()}`,
     // '\n',
     // `Number of files: ${chalk.blue()}`,
     // '\n'
   )
+
+  if (contentProvier === 'ipfs') {
+    console.log(
+      '\n',
+      'Explore the ipfs content with the next link:',
+      '\n',
+      chalk.bold(
+        `http://localhost:8080/ipfs/QmSDgpiHco5yXdyVTfhKxr3aiJ82ynz8V14QcGKicM3rVh/#/explore/${contentLocation}`
+      ),
+      '\n'
+    )
+  }
 
   if (!skipConfirmation) {
     const { confirmation } = await inquirer.prompt([
