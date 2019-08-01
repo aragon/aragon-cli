@@ -320,9 +320,9 @@
       }
     },
     "@aragon/aragen": {
-      "version": "5.0.4",
-      "resolved": "https://registry.npmjs.org/@aragon/aragen/-/aragen-5.0.4.tgz",
-      "integrity": "sha512-jCuFSjoeLOSmvL8BSURmL64Jny8W0fw6+QKh4dgW291bv3r3B5Ksd/zNrD4y7lLwUHipGjoEdBwQ+Z46FzomhA==",
+      "version": "5.0.6",
+      "resolved": "https://registry.npmjs.org/@aragon/aragen/-/aragen-5.0.6.tgz",
+      "integrity": "sha512-uG43yPqfe7uk93VWNEFrC4a78ehVlYUpO5OFwu3FPSpHLzI79bhivREgalXqBmU+TXx+hx46/xFL1pZbg94pTw==",
       "requires": {
         "@aragon/cli-utils": "^0.0.6",
         "@babel/polyfill": "^7.0.0",
