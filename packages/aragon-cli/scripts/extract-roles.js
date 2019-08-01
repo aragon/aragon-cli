@@ -7,6 +7,7 @@ const getAppNPMPackage = appName => `@aragon/apps-${appName}`
 const knownApps = ['voting', 'token-manager', 'vault', 'finance', 'agent']
 
 const getAppRoles = app => {
+  // TODO: Get arapp from IPFS && support Open Enterprice, Survey and Payroll
   const arapp = require(`${getAppNPMPackage(app)}/arapp`)
   const roles = arapp.roles || []
   return roles.map(({ name, id }) => ({ name, id }))
