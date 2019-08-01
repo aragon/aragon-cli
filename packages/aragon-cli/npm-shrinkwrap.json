@@ -407,12 +407,24 @@
     },
     "@aragon/cli-utils": {
       "version": "0.0.6",
+      "resolved": "https://registry.npmjs.org/@aragon/cli-utils/-/cli-utils-0.0.6.tgz",
+      "integrity": "sha512-qY9ojkbtlz9jJ/aLyAKBvslVlZmgdd2cQkaIbMhAYV3xo7MsVAgs3n8rIdoezDmNs/WLqhLRHkjpSxj6Qp+z6Q==",
       "requires": {
         "chalk": "^2.4.2",
         "figures": "^3.0.0",
         "listr-silent-renderer": "^1.1.1",
         "listr-update-renderer": "^0.5.0",
         "listr-verbose-renderer": "^0.5.0"
+      },
+      "dependencies": {
+        "figures": {
+          "version": "3.0.0",
+          "resolved": "https://registry.npmjs.org/figures/-/figures-3.0.0.tgz",
+          "integrity": "sha512-HKri+WoWoUgr83pehn/SIgLOMZ9nAWC6dcGj26RY2R4F50u4+RTUz0RCrUlOV3nKRAICW1UGzyb+kcX2qK1S/g==",
+          "requires": {
+            "escape-string-regexp": "^1.0.5"
+          }
+        }
       }
     },
     "@aragon/os": {
@@ -458,9 +470,9 @@
       }
     },
     "@aragon/rpc-messenger": {
-      "version": "1.1.0",
-      "resolved": "https://registry.npmjs.org/@aragon/rpc-messenger/-/rpc-messenger-1.1.0.tgz",
-      "integrity": "sha512-hgdnSt4F0UqtYIsTtWDAjoiH6vN3nXNRaEUxiW1EYcNBSYUagw/ywkhVyE5uhqQxImwktwk2A6jES9gdL3qQfA==",
+      "version": "2.0.0-beta.1",
+      "resolved": "https://registry.npmjs.org/@aragon/rpc-messenger/-/rpc-messenger-2.0.0-beta.1.tgz",
+      "integrity": "sha512-TJ2no/OkEifIf0lGia8r9BjRrW1xmL+49R6R+W88knmO+8+dP+fGfbCR5oW3gVHC23Df3GBuqSuKW0zBUgco8w==",
       "requires": {
         "@babel/runtime": "^7.1.2",
         "rxjs": "^6.2.1",
@@ -468,13 +480,13 @@
       }
     },
     "@aragon/wrapper": {
-      "version": "5.0.0-rc.9",
-      "resolved": "https://registry.npmjs.org/@aragon/wrapper/-/wrapper-5.0.0-rc.9.tgz",
-      "integrity": "sha512-tbNVmbknVP1r/fwpwCqc0F2gCfgBfXy7z6hHBZhsZPynHquGg7/8WXBrVFLY870Te5V0NtLwzfflDZLhyH3PwQ==",
+      "version": "5.0.0-rc.14",
+      "resolved": "https://registry.npmjs.org/@aragon/wrapper/-/wrapper-5.0.0-rc.14.tgz",
+      "integrity": "sha512-kuMlObwykI7oKuPHoib4oQx2+BAkTUhlFhcJSBKjL+aa57ZmcGvGGOFDi3Rny9XLtgQiNRS4gQ86fv78qLdt6Q==",
       "requires": {
         "@aragon/apm": "^3.0.0",
-        "@aragon/os": "^4.0.1",
-        "@aragon/rpc-messenger": "^1.0.0",
+        "@aragon/os": "^4.2.1",
+        "@aragon/rpc-messenger": "^2.0.0-beta.1",
         "@babel/runtime": "^7.1.2",
         "dot-prop": "^4.2.0",
         "eth-ens-namehash": "^2.0.8",
@@ -485,7 +497,7 @@
         "localforage": "^1.7.3",
         "localforage-memoryStorageDriver": "^0.9.2",
         "radspec": "^1.3.0",
-        "rxjs": "^6.2.1",
+        "rxjs": "^6.5.2",
         "uuid": "^3.2.1",
         "web3": "1.0.0-beta.33",
         "web3-eth-abi": "1.0.0-beta.33",
