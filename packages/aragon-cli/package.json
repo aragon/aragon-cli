@@ -45,8 +45,8 @@
   "dependencies": {
     "@aragon/apm": "^3.1.0",
     "@aragon/apps-shared-minime": "^1.0.1",
-    "@aragon/aragen": "^4.0.0",
-    "@aragon/cli-utils": "^0.0.2",
+    "@aragon/aragen": "^5.0.0",
+    "@aragon/cli-utils": "^0.0.6",
     "@aragon/os": "^4.0.0",
     "@aragon/wrapper": "5.0.0-rc.9",
     "ajv": "^6.6.2",
@@ -84,6 +84,8 @@
     "truffle-hdwallet-provider": "^1.0.2",
     "truffle-hdwallet-provider-privkey": "^0.3.0",
     "web3": "^1.2.0",
+    "web3-eth-abi": "^1.2.0",
+    "web3-utils": "^1.2.0",
     "which": "^1.3.1",
     "yargs": "^13.2.4"
   },

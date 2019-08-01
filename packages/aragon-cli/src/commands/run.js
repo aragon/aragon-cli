@@ -2,7 +2,6 @@ const TaskList = require('listr')
 const Web3 = require('web3')
 const chalk = require('chalk')
 const path = require('path')
-const publish = require('./apm_cmds/publish')
 const devchain = require('./devchain')
 const start = require('./start')
 const deploy = require('./deploy')
@@ -12,6 +11,14 @@ const encodeInitPayload = require('./dao_cmds/utils/encodeInitPayload')
 const fs = require('fs-extra')
 const pkg = require('../../package.json')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
+const APM = require('@aragon/apm')
+const getRepoTask = require('./dao_cmds/utils/getRepoTask')
+
+const {
+  runSetupTask,
+  runPrepareForPublishTask,
+  runPublishTask,
+} = require('./apm_cmds/publish')
 
 const { findProjectRoot, isPortTaken } = require('../util')
 
@@ -218,10 +225,51 @@ exports.handler = function({
             bump,
             http,
             httpServedFrom,
-            propagateContet: false,
-            skipConfirmation: true,
           }
-          ctx.repo = await publish.handler(publishParams)
+
+          const {
+            initialRepo,
+            initialVersion,
+            version,
+            contract: contractAddress,
+            deployArtifacts,
+          } = await runSetupTask(publishParams)
+
+          const { intent } = await runPrepareForPublishTask({
+            ...publishParams,
+            // context
+            initialRepo,
+            initialVersion,
+            version,
+            contractAddress,
+            deployArtifacts,
+          })
+
+          const { dao, proxyAddress, methodName, params } = intent
+
+          const { receipt } = await runPublishTask({
+            ...publishParams,
+            // context
+            dao,
+            proxyAddress,
+            methodName,
+            params,
+          })
+
+          if (!receipt.status) {
+            reporter.error(`\nPublish transaction reverted:\n`)
+          }
+        },
+      },
+      {
+        title: 'Fetch published repo',
+        task: async ctx => {
+          // getRepoTask.task() return a function with ctx argument
+          await getRepoTask.task({
+            apmRepo: module.appName,
+            apm: APM(ctx.web3, apmOptions),
+            artifactRequired: false,
+          })(ctx)
         },
       },
       {
@@ -316,7 +364,11 @@ exports.handler = function({
       )
     }
 
+    reporter.newLine()
+
     reporter.info(`You are now ready to open your app in Aragon.`)
+
+    reporter.newLine()
 
     if (ctx.privateKeys) {
       devchain.printAccounts(reporter, ctx.privateKeys)
@@ -333,23 +385,25 @@ exports.handler = function({
       .slice(1)
       .join('.')
 
-    reporter.info(`\nThis is the configuration for your development deployment:
-    ${chalk.bold('Ethereum Node')}: ${chalk.blue(
-      network.provider.connection._url
-    )}
-    ${chalk.bold('ENS registry')}: ${chalk.blue(ctx.ens)}
-    ${chalk.bold(`aragonPM registry`)}: ${chalk.blue(registry)}
-    ${chalk.bold('DAO address')}: ${chalk.green(ctx.daoAddress)}
+    reporter.info(`This is the configuration for your development deployment:
+    ${'Ethereum Node'}: ${chalk.blue(network.provider.connection._url)}
+    ${'ENS registry'}: ${chalk.blue(ctx.ens)}
+    ${`aragonPM registry`}: ${chalk.blue(registry)}
+    ${'DAO address'}: ${chalk.green(ctx.daoAddress)}`)
 
-    ${
-      client !== false
-        ? `Opening ${chalk.bold(
-            `http://localhost:${clientPort}/#/${ctx.daoAddress}`
-          )} to view your DAO`
-        : `Use ${chalk.bold(
-            `"aragon dao <command> ${ctx.daoAddress}"`
-          )} to interact with your DAO`
-    }`)
+    reporter.newLine()
+
+    reporter.info(
+      `${
+        client !== false
+          ? `Opening ${chalk.bold(
+              `http://localhost:${clientPort}/#/${ctx.daoAddress}`
+            )} to view your DAO`
+          : `Use ${chalk.bold(
+              `"aragon dao <command> ${ctx.daoAddress}"`
+            )} to interact with your DAO`
+      }`
+    )
 
     if (!manifest) {
       reporter.warning('No front-end detected (no manifest.json)')

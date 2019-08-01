@@ -1,5 +1,6 @@
 const path = require('path')
 const TaskList = require('listr')
+const chalk = require('chalk')
 const {
   startIPFSDaemon,
   isIPFSCORS,
@@ -77,7 +78,7 @@ exports.handler = function({ reporter, apm: apmOptions }) {
           'IPFS daemon is now running. Stopping this process will stop IPFS'
         )
       } else {
-        reporter.warning('Didnt start IPFS, port busy')
+        reporter.warning(chalk.yellow('Didnt start IPFS, port busy'))
         process.exit()
       }
     })
