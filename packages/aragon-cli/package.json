@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "6.1.1",
+  "version": "6.2.0",
   "description": "Aragon command-line tools",
   "main": "dist/cli.js",
   "bin": {
@@ -46,7 +46,7 @@
     "@aragon/apm": "^3.1.0",
     "@aragon/apps-shared-minime": "^1.0.1",
     "@aragon/aragen": "^5.0.0",
-    "@aragon/cli-utils": "^0.0.6",
+    "@aragon/cli-utils": "^0.0.7",
     "@aragon/os": "^4.0.0",
     "@aragon/wrapper": "5.0.0-rc.9",
     "ajv": "^6.6.2",
