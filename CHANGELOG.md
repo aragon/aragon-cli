@@ -91,7 +91,7 @@ All changes to this project will be documented in this file.
 ## v6.2.0
 
 Release date: **2019-08-01**  
-[Compare code changes][v6.2.0]
+[Compare code changes][v6.2.0] (🌳 STABLE)
 
 ### What’s changed in aragonCLI
 
@@ -342,7 +342,7 @@ Release date: **2019-06-16**
 ## v5.9.7
 
 Release date: **2019-07-15**  
-[Compare code changes][v5.9.7]
+[Compare code changes][v5.9.7] (🌳 STABLE)
 
 ### What’s changed in aragonCLI
 
@@ -409,7 +409,7 @@ Release date: **2019-06-02**
 ## v5.9.3
 
 Release date: **2019-05-27**  
-[Compare code changes][v5.9.3] (🌳 STABLE)
+[Compare code changes][v5.9.3]
 
 ### What’s changed in aragonCLI
 
