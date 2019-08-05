@@ -136,7 +136,7 @@
     ]
   },
   "aragon": {
-    "clientVersion": "c49ed53337c0bd254897d3e2b7c52275ef3e822d",
+    "clientVersion": "4d766c906f5e113cf27212186768b2a72f186d9c",
     "clientPort": "3000",
     "defaultGasPrice": "10",
     "defaultIpfsTimeout": "300000"
