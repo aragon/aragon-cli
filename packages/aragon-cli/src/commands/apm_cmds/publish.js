@@ -688,7 +688,7 @@ exports.handler = async function({
   if (contentProvier === 'ipfs') {
     console.log(
       '\n',
-      'Explore the ipfs content with the next link:',
+      'Explore the ipfs content locally:',
       '\n',
       chalk.bold(
         `http://localhost:8080/ipfs/QmSDgpiHco5yXdyVTfhKxr3aiJ82ynz8V14QcGKicM3rVh/#/explore/${contentLocation}`

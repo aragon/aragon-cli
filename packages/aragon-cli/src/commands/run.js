@@ -48,6 +48,12 @@ exports.builder = function(yargs) {
       description: 'Port to start devchain at',
       default: '8545',
     })
+    .option('network-id', {
+      description: 'Network id to connect with',
+    })
+    .option('block-time', {
+      description: 'Specify blockTime in seconds for automatic mining',
+    })
     .option('accounts', {
       default: 2,
       description: 'Number of accounts to print',
@@ -157,6 +163,8 @@ exports.handler = function({
   client,
   files,
   port,
+  networkId,
+  blockTime,
   accounts,
   reset,
   kit,
@@ -202,7 +210,8 @@ exports.handler = function({
             return 'Connected to the provided Ethereum network'
           }
         },
-        task: async (ctx, task) => devchain.task({ port, reset, showAccounts }),
+        task: async (ctx, task) =>
+          devchain.task({ port, networkId, blockTime, reset, showAccounts }),
       },
       {
         title: 'Check IPFS',
