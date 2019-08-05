@@ -90,6 +90,11 @@ exports.builder = function(yargs) {
       description: 'The npm script that will be run when building the app',
       default: 'build',
     })
+    .option('publish-dir', {
+      description:
+        'Temporary directory where files will be copied before publishing. Defaults to temp dir.',
+      default: null,
+    })
     .option('prepublish', {
       description:
         'Whether publish should run prepublish script specified in --prepublish-script before publishing',
@@ -162,6 +167,7 @@ exports.handler = function({
   templateDeployEvent,
   build,
   buildScript,
+  publishDir,
   prepublish,
   prepublishScript,
   bump,
@@ -217,6 +223,7 @@ exports.handler = function({
             module,
             buildScript,
             build,
+            publishDir,
             prepublishScript,
             prepublish,
             contract: deploy.arappContract(),

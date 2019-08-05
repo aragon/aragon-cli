@@ -53,9 +53,9 @@ async function prepareFilesForPublishing(
       }
 
       // check files are not ignored
-      if (filter.ignores(file)) {
-        filter.add(`!/${file}`)
-      }
+      if (filter.ignores(file)) filter.add(`!${file}`)
+
+      if (filter.ignores(file + '/')) filter.add(`!${file}/`)
 
       return copy(file, destination, {
         filter: filterIgnoredFiles,

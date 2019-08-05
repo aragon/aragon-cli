@@ -504,7 +504,7 @@ exports.runPrepareForPublishTask = ({
             module.appName,
             version,
             provider,
-            publishDir,
+            ctx.pathToPublish,
             contractAddress
           )
         },
