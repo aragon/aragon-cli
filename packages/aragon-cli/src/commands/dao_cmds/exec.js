@@ -1,6 +1,6 @@
 const execHandler = require('./utils/execHandler').handler
 const daoArg = require('./utils/daoArg')
-const { parseStringIfPossible } = require('../../util')
+const { parseArgumentStringIfPossible } = require('../../util')
 
 exports.command = 'exec <dao> <proxy-address> <fn> [fn-args..]'
 
@@ -33,7 +33,7 @@ exports.handler = async function({
 }) {
   // TODO (daniel) refactor ConsoleReporter so we can do reporter.debug instead
   if (global.DEBUG_MODE) console.log('fn-args before parsing', fnArgs)
-  fnArgs = fnArgs.map(parseStringIfPossible)
+  fnArgs = fnArgs.map(parseArgumentStringIfPossible)
   if (global.DEBUG_MODE) console.log('fn-args after parsing', fnArgs)
 
   const getTransactionPath = wrapper =>

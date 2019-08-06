@@ -2,7 +2,7 @@ const ABI = require('web3-eth-abi')
 const execHandler = require('./utils/execHandler').handler
 const getAppKernel = require('./utils/app-kernel')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const { parseStringIfPossible, ZERO_ADDRESS } = require('../../util')
+const { parseArgumentStringIfPossible, ZERO_ADDRESS } = require('../../util')
 
 const EXECUTE_FUNCTION_NAME = 'execute'
 
@@ -59,7 +59,7 @@ exports.handler = async function({
 }) {
   // TODO (daniel) refactor ConsoleReporter so we can do reporter.debug instead
   if (global.DEBUG_MODE) console.log('call-args before parsing', callArgs)
-  callArgs = callArgs.map(parseStringIfPossible)
+  callArgs = callArgs.map(parseArgumentStringIfPossible)
   if (global.DEBUG_MODE) console.log('call-args after parsing', callArgs)
 
   const web3 = await ensureWeb3(network)

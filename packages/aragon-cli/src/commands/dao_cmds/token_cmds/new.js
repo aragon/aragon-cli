@@ -6,7 +6,7 @@ const chalk = require('chalk')
 const web3Utils = require('web3-utils')
 const {
   getRecommendedGasLimit,
-  parseStringIfPossible,
+  parseArgumentStringIfPossible,
   ZERO_ADDRESS,
 } = require('../../../util')
 
@@ -66,7 +66,7 @@ exports.task = async ({
   if (chainId === 4)
     tokenFactoryAddress = tokenFactoryAddress || RINKEBY_MINIME_TOKEN_FACTORY
 
-  transferEnabled = parseStringIfPossible(transferEnabled)
+  transferEnabled = parseArgumentStringIfPossible(transferEnabled)
 
   return new TaskList(
     [
