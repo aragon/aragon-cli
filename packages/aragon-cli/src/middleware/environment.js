@@ -3,7 +3,7 @@ const merge = require('lodash.merge')
 const { getTruffleConfig } = require('../helpers/truffle-config')
 
 const FRAME_ENDPOINT = 'ws://localhost:1248'
-const FRAME_ORIGIN = 'AragonCLI'
+const FRAME_ORIGIN = 'aragonCLI'
 
 const configureNetwork = (
   argv,
