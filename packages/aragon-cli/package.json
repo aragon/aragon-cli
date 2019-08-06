@@ -56,7 +56,7 @@
     "del-cli": "^2.0.0",
     "dev-null": "^0.1.1",
     "eth-ens-namehash": "^2.0.8",
-    "execa": "^1.0.0",
+    "execa": "^2.0.3",
     "find-up": "^4.0.0",
     "fs-extra": "^8.0.1",
     "get-folder-size": "^2.0.1",
