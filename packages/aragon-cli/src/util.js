@@ -4,7 +4,6 @@ const execa = require('execa')
 const net = require('net')
 const fs = require('fs')
 const { readJson } = require('fs-extra')
-const web3Utils = require('web3-utils')
 const which = require('which')
 
 let cachedProjectRoot
@@ -199,30 +198,6 @@ const getRecommendedGasLimit = async (
 }
 
 /**
- *
- * Parse a String to Number, or throw an error.
- *
- * @param {string} target must be a string
- * @returns {number} the parsed value
- */
-const parseAsNumber = target => {
-  if (typeof target !== 'string') {
-    throw new Error(
-      `Expected ${target} to be of type string, not ${typeof target}`
-    )
-  }
-
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number
-  const number = Number(target)
-
-  if (isNaN(number)) {
-    throw new Error(`Cannot parse ${target} as number`)
-  }
-
-  return number
-}
-
-/**
  * Parse a String to Boolean, or throw an error.
  *
  * The check is **case insensitive**! (Passing `"TRue"` will return `true`)
@@ -274,19 +249,12 @@ const parseAsArray = target => {
 }
 
 /**
- * Parse a String to Number or Boolean or Array, or throw an error.
+ * Parse a String to Boolean or Array, or throw an error.
  *
  * @param {string} target must be a string
- * @returns {number|boolean|Array} the parsed value
+ * @returns {boolean|Array} the parsed value
  */
-const parseStringIfPossible = target => {
-  // convert to number: '1' to 1
-  try {
-    if (!web3Utils.isAddress(target)) {
-      return parseAsNumber(target)
-    }
-  } catch (e) {}
-
+const parseArgumentStringIfPossible = target => {
   // convert to boolean: 'false' to false
   try {
     return parseAsBoolean(target)
@@ -312,7 +280,7 @@ function isValidAragonId(aragonId) {
 }
 
 module.exports = {
-  parseStringIfPossible,
+  parseArgumentStringIfPossible,
   debugLogger,
   findProjectRoot,
   isPortTaken,
