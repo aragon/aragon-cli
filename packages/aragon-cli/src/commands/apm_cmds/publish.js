@@ -503,8 +503,8 @@ exports.runPrepareForPublishTask = ({
             from,
             module.appName,
             version,
-            provider,
-            ctx.pathToPublish,
+            http ? 'http' : provider,
+            http || ctx.pathToPublish,
             contractAddress
           )
         },
