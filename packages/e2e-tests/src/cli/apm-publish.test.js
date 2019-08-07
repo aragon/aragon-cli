@@ -1,7 +1,7 @@
 import test from 'ava'
 import fs from 'fs-extra'
 import path from 'path'
-import { startBackgroundProcess, normalizeOutput } from '../util'
+import { startBackgroundProcess, normalizeOutput } from '@aragon/cli-utils'
 
 const ARTIFACT_FILE = 'artifact.json'
 const MANIFEST_FILE = 'manifest.json'

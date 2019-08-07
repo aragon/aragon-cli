@@ -2,7 +2,10 @@ const ABI = require('web3-eth-abi')
 const execHandler = require('./utils/execHandler').handler
 const getAppKernel = require('./utils/app-kernel')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const { parseArgumentStringIfPossible, ZERO_ADDRESS } = require('../../util')
+const {
+  parseArgumentStringIfPossible,
+  ZERO_ADDRESS,
+} = require('@aragon/cli-utils')
 
 const EXECUTE_FUNCTION_NAME = 'execute'
 

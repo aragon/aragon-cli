@@ -1,5 +1,5 @@
 import test from 'ava'
-import { startBackgroundProcess, normalizeOutput } from '../util'
+import { startBackgroundProcess, normalizeOutput } from '@aragon/cli-utils'
 
 test('should spawn ganache', async t => {
   t.plan(1)

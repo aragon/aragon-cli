@@ -6,6 +6,12 @@ To test only one file, try:
 npm test -- src/cli/version.test.js
 ```
 
+or, without running the pretest/posttest hooks:
+
+```sh
+npx ava src/cli/version.test.js
+```
+
 ## Local environment
 
 Some commands like `aragon run` depend on a local dev environment (ipfs, ganache).
@@ -24,4 +30,4 @@ Posttest:
 * Stop Ganache
 * Delete the test app
 
-**Tip**: Did a test fail and the local environment was cleaned up? Try `npm run test:clean`.
+**Tip**: Did a test fail and the local environment was not cleaned up? Try `npm run test:clean`.

@@ -1,6 +1,6 @@
 const execHandler = require('./utils/execHandler').handler
 const daoArg = require('./utils/daoArg')
-const { parseArgumentStringIfPossible } = require('../../util')
+const { parseArgumentStringIfPossible } = require('@aragon/cli-utils')
 
 exports.command = 'exec <dao> <proxy-address> <fn> [fn-args..]'
 

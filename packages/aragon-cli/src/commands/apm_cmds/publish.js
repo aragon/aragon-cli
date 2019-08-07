@@ -8,12 +8,15 @@ const TaskList = require('listr')
 const taskInput = require('listr-input')
 const inquirer = require('inquirer')
 const chalk = require('chalk')
-const { findProjectRoot, runScriptTask, ZERO_ADDRESS } = require('../../util')
+const {
+  findProjectRoot,
+  runScriptTask,
+  ZERO_ADDRESS,
+} = require('@aragon/cli-utils')
 const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
-const startIPFS = require('../ipfs_cmds/start')
-const propagateIPFS = require('../ipfs_cmds/propagate')
+// const propagateIPFS = require('../ipfs_cmds/propagate')
 const execTask = require('../dao_cmds/utils/execHandler').task
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
@@ -186,11 +189,6 @@ exports.runSetupTask = ({
         title: 'Running prepublish script',
         enabled: () => prepublish,
         task: async (ctx, task) => runScriptTask(task, prepublishScript),
-      },
-      {
-        title: 'Check IPFS',
-        enabled: () => !http && ipfsCheck,
-        task: () => startIPFS.task({ apmOptions }),
       },
       {
         title: `Applying version bump (${bump})`,

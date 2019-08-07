@@ -12,7 +12,7 @@ const Table = require('cli-table')
 const knownRoles = rolesForApps()
 const ANY_ENTITY = '0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF'
 const ANY_ENTITY_TEXT = 'Any entity'
-const { NO_MANAGER, ZERO_ADDRESS } = require('../../../util')
+const { NO_MANAGER, ZERO_ADDRESS } = require('@aragon/cli-utils')
 const NO_MANAGER_TEXT = 'No Manager'
 
 let knownApps

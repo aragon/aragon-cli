@@ -1,6 +1,6 @@
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
-const { getContract } = require('../../../util')
+const { getContract } = require('@aragon/cli-utils')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const chalk = require('chalk')
 const web3Utils = require('web3-utils')
@@ -8,7 +8,7 @@ const {
   getRecommendedGasLimit,
   parseArgumentStringIfPossible,
   ZERO_ADDRESS,
-} = require('../../../util')
+} = require('@aragon/cli-utils')
 
 const MAINNET_MINIME_TOKEN_FACTORY =
   '0xA29EF584c389c67178aE9152aC9C543f9156E2B3'

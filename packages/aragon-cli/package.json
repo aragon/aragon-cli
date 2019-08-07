@@ -11,8 +11,6 @@
     "postinstall": "npm run clean-modules",
     "clean-modules": "del-cli './node_modules/**/.git'",
     "prepare": "npm run build",
-    "link": "npm link",
-    "unlink": "npm unlink",
     "compile-src": "babel src --out-dir dist --source-maps --copy-files",
     "extract-roles": "node scripts/extract-roles",
     "build": "npm run extract-roles && npm run compile-src",
@@ -129,27 +127,33 @@
   "engines": {
     "node": ">=8.0.0"
   },
-  "ava": {
-    "require": [
-      "core-js",
-      "regenerator-runtime",
-      "@babel/register"
-    ],
-    "files": [
-      "test/**/*.test.js"
-    ]
-  },
   "aragon": {
     "clientVersion": "4d766c906f5e113cf27212186768b2a72f186d9c",
     "clientPort": "3000",
     "defaultGasPrice": "2",
     "defaultIpfsTimeout": "300000"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm run lint && npm run test"
-    }
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "useBuiltIns": "usage",
+          "corejs": "3"
+        }
+      ]
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-object-rest-spread"
+    ]
+  },
+  "ava": {
+    "require": [
+      "@babel/register"
+    ],
+    "files": [
+      "test/**/*.test.js"
+    ]
   },
   "lint-staged": {
     "*.js": [
@@ -157,5 +161,31 @@
       "documentation lint",
       "git add"
     ]
+  },
+  "eslintConfig": {
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "extends": [
+      "standard",
+      "plugin:prettier/recommended",
+      "plugin:ava/recommended"
+    ],
+    "parser": "babel-eslint",
+    "rules": {
+      "valid-jsdoc": "error",
+      "no-console": "off",
+      "linebreak-style": [
+        "error",
+        "unix"
+      ]
+    }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": false,
+    "trailingComma": "es5",
+    "bracketSpacing": true
   }
 }

@@ -1,4 +1,4 @@
-workflow "lint, test, build" {
+workflow "continuous-integration" {
   on = "push"
   resolves = ["build", "lint", "test", "test:e2e"]
 }

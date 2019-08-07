@@ -3,10 +3,10 @@
   "private": true,
   "description": "End-to-end tests for aragonCLI",
   "scripts": {
-    "pretest": "ava src/**/*.pretest.js",
-    "posttest": "ava src/**/*.posttest.js",
-    "test": "ava",
-    "test:watch": "ava --watch",
+    "pretest": "ava src/**/*.pretest.js --verbose",
+    "posttest": "ava src/**/*.posttest.js --verbose",
+    "test": "ava --verbose",
+    "test:watch": "ava --watch --verbose",
     "test:debug": "cross-env DEBUG=true npm run test",
     "test:clean": "npm run posttest && npm run reset-cache",
     "update-snapshots": "npm run test:clean && npm run pretest -- --update-snapshots && ava --update-snapshots && npm run posttest -- --update-snapshots",
@@ -16,6 +16,8 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@aragon/cli": "*",
+    "@aragon/cli-utils": "*",
+    "aragon-ipfs": "*",
     "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
     "@babel/polyfill": "^7.2.5",
     "@babel/preset-env": "^7.3.4",
@@ -26,12 +28,24 @@
     "execa": "^1.0.0",
     "fs-extra": "^8.0.1",
     "kill-port": "^1.5.1",
-    "node-fetch": "^2.3.0",
-    "ps-tree": "^1.2.0"
+    "node-fetch": "^2.3.0"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "useBuiltIns": "usage",
+          "corejs": "3",
+          "targets": {
+            "node": true
+          }
+        }
+      ]
+    ]
   },
   "ava": {
     "require": [
-      "@babel/polyfill",
       "@babel/register"
     ],
     "files": [

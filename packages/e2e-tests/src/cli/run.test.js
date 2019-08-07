@@ -1,6 +1,6 @@
 import test from 'ava'
 import fetch from 'node-fetch'
-import { startBackgroundProcess, normalizeOutput } from '../util'
+import { startBackgroundProcess, normalizeOutput } from '@aragon/cli-utils'
 
 const testSandbox = './.tmp'
 const projectName = 'foobar'

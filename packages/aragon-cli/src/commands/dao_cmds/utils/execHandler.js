@@ -1,6 +1,5 @@
 import initAragonJS from './aragonjs-wrapper'
 const chalk = require('chalk')
-const startIPFS = require('../../ipfs_cmds/start')
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
@@ -13,12 +12,6 @@ exports.task = async function(
   const accounts = await web3.eth.getAccounts()
   return new TaskList(
     [
-      {
-        // IPFS is a dependency of getRepoTask which uses IPFS to fetch the contract ABI
-        title: 'Check IPFS',
-        task: () => startIPFS.task({ apmOptions: apm }),
-        enabled: () => ipfsCheck,
-      },
       {
         title: 'Generating transaction',
         task: async (ctx, task) => {

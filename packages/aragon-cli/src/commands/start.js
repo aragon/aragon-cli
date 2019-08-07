@@ -2,7 +2,7 @@ import { downloadWrapper, startClient, openWrapper } from '../lib/start'
 const chalk = require('chalk')
 const TaskList = require('listr')
 const pkg = require('../../package.json')
-const { installDeps } = require('../util')
+const { installDeps } = require('@aragon/cli-utils')
 
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort

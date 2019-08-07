@@ -1,7 +1,7 @@
 const path = require('path')
 const ignore = require('ignore')
 const fs = require('fs')
-const { findProjectRoot } = require('../../../util')
+const { findProjectRoot } = require('@aragon/cli-utils')
 const { copy, pathExistsSync } = require('fs-extra')
 const { promisify } = require('util')
 

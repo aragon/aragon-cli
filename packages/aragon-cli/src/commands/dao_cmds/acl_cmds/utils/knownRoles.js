@@ -1,7 +1,7 @@
 const sha3 = require('js-sha3')
 const keccak256 = x => '0x' + sha3.keccak_256(x)
 const path = require('path')
-const { findProjectRoot } = require('../../../../util')
+const { findProjectRoot } = require('@aragon/cli-utils')
 const defaultAppsRoles = require('../../../../knownRoles.json')
 
 const currentAppRoles = () => {

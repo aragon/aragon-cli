@@ -1,5 +1,5 @@
 import execa from 'execa'
-import { isPortTaken, getNodePackageManager } from '../../util'
+import { isPortTaken, getNodePackageManager } from '@aragon/cli-utils'
 
 export async function startClient(ctx, clientPort, clientPath) {
   if (await isPortTaken(clientPort)) {

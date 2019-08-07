@@ -1,0 +1,60 @@
+{
+  "roles": [
+    {
+      "name": "Increment the counter",
+      "id": "INCREMENT_ROLE",
+      "params": []
+    },
+    {
+      "name": "Decrement the counter",
+      "id": "DECREMENT_ROLE",
+      "params": []
+    }
+  ],
+  "environments": {
+    "local": {
+      "extends": "aragon:devchain",
+      "appName": "placeholder-app-name.open.aragonpm.eth"
+    },
+    "testnet": {
+      "extends": "aragon:rinkeby",
+      "appName": "placeholder-app-name.open.aragonpm.eth"
+    },
+    "mainnet": {
+      "extends": "aragon:mainnet",
+      "appName": "placeholder-app-name.open.aragonpm.eth",
+      "ethSigner": "frame"
+    },
+    "aragon:devchain": {
+      "ethNode": "ws://localhost:8545",
+      "ethSigner": "ws://localhost:8545",
+      "gasPrice": 15000000001,
+      "ensRegistry": "0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1",
+      "ipfsNode": "http://localhost:5001",
+      "ipfsGateway": "http://localhost:8080",
+      "cli": {
+        "ipfsRepo": 23,
+        "ipfsTimeout": 23,
+        "ipfsPort": 23 
+      }
+    },
+    "aragon:rinkeby": {
+      "ethNode": "wss://rinkeby.eth.aragon.network/ws",
+      "ethSigner": "truffleNetwork:rinkeby",
+      "ensRegistry": "0x98df287b6c145399aaa709692c8d308357bc085d",
+      "ipfsGateway": "https://ipfs.eth.aragon.network"
+    },
+    "aragon:staging": {
+      "extends": "aragon:rinkeby",
+      "ensRegistry": "0xfe03625ea880a8cba336f9b5ad6e15b0a3b5a939"
+    },
+    "aragon:mainnet": {
+      "ethNode": "wss://mainnet.eth.aragon.network/ws",
+      "ethSigner": "truffleNetwork:mainnet",
+      "gasPrice": 2000000000,
+      "ensRegistry": "0x314159265dd8dbb310642f98f50c066173c1259b",
+      "ipfsGateway": "https://ipfs.eth.aragon.network"
+    }
+  },
+  "path": "contracts/CounterApp.sol"
+}

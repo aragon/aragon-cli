@@ -8,8 +8,6 @@
   },
   "scripts": {
     "prepare": "npm run build",
-    "link": "npm link",
-    "unlink": "npm unlink",
     "build": "babel src --out-dir dist --source-maps",
     "build:watch": "npm run build -- --watch",
     "lint": "eslint src test && documentation lint src",

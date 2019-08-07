@@ -3,11 +3,11 @@ const TaskList = require('listr')
 const chalk = require('chalk')
 
 const { compileContracts } = require('../helpers/truffle-runner')
-const { findProjectRoot } = require('../util')
+const { findProjectRoot } = require('@aragon/cli-utils')
 const { ensureWeb3 } = require('../helpers/web3-fallback')
 const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const { getRecommendedGasLimit } = require('../util')
+const { getRecommendedGasLimit } = require('@aragon/cli-utils')
 
 exports.command = 'deploy [contract]'
 

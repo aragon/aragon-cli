@@ -2,15 +2,19 @@
   "name": "@aragon/cli-utils",
   "version": "0.0.8",
   "description": "Common building blocks for CLI tools",
-  "main": "",
+  "main": "./dist/index.js",
   "scripts": {
-    "test": ""
+    "prepare": "npm run build",
+    "build": "babel src --out-dir dist --source-maps",
+    "build:watch": "npm run build -- --watch"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aragon/aragon-cli.git"
   },
   "keywords": [
+    "cli",
+    "utils",
     "aragon",
     "ethereum"
   ],
@@ -23,8 +27,34 @@
   "dependencies": {
     "chalk": "^2.4.2",
     "figures": "^3.0.0",
+    "fs-extra": "^8.1.0",
     "listr-silent-renderer": "^1.1.1",
     "listr-update-renderer": "^0.5.0",
-    "listr-verbose-renderer": "^0.5.0"
+    "listr-verbose-renderer": "^0.5.0",
+    "lodash.merge": "^4.6.2",
+    "ps-tree": "^1.2.0"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "useBuiltIns": "usage",
+          "corejs": "3",
+          "targets": {
+            "node": true
+          }
+        }
+      ]
+    ]
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "core-js": "^3.2.0"
   }
 }

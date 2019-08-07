@@ -6,7 +6,6 @@ const devchain = require('./devchain_cmds/start')
 const start = require('./start')
 const deploy = require('./deploy')
 const newDAO = require('./dao_cmds/new')
-const startIPFS = require('./ipfs_cmds/start')
 const encodeInitPayload = require('./dao_cmds/utils/encodeInitPayload')
 const fs = require('fs-extra')
 const pkg = require('../../package.json')
@@ -20,7 +19,7 @@ const {
   runPublishTask,
 } = require('./apm_cmds/publish')
 
-const { findProjectRoot, isPortTaken } = require('../util')
+const { findProjectRoot, isPortTaken } = require('@aragon/cli-utils')
 
 const url = require('url')
 
@@ -210,11 +209,6 @@ exports.handler = function({
         },
         task: async (ctx, task) =>
           devchain.task({ port, networkId, blockTime, reset, showAccounts }),
-      },
-      {
-        title: 'Check IPFS',
-        task: () => startIPFS.task({ apmOptions }),
-        enabled: () => !http || template,
       },
       {
         title: 'Publish app to aragonPM',

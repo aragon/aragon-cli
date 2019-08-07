@@ -1,9 +1,9 @@
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
-const { getContract } = require('../../../util')
+const { getContract } = require('@aragon/cli-utils')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const chalk = require('chalk')
-const { getRecommendedGasLimit } = require('../../../util')
+const { getRecommendedGasLimit } = require('@aragon/cli-utils')
 
 exports.command = 'change-controller <token-address> <new-controller>'
 

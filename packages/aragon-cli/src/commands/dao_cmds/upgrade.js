@@ -8,7 +8,7 @@ const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 const chalk = require('chalk')
 const startIPFS = require('../ipfs_cmds/start')
 const getRepoTask = require('./utils/getRepoTask')
-const { getContract } = require('../../util')
+const { getContract } = require('@aragon/cli-utils')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 exports.command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'

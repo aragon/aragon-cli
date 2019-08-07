@@ -1,9 +1,5 @@
 # Specification for the next versions of aragonCLI
 
-The CLI should package several "core" extensions.
-The API these extensions expose is aimed at node environments.
-The aim is to provide convenience to power-users & devs.
-
 ## Overview
 
 ```sh
@@ -29,31 +25,53 @@ The aim is to provide convenience to power-users & devs.
 
 Goals:
 
-- installing & starting a daemon with the right configuration
-- interacting with local/remote nodes: authentication, configuration, pinning, etc.
-- help setup a "production" node (?)
-- automatically pin anything published to an APM repository (?)
+- Installing & starting a daemon with the right configuration for development as well as production.
+- Interacting with local/remote nodes: authentication, configuration, pinning, etc.
+- (?) automatically pin anything published to an APM repository
 
-### IPFS Binaries
+### IPFS commands
 
-Local node:
+- ✔️ `aragon ipfs install` *Download and install the go-ipfs binaries.*
+  - ✔️ Option: `local`
+    (for people who don't want to "pollute" the global scope)
+    - Default: `false`
+    - If false, it should install ipfs with `npm install --global` (U-IPFS-1A)
+    - If true, it should install ipfs in the project with `npm install --save` (U-IPFS-1B)
+  - ✔️ Option: `dist-version`
+    (this allows to try out new features or rollback if a new release breaks something)
+    - Default: the version recommended by Aragon community
+    - It should allow installing an older or newer version of ipfs (U-IPFS-1C)
+  - ✔️ Option: `dist-url`
+    (in case the official source is terribly slow or offline)
+    - Default: the official source
+    - It should allow downloading the binaries from a different source (U-IPFS-1D)
+  - ✔️ Option: `skip-confirmation`
+    (to be able to run in CI/CD and test environments)
+    - Default: `false`
+    - If false, it should not ask for the confirmation step (U-IPFS-1E)
+    - If true, it should print installation details and ask for confirmation before installing (U-IPFS-1D)
+- ✔️ `aragon ipfs start` *Start and configure the daemon.*
+  - ✔️ Options: `api-port`, `gateway-port`, `swarm-port`
+    - Defaults: `5001`, `8080`, `4001`
+    - The daemon should be configured to run on these ports before being started
+  - Option: `detached`
+    - Default: `true`
+    - If true, it should:
+      - Start the daemon in the background and exit
+      - Pipe the output to logs files in `~/.aragon/logs/ipfs-start-[datetime]-[stdout|stderr].log`
+    - If false, it should:
+      - Start the daemon and wait until the exit signal is received
+      - Stop the daemon on exit
+      - Pipe the output to the terminal
+  - ✔️ Option: `daemon-args`:
+    - Default: `['--migrate', '--init', '--enable-namesys-pubsub']`
+    - The daemon should be started with these arguments
 
-- ✔️ `aragon ipfs` - Alias for `aragon ipfs start`
-- `aragon ipfs start` - Start the **IPFS Daemon**
-  - Should start in the background and then finish
-  - Should start with the recommended configuration from `$HOMEDIR/.aragon/ipfsconfig.json`. E.g.:
 
-  ```json
-   {
-     "daemonArgs": [
-       "--migrate",
-       "--enable-namesys-pubsub"
-     ],
-     "logsLocation": "$HOMEDIR/.aragon/ipfs-logs"
-   }
-  ```
 
-  - Should save `stdout` and `stderr` to files, e.g.: `stdout-${number}.log` in the `logsLocation`
+
+
+
   - Should warn if it's already running
   - Should error (exit code 1) if it cannot start (missing libs/ports taken)
   - Should inform about where the logs are saved and how to stop it
@@ -140,3 +158,22 @@ Note: perhaps this is better suited for `aragonAPI`.
 ### Web3 API
 
 - `getRecommendedGasLimit`
+
+### `aragon-environments`
+
+aragon signer [tx]
+
+aragon ipfs status
+aragon ipfs start
+aragon ipfs stop
+
+aragon env deploy
+aragon env config --edit
+aragon env config --get [name]/ --list
+
+aragon app init
+aragon app run
+aragon app develop
+aragon app unbox
+aragon app config --edit
+aragon app config --get

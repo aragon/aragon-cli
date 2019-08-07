@@ -1,6 +1,6 @@
 const execa = require('execa')
 const devnull = require('dev-null')
-const { getBinary } = require('../util')
+const { getBinary } = require('@aragon/cli-utils')
 
 const truffleBin = getBinary('truffle')
 

@@ -1,7 +1,7 @@
-import test from "ava";
-import execa from "execa";
-import fs from "fs-extra";
-import { startBackgroundProcess, normalizeOutput } from "../util";
+import test from 'ava'
+import execa from 'execa'
+import fs from 'fs-extra'
+import { startBackgroundProcess, normalizeOutput } from '@aragon/cli-utils'
 
 const testSandbox = "./.tmp";
 

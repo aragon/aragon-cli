@@ -1,5 +1,5 @@
 import open from 'open'
-import { isPortTaken } from '../../util'
+import { isPortTaken } from '@aragon/cli-utils'
 
 export async function openWrapper(ctx, clientPort) {
   // Check until the wrapper is served

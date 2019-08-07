@@ -1,5 +1,5 @@
 const fs = require('fs')
-const { findProjectRoot } = require('../util')
+const { findProjectRoot } = require('@aragon/cli-utils')
 
 const getTruffleConfig = () => {
   try {

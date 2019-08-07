@@ -1,4 +1,4 @@
-const { getRecommendedGasLimit } = require('../util')
+const { getRecommendedGasLimit } = require('@aragon/cli-utils')
 
 module.exports = ({ web3, gasPrice, network }) => {
   const getACL = async repoAddr => {

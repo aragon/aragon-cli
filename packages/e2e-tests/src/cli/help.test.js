@@ -1,6 +1,6 @@
 import test from 'ava'
 import execa from 'execa'
-import { normalizeOutput } from '../util'
+import { normalizeOutput } from '@aragon/cli-utils'
 
 test('should return the correct help info', async t => {
   t.plan(1)
@@ -10,5 +10,5 @@ test('should return the correct help info', async t => {
   
   // assert
   result.stdout = normalizeOutput(result.stdout)
-  t.snapshot(result);
+  t.snapshot(result)
 })

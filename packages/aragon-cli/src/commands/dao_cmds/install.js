@@ -14,7 +14,7 @@ const {
   ANY_ENTITY,
   NO_MANAGER,
   ZERO_ADDRESS,
-} = require('../../util')
+} = require('@aragon/cli-utils')
 const kernelABI = require('@aragon/os/abi/Kernel').abi
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
