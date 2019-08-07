@@ -17,11 +17,10 @@ The arapp.json file contains metadata for your app. This are the fields need to 
         - `gateway`: An URI to the IPFS Gateway to read files from. Defaults to `http://localhost:8080/ipfs`.
         - `rpc`: An URI to the IPFS node used to publish files. Defaults to `http://localhost:5001#default`.
 - `path`: The path to the main contract in your app.
-- `links`: (optional) Array of links. Each object in that array should have name and address attributes. Used to links any linkable contracts into the deploying contract bytecode.
 
 ### Example
 
-This is the arapp.json of the app build in the [tutorial](tutorial.md) configure with rinkeby and mainnet environments.
+This is the arapp.json of the app build in the [tutorial](tutorial.md) configure with default environments.
 
 ```json
 {
@@ -38,38 +37,41 @@ This is the arapp.json of the app build in the [tutorial](tutorial.md) configure
     }
   ],
   "environments": {
-    "default": {
-      "appName": "foo.aragonpm.eth",
-      "network": "development"
+    "aragon:local": {
+      "network": "localhost"
     },
     "aragon:rinkeby": {
-        "apm": {
-          "ipfs": {
-            "gateway": "https://ipfs.eth.aragon.network/ipfs"
-          }
-        },
-        "registry": "0x98df287b6c145399aaa709692c8d308357bc085d",
-        "wsRPC": "wss://rinkeby.eth.aragon.network/ws",
-        "network": "rinkeby"
+      "apm": {
+        "ipfs": {
+          "gateway": "https://ipfs.eth.aragon.network/ipfs"
+        }
+      },
+      "registry": "0x98df287b6c145399aaa709692c8d308357bc085d",
+      "wsRPC": "wss://rinkeby.eth.aragon.network/ws",
+      "network": "rinkeby"
+    },
+    "aragon:staging": {
+      "apm": {
+        "ipfs": {
+          "gateway": "https://ipfs.eth.aragon.network/ipfs"
+        }
+      },
+      "registry": "0xfe03625ea880a8cba336f9b5ad6e15b0a3b5a939",
+      "wsRPC": "wss://rinkeby.eth.aragon.network/ws",
+      "network": "rinkeby"
     },
     "aragon:mainnet": {
-        "apm": {
-          "ipfs": {
-            "gateway": "https://ipfs.eth.aragon.network/ipfs"
-          }
-        },
-        "registry": "0x314159265dd8dbb310642f98f50c066173c1259b",
-        "wsRPC": "wss://mainnet.eth.aragon.network/ws",
-        "network": "mainnet"
+      "apm": {
+        "ipfs": {
+          "gateway": "https://ipfs.eth.aragon.network/ipfs"
+        }
+      },
+      "registry": "0x314159265dd8dbb310642f98f50c066173c1259b",
+      "wsRPC": "wss://mainnet.eth.aragon.network/ws",
+      "network": "mainnet"
     }
   },
-  "path": "contracts/CounterApp.sol",
-  "links": [
-    {
-      "name": "CounterExtension",
-      "address": "0x82606d5d2dB55Ac1D36a011dbbA769c729349f56"
-    }
-  ]
+  "path": "contracts/CounterApp.sol"
 }
 ```
 

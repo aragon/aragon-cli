@@ -1,29 +1,5 @@
 The `aragon apm` commands are the easiest way to manage aragonPM repositories.
 
-## aragon apm extract-functions
-
-Extract function information from a Solidity file.
-
-```sh
-aragon apm extract-functions [contract]
-```
-
-- `contract`: Path to the Solidity file to extract functions from.
-
-Options:
-
-- `--output`: Path of the directory where the output file will be saved to.
-
-## aragon apm versions
-
-Shows all the previously published versions of a given repository.
-
-```sh
-aragon apm versions [apmRepo]
-```
-
-- `apmRepo`: Name of the APM repository. Defaults to the current project's repo (defined in `arapp.json`).
-
 ## aragon apm packages
 
 Lists all the packages in a apm registry.
@@ -45,19 +21,9 @@ aragon apm info <apmRepo> [apmRepoVersion]
 - `apmRepo`: Name of the APM repository.
 - `apmRepoVersion`: Version of the repo. Defaults to `latest`.
 
-## aragon apm grant
-
-Grant an address or a group of addresses the permission to create new versions in your package (defined in `arapp.json`), by interacting directly with the ACL, without performing transaction pathing.
-
-```sh
-aragon apm grant [addr1 ... addrN]
-```
-
-- `addresses`: The addresses being granted the permission to publish to the repo.
-
 ## aragon apm publish
 
-The `aragon apm publish` command publishes a new version to the aragonPM repo.
+The `aragon apm publish` command publishes a new version to the aragonPM repo. Check the [Publish to aragonPM guide](https://hack.aragon.org/docs/guides-publish) to learn more about the publish workflow.
 
 ```sh
 aragon apm publish <bump> [contract]
@@ -71,7 +37,9 @@ aragon apm publish <bump> [contract]
 
 If a minor or patch version is being published then the command can be run with the `--only-content` flag which will skip compiling the contracts.
 
-You can target a particular directory to publish, using `--files`. We always publish apps with:
+You can target a particular directory to publish, using `--files`. By default we only include `artifact.json`, `code.sol` and `manifest.json`.
+
+We always publish apps with:
 
 ```sh
 aragon apm publish <version> --environment <environment> --files app/build
@@ -96,3 +64,37 @@ The command has the following parameters:
 - `--reuse`: Whether to reuse the previous version contract and skip deployment on non-major versions. Defaults to `false`.
 - `--propagate-content`: Whether to propagate the content once published. Defaults to `true`.
 - `--skip-confirmation`: Whether to skip the confirmation step. Defaults to `false`.
+
+## aragon apm extract-functions
+
+Extract function information from a Solidity file.
+
+```sh
+aragon apm extract-functions [contract]
+```
+
+- `contract`: Path to the Solidity file to extract functions from.
+
+Options:
+
+- `--output`: Path of the directory where the output file will be saved to.
+
+## aragon apm versions
+
+Shows all the previously published versions of a given repository.
+
+```sh
+aragon apm versions [apmRepo]
+```
+
+- `apmRepo`: Name of the APM repository. Defaults to the current project's repo (defined in `arapp.json`).
+
+## aragon apm grant
+
+Grant an address or a group of addresses the permission to create new versions in your package (defined in `arapp.json`), by interacting directly with the ACL, without performing transaction pathing.
+
+```sh
+aragon apm grant [addr1 ... addrN]
+```
+
+- `addresses`: The addresses being granted the permission to publish to the repo.

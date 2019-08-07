@@ -96,8 +96,12 @@ dao act <agent-proxy> <target-addr> <method> [argument1 ... argumentN]
 
 - `agent-proxy`: Address of the Agent app proxy.
 - `target-addr`: Address where the action is being executed.
-- `method`: Name of the method being executed in the app (e.g. `transfer`).
+- `method`: The [full signature](https://www.4byte.directory) of the method we wish to execute in either the external contract or the app we specified, note that by the full signature we mean the [human readable function signature](https://solidity.readthedocs.io/en/v0.5.3/abi-spec.html#function-selector) (e.g. `vote(unint256,bool,bool)`).
 - `arguments`: The arguments that the method will be executed with (each separated by a space).
+
+Options:
+
+- `--eth-value`: Amount of ETH from the contract that is sent with the action.
 
 ## dao token
 
@@ -115,7 +119,7 @@ dao token new <token-name> <symbol> [decimal-units] [transfer-enabled] [token-fa
 - `symbol`: Symbol of the new Token.
 - `decimal-units`: Total decimal units the new token will use. Defaults to `18`.
 - `transfer-enabled`: Whether the new token will have transfers enabled. Defaults to `true`.
-- `token-factory-address`: Address of a MiniMe Token Factory deployed on the network. Defaults to an existing Minime Factory address for Rinkeby and Mainnet.
+- `token-factory-address`: Address of a MiniMe Token Factory deployed on the network. Defaults to an existing Minime Factory address for Rinkeby and Mainnet. Defaults to `0xA29EF584c389c67178aE9152aC9C543f9156E2B3` on Mainnet and `0xad991658443c56b3dE2D7d7f5d8C68F339aEef29` on Rinkeby.
 
 ### dao token change-controller
 
