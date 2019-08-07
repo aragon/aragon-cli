@@ -21,7 +21,8 @@ exports.builder = function(yargs) {
       type: 'string',
     })
     .positional('signature', {
-      description: 'Function to be executed',
+      description:
+        'Signature of the function to be executed (e.g. "myMethod(uint256,string)"',
       type: 'string',
     })
     .option('call-args', {
@@ -29,7 +30,11 @@ exports.builder = function(yargs) {
       array: true,
       default: [],
     })
-  // TODO: Add an optional argument to provide the eth value for the execution
+    .option('eth-value', {
+      description:
+        'Amount of ETH from the contract that is sent with the action',
+      default: '0',
+    })
 }
 
 const encodeCalldata = (signature, params) => {
@@ -55,6 +60,7 @@ exports.handler = async function({
   target,
   signature,
   callArgs,
+  ethValue,
   wsProvider,
 }) {
   // TODO (daniel) refactor ConsoleReporter so we can do reporter.debug instead
@@ -71,7 +77,9 @@ exports.handler = async function({
     )
   }
 
-  const fnArgs = [target, 0, encodeCalldata(signature, callArgs)]
+  const weiAmount = web3.utils.toWei(ethValue)
+
+  const fnArgs = [target, weiAmount, encodeCalldata(signature, callArgs)]
 
   const getTransactionPath = wrapper =>
     wrapper.getTransactionPath(agentAddress, EXECUTE_FUNCTION_NAME, fnArgs)
