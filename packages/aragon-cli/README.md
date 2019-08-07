@@ -71,7 +71,7 @@ Stable versions:
 
 | Version  | NPM page                              | Docs                                     | Release date |
 | -------- | ------------------------------------- | ---------------------------------------- | ------------ |
-| `v6.2.3` | [![NPM][623-npm-badge]][620-npm-link] | [![Docs][623-docs-badge]][620-docs-link] | 2019-08-07   |
+| `v6.2.3` | [![NPM][623-npm-badge]][623-npm-link] | [![Docs][623-docs-badge]][623-docs-link] | 2019-08-07   |
 | `v5.9.7` | [![NPM][597-npm-badge]][597-npm-link] | [![Docs][597-docs-badge]][597-docs-link] | 2019-07-15   |
 | `v5.8.0` | [![NPM][580-npm-badge]][580-npm-link] | [![Docs][580-docs-badge]][580-docs-link] | 2019-05-18   |
 | `v5.6.2` | [![NPM][562-npm-badge]][562-npm-link] | [![Docs][562-docs-badge]][562-docs-link] | 2019-04-17   |
