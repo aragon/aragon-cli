@@ -4,7 +4,7 @@ All **notable** changes between stable versions will be documented in this file.
 
 - [Changelog](#Changelog)
 
-  - [v6.2.0 (🌳)](#v620)
+  - [v6.2.3 (🌳)](#v623)
     - [What’s changed in aragonCLI since `v5.9.7`](#Whats-changed-in-aragonCLI-since-v597)
     - [💥 Breaking changes](#%F0%9F%92%A5-Breaking-changes)
     - [🚀 New features](#%F0%9F%9A%80-New-features)
@@ -14,10 +14,10 @@ All **notable** changes between stable versions will be documented in this file.
 
 ---
 
-## v6.2.0
+## v6.2.3
 
-Release date: **2019-08-01**
-[Compare code changes][v6.2.0]
+Release date: **2019-08-07**
+[Compare code changes][v6.2.3]
 
 ### What’s changed in aragonCLI since `v5.9.7`
 
