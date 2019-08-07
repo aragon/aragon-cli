@@ -21,7 +21,7 @@ exports.task = async function(
             let wrapper, appsLoaded
 
             const tryFindTransactionPath = async () => {
-              if (appsLoaded && wrapper) {
+              if (appsLoaded && wrapper && !ctx.transactionPath) {
                 try {
                   ctx.transactionPath = await getTransactionPath(wrapper)
                   resolve()
