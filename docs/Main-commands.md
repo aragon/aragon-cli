@@ -19,12 +19,15 @@ Available options to customize the `run` command:
 
 - `--reset`: If reset is present it will reset the devchain before running. The chain will then start from scratch and all published packages will need to be recreated.
 - `--port`: The port where the devchain will be started.
-- `--template`: The name of the contract that will be deployed as the [DAO template](templates-intro.md) that will be used to create your DAO. If no Template is provided it will use a default Template that sets up the DAO with just your app (`bare-template.aragonpm.eth`).
-- `--template-init [argument1 ... argumentN]`: The constructor arguments for the Template contract, each separated by a space. See the [deploy command](#aragon-deploy) for more information on constructor arguments.
-- `--template-deploy-event`: Arguments to be passed to the template constructor. Defaults to `DeployInstance`.
+- `--network-id`: Network id to connect with.
+- `--block-time`: Specify blockTime in seconds for automatic mining.
+- `--files`: The path to the files that will be published. Defaults to the current directory.
 - `--build`: A flag to specify whether the webapp should be built while publishing, running the script specified in `build-script` of `package.json`. Defaults to `true`.
 - `--build-script`: The name of the NPM script in your app that will be used for building the webapp.
 - `--prepublish`: A flag to specify whether to run a prepublish script specified in `prepublish-script` of `package.json`. Defaults to `true`.
+- `--template`: The name of the contract that will be deployed as the [DAO template](templates-intro.md) that will be used to create your DAO. If no Template is provided it will use a default Template that sets up the DAO with just your app (`bare-template.aragonpm.eth`).
+- `--template-init [argument1 ... argumentN]`: The constructor arguments for the Template contract, each separated by a space. See the [deploy command](#aragon-deploy) for more information on constructor arguments.
+- `--template-deploy-event`: Arguments to be passed to the template constructor. Defaults to `DeployInstance`.
 - `--prepublish-script`: The name of the NPM script in your app that will be run before publishing the app. Defaults to `prepublishOnly`.
 - `bump`: Type of bump (major, minor or patch) or version number to publish the app.
 - `--client`: Whether to start the Aragon client or not. Defaults to `true`.
@@ -94,6 +97,18 @@ Options:
 
 > **Note**<br>
 > The ENS instance is used both for the aragonPM registry `aragonpm.eth` and for the [aragon-id](https://github.com/aragon/aragon-id) `aragonid.eth`.
+
+### aragon devchain status
+
+Used to check the status of the local devchain.
+
+```sh
+aragon devchain status
+```
+
+Options:
+
+- `--port`: The port to check. Defaults to `8545`.
 
 ## aragon deploy
 
