@@ -28,6 +28,7 @@ Release date: **2019-08-01**
 
 ### 🚀 New features
 
+- Iterate dao act: add `--eth-value` optional argument (#492)
 - Bump `@aragon/aragen` to [v5.0.0](https://github.com/aragon/aragen/releases/tag/v5.0.0).
 - New command `devchain status` (#678)
 - New flag `--apm.ipfs.gateway` used to read APM artifacts from.
@@ -43,6 +44,9 @@ Release date: **2019-08-01**
 
 ### 💡 Feature updates
 
+- Update aragen & client (#686)
+- Check for existing transactionPath in execHandler (#385)
+- CLI: avoid coercing number arguments from strings to JS numbers (#687)
 - Allow arrays to be passed via `--app-init-args` (#623)
 - Ipfs cmd refactor (#636)
 - Use all environment on artifact generation (#646)
@@ -54,6 +58,8 @@ Release date: **2019-08-01**
 
 ### 🐛 Bug Fixes
 
+- Handle IPFS not being installed (#696)
+- Fix prepare publish function and publish intent argument (#685)
 - Update command to not hang after finishing (#674)
 - Fix `decorateWithAbi` function to filter by function type (#666)
 - Fix prepare files function to handle `--files` correctly (#660)
