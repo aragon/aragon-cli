@@ -3,75 +3,32 @@
 All changes to this project will be documented in this file.
 
 - [Changelog](#Changelog)
-- [v6.2.0](#v620)
+- [v6.2.3](#v623)
   - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI)
   - [🚀 New features](#%F0%9F%9A%80-New-features)
-  - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes)
   - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates)
+  - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes)
   - [🛠️ Maintenance (non-API changes)](#%F0%9F%9B%A0%EF%B8%8F-Maintenance-non-API-changes)
+- [v6.2.2](#v622)
+- [v6.2.1](#v621)
+- [v6.2.0](#v620)
 - [v6.1.1](#v611)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-1)
-  - [🛠️ Maintenance (non-API changes)](#%F0%9F%9B%A0%EF%B8%8F-Maintenance-non-API-changes-1)
 - [v6.1.0](#v610)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-2)
-  - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-1)
-  - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates-1)
-  - [🛠️ Maintenance (non-API changes)](#%F0%9F%9B%A0%EF%B8%8F-Maintenance-non-API-changes-2)
 - [v6.0.5](#v605)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-3)
-  - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-2)
-  - [🛠️ Maintenance (non-API changes)](#%F0%9F%9B%A0%EF%B8%8F-Maintenance-non-API-changes-3)
 - [v6.0.4](#v604)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-4)
 - [v6.0.3](#v603)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-5)
-  - [🛠️ Maintenance (non-API changes)](#%F0%9F%9B%A0%EF%B8%8F-Maintenance-non-API-changes-4)
 - [v6.0.2](#v602)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-6)
-  - [🛠️ Maintenance (non-API changes)](#%F0%9F%9B%A0%EF%B8%8F-Maintenance-non-API-changes-5)
 - [v6.0.1](#v601)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-7)
-  - [🛠️ Maintenance (non-API changes)](#%F0%9F%9B%A0%EF%B8%8F-Maintenance-non-API-changes-6)
 - [v6.0.0](#v600)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-8)
-  - [💥 Breaking changes](#%F0%9F%92%A5-Breaking-changes)
-  - [🚀 New features](#%F0%9F%9A%80-New-features-1)
-  - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates-2)
-  - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-3)
-  - [🛠️ Maintenance (non-API changes)](#%F0%9F%9B%A0%EF%B8%8F-Maintenance-non-API-changes-7)
 - [v5.10.0](#v5100)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-9)
-  - [🚀 New features](#%F0%9F%9A%80-New-features-1)
-  - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates-3)
-  - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-4)
-  - [🛠️ Maintenance & internal changes](#%F0%9F%9B%A0%EF%B8%8F-Maintenance--internal-changes-8)
 - [v5.9.7](#v597)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-10)
-  - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-5)
 - [v5.9.6](#v596)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-11)
-  - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates-4)
-  - [🛠️ Maintenance & internal changes](#%F0%9F%9B%A0%EF%B8%8F-Maintenance--internal-changes-9)
 - [v5.9.5](#v595)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-12)
-  - [🛠️ Maintenance & internal changes](#%F0%9F%9B%A0%EF%B8%8F-Maintenance--internal-changes-10)
 - [v5.9.4](#v594)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-13)
-  - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates-5)
-  - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-6)
 - [v5.9.3](#v593)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-14)
-  - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-7)
 - [v5.9.2](#v592)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-15)
-  - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-8)
 - [v5.9.1](#v591)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-16)
-  - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes-9)
 - [v5.9.0](#v590)
-  - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI-17)
-  - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates-6)
-  - [🛠️ Maintenance & internal changes](#%F0%9F%9B%A0%EF%B8%8F-Maintenance--internal-changes-11)
 - [v5.8.0](#v580)
 - [v5.7.2](#v572)
 - [v5.7.1](#v571)
@@ -88,10 +45,70 @@ All changes to this project will be documented in this file.
 
 ---
 
+## v6.2.3
+
+Release date: **2019-08-07**  
+[Compare code changes][v6.2.3] (🌳 STABLE)
+
+### What’s changed in aragonCLI
+
+## 🚀 New features
+
+- Iterate dao act: add `--eth-value` optional argument (#492) @0xGabi
+
+## 💡 Feature updates
+
+- Check for existing transactionPath in execHandler (#385) @mikec 🎉
+- CLI: avoid coercing number arguments from strings to JS numbers (#687) @sohkai 🎉
+
+## 🐛 Bug Fixes
+
+- Handle IPFS not being installed (#696) @0x6431346e
+
+## 🛠️ Maintenance (non-API changes)
+
+- Update FRAME_ORIGIN AragonCLI -> aragonCLI (#688) @john-light 🎉
+- Update documentation (#697) @0xGabi
+- Bump web3 from 1.2.0 to 1.2.1 (#695) @dependabot-preview
+- Bump sinon from 7.3.2 to 7.4.1 (#692) @dependabot-preview
+- Bump web3-utils from 1.2.0 to 1.2.1 (#693) @dependabot-preview
+
+---
+
+## v6.2.2
+
+Release date: **2019-08-05**  
+[Compare code changes][v6.2.2]
+
+### What’s changed in aragonCLI
+
+## 💡 Feature updates
+
+- Update aragen & client (#686) @0xGabi
+
+---
+
+## v6.2.1
+
+Release date: **2019-08-05**  
+[Compare code changes][v6.2.1]
+
+### What’s changed in aragonCLI
+
+## 🐛 Bug Fixes
+
+- Fix prepare publish function and publish intent argument (#685) @0xGabi
+
+## 🛠️ Maintenance (non-API changes)
+
+- Update README & CHANGELOG files (#681) @0xGabi
+
+---
+
 ## v6.2.0
 
 Release date: **2019-08-01**  
-[Compare code changes][v6.2.0] (🌳 STABLE)
+[Compare code changes][v6.2.0]
 
 ### What’s changed in aragonCLI
 
