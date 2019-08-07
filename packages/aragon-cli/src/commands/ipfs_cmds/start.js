@@ -67,23 +67,17 @@ exports.task = ({ apmOptions, silent, debug }) => {
   )
 }
 
-exports.handler = function({ reporter, apm: apmOptions }) {
+exports.handler = async function({ reporter, apm: apmOptions }) {
   const task = exports.task({ apmOptions })
 
-  task
-    .run()
-    .then(ctx => {
-      if (ctx.started) {
-        reporter.info(
-          'IPFS daemon is now running. Stopping this process will stop IPFS'
-        )
-      } else {
-        reporter.warning(chalk.yellow('Didnt start IPFS, port busy'))
-        process.exit()
-      }
-    })
-    .catch(err => {
-      reporter.error(err)
-      process.exit(1)
-    })
+  const ctx = await task.run()
+
+  if (ctx.started) {
+    reporter.info(
+      'IPFS daemon is now running. Stopping this process will stop IPFS'
+    )
+  } else {
+    reporter.warning(chalk.yellow("Didn't start IPFS, port busy"))
+    process.exit()
+  }
 }
