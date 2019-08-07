@@ -38,24 +38,18 @@ exports.builder = function(yargs) {
 }
 
 const encodeCalldata = (signature, params) => {
-  try {
-    const sigBytes = ABI.encodeFunctionSignature(signature)
+  const sigBytes = ABI.encodeFunctionSignature(signature)
 
-    const types = signature.replace(')', '').split('(')[1]
+  const types = signature.replace(')', '').split('(')[1]
 
-    // No params, return signature directly
-    if (types === '') {
-      return sigBytes
-    }
-
-    const paramBytes = ABI.encodeParameters(types.split(','), params)
-
-    return `${sigBytes}${paramBytes.slice(2)}`
-  } catch (e) {
-    throw new Error(
-      'Invalid signature. You have to respect the function name including types and no spaces e.g. "myMethod(uint256,string,bool)"'
-    )
+  // No params, return signature directly
+  if (types === '') {
+    return sigBytes
   }
+
+  const paramBytes = ABI.encodeParameters(types.split(','), params)
+
+  return `${sigBytes}${paramBytes.slice(2)}`
 }
 
 exports.handler = async function({
