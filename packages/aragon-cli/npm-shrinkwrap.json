@@ -406,12 +406,24 @@
     },
     "@aragon/cli-utils": {
       "version": "0.0.7",
+      "resolved": "https://registry.npmjs.org/@aragon/cli-utils/-/cli-utils-0.0.7.tgz",
+      "integrity": "sha512-U0tPr5/svT4cCUNmQuU0rA6jyLJA/3SEB3G8JNd9z+1SnkXTmCg4N2eL6EQNeFKgqmGFlZfQ/Pvt3HLhHCS6sg==",
       "requires": {
         "chalk": "^2.4.2",
         "figures": "^3.0.0",
         "listr-silent-renderer": "^1.1.1",
         "listr-update-renderer": "^0.5.0",
         "listr-verbose-renderer": "^0.5.0"
+      },
+      "dependencies": {
+        "figures": {
+          "version": "3.0.0",
+          "resolved": "https://registry.npmjs.org/figures/-/figures-3.0.0.tgz",
+          "integrity": "sha512-HKri+WoWoUgr83pehn/SIgLOMZ9nAWC6dcGj26RY2R4F50u4+RTUz0RCrUlOV3nKRAICW1UGzyb+kcX2qK1S/g==",
+          "requires": {
+            "escape-string-regexp": "^1.0.5"
+          }
+        }
       }
     },
     "@aragon/os": {
@@ -32127,6 +32139,32 @@
         "web3-net": "1.2.0",
         "web3-shh": "1.2.0",
         "web3-utils": "1.2.0"
+      },
+      "dependencies": {
+        "eth-lib": {
+          "version": "0.2.7",
+          "resolved": "https://registry.npmjs.org/eth-lib/-/eth-lib-0.2.7.tgz",
+          "integrity": "sha1-L5Pxex4jrsN1nNSj/iDBKGo/wco=",
+          "requires": {
+            "bn.js": "^4.11.6",
+            "elliptic": "^6.4.0",
+            "xhr-request-promise": "^0.1.2"
+          }
+        },
+        "web3-utils": {
+          "version": "1.2.0",
+          "resolved": "https://registry.npmjs.org/web3-utils/-/web3-utils-1.2.0.tgz",
+          "integrity": "sha512-tI1low8ICoaWU2c53cikH0rsksKuIskI2nycH5E5sEXxxl9/BOD3CeDDBFbxgNPQ+bpDevbR7gXNEDB7Ud4G9g==",
+          "requires": {
+            "bn.js": "4.11.8",
+            "eth-lib": "0.2.7",
+            "ethjs-unit": "0.1.6",
+            "number-to-bn": "1.7.0",
+            "randomhex": "0.1.5",
+            "underscore": "1.9.1",
+            "utf8": "3.0.0"
+          }
+        }
       }
     },
     "web3-bzz": {
@@ -32148,6 +32186,32 @@
         "web3-core-method": "1.2.0",
         "web3-core-requestmanager": "1.2.0",
         "web3-utils": "1.2.0"
+      },
+      "dependencies": {
+        "eth-lib": {
+          "version": "0.2.7",
+          "resolved": "https://registry.npmjs.org/eth-lib/-/eth-lib-0.2.7.tgz",
+          "integrity": "sha1-L5Pxex4jrsN1nNSj/iDBKGo/wco=",
+          "requires": {
+            "bn.js": "^4.11.6",
+            "elliptic": "^6.4.0",
+            "xhr-request-promise": "^0.1.2"
+          }
+        },
+        "web3-utils": {
+          "version": "1.2.0",
+          "resolved": "https://registry.npmjs.org/web3-utils/-/web3-utils-1.2.0.tgz",
+          "integrity": "sha512-tI1low8ICoaWU2c53cikH0rsksKuIskI2nycH5E5sEXxxl9/BOD3CeDDBFbxgNPQ+bpDevbR7gXNEDB7Ud4G9g==",
+          "requires": {
+            "bn.js": "4.11.8",
+            "eth-lib": "0.2.7",
+            "ethjs-unit": "0.1.6",
+            "number-to-bn": "1.7.0",
+            "randomhex": "0.1.5",
+            "underscore": "1.9.1",
+            "utf8": "3.0.0"
+          }
+        }
       }
     },
     "web3-core-helpers": {
@@ -32158,6 +32222,32 @@
         "underscore": "1.9.1",
         "web3-eth-iban": "1.2.0",
         "web3-utils": "1.2.0"
+      },
+      "dependencies": {
+        "eth-lib": {
+          "version": "0.2.7",
+          "resolved": "https://registry.npmjs.org/eth-lib/-/eth-lib-0.2.7.tgz",
+          "integrity": "sha1-L5Pxex4jrsN1nNSj/iDBKGo/wco=",
+          "requires": {
+            "bn.js": "^4.11.6",
+            "elliptic": "^6.4.0",
+            "xhr-request-promise": "^0.1.2"
+          }
+        },
+        "web3-utils": {
+          "version": "1.2.0",
+          "resolved": "https://registry.npmjs.org/web3-utils/-/web3-utils-1.2.0.tgz",
+          "integrity": "sha512-tI1low8ICoaWU2c53cikH0rsksKuIskI2nycH5E5sEXxxl9/BOD3CeDDBFbxgNPQ+bpDevbR7gXNEDB7Ud4G9g==",
+          "requires": {
+            "bn.js": "4.11.8",
+            "eth-lib": "0.2.7",
+            "ethjs-unit": "0.1.6",
+            "number-to-bn": "1.7.0",
+            "randomhex": "0.1.5",
+            "underscore": "1.9.1",
+            "utf8": "3.0.0"
+          }
+        }
       }
     },
     "web3-core-method": {
@@ -32170,6 +32260,32 @@
         "web3-core-promievent": "1.2.0",
         "web3-core-subscriptions": "1.2.0",
         "web3-utils": "1.2.0"
+      },
+      "dependencies": {
+        "eth-lib": {
+          "version": "0.2.7",
+          "resolved": "https://registry.npmjs.org/eth-lib/-/eth-lib-0.2.7.tgz",
+          "integrity": "sha1-L5Pxex4jrsN1nNSj/iDBKGo/wco=",
+          "requires": {
+            "bn.js": "^4.11.6",
+            "elliptic": "^6.4.0",
+            "xhr-request-promise": "^0.1.2"
+          }
+        },
+        "web3-utils": {
+          "version": "1.2.0",
+          "resolved": "https://registry.npmjs.org/web3-utils/-/web3-utils-1.2.0.tgz",
+          "integrity": "sha512-tI1low8ICoaWU2c53cikH0rsksKuIskI2nycH5E5sEXxxl9/BOD3CeDDBFbxgNPQ+bpDevbR7gXNEDB7Ud4G9g==",
+          "requires": {
+            "bn.js": "4.11.8",
+            "eth-lib": "0.2.7",
+            "ethjs-unit": "0.1.6",
+            "number-to-bn": "1.7.0",
+            "randomhex": "0.1.5",
+            "underscore": "1.9.1",
+            "utf8": "3.0.0"
+          }
+        }
       }
     },
     "web3-core-promievent": {
@@ -32221,6 +32337,32 @@
         "web3-eth-personal": "1.2.0",
         "web3-net": "1.2.0",
         "web3-utils": "1.2.0"
+      },
+      "dependencies": {
+        "eth-lib": {
+          "version": "0.2.7",
+          "resolved": "https://registry.npmjs.org/eth-lib/-/eth-lib-0.2.7.tgz",
+          "integrity": "sha1-L5Pxex4jrsN1nNSj/iDBKGo/wco=",
+          "requires": {
+            "bn.js": "^4.11.6",
+            "elliptic": "^6.4.0",
+            "xhr-request-promise": "^0.1.2"
+          }
+        },
+        "web3-utils": {
+          "version": "1.2.0",
+          "resolved": "https://registry.npmjs.org/web3-utils/-/web3-utils-1.2.0.tgz",
+          "integrity": "sha512-tI1low8ICoaWU2c53cikH0rsksKuIskI2nycH5E5sEXxxl9/BOD3CeDDBFbxgNPQ+bpDevbR7gXNEDB7Ud4G9g==",
+          "requires": {
+            "bn.js": "4.11.8",
+            "eth-lib": "0.2.7",
+            "ethjs-unit": "0.1.6",
+            "number-to-bn": "1.7.0",
+            "randomhex": "0.1.5",
+            "underscore": "1.9.1",
+            "utf8": "3.0.0"
+          }
+        }
       }
     },
     "web3-eth-abi": {
@@ -32231,6 +32373,32 @@
         "ethers": "4.0.0-beta.3",
         "underscore": "1.9.1",
         "web3-utils": "1.2.0"
+      },
+      "dependencies": {
+        "eth-lib": {
+          "version": "0.2.7",
+          "resolved": "https://registry.npmjs.org/eth-lib/-/eth-lib-0.2.7.tgz",
+          "integrity": "sha1-L5Pxex4jrsN1nNSj/iDBKGo/wco=",
+          "requires": {
+            "bn.js": "^4.11.6",
+            "elliptic": "^6.4.0",
+            "xhr-request-promise": "^0.1.2"
+          }
+        },
+        "web3-utils": {
+          "version": "1.2.0",
+          "resolved": "https://registry.npmjs.org/web3-utils/-/web3-utils-1.2.0.tgz",
+          "integrity": "sha512-tI1low8ICoaWU2c53cikH0rsksKuIskI2nycH5E5sEXxxl9/BOD3CeDDBFbxgNPQ+bpDevbR7gXNEDB7Ud4G9g==",
+          "requires": {
+            "bn.js": "4.11.8",
+            "eth-lib": "0.2.7",
+            "ethjs-unit": "0.1.6",
+            "number-to-bn": "1.7.0",
+            "randomhex": "0.1.5",
+            "underscore": "1.9.1",
+            "utf8": "3.0.0"
+          }
+        }
       }
     },
     "web3-eth-accounts": {
@@ -32259,6 +32427,20 @@
             "elliptic": "^6.4.0",
             "xhr-request-promise": "^0.1.2"
           }
+        },
+        "web3-utils": {
+          "version": "1.2.0",
+          "resolved": "https://registry.npmjs.org/web3-utils/-/web3-utils-1.2.0.tgz",
+          "integrity": "sha512-tI1low8ICoaWU2c53cikH0rsksKuIskI2nycH5E5sEXxxl9/BOD3CeDDBFbxgNPQ+bpDevbR7gXNEDB7Ud4G9g==",
+          "requires": {
+            "bn.js": "4.11.8",
+            "eth-lib": "0.2.7",
+            "ethjs-unit": "0.1.6",
+            "number-to-bn": "1.7.0",
+            "randomhex": "0.1.5",
+            "underscore": "1.9.1",
+            "utf8": "3.0.0"
+          }
         }
       }
     },
@@ -32275,6 +32457,32 @@
         "web3-core-subscriptions": "1.2.0",
         "web3-eth-abi": "1.2.0",
         "web3-utils": "1.2.0"
+      },
+      "dependencies": {
+        "eth-lib": {
+          "version": "0.2.7",
+          "resolved": "https://registry.npmjs.org/eth-lib/-/eth-lib-0.2.7.tgz",
+          "integrity": "sha1-L5Pxex4jrsN1nNSj/iDBKGo/wco=",
+          "requires": {
+            "bn.js": "^4.11.6",
+            "elliptic": "^6.4.0",
+            "xhr-request-promise": "^0.1.2"
+          }
+        },
+        "web3-utils": {
+          "version": "1.2.0",
+          "resolved": "https://registry.npmjs.org/web3-utils/-/web3-utils-1.2.0.tgz",
+          "integrity": "sha512-tI1low8ICoaWU2c53cikH0rsksKuIskI2nycH5E5sEXxxl9/BOD3CeDDBFbxgNPQ+bpDevbR7gXNEDB7Ud4G9g==",
+          "requires": {
+            "bn.js": "4.11.8",
+            "eth-lib": "0.2.7",
+            "ethjs-unit": "0.1.6",
+            "number-to-bn": "1.7.0",
+            "randomhex": "0.1.5",
+            "underscore": "1.9.1",
+            "utf8": "3.0.0"
+          }
+        }
       }
     },
     "web3-eth-ens": {
@@ -32290,6 +32498,32 @@
         "web3-eth-abi": "1.2.0",
         "web3-eth-contract": "1.2.0",
         "web3-utils": "1.2.0"
+      },
+      "dependencies": {
+        "eth-lib": {
+          "version": "0.2.7",
+          "resolved": "https://registry.npmjs.org/eth-lib/-/eth-lib-0.2.7.tgz",
+          "integrity": "sha1-L5Pxex4jrsN1nNSj/iDBKGo/wco=",
+          "requires": {
+            "bn.js": "^4.11.6",
+            "elliptic": "^6.4.0",
+            "xhr-request-promise": "^0.1.2"
+          }
+        },
+        "web3-utils": {
+          "version": "1.2.0",
+          "resolved": "https://registry.npmjs.org/web3-utils/-/web3-utils-1.2.0.tgz",
+          "integrity": "sha512-tI1low8ICoaWU2c53cikH0rsksKuIskI2nycH5E5sEXxxl9/BOD3CeDDBFbxgNPQ+bpDevbR7gXNEDB7Ud4G9g==",
+          "requires": {
+            "bn.js": "4.11.8",
+            "eth-lib": "0.2.7",
+            "ethjs-unit": "0.1.6",
+            "number-to-bn": "1.7.0",
+            "randomhex": "0.1.5",
+            "underscore": "1.9.1",
+            "utf8": "3.0.0"
+          }
+        }
       }
     },
     "web3-eth-iban": {
@@ -32299,6 +32533,32 @@
       "requires": {
         "bn.js": "4.11.8",
         "web3-utils": "1.2.0"
+      },
+      "dependencies": {
+        "eth-lib": {
+          "version": "0.2.7",
+          "resolved": "https://registry.npmjs.org/eth-lib/-/eth-lib-0.2.7.tgz",
+          "integrity": "sha1-L5Pxex4jrsN1nNSj/iDBKGo/wco=",
+          "requires": {
+            "bn.js": "^4.11.6",
+            "elliptic": "^6.4.0",
+            "xhr-request-promise": "^0.1.2"
+          }
+        },
+        "web3-utils": {
+          "version": "1.2.0",
+          "resolved": "https://registry.npmjs.org/web3-utils/-/web3-utils-1.2.0.tgz",
+          "integrity": "sha512-tI1low8ICoaWU2c53cikH0rsksKuIskI2nycH5E5sEXxxl9/BOD3CeDDBFbxgNPQ+bpDevbR7gXNEDB7Ud4G9g==",
+          "requires": {
+            "bn.js": "4.11.8",
+            "eth-lib": "0.2.7",
+            "ethjs-unit": "0.1.6",
+            "number-to-bn": "1.7.0",
+            "randomhex": "0.1.5",
+            "underscore": "1.9.1",
+            "utf8": "3.0.0"
+          }
+        }
       }
     },
     "web3-eth-personal": {
@@ -32311,6 +32571,32 @@
         "web3-core-method": "1.2.0",
         "web3-net": "1.2.0",
         "web3-utils": "1.2.0"
+      },
+      "dependencies": {
+        "eth-lib": {
+          "version": "0.2.7",
+          "resolved": "https://registry.npmjs.org/eth-lib/-/eth-lib-0.2.7.tgz",
+          "integrity": "sha1-L5Pxex4jrsN1nNSj/iDBKGo/wco=",
+          "requires": {
+            "bn.js": "^4.11.6",
+            "elliptic": "^6.4.0",
+            "xhr-request-promise": "^0.1.2"
+          }
+        },
+        "web3-utils": {
+          "version": "1.2.0",
+          "resolved": "https://registry.npmjs.org/web3-utils/-/web3-utils-1.2.0.tgz",
+          "integrity": "sha512-tI1low8ICoaWU2c53cikH0rsksKuIskI2nycH5E5sEXxxl9/BOD3CeDDBFbxgNPQ+bpDevbR7gXNEDB7Ud4G9g==",
+          "requires": {
+            "bn.js": "4.11.8",
+            "eth-lib": "0.2.7",
+            "ethjs-unit": "0.1.6",
+            "number-to-bn": "1.7.0",
+            "randomhex": "0.1.5",
+            "underscore": "1.9.1",
+            "utf8": "3.0.0"
+          }
+        }
       }
     },
     "web3-net": {
@@ -32321,6 +32607,32 @@
         "web3-core": "1.2.0",
         "web3-core-method": "1.2.0",
         "web3-utils": "1.2.0"
+      },
+      "dependencies": {
+        "eth-lib": {
+          "version": "0.2.7",
+          "resolved": "https://registry.npmjs.org/eth-lib/-/eth-lib-0.2.7.tgz",
+          "integrity": "sha1-L5Pxex4jrsN1nNSj/iDBKGo/wco=",
+          "requires": {
+            "bn.js": "^4.11.6",
+            "elliptic": "^6.4.0",
+            "xhr-request-promise": "^0.1.2"
+          }
+        },
+        "web3-utils": {
+          "version": "1.2.0",
+          "resolved": "https://registry.npmjs.org/web3-utils/-/web3-utils-1.2.0.tgz",
+          "integrity": "sha512-tI1low8ICoaWU2c53cikH0rsksKuIskI2nycH5E5sEXxxl9/BOD3CeDDBFbxgNPQ+bpDevbR7gXNEDB7Ud4G9g==",
+          "requires": {
+            "bn.js": "4.11.8",
+            "eth-lib": "0.2.7",
+            "ethjs-unit": "0.1.6",
+            "number-to-bn": "1.7.0",
+            "randomhex": "0.1.5",
+            "underscore": "1.9.1",
+            "utf8": "3.0.0"
+          }
+        }
       }
     },
     "web3-provider-engine": {
@@ -32421,9 +32733,9 @@
       }
     },
     "web3-utils": {
-      "version": "1.2.0",
-      "resolved": "https://registry.npmjs.org/web3-utils/-/web3-utils-1.2.0.tgz",
-      "integrity": "sha512-tI1low8ICoaWU2c53cikH0rsksKuIskI2nycH5E5sEXxxl9/BOD3CeDDBFbxgNPQ+bpDevbR7gXNEDB7Ud4G9g==",
+      "version": "1.2.1",
+      "resolved": "https://registry.npmjs.org/web3-utils/-/web3-utils-1.2.1.tgz",
+      "integrity": "sha512-Mrcn3l58L+yCKz3zBryM6JZpNruWuT0OCbag8w+reeNROSGVlXzUQkU+gtAwc9JCZ7tKUyg67+2YUGqUjVcyBA==",
       "requires": {
         "bn.js": "4.11.8",
         "eth-lib": "0.2.7",
