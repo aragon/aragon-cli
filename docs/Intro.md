@@ -54,13 +54,16 @@ After installing, the main `aragon` executable will be available for use. It wil
 
 #### Install IPFS
 
-Since v6.0.0 we separate the instalation of IPFS. If you do not have it installed globally on your system we have a couple of comand to help with that. You should ran `aragon ipfs install`. After that you are ready.
+Since `v6.0.0` we separate the instalation of `go-ipfs` from the aragonCLI. If you do not have it installed globally on your system we have a couple of comands to help with that:`aragon ipfs install` and `aragon ipfs uninstall`.
+
+> **Note**<br>
+> We are using the `0.4.18-hacky2` version cause lastest version is not stable yet.
 
 ## Global options
 
 Options that change the behaviour of the command:
 
-- `--environment`: The environment in your arapp.json that you want to use. Defaults to `aragon:local`. Check the other [default environments](/docs/cli-global-confg.html#the-arappjson-file).
+- `--environment`: The environment in your arapp.json that you want to use. Defaults to `aragon:local`. Check the other [default environments](/docs/cli-global-confg.html#example).
 - `--gas-price`: Gas price in Gwei. Defaults to `2`.
 - `--silent`: Silence output to terminal.
 - `--debug`: Show more output to terminal.
