@@ -39,6 +39,7 @@ exports.handler = async function({
   const getTransactionPath = wrapper =>
     wrapper.getTransactionPath(proxyAddress, fn, fnArgs)
   return execHandler(dao, getTransactionPath, {
+    ipfsCheck: true,
     reporter,
     apm,
     network,
