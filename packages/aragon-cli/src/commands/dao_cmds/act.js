@@ -85,6 +85,7 @@ exports.handler = async function({
     wrapper.getTransactionPath(agentAddress, EXECUTE_FUNCTION_NAME, fnArgs)
 
   return execHandler(dao, getTransactionPath, {
+    ipfsCheck: true,
     reporter,
     apm,
     network,
