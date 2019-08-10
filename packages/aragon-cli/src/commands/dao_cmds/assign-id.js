@@ -1,18 +1,21 @@
 const TaskList = require('listr')
+const ENS = require('ethereum-ens')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const { green } = require('chalk')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const { isAddress } = require('web3-utils')
-const assignId = require('./utils/assign-id')
+const registrarAbi = require('@aragon/id/abi/IFIFSResolvingRegistrar').abi
+const { sha3 } = require('web3-utils')
+
+const ARAGON_DOMAIN = 'aragonid.eth'
 
 exports.command = 'assign-id <dao> <aragon-id>'
-
 exports.describe = 'Assign an Aragon Id to a DAO address'
 
 exports.builder = yargs => {
   return yargs
     .positional('dao', {
-      description: 'Address of the Kernel',
+      description: 'DAO address',
       type: 'string',
     })
     .positional('aragon-id', {
@@ -36,24 +39,54 @@ exports.task = async ({
     process.exit(1)
   }
 
-  if (!/^([\w-]+)$/.test(aragonId)) {
-    reporter.error('Invalid Aragon Id')
-    process.exit(1)
-  }
-
   const tasks = new TaskList(
     [
       {
-        title: 'Assigning Aragon Id',
+        title: 'Validating Id',
         task: async ctx => {
-          ctx.receipt = await assignId({
-            id: aragonId,
-            orgAddress: dao,
-            ensRegistryAddress: apmOptions['ens-registry'],
-            gasPrice,
-            web3,
-          })
-          ctx.domain = `${aragonId}.aragonid.eth`
+          if (!/^([\w-]+)$/.test(aragonId)) {
+            reporter.error('Invalid Aragon Id')
+            process.exit(1)
+          }
+
+          const ens = (ctx.ens = new ENS(
+            web3.currentProvider,
+            apmOptions['ens-registry']
+          ))
+
+          // Check name doesn't already exist
+          try {
+            const exists = await ens
+              .resolver(`${aragonId}.${ARAGON_DOMAIN}`)
+              .addr()
+            if (exists) {
+              reporter.error(
+                `Cannot assign: ${aragonId}.${ARAGON_DOMAIN} is already assigned to ${exists}.`
+              )
+              process.emit(1)
+            }
+          } catch (err) {
+            // ens.resolver() throws an ENS.NameNotFound error if name doesn't exist
+            if (err !== ENS.NameNotFound) throw err
+          }
+        },
+      },
+      {
+        title: 'Assigning Id',
+        task: async ctx => {
+          const registrar = new web3.eth.Contract(
+            registrarAbi,
+            await ctx.ens.owner(ARAGON_DOMAIN)
+          )
+
+          ctx.receipt = await registrar.methods
+            .register(sha3(aragonId), dao)
+            .send({
+              from: (await web3.eth.getAccounts())[0],
+              gas: '1000000',
+              gasPrice: gasPrice,
+            })
+          ctx.domain = `${aragonId}.${ARAGON_DOMAIN}`
         },
       },
     ],
