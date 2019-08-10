@@ -2,12 +2,13 @@ const TaskList = require('listr')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const APM = require('@aragon/apm')
 const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
-const chalk = require('chalk')
+const { green, bold } = require('chalk')
 const { getContract } = require('../../util')
 const getRepoTask = require('./utils/getRepoTask')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const startIPFS = require('../ipfs_cmds/start')
 const { getRecommendedGasLimit } = require('../../util')
+const assignIdTask = require('./assign-id').task
 
 exports.BARE_TEMPLATE = defaultAPMName('bare-kit')
 exports.BARE_INSTANCE_FUNCTION = 'newBareInstance'
@@ -54,6 +55,10 @@ exports.builder = yargs => {
       boolean: true,
       default: true,
     })
+    .option('aragon-id', {
+      description: 'Assign an Aragon Id to the DAO',
+      type: 'string',
+    })
 }
 
 exports.task = async ({
@@ -71,6 +76,7 @@ exports.task = async ({
   silent,
   debug,
   ipfsCheck,
+  aragonId,
 }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
@@ -86,7 +92,7 @@ exports.task = async ({
         enabled: () => ipfsCheck,
       },
       {
-        title: `Fetching template ${chalk.bold(template)}@${templateVersion}`,
+        title: `Fetching template ${bold(template)}@${templateVersion}`,
         task: getRepoTask.task({
           apm,
           apmRepo: template,
@@ -130,6 +136,22 @@ exports.task = async ({
           ctx.appManagerRole = await kernel.methods.APP_MANAGER_ROLE().call()
         },
       },
+      {
+        title: 'Assigning Aragon Id',
+        enabled: () => aragonId,
+        task: async ctx => {
+          return assignIdTask({
+            dao: ctx.daoAddress,
+            aragonId,
+            web3,
+            gasPrice,
+            apmOptions,
+            silent,
+            debug,
+            reporter,
+          })
+        },
+      },
     ],
     listrOpts(silent, debug)
   )
@@ -150,6 +172,7 @@ exports.handler = async function({
   apm: apmOptions,
   silent,
   debug,
+  aragonId,
 }) {
   const web3 = await ensureWeb3(network)
 
@@ -170,9 +193,17 @@ exports.handler = async function({
     skipChecks: false,
     silent,
     debug,
+    aragonId,
   })
   return task.run().then(ctx => {
-    reporter.success(`Created DAO: ${chalk.green(ctx.daoAddress)}`)
+    if (aragonId) {
+      reporter.success(
+        `Created DAO: ${green(ctx.domain)} at ${green(ctx.daoAddress)}`
+      )
+    } else {
+      reporter.success(`Created DAO: ${green(ctx.daoAddress)}`)
+    }
+
     if (kit || kitVersion) {
       reporter.warning(
         `The use of kits is deprecated and templates should be used instead. The new options for 'dao new' are '--template' and '--template-version'`
