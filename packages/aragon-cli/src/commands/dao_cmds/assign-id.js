@@ -44,7 +44,10 @@ exports.task = async ({
       {
         title: 'Validating Id',
         task: async ctx => {
-          if (!/^([\w-]+)$/.test(aragonId)) {
+          if (
+            !/^([\w-]+)$/.test(aragonId) &&
+            !new RegExp(`^([\\w-]+).${ARAGON_DOMAIN}$`).test(aragonId)
+          ) {
             reporter.error('Invalid Aragon Id')
             process.exit(1)
           }
@@ -54,14 +57,17 @@ exports.task = async ({
             apmOptions['ens-registry']
           ))
 
+          ctx.domain = aragonId.includes(ARAGON_DOMAIN)
+            ? aragonId
+            : `${aragonId}.${ARAGON_DOMAIN}`
+
           // Check name doesn't already exist
           try {
-            const exists = await ens
-              .resolver(`${aragonId}.${ARAGON_DOMAIN}`)
-              .addr()
+            const exists = await ens.resolver(ctx.domain).addr()
+
             if (exists) {
               reporter.error(
-                `Cannot assign: ${aragonId}.${ARAGON_DOMAIN} is already assigned to ${exists}.`
+                `Cannot assign: ${ctx.domain} is already assigned to ${exists}.`
               )
               process.emit(1)
             }
@@ -86,7 +92,6 @@ exports.task = async ({
               gas: '1000000',
               gasPrice: gasPrice,
             })
-          ctx.domain = `${aragonId}.${ARAGON_DOMAIN}`
         },
       },
     ],
