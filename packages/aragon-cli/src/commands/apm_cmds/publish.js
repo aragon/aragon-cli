@@ -554,6 +554,7 @@ exports.runPublishTask = ({
             }
 
             return execTask(dao, getTransactionPath, {
+              ipfsCheck: false,
               reporter,
               gasPrice,
               apm: apmOptions,
@@ -758,43 +759,44 @@ exports.handler = async function({
   reporter.debug(`Published directory: ${chalk.blue(pathToPublish)}\n`)
 
   // Propagate content
+  if (propagateContent && !http) {
+    if (!skipConfirmation) {
+      const { confirmation } = await inquirer.prompt([
+        {
+          type: 'confirm',
+          name: 'confirmation',
+          message: chalk.green(`Propagate content`),
+        },
+      ])
+      // new line after confirm
+      console.log()
+      if (!confirmation) process.exit()
+    }
 
-  if (!skipConfirmation && propagateContent) {
-    const { confirmation } = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'confirmation',
-        message: chalk.green(`Propagate content`),
-      },
-    ])
-    // new line after confirm
-    console.log()
-    if (!confirmation) process.exit()
+    const propagateTask = await propagateIPFS.task({
+      apmOptions,
+      cid: contentLocation,
+      debug,
+      silent,
+    })
+
+    const { CIDs, result } = await propagateTask.run()
+
+    console.log(
+      '\n',
+      `Queried ${chalk.blue(CIDs.length)} CIDs at ${chalk.blue(
+        result.gateways.length
+      )} gateways`,
+      '\n',
+      `Requests succeeded: ${chalk.green(result.succeeded)}`,
+      '\n',
+      `Requests failed: ${chalk.red(result.failed)}`,
+      '\n'
+    )
+
+    reporter.debug(`Gateways: ${result.gateways.join(', ')}`)
+    reporter.debug(`Errors: \n${result.errors.map(JSON.stringify).join('\n')}`)
+    // TODO: add your own gateways
   }
-
-  const propagateTask = await propagateIPFS.task({
-    apmOptions,
-    cid: contentLocation,
-    debug,
-    silent,
-  })
-
-  const { CIDs, result } = await propagateTask.run()
-
-  console.log(
-    '\n',
-    `Queried ${chalk.blue(CIDs.length)} CIDs at ${chalk.blue(
-      result.gateways.length
-    )} gateways`,
-    '\n',
-    `Requests succeeded: ${chalk.green(result.succeeded)}`,
-    '\n',
-    `Requests failed: ${chalk.red(result.failed)}`,
-    '\n'
-  )
-
-  reporter.debug(`Gateways: ${result.gateways.join(', ')}`)
-  reporter.debug(`Errors: \n${result.errors.map(JSON.stringify).join('\n')}`)
-  // TODO: add your own gateways
   process.exit()
 }

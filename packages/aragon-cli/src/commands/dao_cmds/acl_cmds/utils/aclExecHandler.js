@@ -23,6 +23,7 @@ module.exports = async function(
     return wrapper.getACLTransactionPath(method, processedParams)
   }
   return execHandler(dao, getTransactionPath, {
+    ipfsCheck: false,
     reporter,
     gasPrice,
     apm,
