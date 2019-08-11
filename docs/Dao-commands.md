@@ -10,6 +10,7 @@ dao new
 
 Options:
 
+- `--aragon-id`: Assigns an Aragon Id to the DAO.
 - `--template`: The aragonPM repo name of the template that is used to create the DAO. Defaults to `bare-template.aragonpm.eth`.
 - `--template-version [version-number|latest]`: The version of the repo that will be used to create the DAO. Defaults to `latest`.
 - `--fn`: The function on the template that is called to create a new DAO. Defaults to the `newBareInstance` function for `bare-template.aragonpm.eth`.
@@ -33,6 +34,17 @@ dao apps <dao-addr>
 Options:
 
 - `--all`: To include apps without permissions in the report.
+
+## dao assign-id
+
+Assigns an Aragon Id to a DAO address.
+
+```sh
+dao assign-id <dao> <aragon-id>
+```
+
+- `dao`: The main address of the DAO (Kernel).
+- `aragon-id`: The Aragon Id.
 
 ## dao install
 
