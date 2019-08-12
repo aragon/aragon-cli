@@ -187,8 +187,6 @@ exports.handler = function({
   clientPort,
   clientPath,
 }) {
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
-
   // TODO: this can be cleaned up once kits is no longer supported
   template = kit || template
   templateInit = kitInit || templateInit
@@ -365,7 +363,7 @@ exports.handler = function({
     manifest = fs.readJsonSync(manifestPath)
   }
 
-  return tasks.run({ ens: apmOptions['ens-registry'] }).then(async ctx => {
+  return tasks.run({ ens: apmOptions.ensRegistryAddress }).then(async ctx => {
     if (ctx.portOpen) {
       reporter.warning(
         `Server already listening at port ${chalk.blue(

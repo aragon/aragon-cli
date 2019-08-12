@@ -60,7 +60,6 @@ exports.task = async ({
   silent,
   debug,
 }) => {
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
   apmRepo = defaultAPMName(apmRepo)
