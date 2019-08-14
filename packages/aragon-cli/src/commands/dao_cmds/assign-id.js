@@ -69,7 +69,7 @@ exports.task = async ({
               reporter.error(
                 `Cannot assign: ${ctx.domain} is already assigned to ${exists}.`
               )
-              process.emit(1)
+              process.exit(1)
             }
           } catch (err) {
             // ens.resolver() throws an ENS.NameNotFound error if name doesn't exist
