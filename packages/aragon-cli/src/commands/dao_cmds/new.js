@@ -8,7 +8,7 @@ const getRepoTask = require('./utils/getRepoTask')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const startIPFS = require('../ipfs_cmds/start')
 const { getRecommendedGasLimit } = require('../../util')
-const assignIdTask = require('./assign-id').task
+const assignIdTask = require('./id-assign').task
 
 exports.BARE_TEMPLATE = defaultAPMName('bare-kit')
 exports.BARE_INSTANCE_FUNCTION = 'newBareInstance'
