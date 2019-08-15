@@ -9,10 +9,10 @@ const { sha3 } = require('web3-utils')
 
 const ARAGON_DOMAIN = 'aragonid.eth'
 
-exports.command = 'assign-id <dao> <aragon-id>'
-exports.describe = 'Assign an Aragon Id to a DAO address'
-
-exports.builder = yargs => {
+// dao id assign command
+const idAssignCommand = 'assign <dao> <aragon-id>'
+const idAssignDescribe = 'Assign an Aragon Id to a DAO address'
+const idAssignBuilder = yargs => {
   return yargs
     .positional('dao', {
       description: 'DAO address',
@@ -22,6 +22,19 @@ exports.builder = yargs => {
       description: 'Aragon Id',
       type: 'string',
     })
+}
+
+// dao id shortcut
+exports.command = 'id <dao> <aragon-id>'
+exports.describe = 'Shortcut for `dao id assign`'
+
+exports.builder = yargs => {
+  return idAssignBuilder(yargs).command(
+    idAssignCommand,
+    idAssignDescribe,
+    idAssignBuilder,
+    exports.handler
+  )
 }
 
 exports.task = async ({

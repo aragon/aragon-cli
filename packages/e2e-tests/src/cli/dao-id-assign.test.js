@@ -12,7 +12,7 @@ test('assigns an Aragon Id to a DAO address', async t => {
 
   // Randomize Aragon Id
   const aragonId = 'newdao' + Math.floor(Math.random() * 100)
-  const assignIdResult = await execa('aragon', ['dao', 'assign-id', daoAddress, aragonId, '--debug'])
+  const assignIdResult = await execa('aragon', ['dao', 'id', 'assign', daoAddress, aragonId, '--debug'])
   
   const resultSnapshot = {
     ...daoNewResult,

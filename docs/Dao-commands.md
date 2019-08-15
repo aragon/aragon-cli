@@ -35,12 +35,18 @@ Options:
 
 - `--all`: To include apps without permissions in the report.
 
-## dao assign-id
+## dao id assign
 
 Assigns an Aragon Id to a DAO address.
 
 ```sh
-dao assign-id <dao> <aragon-id>
+dao id assign <dao> <aragon-id>
+```
+
+or 
+
+```sh
+dao id <dao> <aragon-id>
 ```
 
 - `dao`: The main address of the DAO (Kernel).
