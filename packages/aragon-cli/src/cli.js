@@ -35,7 +35,8 @@ cmd.middleware(MIDDLEWARES)
 
 cmd.alias('env', 'environment')
 cmd.alias('h', 'help')
-cmd.alias('v', 'version')
+// TODO: (Gabi) Fix alias clash with aragen
+//cmd.alias('v', 'version')
 
 // blank scriptName so that help text doesn't display "aragon" before each command
 cmd.scriptName('')
