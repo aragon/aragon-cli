@@ -71,7 +71,7 @@ The `dao install` command will create an instance of the app and assign permissi
 Options:
 
 - `--app-init`: Name of the function that will be called to initialize an app. If you want to skip app initialization (which is not generally recommended), you can do it by set it to `none`. By default it will initialize the app using `initialize` function.
-- `--app-init-args`: Arguments for calling the app init function.
+- `--app-init-args`: Arguments for calling the app init function. To use arrays use the following format `["'0xB24b...73a7', '0xB24b...73a7'"]`.
 - `--set-permissions`: Whether to set permissions in the app. Set it to `open` to allow `ANY_ENTITY` on all roles.
 
 > **Note**<br>
