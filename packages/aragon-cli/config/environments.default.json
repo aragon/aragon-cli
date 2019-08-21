@@ -1,6 +1,6 @@
 {
   "aragon:local": {
-    "network": "localhost"
+    "network": "development"
   },
   "aragon:rinkeby": {
     "apm": {
@@ -31,5 +31,15 @@
     "registry": "0x314159265dd8dbb310642f98f50c066173c1259b",
     "wsRPC": "wss://mainnet.eth.aragon.network/ws",
     "network": "mainnet"
+  },
+  "aragon:ropsten": {
+    "apm": {
+      "ipfs": {
+        "gateway": "https://ipfs.eth.aragon.network/ipfs"
+      }
+    },
+    "registry": "0x6afe2cacee211ea9179992f89dc61ff25c61e923",
+    "wsRPC": "wss://ropsten.eth.aragon.network/ws",
+    "network": "ropsten"
   }
 }
