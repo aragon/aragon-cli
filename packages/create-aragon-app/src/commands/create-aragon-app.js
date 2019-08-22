@@ -5,6 +5,7 @@ const TaskList = require('listr')
 const { installDeps, isValidAragonId } = require('../util')
 const defaultAPMName = require('../helpers/default-apm')
 const listrOpts = require('../helpers/listr-options')
+const execa = require('execa')
 
 exports.command = '* <name> [template]'
 
@@ -84,6 +85,24 @@ exports.handler = function({ reporter, name, template, silent, debug }) {
       {
         title: 'Installing package dependencies',
         task: async (ctx, task) => installDeps(basename, task),
+      },
+      {
+        title: 'Check IPFS',
+        task: async (ctx, task) => {
+          try {
+            ctx.ipfsMissing = false
+            await execa('ipfs', ['version'])
+          } catch {
+            ctx.ipfsMissing = true
+          }
+        },
+      },
+      {
+        title: 'Installing IPFS',
+        enabled: (ctx) => ctx.ipfsMissing,
+        task: async (ctx, task) => {
+          await execa('npx', ['aragon','ipfs', 'install', '--skip-confirmation'])
+        }
       },
     ],
     listrOpts(silent, debug)
