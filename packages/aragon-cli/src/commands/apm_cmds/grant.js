@@ -44,6 +44,7 @@ exports.handler = async function({
     reporter.warning('No grantee addresses provided')
   }
 
+  /* eslint-disable-next-line */
   for (const address of grantees) {
     reporter.info(
       `Granting permission to publish on ${chalk.blue(
