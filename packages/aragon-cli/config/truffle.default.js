@@ -1,4 +1,4 @@
-const homedir = require('os').homedir
+const homedir = require('homedir')
 const path = require('path')
 
 const HDWalletProvider = require('truffle-hdwallet-provider')
@@ -9,7 +9,8 @@ const DEFAULT_MNEMONIC =
 
 const defaultRPC = network => `https://${network}.eth.aragon.network`
 
-const configFilePath = filename => path.join(homedir(), `.aragon/${filename}`)
+const configFilePath = (filename) =>
+  path.join(homedir(), `.aragon/${filename}`)
 
 const mnemonic = () => {
   try {
@@ -19,32 +20,35 @@ const mnemonic = () => {
   }
 }
 
-const settingsForNetwork = network => {
+const settingsForNetwork = (network) => {
   try {
     return require(configFilePath(`${network}_key.json`))
   } catch (e) {
-    return {}
+    return { }
   }
 }
 
 // Lazily loaded provider
-const providerForNetwork = network => () => {
-  let { rpc, keys } = settingsForNetwork(network)
-  rpc = rpc || defaultRPC(network)
+const providerForNetwork = (network) => (
+  () => {
+    let { rpc, keys } = settingsForNetwork(network)
 
-  if (!keys || keys.length === 0) {
-    return new HDWalletProvider(mnemonic(), rpc)
+    rpc = rpc || defaultRPC(network)
+
+    if (!keys || keys.length == 0) {
+      return new HDWalletProvider(mnemonic(), rpc)
+    }
+
+    return new HDWalletProviderPrivkey(keys, rpc)
   }
-
-  return new HDWalletProviderPrivkey(keys, rpc)
-}
+)
 
 const mochaGasSettings = {
   reporter: 'eth-gas-reporter',
-  reporterOptions: {
+  reporterOptions : {
     currency: 'USD',
-    gasPrice: 3,
-  },
+    gasPrice: 3
+  }
 }
 
 const mocha = process.env.GAS_REPORTER ? mochaGasSettings : {}
@@ -56,67 +60,51 @@ module.exports = {
       host: 'localhost',
       port: 8545,
       gas: 6.9e6,
-      gasPrice: 15000000001,
+      gasPrice: 15000000001
     },
     devnet: {
       network_id: 16,
       host: 'localhost',
       port: 8535,
       gas: 6.9e6,
-      gasPrice: 15000000001,
+      gasPrice: 15000000001
     },
     mainnet: {
       network_id: 1,
       provider: providerForNetwork('mainnet'),
       gas: 7.9e6,
-      gasPrice: 3000000001,
+      gasPrice: 3000000001
     },
     ropsten: {
       network_id: 3,
       provider: providerForNetwork('ropsten'),
-      gas: 4.712e6,
+      gas: 4.712e6
     },
     rinkeby: {
       network_id: 4,
       provider: providerForNetwork('rinkeby'),
       gas: 6.9e6,
-      gasPrice: 15000000001,
+      gasPrice: 15000000001
     },
     kovan: {
       network_id: 42,
       provider: providerForNetwork('kovan'),
-      gas: 6.9e6,
+      gas: 6.9e6
     },
     coverage: {
-      host: 'localhost',
-      network_id: '*',
+      host: "localhost",
+      network_id: "*",
       port: 8555,
       gas: 0xffffffffff,
-      gasPrice: 0x01,
-    },
-    development: {
-      host: 'localhost',
-      network_id: '*',
-      port: 8545,
-      gas: 6.9e6,
-      gasPrice: 15000000001,
+      gasPrice: 0x01
     },
   },
+  build: {},
   mocha,
-  // Configure your compilers
-  compilers: {
-    solc: {
-      version: '0.4.24', // A version or constraint - Ex. "^0.5.0"
-      // Can also be set to "native" to use a native solc
-      // docker: <boolean>, // Use a version obtained through docker</string>
-      settings: {
-        // Optimize for how many times you intend to run the code
-        optimizer: {
-          enabled: true,
-          runs: 200,
-        },
-      },
-      // evmVersion: <string> // Default: "byzantium"
-    },
+  solc: {
+    optimizer: {
+      enabled: true,
+      runs: 10000
+    }
   },
 }
