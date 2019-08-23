@@ -99,10 +99,15 @@ exports.handler = function({ reporter, name, template, silent, debug }) {
       },
       {
         title: 'Installing IPFS',
-        enabled: (ctx) => ctx.ipfsMissing,
+        enabled: ctx => ctx.ipfsMissing,
         task: async (ctx, task) => {
-          await execa('npx', ['aragon','ipfs', 'install', '--skip-confirmation'])
-        }
+          await execa('npx', [
+            'aragon',
+            'ipfs',
+            'install',
+            '--skip-confirmation',
+          ])
+        },
       },
     ],
     listrOpts(silent, debug)
