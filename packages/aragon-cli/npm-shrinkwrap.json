@@ -525,6 +525,8 @@
     },
     "@aragon/cli-utils": {
       "version": "0.0.8",
+      "resolved": "https://registry.npmjs.org/@aragon/cli-utils/-/cli-utils-0.0.8.tgz",
+      "integrity": "sha512-1rNF/Qkq3+qqv8wAcQW3WvS5h3+hF53DK8yaDQcTbE1hzIMZqkcScAOcwkkwrLGreMDT57/RHV7eZcDetEF8MQ==",
       "requires": {
         "chalk": "^2.4.2",
         "figures": "^3.0.0",
@@ -7490,37 +7492,20 @@
       }
     },
     "eslint-plugin-ava": {
-      "version": "7.1.0",
-      "resolved": "https://registry.npmjs.org/eslint-plugin-ava/-/eslint-plugin-ava-7.1.0.tgz",
-      "integrity": "sha512-Z/vWPuHxtqMzxLZKhY/BJPrpPwA6uDlYekpBafyy95ssJCRDKUlFh0bk+P8fPPQJjXYr7bYp3Hwn66/QLwTBUA==",
+      "version": "8.0.0",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-ava/-/eslint-plugin-ava-8.0.0.tgz",
+      "integrity": "sha512-jOrf7FPPLFxFhDXadRuqTN4qN19Lec40sYJ3FwbByLIh0J0l5znLdhox32OdJxW7il10LlfLRnAp+toyvPs+Dw==",
       "dev": true,
       "requires": {
         "deep-strict-equal": "^0.2.0",
         "enhance-visitors": "^1.0.0",
-        "espree": "^5.0.0",
+        "espree": "^6.0.0",
         "espurify": "^2.0.0",
         "import-modules": "^1.1.0",
         "pkg-dir": "^4.2.0",
         "resolve-from": "^5.0.0"
       },
       "dependencies": {
-        "acorn": {
-          "version": "6.3.0",
-          "resolved": "https://registry.npmjs.org/acorn/-/acorn-6.3.0.tgz",
-          "integrity": "sha512-/czfa8BwS88b9gWQVhc8eknunSA2DoJpJyTQkhheIf5E48u1N0R4q/YxxsAeqRrmK9TQ/uYfgLDfZo91UlANIA==",
-          "dev": true
-        },
-        "espree": {
-          "version": "5.0.1",
-          "resolved": "https://registry.npmjs.org/espree/-/espree-5.0.1.tgz",
-          "integrity": "sha512-qWAZcWh4XE/RwzLJejfcofscgMc9CamR6Tn1+XRXNzrvUSSbiAjGOI/fggztjIi7y9VLPqnICMIPiGyr8JaZ0A==",
-          "dev": true,
-          "requires": {
-            "acorn": "^6.0.7",
-            "acorn-jsx": "^5.0.0",
-            "eslint-visitor-keys": "^1.0.0"
-          }
-        },
         "espurify": {
           "version": "2.0.1",
           "resolved": "https://registry.npmjs.org/espurify/-/espurify-2.0.1.tgz",
@@ -33556,6 +33541,32 @@
         "underscore": "1.9.1",
         "web3-core-helpers": "1.2.1",
         "websocket": "github:web3-js/WebSocket-Node#polyfill/globalThis"
+      },
+      "dependencies": {
+        "debug": {
+          "version": "2.6.9",
+          "resolved": "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz",
+          "integrity": "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==",
+          "requires": {
+            "ms": "2.0.0"
+          }
+        },
+        "ms": {
+          "version": "2.0.0",
+          "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
+          "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g="
+        },
+        "websocket": {
+          "version": "github:web3-js/WebSocket-Node#905deb4812572b344f5801f8c9ce8bb02799d82e",
+          "from": "github:web3-js/WebSocket-Node#polyfill/globalThis",
+          "requires": {
+            "debug": "^2.2.0",
+            "es5-ext": "^0.10.50",
+            "nan": "^2.14.0",
+            "typedarray-to-buffer": "^3.1.5",
+            "yaeti": "^0.0.6"
+          }
+        }
       }
     },
     "web3-shh": {
