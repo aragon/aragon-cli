@@ -13,7 +13,6 @@ create-aragon-app <app-name> [boilerplate]
 - `boilerplate`: the Github repo name or alias for a boilerplate to set up your app. The currently available boilerplates are:
 
   - `react`: this boilerplate contains a very basic Counter app and a webapp for interacting with it. It showcases the end-to-end interaction with an Aragon app, from the contracts to the webapp.
-  - `react-kit`: it is a variation of the `react` boilerplate that also comes with a DAO Kit which will allow for using your app to interact with other Aragon apps like the Voting app. You can read more about DAO Kits [here](https://github.com/aragon/hack/blob/master/docs/kits-intro.md).
   - `bare`: this boilerplate will just set up your app directory structure but contains no functional code.
 
 ## Example
