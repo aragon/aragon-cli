@@ -35,7 +35,7 @@ Available options to customize the `run` command:
 - `--client-port`: Port being used by Aragon client.
 - `--client-path`: A path pointing to an existing Aragon client installation.
 - `--app-init`: Name of the function that will be called to initialize an app. Defaults to `initialize`.
-- `--app-init-args`: Arguments for calling the app init function.
+- `--app-init-args`: Arguments for calling the app init function. To use arrays use the following format `["'0xB24b...73a7', '0xB24b...73a7'"]`.
 
 ### Running your app from a development HTTP server
 
