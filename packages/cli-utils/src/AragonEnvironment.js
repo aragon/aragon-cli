@@ -2,36 +2,35 @@ import defaultEnvironments from '../config/environments.default'
 import { askForChoice } from './index'
 
 export const OPTIONS = {
-  'environment': {
-    description: 'The environment in which to run the command'
+  environment: {
+    description: 'The environment in which to run the command',
   },
   'eth-node': {
-    description: 'The ETH node to read data from'
+    description: 'The ETH node to read data from',
   },
   'web3-signer': {
-    description: 'The ETH node to send transactions to'
+    description: 'The ETH node to send transactions to',
   },
   'ens-registry': {
-    description: 'The ENS registry address'
+    description: 'The ENS registry address',
   },
   'gas-price': {
-    description: 'The transaction gas price (in Wei)'
+    description: 'The transaction gas price (in Wei)',
   },
   'ipfs-node': {
-    description: 'The IPFS node to send data to'
+    description: 'The IPFS node to send data to',
   },
   'ipfs-gateway': {
-    description: 'The IPFS gateway to read data from'
-  }
+    description: 'The IPFS gateway to read data from',
+  },
 }
 
-export const configure = (yargs, options) => yargs
-  .options(OPTIONS)
-  .alias('env', 'environment')
-  .group(Object.keys(OPTIONS), 'Environment:')
-  .middleware([
-    (argv) => middleware(argv, options)
-  ])
+export const configure = (yargs, options) =>
+  yargs
+    .options(OPTIONS)
+    .alias('env', 'environment')
+    .group(Object.keys(OPTIONS), 'Environment:')
+    .middleware([argv => middleware(argv, options)])
 
 export const middleware = async (argv, options) => {
   if (shouldBeSkipped(argv, options)) return
@@ -41,7 +40,10 @@ export const middleware = async (argv, options) => {
 
   let { environment: environmentName } = argv
   if (!environmentName) {
-    environmentName = await askForChoice('Choose an environment', Object.keys(environments))
+    environmentName = await askForChoice(
+      'Choose an environment',
+      Object.keys(environments)
+    )
   }
 
   let environment = getEnvironmentObject(environments, environmentName)
@@ -53,7 +55,7 @@ export const middleware = async (argv, options) => {
     ensRegistry: argv.ensRegistry || environment.ensRegistry,
     gasPrice: argv.gasPrice || environment.gasPrice,
     ipfsNode: argv.ipfsNode || environment.ipfsNode,
-    ipfsGateway: argv.ipfsGateway || environment.ipfsGateway
+    ipfsGateway: argv.ipfsGateway || environment.ipfsGateway,
   }
 
   reporter.debug('AragonEnvironment: environment')
@@ -62,7 +64,7 @@ export const middleware = async (argv, options) => {
 }
 
 const getEnvironmentObject = (environments, environmentName) => {
-  let environment = environments[environmentName]
+  const environment = environments[environmentName]
 
   if (!environment) {
     throw new Error(`Cannot find "${environmentName}" in arapp.json`)

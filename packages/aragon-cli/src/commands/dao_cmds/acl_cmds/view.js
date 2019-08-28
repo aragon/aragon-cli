@@ -130,7 +130,7 @@ exports.handler = async function({
       `Successfully fetched DAO apps for ${chalk.green(ctx.daoAddress)}`
     )
 
-    let acl = ctx.acl
+    const acl = ctx.acl
 
     // filter according to cli params will happen here
 

@@ -9,30 +9,36 @@ const execa = require('execa')
 const psTree = require('ps-tree')
 
 const askForInput = async message => {
-  const { reply } = await inquirer.prompt([{
-    type: 'input',
-    name: 'reply',
-    message
-  }])
+  const { reply } = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'reply',
+      message,
+    },
+  ])
   return reply
 }
 
 const askForChoice = async (message, choices) => {
-  const { reply } = await inquirer.prompt([{
-    type: 'list',
-    name: 'reply',
-    message,
-    choices
-  }])
+  const { reply } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'reply',
+      message,
+      choices,
+    },
+  ])
   return reply
 }
 
-const askForConfirmation = async (message) => {
-  const { reply } = await inquirer.prompt([{
-    type: 'confirm',
-    name: 'reply',
-    message
-  }])
+const askForConfirmation = async message => {
+  const { reply } = await inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'reply',
+      message,
+    },
+  ])
   return reply
 }
 
@@ -324,12 +330,12 @@ async function startBackgroundProcess({
   return new Promise((resolve, reject) => {
     // start the process
     const subprocess = execa(cmd, args, execaOpts)
-    
+
     let stdout = ''
     let stderr = ''
-    let logPrefix 
-    if(args && args.length > 0) {
-      logPrefix = `${cmd} ${args[0]}` 
+    let logPrefix
+    if (args && args.length > 0) {
+      logPrefix = `${cmd} ${args[0]}`
     } else {
       logPrefix = cmd
     }
@@ -437,5 +443,5 @@ module.exports = {
   askForInput,
   askForConfirmation,
   startBackgroundProcess,
-  normalizeOutput
+  normalizeOutput,
 }

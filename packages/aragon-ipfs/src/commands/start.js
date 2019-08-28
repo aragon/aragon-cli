@@ -1,17 +1,17 @@
-import path from 'path'
+// import path from 'path'
 import TaskList from 'listr'
-import chalk from 'chalk'
-import IPFS from 'ipfs-api'
+// import chalk from 'chalk'
+// import IPFS from 'ipfs-api'
 import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
 //
 import {
   startDaemon,
-  isIPFSCORS,
-  setIPFSCORS as setCORS,
-  isIPFSRunning,
+  // isIPFSCORS,
+  // setIPFSCORS as setCORS,
+  // isIPFSRunning,
   getDefaultRepoPath,
   setPorts,
-  getClient,
+  // getClient,
 } from '../lib'
 
 export const command = 'start'
@@ -112,7 +112,7 @@ export const handler = async argv => {
     repoPath,
   } = argv
 
-  const ctx = await runStartTask({
+  await runStartTask({
     detached,
     apiPort,
     gatewayPort,

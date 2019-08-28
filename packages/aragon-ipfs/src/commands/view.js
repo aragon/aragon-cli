@@ -6,7 +6,8 @@ import { askForInput } from '@aragon/cli-utils'
 import { getMerkleDAG, stringifyMerkleDAG, getClient } from '../lib'
 
 export const command = 'view [cid]'
-export const describe = 'Show metadata about the content: size, links, etc. Uses --ipfs-gateway.'
+export const describe =
+  'Show metadata about the content: size, links, etc. Uses --ipfs-gateway.'
 
 export const builder = yargs =>
   yargs.positional('cid', {

@@ -16,7 +16,6 @@ const {
 const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3-utils')
 const deploy = require('../deploy')
-// const propagateIPFS = require('../ipfs_cmds/propagate')
 const execTask = require('../dao_cmds/utils/execHandler').task
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
@@ -379,7 +378,7 @@ exports.runPrepareForPublishTask = ({
           const manifestDst = path.resolve(httpServedFrom, MANIFEST_FILE)
 
           if (!pathExistsSync(manifestDst) && pathExistsSync(manifestOrigin)) {
-            let manifest = await readJson(manifestOrigin)
+            const manifest = await readJson(manifestOrigin)
             manifest.start_url = path.basename(manifest.start_url)
             manifest.script = path.basename(manifest.script)
             await writeJson(manifestDst, manifest)
@@ -541,26 +540,18 @@ exports.runPublishTask = ({
         title: `Publish ${module.appName}`,
         enabled: () => !onlyArtifacts,
         task: async (ctx, task) => {
-          try {
-            const getTransactionPath = wrapper => {
-              return wrapper.getTransactionPath(
-                proxyAddress,
-                methodName,
-                params
-              )
-            }
-
-            return execTask(dao, getTransactionPath, {
-              ipfsCheck: false,
-              reporter,
-              gasPrice,
-              apm: apmOptions,
-              web3,
-              wsProvider,
-            })
-          } catch (e) {
-            throw e
+          const getTransactionPath = wrapper => {
+            return wrapper.getTransactionPath(proxyAddress, methodName, params)
           }
+
+          return execTask(dao, getTransactionPath, {
+            ipfsCheck: false,
+            reporter,
+            gasPrice,
+            apm: apmOptions,
+            web3,
+            wsProvider,
+          })
         },
       },
     ],
@@ -770,29 +761,29 @@ exports.handler = async function({
       if (!confirmation) process.exit()
     }
 
-    const propagateTask = await propagateIPFS.task({
-      apmOptions,
-      cid: contentLocation,
-      debug,
-      silent,
-    })
+    // const propagateTask = await propagateIPFS.task({
+    //   apmOptions,
+    //   cid: contentLocation,
+    //   debug,
+    //   silent,
+    // })
 
-    const { CIDs, result } = await propagateTask.run()
+    // const { CIDs, result } = await propagateTask.run()
 
-    console.log(
-      '\n',
-      `Queried ${chalk.blue(CIDs.length)} CIDs at ${chalk.blue(
-        result.gateways.length
-      )} gateways`,
-      '\n',
-      `Requests succeeded: ${chalk.green(result.succeeded)}`,
-      '\n',
-      `Requests failed: ${chalk.red(result.failed)}`,
-      '\n'
-    )
+    // console.log(
+    //   '\n',
+    //   `Queried ${chalk.blue(CIDs.length)} CIDs at ${chalk.blue(
+    //     result.gateways.length
+    //   )} gateways`,
+    //   '\n',
+    //   `Requests succeeded: ${chalk.green(result.succeeded)}`,
+    //   '\n',
+    //   `Requests failed: ${chalk.red(result.failed)}`,
+    //   '\n'
+    // )
 
-    reporter.debug(`Gateways: ${result.gateways.join(', ')}`)
-    reporter.debug(`Errors: \n${result.errors.map(JSON.stringify).join('\n')}`)
+    // reporter.debug(`Gateways: ${result.gateways.join(', ')}`)
+    // reporter.debug(`Errors: \n${result.errors.map(JSON.stringify).join('\n')}`)
     // TODO: add your own gateways
   }
   process.exit()

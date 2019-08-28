@@ -7,7 +7,7 @@ test('should return the correct help info', async t => {
 
   // act
   const result = await execa('aragon', ['--help'])
-  
+
   // assert
   result.stdout = normalizeOutput(result.stdout)
   t.snapshot(result)

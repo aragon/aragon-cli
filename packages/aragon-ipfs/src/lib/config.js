@@ -6,6 +6,9 @@ import { existsSync } from 'fs'
 import { homedir } from 'os'
 import { getBinary } from '@aragon/cli-utils'
 import byteSize from 'byte-size'
+import execa from 'execa'
+
+let ipfsNode
 
 export const isIPFSCORS = async ipfsRpc => {
   if (!ipfsNode) ipfsNode = oldIpfsAPI(ipfsRpc)
@@ -65,16 +68,16 @@ export const setPorts = async (repoPath, apiPort, gatewayPort, swarmPort) => {
   })
 }
 
-export function getDefaultRepoPath () {
+export function getDefaultRepoPath() {
   const homedirPath = homedir()
   return joinPath(homedirPath, '.ipfs')
 }
 
-export function getPeerIDConfig (repoConfig) {
+export function getPeerIDConfig(repoConfig) {
   return repoConfig.Identity.PeerID
 }
 
-export function getPorts (repoConfig) {
+export function getPorts(repoConfig) {
   return {
     // default: "/ip4/127.0.0.1/tcp/5001"
     api: repoConfig.Addresses.API.split('/').pop(),
@@ -88,13 +91,13 @@ export function getPorts (repoConfig) {
   }
 }
 
-export async function getRepoVersion (repoPath) {
+export async function getRepoVersion(repoPath) {
   const versionFilePath = joinPath(repoPath, 'version')
   const version = await readJson(versionFilePath)
   return version
 }
 
-export async function getRepoSize (repoPath) {
+export async function getRepoSize(repoPath) {
   return new Promise((resolve, reject) => {
     getFolderSize(repoPath, (err, size) => {
       if (err) {
@@ -107,13 +110,13 @@ export async function getRepoSize (repoPath) {
   })
 }
 
-export async function getRepoConfig (repoPath) {
+export async function getRepoConfig(repoPath) {
   const configFilePath = joinPath(repoPath, 'config')
   const config = await readJson(configFilePath)
   return config
 }
 
-export async function patchRepoConfig (repoPath, patch) {
+export async function patchRepoConfig(repoPath, patch) {
   const configFilePath = joinPath(repoPath, 'config')
   const repoConfig = await readJson(configFilePath)
   const nextConfig = Object.assign(repoConfig, patch)

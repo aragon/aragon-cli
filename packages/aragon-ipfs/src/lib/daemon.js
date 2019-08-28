@@ -1,5 +1,10 @@
 import execa from 'execa'
 import { getBinary, isPortTaken } from '@aragon/cli-utils'
+import oldIpfsAPI from 'ipfs-api'
+import { IPFS_START_TIMEOUT } from '../configuration'
+import { connectOrThrow } from './misc'
+
+let ipfsNode
 
 export const isIPFSRunning = async ipfsRpc => {
   const portTaken = await isPortTaken(ipfsRpc.port)
@@ -36,8 +41,8 @@ export const startIPFSDaemon = () => {
     }, IPFS_START_TIMEOUT)
   })
 
-  const start = new Promise(async (resolve, reject) => {
-    await ensureIPFSInitialized()
+  const start = new Promise((resolve, reject) => {
+    // await ensureIPFSInitialized()
     const ipfsProc = execa(getBinary('ipfs'), ['daemon', '--migrate'])
 
     ipfsProc.stdout.on('data', data => {
@@ -120,7 +125,7 @@ export async function isDaemonRunning(address) {
   try {
     // if port is taken, connect to the API,
     // otherwise we can assume the port is taken by a different process
-    await ensureConnection(address)
+    await connectOrThrow(address)
     return true
   } catch (e) {
     return false

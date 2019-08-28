@@ -1,25 +1,26 @@
 import ConsoleReporter from './reporters/ConsoleReporter'
 // TODO FileReporter: save output as logs in ~/.aragon
 import { ERROR_ICON } from './reporters/ReporterIcons'
-import { WARNING_ICON } from '../dist/reporters/ReporterIcons';
+import { WARNING_ICON } from '../dist/reporters/ReporterIcons'
 
 export * from './reporters/ReporterIcons'
 
-export const configure = yargs => yargs
-  .option('silent', {
-    boolean: true,
-    description: 'Silence all output',
-    default: false,
-  })
-  .option('debug', {
-    boolean: true,
-    description: 'Show extra output',
-    default: false,
-  })
-  .alias('s', 'silent')
-  .alias('d', 'debug')
-  .group(['debug', 'silent'], 'Global options:')
-  .middleware([middleware])
+export const configure = yargs =>
+  yargs
+    .option('silent', {
+      boolean: true,
+      description: 'Silence all output',
+      default: false,
+    })
+    .option('debug', {
+      boolean: true,
+      description: 'Show extra output',
+      default: false,
+    })
+    .alias('s', 'silent')
+    .alias('d', 'debug')
+    .group(['debug', 'silent'], 'Global options:')
+    .middleware([middleware])
 
 export const middleware = argv => {
   const { silent, debug } = argv

@@ -1,4 +1,5 @@
 import fetch from 'node-fetch'
+import { timeout, GATEWAYS } from '../configuration'
 
 async function queryCidAtGateway(gateway, cid) {
   try {

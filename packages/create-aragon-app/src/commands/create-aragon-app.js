@@ -2,7 +2,7 @@ import { checkProjectExists, prepareTemplate } from '../lib'
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 const TaskList = require('listr')
-const { installDeps, isValidAragonId } = require('@aragon/cli-utils')
+const { installDeps, isValidAragonId } = require('../util')
 const defaultAPMName = require('../helpers/default-apm')
 const listrOpts = require('../helpers/listr-options')
 const execa = require('execa')

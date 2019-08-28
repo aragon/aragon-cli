@@ -6,7 +6,6 @@ const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const APM = require('@aragon/apm')
 const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 const chalk = require('chalk')
-const startIPFS = require('../ipfs_cmds/start')
 const getRepoTask = require('./utils/getRepoTask')
 const encodeInitPayload = require('./utils/encodeInitPayload')
 const {
@@ -78,11 +77,6 @@ exports.task = async ({
 
   const tasks = new TaskList(
     [
-      {
-        // IPFS is a dependency of getRepoTask which uses IPFS to fetch the contract ABI
-        title: 'Check IPFS',
-        task: () => startIPFS.task({ apmOptions }),
-      },
       {
         title: `Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`,
         task: getRepoTask.task({ apm, apmRepo, apmRepoVersion }),

@@ -3,12 +3,14 @@
   "private": true,
   "description": "End-to-end tests for aragonCLI",
   "scripts": {
+    "lint": "eslint src",
+    "lint:fix": "npm run lint -- --fix",
     "pretest": "ava src/**/*.pretest.js --verbose",
     "posttest": "ava src/**/*.posttest.js --verbose",
     "test": "ava --verbose",
     "test:watch": "ava --watch --verbose",
     "test:debug": "cross-env DEBUG=true npm run test",
-    "test:clean": "npm run posttest && npm run reset-cache",
+    "test:clean": "npm run posttest & npm run reset-cache",
     "update-snapshots": "npm run test:clean && npm run pretest -- --update-snapshots && ava --update-snapshots && npm run posttest -- --update-snapshots",
     "reset-cache": "ava --reset-cache"
   },
@@ -18,38 +20,55 @@
     "@aragon/cli": "*",
     "@aragon/cli-utils": "*",
     "aragon-ipfs": "*",
-    "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
-    "@babel/polyfill": "^7.2.5",
-    "@babel/preset-env": "^7.3.4",
-    "@babel/register": "^7.0.0",
-    "ava": "^2.0.0",
     "create-aragon-app": "*",
     "cross-env": "^5.2.0",
-    "execa": "^1.0.0",
-    "fs-extra": "^8.0.1",
+    "execa": "^2.0.3",
+    "fs-extra": "^8.1.0",
     "kill-port": "^1.5.1",
-    "node-fetch": "^2.3.0"
-  },
-  "babel": {
-    "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "useBuiltIns": "usage",
-          "corejs": "3",
-          "targets": {
-            "node": true
-          }
-        }
-      ]
-    ]
+    "node-fetch": "^2.6.0",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/register": "^7.5.5",
+    "ava": "^2.3.0",
+    "babel-eslint": "^10.0.2",
+    "eslint": "^6.2.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-config-standard": "^13.0.1",
+    "eslint-plugin-ava": "^8.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0"
   },
   "ava": {
     "require": [
       "@babel/register"
     ],
     "files": [
-      "src/**/*.test.js"
+      "src/**/*.test.js",
+      "src/**/*.pretest.js",
+      "src/**/*.posttest.js"
     ]
+  },
+  "eslintConfig": {
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "extends": [
+      "standard",
+      "plugin:ava/recommended",
+      "plugin:prettier/recommended"
+    ],
+    "parser": "babel-eslint",
+    "rules": {
+      "ava/no-ignored-test-files": "warn"
+    }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": false,
+    "trailingComma": "es5",
+    "bracketSpacing": true
   }
 }

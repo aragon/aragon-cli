@@ -28,7 +28,10 @@ test('should uninstall ipfs globally', async t => {
   t.plan(1)
 
   // act
-  const { stdout } = await execa('aragon-ipfs', ['uninstall', '--skip-confirmation'])
+  const { stdout } = await execa('aragon-ipfs', [
+    'uninstall',
+    '--skip-confirmation',
+  ])
 
   // assert
   t.snapshot(normalizeOutput(stdout))

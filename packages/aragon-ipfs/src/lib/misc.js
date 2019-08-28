@@ -4,29 +4,24 @@ import url from 'url'
 import execa from 'execa'
 import goplatform from 'go-platform'
 //
-import {
-  FETCH_TIMEOUT_ERR,
-  FETCH_TIMEOUT,
-  IPFS_START_TIMEOUT,
-  GATEWAYS,
-} from '../configuration'
+// import { FETCH_TIMEOUT_ERR, FETCH_TIMEOUT } from '../configuration'
 
 export const getClient = async address => {
   // try {
-    return await connectOrThrow(address)
+  return connectOrThrow(address)
   // } catch (err) {
-    // if (!address.includes('localhost')) {
-    //   throw err
-    // }
+  // if (!address.includes('localhost')) {
+  //   throw err
+  // }
 
-    // // connecting locally failed
-    // const startAndRetry = await askForConfirmation(
-    //   'The local IPFS Daemon is not running, do you wish to start it?'
-    // )
-    // if (startAndRetry) {
-    //   await startDaemon()
-    //   return getClient(address)
-    // }
+  // // connecting locally failed
+  // const startAndRetry = await askForConfirmation(
+  //   'The local IPFS Daemon is not running, do you wish to start it?'
+  // )
+  // if (startAndRetry) {
+  //   await startDaemon()
+  //   return getClient(address)
+  // }
   // }
 }
 export async function connectOrThrow(address) {
@@ -54,13 +49,13 @@ export function parseAddressAsURL(address) {
   }
 }
 
-function timeout() {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      reject(FETCH_TIMEOUT_ERR)
-    }, FETCH_TIMEOUT)
-  })
-}
+// function timeout() {
+//   return new Promise((resolve, reject) => {
+//     setTimeout(() => {
+//       reject(FETCH_TIMEOUT_ERR)
+//     }, FETCH_TIMEOUT)
+//   })
+// }
 
 export const getGlobalNpmPrefix = async () =>
   (await execa('npm', ['prefix', '--global'])).stdout

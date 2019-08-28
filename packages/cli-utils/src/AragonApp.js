@@ -2,11 +2,9 @@ import { resolve as pathResolve } from 'path'
 import { readJsonSync } from 'fs-extra'
 import { findProjectRoot } from './index'
 
-export const configure = (yargs, options) => yargs
-  .middleware([
-    (argv) => middleware(argv, options)
-  ])
-  
+export const configure = (yargs, options) =>
+  yargs.middleware([argv => middleware(argv, options)])
+
 export const middleware = (argv, options) => {
   if (shouldBeSkipped(argv, options)) return
 
@@ -28,13 +26,13 @@ export const middleware = (argv, options) => {
   return { arapp }
 }
 
-export const getArapp = (projectRootPath) => {
+export const getArapp = projectRootPath => {
   const arappPath = pathResolve(projectRootPath, 'arapp.json')
   const arapp = readJsonSync(arappPath)
   return arapp
 }
 
-export const validateArapp = (arapp) => {
+export const validateArapp = arapp => {
   const Ajv = require('ajv')
   const arappSchema = require('../schemas/arapp.schema')
   const ajv = new Ajv({ allErrors: true })

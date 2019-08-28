@@ -2,6 +2,7 @@ import TaskList from 'listr'
 import chalk from 'chalk'
 import { cid as isValidCID } from 'is-ipfs'
 import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+import { askForInput } from '@aragon/cli-utils'
 //
 import {
   getClient,
@@ -11,7 +12,8 @@ import {
 } from '../lib'
 
 export const command = 'propagate [cid]'
-export const describe = 'Request the content and its links at several gateways, making the files more distributed within the network. Uses --ipfs-gateway.'
+export const describe =
+  'Request the content and its links at several gateways, making the files more distributed within the network. Uses --ipfs-gateway.'
 
 export const builder = yargs =>
   yargs.positional('cid', {

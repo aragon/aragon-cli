@@ -7,10 +7,17 @@ test('should spawn ganache', async t => {
   // act
   const { stdout } = await startBackgroundProcess({
     cmd: 'aragon',
-    args: ['devchain', '--verbose', '--debug', '--reset', '--network-id', '1'],
+    args: [
+      'devchain',
+      '--verbose',
+      // '--debug', TODO
+      '--reset',
+      '--network-id',
+      '1',
+    ],
     readyOutput: 'Devchain running',
     // keep this process alive after the test finished
-    execaOpts: { detached: true }
+    execaOpts: { detached: true },
   })
 
   // assert

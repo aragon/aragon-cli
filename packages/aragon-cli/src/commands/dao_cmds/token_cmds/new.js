@@ -74,11 +74,11 @@ exports.task = async ({
         title: 'Deploy the MiniMeTokenFactory contract',
         enabled: () => !web3Utils.isAddress(tokenFactoryAddress),
         task: async (ctx, task) => {
-          let artifact = getContract(
+          const artifact = getContract(
             '@aragon/apps-shared-minime',
             'MiniMeTokenFactory'
           )
-          let contract = new web3.eth.Contract(artifact.abi)
+          const contract = new web3.eth.Contract(artifact.abi)
 
           const deployTx = contract.deploy({ data: artifact.bytecode })
           const estimatedGas = await deployTx.estimateGas()
@@ -107,11 +107,11 @@ exports.task = async ({
       {
         title: 'Deploy the MiniMeToken contract',
         task: async (ctx, task) => {
-          let artifact = getContract(
+          const artifact = getContract(
             '@aragon/apps-shared-minime',
             'MiniMeToken'
           )
-          let contract = new web3.eth.Contract(artifact.abi)
+          const contract = new web3.eth.Contract(artifact.abi)
 
           const deployTx = contract.deploy({
             data: artifact.bytecode,
