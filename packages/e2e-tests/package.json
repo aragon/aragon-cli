@@ -45,9 +45,7 @@
       "@babel/register"
     ],
     "files": [
-      "src/**/*.test.js",
-      "src/**/*.pretest.js",
-      "src/**/*.posttest.js"
+      "src/**/*.test.js"
     ]
   },
   "eslintConfig": {
@@ -60,10 +58,7 @@
       "plugin:ava/recommended",
       "plugin:prettier/recommended"
     ],
-    "parser": "babel-eslint",
-    "rules": {
-      "ava/no-ignored-test-files": "warn"
-    }
+    "parser": "babel-eslint"
   },
   "prettier": {
     "singleQuote": true,

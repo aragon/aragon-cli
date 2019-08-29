@@ -38,7 +38,7 @@ const cli = yargs
 const middlewareOpts = {
   skipOn: ['ipfs'],
 }
-// AragonReporter.configure(cli)
+AragonReporter.configure(cli)
 AragonApp.configure(cli, middlewareOpts)
 AragonEnvironment.configure(cli, middlewareOpts)
 AragonExtensions.configure(cli)

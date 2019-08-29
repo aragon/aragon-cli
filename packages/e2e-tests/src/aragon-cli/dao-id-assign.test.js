@@ -1,6 +1,6 @@
 import test from 'ava'
 import execa from 'execa'
-import { normalizeOutput } from '../util'
+import { normalizeOutput } from '@aragon/cli-utils'
 
 const daoAddressRegex = /Created DAO: (.*)$/
 

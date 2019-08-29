@@ -25,7 +25,6 @@ export const configure = yargs =>
 export const middleware = argv => {
   const { silent, debug } = argv
   const reporter = new ConsoleReporter({ silent, debug })
-  reporter.debug('AragonReporter: argv before middleware', argv)
   return { reporter }
 }
 

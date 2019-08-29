@@ -1,3 +1,4 @@
+/* eslint-disable ava/no-ignored-test-files */
 import test from 'ava'
 import { remove } from 'fs-extra'
 

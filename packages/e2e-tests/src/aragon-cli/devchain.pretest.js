@@ -1,3 +1,4 @@
+/* eslint-disable ava/no-ignored-test-files */
 import test from 'ava'
 import { startBackgroundProcess, normalizeOutput } from '@aragon/cli-utils'
 
@@ -9,8 +10,10 @@ test('should spawn ganache', async t => {
     cmd: 'aragon',
     args: [
       'devchain',
+      '--env',
+      'aragon:devchain',
       '--verbose',
-      // '--debug', TODO
+      '--debug',
       '--reset',
       '--network-id',
       '1',

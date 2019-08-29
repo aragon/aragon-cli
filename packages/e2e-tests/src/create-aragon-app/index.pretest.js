@@ -1,3 +1,4 @@
+/* eslint-disable ava/no-ignored-test-files */
 import test from 'ava'
 import fs from 'fs-extra'
 import { startBackgroundProcess, normalizeOutput } from '@aragon/cli-utils'
@@ -19,9 +20,8 @@ test('should create a new aragon app', async t => {
   // act
   const { stdout } = await startBackgroundProcess({
     cmd: 'create-aragon-app',
-    args: [projectName],
+    args: [projectName, '--debug'],
     readyOutput: 'Created new application',
-    // keep this process alive after the test finished
     execaOpts: { cwd: testSandbox },
   })
 
@@ -37,17 +37,10 @@ test('should create a new aragon app', async t => {
     stdout.indexOf('Installing package dependencies [completed]')
   )
 
-  const installingIPFSOutput = stdout.substring(
-    stdout.indexOf('Installing IPFS[started]'),
-    stdout.indexOf('Installing IPFS [completed]')
+  const outputToSnapshot = stdout.replace(
+    installingDependenciesOutput,
+    '[deleted-installing-dependencies-output]\n'
   )
-
-  const outputToSnapshot = stdout
-    .replace(
-      installingDependenciesOutput,
-      '[deleted-installing-dependencies-output]'
-    )
-    .replace(installingIPFSOutput, '[deleted-installing-ipfs-output]')
 
   // assert
   t.snapshot(normalizeOutput(outputToSnapshot))

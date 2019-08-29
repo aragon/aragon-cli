@@ -58,7 +58,7 @@ export const middleware = async (argv, options) => {
     ipfsGateway: argv.ipfsGateway || environment.ipfsGateway,
   }
 
-  reporter.debug('AragonEnvironment: environment')
+  reporter.debug('AragonEnvironment:')
   reporter.debug(environment)
   return { environment }
 }
