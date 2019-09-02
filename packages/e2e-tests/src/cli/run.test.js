@@ -1,12 +1,20 @@
 import test from 'ava'
 import fetch from 'node-fetch'
 import { startBackgroundProcess, normalizeOutput } from '../util'
+import fs from 'fs'
+import path from 'path'
 
 const testSandbox = './.tmp'
 const projectName = 'foobar'
 
 test('should run an aragon app successfully', async t => {
   t.plan(3)
+
+  // Node.js 11 fix (https://github.com/aragon/aragon-cli/issues/731)
+  fs.writeFileSync(path.join(testSandbox, projectName, 'truffle.js'), `
+    module.exports = require('@aragon/os/truffle-config'); 
+    module.exports.solc.optimizer.enabled = false;
+  `)
 
   // act
   const { stdout, exit } = await startBackgroundProcess({
