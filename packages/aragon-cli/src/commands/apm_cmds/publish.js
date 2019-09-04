@@ -307,7 +307,7 @@ exports.runSetupTask = ({
       },
     ],
     listrOpts(silent, debug)
-  ).run()
+  )
 }
 
 exports.runPrepareForPublishTask = ({
@@ -511,7 +511,7 @@ exports.runPrepareForPublishTask = ({
       },
     ],
     listrOpts(silent, debug)
-  ).run()
+  )
 }
 
 exports.runPublishTask = ({
@@ -568,7 +568,7 @@ exports.runPublishTask = ({
       },
     ],
     listrOpts(silent, debug)
-  ).run()
+  )
 }
 
 exports.handler = async function({
@@ -615,54 +615,58 @@ exports.handler = async function({
     version,
     contract: contractAddress,
     deployArtifacts,
-  } = await exports.runSetupTask({
-    reporter,
-    gasPrice,
-    cwd,
-    web3,
-    network,
-    module,
-    apm: apmOptions,
-    silent,
-    debug,
-    prepublish,
-    prepublishScript,
-    build,
-    buildScript,
-    bump,
-    contract,
-    init,
-    reuse,
-    onlyContent,
-    onlyArtifacts,
-    ipfsCheck,
-    http,
-  })
+  } = await exports
+    .runSetupTask({
+      reporter,
+      gasPrice,
+      cwd,
+      web3,
+      network,
+      module,
+      apm: apmOptions,
+      silent,
+      debug,
+      prepublish,
+      prepublishScript,
+      build,
+      buildScript,
+      bump,
+      contract,
+      init,
+      reuse,
+      onlyContent,
+      onlyArtifacts,
+      ipfsCheck,
+      http,
+    })
+    .run()
 
-  const { pathToPublish, intent } = await exports.runPrepareForPublishTask({
-    reporter,
-    cwd,
-    web3,
-    network,
-    module,
-    apm: apmOptions,
-    silent,
-    debug,
-    publishDir,
-    files,
-    ignore,
-    httpServedFrom,
-    provider,
-    onlyArtifacts,
-    onlyContent,
-    http,
-    // context
-    initialRepo,
-    initialVersion,
-    version,
-    contractAddress,
-    deployArtifacts,
-  })
+  const { pathToPublish, intent } = await exports
+    .runPrepareForPublishTask({
+      reporter,
+      cwd,
+      web3,
+      network,
+      module,
+      apm: apmOptions,
+      silent,
+      debug,
+      publishDir,
+      files,
+      ignore,
+      httpServedFrom,
+      provider,
+      onlyArtifacts,
+      onlyContent,
+      http,
+      // context
+      initialRepo,
+      initialVersion,
+      version,
+      contractAddress,
+      deployArtifacts,
+    })
+    .run()
 
   // Output publish info
 
@@ -711,23 +715,25 @@ exports.handler = async function({
     if (!confirmation) process.exit()
   }
 
-  const { receipt, transactionPath } = await exports.runPublishTask({
-    reporter,
-    gasPrice,
-    web3,
-    wsProvider,
-    module,
-    apm: apmOptions,
-    silent,
-    debug,
-    onlyArtifacts,
-    onlyContent,
-    // context
-    dao,
-    proxyAddress,
-    methodName,
-    params,
-  })
+  const { receipt, transactionPath } = await exports
+    .runPublishTask({
+      reporter,
+      gasPrice,
+      web3,
+      wsProvider,
+      module,
+      apm: apmOptions,
+      silent,
+      debug,
+      onlyArtifacts,
+      onlyContent,
+      // context
+      dao,
+      proxyAddress,
+      methodName,
+      params,
+    })
+    .run()
 
   const { transactionHash, status } = receipt
 
@@ -759,7 +765,7 @@ exports.handler = async function({
   reporter.debug(`Published directory: ${chalk.blue(pathToPublish)}\n`)
 
   // Propagate content
-  if (propagateContent && !http) {
+  if (!http && propagateContent) {
     if (!skipConfirmation) {
       const { confirmation } = await inquirer.prompt([
         {

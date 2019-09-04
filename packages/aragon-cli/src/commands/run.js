@@ -219,9 +219,9 @@ exports.handler = function({
         enabled: () => !http || template,
       },
       {
-        title: 'Publish app to aragonPM',
+        title: 'Setup before publish',
         task: async ctx => {
-          const publishParams = {
+          ctx.publishParams = {
             provider: 'ipfs',
             files,
             ignore: ['node_modules'],
@@ -243,38 +243,36 @@ exports.handler = function({
             httpServedFrom,
           }
 
-          const {
-            initialRepo,
-            initialVersion,
-            version,
-            contract: contractAddress,
-            deployArtifacts,
-          } = await runSetupTask(publishParams)
-
-          const { intent } = await runPrepareForPublishTask({
-            ...publishParams,
+          return runSetupTask(ctx.publishParams)
+        },
+      },
+      {
+        title: 'Prepare for publish',
+        task: async ctx => {
+          return runPrepareForPublishTask({
+            ...ctx.publishParams,
             // context
-            initialRepo,
-            initialVersion,
-            version,
-            contractAddress,
-            deployArtifacts,
+            initialRepo: ctx.initialRepo,
+            initialVersion: ctx.initialVersion,
+            version: ctx.version,
+            contractAddress: ctx.contract,
+            deployArtifacts: ctx.deployArtifacts,
           })
+        },
+      },
+      {
+        title: 'Publish app to aragonPM',
+        task: async ctx => {
+          const { dao, proxyAddress, methodName, params } = ctx.intent
 
-          const { dao, proxyAddress, methodName, params } = intent
-
-          const { receipt } = await runPublishTask({
-            ...publishParams,
+          return runPublishTask({
+            ...ctx.publishParams,
             // context
             dao,
             proxyAddress,
             methodName,
             params,
           })
-
-          if (!receipt.status) {
-            reporter.error(`\nPublish transaction reverted:\n`)
-          }
         },
       },
       {
