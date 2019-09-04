@@ -2,19 +2,24 @@ const TaskList = require('listr')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const APM = require('@aragon/apm')
 const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
-const { green, bold } = require('chalk')
+const chalk = require('chalk')
 const { getContract } = require('../../util')
 const getRepoTask = require('./utils/getRepoTask')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const startIPFS = require('../ipfs_cmds/start')
 const { getRecommendedGasLimit } = require('../../util')
-const assignIdTask = require('./id-assign').task
 
-exports.BARE_TEMPLATE = defaultAPMName('bare-kit')
-exports.BARE_INSTANCE_FUNCTION = 'newBareInstance'
-exports.BARE_TEMPLATE_DEPLOY_EVENT = 'DeployInstance'
+exports.BARE_TEMPLATE = defaultAPMName('bare-template')
+exports.BARE_INSTANCE_FUNCTION = 'newInstance'
+exports.BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
 
+exports.OLD_BARE_TEMPLATE = defaultAPMName('bare-kit')
+exports.OLD_BARE_INSTANCE_FUNCTION = 'newBareInstance'
+exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT = 'DeployInstance'
+
+// TODO: Remove old template once is no longer supported
 const BARE_TEMPLATE_ABI = require('./utils/bare-template-abi')
+const OLD_BARE_TEMPLATE_ABI = require('./utils/old-bare-template-abi')
 
 exports.command = 'new [template] [template-version]'
 
@@ -55,15 +60,10 @@ exports.builder = yargs => {
       boolean: true,
       default: true,
     })
-    .option('aragon-id', {
-      description: 'Assign an Aragon Id to the DAO',
-      type: 'string',
-    })
 }
 
 exports.task = async ({
   web3,
-  reporter,
   gasPrice,
   apmOptions,
   template,
@@ -76,12 +76,24 @@ exports.task = async ({
   silent,
   debug,
   ipfsCheck,
-  aragonId,
 }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
   template = defaultAPMName(template)
+
+  let bareTemplateABI = BARE_TEMPLATE_ABI
+
+  // Get chain id
+  const chainId = await web3.eth.net.getId()
+
+  // TODO: Remove rinkeby once new template deployed
+  if ([1, 4].includes(chainId) && template === exports.BARE_TEMPLATE) {
+    template = exports.OLD_BARE_TEMPLATE
+    fn = exports.OLD_BARE_INSTANCE_FUNCTION
+    deployEvent = exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT
+    bareTemplateABI = OLD_BARE_TEMPLATE_ABI
+  }
 
   const tasks = new TaskList(
     [
@@ -92,7 +104,7 @@ exports.task = async ({
         enabled: () => ipfsCheck,
       },
       {
-        title: `Fetching template ${bold(template)}@${templateVersion}`,
+        title: `Fetching template ${chalk.bold(template)}@${templateVersion}`,
         task: getRepoTask.task({
           apm,
           apmRepo: template,
@@ -107,9 +119,7 @@ exports.task = async ({
           if (!ctx.accounts) {
             ctx.accounts = await web3.eth.getAccounts()
           }
-
-          // TODO: Remove hack once https://github.com/aragon/aragen/pull/15 is finished and published
-          const abi = ctx.repo.abi || BARE_TEMPLATE_ABI
+          const abi = ctx.repo.abi || bareTemplateABI
           const template =
             templateInstance ||
             new web3.eth.Contract(abi, ctx.repo.contractAddress)
@@ -136,22 +146,6 @@ exports.task = async ({
           ctx.appManagerRole = await kernel.methods.APP_MANAGER_ROLE().call()
         },
       },
-      {
-        title: 'Assigning Aragon Id',
-        enabled: () => aragonId,
-        task: async ctx => {
-          return assignIdTask({
-            dao: ctx.daoAddress,
-            aragonId,
-            web3,
-            gasPrice,
-            apmOptions,
-            silent,
-            debug,
-            reporter,
-          })
-        },
-      },
     ],
     listrOpts(silent, debug)
   )
@@ -172,7 +166,6 @@ exports.handler = async function({
   apm: apmOptions,
   silent,
   debug,
-  aragonId,
 }) {
   const web3 = await ensureWeb3(network)
 
@@ -193,17 +186,9 @@ exports.handler = async function({
     skipChecks: false,
     silent,
     debug,
-    aragonId,
   })
   return task.run().then(ctx => {
-    if (aragonId) {
-      reporter.success(
-        `Created DAO: ${green(ctx.domain)} at ${green(ctx.daoAddress)}`
-      )
-    } else {
-      reporter.success(`Created DAO: ${green(ctx.daoAddress)}`)
-    }
-
+    reporter.success(`Created DAO: ${chalk.green(ctx.daoAddress)}`)
     if (kit || kitVersion) {
       reporter.warning(
         `The use of kits is deprecated and templates should be used instead. The new options for 'dao new' are '--template' and '--template-version'`
