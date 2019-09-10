@@ -18,8 +18,11 @@ For Linux:
 - git
   - Install this using the command `sudo apt install git`
 - python
-
   - Install this using the command `sudo apt install python`
+- make
+  - Install this using the command `sudo apt install make`
+- g++
+  - Install this using the command `sudo apt install g++`
 
 For Mac:
 
