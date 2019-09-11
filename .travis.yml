@@ -1,5 +1,8 @@
 language: node_js
 cache: npm
+branches:
+  only:
+    - master
 notifications:
   email: false
 node_js:
