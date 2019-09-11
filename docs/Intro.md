@@ -103,3 +103,6 @@ npx create-aragon-app <app-name> [boilerplate]
 
 > **Note**<br>
 > The `react-kit` boilerplate has been deprecated and merged with `react` boilerplate. Also `kits` has been deprecated and `templates` should be used instead.
+
+> **Note**<br>
+> The default mnemonic of the Aragon CLI is the same for all users. If you are going to deploy contracts to public networks it is highly recommended that you use your own web3 provider. Instructions on that can be found [here](TBD)
