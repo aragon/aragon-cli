@@ -19,7 +19,7 @@ exports.builder = yargs => {
   return yargs
     .option('dist-version', {
       description: 'The version of IPFS that will be installed',
-      default: '0.4.18-hacky2',
+      default: '0.4.22',
     })
     .option('dist-url', {
       description: 'The url from which to download IPFS',
