@@ -82,6 +82,10 @@ exports.builder = function(yargs) {
       array: true,
       default: [],
     })
+    .option('template-new-instance', {
+      description: 'Function to be called to create template instance',
+      default: newDAO.BARE_INSTANCE_FUNCTION,
+    })
     .option('template-deploy-event', {
       description: 'Arguments to be passed to the template constructor',
       default: newDAO.BARE_TEMPLATE_DEPLOY_EVENT,
@@ -172,6 +176,7 @@ exports.handler = function({
   kitDeployEvent,
   template,
   templateInit,
+  templateNewInstance,
   templateDeployEvent,
   build,
   buildScript,
@@ -335,7 +340,7 @@ exports.handler = function({
             template,
             templateVersion: 'latest',
             templateInstance: ctx.contractInstance,
-            fn: 'newInstance',
+            fn: templateNewInstance,
             fnArgs,
             deployEvent: templateDeployEvent,
             gasPrice,
