@@ -132,6 +132,7 @@ const getGlobalBinary = binaryName => {
   }
 }
 
+// TODO: Add a cwd paramter
 const runScriptTask = async (task, scriptName) => {
   if (!fs.existsSync('package.json')) {
     task.skip('No package.json found')
