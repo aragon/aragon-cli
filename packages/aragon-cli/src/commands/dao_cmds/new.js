@@ -123,6 +123,7 @@ exports.task = async ({
           const template =
             templateInstance ||
             new web3.eth.Contract(abi, ctx.repo.contractAddress)
+
           const newInstanceTx = template.methods[fn](...fnArgs)
           const estimatedGas = await newInstanceTx.estimateGas()
 
