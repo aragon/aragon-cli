@@ -323,6 +323,8 @@ exports.handler = function({
           const roles = ctx.repo.roles || []
           const rolesBytes = roles.map(role => role.bytes)
 
+          console.log(rolesBytes)
+
           let fnArgs
 
           if (ctx.contractInstance) {
