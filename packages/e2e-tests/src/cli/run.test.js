@@ -19,7 +19,7 @@ test('should run an aragon app successfully', async t => {
   // act
   const { stdout, exit } = await startBackgroundProcess({
     cmd: 'aragon',
-    args: ['run', '--debug'],
+    args: ['run', '--debug', '--files', 'dist'],
     execaOpts: {
       cwd: `${testSandbox}/${projectName}`,
       /**
