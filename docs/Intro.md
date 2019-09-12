@@ -55,6 +55,36 @@ npm link
 
 After installing, the main `aragon` executable will be available for use. It will also install the `dao` alias which is a shortcut for `aragon dao` commands.
 
+#### The ~/.aragon directory
+
+The aragonCLI creates the `.aragon` directory under the user directory where it saves the state of the devchain and the [Aragon client](client.md).
+
+In case the client is not loading properly, deleting the `~/.aragon` directory will make `aragon run` recreate the environment the next time it is used and may solve the issue.
+
+#### Set a private key
+
+> **⚠️  Warning**<br>
+> The default mnemonic for the Aragon CLI is the same for all users. If you are going to deploy contracts to public networks it is highly recommended that you use your own web3 provider and set your own private key.
+
+You can configure a private key for the Aragon CLI in `~/.aragon`. To do so you will need to create a file `<network>_key.json` (eg. `rinkeby_key.json`) with this structure:
+
+```json
+{
+  "rpc": "https://<network>.infura.io",
+  "keys": ["put-your-priv-key-here"]
+}
+```
+
+Then if you use `--environment aragon:<network>` when using the aragonCLI it will use that account.
+
+You can also define an `~/.aragon/mnemonic.json` file like:
+
+```json
+{
+  "mnemonic": "explain tackle mirror kit ..."
+}
+```
+
 #### Install IPFS
 
 Since `v6.0.0` we separate the instalation of `go-ipfs` from the aragonCLI. If you do not have it installed globally on your system we have a couple of comands to help with that:`aragon ipfs install` and `aragon ipfs uninstall`.
@@ -103,6 +133,3 @@ npx create-aragon-app <app-name> [boilerplate]
 
 > **Note**<br>
 > The `react-kit` boilerplate has been deprecated and merged with `react` boilerplate. Also `kits` has been deprecated and `templates` should be used instead.
-
-> **Note**<br>
-> The default mnemonic of the Aragon CLI is the same for all users. If you are going to deploy contracts to public networks it is highly recommended that you use your own web3 provider. Instructions on that can be found [here](https://hack.aragon.org/docs/guides-faq#set-a-private-key)
