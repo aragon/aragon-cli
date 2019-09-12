@@ -1,4 +1,10 @@
-import { downloadWrapper, startClient, openWrapper } from '../lib/start'
+import {
+  fetchClient,
+  downloadClient,
+  buildClient,
+  startClient,
+  openClient,
+} from '../lib/start'
 const chalk = require('chalk')
 const TaskList = require('listr')
 const pkg = require('../../package.json')
@@ -31,17 +37,35 @@ exports.builder = yargs => {
 exports.task = async function({ clientVersion, clientPort, clientPath }) {
   const tasks = new TaskList([
     {
-      title: 'Downloading wrapper',
+      title: 'Fetching client from aragen',
       skip: () => !!clientPath,
       task: async (ctx, task) => {
-        task.output = 'Downloading wrapper...'
-        await downloadWrapper(ctx, task, clientVersion)
+        task.output = 'Fetching client...'
+        await fetchClient(ctx, task, DEFAULT_CLIENT_VERSION)
       },
+      enabled: () => clientVersion === DEFAULT_CLIENT_VERSION,
     },
     {
-      title: 'Installing wrapper dependencies',
-      task: async (ctx, task) => installDeps(ctx.wrapperPath, task),
-      enabled: ctx => !ctx.wrapperAvailable && !clientPath,
+      title: 'Downloading client',
+      skip: ctx => !!clientPath,
+      task: async (ctx, task) => {
+        task.output = 'Downloading client...'
+        await downloadClient(ctx, task, clientVersion)
+      },
+      enabled: ctx => !ctx.clientFetch,
+    },
+    {
+      title: 'Installing client dependencies',
+      task: async (ctx, task) => installDeps(ctx.clientPath, task),
+      enabled: ctx => !ctx.clientAvailable && !clientPath,
+    },
+    {
+      title: 'Building Aragon client',
+      task: async (ctx, task) => {
+        task.output = 'Building Aragon client...'
+        await buildClient(ctx, clientPath)
+      },
+      enabled: ctx => !ctx.clientAvailable,
     },
     {
       title: 'Starting Aragon client',
@@ -51,10 +75,10 @@ exports.task = async function({ clientVersion, clientPort, clientPath }) {
       },
     },
     {
-      title: 'Opening wrapper',
+      title: 'Opening client',
       task: async (ctx, task) => {
-        task.output = 'Opening wrapper'
-        await openWrapper(ctx, clientPort)
+        task.output = 'Opening client'
+        await openClient(ctx, clientPort)
       },
     },
   ])
