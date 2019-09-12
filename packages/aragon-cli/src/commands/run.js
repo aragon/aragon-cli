@@ -7,7 +7,6 @@ const start = require('./start')
 const deploy = require('./deploy')
 const newDAO = require('./dao_cmds/new')
 const startIPFS = require('./ipfs_cmds/start')
-const parseTemplateArgs = require('./dao_cmds/utils/parseTemplateArgs')
 const encodeInitPayload = require('./dao_cmds/utils/encodeInitPayload')
 const fs = require('fs-extra')
 const pkg = require('../../package.json')
@@ -328,8 +327,7 @@ exports.handler = function({
 
           if (ctx.contractInstance) {
             // If template was deployed, use template args
-            const { abi } = ctx.contractArtifacts
-            fnArgs = parseTemplateArgs(abi, templateNewInstance, templateArgs)
+            fnArgs = templateArgs
           } else {
             // TODO: Report warning when app wasn't initialized
             const initPayload = encodeInitPayload(

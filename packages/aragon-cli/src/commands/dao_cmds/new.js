@@ -8,6 +8,7 @@ const getRepoTask = require('./utils/getRepoTask')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const startIPFS = require('../ipfs_cmds/start')
 const { getRecommendedGasLimit } = require('../../util')
+const parseTemplateArgs = require('./utils/parseTemplateArgs')
 
 exports.BARE_TEMPLATE = defaultAPMName('bare-template')
 exports.BARE_INSTANCE_FUNCTION = 'newInstance'
@@ -123,6 +124,10 @@ exports.task = async ({
           const template =
             templateInstance ||
             new web3.eth.Contract(abi, ctx.repo.contractAddress)
+
+          // Parse template args
+          fnArgs = parseTemplateArgs(abi, fn, fnArgs)
+
           const newInstanceTx = template.methods[fn](...fnArgs)
           const estimatedGas = await newInstanceTx.estimateGas()
 
