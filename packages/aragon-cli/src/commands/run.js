@@ -7,6 +7,7 @@ const start = require('./start')
 const deploy = require('./deploy')
 const newDAO = require('./dao_cmds/new')
 const startIPFS = require('./ipfs_cmds/start')
+const parseTemplateArgs = require('./dao_cmds/utils/parseTemplateArgs')
 const encodeInitPayload = require('./dao_cmds/utils/encodeInitPayload')
 const fs = require('fs-extra')
 const pkg = require('../../package.json')
@@ -71,7 +72,8 @@ exports.builder = function(yargs) {
       array: true,
     })
     .option('kit-deploy-event', {
-      description: '(deprecated) Arguments to be passed to the kit constructor',
+      description:
+        '(deprecated) Event name that the template will fire on success',
     })
     .option('template', {
       default: newDAO.BARE_TEMPLATE,
@@ -79,16 +81,21 @@ exports.builder = function(yargs) {
     })
     .option('template-init', {
       description: 'Arguments to be passed to the template constructor',
-      array: true,
-      default: [],
+      default: newDAO.BARE_TEMPLATE_DEPLOY_EVENT,
+    })
+    .option('template-deploy-event', {
+      description: 'Event name that the template will fire on success',
+      default: newDAO.BARE_TEMPLATE_DEPLOY_EVENT,
     })
     .option('template-new-instance', {
       description: 'Function to be called to create template instance',
       default: newDAO.BARE_INSTANCE_FUNCTION,
     })
-    .option('template-deploy-event', {
-      description: 'Arguments to be passed to the template constructor',
-      default: newDAO.BARE_TEMPLATE_DEPLOY_EVENT,
+    .option('template-args', {
+      description:
+        'Arguments to be passed to the function specified in --template-new-instance',
+      array: true,
+      default: [],
     })
     .option('build', {
       description:
@@ -176,8 +183,9 @@ exports.handler = function({
   kitDeployEvent,
   template,
   templateInit,
-  templateNewInstance,
   templateDeployEvent,
+  templateNewInstance,
+  templateArgs,
   build,
   buildScript,
   publishDir,
@@ -293,7 +301,8 @@ exports.handler = function({
       },
       {
         title: 'Deploy Template',
-        enabled: () => template !== newDAO.BARE_TEMPLATE,
+        enabled: () =>
+          template !== (newDAO.BARE_TEMPLATE || newDAO.OLD_BARE_TEMPLATE),
         task: ctx => {
           const deployParams = {
             contract: template,
@@ -318,8 +327,9 @@ exports.handler = function({
           let fnArgs
 
           if (ctx.contractInstance) {
-            // If no template was deployed, use default params
-            fnArgs = []
+            // If template was deployed, use template args
+            const { abi } = ctx.contractArtifacts
+            fnArgs = parseTemplateArgs(abi, templateNewInstance, templateArgs)
           } else {
             // TODO: Report warning when app wasn't initialized
             const initPayload = encodeInitPayload(
