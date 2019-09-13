@@ -301,8 +301,7 @@ exports.handler = function({
       },
       {
         title: 'Deploy Template',
-        enabled: () =>
-          template !== (newDAO.BARE_TEMPLATE || newDAO.OLD_BARE_TEMPLATE),
+        enabled: () => template !== newDAO.BARE_TEMPLATE,
         task: ctx => {
           const deployParams = {
             contract: template,

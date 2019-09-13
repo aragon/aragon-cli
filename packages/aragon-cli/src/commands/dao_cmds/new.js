@@ -91,12 +91,7 @@ exports.task = async ({
 
   let bareTemplateABI = BARE_TEMPLATE_ABI
 
-  // Get chain id
-  const chainId = await web3.eth.net.getId()
-
-  // TODO: Remove rinkeby once new template deployed
-  if ([1, 4].includes(chainId) && template === exports.BARE_TEMPLATE) {
-    template = exports.OLD_BARE_TEMPLATE
+  if (template === exports.OLD_BARE_TEMPLATE) {
     fn = exports.OLD_BARE_INSTANCE_FUNCTION
     deployEvent = exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT
     bareTemplateABI = OLD_BARE_TEMPLATE_ABI
@@ -133,14 +128,11 @@ exports.task = async ({
 
           const newInstanceTx = template.methods[fn](...fnArgs)
           const estimatedGas = await newInstanceTx.estimateGas()
-
           const { events } = await newInstanceTx.send({
             from: ctx.accounts[0],
             gas: await getRecommendedGasLimit(web3, estimatedGas),
             gasPrice,
           })
-
-          console.log(events)
           ctx.daoAddress = events[deployEvent].returnValues.dao
         },
       },
