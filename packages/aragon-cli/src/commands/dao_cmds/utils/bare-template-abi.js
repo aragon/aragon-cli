@@ -1,61 +1,5 @@
 module.exports = [
   {
-    constant: true,
-    inputs: [],
-    name: 'ens',
-    outputs: [
-      {
-        name: '',
-        type: 'address',
-      },
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: 'daoFactory',
-    outputs: [
-      {
-        name: '',
-        type: 'address',
-      },
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: 'miniMeFactory',
-    outputs: [
-      {
-        name: '',
-        type: 'address',
-      },
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: 'aragonID',
-    outputs: [
-      {
-        name: '',
-        type: 'address',
-      },
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [
       {
         name: '_daoFactory',
@@ -95,6 +39,18 @@ module.exports = [
     inputs: [
       {
         indexed: false,
+        name: 'dao',
+        type: 'address',
+      },
+    ],
+    name: 'SetupDao',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         name: 'token',
         type: 'address',
       },
@@ -123,19 +79,19 @@ module.exports = [
     constant: false,
     inputs: [
       {
-        name: 'appId',
+        name: '_appId',
         type: 'bytes32',
       },
       {
-        name: 'roles',
+        name: '_roles',
         type: 'bytes32[]',
       },
       {
-        name: 'authorizedAddress',
+        name: '_authorizedAddress',
         type: 'address',
       },
       {
-        name: 'initializeCallData',
+        name: '_initializeCallData',
         type: 'bytes',
       },
     ],
