@@ -678,7 +678,7 @@ exports.handler = async function({
 
   if (files.length === 1 && path.normalize(files[0]) === '.') {
     reporter.warning(
-      `Publishing files from the project's root folder is not recommended. Consider using the "dist" folder: "--files dist".`
+      `Publishing files from the project's root folder is not recommended. Consider using the distribution folder of your project: "--files <folder>".`
     )
   }
 

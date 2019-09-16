@@ -139,6 +139,12 @@ exports.task = async ({
             events[deployEvent] ||
             events[exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT]
 
+          // TODO: Include link to documentation
+          if (events[exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT])
+            reporter.warning(
+              `The use of kits was deprecated and templates should be used instead. The 'DeployInstance' event was replaced, 'DeployDao' should be used instead.`
+            )
+
           if (deployEventValue)
             ctx.daoAddress = deployEventValue.returnValues.dao
           else {
