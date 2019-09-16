@@ -76,6 +76,7 @@ exports.task = async ({
   silent,
   debug,
   ipfsCheck,
+  reporter,
 }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
@@ -132,7 +133,18 @@ exports.task = async ({
             gas: await getRecommendedGasLimit(web3, estimatedGas),
             gasPrice,
           })
-          ctx.daoAddress = events[deployEvent].returnValues.dao
+
+          // Backward compatibility with old event name
+          const deployEventValue =
+            events[deployEvent] ||
+            events[exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT]
+
+          if (deployEventValue)
+            ctx.daoAddress = deployEventValue.returnValues.dao
+          else {
+            reporter.error(`Could not find deploy event: ${deployEvent}`)
+            process.exit(1)
+          }
         },
       },
       {
