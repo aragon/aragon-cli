@@ -39,7 +39,7 @@ async function prepareFilesForPublishing(
 
   function filterIgnoredFiles(src) {
     const relativeSrc = path.relative(projectRoot, src)
-    return !filter.ignores(relativeSrc)
+    return relativeSrc === '' ? true : !filter.ignores(relativeSrc)
   }
 
   // Copy files

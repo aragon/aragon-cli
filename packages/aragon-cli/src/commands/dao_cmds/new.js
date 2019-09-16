@@ -133,7 +133,24 @@ exports.task = async ({
             gas: await getRecommendedGasLimit(web3, estimatedGas),
             gasPrice,
           })
-          ctx.daoAddress = events[deployEvent].returnValues.dao
+
+          // Backward compatibility with old event name
+          const deployEventValue =
+            events[deployEvent] ||
+            events[exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT]
+
+          // TODO: Include link to documentation
+          if (events[exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT])
+            reporter.warning(
+              `The use of kits was deprecated and templates should be used instead. The 'DeployInstance' event was replaced, 'DeployDao' should be used instead.`
+            )
+
+          if (deployEventValue)
+            ctx.daoAddress = deployEventValue.returnValues.dao
+          else {
+            reporter.error(`Could not find deploy event: ${deployEvent}`)
+            process.exit(1)
+          }
         },
       },
       {

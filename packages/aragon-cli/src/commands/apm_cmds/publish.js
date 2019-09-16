@@ -676,6 +676,12 @@ exports.handler = async function({
   const contentURI = web3.utils.hexToAscii(params[params.length - 1])
   const [contentProvier, contentLocation] = contentURI.split(/:(.+)/)
 
+  if (files.length === 1 && path.normalize(files[0]) === '.') {
+    reporter.warning(
+      `Publishing files from the project's root folder is not recommended. Consider using the distribution folder of your project: "--files <folder>".`
+    )
+  }
+
   console.log(
     '\n',
     `The following information will be published:`,
