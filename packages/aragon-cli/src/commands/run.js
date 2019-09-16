@@ -80,7 +80,8 @@ exports.builder = function(yargs) {
     })
     .option('template-init', {
       description: 'Arguments to be passed to the template constructor',
-      default: newDAO.BARE_TEMPLATE_DEPLOY_EVENT,
+      array: true,
+      default: [],
     })
     .option('template-deploy-event', {
       description: 'Event name that the template will fire on success',
@@ -300,8 +301,7 @@ exports.handler = function({
       },
       {
         title: 'Deploy Template',
-        enabled: () =>
-          template !== (newDAO.BARE_TEMPLATE || newDAO.OLD_BARE_TEMPLATE),
+        enabled: () => template !== newDAO.BARE_TEMPLATE,
         task: ctx => {
           const deployParams = {
             contract: template,
@@ -322,8 +322,6 @@ exports.handler = function({
         task: ctx => {
           const roles = ctx.repo.roles || []
           const rolesBytes = roles.map(role => role.bytes)
-
-          console.log(rolesBytes)
 
           let fnArgs
 
