@@ -31,12 +31,7 @@
       "gasPrice": 15000000001,
       "ensRegistry": "0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1",
       "ipfsNode": "http://localhost:5001",
-      "ipfsGateway": "http://localhost:8080",
-      "cli": {
-        "ipfsRepo": 23,
-        "ipfsTimeout": 23,
-        "ipfsPort": 23 
-      }
+      "ipfsGateway": "http://localhost:8080"
     },
     "aragon:rinkeby": {
       "ethNode": "wss://rinkeby.eth.aragon.network/ws",

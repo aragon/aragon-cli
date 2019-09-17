@@ -2,24 +2,86 @@
 
 ## Overview
 
-```sh
-@aragon/dao-cli
-├── @aragon/dao (binary: `aragon-dao`, commands: `new`, `apps`, `install`, `upgrade`, `exec`, `act`)
-├── @aragon/token (binary: `aragon-token`, commands: `new`, `change-controller`)
-├── @aragon/acl (binary: `aragon-acl`, commands: `view`, `create`, `grant`, `revoke`, `set-manager`, `remove-manager`)
-
-@aragon/dev-cli
-├── create-aragon-app
-├── run-aragon-app
-├── develop-aragon-app
-├── @aragon/ipfs-utils (binary: `aragon-ipfs`, commands: `start`, `stop`, `view`, `propagate`)
-├── @aragon/ganache-utils (binary: `aragon-devchain`, commands: `start`, `stop`, `deploy`)
-├── @aragon/apm (binary: `aragon-apm`, commands: `versions`, `packages`, `info`, `grant`, `publish`)
-```
-
 The CLI should package several "core" extensions.
 The API these extensions expose is aimed at `node` environments.
 The aim is to provide convenience to power-users & devs.
+
+### User apps
+
+@aragon/dao (alias: `org`, `organization`)
+├─ `aragon dao new [template] [aragon-id]` ( `await execa('aragon-app', ['exec', '...params']`)
+├─ `aragon dao apps [dao]`
+├─ `aragon dao install [dao] [app]` 
+├─ `aragon dao initialize [dao] [app]` 🔬
+└─ `aragon dao upgrade [dao] [app]`
+@aragon/app
+├─ `aragon app read [app] [fn] [fn-args]` 🔬
+└─ `aragon app exec [app] [fn] [fn-args] [--with-agent]` 🔬
+@aragon/id
+├─ `aragon id transfer [dao] [aragon-id]` 🔬
+├─ `aragon id unassign [dao] [aragon-id]` 🔬
+└─ `aragon id assign [dao] [aragon-id]`
+@aragon/acl (alias: `permissions`)
+├─ `aragon acl view [dao]`
+├─ `aragon acl create [dao] [app] [role] [entity] [manager]`
+├─ `aragon acl set-manager [dao] [app]`
+└─ `aragon acl remove-manager`
+@aragon/token
+├─ `aragon token new`
+└─ `aragon token change-controller`
+@aragon/apm (alias: `packages`, `pm`)
+├─ `aragon apm list-packages [registry]`
+├─ `aragon apm list-versions [repo]`
+├─ `aragon apm get-version [repo]`
+├─ `aragon apm download [repo]` 🔬 
+├─ `aragon apm publish [repo]` 🔬
+├─ `aragon apm grant-access [repo] [grantees...]` 
+└─ `aragon apm revoke-access [repo] [grantees...]`
+
+@aragon/tx
+├─ `aragon tx sign [tx] [--send=true] [--metamask] [--frame] [--priv-key] [--mnemonic]` 🔬
+└─ `aragon tx send [tx]` 🔬
+> Usecase: Allow the user to sign a raw transaction with various signing providers: MetaMask, Frame, PrivKey, Mnemonic, etc.
+> To bridge MetaMask to desktop apps we can use: https://github.com/JoinColony/node-metamask
+
+@aragon/cli-environments (with support for app environments)
+├─ `aragon env list` 🔬
+└─ `aragon env set-default` 🔬
+@aragon/cli-configuration
+├─ `aragon config get` 🔬
+└─ `aragon config set` 🔬
+@aragon/cli-os
+├─ `aragon os status` 🔬
+└─ `aragon os deploy` 🔬
+@aragon/cli-extensions
+├─ `aragon ext list` 🔬
+├─ `aragon ext install` 🔬
+└─ `aragon ext uninstall` 🔬
+
+### Developer apps
+
+@aragon/app-dev
+├─ `aragon app-dev init` (rename to unbox?) (`npx @aragon/app-dev init`)
+├─ `aragon app-dev run` (creates a new dao everytime, do we need this???)
+├─ `aragon app-dev develop` (should not create a dao everytime)
+└─ `aragon app-dev publish`
+@aragon/js-utils
+├─ `aragon js lint`
+└─ `aragon js compile`
+@aragon/solidity-utils
+├─ `aragon sol lint`
+└─ `aragon sol compile`
+@aragon/ipfs-manager
+├─ `aragon ipfs start [--configure=true]`
+├─ `aragon ipfs configure` 🔬
+├─ `aragon ipfs stop`
+├─ `aragon ipfs view`
+└─ `aragon ipfs propagate`
+@aragon/ganache-manager
+├─ `aragon ganache start [--configure=true]`
+├─ `aragon ganache configure` 🔬
+├─ `aragon ganache stop`
+└─ `aragon ganache deploy [contract]`
 
 ## IPFS `@aragon/ipfs-utils`
 
@@ -98,8 +160,8 @@ Local/remote node:
   - Should configure CORS
   - Should pin Aragon artifacts (from ipfs with a fallback to http)
   - Should inform the user about advanced configurations with `ipfs config`
-- ✔️ `aragon ipfs view <cid>` - Display metadata about the content, such as size, links, etc.
-- ✔️ `aragon ipfs propagate <cid>` - Request the content and its links at several gateways, making the files
+- ✔️ `aragon ipfs view [cid]` - Display metadata about the content, such as size, links, etc.
+- ✔️ `aragon ipfs propagate [cid]` - Request the content and its links at several gateways, making the files
 more distributed within the network
 
 ### IPFS API

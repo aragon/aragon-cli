@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 import 'source-map-support/register'
 import yargs from 'yargs'
 import * as AragonReporter from '@aragon/cli-utils/dist/AragonReporter'
@@ -42,7 +43,6 @@ AragonReporter.configure(cli)
 AragonApp.configure(cli, middlewareOpts)
 AragonEnvironment.configure(cli, middlewareOpts)
 AragonExtensions.configure(cli)
+
 // trigger yargs
-/* eslint-disable no-unused-expressions */
-cli.argv
-/* eslint-enable no-unused-expressions */
+cli.argv // eslint-disable-line no-unused-expressions

@@ -1,19 +1,18 @@
 import execa from 'execa'
-const { getBinary } = require('@aragon/cli-utils')
+import { getBinary } from '@aragon/cli-utils'
 
 export const configure = yargs => {
   const commandName = 'ipfs'
   const commandDescription = 'Manage an IPFS node'
-  const builderFn = yargs => {
-    return (
-      yargs
-        // extensions have custom options
-        .strict(false)
-        // extensions have their own help and version commands
-        .help(false)
-        .version(false)
-    )
-  }
+
+  const builderFn = yargs =>
+    yargs
+      // extensions have custom options
+      .strict(false)
+      // extensions have their own help and version commands
+      .help(false)
+      .version(false)
+
   const handlerFn = async () => {
     const extensionArgs = process.argv.slice(3)
     try {
@@ -33,6 +32,5 @@ export const configure = yargs => {
 const callExtension = (extensionName, extensionArgs, execaOpts) => {
   const binaryName = `aragon-${extensionName}`
   const binaryLocation = getBinary(binaryName)
-  console.log('hey3', binaryName, binaryLocation, extensionArgs)
   return execa(binaryLocation, extensionArgs, execaOpts)
 }

@@ -49,6 +49,4 @@ AragonApp.configure(cli, middlewareOpts)
 AragonEnvironment.configure(cli, middlewareOpts)
 
 // trigger yargs
-/* eslint-disable no-unused-expressions */
-cli.argv
-/* eslint-enable no-unused-expressions */
+cli.argv // eslint-disable-line no-unused-expressions
