@@ -1,7 +1,6 @@
 import ConsoleReporter from './reporters/ConsoleReporter'
 // TODO FileReporter: save output as logs in ~/.aragon
-import { ERROR_ICON } from './reporters/ReporterIcons'
-import { WARNING_ICON } from '../dist/reporters/ReporterIcons'
+import { ERROR_ICON, WARNING_ICON } from './reporters/ReporterIcons'
 
 export * from './reporters/ReporterIcons'
 

@@ -30,13 +30,15 @@
   },
   "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
+    "ajv": "^6.6.2",
     "chalk": "^2.4.2",
+    "inquirer": "^6.5.1",
     "figures": "^3.0.0",
+    "find-up": "^4.0.0",
     "fs-extra": "^8.1.0",
     "listr-silent-renderer": "^1.1.1",
     "listr-update-renderer": "^0.5.0",
     "listr-verbose-renderer": "^0.5.0",
-    "lodash.merge": "^4.6.2",
     "ps-tree": "^1.2.0"
   },
   "engines": {

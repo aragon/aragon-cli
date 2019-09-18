@@ -1,12 +1,22 @@
-const findUp = require('find-up')
 const path = require('path')
 const net = require('net')
 const fs = require('fs')
 const { readJson } = require('fs-extra')
+const findUp = require('find-up')
 const which = require('which')
 const inquirer = require('inquirer')
 const execa = require('execa')
 const psTree = require('ps-tree')
+
+const ListrRenderer = require('./reporters/ListrRenderer')
+
+const PGK_MANAGER_BIN_NPM = 'npm'
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
+const NO_MANAGER = '0x0000000000000000000000000000000000000000'
+const DEFAULT_APM_REGISTRY = 'aragonpm.eth'
+
+const debugLogger = process.env.DEBUG ? console.log : () => {}
 
 const askForInput = async message => {
   const { reply } = await inquirer.prompt([
@@ -42,25 +52,6 @@ const askForConfirmation = async message => {
   return reply
 }
 
-let cachedProjectRoot
-
-const PGK_MANAGER_BIN_NPM = 'npm'
-const debugLogger = process.env.DEBUG ? console.log : () => {}
-
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-
-const findProjectRoot = () => {
-  if (!cachedProjectRoot) {
-    try {
-      cachedProjectRoot = path.dirname(findUp.sync('arapp.json'))
-    } catch (_) {
-      throw new Error('This directory is not an Aragon project')
-      // process.exit(1)
-    }
-  }
-  return cachedProjectRoot
-}
-
 const isPortTaken = async (port, opts) => {
   opts = Object.assign({ timeout: 1000 }, opts)
 
@@ -83,10 +74,6 @@ const isPortTaken = async (port, opts) => {
   })
 }
 
-const getNodePackageManager = () => {
-  return PGK_MANAGER_BIN_NPM
-}
-
 const installDeps = (cwd, task) => {
   const bin = getNodePackageManager()
   const installTask = execa(bin, ['install'], { cwd })
@@ -100,6 +87,52 @@ const installDeps = (cwd, task) => {
       `${err.message}\n${err.stderr}\n\nFailed to install dependencies. See above output.`
     )
   })
+}
+
+const runScriptTask = async (task, scriptName) => {
+  if (!fs.existsSync('package.json')) {
+    task.skip('No package.json found')
+    return
+  }
+
+  const packageJson = await readJson('package.json')
+  const scripts = packageJson.scripts || {}
+  if (!scripts[scriptName]) {
+    task.skip('Build script not defined in package.json')
+    return
+  }
+
+  const bin = getNodePackageManager()
+  const scriptTask = execa(bin, ['run', scriptName])
+
+  scriptTask.stdout.on('data', log => {
+    if (!log) return
+    task.output = `npm run ${scriptName}: ${log}`
+  })
+
+  return scriptTask.catch(err => {
+    throw new Error(
+      `${err.message}\n${err.stderr}\n\nFailed to build. See above output.`
+    )
+  })
+}
+
+let cachedProjectRoot
+
+const findProjectRoot = () => {
+  if (!cachedProjectRoot) {
+    try {
+      cachedProjectRoot = path.dirname(findUp.sync('arapp.json'))
+    } catch (_) {
+      throw new Error('This directory is not an Aragon project')
+      // process.exit(1)
+    }
+  }
+  return cachedProjectRoot
+}
+
+const getNodePackageManager = () => {
+  return PGK_MANAGER_BIN_NPM
 }
 
 /**
@@ -168,41 +201,11 @@ const getGlobalBinary = binaryName => {
   }
 }
 
-const runScriptTask = async (task, scriptName) => {
-  if (!fs.existsSync('package.json')) {
-    task.skip('No package.json found')
-    return
-  }
-
-  const packageJson = await readJson('package.json')
-  const scripts = packageJson.scripts || {}
-  if (!scripts[scriptName]) {
-    task.skip('Build script not defined in package.json')
-    return
-  }
-
-  const bin = getNodePackageManager()
-  const scriptTask = execa(bin, ['run', scriptName])
-
-  scriptTask.stdout.on('data', log => {
-    if (!log) return
-    task.output = `npm run ${scriptName}: ${log}`
-  })
-
-  return scriptTask.catch(err => {
-    throw new Error(
-      `${err.message}\n${err.stderr}\n\nFailed to build. See above output.`
-    )
-  })
-}
-
 const getContract = (pkg, contract) => {
   const artifact = require(`${pkg}/build/contracts/${contract}.json`)
   return artifact
 }
 
-const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
-const NO_MANAGER = '0x0000000000000000000000000000000000000000'
 const DEFAULT_GAS_FUZZ_FACTOR = 1.5
 const LAST_BLOCK_GAS_LIMIT_FACTOR = 0.95
 
@@ -315,6 +318,10 @@ function isValidAragonId(aragonId) {
   return /^[a-z0-9-]+$/.test(aragonId)
 }
 
+// insert default apm if the provided name doesnt have the suffix
+const defaultAPM = name =>
+  name.split('.').length > 1 ? name : `${name}.${DEFAULT_APM_REGISTRY}`
+
 // let's try gracefully, otherwise we can do SIGTERM or SIGKILL
 const defaultKillSignal = 'SIGINT'
 const defaultLogger = process.env.DEBUG ? console.log : () => {}
@@ -422,8 +429,29 @@ function normalizeOutput(stdout) {
   return next
 }
 
+/**
+ * https://github.com/SamVerschueren/listr#options
+ * https://github.com/SamVerschueren/listr-update-renderer#options
+ * https://github.com/SamVerschueren/listr-verbose-renderer#options
+ *
+ * @param {boolean} silent Option silent
+ * @param {boolean} debug Option debug
+ * @returns {Object} listr options object
+ */
+function listrOpts(silent, debug) {
+  return {
+    renderer: ListrRenderer(silent, debug),
+    dateFormat: false,
+  }
+}
+
 module.exports = {
-  parseArgumentStringIfPossible,
+  ANY_ENTITY,
+  NO_MANAGER,
+  ZERO_ADDRESS,
+  askForChoice,
+  askForInput,
+  askForConfirmation,
   debugLogger,
   findProjectRoot,
   isPortTaken,
@@ -434,14 +462,11 @@ module.exports = {
   getLocalBinary,
   getGlobalBinary,
   getContract,
-  isValidAragonId,
-  ANY_ENTITY,
-  NO_MANAGER,
-  ZERO_ADDRESS,
   getRecommendedGasLimit,
-  askForChoice,
-  askForInput,
-  askForConfirmation,
+  isValidAragonId,
+  defaultAPM,
+  parseArgumentStringIfPossible,
   startBackgroundProcess,
   normalizeOutput,
+  listrOpts,
 }

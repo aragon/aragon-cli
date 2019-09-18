@@ -28,7 +28,7 @@ const cli = yargs
     'parse-numbers': false,
   })
   .alias({
-    // v: 'version', TODO Gabi: fix aragen conflict
+    v: 'version',
     h: 'help',
   })
   .group(['help', 'version'], 'Global options:')

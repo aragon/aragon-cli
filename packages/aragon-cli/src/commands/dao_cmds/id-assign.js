@@ -4,7 +4,7 @@ const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const { green } = require('chalk')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const { isAddress } = require('web3-utils')
-const registrarAbi = require('@aragon/id/abi/IFIFSResolvingRegistrar').abi
+const registrarAbi = require('./abi/id/IFIFSResolvingRegistrar').abi
 const { sha3 } = require('web3-utils')
 
 const ARAGON_DOMAIN = 'aragonid.eth'
