@@ -3,8 +3,14 @@ import { existsSync, ensureDirSync } from 'fs-extra'
 import os from 'os'
 import { promisify } from 'util'
 const clone = promisify(require('git-clone'))
+const pkg = require('../../../package.json')
 
-export async function downloadClient(ctx, task, clientVersion) {
+export async function downloadClient({
+  ctx,
+  task,
+  clientRepo = pkg.aragon.clientRepo,
+  clientVersion,
+}) {
   const CLIENT_PATH = `${os.homedir()}/.aragon/client-${clientVersion}`
   ctx.clientPath = CLIENT_PATH
 
@@ -19,7 +25,5 @@ export async function downloadClient(ctx, task, clientVersion) {
   ensureDirSync(CLIENT_PATH)
 
   // Clone client
-  return clone('https://github.com/aragon/aragon', CLIENT_PATH, {
-    checkout: clientVersion,
-  })
+  return clone(clientRepo, CLIENT_PATH, { checkout: clientVersion })
 }
