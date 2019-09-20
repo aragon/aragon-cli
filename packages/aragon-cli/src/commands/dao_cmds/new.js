@@ -137,7 +137,9 @@ exports.task = async ({
           // Backward compatibility with old event name
           const deployEventValue =
             events[deployEvent] ||
-            events[exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT]
+            events[exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT] ||
+            // Some templates use DeployDAO instead of DeployDao
+            events['DeployDAO']
 
           // TODO: Include link to documentation
           if (events[exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT])
