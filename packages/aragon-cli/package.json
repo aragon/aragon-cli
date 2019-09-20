@@ -141,6 +141,7 @@
     ]
   },
   "aragon": {
+    "clientRepo": "https://github.com/aragon/aragon",
     "clientVersion": "d8066daad8bf3be6a83f7ee374032995ebd994cf",
     "clientPort": "3000",
     "defaultGasPrice": "2",

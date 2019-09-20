@@ -32,6 +32,7 @@ Available options to customize the `run` command:
 - `bump`: Type of bump (major, minor or patch) or version number to publish the app.
 - `--client`: Whether to start the Aragon client or not. Defaults to `true`.
 - `--client-version`: Version of Aragon client used to run your sandboxed app.
+- `--client-repo`: Repository of Aragon client to clone and run in your sandboxed app. Defaults to `https://github.com/aragon/aragon`.
 - `--client-port`: Port being used by Aragon client.
 - `--client-path`: A path pointing to an existing Aragon client installation.
 - `--app-init`: Name of the function that will be called to initialize an app. Defaults to `initialize`.

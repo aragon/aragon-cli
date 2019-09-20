@@ -45,6 +45,19 @@ All changes to this project will be documented in this file.
 
 ---
 
+## v6.2.4
+
+Release date: **2019-09-20**  
+[Compare code changes][v6.2.4] (🌳 STABLE)
+
+### What’s changed in aragonCLI
+
+## 💡 Feature updates
+
+- Iterate `aragon run`: add `--client-repo` optional argument
+
+---
+
 ## v6.2.3
 
 Release date: **2019-08-07**  
