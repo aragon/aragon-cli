@@ -7,7 +7,10 @@ const { getContract } = require('../../util')
 const getRepoTask = require('./utils/getRepoTask')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const startIPFS = require('../ipfs_cmds/start')
-const { getRecommendedGasLimit } = require('../../util')
+const {
+  getRecommendedGasLimit,
+  parseArgumentStringIfPossible,
+} = require('../../util')
 const assignIdTask = require('./id-assign').task
 
 exports.BARE_TEMPLATE = defaultAPMName('bare-template')
@@ -47,6 +50,9 @@ exports.builder = yargs => {
         'Arguments to be passed to the newInstance function (or the function passed with --fn)',
       array: true,
       default: [],
+      coerce: args => {
+        return args.map(parseArgumentStringIfPossible)
+      },
     })
     .option('fn', {
       description: 'Function to be called to create instance',
