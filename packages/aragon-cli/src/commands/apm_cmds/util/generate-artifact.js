@@ -122,13 +122,19 @@ async function generateApplicationArtifact(
     artifact.deployment.flattenedCode = `./${SOLIDITY_FILE}`
   }
 
+  console.log('before extract')
+
   // Analyse contract functions and returns an array
   // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
   artifact.functions = await extract(path.resolve(cwd, artifact.path))
+
+  console.log('after extract')
+
   // extract abi for each function
   // > [{ sig: , role: , notice: , abi: }]
   decorateFunctionsWithAbi(artifact.functions, artifact.abi, web3)
 
+  console.log('before deprecated')
   // Consult old (major) version's artifacts and return an array
   // of deprecated functions per version
   // > "deprecatedFunctions": { "1.0.0": [{}], "2.0.0": [{}] }
@@ -138,6 +144,8 @@ async function generateApplicationArtifact(
     web3,
     reporter
   )
+
+  console.log('after deprecated')
 
   if (artifact.roles) {
     getRoles(artifact.roles)

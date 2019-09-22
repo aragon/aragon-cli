@@ -3,12 +3,16 @@
 All changes to this project will be documented in this file.
 
 - [Changelog](#Changelog)
-- [v6.2.3](#v623)
+- [v6.4.0](#v640)
   - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI)
-  - [🚀 New features](#%F0%9F%9A%80-New-features)
   - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates)
-  - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes)
   - [🛠️ Maintenance (non-API changes)](#%F0%9F%9B%A0%EF%B8%8F-Maintenance-non-API-changes)
+- [v6.3.1](#v631)
+- [v6.3.0](#v630)
+- [v6.2.6](#v626)
+- [v6.2.5](#v625)
+- [v6.2.4](#v624)
+- [v6.2.3](#v623)
 - [v6.2.2](#v622)
 - [v6.2.1](#v621)
 - [v6.2.0](#v620)
@@ -45,16 +49,122 @@ All changes to this project will be documented in this file.
 
 ---
 
-## v6.2.4
+## v6.4.0
 
 Release date: **2019-09-20**  
-[Compare code changes][v6.2.4] (🌳 STABLE)
+[Compare code changes][v6.4.0] (🌳 STABLE)
+
+## 💡 Feature updates
+
+- Iterate `aragon run`: add `--client-repo` optional argument
+
+## 🛠️ Maintenance (non-API changes)
+
+- Add deploy event compatibility
+
+---
+
+## v6.3.1
+
+Release date: **2019-09-16**  
+[Compare code changes][v6.3.1]
+
+### What’s changed in aragonCLI
+
+## 🐛 Bug Fixes
+
+- Backward compatibility fix for the old deploy event name and the publish folder (#778) @macor161
+
+---
+
+## v6.3.0
+
+Release date: **2019-09-13**  
+[Compare code changes][v6.3.0]
 
 ### What’s changed in aragonCLI
 
 ## 💡 Feature updates
 
-- Iterate `aragon run`: add `--client-repo` optional argument
+- Update client to 0.8 🛣 (#765) @0xGabi
+- Include `templates-args` new option (#768) @0xGabi
+- Use a pre build of the client instead of building it every time 🚀(#764) @0xGabi
+- Use new aragen snapshot (#772) @0xGabi
+
+## 🐛 Bug Fixes
+
+- Fix deployment with new Templates (#762) @0xGabi
+
+## 🛠️ Maintenance (non-API changes)
+
+- Added more dependencies (#759) @chrishobcroft 🎉
+- Dao new clean (#772) @0xGabi
+- Use travis only on mater (#766) @0xGabi
+- Update default ipfs distribution installed (#763) @0xGabi
+
+---
+
+## v6.2.6
+
+### What’s changed in aragonCLI
+
+## 💡 Feature updates
+
+- Fix dao new command for new templates (#669) @0xGabi
+- Fix output for aragon run & fix http publish flag (#752) @0xGabi
+
+## 🐛 Bug Fixes
+
+- Check IPFS & install if missing (#734) @0xGabi
+- Bump aragen to [v5.2.0](https://github.com/aragon/aragen/releases/tag/v5.2.0) , fix tx pathing issue with ganache version (#753) @0xGabi
+
+## 🛠️ Maintenance (non-API changes)
+
+- End to end tests fix (#746) @macor161
+- Rollback to truffle-config v4 (#745) @0xGabi
+
+---
+
+## v6.2.5
+
+Release date: **2019-08-18**  
+[Compare code changes][v6.2.5]
+
+### What’s changed in aragonCLI
+
+### 🚀 New Feature
+
+- New Command `aragon id assign` (#707) @macor161 🙏
+
+### 🐛 Bug Fixes
+
+- Add Aragon's default endpoint (#713) @0xGabi
+
+### 🛠️ Maintenance (non-API changes)
+
+- Bump `aragen v5.1.0` (#720) @0xGabi
+
+---
+
+## v6.2.4
+
+Release date: **2019-08-08**  
+[Compare code changes][v6.2.4]
+
+### What’s changed in aragonCLI
+
+## 💡 Feature updates
+
+- Improve ipfs handler (#701) @0xGabi
+
+## 🐛 Bug Fixes
+
+- Fix http provider publish workflow (#701) @0xGabi
+
+## 🛠️ Maintenance (non-API changes)
+
+- Doc: Improve IPFS section (#699) @0xGabi
+- Update changelog (#698) @0xGabi
 
 ---
 
