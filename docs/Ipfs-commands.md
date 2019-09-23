@@ -38,7 +38,7 @@ aragon ipfs install
 
 Options:
 
-- `--dist-version`: The version of IPFS that will be installed. Defaults to `0.4.18-hacky2`.
+- `--dist-version`: The version of IPFS that will be installed. Defaults to `0.4.22`.
 - `--dist-url`: The url from which to download IPFS. Defaults to `https://dist.ipfs.io`.
 - `--local`: Whether to install IPFS as a project dependency. Defaults `false`.
 - `--skip-confirmation`: Whether to skip the confirmation step. Defaults to `false`.

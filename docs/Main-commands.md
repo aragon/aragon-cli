@@ -21,15 +21,18 @@ Available options to customize the `run` command:
 - `--port`: The port where the devchain will be started.
 - `--network-id`: Network id to connect with.
 - `--block-time`: Specify blockTime in seconds for automatic mining.
+- `--accounts`: Number of accounts to print. Defaults to `2`.
 - `--files`: The path to the files that will be published. Defaults to the current directory.
+- `bump`: Type of bump (major, minor or patch) or version number to publish the app.
 - `--build`: A flag to specify whether the webapp should be built while publishing, running the script specified in `build-script` of `package.json`. Defaults to `true`.
 - `--build-script`: The name of the NPM script in your app that will be used for building the webapp.
 - `--prepublish`: A flag to specify whether to run a prepublish script specified in `prepublish-script` of `package.json`. Defaults to `true`.
+- `--prepublish-script`: The name of the NPM script in your app that will be run before publishing the app. Defaults to `prepublishOnly`.
 - `--template`: The name of the contract that will be deployed as the [DAO template](templates-intro.md) that will be used to create your DAO. If no Template is provided it will use a default Template that sets up the DAO with just your app (`bare-template.aragonpm.eth`).
 - `--template-init [argument1 ... argumentN]`: The constructor arguments for the Template contract, each separated by a space. See the [deploy command](#aragon-deploy) for more information on constructor arguments.
-- `--template-deploy-event`: Arguments to be passed to the template constructor. Defaults to `DeployInstance`.
-- `--prepublish-script`: The name of the NPM script in your app that will be run before publishing the app. Defaults to `prepublishOnly`.
-- `bump`: Type of bump (major, minor or patch) or version number to publish the app.
+- `--template-deploy-event`: Event name that the template will fire on success. Defaults to `DeployDao`.
+- `--template-new-instance`: The function on the template that is called to create a new DAO. Defaults to the `newInstance` function for `bare-template.aragonpm.eth`.
+- `--template-args`: The arguments that the function to create the template is called with. Defaults to an array of arguments. To use arrays use the following format `["'0xB24b...73a7', '0xB24b...73a7'"]`.
 - `--client`: Whether to start the Aragon client or not. Defaults to `true`.
 - `--client-version`: Version of Aragon client used to run your sandboxed app.
 - `--client-port`: Port being used by Aragon client.
@@ -57,12 +60,9 @@ However, when **making changes to the background script** of your app, a refresh
 
 The [React boilerplate](https://github.com/aragon/aragon-react-boilerplate) supports serving your app using HTTP.
 
-> **Note**<br>
-> The `kits` has been deprecated and `templates` should be used instead. You may find the `kits` notation in some places while we make the transition.
-
 ## aragon start
 
-Start the Aragon GUI (graphical user interface)
+Start the Aragon GUI (graphical user interface). It uses [aragen](https://github.com/aragon/aragen) snapshot to try fetching a prebuild of the client if it was not previously fetch. Otherwise, the command download the client repo and build it to use it locally.
 
 ```sh
 aragon start [client-version]
@@ -85,14 +85,18 @@ aragon devchain
 
 It uses [aragen](https://github.com/aragon/aragen) for setting up the snapshot from which the chain starts. At any point `aragon devchain --reset` can be run which will reset the devchain to the original snapshot.
 
-This snapshot contains a local instance of ENS, the first-party [Aragon apps](https://github.com/aragon/aragon-apps) published to aragonPM (e.g. `voting.aragonpm.eth` or `token-manager.aragonpm.eth`) and the first-party [DAO Templates](https://github.com/aragon/dao-kits) (e.g. `bare-template.aragonpm.eth`).
+This snapshot contains a local instance of ENS, the first-party [Aragon apps](https://github.com/aragon/aragon-apps) published to aragonPM (e.g. `voting.aragonpm.eth` or `token-manager.aragonpm.eth`) and the first-party [DAO Templates](https://github.com/aragon/dao-templates) (e.g. `bare-template.aragonpm.eth`).
 
 Devchains can be started on different ports and will keep their state independent from other chains.
 
 Options:
 
 - `--reset`: Resets the devchain to the snapshot.
-- `--port`: The port number where the devchain will be started.
+- `--port`: The port number where the devchain will be started. Defaults to `8545`.
+- `--network-id`: Network id to connect with.
+- `--block-time`: Specify blockTime in seconds for automatic mining.
+- `--gas-limit`: Block gas limit. Must be specified as a hex string.
+- `--accounts`: Number of accounts to print.
 - `--verbose`: Enable verbose output. Similar to ganache-cli.
 
 > **Note**<br>
