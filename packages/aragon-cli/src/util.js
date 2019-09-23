@@ -142,7 +142,7 @@ const runScriptTask = async (task, scriptName) => {
   const packageJson = await readJson('package.json')
   const scripts = packageJson.scripts || {}
   if (!scripts[scriptName]) {
-    task.skip('Build script not defined in package.json')
+    task.skip(`${scriptName} script not defined in package.json`)
     return
   }
 
