@@ -14,7 +14,7 @@ const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 
-exports.command = 'start [client-version]'
+exports.command = 'start [client-repo] [client-version]'
 
 exports.describe = 'Start the Aragon GUI (graphical user interface)'
 
