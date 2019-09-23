@@ -84,9 +84,14 @@ If you want to learn how use environments in practice check the guides to learn 
 The manifest.json defines end-user specific configurations:
 
 - `name`: Human-readable name of your app.
+- `author`: (optional) Author of the app.
 - `description`: Small description of the app.
+- `detail_url`: (optional) Path to markdown file with details of the app.
+- `source_url`: (optional) Link to the source code of the app.
 - `icons`: (optional) An array of all the icons that your app has. Each icon has the following properties:
   - `src`: Path to the icon's image.
   - `sizes`: Size of the icon.
+- `screenshots`: (optional) An array of all the screenshots that your app has. Each screenshot has the following properties:
+  - `src`: Path to the screenshot's image.
 - `script`: (optional) Background script path.
 - `start_url`: Path to the starting URL.

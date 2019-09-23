@@ -16,13 +16,10 @@ Options:
 - `--aragon-id`: Assigns an Aragon Id to the DAO.
 - `--template`: The aragonPM repo name of the template that is used to create the DAO. Defaults to `bare-template.aragonpm.eth`.
 - `--template-version [version-number|latest]`: The version of the repo that will be used to create the DAO. Defaults to `latest`.
-- `--fn`: The function on the template that is called to create a new DAO. Defaults to the `newBareInstance` function for `bare-template.aragonpm.eth`.
-- `--fn-args`: The arguments that the function to create the template is called with. Defaults to an array of arguments.
-- `--deploy-event`: The name of the event that is emitted when the DAO is created. The DAO address must be a return argument in the event log named `dao`. Defaults to `DeployInstance`.
+- `--fn`: The function on the template that is called to create a new DAO. Defaults to the `newInstance` function for `bare-template.aragonpm.eth`.
+- `--fn-args`: The arguments that the function to create the template is called with. Defaults to an array of arguments. To use arrays use the following format `["'0xB24b...73a7', '0xB24b...73a7'"]`.
+- `--deploy-event`: The name of the event that is emitted when the DAO is created. The DAO address must be a return argument in the event log named `dao`. Defaults to `DeployDao`.
 - `--ipfs-check`: Whether to have start IPFS if not started. Defaults to `true`.
-
-> **Note**<br>
-> The `kits` has been deprecated and `templates` should be used instead. You may find the `kits` notation in some places while we make the transition.
 
 ## dao apps
 

@@ -63,7 +63,7 @@ In case the client is not loading properly, deleting the `~/.aragon` directory w
 
 #### Set a private key
 
-> **⚠️  Warning**<br>
+> **⚠️ Warning**<br>
 > The default mnemonic for the Aragon CLI is the same for all users. If you are going to deploy contracts to public networks it is highly recommended that you use your own web3 provider and set your own private key.
 
 You can configure a private key for the Aragon CLI in `~/.aragon`. To do so you will need to create a file `<network>_key.json` (eg. `rinkeby_key.json`) with this structure:
@@ -89,22 +89,19 @@ You can also define an `~/.aragon/mnemonic.json` file like:
 
 Since `v6.0.0` we separate the instalation of `go-ipfs` from the aragonCLI. If you do not have it installed globally on your system we have a couple of comands to help with that:`aragon ipfs install` and `aragon ipfs uninstall`.
 
-> **Note**<br>
-> We are using the `0.4.18-hacky2` version cause lastest version is not stable yet.
-
 ## Global options
 
 Options that change the behaviour of the command:
 
-- `--environment`: The environment in your arapp.json that you want to use. Defaults to `aragon:local`. Check the other [default environments](/docs/cli-global-confg.html#example).
+- `--environment`: The environment in your `arapp.json` that you want to use. Defaults to `aragon:local`. Check the other [default environments](/docs/cli-global-confg.html#example). You can also use it with the `--env` alias.
 - `--gas-price`: Gas price in Gwei. Defaults to `2`.
-- `--silent`: Silence output to terminal.
-- `--debug`: Show more output to terminal.
-- `--cwd`: Project working directory.
-- `--use-frame`: Use frame as a signing provider and web3 provider.
+- `--use-frame`: Use Frame as a signing provider and web3 provider.
 - `--apm.ens-registry`: Address of the ENS registry. This will be overwritten if the selected environment from your arapp.json includes a `registry` property.
 - `--apm.ipfs.gateway`: An URI to the IPFS Gateway to read files from. Defaults to `http://localhost:8080/ipfs`.
 - `--apm.ipfs.rpc`: An URI to the IPFS node used to publish files. Defaults to `http://localhost:5001#default`.
+- `--cwd`: Project working directory.
+- `--debug`: Show more output to terminal.
+- `--silent`: Silence output to terminal.
 
 ### Example
 
@@ -130,6 +127,3 @@ npx create-aragon-app <app-name> [boilerplate]
 > **Note**<br>
 > This is an independent package, it's not necessary to have `@aragon/cli` installed to use it.
 > [npx](https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner-55f7d4bd282b) comes with npm 5.2+. If you use npm 5.1 or earlier, you can't use `npx`. Instead, install `create-aragon-app` globally.
-
-> **Note**<br>
-> The `react-kit` boilerplate has been deprecated and merged with `react` boilerplate. Also `kits` has been deprecated and `templates` should be used instead.
