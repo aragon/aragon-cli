@@ -27,6 +27,7 @@ const {
 
 const url = require('url')
 
+const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 
@@ -153,6 +154,10 @@ exports.builder = function(yargs) {
       array: true,
       default: [],
     })
+    .option('client-repo', {
+      description: 'Repo of Aragon client used to run your sandboxed app',
+      default: DEFAULT_CLIENT_REPO,
+    })
     .option('client-version', {
       description: 'Version of Aragon client used to run your sandboxed app',
       default: DEFAULT_CLIENT_VERSION,
@@ -202,6 +207,7 @@ exports.handler = function({
   httpServedFrom,
   appInit,
   appInitArgs,
+  clientRepo,
   clientVersion,
   clientPort,
   clientPath,
@@ -370,7 +376,7 @@ exports.handler = function({
         title: 'Open DAO',
         enabled: () => client === true,
         task: async (ctx, task) =>
-          start.task({ clientVersion, clientPort, clientPath }),
+          start.task({ clientRepo, clientVersion, clientPort, clientPath }),
       },
     ],
     listrOpts(silent, debug)

@@ -35,6 +35,7 @@ Available options to customize the `run` command:
 - `--template-args`: The arguments that the function to create the template is called with. Defaults to an array of arguments. To use arrays use the following format `["'0xB24b...73a7', '0xB24b...73a7'"]`.
 - `--client`: Whether to start the Aragon client or not. Defaults to `true`.
 - `--client-version`: Version of Aragon client used to run your sandboxed app.
+- `--client-repo`: Repository of Aragon client to clone and run in your sandboxed app. Defaults to `https://github.com/aragon/aragon`.
 - `--client-port`: Port being used by Aragon client.
 - `--client-path`: A path pointing to an existing Aragon client installation.
 - `--app-init`: Name of the function that will be called to initialize an app. Defaults to `initialize`.
@@ -65,9 +66,10 @@ The [React boilerplate](https://github.com/aragon/aragon-react-boilerplate) supp
 Start the Aragon GUI (graphical user interface). It uses [aragen](https://github.com/aragon/aragen) snapshot to try fetching a prebuild of the client if it was not previously fetch. Otherwise, the command download the client repo and build it to use it locally.
 
 ```sh
-aragon start [client-version]
+aragon start [client-repo] [client-version]
 ```
 
+- `client-repo`: Repository of Aragon client to clone and run in your sandboxed app. Defaults to `https://github.com/aragon/aragon`.
 - `client-version`: Version of Aragon client used to run your sandboxed app (commit hash, branch name or tag name)
 
 Options:

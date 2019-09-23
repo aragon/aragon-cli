@@ -4,7 +4,7 @@ All **notable** changes between stable versions will be documented in this file.
 
 - [Changelog](#Changelog)
 
-  - [v6.2.3 (🌳)](#v623)
+  - [v6.3.2(🌳)](#v632)
     - [What’s changed in aragonCLI since `v5.9.7`](#Whats-changed-in-aragonCLI-since-v597)
     - [💥 Breaking changes](#%F0%9F%92%A5-Breaking-changes)
     - [🚀 New features](#%F0%9F%9A%80-New-features)
@@ -14,10 +14,10 @@ All **notable** changes between stable versions will be documented in this file.
 
 ---
 
-## v6.2.3
+## v6.3.2
 
-Release date: **2019-08-07**
-[Compare code changes][v6.2.3]
+Release date: **2019-09-23**
+[Compare code changes][v6.3.2]
 
 ### What’s changed in aragonCLI since `v5.9.7`
 
@@ -28,6 +28,8 @@ Release date: **2019-08-07**
 
 ### 🚀 New features
 
+- Use a pre build of the client instead of building it every time 🚀(#764)
+- New Command `aragon id assign` (#707)
 - Iterate dao act: add `--eth-value` optional argument (#492)
 - Bump `@aragon/aragen` to [v5.0.0](https://github.com/aragon/aragen/releases/tag/v5.0.0).
 - New command `devchain status` (#678)
@@ -44,20 +46,22 @@ Release date: **2019-08-07**
 
 ### 💡 Feature updates
 
-- Update aragen & client (#686)
+- Include `templates-args` new option for aragon run (#768)
+- Fix dao new command for new templates (#669)
+- Add Aragon's default endpoint (#713) @0xGabi
 - Check for existing transactionPath in execHandler (#385)
-- CLI: avoid coercing number arguments from strings to JS numbers (#687)
+- Avoid coercing number arguments from strings to JS numbers (#687)
 - Allow arrays to be passed via `--app-init-args` (#623)
-- Ipfs cmd refactor (#636)
 - Use all environment on artifact generation (#646)
 - Add `gas-price` global option (#625)
-- Update the GUI client to `v0.7.4` (#519)
 - Update `dao install` to always show the proxy address (#478)
 - Update `dao token new` options to use a deployed `minimeTokenFactory` in Rinkeby and Mainnet as default to save gas (#555)
 - Pass apm opts to @aragon/wrapper (#567)
 
 ### 🐛 Bug Fixes
 
+- Add Aragon's default endpoint (#713)
+- Fix http provider publish workflow (#701)
 - Handle IPFS not being installed (#696)
 - Fix prepare publish function and publish intent argument (#685)
 - Update command to not hang after finishing (#674)
@@ -72,14 +76,11 @@ Release date: **2019-08-07**
 
 ### 🛠️ Maintenance & internal changes
 
-- Small cleanup (#657)
 - Add isPortTaken function to `@aragon/cli-utils` (#668)
 - Refactor `cli-utils` package (#652)
 - Set-up code coverage (#493)
 - Set-up continuous deployment (#513)
 - Set-up some [probot](https://probot.github.io) apps (#517, #518)
-- Add pre-requisites section to docs (#559)
-- Update CONTRIBUTING.md with Bounties section 🦅 (#507)
 - Update aragonCLI Roadmap (#504)
 
 [v6.0.5]: https://github.com/aragon/aragon-cli/compare/v5.9.7...v6.0.5
