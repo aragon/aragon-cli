@@ -58,7 +58,7 @@ test('should run an aragon app successfully', async t => {
   )
 
   const wrapperInstallOutput = stdout.substring(
-    stdout.indexOf('Downloading wrapper [started]'),
+    stdout.indexOf('Fetching client from aragen [started]'),
     stdout.indexOf('Starting Aragon client [started]')
   )
 
