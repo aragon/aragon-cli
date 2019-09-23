@@ -1,6 +1,5 @@
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
-const { getContract } = require('@aragon/cli-utils')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const chalk = require('chalk')
 const web3Utils = require('web3-utils')
@@ -74,10 +73,7 @@ exports.task = async ({
         title: 'Deploy the MiniMeTokenFactory contract',
         enabled: () => !web3Utils.isAddress(tokenFactoryAddress),
         task: async (ctx, task) => {
-          const artifact = getContract(
-            '@aragon/apps-shared-minime',
-            'MiniMeTokenFactory'
-          )
+          const artifact = require('./artifacts/MiniMeToken')
           const contract = new web3.eth.Contract(artifact.abi)
 
           const deployTx = contract.deploy({ data: artifact.bytecode })
@@ -107,10 +103,7 @@ exports.task = async ({
       {
         title: 'Deploy the MiniMeToken contract',
         task: async (ctx, task) => {
-          const artifact = getContract(
-            '@aragon/apps-shared-minime',
-            'MiniMeToken'
-          )
+          const artifact = require('./artifacts/MiniMeTokenFactory')
           const contract = new web3.eth.Contract(artifact.abi)
 
           const deployTx = contract.deploy({

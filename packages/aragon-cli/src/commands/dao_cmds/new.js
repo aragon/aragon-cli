@@ -3,7 +3,7 @@ const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const APM = require('@aragon/apm')
 const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 const { green, bold } = require('chalk')
-const { getContract, getRecommendedGasLimit } = require('@aragon/cli-utils')
+const { getRecommendedGasLimit } = require('@aragon/cli-utils')
 const getRepoTask = require('./utils/getRepoTask')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const assignIdTask = require('./id-assign').task
@@ -120,7 +120,7 @@ exports.task = async ({
         skip: () => skipChecks,
         task: async (ctx, task) => {
           const kernel = new web3.eth.Contract(
-            getContract('@aragon/os', 'Kernel').abi,
+            require('./abi/os/Kernel').abi,
             ctx.daoAddress
           )
           ctx.aclAddress = await kernel.methods.acl().call()

@@ -7,7 +7,6 @@ const APM = require('@aragon/apm')
 const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 const chalk = require('chalk')
 const getRepoTask = require('./utils/getRepoTask')
-const { getContract } = require('@aragon/cli-utils')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 exports.command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
@@ -53,7 +52,7 @@ exports.task = async ({
         title: 'Upgrading app',
         task: async ctx => {
           const kernel = new web3.eth.Contract(
-            getContract('@aragon/os', 'Kernel').abi,
+            require('./abi/os/Kernel').abi,
             dao
           )
 
