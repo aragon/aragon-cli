@@ -3,9 +3,10 @@
 All changes to this project will be documented in this file.
 
 - [Changelog](#Changelog)
-- [v6.4.0](#v640)
+- [v6.3.2](#v632)
   - [What’s changed in aragonCLI](#Whats-changed-in-aragonCLI)
   - [💡 Feature updates](#%F0%9F%92%A1-Feature-updates)
+  - [🐛 Bug Fixes](#%F0%9F%90%9B-Bug-Fixes)
   - [🛠️ Maintenance (non-API changes)](#%F0%9F%9B%A0%EF%B8%8F-Maintenance-non-API-changes)
 - [v6.3.1](#v631)
 - [v6.3.0](#v630)
@@ -49,18 +50,26 @@ All changes to this project will be documented in this file.
 
 ---
 
-## v6.4.0
+## v6.3.2
 
 Release date: **2019-09-20**  
-[Compare code changes][v6.4.0] (🌳 STABLE)
+[Compare code changes][v6.3.2] (🌳 STABLE)
+
+### What’s changed in aragonCLI
 
 ## 💡 Feature updates
 
 - Iterate `aragon run`: add `--client-repo` optional argument
 
+## 🐛 Bug Fixes
+
+- Fix array arguments support (#785) @macor161
+- Add deploy event compatibility (#784) @macor161
+
 ## 🛠️ Maintenance (non-API changes)
 
-- Add deploy event compatibility
+- Added CLI Mnenmonic Warning (#767) @burrrata
+- Update documentation (#786) @0xGabi
 
 ---
 
