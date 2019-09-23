@@ -19,8 +19,11 @@ const {
   runPrepareForPublishTask,
   runPublishTask,
 } = require('./apm_cmds/publish')
-
-const { findProjectRoot, isPortTaken } = require('../util')
+const {
+  findProjectRoot,
+  isPortTaken,
+  parseArgumentStringIfPossible,
+} = require('../util')
 
 const url = require('url')
 
@@ -96,6 +99,9 @@ exports.builder = function(yargs) {
         'Arguments to be passed to the function specified in --template-new-instance',
       array: true,
       default: [],
+      coerce: args => {
+        return args.map(parseArgumentStringIfPossible)
+      },
     })
     .option('build', {
       description:
