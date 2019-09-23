@@ -136,9 +136,9 @@
       }
     },
     "@aragon/apps-payroll": {
-      "version": "1.0.0-rc.1",
-      "resolved": "https://registry.npmjs.org/@aragon/apps-payroll/-/apps-payroll-1.0.0-rc.1.tgz",
-      "integrity": "sha512-fYcHqN5yTVHJynlDzVDvIHtjzbt1ajC56twJaKYql6BO73WHjOSTVT/MQG4eGnZAXyLWxlPsTNg8x255+HStag==",
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/@aragon/apps-payroll/-/apps-payroll-1.0.0.tgz",
+      "integrity": "sha512-GaWIpOk+xBKLFeco8GZ+9sZlrUSTIxxEV/mjMj2Gfqq0SyULc9+42M6gu/y53Yx3axeI/ZJzz2yvn6B0P3TMGQ==",
       "dev": true,
       "requires": {
         "@aragon/apps-finance": "3.0.0",

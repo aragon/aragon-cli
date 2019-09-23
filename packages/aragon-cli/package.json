@@ -98,7 +98,7 @@
     "@aragon/apps-token-manager": "^2.0.0",
     "@aragon/apps-vault": "^4.0.0",
     "@aragon/apps-voting": "^2.0.0",
-    "@aragon/apps-payroll": "1.0.0-rc.1",
+    "@aragon/apps-payroll": "1.0.0",
     "@aragon/apps-survey": "^1.0.0",
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
