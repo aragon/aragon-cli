@@ -98,7 +98,7 @@
     "@aragon/apps-token-manager": "^2.0.0",
     "@aragon/apps-vault": "^4.0.0",
     "@aragon/apps-voting": "^2.0.0",
-    "@aragon/apps-payroll": "1.0.0-rc.1",
+    "@aragon/apps-payroll": "^1.0.0",
     "@aragon/apps-survey": "^1.0.0",
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
@@ -142,7 +142,7 @@
   },
   "aragon": {
     "clientRepo": "https://github.com/aragon/aragon",
-    "clientVersion": "d8066daad8bf3be6a83f7ee374032995ebd994cf",
+    "clientVersion": "d754535d8487b94a651209464225d8507ae24a67",
     "clientPort": "3000",
     "defaultGasPrice": "2",
     "defaultIpfsTimeout": "300000"
