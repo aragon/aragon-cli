@@ -2,7 +2,8 @@ const ABI = require('web3-eth-abi')
 const execHandler = require('./utils/execHandler').handler
 const getAppKernel = require('./utils/app-kernel')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const { parseArgumentStringIfPossible, ZERO_ADDRESS } = require('../../util')
+const { parseArgumentStringIfPossible, ZERO_ADDRESS, addressesEqual } = require('../../util')
+const { map, filter, first } = require('rxjs/operators')
 
 const EXECUTE_FUNCTION_NAME = 'execute'
 
@@ -81,8 +82,16 @@ exports.handler = async function({
 
   const fnArgs = [target, weiAmount, encodeCalldata(signature, callArgs)]
 
-  const getTransactionPath = wrapper =>
-    wrapper.getTransactionPath(agentAddress, EXECUTE_FUNCTION_NAME, fnArgs)
+  const getTransactionPath = async wrapper => {
+    // Wait for agent info to load
+    await wrapper.apps.pipe(
+      map(apps => apps.find(app => addressesEqual(app.proxyAddress, agentAddress))),
+      filter(app => app),
+      first()
+    ).toPromise()
+
+    return wrapper.getTransactionPath(agentAddress, EXECUTE_FUNCTION_NAME, fnArgs)
+  }
 
   return execHandler(dao, getTransactionPath, {
     ipfsCheck: true,
