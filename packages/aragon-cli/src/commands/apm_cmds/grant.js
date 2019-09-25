@@ -1,5 +1,5 @@
 const APM = require('@aragon/apm')
-const ACL = require('../../acl')
+const ACL = require('./util/acl')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const chalk = require('chalk')
 

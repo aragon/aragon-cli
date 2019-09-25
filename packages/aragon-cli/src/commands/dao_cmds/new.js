@@ -3,7 +3,6 @@ const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const APM = require('@aragon/apm')
 const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 const { green, bold } = require('chalk')
-const { getContract } = require('../../util')
 const getRepoTask = require('./utils/getRepoTask')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const startIPFS = require('../ipfs_cmds/start')
@@ -166,7 +165,7 @@ exports.task = async ({
         skip: () => skipChecks,
         task: async (ctx, task) => {
           const kernel = new web3.eth.Contract(
-            getContract('@aragon/os', 'Kernel').abi,
+            require('./abi/os/Kernel').abi,
             ctx.daoAddress
           )
           ctx.aclAddress = await kernel.methods.acl().call()

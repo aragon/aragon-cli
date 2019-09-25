@@ -1,29 +1,20 @@
-const { getRecommendedGasLimit } = require('../util')
+const { getRecommendedGasLimit } = require('../../../util')
 
 module.exports = ({ web3, gasPrice, network }) => {
   const getACL = async repoAddr => {
     const repo = new web3.eth.Contract(
-      require('@aragon/os/build/contracts/AragonApp').abi,
+      require('../abi/os/AragonApp').abi,
       repoAddr
     )
     const daoAddr = await repo.methods.kernel().call()
-    const dao = new web3.eth.Contract(
-      require('@aragon/os/build/contracts/Kernel').abi,
-      daoAddr
-    )
+    const dao = new web3.eth.Contract(require('../abi/os/Kernel').abi, daoAddr)
     const aclAddr = await dao.methods.acl().call()
 
-    return new web3.eth.Contract(
-      require('@aragon/os/build/contracts/ACL').abi,
-      aclAddr
-    )
+    return new web3.eth.Contract(require('../abi/os/ACL').abi, aclAddr)
   }
 
   const getRoleId = async repoAddr => {
-    const repo = new web3.eth.Contract(
-      require('@aragon/os/build/contracts/Repo').abi,
-      repoAddr
-    )
+    const repo = new web3.eth.Contract(require('../abi/os/Repo').abi, repoAddr)
     return repo.methods.CREATE_VERSION_ROLE().call()
   }
 
