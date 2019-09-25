@@ -39,12 +39,16 @@ exports.handler = async function({
 
   const getTransactionPath = async wrapper => {
     // Wait for app info to load
-    await wrapper.apps.pipe(
-      map(apps => apps.find(app => addressesEqual(app.proxyAddress, proxyAddress))),
-      filter(app => app),
-      first()
-    ).toPromise()
-    
+    await wrapper.apps
+      .pipe(
+        map(apps =>
+          apps.find(app => addressesEqual(app.proxyAddress, proxyAddress))
+        ),
+        filter(app => app),
+        first()
+      )
+      .toPromise()
+
     return wrapper.getTransactionPath(proxyAddress, fn, fnArgs)
   }
   return execHandler(dao, getTransactionPath, {

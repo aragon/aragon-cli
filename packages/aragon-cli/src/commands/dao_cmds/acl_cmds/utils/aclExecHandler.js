@@ -12,11 +12,15 @@ module.exports = async function(
   const getTransactionPath = async wrapper => {
     const aclAddr = wrapper.aclProxy.address
     // Wait for app info to load
-    await wrapper.apps.pipe(
-      map(apps => apps.find(app => addressesEqual(app.proxyAddress, aclAddr))),
-      filter(app => app),
-      first()
-    ).toPromise()
+    await wrapper.apps
+      .pipe(
+        map(apps =>
+          apps.find(app => addressesEqual(app.proxyAddress, aclAddr))
+        ),
+        filter(app => app),
+        first()
+      )
+      .toPromise()
 
     let processedParams
 
