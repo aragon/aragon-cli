@@ -13,6 +13,18 @@ const debugLogger = process.env.DEBUG ? console.log : () => {}
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
+/**
+ * Check eth address equality without checksums
+ * @param {string} first address
+ * @param {string} second address
+ * @returns {boolean} address equality
+ */
+function addressesEqual(first, second) {
+  first = first && first.toLowerCase()
+  second = second && second.toLowerCase()
+  return first === second
+}
+
 const findProjectRoot = () => {
   if (!cachedProjectRoot) {
     try {
@@ -281,6 +293,7 @@ function isValidAragonId(aragonId) {
 }
 
 module.exports = {
+  addressesEqual,
   parseArgumentStringIfPossible,
   debugLogger,
   findProjectRoot,

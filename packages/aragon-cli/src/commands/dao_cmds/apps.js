@@ -5,10 +5,8 @@ const daoArg = require('./utils/daoArg')
 const { listApps } = require('./utils/knownApps')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const { getContract } = require('../../util')
+const { getContract, addressesEqual } = require('../../util')
 const Table = require('cli-table')
-
-const addressesEqual = (a, b) => a.toLowerCase() === b.toLowerCase()
 
 let knownApps
 

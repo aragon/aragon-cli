@@ -10,6 +10,7 @@ const startIPFS = require('../ipfs_cmds/start')
 const getRepoTask = require('./utils/getRepoTask')
 const encodeInitPayload = require('./utils/encodeInitPayload')
 const {
+  addressesEqual,
   getContract,
   ANY_ENTITY,
   NO_MANAGER,
@@ -17,8 +18,6 @@ const {
 } = require('../../util')
 const kernelABI = require('@aragon/os/abi/Kernel').abi
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-
-const addressesEqual = (a, b) => a.toLowerCase() === b.toLowerCase()
 
 exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'
 

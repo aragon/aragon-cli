@@ -49,7 +49,7 @@
     "@aragon/cli-utils": "^0.0.8",
     "@aragon/id": "^2.1.0",
     "@aragon/os": "^4.0.0",
-    "@aragon/wrapper": "5.0.0-rc.9",
+    "@aragon/wrapper": "^5.0.0-rc.17",
     "ajv": "^6.6.2",
     "byte-size": "^5.0.1",
     "chalk": "^2.1.0",
