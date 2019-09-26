@@ -5,6 +5,7 @@ const net = require('net')
 const fs = require('fs')
 const { readJson } = require('fs-extra')
 const which = require('which')
+const { request } = require('http')
 
 let cachedProjectRoot
 
@@ -56,6 +57,21 @@ const isPortTaken = async (port, opts) => {
       socket.end()
       resolve(true)
     })
+  })
+}
+
+/**
+ * Check if an http server is listening at a given url
+ * @param {string} url Server url
+ * @returns {boolean} true if server is returning a valid response
+ */
+function isHttpServerOpen(url) {
+  return new Promise(resolve => {
+    request(url, { method: 'HEAD' }, r => {
+      resolve(r.statusCode >= 200 && r.statusCode < 400)
+    })
+      .on('error', () => resolve(false))
+      .end()
   })
 }
 
@@ -297,6 +313,7 @@ module.exports = {
   parseArgumentStringIfPossible,
   debugLogger,
   findProjectRoot,
+  isHttpServerOpen,
   isPortTaken,
   installDeps,
   runScriptTask,

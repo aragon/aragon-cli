@@ -21,6 +21,7 @@ const {
 } = require('./apm_cmds/publish')
 const {
   findProjectRoot,
+  isHttpServerOpen,
   isPortTaken,
   parseArgumentStringIfPossible,
 } = require('../util')
@@ -138,6 +139,9 @@ exports.builder = function(yargs) {
     .option('http', {
       description: 'URL for where your app is served from e.g. localhost:1234',
       default: null,
+      coerce: url => {
+        return url && url.substr(0, 7) !== 'http://' ? `http://${url}` : url
+      },
     })
     .option('http-served-from', {
       description:
@@ -172,7 +176,7 @@ exports.builder = function(yargs) {
     })
 }
 
-exports.handler = function({
+exports.handler = async function({
   // Globals
   reporter,
   gasPrice,
@@ -213,6 +217,13 @@ exports.handler = function({
   clientPath,
 }) {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
+
+  if (http && !(await isHttpServerOpen(http))) {
+    reporter.error(
+      `Can't connect to ${http}, make sure the http server is running.`
+    )
+    process.exit(1)
+  }
 
   // TODO: this can be cleaned up once kits is no longer supported
   template = kit || template
