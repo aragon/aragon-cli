@@ -58,7 +58,7 @@ function isHttpServerOpen(url) {
     request(url, { method: 'HEAD' }, r => {
       resolve(r.statusCode >= 200 && r.statusCode < 400)
     })
-      .on('error', err => resolve(false))
+      .on('error', () => resolve(false))
       .end()
   })
 }
