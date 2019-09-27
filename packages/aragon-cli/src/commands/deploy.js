@@ -6,7 +6,7 @@ const { compileContracts } = require('../helpers/truffle-runner')
 const { findProjectRoot } = require('../util')
 const { ensureWeb3 } = require('../helpers/web3-fallback')
 const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
-const listrOpts = require('../helpers/listr-options')
+const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const { getRecommendedGasLimit, expandLink } = require('../util')
 
 exports.command = 'deploy [contract]'
@@ -109,6 +109,10 @@ exports.task = async ({
               env.links.map(expandLink).forEach(l => {
                 console.log('linking', l.name)
                 bytecode = bytecode.replace(l.regex, l.addressBytes)
+                if (!bytecode.includes(l.addressBytes)) {
+                  reporter.error(`Could not link library ${l.name}`)
+                  process.exit(1)
+                }
               })
           }
 
