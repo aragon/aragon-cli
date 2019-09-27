@@ -107,7 +107,6 @@ exports.task = async ({
             let env = module.env
             env.links &&
               env.links.map(expandLink).forEach(l => {
-                console.log('linking', l.name)
                 bytecode = bytecode.replace(l.regex, l.addressBytes)
                 if (!bytecode.includes(l.addressBytes)) {
                   reporter.error(`Could not link library ${l.name}`)
