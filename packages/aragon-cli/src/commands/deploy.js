@@ -7,7 +7,7 @@ const { findProjectRoot } = require('../util')
 const { ensureWeb3 } = require('../helpers/web3-fallback')
 const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const { getRecommendedGasLimit } = require('../util')
+const { getRecommendedGasLimit, expandLink } = require('../util')
 
 exports.command = 'deploy [contract]'
 
@@ -35,6 +35,8 @@ exports.builder = yargs => {
 }
 
 exports.task = async ({
+  module,
+  reporter,
   network,
   gasPrice,
   cwd,
@@ -90,7 +92,8 @@ exports.task = async ({
             )
           }
 
-          const { abi, bytecode } = ctx.contractArtifacts
+          const { abi } = ctx.contractArtifacts
+          let { bytecode } = ctx.contractArtifacts
 
           if (!bytecode || bytecode === '0x') {
             throw new Error(
@@ -99,6 +102,18 @@ exports.task = async ({
           }
 
           task.output = `Deploying '${contractName}' to network`
+
+          if (module) {
+            let env = module.env
+            env.links &&
+              env.links.map(expandLink).forEach(l => {
+                bytecode = bytecode.replace(l.regex, l.addressBytes)
+                if (!bytecode.includes(l.addressBytes)) {
+                  reporter.error(`Could not link library ${l.name}`)
+                  process.exit(1)
+                }
+              })
+          }
 
           const contract = new web3.eth.Contract(abi, { data: bytecode })
           const accounts = await web3.eth.getAccounts()
@@ -146,6 +161,7 @@ exports.task = async ({
 }
 
 exports.handler = async ({
+  module,
   reporter,
   gasPrice,
   network,
@@ -157,6 +173,8 @@ exports.handler = async ({
   debug,
 }) => {
   const task = await exports.task({
+    module,
+    reporter,
     gasPrice,
     network,
     cwd,

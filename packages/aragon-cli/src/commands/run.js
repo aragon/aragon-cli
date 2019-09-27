@@ -327,6 +327,7 @@ exports.handler = async function({
         enabled: () => template !== newDAO.BARE_TEMPLATE,
         task: ctx => {
           const deployParams = {
+            module,
             contract: template,
             init: templateInit,
             reporter,

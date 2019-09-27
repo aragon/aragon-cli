@@ -119,6 +119,8 @@ module.exports = function environmentMiddleware(argv) {
       [environment]: env,
     }
 
+    module.env = env
+
     const response = {
       module: Object.assign({}, module, { appName: env.appName }),
       network: configureNetwork(argv, env.network),

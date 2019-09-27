@@ -261,6 +261,7 @@ exports.runSetupTask = ({
             (!contract && ctx.shouldDeployContract && !reuse)),
         task: async ctx => {
           const deployTaskParams = {
+            module,
             contract,
             init,
             gasPrice,
