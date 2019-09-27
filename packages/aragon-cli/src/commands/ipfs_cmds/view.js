@@ -5,7 +5,9 @@ import {
   getMerkleDAG,
   stringifyMerkleDAG,
 } from '../../lib/ipfs'
-import listrOpts from '../../helpers/listr-options'
+import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+
+const startIPFS = require('./start')
 
 exports.command = 'view <cid>'
 exports.describe =
@@ -22,6 +24,10 @@ exports.task = ({ apmOptions, silent, debug, cid }) => {
   return new TaskList(
     [
       // TODO validation of the CID
+      {
+        title: 'Check IPFS',
+        task: () => startIPFS.task({ apmOptions }),
+      },
       {
         title: 'Connect to IPFS',
         task: async ctx => {

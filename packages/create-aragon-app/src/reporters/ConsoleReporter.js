@@ -1,49 +1,68 @@
 const chalk = require('chalk')
 const figures = require('figures')
 
+const ICON_MAP = {
+  debug: {
+    color: 'magenta',
+    symbol: 'pointer',
+  },
+  info: {
+    color: 'blue',
+    symbol: 'info',
+  },
+  warning: {
+    color: 'yellow',
+    symbol: 'warning',
+  },
+  error: {
+    color: 'red',
+    symbol: 'cross',
+  },
+  success: {
+    color: 'green',
+    symbol: 'tick',
+  },
+}
+
+const getIcon = name => {
+  const { color, symbol } = ICON_MAP[name]
+  return chalk[color](figures[symbol])
+}
+
 module.exports = class ConsoleReporter {
   constructor(opts = { silent: false }) {
     this.silent = opts.silent
   }
 
-  message(category = 'info', message) {
+  message(category = 'info', ...messages) {
     if (this.silent) return
 
-    const color = {
-      debug: 'magenta',
-      info: 'blue',
-      warning: 'yellow',
-      error: 'red',
-      success: 'green',
-    }[category]
-    const symbol = {
-      debug: figures.pointer,
-      info: figures.info,
-      warning: figures.warning,
-      error: figures.cross,
-      success: figures.tick,
-    }[category]
-    const icon = chalk[color](symbol)
-    console.log(` ${icon} ${message}`)
+    const icon = getIcon(category)
+
+    console.log(icon, ...messages)
   }
 
-  debug(message) {
-    if (global.DEBUG_MODE) this.message('debug', message)
+  debug(...messages) {
+    if (global.DEBUG_MODE) this.message('debug', ...messages)
   }
 
-  info(message) {
-    this.message('info', message)
+  info(...messages) {
+    this.message('info', ...messages)
   }
 
-  warning(message) {
-    this.message('warning', message)
+  warning(...messages) {
+    this.message('warning', ...messages)
   }
 
-  error(message) {
-    this.message('error', message)
+  error(...messages) {
+    this.message('error', ...messages)
   }
 
-  success(message) {
-    this.message('success', message)
+  success(...messages) {
+    this.message('success', ...messages)
+  }
+
+  newLine() {
+    console.log()
   }
 }

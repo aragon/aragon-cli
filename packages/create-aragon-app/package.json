@@ -1,6 +1,6 @@
 {
   "name": "create-aragon-app",
-  "version": "2.2.6",
+  "version": "2.2.14",
   "description": "Aragon command-line tool to create aragon apps",
   "main": "dist/cli.js",
   "bin": {
@@ -13,9 +13,9 @@
     "build": "babel src --out-dir dist --source-maps",
     "build:watch": "npm run build -- --watch",
     "lint": "eslint src test && documentation lint src",
-    "test": "nyc ava",
+    "test": "ava",
     "test:watch": "ava --watch",
-    "test:coverage:ci": "nyc --all --reporter=lcovonly ava"
+    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly --exclude 'config/**' --exclude '**/*.test.js' npm run test"
   },
   "repository": {
     "type": "git",
@@ -36,7 +36,6 @@
   },
   "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
-    "@babel/polyfill": "^7.0.0",
     "chalk": "^2.1.0",
     "execa": "^1.0.0",
     "figures": "^3.0.0",
@@ -58,9 +57,10 @@
     "@babel/register": "^7.0.0",
     "ava": "^2.0.0",
     "babel-eslint": "^10.0.1",
-    "documentation": "^11.0.0",
-    "eslint": "^5.9.0",
-    "eslint-config-prettier": "^4.1.0",
+    "core-js": "^3.1.4",
+    "documentation": "^12.0.0",
+    "eslint": "^6.0.1",
+    "eslint-config-prettier": "^6.0.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-ava": "^7.0.0",
     "eslint-plugin-import": "^2.14.0",
@@ -68,17 +68,19 @@
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
-    "husky": "^2.3.0",
-    "lint-staged": "^8.1.1",
+    "husky": "^3.0.0",
+    "lint-staged": "^9.1.0",
     "nyc": "^14.1.1",
-    "prettier": "^1.15.3"
+    "prettier": "^1.15.3",
+    "regenerator-runtime": "^0.13.3"
   },
   "engines": {
     "node": ">=8.0.0"
   },
   "ava": {
     "require": [
-      "@babel/polyfill",
+      "core-js",
+      "regenerator-runtime",
       "@babel/register"
     ],
     "files": [
@@ -92,12 +94,10 @@
     }
   },
   "lint-staged": {
-    "linters": {
-      "*.js": [
-        "eslint --fix",
-        "documentation lint",
-        "git add"
-      ]
-    }
+    "*.js": [
+      "eslint --fix",
+      "documentation lint",
+      "git add"
+    ]
   }
 }

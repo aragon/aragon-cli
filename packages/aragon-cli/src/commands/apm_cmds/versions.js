@@ -1,6 +1,7 @@
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const APM = require('@aragon/apm')
-const defaultAPMName = require('../../helpers/default-apm')
+const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
+const chalk = require('chalk')
 
 exports.command = 'versions [apmRepo]'
 
@@ -28,20 +29,30 @@ exports.handler = async function({
 
   const versions = await APM(web3, apmOptions).getAllVersions(repoName)
 
-  reporter.info(`${repoName} has ${versions.length} published versions`)
+  reporter.info(
+    `${chalk.blue(repoName)} has ${chalk.green(
+      versions.length
+    )} published versions`
+  )
 
   versions.map(version => {
     if (version && version.content) {
       reporter.success(
-        `${version.version}: ${version.contractAddress} ${version.content.provider}:${version.content.location}`
+        `${chalk.blue(version.version)}: ${version.contractAddress} ${
+          version.content.provider
+        }:${version.content.location}`
       )
     } else if (version && version.error) {
       reporter.warning(
-        `${version.version}: ${version.contractAddress} ${version.error}`
+        `${chalk.blue(version.version)}: ${version.contractAddress} ${
+          version.error
+        }`
       )
     } else {
       reporter.error(
-        `${version.version}: ${version.contractAddress} Version not found in provider`
+        `${chalk.blue(version.version)}: ${
+          version.contractAddress
+        } Version not found in provider`
       )
     }
   })

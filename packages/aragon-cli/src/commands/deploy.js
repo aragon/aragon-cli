@@ -6,7 +6,6 @@ const { compileContracts } = require('../helpers/truffle-runner')
 const { findProjectRoot } = require('../util')
 const { ensureWeb3 } = require('../helpers/web3-fallback')
 const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
-const DEFAULT_GAS_PRICE = require('../../package.json').aragon.defaultGasPrice
 const listrOpts = require('../helpers/listr-options')
 const { getRecommendedGasLimit, expandLink } = require('../util')
 
@@ -39,6 +38,7 @@ exports.task = async ({
   module,
   reporter,
   network,
+  gasPrice,
   cwd,
   contract,
   init,
@@ -123,7 +123,7 @@ exports.task = async ({
 
           const args = {
             from: accounts[0],
-            gasPrice: network.gasPrice || DEFAULT_GAS_PRICE,
+            gasPrice: network.gasPrice || gasPrice,
             gas,
           }
 
@@ -160,6 +160,7 @@ exports.task = async ({
 exports.handler = async ({
   module,
   reporter,
+  gasPrice,
   network,
   cwd,
   contract,
@@ -171,6 +172,7 @@ exports.handler = async ({
   const task = await exports.task({
     module,
     reporter,
+    gasPrice,
     network,
     cwd,
     contract,
@@ -182,9 +184,13 @@ exports.handler = async ({
   const ctx = await task.run()
 
   reporter.success(
-    `Successfully deployed ${ctx.contractName} at: ${chalk.bold(ctx.contract)}`
+    `Successfully deployed ${chalk.blue(ctx.contractName)} at: ${chalk.green(
+      ctx.contract
+    )}`
   )
-  reporter.info(`Transaction hash: ${ctx.deployArtifacts.transactionHash}`)
+  reporter.info(
+    `Transaction hash: ${chalk.blue(ctx.deployArtifacts.transactionHash)}`
+  )
 
   process.exit()
 }

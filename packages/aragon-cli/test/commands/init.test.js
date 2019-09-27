@@ -2,8 +2,9 @@ import test from 'ava'
 import fs from 'fs-extra'
 
 import { checkProjectExists, prepareTemplate } from '../../src/lib/init'
+import { isValidAragonId } from '../../src/util'
 
-import defaultAPMName from '../../src/helpers/default-apm'
+import defaultAPMName from '@aragon/cli-utils/src/helpers/default-apm'
 
 const projectPath = './.tmp/aragon-app'
 
@@ -15,7 +16,7 @@ test.afterEach(t => {
   fs.removeSync(projectPath)
 })
 
-test('check if project folder already exists', async t => {
+test.serial('check if project folder already exists', async t => {
   try {
     await checkProjectExists(projectPath)
     t.fail()
@@ -24,7 +25,16 @@ test('check if project folder already exists', async t => {
   }
 })
 
-test('prepare project template', async t => {
+test('project name validation', t => {
+  t.is(isValidAragonId('testproject'), true)
+  t.is(isValidAragonId('project2'), true)
+  t.is(isValidAragonId('test-project'), true)
+
+  t.is(isValidAragonId('testProject'), false)
+  t.is(isValidAragonId('test_project'), false)
+})
+
+test.serial('prepare project template', async t => {
   const repoPath = `${projectPath}/.git`
   const arappPath = `${projectPath}/arapp.json`
   const packageJsonPath = `${projectPath}/package.json`

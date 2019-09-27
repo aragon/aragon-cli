@@ -21,19 +21,19 @@ test.afterEach.always(() => {
   sinon.restore()
 })
 
-test('getDependentBinary should find the binary path from the local node_modules', t => {
+test('getLocalBinary should find the binary path from the local node_modules', t => {
   t.plan(1)
   const { util, fsStub } = t.context
 
   // arrange
   fsStub.existsSync.returns(true)
   // act
-  const path = util.getDependentBinary('truff', 'project_root')
+  const path = util.getLocalBinary('truff', 'project_root')
   // assert
   t.is(normalizePath(path), 'project_root/node_modules/.bin/truff')
 })
 
-test('getDependentBinary should find the binary path from the parent node_modules', t => {
+test('getLocalBinary should find the binary path from the parent node_modules', t => {
   t.plan(1)
   const { util, fsStub } = t.context
 
@@ -41,15 +41,12 @@ test('getDependentBinary should find the binary path from the parent node_module
   fsStub.existsSync.onCall(0).returns(false)
   fsStub.existsSync.onCall(1).returns(true)
   // act
-  const path = util.getDependentBinary(
-    'truff',
-    'parent/node_modules/project_root'
-  )
+  const path = util.getLocalBinary('truff', 'parent/node_modules/project_root')
   // assert
   t.is(normalizePath(path), 'parent/node_modules/.bin/truff')
 })
 
-test("getDependentBinary should find the binary path from the parent node_modules even when it's scoped", t => {
+test("getLocalBinary should find the binary path from the parent node_modules even when it's scoped", t => {
   t.plan(1)
   const { util, fsStub } = t.context
 
@@ -58,7 +55,7 @@ test("getDependentBinary should find the binary path from the parent node_module
   fsStub.existsSync.onCall(1).returns(false)
   fsStub.existsSync.onCall(2).returns(true)
   // act
-  const path = util.getDependentBinary(
+  const path = util.getLocalBinary(
     'truff',
     'parent/node_modules/@scope/project_root'
   )

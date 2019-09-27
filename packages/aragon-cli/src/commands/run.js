@@ -2,8 +2,7 @@ const TaskList = require('listr')
 const Web3 = require('web3')
 const chalk = require('chalk')
 const path = require('path')
-const publish = require('./apm_cmds/publish')
-const devchain = require('./devchain')
+const devchain = require('./devchain_cmds/start')
 const start = require('./start')
 const deploy = require('./deploy')
 const newDAO = require('./dao_cmds/new')
@@ -11,15 +10,25 @@ const startIPFS = require('./ipfs_cmds/start')
 const encodeInitPayload = require('./dao_cmds/utils/encodeInitPayload')
 const fs = require('fs-extra')
 const pkg = require('../../package.json')
-const listrOpts = require('../helpers/listr-options')
+const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
+const APM = require('@aragon/apm')
+const getRepoTask = require('./dao_cmds/utils/getRepoTask')
 
-const { findProjectRoot, isPortTaken } = require('../util')
+const {
+  runSetupTask,
+  runPrepareForPublishTask,
+  runPublishTask,
+} = require('./apm_cmds/publish')
+const {
+  findProjectRoot,
+  isPortTaken,
+  parseArgumentStringIfPossible,
+} = require('../util')
 
 const url = require('url')
 
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
-// TODO: gasPrice parameter (?)
 
 exports.command = 'run'
 
@@ -42,6 +51,12 @@ exports.builder = function(yargs) {
       description: 'Port to start devchain at',
       default: '8545',
     })
+    .option('network-id', {
+      description: 'Network id to connect with',
+    })
+    .option('block-time', {
+      description: 'Specify blockTime in seconds for automatic mining',
+    })
     .option('accounts', {
       default: 2,
       description: 'Number of accounts to print',
@@ -59,7 +74,8 @@ exports.builder = function(yargs) {
       array: true,
     })
     .option('kit-deploy-event', {
-      description: '(deprecated) Arguments to be passed to the kit constructor',
+      description:
+        '(deprecated) Event name that the template will fire on success',
     })
     .option('template', {
       default: newDAO.BARE_TEMPLATE,
@@ -71,12 +87,52 @@ exports.builder = function(yargs) {
       default: [],
     })
     .option('template-deploy-event', {
-      description: 'Arguments to be passed to the template constructor',
+      description: 'Event name that the template will fire on success',
       default: newDAO.BARE_TEMPLATE_DEPLOY_EVENT,
+    })
+    .option('template-new-instance', {
+      description: 'Function to be called to create template instance',
+      default: newDAO.BARE_INSTANCE_FUNCTION,
+    })
+    .option('template-args', {
+      description:
+        'Arguments to be passed to the function specified in --template-new-instance',
+      array: true,
+      default: [],
+      coerce: args => {
+        return args.map(parseArgumentStringIfPossible)
+      },
+    })
+    .option('build', {
+      description:
+        'Whether publish should try to build the app before publishing, running the script specified in --build-script',
+      default: true,
+      boolean: true,
     })
     .option('build-script', {
       description: 'The npm script that will be run when building the app',
       default: 'build',
+    })
+    .option('publish-dir', {
+      description:
+        'Temporary directory where files will be copied before publishing. Defaults to temp dir.',
+      default: null,
+    })
+    .option('prepublish', {
+      description:
+        'Whether publish should run prepublish script specified in --prepublish-script before publishing',
+      default: true,
+      boolean: true,
+    })
+    .option('prepublish-script', {
+      description: 'The npm script that will be run before publishing the app',
+      default: 'prepublishOnly',
+    })
+    .option('bump', {
+      description:
+        'Type of bump (major, minor or patch) or version number to publish the app',
+      type: 'string',
+      default: 'major',
     })
     .option('http', {
       description: 'URL for where your app is served from e.g. localhost:1234',
@@ -114,6 +170,7 @@ exports.builder = function(yargs) {
 exports.handler = function({
   // Globals
   reporter,
+  gasPrice,
   cwd,
   apm: apmOptions,
   silent,
@@ -123,6 +180,8 @@ exports.handler = function({
   client,
   files,
   port,
+  networkId,
+  blockTime,
   accounts,
   reset,
   kit,
@@ -131,7 +190,14 @@ exports.handler = function({
   template,
   templateInit,
   templateDeployEvent,
+  templateNewInstance,
+  templateArgs,
+  build,
   buildScript,
+  publishDir,
+  prepublish,
+  prepublishScript,
+  bump,
   http,
   httpServedFrom,
   appInit,
@@ -163,7 +229,8 @@ exports.handler = function({
             return 'Connected to the provided Ethereum network'
           }
         },
-        task: async (ctx, task) => devchain.task({ port, reset, showAccounts }),
+        task: async (ctx, task) =>
+          devchain.task({ port, networkId, blockTime, reset, showAccounts }),
       },
       {
         title: 'Check IPFS',
@@ -171,26 +238,71 @@ exports.handler = function({
         enabled: () => !http || template,
       },
       {
-        title: 'Publish app to aragonPM',
+        title: 'Setup before publish',
         task: async ctx => {
-          const publishParams = {
+          ctx.publishParams = {
             provider: 'ipfs',
             files,
             ignore: ['node_modules'],
             reporter,
+            gasPrice,
             cwd,
             network,
             module,
             buildScript,
-            build: true,
+            build,
+            publishDir,
+            prepublishScript,
+            prepublish,
             contract: deploy.arappContract(),
             web3: ctx.web3,
             apm: apmOptions,
-            bump: 'major',
+            bump,
             http,
             httpServedFrom,
           }
-          return publish.task(publishParams)
+
+          return runSetupTask(ctx.publishParams)
+        },
+      },
+      {
+        title: 'Prepare for publish',
+        task: async ctx => {
+          return runPrepareForPublishTask({
+            ...ctx.publishParams,
+            // context
+            initialRepo: ctx.initialRepo,
+            initialVersion: ctx.initialVersion,
+            version: ctx.version,
+            contractAddress: ctx.contract,
+            deployArtifacts: ctx.deployArtifacts,
+          })
+        },
+      },
+      {
+        title: 'Publish app to aragonPM',
+        task: async ctx => {
+          const { dao, proxyAddress, methodName, params } = ctx.intent
+
+          return runPublishTask({
+            ...ctx.publishParams,
+            // context
+            dao,
+            proxyAddress,
+            methodName,
+            params,
+          })
+        },
+      },
+      {
+        title: 'Fetch published repo',
+        task: async ctx => {
+          // getRepoTask.task() return a function with ctx argument
+          await getRepoTask.task({
+            apmRepo: module.appName,
+            apm: APM(ctx.web3, apmOptions),
+            artifactRequired: false,
+          })(ctx)
         },
       },
       {
@@ -202,6 +314,7 @@ exports.handler = function({
             contract: template,
             init: templateInit,
             reporter,
+            gasPrice,
             network,
             cwd,
             web3: ctx.web3,
@@ -220,8 +333,8 @@ exports.handler = function({
           let fnArgs
 
           if (ctx.contractInstance) {
-            // If no template was deployed, use default params
-            fnArgs = []
+            // If template was deployed, use template args
+            fnArgs = templateArgs
           } else {
             // TODO: Report warning when app wasn't initialized
             const initPayload = encodeInitPayload(
@@ -242,9 +355,10 @@ exports.handler = function({
             template,
             templateVersion: 'latest',
             templateInstance: ctx.contractInstance,
-            fn: 'newInstance',
+            fn: templateNewInstance,
             fnArgs,
             deployEvent: templateDeployEvent,
+            gasPrice,
             web3: ctx.web3,
             reporter,
             apmOptions,
@@ -272,7 +386,9 @@ exports.handler = function({
   return tasks.run({ ens: apmOptions['ens-registry'] }).then(async ctx => {
     if (ctx.portOpen) {
       reporter.warning(
-        `Server already listening at port ${clientPort}, skipped starting Aragon`
+        `Server already listening at port ${chalk.blue(
+          clientPort
+        )}, skipped starting Aragon`
       )
     }
 
@@ -282,7 +398,17 @@ exports.handler = function({
       )
     }
 
+    if (files.length === 1 && path.normalize(files[0]) === '.') {
+      reporter.warning(
+        `Publishing files from the project's root folder is not recommended. Consider using the distribution folder of your project: "--files <folder>".`
+      )
+    }
+
+    reporter.newLine()
+
     reporter.info(`You are now ready to open your app in Aragon.`)
+
+    reporter.newLine()
 
     if (ctx.privateKeys) {
       devchain.printAccounts(reporter, ctx.privateKeys)
@@ -299,18 +425,25 @@ exports.handler = function({
       .slice(1)
       .join('.')
 
-    console.log()
     reporter.info(`This is the configuration for your development deployment:
-    ${chalk.bold('Ethereum Node')}: ${network.provider.connection._url}
-    ${chalk.bold('ENS registry')}: ${ctx.ens}
-    ${chalk.bold(`aragonPM registry`)}: ${registry}
-    ${chalk.bold('DAO address')}: ${ctx.daoAddress}
+    ${'Ethereum Node'}: ${chalk.blue(network.provider.connection._url)}
+    ${'ENS registry'}: ${chalk.blue(ctx.ens)}
+    ${`aragonPM registry`}: ${chalk.blue(registry)}
+    ${'DAO address'}: ${chalk.green(ctx.daoAddress)}`)
 
-    ${
-      client !== false
-        ? `Opening http://localhost:${clientPort}/#/${ctx.daoAddress} to view your DAO`
-        : `Use "aragon dao <command> ${ctx.daoAddress}" to interact with your DAO`
-    }`)
+    reporter.newLine()
+
+    reporter.info(
+      `${
+        client !== false
+          ? `Opening ${chalk.bold(
+              `http://localhost:${clientPort}/#/${ctx.daoAddress}`
+            )} to view your DAO`
+          : `Use ${chalk.bold(
+              `"aragon dao <command> ${ctx.daoAddress}"`
+            )} to interact with your DAO`
+      }`
+    )
 
     if (!manifest) {
       reporter.warning('No front-end detected (no manifest.json)')

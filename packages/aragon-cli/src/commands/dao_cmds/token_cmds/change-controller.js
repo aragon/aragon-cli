@@ -1,7 +1,7 @@
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 const { getContract } = require('../../../util')
-const listrOpts = require('../../../helpers/listr-options')
+const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const chalk = require('chalk')
 const { getRecommendedGasLimit } = require('../../../util')
 
@@ -19,7 +19,14 @@ exports.builder = yargs => {
     })
 }
 
-exports.task = async ({ web3, tokenAddress, newController, silent, debug }) => {
+exports.task = async ({
+  web3,
+  gasPrice,
+  tokenAddress,
+  newController,
+  silent,
+  debug,
+}) => {
   // Decode sender
   const accounts = await web3.eth.getAccounts()
   const from = accounts[0]
@@ -42,7 +49,7 @@ exports.task = async ({ web3, tokenAddress, newController, silent, debug }) => {
             await tx.estimateGas({ from })
           )
 
-          const sendPromise = tx.send({ from, gas })
+          const sendPromise = tx.send({ from, gas, gasPrice })
           sendPromise
             .on('transactionHash', transactionHash => {
               ctx.txHash = transactionHash
@@ -62,6 +69,7 @@ exports.task = async ({ web3, tokenAddress, newController, silent, debug }) => {
 
 exports.handler = async function({
   reporter,
+  gasPrice,
   network,
   tokenAddress,
   newController,
@@ -72,6 +80,7 @@ exports.handler = async function({
 
   const task = await exports.task({
     web3,
+    gasPrice,
     reporter,
     tokenAddress,
     newController,
@@ -80,9 +89,11 @@ exports.handler = async function({
   })
   return task.run().then(ctx => {
     reporter.success(
-      `Successfully changed the controller of ${tokenAddress} to ${newController}`
+      `Successfully changed the controller of ${chalk.green(
+        tokenAddress
+      )} to ${chalk.green(newController)}`
     )
-    reporter.info(`Transaction hash: ${chalk.bold(ctx.txHash)}`)
+    reporter.info(`Transaction hash: ${chalk.blue(ctx.txHash)}`)
 
     process.exit()
   })

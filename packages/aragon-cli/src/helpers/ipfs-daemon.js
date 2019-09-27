@@ -3,11 +3,17 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 const ipfsAPI = require('ipfs-api')
-const { getDependentBinary, isPortTaken } = require('../util')
+const { getBinary, isPortTaken } = require('../util')
 
-const ipfsBin = getDependentBinary('ipfs')
+const ipfsBin = getBinary('ipfs')
 
 const ensureIPFSInitialized = async () => {
+  if (!ipfsBin) {
+    throw new Error(
+      'IPFS is not installed. Use `aragon ipfs install` before proceeding.'
+    )
+  }
+
   if (!fs.existsSync(path.join(os.homedir(), '.ipfs'))) {
     // We could use 'ipfs daemon --init' when https://github.com/ipfs/go-ipfs/issues/3913 is solved
     await execa(ipfsBin, ['init'])
@@ -15,6 +21,12 @@ const ensureIPFSInitialized = async () => {
 }
 
 const startIPFSDaemon = () => {
+  if (!ipfsBin) {
+    throw new Error(
+      'IPFS is not installed. Use `aragon ipfs install` before proceeding.'
+    )
+  }
+
   const IPFS_START_TIMEOUT = 20000 // 20s for timeout, may need to be tweaked
 
   let startOutput = ''

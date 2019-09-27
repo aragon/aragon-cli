@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "5.10.0",
+  "version": "6.3.1",
   "description": "Aragon command-line tools",
   "main": "dist/cli.js",
   "bin": {
@@ -8,9 +8,8 @@
     "dao": "./aliases/dao"
   },
   "scripts": {
-    "postinstall": "npm run clean-modules && npm run fix-lockfile",
+    "postinstall": "npm run clean-modules",
     "clean-modules": "del-cli './node_modules/**/.git'",
-    "fix-lockfile": "node scripts/fix-lockfile",
     "prepare": "npm run build",
     "link": "npm link",
     "unlink": "npm unlink",
@@ -19,9 +18,9 @@
     "build": "npm run extract-roles && npm run compile-src",
     "build:watch": "npm run build -- -- --watch",
     "lint": "eslint src test/commands && documentation lint src",
-    "test": "nyc ava",
+    "test": "ava",
     "test:watch": "ava --watch",
-    "test:coverage:ci": "nyc --all --reporter=lcovonly --exclude 'config/**' --exclude '**/*.test.js' ava"
+    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly --exclude 'config/**' --exclude '**/*.test.js' npm run test"
   },
   "repository": {
     "type": "git",
@@ -46,35 +45,38 @@
   "dependencies": {
     "@aragon/apm": "^3.1.0",
     "@aragon/apps-shared-minime": "^1.0.1",
-    "@aragon/aragen": "^4.0.0",
+    "@aragon/aragen": "^5.0.0",
+    "@aragon/cli-utils": "^0.0.8",
+    "@aragon/id": "^2.1.0",
     "@aragon/os": "^4.0.0",
     "@aragon/wrapper": "5.0.0-rc.9",
-    "@babel/polyfill": "^7.0.0",
     "ajv": "^6.6.2",
     "byte-size": "^5.0.1",
     "chalk": "^2.1.0",
     "cli-table": "^0.3.1",
-    "colors": "^1.2.4",
+    "del-cli": "^2.0.0",
     "dev-null": "^0.1.1",
     "eth-ens-namehash": "^2.0.8",
+    "ethereum-ens": "^0.7.7",
     "execa": "^1.0.0",
     "find-up": "^4.0.0",
     "fs-extra": "^8.0.1",
+    "get-folder-size": "^2.0.1",
     "git-clone": "^0.1.0",
-    "go-ipfs": "0.4.18-hacky2",
+    "go-platform": "^1.0.0",
+    "http-server": "^0.11.1",
     "ignore": "^4.0.6",
+    "inquirer": "^6.4.1",
+    "internal-ip": "^4.3.0",
     "ipfs-api": "^26.1.2",
-    "ipfs-http-client": "^32.0.1",
+    "ipfs-http-client": "^33.0.1",
     "js-sha3": "^0.8.0",
     "listr": "^0.14.3",
     "listr-input": "0.1.3",
-    "listr-silent-renderer": "^1.1.1",
-    "listr-update-renderer": "^0.5.0",
-    "listr-verbose-renderer": "^0.5.0",
     "lodash.merge": "^4.6.1",
-    "mkdirp": "^0.5.1",
     "node-fetch": "^2.3.0",
-    "opn": "^6.0.0",
+    "open": "^6.0.0",
+    "public-ip": "^3.1.0",
     "replace": "^1.1.0",
     "semver": "^6.1.1",
     "source-map-support": "^0.5.11",
@@ -84,14 +86,20 @@
     "truffle-flattener": "^1.2.9",
     "truffle-hdwallet-provider": "^1.0.2",
     "truffle-hdwallet-provider-privkey": "^0.3.0",
-    "web3": "1.0.0-beta.35",
+    "web3": "^1.2.0",
+    "web3-eth-abi": "^1.2.0",
+    "web3-utils": "^1.2.0",
+    "which": "^1.3.1",
     "yargs": "^13.2.4"
   },
   "devDependencies": {
+    "@aragon/apps-agent": "^1.1.1",
     "@aragon/apps-finance": "^3.0.0",
     "@aragon/apps-token-manager": "^2.0.0",
     "@aragon/apps-vault": "^4.0.0",
     "@aragon/apps-voting": "^2.0.0",
+    "@aragon/apps-payroll": "1.0.0-rc.1",
+    "@aragon/apps-survey": "^1.0.0",
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
     "@babel/node": "^7.0.0",
@@ -100,10 +108,10 @@
     "@babel/register": "^7.0.0",
     "ava": "^2.1.0",
     "babel-eslint": "^10.0.1",
-    "del-cli": "^2.0.0",
-    "documentation": "^11.0.0",
-    "eslint": "^5.9.0",
-    "eslint-config-prettier": "^5.0.0",
+    "core-js": "^3.1.4",
+    "documentation": "^12.0.0",
+    "eslint": "^6.0.1",
+    "eslint-config-prettier": "^6.0.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-ava": "^7.1.0",
     "eslint-plugin-import": "^2.14.0",
@@ -111,11 +119,12 @@
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
-    "husky": "^2.3.0",
-    "lint-staged": "^8.1.1",
+    "husky": "^3.0.0",
+    "lint-staged": "^9.1.0",
     "nyc": "^14.1.1",
     "prettier": "^1.15.3",
     "proxyquire": "^2.1.0",
+    "regenerator-runtime": "^0.13.3",
     "sinon": "^7.3.1"
   },
   "engines": {
@@ -123,7 +132,8 @@
   },
   "ava": {
     "require": [
-      "@babel/polyfill",
+      "core-js",
+      "regenerator-runtime",
       "@babel/register"
     ],
     "files": [
@@ -131,9 +141,9 @@
     ]
   },
   "aragon": {
-    "clientVersion": "c49ed53337c0bd254897d3e2b7c52275ef3e822d",
+    "clientVersion": "d8066daad8bf3be6a83f7ee374032995ebd994cf",
     "clientPort": "3000",
-    "defaultGasPrice": "10000000000",
+    "defaultGasPrice": "2",
     "defaultIpfsTimeout": "300000"
   },
   "husky": {
@@ -143,12 +153,10 @@
     }
   },
   "lint-staged": {
-    "linters": {
-      "*.js": [
-        "eslint --fix",
-        "documentation lint",
-        "git add"
-      ]
-    }
+    "*.js": [
+      "eslint --fix",
+      "documentation lint",
+      "git add"
+    ]
   }
 }

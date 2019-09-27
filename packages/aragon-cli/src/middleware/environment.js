@@ -3,7 +3,10 @@ const merge = require('lodash.merge')
 const { getTruffleConfig } = require('../helpers/truffle-config')
 
 const FRAME_ENDPOINT = 'ws://localhost:1248'
-const FRAME_ORIGIN = 'AragonCLI'
+const FRAME_ORIGIN = 'aragonCLI'
+
+const ARAGON_RINKEBY_ENDPOINT = 'wss://rinkeby.eth.aragon.network/ws'
+const ARAGON_MAINNET_ENDPOINT = 'wss://mainnet.eth.aragon.network/ws'
 
 const configureNetwork = (
   argv,
@@ -141,6 +144,15 @@ module.exports = function environmentMiddleware(argv) {
 
     if (env.wsRPC) {
       response.wsProvider = new Web3.providers.WebsocketProvider(env.wsRPC)
+    } else {
+      if (env.network === 'rinkeby')
+        response.wsProvider = new Web3.providers.WebsocketProvider(
+          ARAGON_RINKEBY_ENDPOINT
+        )
+      if (env.network === 'mainnet')
+        response.wsProvider = new Web3.providers.WebsocketProvider(
+          ARAGON_MAINNET_ENDPOINT
+        )
     }
 
     return response

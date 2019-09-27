@@ -1,6 +1,7 @@
 const APM = require('@aragon/apm')
 const ACL = require('../../acl')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const chalk = require('chalk')
 
 exports.command = 'grant [grantees..]'
 exports.describe =
@@ -18,6 +19,7 @@ exports.builder = function(yargs) {
 exports.handler = async function({
   // Globals
   reporter,
+  gasPrice,
   cwd,
   network,
   module,
@@ -42,9 +44,12 @@ exports.handler = async function({
     reporter.warning('No grantee addresses provided')
   }
 
+  /* eslint-disable-next-line */
   for (const address of grantees) {
     reporter.info(
-      `Granting permission to publish on ${module.appName} for ${address}`
+      `Granting permission to publish on ${chalk.blue(
+        module.appName
+      )} for ${chalk.green(address)}`
     )
 
     // Decode sender
@@ -54,17 +59,17 @@ exports.handler = async function({
     // Build transaction
     const transaction = await acl.grant(repo.options.address, address)
 
-    const DEFAULT_GAS_PRICE = require('../../../package.json').aragon
-      .defaultGasPrice
     transaction.from = from
-    transaction.gasPrice = network.gasPrice || DEFAULT_GAS_PRICE
+    transaction.gasPrice = network.gasPrice || gasPrice
     // the recommended gasLimit is already calculated by the ACL module
 
     try {
       const receipt = await web3.eth.sendTransaction(transaction)
-      reporter.success(`Successful transaction (${receipt.transactionHash})`)
+      reporter.success(
+        `Successful transaction (${chalk.blue(receipt.transactionHash)})`
+      )
     } catch (e) {
-      reporter.error(`${e}\nTransaction failed`)
+      reporter.error(`${e}\n${chalk.red('Transaction failed')}`)
       process.exit(1)
     }
   }

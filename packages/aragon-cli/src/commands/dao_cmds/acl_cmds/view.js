@@ -5,17 +5,15 @@ const daoArg = require('../utils/daoArg')
 const { listApps } = require('../utils/knownApps')
 const { rolesForApps } = require('./utils/knownRoles')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
-const listrOpts = require('../../../helpers/listr-options')
+const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 const Table = require('cli-table')
 
 const knownRoles = rolesForApps()
 const ANY_ENTITY = '0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF'
 const ANY_ENTITY_TEXT = 'Any entity'
-const { NO_MANAGER } = require('../../../util')
+const { NO_MANAGER, ZERO_ADDRESS } = require('../../../util')
 const NO_MANAGER_TEXT = 'No Manager'
-
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 let knownApps
 
@@ -128,7 +126,9 @@ exports.handler = async function({
   )
 
   return tasks.run().then(ctx => {
-    reporter.success(`Successfully fetched DAO apps for ${ctx.daoAddress}`)
+    reporter.success(
+      `Successfully fetched DAO apps for ${chalk.green(ctx.daoAddress)}`
+    )
 
     let acl = ctx.acl
 

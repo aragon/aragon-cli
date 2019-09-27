@@ -1,10 +1,10 @@
+const ABI = require('web3-eth-abi')
 const execHandler = require('./utils/execHandler').handler
 const getAppKernel = require('./utils/app-kernel')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const ABI = require('web3-eth-abi')
+const { parseArgumentStringIfPossible, ZERO_ADDRESS } = require('../../util')
 
 const EXECUTE_FUNCTION_NAME = 'execute'
-const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
 exports.command = 'act <agent-address> <target> <signature> [call-args..]'
 
@@ -21,7 +21,8 @@ exports.builder = function(yargs) {
       type: 'string',
     })
     .positional('signature', {
-      description: 'Function to be executed',
+      description:
+        'Signature of the function to be executed (e.g. "myMethod(uint256,string)"',
       type: 'string',
     })
     .option('call-args', {
@@ -29,7 +30,11 @@ exports.builder = function(yargs) {
       array: true,
       default: [],
     })
-  // TODO: Add an optional argument to provide the eth value for the execution
+    .option('eth-value', {
+      description:
+        'Amount of ETH from the contract that is sent with the action',
+      default: '0',
+    })
 }
 
 const encodeCalldata = (signature, params) => {
@@ -55,23 +60,32 @@ exports.handler = async function({
   target,
   signature,
   callArgs,
+  ethValue,
   wsProvider,
 }) {
+  // TODO (daniel) refactor ConsoleReporter so we can do reporter.debug instead
+  if (global.DEBUG_MODE) console.log('call-args before parsing', callArgs)
+  callArgs = callArgs.map(parseArgumentStringIfPossible)
+  if (global.DEBUG_MODE) console.log('call-args after parsing', callArgs)
+
   const web3 = await ensureWeb3(network)
   const dao = await getAppKernel(web3, agentAddress)
 
-  if (dao === ZERO_ADDR) {
+  if (dao === ZERO_ADDRESS) {
     throw new Error(
       'Invalid Agent app address, cannot find Kernel reference in contract'
     )
   }
 
-  const fnArgs = [target, 0, encodeCalldata(signature, callArgs)]
+  const weiAmount = web3.utils.toWei(ethValue)
+
+  const fnArgs = [target, weiAmount, encodeCalldata(signature, callArgs)]
 
   const getTransactionPath = wrapper =>
     wrapper.getTransactionPath(agentAddress, EXECUTE_FUNCTION_NAME, fnArgs)
 
   return execHandler(dao, getTransactionPath, {
+    ipfsCheck: true,
     reporter,
     apm,
     network,

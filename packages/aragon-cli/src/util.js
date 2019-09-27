@@ -3,10 +3,15 @@ const path = require('path')
 const execa = require('execa')
 const net = require('net')
 const fs = require('fs')
+const { readJson } = require('fs-extra')
+const which = require('which')
 
 let cachedProjectRoot
 
 const PGK_MANAGER_BIN_NPM = 'npm'
+const debugLogger = process.env.DEBUG ? console.log : () => {}
+
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 const findProjectRoot = () => {
   if (!cachedProjectRoot) {
@@ -61,7 +66,29 @@ const installDeps = (cwd, task) => {
   })
 }
 
-const getDependentBinary = (binaryName, projectRoot) => {
+/**
+ * Attempts to find the binary path locally and then globally.
+ *
+ * @param {string} binaryName e.g.: `ipfs`
+ * @returns {string} the path to the binary, `null` if unsuccessful
+ */
+const getBinary = binaryName => {
+  let binaryPath = getLocalBinary(binaryName)
+
+  if (binaryPath === null) {
+    binaryPath = getGlobalBinary(binaryName)
+  }
+
+  if (binaryPath === null) {
+    debugLogger(`Cannot find binary ${binaryName}.`)
+  } else {
+    debugLogger(`Found binary ${binaryName} at ${binaryPath}.`)
+  }
+
+  return binaryPath
+}
+
+const getLocalBinary = (binaryName, projectRoot) => {
   if (!projectRoot) {
     // __dirname evaluates to the directory of this file (util.js)
     // e.g.: `../dist/` or `../src/`
@@ -71,6 +98,7 @@ const getDependentBinary = (binaryName, projectRoot) => {
   // check local node_modules
   let binaryPath = path.join(projectRoot, 'node_modules', '.bin', binaryName)
 
+  debugLogger(`Searching binary ${binaryName} at ${binaryPath}`)
   if (fs.existsSync(binaryPath)) {
     return binaryPath
   }
@@ -78,6 +106,7 @@ const getDependentBinary = (binaryName, projectRoot) => {
   // check parent node_modules
   binaryPath = path.join(projectRoot, '..', '.bin', binaryName)
 
+  debugLogger(`Searching binary ${binaryName} at ${binaryPath}.`)
   if (fs.existsSync(binaryPath)) {
     return binaryPath
   }
@@ -85,13 +114,51 @@ const getDependentBinary = (binaryName, projectRoot) => {
   // check parent node_modules if this module is scoped (e.g.: @scope/package)
   binaryPath = path.join(projectRoot, '..', '..', '.bin', binaryName)
 
+  debugLogger(`Searching binary ${binaryName} at ${binaryPath}.`)
   if (fs.existsSync(binaryPath)) {
     return binaryPath
   }
 
-  throw new Error(
-    `Cannot find the ${binaryName} dependency. Has this module installed correctly?`
-  )
+  return null
+}
+
+const getGlobalBinary = binaryName => {
+  debugLogger(`Searching binary ${binaryName} in the global PATH variable.`)
+
+  try {
+    return which.sync(binaryName)
+  } catch {
+    return null
+  }
+}
+
+// TODO: Add a cwd paramter
+const runScriptTask = async (task, scriptName) => {
+  if (!fs.existsSync('package.json')) {
+    task.skip('No package.json found')
+    return
+  }
+
+  const packageJson = await readJson('package.json')
+  const scripts = packageJson.scripts || {}
+  if (!scripts[scriptName]) {
+    task.skip(`${scriptName} script not defined in package.json`)
+    return
+  }
+
+  const bin = getNodePackageManager()
+  const scriptTask = execa(bin, ['run', scriptName])
+
+  scriptTask.stdout.on('data', log => {
+    if (!log) return
+    task.output = `npm run ${scriptName}: ${log}`
+  })
+
+  return scriptTask.catch(err => {
+    throw new Error(
+      `${err.message}\n${err.stderr}\n\nFailed to build. See above output.`
+    )
+  })
 }
 
 const getContract = (pkg, contract) => {
@@ -140,15 +207,104 @@ const expandLink = link => {
   return link
 }
 
+/**
+ * Parse a String to Boolean, or throw an error.
+ *
+ * The check is **case insensitive**! (Passing `"TRue"` will return `true`)
+ *
+ * @param {string} target must be a string
+ * @returns {boolean} the parsed value
+ */
+const parseAsBoolean = target => {
+  if (typeof target !== 'string') {
+    throw new Error(
+      `Expected ${target} to be of type string, not ${typeof target}`
+    )
+  }
+
+  const lowercase = target.toLowerCase()
+
+  if (lowercase === 'true') {
+    return true
+  }
+
+  if (lowercase === 'false') {
+    return false
+  }
+
+  throw new Error(`Cannot parse ${target} as boolean`)
+}
+
+/**
+ * Parse a String to Array, or throw an error.
+ *
+ * @param {string} target must be a string
+ * @returns {Array} the parsed value
+ */
+const parseAsArray = target => {
+  if (typeof target !== 'string') {
+    throw new Error(
+      `Expected ${target} to be of type string, not ${typeof target}`
+    )
+  }
+
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
+  const json = JSON.parse(target)
+
+  if (Array.isArray(json)) {
+    return json
+  }
+
+  throw new Error(`Cannot parse ${target} as array`)
+}
+
+/**
+ * Parse a String to Boolean or Array, or throw an error.
+ *
+ * @param {string} target must be a string
+ * @returns {boolean|Array} the parsed value
+ */
+const parseArgumentStringIfPossible = target => {
+  // convert to boolean: 'false' to false
+  try {
+    return parseAsBoolean(target)
+  } catch (e) {}
+
+  // convert to array: '["hello", 1, "true"]' to ["hello", 1, "true"]
+  // TODO convert children as well ??
+  try {
+    return parseAsArray(target)
+  } catch (e) {}
+
+  // nothing to parse
+  return target
+}
+
+/**
+ * Validates an Aragon Id
+ * @param {string} aragonId Aragon Id
+ * @returns {boolean} `true` if valid
+ */
+function isValidAragonId(aragonId) {
+  return /^[a-z0-9-]+$/.test(aragonId)
+}
+
 module.exports = {
+  parseArgumentStringIfPossible,
+  debugLogger,
   findProjectRoot,
   isPortTaken,
   installDeps,
+  runScriptTask,
   getNodePackageManager,
-  getDependentBinary,
+  getBinary,
+  getLocalBinary,
+  getGlobalBinary,
   getContract,
+  isValidAragonId,
   ANY_ENTITY,
   NO_MANAGER,
+  ZERO_ADDRESS,
   getRecommendedGasLimit,
   expandLink,
 }

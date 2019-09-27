@@ -1,16 +1,24 @@
 import initAragonJS from './aragonjs-wrapper'
+const chalk = require('chalk')
+const startIPFS = require('../../ipfs_cmds/start')
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
-const listrOpts = require('../../../helpers/listr-options')
+const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 exports.task = async function(
   dao,
   getTransactionPath,
-  { reporter, apm, web3, wsProvider, silent, debug }
+  { ipfsCheck, reporter, apm, web3, wsProvider, gasPrice, silent, debug }
 ) {
   const accounts = await web3.eth.getAccounts()
   return new TaskList(
     [
+      {
+        // IPFS is a dependency of getRepoTask which uses IPFS to fetch the contract ABI
+        title: 'Check IPFS',
+        task: () => startIPFS.task({ apmOptions: apm }),
+        enabled: () => ipfsCheck,
+      },
       {
         title: 'Generating transaction',
         task: async (ctx, task) => {
@@ -20,7 +28,7 @@ exports.task = async function(
             let wrapper, appsLoaded
 
             const tryFindTransactionPath = async () => {
-              if (appsLoaded && wrapper) {
+              if (appsLoaded && wrapper && !ctx.transactionPath) {
                 try {
                   ctx.transactionPath = await getTransactionPath(wrapper)
                   resolve()
@@ -31,6 +39,8 @@ exports.task = async function(
             }
 
             initAragonJS(dao, apm['ens-registry'], {
+              ipfsConf: apm.ipfs,
+              gasPrice,
               provider: wsProvider || web3.currentProvider,
               accounts,
               onApps: async apps => {
@@ -80,7 +90,9 @@ exports.handler = async function(dao, getTransactionPath, args) {
 
   return tasks.run().then(ctx => {
     args.reporter.success(
-      `Successfully executed: "${ctx.transactionPath[0].description}"`
+      `Successfully executed: "${chalk.blue(
+        ctx.transactionPath[0].description
+      )}"`
     )
     process.exit()
   })

@@ -1,11 +1,39 @@
 # Dependencies
 
-## Greenkeeper
+## Dependabot
 
-We have setup [greenkeeper][greenkeeper-home] to take care of updating dependencies to their latest
+We have setup [dependabot][dependabot-home] to take care of updating dependencies to their latest
 versions.
 
-The configuration file is located at `greenkeeper.json`.
+## Cleaning up git modules
+
+Some packages are installed from git and contain a `.git` folder.
+
+For example:
+
+```sh
+$ find node_modules/ -name '.git'
+node_modules/websocket/.git
+node_modules/ganache-core/node_modules/web3-providers-ws/node_modules/websocket/.git
+node_modules/ganache-core/node_modules/secp256k1/src/secp256k1-src/.git
+node_modules/secp256k1/src/secp256k1-src/.git
+```
+
+These are problematic because when trying to link a package `npm link` throws an error:
+
+```sh
+npm ERR! path ~/repos/aragon-cli/packages/aragon-cli/node_modules/websocket
+npm ERR! code EISGIT
+npm ERR! git ~/repos/aragon-cli/packages/aragon-cli/node_modules/websocket: Appears to be a git repo or submodule.
+npm ERR! git     ~/repos/aragon-cli/packages/aragon-cli/node_modules/websocket
+npm ERR! git Refusing to remove it. Update manually,
+npm ERR! git or move it out of the way first.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /home/daniel/.npm/_logs/2019-07-18T17_15_26_504Z-debug.log
+```
+
+The solution is to run `del-cli './node_modules/**/.git'` on a `postinstall` hook.
 
 ## Lock files
 
@@ -16,32 +44,11 @@ We are using [npm shrinkwrap][shrinkwrap-home] for the reasons described [here][
 Example:
 
 ```sh
-npm run delete-lockfiles
-npm run bootstrap
-npm run bootstrap
-npm run create-lockfiles
-npm run fix-lockfiles
+npm run delete-shrinkwraps
+npm run clean
+npm install # this will call bootstrap too
+npm run create-shrinkwraps
 ```
-
-Why do we run bootstrap twice?
-
-`npm` will actually fix the lockfiles the second time around, e.g.:
-
-```diff
--    "websocket": "websocket@git://github.com/frozeman/WebSocket-Node.git#6c72925e3f8aaaea8dc8450f97627e85263999f2"
-+    "websocket": "git://github.com/frozeman/WebSocket-Node.git#browserifyCompatible"
-```
-
-Why do we need the `fix-lockfile` script?
-
-Some packages like `async-eventemitter` are still getting messed up by `npm`, e.g.:
-
-```diff
--    "from": "async-eventemitter@github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c"
-+    "resolved": "github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c",
-```
-
-(Green is how they should look like)
 
 ## Out of date dependencies
 
@@ -120,7 +127,7 @@ npm install --save ignore@latest
 Note: sometimes you need to [regenerate the lockfiles](#regenerate-the-lockfiles) when you install
 a new package, because the automatic updates prove very unreliable.
 
-[greenkeeper-home]: https://greenkeeper.io
+[dependabot-home]: https://dependabot.com/
 [shrinkwrap-home]: https://docs.npmjs.com/cli/shrinkwrap.html
 [shrinkwrap-issue]: https://github.com/aragon/aragon-cli/issues/477
 [ignore-fail-log]: https://travis-ci.org/aragon/aragon-cli/jobs/536290327#L945

@@ -6,7 +6,10 @@ import {
   extractCIDsFromMerkleDAG,
   propagateFiles,
 } from '../../lib/ipfs'
-import listrOpts from '../../helpers/listr-options'
+import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+
+const chalk = require('chalk')
+const startIPFS = require('./start')
 
 exports.command = 'propagate <cid>'
 exports.describe =
@@ -21,6 +24,10 @@ exports.builder = yargs => {
 exports.task = ({ apmOptions, silent, debug, cid }) => {
   return new TaskList(
     [
+      {
+        title: 'Check IPFS',
+        task: () => startIPFS.task({ apmOptions }),
+      },
       {
         title: 'Connect to IPFS',
         task: async ctx => {
@@ -59,7 +66,6 @@ exports.handler = async function({
   silent,
 }) {
   const task = await exports.task({
-    reporter,
     apmOptions,
     cid,
     debug,
@@ -68,14 +74,22 @@ exports.handler = async function({
 
   const ctx = await task.run()
 
-  reporter.info(
-    `Queried ${ctx.CIDs.length} CIDs at ${ctx.result.gateways.length} gateways`
+  console.log(
+    '\n',
+    `Queried ${chalk.blue(ctx.CIDs.length)} CIDs at ${chalk.blue(
+      ctx.result.gateways.length
+    )} gateways`,
+    '\n',
+    `Requests succeeded: ${chalk.green(ctx.result.succeeded)}`,
+    '\n',
+    `Requests failed: ${chalk.red(ctx.result.failed)}`,
+    '\n'
   )
-  reporter.info(`Requests succeeded: ${ctx.result.succeeded}`)
-  reporter.info(`Requests failed: ${ctx.result.failed}`)
+
   reporter.debug(`Gateways: ${ctx.result.gateways.join(', ')}`)
   reporter.debug(
     `Errors: \n${ctx.result.errors.map(JSON.stringify).join('\n')}`
   )
   // TODO add your own gateways
+  process.exit()
 }

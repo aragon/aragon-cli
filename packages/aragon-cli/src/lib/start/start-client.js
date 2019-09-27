@@ -1,21 +1,22 @@
 import execa from 'execa'
-import { isPortTaken, getNodePackageManager } from '../../util'
+import path from 'path'
+import { isPortTaken, getBinary } from '../../util'
 
 export async function startClient(ctx, clientPort, clientPath) {
   if (await isPortTaken(clientPort)) {
     ctx.portOpen = true
     return
   }
-  const bin = getNodePackageManager()
+  const bin = getBinary('http-server')
+
+  const rootPath = clientPath || ctx.clientPath
+
   const startArguments = {
-    cwd: clientPath || ctx.wrapperPath,
-    env: {
-      REACT_APP_ENS_REGISTRY_ADDRESS: ctx.ens,
-      REACT_APP_PORT: clientPort,
-    },
+    cwd: path.join(rootPath, 'build'),
   }
 
-  execa(bin, ['run', 'start:local'], startArguments).catch(err => {
+  // TODO: Use -o option to open url. Will remove open dependency
+  execa(bin, ['-p', clientPort], startArguments).catch(err => {
     throw new Error(err)
   })
 }

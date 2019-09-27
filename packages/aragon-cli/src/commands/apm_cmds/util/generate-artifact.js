@@ -1,27 +1,54 @@
 const fs = require('fs')
 const path = require('path')
 const { readJson, writeJson } = require('fs-extra')
+const flatten = require('truffle-flattener')
 const extract = require('../../../helpers/solidity-extractor')
 const namehash = require('eth-ens-namehash')
+const taskInput = require('listr-input')
 const { keccak256 } = require('js-sha3')
 
 const { ARTIFACT_FILE } = require('./preprare-files')
 const SOLIDITY_FILE = 'code.sol'
+const ARAPP_FILE = 'arapp.json'
+
+const POSITIVE_ANSWERS = ['yes', 'y']
+const NEGATIVE_ANSWERS = ['no', 'n', 'abort', 'a']
+const ANSWERS = POSITIVE_ANSWERS.concat(NEGATIVE_ANSWERS)
 
 const getMajor = version => version.split('.')[0]
 
+const getRoles = roles =>
+  roles.map(role => Object.assign(role, { bytes: '0x' + keccak256(role.id) }))
+
+async function getEnvironments(cwd) {
+  const arappManifestPath = path.resolve(cwd, ARAPP_FILE)
+  const arappManifestFile = await readJson(arappManifestPath)
+  return arappManifestFile.environments
+}
+
+async function getContractAbi(cwd, contractPath) {
+  const contractInterfacePath = path.resolve(
+    cwd,
+    'build/contracts',
+    path.basename(contractPath, '.sol') + '.json'
+  )
+  const contractInterface = await readJson(contractInterfacePath)
+  return contractInterface.abi
+}
+
 function decorateFunctionsWithAbi(functions, abi, web3) {
+  const abiFunctions = abi.filter(elem => elem.type === 'function')
   functions.forEach(f => {
-    f.abi = abi.find(
-      interfaceObject =>
-        web3.eth.abi.encodeFunctionSignature(interfaceObject) ===
+    f.abi = abiFunctions.find(
+      elem =>
+        web3.eth.abi.encodeFunctionSignature(elem) ===
         web3.eth.abi.encodeFunctionSignature(f.sig)
     )
   })
 }
 
 async function deprecatedFunctions(apm, artifact, web3, reporter) {
-  let deprecated = {}
+  const deprecatedFunctions = {}
   try {
     const deprecatedFunctionsSig = new Set()
     const versions = await apm.getAllVersions(artifact.appName)
@@ -42,22 +69,31 @@ async function deprecatedFunctions(apm, artifact, web3, reporter) {
             }
           })
           if (deprecatedOnVersion.length) {
-            deprecated[`${lastMajor}.0.0`] = deprecatedOnVersion
+            deprecatedFunctions[`${lastMajor}.0.0`] = deprecatedOnVersion
             decorateFunctionsWithAbi(deprecatedOnVersion, version.abi, web3)
             deprecatedOnVersion = []
           }
         } else {
           reporter.warning(
-            `Cannot find artifacts for version ${version.version}  in aragonPM repo. Please make sure the package was published and IPFS or your HTTP server running.`
+            `Cannot find artifacts for version ${version.version} in aragonPM. Please make sure the package was published and your IPFS or HTTP server are running.\n`
           )
-          return deprecated
+          return taskInput(`Abort publication? [y]es/[n]o`, {
+            validate: value => {
+              return ANSWERS.indexOf(value) > -1
+            },
+            done: async answer => {
+              if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
+                throw new Error('Aborting publication...')
+              }
+            },
+          })
         }
       }
     })
-    return deprecated
   } catch (e) {
     // Catch ENS error on first version
   }
+  return deprecatedFunctions
 }
 
 async function generateApplicationArtifact(
@@ -69,30 +105,21 @@ async function generateApplicationArtifact(
   web3,
   reporter
 ) {
+  // Set appName, path & roles
   let artifact = Object.assign({}, module)
-  const contractPath = artifact.path
-  const contractInterfacePath = path.resolve(
-    cwd,
-    'build/contracts',
-    path.basename(contractPath, '.sol') + '.json'
-  )
 
   // Set `appId`
   artifact.appId = namehash.hash(artifact.appName)
 
+  // Set environments
+  artifact.environments = await getEnvironments(cwd)
+
   // Set ABI
-  const contractInterface = await readJson(contractInterfacePath)
-  artifact.abi = contractInterface.abi
+  artifact.abi = await getContractAbi(cwd, artifact.path)
 
   if (deployArtifacts) {
     artifact.deployment = deployArtifacts
-    if (deployArtifacts.flattenedCode) {
-      fs.writeFileSync(
-        path.resolve(outputPath, SOLIDITY_FILE),
-        artifact.deployment.flattenedCode
-      )
-      artifact.deployment.flattenedCode = `./${SOLIDITY_FILE}`
-    }
+    artifact.deployment.flattenedCode = `./${SOLIDITY_FILE}`
   }
 
   // Analyse contract functions and returns an array
@@ -104,13 +131,16 @@ async function generateApplicationArtifact(
 
   // Consult old (major) version's artifacts and return an array
   // of deprecated functions per version
-  // > "deprecated": { "1.0.0": [{}], "2.0.0": [{}] }
-  artifact.deprecated = await deprecatedFunctions(apm, artifact, web3, reporter)
+  // > "deprecatedFunctions": { "1.0.0": [{}], "2.0.0": [{}] }
+  artifact.deprecatedFunctions = await deprecatedFunctions(
+    apm,
+    artifact,
+    web3,
+    reporter
+  )
 
   if (artifact.roles) {
-    artifact.roles = artifact.roles.map(role =>
-      Object.assign(role, { bytes: '0x' + keccak256(role.id) })
-    )
+    getRoles(artifact.roles)
   }
 
   // Save artifact
@@ -121,34 +151,35 @@ async function generateApplicationArtifact(
   return artifact
 }
 
+async function generateFlattenedCode(dir, sourcePath) {
+  const flattenedCode = await flatten([sourcePath])
+  fs.writeFileSync(path.resolve(dir, SOLIDITY_FILE), flattenedCode)
+}
+
 // Sanity check artifact.json
-function sanityCheck(
-  networkName,
-  moduleAppName,
-  moduleRegistry,
-  modulePath,
-  artifact
-) {
-  const { environments, contractPath } = artifact
-  const { appName, registry, network } = environments[0]
+async function sanityCheck(cwd, newRoles, newContractPath, oldArtifact) {
+  const { roles, environments, abi, path } = oldArtifact
+
+  const newContractRoles = await getRoles(newRoles)
+  const newContractEnvironments = await getEnvironments(cwd)
+  const newContractAbi = await getContractAbi(cwd, newContractPath)
 
   return (
-    networkName !== network ||
-    moduleAppName !== appName ||
-    moduleRegistry !== registry ||
-    modulePath !== contractPath
+    JSON.stringify(newContractRoles) !== JSON.stringify(roles) ||
+    JSON.stringify(newContractEnvironments) !== JSON.stringify(environments) ||
+    JSON.stringify(newContractAbi) !== JSON.stringify(abi) ||
+    newContractPath !== path
   )
 }
 
 async function copyCurrentApplicationArtifacts(
+  cwd,
   outputPath,
   apm,
-  networkName,
-  appName,
-  registry,
-  modulePath,
   repo,
-  newVersion
+  newVersion,
+  roles,
+  contractPath
 ) {
   const copyingFiles = [ARTIFACT_FILE, SOLIDITY_FILE]
   const { content } = repo
@@ -178,38 +209,40 @@ async function copyCurrentApplicationArtifacts(
     return { ...file, fileContent: JSON.stringify(newContent, null, 2) }
   }
 
-  copy
-    .filter(item => item)
-    .map(async file => {
-      try {
-        if (file.fileName === ARTIFACT_FILE) {
-          const rebuild = await sanityCheck(
-            networkName,
-            appName,
-            registry,
-            modulePath,
-            file.fileContent
-          )
-          if (rebuild) {
-            throw new Error('Artifact mismatch')
-          } else {
-            return updateArtifactVersion(file, newVersion)
-          }
-        }
-        return file
-      } catch (e) {
-        throw e
+  const evaluateFile = async file => {
+    if (file.fileName === ARTIFACT_FILE) {
+      const rebuild = await sanityCheck(
+        cwd,
+        roles,
+        contractPath,
+        JSON.parse(file.fileContent)
+      )
+      if (rebuild) {
+        throw new Error('Artifact mismatch')
+      } else {
+        return updateArtifactVersion(file, newVersion)
       }
-    })
-    .forEach(({ fileName, filePath, fileContent }) =>
-      fs.writeFileSync(filePath, fileContent)
-    )
+    }
+    return file
+  }
+
+  const copyArray = await Promise.all(
+    copy.filter(item => item).map(file => evaluateFile(file))
+  )
+
+  copyArray.forEach(({ fileName, filePath, fileContent }) =>
+    fs.writeFileSync(filePath, fileContent)
+  )
 }
 
 module.exports = {
+  POSITIVE_ANSWERS,
+  NEGATIVE_ANSWERS,
+  ANSWERS,
   SOLIDITY_FILE,
   getMajor,
   generateApplicationArtifact,
+  generateFlattenedCode,
   sanityCheck,
   copyCurrentApplicationArtifacts,
 }

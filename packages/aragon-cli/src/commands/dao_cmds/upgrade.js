@@ -4,11 +4,12 @@ const TaskList = require('listr')
 const daoArg = require('./utils/daoArg')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const APM = require('@aragon/apm')
-const defaultAPMName = require('../../helpers/default-apm')
+const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 const chalk = require('chalk')
+const startIPFS = require('../ipfs_cmds/start')
 const getRepoTask = require('./utils/getRepoTask')
 const { getContract } = require('../../util')
-const listrOpts = require('../../helpers/listr-options')
+const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 exports.command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
 
@@ -22,6 +23,7 @@ exports.task = async ({
   wsProvider,
   web3,
   reporter,
+  gasPrice,
   dao,
   network,
   apmOptions,
@@ -44,6 +46,11 @@ exports.task = async ({
 
   const tasks = new TaskList(
     [
+      {
+        // IPFS is a dependency of getRepoTask which uses IPFS to fetch the contract ABI
+        title: 'Check IPFS',
+        task: () => startIPFS.task({ apmOptions }),
+      },
       {
         title: `Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`,
         skip: ctx => ctx.repo, // only run if repo isn't passed
@@ -71,7 +78,9 @@ exports.task = async ({
           }
 
           return execTask(dao, getTransactionPath, {
+            ipfsCheck: false,
             reporter,
+            gasPrice,
             apm: apmOptions,
             web3,
             wsProvider,
@@ -88,6 +97,7 @@ exports.task = async ({
 exports.handler = async function({
   reporter,
   dao,
+  gasPrice,
   network,
   wsProvider,
   apm: apmOptions,
@@ -103,6 +113,7 @@ exports.handler = async function({
     web3,
     reporter,
     dao,
+    gasPrice,
     network,
     apmOptions,
     apmRepo,
@@ -114,7 +125,9 @@ exports.handler = async function({
 
   return task.run().then(ctx => {
     reporter.success(
-      `Successfully executed: "${ctx.transactionPath[0].description}"`
+      `Successfully executed: "${chalk.blue(
+        ctx.transactionPath[0].description
+      )}"`
     )
     process.exit()
   })

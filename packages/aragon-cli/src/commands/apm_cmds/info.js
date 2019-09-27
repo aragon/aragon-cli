@@ -1,7 +1,7 @@
 const APM = require('@aragon/apm')
 const chalk = require('chalk')
 const TaskList = require('listr')
-const defaultAPMName = require('../../helpers/default-apm')
+const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const getRepoTask = require('../dao_cmds/utils/getRepoTask')
 

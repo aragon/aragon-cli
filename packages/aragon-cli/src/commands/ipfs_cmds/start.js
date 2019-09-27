@@ -1,5 +1,6 @@
 const path = require('path')
 const TaskList = require('listr')
+const chalk = require('chalk')
 const {
   startIPFSDaemon,
   isIPFSCORS,
@@ -8,11 +9,10 @@ const {
 } = require('../../helpers/ipfs-daemon')
 
 const IPFS = require('ipfs-api')
-const listrOpts = require('../../helpers/listr-options')
+const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 exports.command = 'start'
-
-exports.describe = 'Start an IPFS daemon configured to work with Aragon.'
+exports.describe = 'Start the IPFS daemon and configure it to work with Aragon.'
 
 exports.task = ({ apmOptions, silent, debug }) => {
   return new TaskList(
@@ -67,23 +67,17 @@ exports.task = ({ apmOptions, silent, debug }) => {
   )
 }
 
-exports.handler = function({ reporter, apm: apmOptions }) {
+exports.handler = async function({ reporter, apm: apmOptions }) {
   const task = exports.task({ apmOptions })
 
-  task
-    .run()
-    .then(ctx => {
-      if (ctx.started) {
-        reporter.info(
-          'IPFS daemon is now running. Stopping this process will stop IPFS'
-        )
-      } else {
-        reporter.warning('Didnt start IPFS, port busy')
-        process.exit()
-      }
-    })
-    .catch(err => {
-      reporter.error(err)
-      process.exit(1)
-    })
+  const ctx = await task.run()
+
+  if (ctx.started) {
+    reporter.info(
+      'IPFS daemon is now running. Stopping this process will stop IPFS'
+    )
+  } else {
+    reporter.warning(chalk.yellow("Didn't start IPFS, port busy"))
+    process.exit()
+  }
 }

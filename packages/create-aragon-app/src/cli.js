@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-require('@babel/polyfill')
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
 const ConsoleReporter = require('./reporters/ConsoleReporter')
 
 // Set up commands

@@ -22,16 +22,18 @@ branch daily, if nothing else triggered a build within this time frame.
 
 We record the test coverage history using [Coveralls](https://coveralls.io).
 
-Each project has script to run the tests and report them in the `lcov` format.
+Each project has a script to run the tests and report them in the `lcov` format for `coveralls`,
+as well as `text` for humans.
 (see [available reporters](https://istanbul.js.org/docs/advanced/alternative-reporters/))
 
 ```json
-    "test:coverage:ci": "nyc --all --reporter=lcovonly ava"
+    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly --exclude 'config/**' --exclude '**/*.test.js' npm run test"
 ```
 
 Notes:
 
 - we use the `--all` flag to include all the files (not just the ones touched by our tests)  
+- we use the `--exclude` flag to not include files like configs in the coverage reports
 - the coverage is only calculated for unit & integration tests.
 
 Because we are using a monorepo structure, we need to merge the lcov results before passing them to
@@ -48,8 +50,8 @@ coveralls.
 Our `@aragon/e2e-tests` package has the following dependencies:
 
 ```json
-    "@aragon/cli": "file:../aragon-cli",
-    "create-aragon-app": "file:../create-aragon-app",
+    "@aragon/cli": "*",
+    "create-aragon-app": "*",
 ```
 
 These dependencies need to be built **before** we install them, otherwise `npm` will not create
@@ -59,8 +61,8 @@ The solution is to split the bootstrapping process in two:
 
 ```json
     "prepare": "npm run bootstrap && npm run bootstrap-e2e-tests",
-    "bootstrap": "lerna exec --ignore @aragon/e2e-tests -- npm install",
-    "bootstrap-e2e-tests": "lerna exec --scope @aragon/e2e-tests -- npm install",
+    "bootstrap": "lerna bootstrap--ignore @aragon/e2e-tests",
+    "bootstrap-e2e-tests": "lerna bootstrap",
 ```
 
 Note: this works because when we bootstrap a package, it will get built right after thanks to the

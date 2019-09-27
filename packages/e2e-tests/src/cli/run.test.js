@@ -1,36 +1,29 @@
 import test from 'ava'
-import fs from 'fs-extra'
 import fetch from 'node-fetch'
-import execa from 'execa'
 import { startBackgroundProcess, normalizeOutput } from '../util'
+import fs from 'fs'
+import path from 'path'
 
-const testSandbox = './.tmp/run'
+const testSandbox = './.tmp'
+const projectName = 'foobar'
 
-test.beforeEach(() => {
-  fs.ensureDirSync(testSandbox)
-})
-
-test.afterEach(() => {
-  fs.removeSync(testSandbox)
-})
-
-test('should create a new aragon app and run it successfully', async t => {
+test('should run an aragon app successfully', async t => {
   t.plan(3)
 
-  // arrange
-  const projectName = 'foobarfoo'
-  await execa('create-aragon-app', [projectName], { cwd: testSandbox })
-  // hack, we need to install the dependencies of the app
-  await execa('npm', ['install'], { cwd: `${testSandbox}/${projectName}/app` })
+  // Node.js 11 fix (https://github.com/aragon/aragon-cli/issues/731)
+  fs.writeFileSync(path.join(testSandbox, projectName, 'truffle.js'), `
+    module.exports = require('@aragon/os/truffle-config'); 
+    module.exports.solc.optimizer.enabled = false;
+  `)
 
   // act
-  const runProcess = await startBackgroundProcess({
+  const { stdout, exit } = await startBackgroundProcess({
     cmd: 'aragon',
-    args: ['run', '--debug', '--reset'],
+    args: ['run', '--debug', '--files', 'dist'],
     execaOpts: {
       cwd: `${testSandbox}/${projectName}`,
       /**
-       * By default execa will run the aragon binary that is located at '.tmp/run/foobarfoo/node_modules'.
+       * By default execa will run the aragon binary that is located at '.tmp/foobar/node_modules'.
        * That is coming from npm and is not the one we want to test.
        *
        * We need to tell it to use the one we just built locally and installed in the e2e-tests package
@@ -42,33 +35,38 @@ test('should create a new aragon app and run it successfully', async t => {
   })
 
   // hack so the wrapper has time to start
-  await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000))
+  await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000)) // TODO move to utils
 
   // finding the DAO address
-  const daoAddress = runProcess.stdout.match(
-    /DAO address: (0x[a-fA-F0-9]{40})/
-  )[1]
+  const daoAddress = stdout.match(/DAO address: (0x[a-fA-F0-9]{40})/)[1]
 
   // TODO: fetch the counter app instead
   const fetchResult = await fetch(`http://localhost:3000/#/${daoAddress}`)
   const fetchBody = await fetchResult.text()
 
   // cleanup
-  await runProcess.exit()
+  await exit()
 
   // delete some output sections that are not deterministic
-  const appBuildOutput = runProcess.stdout.substring(
-    runProcess.stdout.indexOf('Building frontend [started]'),
-    runProcess.stdout.indexOf('Building frontend [completed]')
+  const appBuildOutput = stdout.substring(
+    stdout.indexOf('Building frontend [started]'),
+    stdout.indexOf('Building frontend [completed]')
   )
-  const wrapperInstallOutput = runProcess.stdout.substring(
-    runProcess.stdout.indexOf('Downloading wrapper [started]'),
-    runProcess.stdout.indexOf('Starting Aragon client [started]')
+  const publishOutput = stdout.substring(
+    stdout.indexOf('Publish app to aragonPM [started]'),
+    stdout.indexOf('Publish app to aragonPM [completed]')
   )
 
-  const outputToSnapshot = runProcess.stdout
-    .replace(appBuildOutput, '')
-    .replace(wrapperInstallOutput, '')
+  const wrapperInstallOutput = stdout.substring(
+    stdout.indexOf('Fetching client from aragen [started]'),
+    stdout.indexOf('Starting Aragon client [started]')
+  )
+
+  const outputToSnapshot = stdout
+    .replace(publishOutput, '[deleted-publish-output]')
+    .replace(appBuildOutput, '[deleted-app-build-output]')
+    .replace(wrapperInstallOutput, '[deleted-wrapper-install-output]')
+    .replace(new RegExp(daoAddress, 'g'), '[deleted-dao-address]')
 
   // assert
   t.snapshot(normalizeOutput(outputToSnapshot))

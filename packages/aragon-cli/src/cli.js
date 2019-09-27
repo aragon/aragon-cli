@@ -1,6 +1,10 @@
 #!/usr/bin/env node
-require('@babel/polyfill')
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
 require('source-map-support/register')
+const Web3 = require('web3')
+
+const DEFAULT_GAS_PRICE = require('../package.json').aragon.defaultGasPrice
 
 const {
   environmentMiddleware,
@@ -8,7 +12,8 @@ const {
   moduleMiddleware,
 } = require('./middleware')
 const { findProjectRoot } = require('./util')
-const { ConsoleReporter, ens } = require('@aragon/aragen')
+const { ens } = require('@aragon/aragen')
+const ConsoleReporter = require('@aragon/cli-utils/src/reporters/ConsoleReporter')
 const url = require('url')
 
 const MIDDLEWARES = [
@@ -54,6 +59,14 @@ cmd.option('debug', {
       global.DEBUG_MODE = true
       return true
     }
+  },
+})
+
+cmd.option('gas-price', {
+  description: 'Gas price in Gwei',
+  default: DEFAULT_GAS_PRICE,
+  coerce: gasPrice => {
+    return Web3.utils.toWei(gasPrice, 'gwei')
   },
 })
 
@@ -103,7 +116,7 @@ cmd.option('apm.ens-registry', {
     "Address of the ENS registry. This will be overwritten if the selected '--environment' from your arapp.json includes a `registry` property",
   default: ens,
 })
-cmd.group(['apm.ens-registry', 'eth-rpc'], 'APM:')
+cmd.group(['apm.ens-registry'], 'APM:')
 
 cmd.option('apm.ipfs.rpc', {
   description: 'An URI to the IPFS node used to publish files',
@@ -137,7 +150,7 @@ cmd.epilogue('For more information, check out https://hack.aragon.org')
 
 // Run
 const reporter = new ConsoleReporter()
-reporter.debug(JSON.stringify(process.argv))
+reporter.debug(JSON.stringify(process.argv)) // TODO: this ain't working (DEBUG_MODE not set yet?)
 cmd
   .fail((msg, err, yargs) => {
     reporter.error(msg || err.message || 'An error occurred')

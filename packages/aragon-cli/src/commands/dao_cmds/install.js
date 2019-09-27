@@ -4,16 +4,21 @@ const TaskList = require('listr')
 const daoArg = require('./utils/daoArg')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const APM = require('@aragon/apm')
-const defaultAPMName = require('../../helpers/default-apm')
+const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 const chalk = require('chalk')
+const startIPFS = require('../ipfs_cmds/start')
 const getRepoTask = require('./utils/getRepoTask')
 const encodeInitPayload = require('./utils/encodeInitPayload')
-const { getContract, ANY_ENTITY, NO_MANAGER } = require('../../util')
+const {
+  getContract,
+  ANY_ENTITY,
+  NO_MANAGER,
+  ZERO_ADDRESS,
+} = require('../../util')
 const kernelABI = require('@aragon/os/abi/Kernel').abi
-const listrOpts = require('../../helpers/listr-options')
+const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 const addressesEqual = (a, b) => a.toLowerCase() === b.toLowerCase()
-const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 
 exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'
 
@@ -44,6 +49,7 @@ exports.task = async ({
   web3,
   reporter,
   dao,
+  gasPrice,
   network,
   apmOptions,
   apmRepo,
@@ -74,6 +80,11 @@ exports.task = async ({
   const tasks = new TaskList(
     [
       {
+        // IPFS is a dependency of getRepoTask which uses IPFS to fetch the contract ABI
+        title: 'Check IPFS',
+        task: () => startIPFS.task({ apmOptions }),
+      },
+      {
         title: `Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`,
         task: getRepoTask.task({ apm, apmRepo, apmRepoVersion }),
       },
@@ -86,7 +97,7 @@ exports.task = async ({
           const currentBase = await kernel.methods
             .getApp(basesNamespace, ctx.repo.appId)
             .call()
-          if (currentBase === ZERO_ADDR) {
+          if (currentBase === ZERO_ADDRESS) {
             task.skip(`Installing the first instance of ${apmRepo} in DAO`)
             return
           }
@@ -122,7 +133,9 @@ exports.task = async ({
           }
 
           return execTask(dao, getTransactionPath, {
+            ipfsCheck: false,
             reporter,
+            gasPrice,
             apm: apmOptions,
             web3,
             wsProvider,
@@ -189,6 +202,7 @@ exports.task = async ({
               return (
                 execTask(dao, getTransactionPath, {
                   reporter,
+                  gasPrice,
                   apm: apmOptions,
                   web3,
                   wsProvider,
@@ -212,6 +226,7 @@ exports.task = async ({
 exports.handler = async function({
   reporter,
   dao,
+  gasPrice,
   network,
   apm: apmOptions,
   apmRepo,
@@ -228,6 +243,7 @@ exports.handler = async function({
     web3,
     reporter,
     dao,
+    gasPrice,
     network,
     apmOptions,
     apmRepo,
@@ -242,11 +258,15 @@ exports.handler = async function({
 
   return task.run().then(ctx => {
     reporter.info(
-      `Successfully executed: "${ctx.transactionPath[0].description}"`
+      `Successfully executed: "${chalk.blue(
+        ctx.transactionPath[0].description
+      )}"`
     )
 
     if (ctx.appAddress) {
-      reporter.success(`Installed ${apmRepo} at: ${chalk.bold(ctx.appAddress)}`)
+      reporter.success(
+        `Installed ${chalk.blue(apmRepo)} at: ${chalk.green(ctx.appAddress)}`
+      )
     } else {
       reporter.warning(
         'After the app instance is created, you will need to assign permissions to it for it appear as an app in the DAO'

@@ -8,6 +8,9 @@ const knownAppNames = [
   'token-manager',
   'finance',
   'vault',
+  'agent',
+  'survey',
+  'payroll',
   'kernel',
   'acl',
   'evmreg',
@@ -32,6 +35,7 @@ const listApps = (userApps = []) => {
     {}
   )
   // because of a current issue in the deployed apps, we need to calculate with just the keccak too (otherwise acl and evmreg dont show up)
+  // TODO: Fix kernel not showing up
   return appNames.reduce(
     (acc, app) => Object.assign(acc, { [keccak256(app)]: app }),
     appIds

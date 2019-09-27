@@ -21,7 +21,7 @@ The arapp.json file contains metadata for your app. This are the fields need to 
 
 ### Example
 
-This is the arapp.json of the app build in the [tutorial](tutorial.md) configure with rinkeby and mainnet environments.
+This is the arapp.json of the app build in the [tutorial](tutorial.md) configure with default environments.
 
 ```json
 {
@@ -38,9 +38,8 @@ This is the arapp.json of the app build in the [tutorial](tutorial.md) configure
     }
   ],
   "environments": {
-    "default": {
-      "appName": "foo.aragonpm.eth",
-      "network": "development"
+    "aragon:local": {
+      "network": "localhost"
     },
     "aragon:rinkeby": {
       "apm": {
@@ -49,6 +48,16 @@ This is the arapp.json of the app build in the [tutorial](tutorial.md) configure
         }
       },
       "registry": "0x98df287b6c145399aaa709692c8d308357bc085d",
+      "wsRPC": "wss://rinkeby.eth.aragon.network/ws",
+      "network": "rinkeby"
+    },
+    "aragon:staging": {
+      "apm": {
+        "ipfs": {
+          "gateway": "https://ipfs.eth.aragon.network/ipfs"
+        }
+      },
+      "registry": "0xfe03625ea880a8cba336f9b5ad6e15b0a3b5a939",
       "wsRPC": "wss://rinkeby.eth.aragon.network/ws",
       "network": "rinkeby"
     },
@@ -82,9 +91,14 @@ If you want to learn how use environments in practice check the guides to learn 
 The manifest.json defines end-user specific configurations:
 
 - `name`: Human-readable name of your app.
+- `author`: (optional) Author of the app.
 - `description`: Small description of the app.
+- `detail_url`: (optional) Path to markdown file with details of the app.
+- `source_url`: (optional) Link to the source code of the app.
 - `icons`: (optional) An array of all the icons that your app has. Each icon has the following properties:
   - `src`: Path to the icon's image.
   - `sizes`: Size of the icon.
+- `screenshots`: (optional) An array of all the screenshots that your app has. Each screenshot has the following properties:
+  - `src`: Path to the screenshot's image.
 - `script`: (optional) Background script path.
 - `start_url`: Path to the starting URL.

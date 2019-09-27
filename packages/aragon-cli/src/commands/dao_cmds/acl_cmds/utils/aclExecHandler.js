@@ -5,7 +5,7 @@ module.exports = async function(
   dao,
   method,
   params,
-  { reporter, apm, network, wsProvider, role, silent, debug }
+  { reporter, apm, network, gasPrice, wsProvider, role, silent, debug }
 ) {
   const getTransactionPath = async wrapper => {
     let processedParams
@@ -23,7 +23,9 @@ module.exports = async function(
     return wrapper.getACLTransactionPath(method, processedParams)
   }
   return execHandler(dao, getTransactionPath, {
+    ipfsCheck: false,
     reporter,
+    gasPrice,
     apm,
     wsProvider,
     network,
