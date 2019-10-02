@@ -11,13 +11,12 @@ exports.describe =
   'Grant a permission in a DAO (only permission manager can do it)'
 
 exports.builder = function(yargs) {
-  return daoArg(yargs)
-    .option('params', {
-      description: 'Parameters',
-      type: 'array',
-      default: [],
-      coerce: params => isArray(params) ? params : [params]
-    })
+  return daoArg(yargs).option('params', {
+    description: 'Parameters',
+    type: 'array',
+    default: [],
+    coerce: params => (isArray(params) ? params : [params]),
+  })
 }
 
 exports.handler = async function({
@@ -30,15 +29,14 @@ exports.handler = async function({
   wsProvider,
   apm,
   gasPrice,
-  params
+  params,
 }) {
-  const method = params.length === 0
-    ? 'grantPermission'
-    : 'grantPermissionP'
+  const method = params.length === 0 ? 'grantPermission' : 'grantPermissionP'
 
-  const methodParams = params.length === 0 
-    ? [entity, app, role]
-    : [entity, app, role, params.map(convertStringToParam).map(encodeParam)]
+  const methodParams =
+    params.length === 0
+      ? [entity, app, role]
+      : [entity, app, role, params.map(convertStringToParam).map(encodeParam)]
 
   return aclExecHandler(dao, method, methodParams, {
     reporter,
@@ -46,9 +44,6 @@ exports.handler = async function({
     apm,
     network,
     wsProvider,
-    role
+    role,
   })
 }
-
-
-
