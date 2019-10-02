@@ -67,4 +67,28 @@ function encodeParam(param) {
   return encodedParam.toString()
 }
 
+/**
+ * Encode an operator
+ * @param {string} param1 
+ * @param {string} param2 
+ * @returns {BN} Encoded operator
+ */
+function encodeOperator(param1, param2) {
+    return new BN(param1)
+        .add(new BN(param2).shln(32))
+}
+
+/**
+ * Encode an if-else condition. 
+ * Original logic: https://github.com/aragon/aragonOS/blob/v4.2.1/contracts/test/helpers/ACLHelper.sol
+ * @param {string} condition 
+ * @param {string} successParam 
+ * @param {string} failureParam 
+ */
+function encodeIfElse(condition, successParam, failureParam) {
+    return new BN(condition)
+        .add(new BN(successParam).shln(32))
+        .add(new BN(failureParam).shln(64))
+}
+
 module.exports = { encodeParam, convertStringToParam, Op }
