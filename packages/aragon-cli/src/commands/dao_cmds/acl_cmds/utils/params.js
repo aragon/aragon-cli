@@ -37,7 +37,7 @@ const ArgumentIds = {
  * The string must follow the pattern: "<id>, <op>, <value>"
  * Where <id> is the param id, <op> is the operation, either as a string or
  * as a number, and <value> is the value.
- * examples: "LOGIC_OP_PARAM_ID, OR, (1,2)", "0, GT, 42", 
+ * examples: "LOGIC_OP_PARAM_ID, OR, (1,2)", "0, GT, 42",
  * "1, EQ, 0x6E14E589477AA08d139D55a871535c0579B1BB84"
  * @param {string} str String param
  * @returns {AclParam} Param object
