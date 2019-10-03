@@ -5,17 +5,15 @@ const { isArray } = require('lodash')
 
 // Note: we usually order these values as entity, proxy, role but this order fits
 //       better with other CLI commands
-exports.command = 'grant <dao> <app> <role> <entity> [params]'
+exports.command = 'grant <dao> <app> <role> <entity> [params...]'
 
 exports.describe =
   'Grant a permission in a DAO (only permission manager can do it)'
 
 exports.builder = function(yargs) {
-  return daoArg(yargs).option('params', {
-    description: 'Parameters',
-    type: 'array',
+  return daoArg(yargs).positional('params', {
+    description: 'ACL parameters',
     default: [],
-    coerce: params => (isArray(params) ? params : [params]),
   })
 }
 

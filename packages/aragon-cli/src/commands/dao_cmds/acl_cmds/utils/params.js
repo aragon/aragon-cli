@@ -1,6 +1,7 @@
 const { isString } = require('lodash')
 const BN = require('bn.js')
 
+
 /**
  * @typedef {Object} AclParam
  * @property {string} id
@@ -44,21 +45,15 @@ const ArgumentIds = {
  */
 function convertStringToParam(str) {
   try {
-    str = str
+    const cleanStr = str
       .replace(/^\[(.+)\]$/, (m, p1) => p1)
       .replace(/ /g, '')
       .replace(/"/g, '')
       .replace(/'/g, '')
 
-    const [idStr, opStr, valueStr] = str.split(',')
-
-    const id = ArgumentIds[idStr.toUpperCase()]
-        ? ArgumentIds[idStr.toUpperCase()]
-        : idStr
-
-    const op = Op[opStr.toUpperCase()]
-        ? Op[opStr.toUpperCase()]
-        : opStr
+    const [,idStr, opStr, valueStr] = /^(.+?),(.+?),(.+)$/.exec(cleanStr)
+    const id = ArgumentIds[idStr.toUpperCase()] || idStr
+    const op = Op[opStr.toUpperCase()] || opStr
 
     const value = id === ArgumentIds.LOGIC_OP_PARAM_ID
         ? convertStringToLogicParam(valueStr)
@@ -85,6 +80,12 @@ function encodeParam(param) {
   return encodedParam.toString()
 }
 
+/**
+ * Convert an ACL logic parameter from string
+ * to an encoded bn.js uint
+ * @param {string} str 
+ * @returns {BN} Encoded parameter
+ */
 function convertStringToLogicParam(str) {
     try {
         str = str
@@ -141,7 +142,7 @@ function encodeIfElse(condition, successParam, failureParam) {
 function parseNumber(number) {
     return isString(number) && number.substr(0, 2) === '0x'
         ? new BN(number.substr(2), 16)
-        : new BN(number, 10)
+        : new BN(number)
 }
 
 module.exports = { encodeParam, convertStringToParam, Op }
