@@ -2,7 +2,7 @@ const { isString } = require('lodash')
 const BN = require('bn.js')
 
 /**
- * @typedef {Object} AclParam
+ * @typedef {Object} AclParam ACL parameter
  * @property {string} id
  * @property {string} op
  * @property {string} value
@@ -39,6 +39,7 @@ const ArgumentIds = {
  * as a number, and <value> is the value.
  * examples: "LOGIC_OP_PARAM_ID, OR, (1,2)", "0, GT, 42",
  * "1, EQ, 0x6E14E589477AA08d139D55a871535c0579B1BB84"
+ * @name convertStringToParam
  * @param {string} str String param
  * @returns {AclParam} Param object
  */
