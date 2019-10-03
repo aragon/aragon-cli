@@ -34,16 +34,17 @@ const ArgumentIds = {
 
 /**
  * Convert a string to an AclParam object
- * The string must follow the pattern: "[<id>, <op>, <value>]"
+ * The string must follow the pattern: "<id>, <op>, <value>"
  * Where <id> is the param id, <op> is the operation, either as a string or
- * as a number, and <value> is the value. You can omit the brackets.
- * examples: "[0, GT, 42]", "0, NEQ, 33",
- * "[1, EQ, 0x6E14E589477AA08d139D55a871535c0579B1BB84]"
+ * as a number, and <value> is the value.
+ * examples: "LOGIC_OP_PARAM_ID, OR, (1,2)", "0, GT, 42", 
+ * "1, EQ, 0x6E14E589477AA08d139D55a871535c0579B1BB84"
  * @param {string} str String param
  * @returns {AclParam} Param object
  */
 function convertStringToParam(str) {
   try {
+    // Remove square brackets, quotes and spaces
     const cleanStr = str
       .replace(/^\[(.+)\]$/, (m, p1) => p1)
       .replace(/ /g, '')
@@ -87,7 +88,8 @@ function encodeParam(param) {
  */
 function convertStringToLogicParam(str) {
   try {
-    str = str
+    // Remove encodeIfElse, encodeOperator, quotes and spaces
+    const cleanStr = str
       .replace(/encodeIfElse/i, '')
       .replace(/encodeOperator/i, '')
       .replace(/^\((.+)\)$/, (m, p1) => p1)
@@ -96,7 +98,7 @@ function convertStringToLogicParam(str) {
       .replace(/"/g, '')
       .replace(/'/g, '')
 
-    const params = str.split(',')
+    const params = cleanStr.split(',')
 
     switch (params.length) {
       case 2:
