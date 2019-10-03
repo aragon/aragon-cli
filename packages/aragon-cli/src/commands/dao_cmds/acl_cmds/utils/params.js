@@ -1,3 +1,4 @@
+const { isString } = require('lodash')
 const BN = require('bn.js')
 
 /**
@@ -23,6 +24,14 @@ const Op = {
   IF_ELSE: '12',
 }
 
+const ArgumentIds = {
+    BLOCK_NUMBER_PARAM_ID: '200',
+    TIMESTAMP_PARAM_ID: '201',
+    ORACLE_PARAM_ID: '203',
+    LOGIC_OP_PARAM_ID: '204',
+    PARAM_VALUE_PARAM_ID: '205'
+}
+
 /**
  * Convert a string to an AclParam object
  * The string must follow the pattern: "[<id>, <op>, <value>]"
@@ -41,13 +50,22 @@ function convertStringToParam(str) {
       .replace(/"/g, '')
       .replace(/'/g, '')
 
-    let [id, op, value] = str.split(',')
+    const [idStr, opStr, valueStr] = str.split(',')
 
-    if (Number.isInteger(Op[op])) op = Op[op]
+    const id = ArgumentIds[idStr.toUpperCase()]
+        ? ArgumentIds[idStr.toUpperCase()]
+        : idStr
 
-    if (value.substr(0, 2) === '0x') value = new BN(value.substr(2), 16)
+    const op = Op[opStr.toUpperCase()]
+        ? Op[opStr.toUpperCase()]
+        : opStr
 
-    return { id, op, value }
+    const value = id === ArgumentIds.LOGIC_OP_PARAM_ID
+        ? convertStringToLogicParam(valueStr)
+        : valueStr
+
+    return { id, op, value } 
+    
   } catch (err) {
     throw new Error(`Can't parse param ${str}`)
   }
@@ -62,9 +80,32 @@ function encodeParam(param) {
   const encodedParam = new BN(param.id)
     .shln(248)
     .or(new BN(param.op).shln(240))
-    .or(new BN(param.value))
+    .or(parseNumber(param.value))
 
   return encodedParam.toString()
+}
+
+function convertStringToLogicParam(str) {
+    try {
+        str = str
+            .replace(/encodeIfElse/i, '')
+            .replace(/encodeOperator/i, '')
+            .replace(/^\((.+)\)$/, (m, p1) => p1)
+            .replace(/^\[(.+)\]$/, (m, p1) => p1)
+            .replace(/ /g, '')
+            .replace(/"/g, '')
+            .replace(/'/g, '')
+
+        const params = str.split(',') 
+
+        switch(params.length) {
+            case 2: return encodeOperator(params[0], params[1])
+            case 3: return encodeIfElse(params[0], params[1], params[2])
+            default: throw new Error('Invalid parameters.')
+        }
+    } catch(e) {
+        throw new Error("Can't parse logic parameters.")
+    }
 }
 
 /**
@@ -79,16 +120,28 @@ function encodeOperator(param1, param2) {
 }
 
 /**
- * Encode an if-else condition. 
+ * Encode an if-else condition
  * Original logic: https://github.com/aragon/aragonOS/blob/v4.2.1/contracts/test/helpers/ACLHelper.sol
  * @param {string} condition 
  * @param {string} successParam 
  * @param {string} failureParam 
+ * @returns {BN} Encoded condition
  */
 function encodeIfElse(condition, successParam, failureParam) {
     return new BN(condition)
         .add(new BN(successParam).shln(32))
         .add(new BN(failureParam).shln(64))
+}
+
+/**
+ * Parse a decimal or hexadecimal number 
+ * @param {string|number} number 
+ * @returns {BN} bn.js number
+ */
+function parseNumber(number) {
+    return isString(number) && number.substr(0, 2) === '0x'
+        ? new BN(number.substr(2), 16)
+        : new BN(number, 10)
 }
 
 module.exports = { encodeParam, convertStringToParam, Op }
