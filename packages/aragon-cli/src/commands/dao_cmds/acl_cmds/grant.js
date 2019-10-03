@@ -1,7 +1,6 @@
 const daoArg = require('../utils/daoArg')
 const aclExecHandler = require('./utils/aclExecHandler')
 const { convertStringToParam, encodeParam } = require('./utils/params')
-const { isArray } = require('lodash')
 
 // Note: we usually order these values as entity, proxy, role but this order fits
 //       better with other CLI commands
