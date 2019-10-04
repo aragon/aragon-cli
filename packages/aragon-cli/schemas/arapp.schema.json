@@ -46,11 +46,21 @@
           }
         }
       },
-      "required": [
-        "id",
-        "name",
-        "params"
-      ]
+      "required": ["id", "name", "params"]
+    },
+    "link": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Contract name.",
+          "type": "string"
+        },
+        "address": {
+          "description": "Contract address.",
+          "type": "string"
+        }
+      },
+      "required": ["name", "address"]
     },
     "environment": {
       "description": "An object containing the configuration for a specific environment. Can have any name you choose",
@@ -67,15 +77,41 @@
         "registry": {
           "description": "The address of the ENS registry for this environment. If omitted defaults to the Aragon ENS registry for this network.",
           "type": "string"
+        },
+        "wsRPC": {
+          "description": "If present is used by aragon.js as its data provider.",
+          "type": "string"
+        },
+        "links": {
+          "description": "An array of linkable contracts used to link them into the deploying contract bytecode.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/link"
+          }
+        },
+        "apm": {
+          "description": "An object containing apm options.",
+          "type": "object",
+          "properties": {
+            "ipfs": {
+              "description": "An object containing IPFS options.",
+              "type": "object",
+              "properties": {
+                "gateway": {
+                  "description": "An URI to the IPFS Gateway to read files from. Defaults to http://localhost:8080/ipfs.",
+                  "type": "string"
+                },
+                "rpc": {
+                  "description": "An URI to the IPFS node used to publish files. Defaults to http://localhost:5001#default.",
+                  "type": "string"
+                }
+              }
+            }
+          }
         }
       },
-      "required": [
-        "appName",
-        "network"
-      ]
+      "required": ["appName", "network"]
     }
   },
-  "required": [
-    "environments"
-  ]
+  "required": ["environments"]
 }

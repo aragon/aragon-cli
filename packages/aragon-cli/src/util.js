@@ -5,6 +5,7 @@ const net = require('net')
 const fs = require('fs')
 const { readJson } = require('fs-extra')
 const which = require('which')
+const { request } = require('http')
 
 let cachedProjectRoot
 
@@ -12,6 +13,18 @@ const PGK_MANAGER_BIN_NPM = 'npm'
 const debugLogger = process.env.DEBUG ? console.log : () => {}
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+
+/**
+ * Check eth address equality without checksums
+ * @param {string} first address
+ * @param {string} second address
+ * @returns {boolean} address equality
+ */
+function addressesEqual(first, second) {
+  first = first && first.toLowerCase()
+  second = second && second.toLowerCase()
+  return first === second
+}
 
 const findProjectRoot = () => {
   if (!cachedProjectRoot) {
@@ -44,6 +57,21 @@ const isPortTaken = async (port, opts) => {
       socket.end()
       resolve(true)
     })
+  })
+}
+
+/**
+ * Check if an http server is listening at a given url
+ * @param {string} url Server url
+ * @returns {boolean} true if server is returning a valid response
+ */
+function isHttpServerOpen(url) {
+  return new Promise(resolve => {
+    request(url, { method: 'HEAD' }, r => {
+      resolve(r.statusCode >= 200 && r.statusCode < 400)
+    })
+      .on('error', () => resolve(false))
+      .end()
   })
 }
 
@@ -198,6 +226,15 @@ const getRecommendedGasLimit = async (
   return upperGasLimit
 }
 
+const expandLink = link => {
+  let { name, address } = link
+  let placeholder = `__${name}${'_'.repeat(38 - name.length)}`
+  link.placeholder = placeholder
+  link.regex = new RegExp(placeholder, 'g')
+  link.addressBytes = address.slice(0, 2) === '0x' ? address.slice(2) : address
+  return link
+}
+
 /**
  * Parse a String to Boolean, or throw an error.
  *
@@ -281,9 +318,11 @@ function isValidAragonId(aragonId) {
 }
 
 module.exports = {
+  addressesEqual,
   parseArgumentStringIfPossible,
   debugLogger,
   findProjectRoot,
+  isHttpServerOpen,
   isPortTaken,
   installDeps,
   runScriptTask,
@@ -297,4 +336,5 @@ module.exports = {
   NO_MANAGER,
   ZERO_ADDRESS,
   getRecommendedGasLimit,
+  expandLink,
 }

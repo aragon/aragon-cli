@@ -17,6 +17,7 @@ The arapp.json file contains metadata for your app. This are the fields need to 
         - `gateway`: An URI to the IPFS Gateway to read files from. Defaults to `http://localhost:8080/ipfs`.
         - `rpc`: An URI to the IPFS node used to publish files. Defaults to `http://localhost:5001#default`.
 - `path`: The path to the main contract in your app.
+- `links`: (optional) Array of links. Each object in that array should have name and address attributes. Used to links any linkable contracts into the deploying contract bytecode.
 
 ### Example
 
@@ -71,7 +72,13 @@ This is the arapp.json of the app build in the [tutorial](tutorial.md) configure
       "network": "mainnet"
     }
   },
-  "path": "contracts/CounterApp.sol"
+  "path": "contracts/CounterApp.sol",
+  "links": [
+    {
+      "name": "CounterExtension",
+      "address": "0x82606d5d2dB55Ac1D36a011dbbA769c729349f56"
+    }
+  ]
 }
 ```
 

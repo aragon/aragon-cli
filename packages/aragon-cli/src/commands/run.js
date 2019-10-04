@@ -21,12 +21,14 @@ const {
 } = require('./apm_cmds/publish')
 const {
   findProjectRoot,
+  isHttpServerOpen,
   isPortTaken,
   parseArgumentStringIfPossible,
 } = require('../util')
 
 const url = require('url')
 
+const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 
@@ -137,6 +139,9 @@ exports.builder = function(yargs) {
     .option('http', {
       description: 'URL for where your app is served from e.g. localhost:1234',
       default: null,
+      coerce: url => {
+        return url && url.substr(0, 7) !== 'http://' ? `http://${url}` : url
+      },
     })
     .option('http-served-from', {
       description:
@@ -153,6 +158,10 @@ exports.builder = function(yargs) {
       array: true,
       default: [],
     })
+    .option('client-repo', {
+      description: 'Repo of Aragon client used to run your sandboxed app',
+      default: DEFAULT_CLIENT_REPO,
+    })
     .option('client-version', {
       description: 'Version of Aragon client used to run your sandboxed app',
       default: DEFAULT_CLIENT_VERSION,
@@ -167,7 +176,7 @@ exports.builder = function(yargs) {
     })
 }
 
-exports.handler = function({
+exports.handler = async function({
   // Globals
   reporter,
   gasPrice,
@@ -202,11 +211,19 @@ exports.handler = function({
   httpServedFrom,
   appInit,
   appInitArgs,
+  clientRepo,
   clientVersion,
   clientPort,
   clientPath,
 }) {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
+
+  if (http && !(await isHttpServerOpen(http))) {
+    reporter.error(
+      `Can't connect to ${http}, make sure the http server is running.`
+    )
+    process.exit(1)
+  }
 
   // TODO: this can be cleaned up once kits is no longer supported
   template = kit || template
@@ -310,6 +327,7 @@ exports.handler = function({
         enabled: () => template !== newDAO.BARE_TEMPLATE,
         task: ctx => {
           const deployParams = {
+            module,
             contract: template,
             init: templateInit,
             reporter,
@@ -370,7 +388,7 @@ exports.handler = function({
         title: 'Open DAO',
         enabled: () => client === true,
         task: async (ctx, task) =>
-          start.task({ clientVersion, clientPort, clientPath }),
+          start.task({ clientRepo, clientVersion, clientPort, clientPath }),
       },
     ],
     listrOpts(silent, debug)

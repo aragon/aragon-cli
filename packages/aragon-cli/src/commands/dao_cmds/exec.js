@@ -1,6 +1,7 @@
 const execHandler = require('./utils/execHandler').handler
 const daoArg = require('./utils/daoArg')
-const { parseArgumentStringIfPossible } = require('../../util')
+const { parseArgumentStringIfPossible, addressesEqual } = require('../../util')
+const { map, filter, first } = require('rxjs/operators')
 
 exports.command = 'exec <dao> <proxy-address> <fn> [fn-args..]'
 
@@ -36,8 +37,20 @@ exports.handler = async function({
   fnArgs = fnArgs.map(parseArgumentStringIfPossible)
   if (global.DEBUG_MODE) console.log('fn-args after parsing', fnArgs)
 
-  const getTransactionPath = wrapper =>
-    wrapper.getTransactionPath(proxyAddress, fn, fnArgs)
+  const getTransactionPath = async wrapper => {
+    // Wait for app info to load
+    await wrapper.apps
+      .pipe(
+        map(apps =>
+          apps.find(app => addressesEqual(app.proxyAddress, proxyAddress))
+        ),
+        filter(app => app),
+        first()
+      )
+      .toPromise()
+
+    return wrapper.getTransactionPath(proxyAddress, fn, fnArgs)
+  }
   return execHandler(dao, getTransactionPath, {
     ipfsCheck: true,
     reporter,
