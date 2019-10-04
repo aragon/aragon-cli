@@ -8,11 +8,10 @@ const BN = require('bn.js')
  * @property {string} value
  */
 
-
- /**
-  * ACL operators. See https://hack.aragon.org/docs/aragonos-ref#parameter-interpretation
-  * for more information.
-  */
+/**
+ * ACL operators. See https://hack.aragon.org/docs/aragonos-ref#parameter-interpretation
+ * for more information.
+ */
 const Op = {
   NONE: '0',
   EQ: '1',
