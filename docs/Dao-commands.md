@@ -186,11 +186,11 @@ dao acl grant <dao-addr> <app-proxy-addr> <role> <entity> [params...]
 - `app-proxy-addr`: The address of the app whose permissions are being managed. You can find the proxy address by checking [`dao apps`](#dao-apps).
 - `role`: The identifier for the role. Can be the `bytes32` identifier of the role or its name (e.g. `INCREMENT_ROLE`).
 - `entity`: The address of entity that is being granted the permission.
-- `params`: ACL parameters, with the following syntax: `"<id>, <op>, <value>"`. Multiple parameters must be separated by spaces, **quotes are required**. See the [ACL documentation](https://hack.aragon.org/docs/aragonos-ref#parameter-interpretation) for the list of available operators. <br />**Examples:** 
-  - `"0, GT, 2"`
-  - `"2, EQ, 0xC7f8dDbc7B3BFd432dEAc0CA270110467EcE01c3"`
-  - `"LOGIC_OP_PARAM_ID, OR, (1,2)"` &nbsp;&nbsp; `"0, LT, 4"` &nbsp;&nbsp; `"1, EQ, 42"`
-  - `"LOGIC_OP_PARAM_ID, IF_ELSE, (1,2,3)"` &nbsp;&nbsp; `"BLOCK_NUMBER_PARAM_ID, GT, 1000"` &nbsp;&nbsp; `"0, EQ, 42"` &nbsp;&nbsp; `"0, EQ, 0"`
+- `params`: ACL parameters, with the following syntax: `"<id>,<op>,<value>"`. Multiple parameters must be separated by spaces. See the [ACL documentation](https://hack.aragon.org/docs/aragonos-ref#parameter-interpretation) for the list of available operators. <br />**Examples:** 
+  - `"0,GT,2"`
+  - `"2,EQ,0xC7f8dDbc7B3BFd432dEAc0CA270110467EcE01c3"`
+  - `"LOGIC_OP_PARAM_ID,OR,(1,2)"` &nbsp;&nbsp; `"0,LT,4"` &nbsp;&nbsp; `"1,EQ,42"`
+  - `"LOGIC_OP_PARAM_ID,IF_ELSE,(1,2,3)"` &nbsp;&nbsp; `"BLOCK_NUMBER_PARAM_ID,GT,1000"` &nbsp;&nbsp; `"0,EQ,42"` &nbsp;&nbsp; `"0,EQ,0"`
 
 ### dao acl revoke
 
