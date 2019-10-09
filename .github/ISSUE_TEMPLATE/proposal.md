@@ -1,6 +1,6 @@
 ---
 name: 💥 Proposal
-about: Propose a non-trivial change to Docusaurus
+about: Propose a non-trivial change to aragonCLI
 ---
 
 ## 💥 Proposal
