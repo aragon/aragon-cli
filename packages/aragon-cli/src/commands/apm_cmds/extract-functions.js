@@ -1,5 +1,5 @@
 const path = require('path')
-const { keccak256 } = require('js-sha3')
+const { keccak256 } = require('web3').utils
 const { writeJson } = require('fs-extra')
 const extract = require('../../helpers/solidity-extractor')
 const chalk = require('chalk')
