@@ -1,7 +1,5 @@
 const namehash = require('eth-ens-namehash').hash
-const sha3 = require('web3').utils
-
-const keccak256 = x => '0x' + sha3.keccak_256(x)
+const { keccak256 } = require('web3').utils
 
 const knownAppNames = [
   'voting',
