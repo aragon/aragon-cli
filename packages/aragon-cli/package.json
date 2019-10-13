@@ -48,7 +48,7 @@
     "@aragon/wrapper": "^5.0.0-rc.17",
     "ajv": "^6.6.2",
     "bn.js": "^5.0.0",
-    "byte-size": "^5.0.1",
+    "byte-size": "^6.0.0",
     "chalk": "^2.1.0",
     "cli-table": "^0.3.1",
     "dev-null": "^0.1.1",
