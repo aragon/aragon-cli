@@ -3,7 +3,7 @@ const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 const { getContract } = require('../../../util')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const chalk = require('chalk')
-const web3Utils = require('web3-utils')
+const web3Utils = require('web3').utils
 const {
   getRecommendedGasLimit,
   parseArgumentStringIfPossible,

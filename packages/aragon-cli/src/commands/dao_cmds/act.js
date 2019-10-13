@@ -1,4 +1,4 @@
-const ABI = require('web3-eth-abi')
+const web3 = require('web3')
 const execHandler = require('./utils/execHandler').handler
 const getAppKernel = require('./utils/app-kernel')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
@@ -43,7 +43,7 @@ exports.builder = function(yargs) {
 }
 
 const encodeCalldata = (signature, params) => {
-  const sigBytes = ABI.encodeFunctionSignature(signature)
+  const sigBytes = web3.eth.abi.encodeFunctionSignature(signature)
 
   const types = signature.replace(')', '').split('(')[1]
 
@@ -52,7 +52,7 @@ const encodeCalldata = (signature, params) => {
     return sigBytes
   }
 
-  const paramBytes = ABI.encodeParameters(types.split(','), params)
+  const paramBytes = web3.eth.abi.encodeParameters(types.split(','), params)
 
   return `${sigBytes}${paramBytes.slice(2)}`
 }

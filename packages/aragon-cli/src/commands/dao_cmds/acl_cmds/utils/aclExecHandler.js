@@ -1,5 +1,5 @@
 const execHandler = require('../../utils/execHandler').handler
-const { keccak256 } = require('js-sha3')
+const { keccak256 } = require('web3').utils
 const { map, filter, first } = require('rxjs/operators')
 const { addressesEqual } = require('../../../../util')
 

@@ -11,12 +11,11 @@ const getRepoTask = require('./utils/getRepoTask')
 const encodeInitPayload = require('./utils/encodeInitPayload')
 const {
   addressesEqual,
-  getContract,
   ANY_ENTITY,
   NO_MANAGER,
   ZERO_ADDRESS,
 } = require('../../util')
-const kernelABI = require('@aragon/os/abi/Kernel').abi
+const kernelABI = require('./abi/os/Kernel').abi
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'
@@ -71,10 +70,7 @@ exports.task = async ({
         registryAddress: apmOptions.ensRegistryAddress,
       })
 
-  const kernel = new web3.eth.Contract(
-    getContract('@aragon/os', 'Kernel').abi,
-    dao
-  )
+  const kernel = new web3.eth.Contract(require('./abi/os/Kernel').abi, dao)
 
   const tasks = new TaskList(
     [

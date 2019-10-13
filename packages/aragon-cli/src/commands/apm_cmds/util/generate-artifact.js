@@ -5,7 +5,7 @@ const flatten = require('truffle-flattener')
 const extract = require('../../../helpers/solidity-extractor')
 const namehash = require('eth-ens-namehash')
 const taskInput = require('listr-input')
-const { keccak256 } = require('js-sha3')
+const { keccak256 } = require('web3').utils
 
 const { ARTIFACT_FILE } = require('./preprare-files')
 const SOLIDITY_FILE = 'code.sol'
