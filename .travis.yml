@@ -6,6 +6,7 @@ branches:
 notifications:
   email: false
 node_js:
+  - '12'
   - '11'
   - '10'
   - '9'
@@ -19,7 +20,7 @@ script:
   - npm run test:coverage
   - travis_wait 30 npm run test:e2e
 after_success:
-  - test $TRAVIS_NODE_VERSION = "11" && npm run report-coverage
+  - test $TRAVIS_NODE_VERSION = "12" && npm run report-coverage
 before_deploy:
   - echo 'Preparing to deploy to NPM'
   - echo 'Cleaning any uncommitted changes'
@@ -32,7 +33,7 @@ deploy:
   provider: script
   script: 'npm run publish:nightly'
   on:
-    node_js: '11'
+    node_js: '12'
     tags: true
 after_deploy:
   - echo 'Finished deploying to NPM'
