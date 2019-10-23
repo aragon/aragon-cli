@@ -117,17 +117,17 @@ exports.task = async ({
             ctx.notInitialized = true
           }
 
-          const getTransactionPath = wrapper => {
-            const fnArgs = [
-              ctx.repo.appId,
-              ctx.repo.contractAddress,
-              initPayload,
-              false,
-            ]
-            return wrapper.getTransactionPath(dao, 'newAppInstance', fnArgs)
-          }
-
-          return execTask(dao, getTransactionPath, {
+          const fnArgs = [
+            ctx.repo.appId,
+            ctx.repo.contractAddress,
+            initPayload,
+            false,
+          ]
+          
+          return execTask(dao, {
+            app: dao,
+            method: 'newAppInstance',
+            params: fnArgs,
             ipfsCheck: false,
             reporter,
             gasPrice,

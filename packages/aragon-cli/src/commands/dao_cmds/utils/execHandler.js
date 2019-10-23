@@ -4,37 +4,47 @@ const startIPFS = require('../../ipfs_cmds/start')
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
+const { addressesEqual } = require('../../../util')
+const { map, filter, first } = require('rxjs/operators')
 
 /**
  * Get transaction path
- * @param {string} app App address
+ * @param {string} appAddress App address
  * @param {string} method Method name
  * @param {Object} params Method params
  * @param {Object} wrapper Aragon wrapper
  */
-async function getTransactionPath(app, method, params, wrapper) {
+async function getTransactionPath(appAddress, method, params, wrapper) {
   // Wait for app info to load
   await wrapper.apps
     .pipe(
-      map(apps =>
-        apps.find(appAddress =>
-          addressesEqual(app, appAddress)
-        )
-      ),
+      map(apps => apps.find(app => addressesEqual(appAddress, app.proxyAddress))),
       filter(app => app),
       first()
     )
     .toPromise()
 
   // If app is the ACL, call getACLTransactionPath
-  return app === wrapper.aclProxy.address
-    ? wrapper.getACLTransactionPath(method, params)  
-    : wrapper.getTransactionPath(app, method, params)  
+  return appAddress === wrapper.aclProxy.address
+    ? wrapper.getACLTransactionPath(method, params)
+    : wrapper.getTransactionPath(appAddress, method, params)
 }
 
 exports.task = async function(
   dao,
-  { app, method, params, ipfsCheck, reporter, apm, web3, wsProvider, gasPrice, silent, debug }
+  {
+    app,
+    method,
+    params,
+    ipfsCheck,
+    reporter,
+    apm,
+    web3,
+    wsProvider,
+    gasPrice,
+    silent,
+    debug,
+  }
 ) {
   const accounts = await web3.eth.getAccounts()
   return new TaskList(
@@ -56,7 +66,12 @@ exports.task = async function(
             const tryFindTransactionPath = async () => {
               if (appsLoaded && wrapper && !ctx.transactionPath) {
                 try {
-                  ctx.transactionPath = await getTransactionPath(app, method, params, wrapper)
+                  ctx.transactionPath = await getTransactionPath(
+                    app,
+                    method,
+                    params,
+                    wrapper
+                  )
                   resolve()
                 } catch (e) {
                   reject(e)
