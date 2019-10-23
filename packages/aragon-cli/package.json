@@ -45,6 +45,8 @@
     "@aragon/apps-shared-minime": "^1.0.1",
     "@aragon/aragen": "^5.0.0",
     "@aragon/cli-utils": "^0.0.8",
+    "@aragon/id": "^2.1.0",
+    "@aragon/os": "^4.3.0",
     "@aragon/wrapper": "^5.0.0-rc.17",
     "ajv": "^6.6.2",
     "bn.js": "^5.0.0",

@@ -10,6 +10,7 @@ const {
   getRecommendedGasLimit,
   parseArgumentStringIfPossible,
 } = require('../../util')
+const kernelAbi = require('@aragon/os/build/contracts/Kernel.json').abi
 const assignIdTask = require('./id-assign').task
 
 exports.BARE_TEMPLATE = defaultAPMName('bare-template')
@@ -164,10 +165,7 @@ exports.task = async ({
         title: 'Checking DAO',
         skip: () => skipChecks,
         task: async (ctx, task) => {
-          const kernel = new web3.eth.Contract(
-            require('./abi/os/Kernel').abi,
-            ctx.daoAddress
-          )
+          const kernel = new web3.eth.Contract(kernelAbi, ctx.daoAddress)
           ctx.aclAddress = await kernel.methods.acl().call()
           ctx.appManagerRole = await kernel.methods.APP_MANAGER_ROLE().call()
         },
