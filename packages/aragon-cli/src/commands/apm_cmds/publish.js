@@ -709,11 +709,11 @@ exports.handler = async function({
     '\n',
     `${chalk.bold('Publish information:')}`,
     '\n\n',
-    `Repo: ${chalk.green(appName)}`,
+    `Repo: ${chalk.blue(appName)}`,
     '\n',
-    `Contract address: ${chalk.blue(contractAddress || ZERO_ADDRESS)}`,
+    `Contract address: ${chalk.green(contractAddress || ZERO_ADDRESS)}`,
     '\n',
-    `Content (${contentProvier}): ${chalk.blue(contentLocation)}`,
+    `Content (${contentProvier}): ${chalk.green(contentLocation)}`,
     '\n'
     // TODO: (Gabi) Add extra relevant info (e.g. size)
     // `Size: ${chalk.blue()}`,
