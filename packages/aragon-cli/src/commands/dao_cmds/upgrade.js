@@ -59,7 +59,7 @@ exports.task = async ({
         title: 'Upgrading app',
         task: async ctx => {
           const kernel = new web3.eth.Contract(
-            require('./abi/os/Kernel').abi,
+            require('@aragon/os/build/contracts/Kernel').abi,
             dao
           )
 

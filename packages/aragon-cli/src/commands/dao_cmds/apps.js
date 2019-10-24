@@ -82,7 +82,7 @@ exports.handler = async function({
         enabled: () => all,
         task: async (ctx, task) => {
           const kernel = new web3.eth.Contract(
-            require('./abi/os/Kernel').abi,
+            require('@aragon/os/build/contracts/Kernel').abi,
             ctx.daoAddress
           )
 

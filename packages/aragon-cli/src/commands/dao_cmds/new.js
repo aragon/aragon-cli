@@ -165,7 +165,7 @@ exports.task = async ({
         skip: () => skipChecks,
         task: async (ctx, task) => {
           const kernel = new web3.eth.Contract(
-            require('./abi/os/Kernel').abi,
+            require('@aragon/os/build/contracts/Kernel').abi,
             ctx.daoAddress
           )
           ctx.aclAddress = await kernel.methods.acl().call()

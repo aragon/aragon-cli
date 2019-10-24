@@ -3,7 +3,8 @@ const ENS = require('ethereum-ens')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const { green } = require('chalk')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const registrarAbi = require('./abi/id/IFIFSResolvingRegistrar').abi
+const registrarAbi = require('@aragon/id/build/contracts/IFIFSResolvingRegistrar')
+  .abi
 const { sha3, isAddress } = require('web3').utils
 
 const ARAGON_DOMAIN = 'aragonid.eth'
