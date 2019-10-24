@@ -134,7 +134,7 @@
   },
   "aragon": {
     "clientRepo": "https://github.com/aragon/aragon",
-    "clientVersion": "8cf20f6acd637ec55899818816d03a653abbd61d",
+    "clientVersion": "775edd606333a111eb2693df53900039722a95dc",
     "clientPort": "3000",
     "defaultGasPrice": "2",
     "defaultIpfsTimeout": "300000"
