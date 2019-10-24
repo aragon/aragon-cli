@@ -150,6 +150,7 @@ const gateways = [
   'https://ipfs.jes.xxx/ipfs',
   'https://www.eternum.io/ipfs',
   'https://ipfs.wa.hle.rs/ipfs',
+  'https://siderus.io/ipfs/',
 ]
 
 async function queryCidAtGateway(gateway, cid) {
