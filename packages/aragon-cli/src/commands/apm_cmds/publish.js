@@ -548,28 +548,11 @@ exports.runPublishTask = ({
         enabled: () => !onlyArtifacts,
         task: async (ctx, task) => {
           try {
-            const getTransactionPath = async wrapper => {
-              // Wait for app info to load
-              await wrapper.apps
-                .pipe(
-                  map(apps =>
-                    apps.find(app =>
-                      addressesEqual(app.proxyAddress, proxyAddress)
-                    )
-                  ),
-                  filter(app => app),
-                  first()
-                )
-                .toPromise()
-
-              return wrapper.getTransactionPath(
-                proxyAddress,
-                methodName,
-                params
-              )
-            }
-
-            return execTask(dao, getTransactionPath, {
+            return execTask(dao, {
+              dao,
+              app: proxyAddress,
+              method: methodName,
+              params,
               ipfsCheck: false,
               reporter,
               gasPrice,
