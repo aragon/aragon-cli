@@ -1,6 +1,26 @@
 import Aragon, { ensResolve } from '@aragon/wrapper'
-const { takeWhile } = require('rxjs/operators')
+const { takeWhile, map, filter, first } = require('rxjs/operators')
+const { addressesEqual } = require('../../../util')
 const noop = () => {}
+
+// Subscribe to wrapper's observables
+const subscribe = (
+  wrapper,
+  { onApps, onForwarders, onTransaction, onPermissions }
+) => {
+  const { apps, forwarders, transactions, permissions } = wrapper
+  
+  const subscriptions = {
+    apps: apps.subscribe(onApps),
+    connectedApp: null,
+    forwarders: forwarders.subscribe(onForwarders),
+    transactions: transactions.subscribe(onTransaction),
+    permissions: permissions.subscribe(onPermissions),
+  }
+
+  return subscriptions
+}
+
 
 export async function resolveEnsDomain(domain, opts) {
   try {
@@ -20,7 +40,6 @@ export async function initAragonJS(
     provider,
     gasPrice,
     accounts = '',
-    walletProvider = null,
     ipfsConf = {},
     onError = noop,
     onApps = noop,
@@ -86,6 +105,30 @@ export async function initAragonJS(
 }
 
 /**
+ * Get transaction path on an Aragon app for `method` with `params` 
+ * as parameters. 
+ * @param {string} appAddress App address
+ * @param {string} method Method name
+ * @param {string[]} params Method params
+ * @param {Aragon} wrapper Aragon wrapper
+ */
+export async function getTransactionPath(appAddress, method, params, wrapper) {
+  // Wait for app info to load
+  await wrapper.apps
+    .pipe(
+      map(apps => apps.find(app => addressesEqual(appAddress, app.proxyAddress))),
+      filter(app => app),
+      first()
+    )
+    .toPromise()
+
+  // If app is the ACL, call getACLTransactionPath
+  return appAddress === wrapper.aclProxy.address
+    ? wrapper.getACLTransactionPath(method, params)
+    : wrapper.getTransactionPath(appAddress, method, params)
+}
+
+/**
  * Return a list of all installed apps
  * @param {Aragon} wrapper Aragon wrapper
  * @returns {Promise<Object[]>} Installed apps
@@ -98,21 +141,5 @@ export async function getApps(wrapper) {
     .toPromise()
 }
 
-// Subscribe to wrapper's observables
-const subscribe = (
-  wrapper,
-  { onApps, onForwarders, onTransaction, onPermissions }
-) => {
-  const { apps, forwarders, transactions, permissions } = wrapper
-  
-  const subscriptions = {
-    apps: apps.subscribe(onApps),
-    connectedApp: null,
-    forwarders: forwarders.subscribe(onForwarders),
-    transactions: transactions.subscribe(onTransaction),
-    permissions: permissions.subscribe(onPermissions),
-  }
 
-  return subscriptions
-}
 

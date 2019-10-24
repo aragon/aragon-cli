@@ -1,34 +1,9 @@
-import { initAragonJS } from './aragonjs-wrapper'
+import { initAragonJS, getTransactionPath } from './aragonjs-wrapper'
 const chalk = require('chalk')
 const startIPFS = require('../../ipfs_cmds/start')
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const { addressesEqual } = require('../../../util')
-const { map, filter, first } = require('rxjs/operators')
-
-/**
- * Get transaction path
- * @param {string} appAddress App address
- * @param {string} method Method name
- * @param {Object} params Method params
- * @param {Object} wrapper Aragon wrapper
- */
-async function getTransactionPath(appAddress, method, params, wrapper) {
-  // Wait for app info to load
-  await wrapper.apps
-    .pipe(
-      map(apps => apps.find(app => addressesEqual(appAddress, app.proxyAddress))),
-      filter(app => app),
-      first()
-    )
-    .toPromise()
-
-  // If app is the ACL, call getACLTransactionPath
-  return appAddress === wrapper.aclProxy.address
-    ? wrapper.getACLTransactionPath(method, params)
-    : wrapper.getTransactionPath(appAddress, method, params)
-}
 
 exports.task = async function(
   {
