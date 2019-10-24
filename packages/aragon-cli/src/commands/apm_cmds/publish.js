@@ -141,7 +141,7 @@ exports.builder = function(yargs) {
       default: false,
     })
     .option('dry-run', {
-      description: 'Whether to skip the confirmation step',
+      description: 'Whether to broadcast the publish transaction',
       boolean: true,
       default: false,
     })
