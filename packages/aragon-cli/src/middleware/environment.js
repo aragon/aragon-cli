@@ -15,6 +15,7 @@ const configureNetwork = (
 ) => {
   // Catch commands that dont require network and return
   const skipNetworkSubcommands = new Set(['version']) // 'aragon apm version'
+  console.log(getTruffleConfig.networks)
   if (argv._.length >= 2) {
     if (skipNetworkSubcommands.has(argv._[1])) {
       return {}
@@ -99,7 +100,7 @@ module.exports = function environmentMiddleware(argv) {
         )
         process.exit(1)
       }
-      if (!network) network = 'development'
+      if (!network) network = 'rpc'
       return { network: configureNetwork(argv, network) }
     }
 
