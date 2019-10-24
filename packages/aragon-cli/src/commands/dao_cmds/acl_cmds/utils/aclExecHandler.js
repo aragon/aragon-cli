@@ -1,7 +1,6 @@
 const execHandler = require('../../utils/execHandler').handler
 const { keccak256 } = require('web3').utils
-const { map, filter, first } = require('rxjs/operators')
-const { addressesEqual } = require('../../../../util')
+const { ensureWeb3 } = require('../../../../helpers/web3-fallback')
 
 module.exports = async function(
   dao,
@@ -9,34 +8,19 @@ module.exports = async function(
   params,
   { reporter, apm, network, gasPrice, wsProvider, role, silent, debug }
 ) {
-  const getTransactionPath = async wrapper => {
-    const aclAddr = wrapper.aclProxy.address
-    // Wait for app info to load
-    await wrapper.apps
-      .pipe(
-        map(apps =>
-          apps.find(app => addressesEqual(app.proxyAddress, aclAddr))
-        ),
-        filter(app => app),
-        first()
-      )
-      .toPromise()
+  const web3 = await ensureWeb3(network)
+  const daoInstance = new web3.eth.Contract(require('../../abi/os/Kernel').abi, dao)
+  const aclAddress = await daoInstance.methods.acl().call()
 
-    let processedParams
+  const processedParams = role.startsWith('0x') 
+    ? params
+    : params.map(param => param === role ? keccak256(role) : param)
 
-    // If the provided role is its name, the name is hashed
-    // TODO: Get role bytes from app artifacts
-    if (role.startsWith('0x')) {
-      processedParams = params
-    } else {
-      processedParams = params.map(param =>
-        param === role ? '0x' + keccak256(role) : param
-      )
-    }
-
-    return wrapper.getACLTransactionPath(method, processedParams)
-  }
-  return execHandler(dao, getTransactionPath, {
+  return execHandler({
+    dao,
+    app: aclAddress,
+    method,
+    params: processedParams,
     ipfsCheck: false,
     reporter,
     gasPrice,

@@ -31,8 +31,8 @@ async function getTransactionPath(appAddress, method, params, wrapper) {
 }
 
 exports.task = async function(
-  dao,
   {
+    dao,
     app,
     method,
     params,
@@ -121,13 +121,13 @@ exports.task = async function(
   )
 }
 
-exports.handler = async function(dao, getTransactionPath, args) {
+exports.handler = async function(args) {
   args = {
     ...args,
     web3: await ensureWeb3(args.network),
   }
 
-  const tasks = await exports.task(dao, getTransactionPath, args)
+  const tasks = await exports.task(args)
 
   return tasks.run().then(ctx => {
     args.reporter.success(
