@@ -1,4 +1,4 @@
-import initAragonJS from './aragonjs-wrapper'
+import { initAragonJS } from './aragonjs-wrapper'
 const chalk = require('chalk')
 const startIPFS = require('../../ipfs_cmds/start')
 const TaskList = require('listr')

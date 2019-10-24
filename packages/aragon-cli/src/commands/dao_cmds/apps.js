@@ -1,4 +1,4 @@
-import initAragonJS from './utils/aragonjs-wrapper'
+import { initAragonJS, getApps } from './utils/aragonjs-wrapper'
 const TaskList = require('listr')
 const chalk = require('chalk')
 const daoArg = require('./utils/daoArg')
@@ -60,15 +60,15 @@ exports.handler = async function({
 
           return new Promise((resolve, reject) => {
             initAragonJS(dao, apmOptions['ens-registry'], {
+              ipfsConf: apmOptions.ipfs,
               provider: wsProvider || web3.currentProvider,
-              onApps: apps => {
-                ctx.apps = apps
-                resolve()
-              },
               onDaoAddress: addr => {
                 ctx.daoAddress = addr
               },
               onError: err => reject(err),
+            }).then(async wrapper => {
+              ctx.apps = await getApps(wrapper)
+              resolve()
             }).catch(err => {
               reporter.error('Error inspecting DAO apps')
               reporter.debug(err)

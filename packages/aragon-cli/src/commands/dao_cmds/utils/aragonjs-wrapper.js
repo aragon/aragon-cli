@@ -1,24 +1,6 @@
 import Aragon, { ensResolve } from '@aragon/wrapper'
-
+const { takeWhile } = require('rxjs/operators')
 const noop = () => {}
-
-// Subscribe to wrapper's observables
-const subscribe = (
-  wrapper,
-  { onApps, onForwarders, onTransaction, onPermissions }
-) => {
-  const { apps, forwarders, transactions, permissions } = wrapper
-
-  const subscriptions = {
-    apps: apps.subscribe(onApps),
-    connectedApp: null,
-    forwarders: forwarders.subscribe(onForwarders),
-    transactions: transactions.subscribe(onTransaction),
-    permissions: permissions.subscribe(onPermissions),
-  }
-
-  return subscriptions
-}
 
 export async function resolveEnsDomain(domain, opts) {
   try {
@@ -31,7 +13,7 @@ export async function resolveEnsDomain(domain, opts) {
   }
 }
 
-const initWrapper = async (
+export async function initAragonJS(
   dao,
   ensRegistryAddress,
   {
@@ -47,7 +29,7 @@ const initWrapper = async (
     onDaoAddress = noop,
     onPermissions = noop,
   } = {}
-) => {
+) {
   const isDomain = dao => /[a-z0-9]+\.eth/.test(dao)
 
   const daoAddress = isDomain(dao)
@@ -65,7 +47,6 @@ const initWrapper = async (
   onDaoAddress(daoAddress)
 
   // TODO: don't reinitialize if cached
-
   const wrapper = new Aragon(daoAddress, {
     provider,
     defaultGasPriceFn: () => gasPrice,
@@ -104,4 +85,34 @@ const initWrapper = async (
   return wrapper
 }
 
-export default initWrapper
+/**
+ * Return a list of all installed apps
+ * @param {Aragon} wrapper Aragon wrapper
+ * @returns {Promise<Object[]>} Installed apps
+ */
+export async function getApps(wrapper) {
+  return wrapper.apps
+    // The first element of the apps stream is sometimes the kernel alone.
+    // If this is the case, continue.
+    .pipe(takeWhile(apps => apps.length <= 1, true))
+    .toPromise()
+}
+
+// Subscribe to wrapper's observables
+const subscribe = (
+  wrapper,
+  { onApps, onForwarders, onTransaction, onPermissions }
+) => {
+  const { apps, forwarders, transactions, permissions } = wrapper
+  
+  const subscriptions = {
+    apps: apps.subscribe(onApps),
+    connectedApp: null,
+    forwarders: forwarders.subscribe(onForwarders),
+    transactions: transactions.subscribe(onTransaction),
+    permissions: permissions.subscribe(onPermissions),
+  }
+
+  return subscriptions
+}
+

@@ -1,4 +1,4 @@
-import initAragonJS from '../utils/aragonjs-wrapper'
+import { initAragonJS, getApps } from '../utils/aragonjs-wrapper'
 const chalk = require('chalk')
 const TaskList = require('listr')
 const daoArg = require('../utils/daoArg')
@@ -93,8 +93,9 @@ exports.handler = async function({
           task.output = `Fetching permissions for ${dao}...`
 
           return new Promise((resolve, reject) => {
-            const resolveIfReady = () => {
+            const resolveIfReady = async () => {
               if (ctx.acl && ctx.apps) {
+                await new Promise(res => setTimeout(res, 1000))
                 resolve()
               }
             }
@@ -105,15 +106,15 @@ exports.handler = async function({
                 ctx.acl = permissions
                 resolveIfReady()
               },
-              onApps: apps => {
-                ctx.apps = apps
-                resolveIfReady()
-              },
               onDaoAddress: addr => {
                 ctx.daoAddress = addr
               },
               onError: err => reject(err),
-            }).catch(err => {
+            }).then(async wrapper => {
+              ctx.apps = await getApps(wrapper)
+              resolveIfReady()
+            })
+            .catch(err => {
               reporter.error('Error inspecting DAO')
               reporter.debug(err)
               process.exit(1)
