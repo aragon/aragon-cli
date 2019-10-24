@@ -8,7 +8,17 @@ const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 exports.task = async function(
   dao,
   getTransactionPath,
-  { ipfsCheck, reporter, apm, web3, wsProvider, gasPrice, silent, debug }
+  {
+    ipfsCheck,
+    dryRun,
+    reporter,
+    apm,
+    web3,
+    wsProvider,
+    gasPrice,
+    silent,
+    debug,
+  }
 ) {
   const accounts = await web3.eth.getAccounts()
   return new TaskList(
@@ -71,8 +81,10 @@ exports.task = async function(
             throw new Error('Cannot find transaction path for executing action')
           }
 
-          task.output = `Waiting for transaction to be mined...`
-          ctx.receipt = await web3.eth.sendTransaction(ctx.transactionPath[0])
+          if (!dryRun) {
+            task.output = `Waiting for transaction to be mined...`
+            ctx.receipt = await web3.eth.sendTransaction(ctx.transactionPath[0])
+          }
         },
       },
     ],

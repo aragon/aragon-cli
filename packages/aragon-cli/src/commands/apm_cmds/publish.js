@@ -140,6 +140,11 @@ exports.builder = function(yargs) {
       boolean: true,
       default: false,
     })
+    .option('dry-run', {
+      description: 'Whether to skip the confirmation step',
+      boolean: true,
+      default: false,
+    })
 }
 
 exports.runSetupTask = ({
@@ -319,7 +324,6 @@ exports.runPrepareForPublishTask = ({
   // Globals
   cwd,
   web3,
-  network,
   module,
   apm: apmOptions,
   silent,
@@ -532,7 +536,7 @@ exports.runPublishTask = ({
   // Arguments
   /// Conditionals
   onlyArtifacts,
-  onlyContent,
+  dryRun,
 
   /// Context
   dao,
@@ -571,6 +575,7 @@ exports.runPublishTask = ({
 
             return execTask(dao, getTransactionPath, {
               ipfsCheck: false,
+              dryRun,
               reporter,
               gasPrice,
               apm: apmOptions,
@@ -622,6 +627,7 @@ exports.handler = async function({
   httpServedFrom,
   propagateContent,
   skipConfirmation,
+  dryRun,
 }) {
   web3 = web3 || (await ensureWeb3(network))
 
@@ -662,7 +668,6 @@ exports.handler = async function({
       reporter,
       cwd,
       web3,
-      network,
       module,
       apm: apmOptions,
       silent,
@@ -694,17 +699,22 @@ exports.handler = async function({
 
   if (files.length === 1 && path.normalize(files[0]) === '.') {
     reporter.warning(
-      `Publishing files from the project's root folder is not recommended. Consider using the distribution folder of your project: "--files <folder>".`
+      `${chalk.yellow(
+        'Publishing files from the project\'s root folder is not recommended. Consider using the distribution folder of your project: "--files <folder>".'
+      )}`
     )
   }
 
   console.log(
     '\n',
-    `The following information will be published:`,
+    `${chalk.bold('Publish information:')}`,
+    '\n\n',
+    `Repo: ${chalk.green(appName)}`,
     '\n',
     `Contract address: ${chalk.blue(contractAddress || ZERO_ADDRESS)}`,
     '\n',
-    `Content (${contentProvier}): ${chalk.blue(contentLocation)}`
+    `Content (${contentProvier}): ${chalk.blue(contentLocation)}`,
+    '\n'
     // TODO: (Gabi) Add extra relevant info (e.g. size)
     // `Size: ${chalk.blue()}`,
     // '\n',
@@ -713,9 +723,8 @@ exports.handler = async function({
   )
 
   if (contentProvier === 'ipfs') {
+    reporter.info('Explore IPFS content locally with the following link:')
     console.log(
-      '\n',
-      'Explore the ipfs content locally:',
       '\n',
       chalk.bold(
         `http://localhost:8080/ipfs/QmSDgpiHco5yXdyVTfhKxr3aiJ82ynz8V14QcGKicM3rVh/#/explore/${contentLocation}`
@@ -724,12 +733,21 @@ exports.handler = async function({
     )
   }
 
-  if (!skipConfirmation) {
+  if (dryRun) {
+    reporter.warning(
+      `${chalk.yellow(
+        'The publish transaction will not be send, this is a dry run. Use the transaction data to send it asynchronously.'
+      )}`,
+      '\n'
+    )
+  }
+
+  if (!dryRun && !skipConfirmation) {
     const { confirmation } = await inquirer.prompt([
       {
         type: 'confirm',
         name: 'confirmation',
-        message: `${chalk.green(`Publish to ${appName} repo`)}`,
+        message: `${chalk.green(`Publish new version`)}`,
       },
     ])
     // new line after confirm
@@ -748,7 +766,7 @@ exports.handler = async function({
       silent,
       debug,
       onlyArtifacts,
-      onlyContent,
+      dryRun,
       // context
       dao,
       proxyAddress,
@@ -757,35 +775,55 @@ exports.handler = async function({
     })
     .run()
 
-  const { transactionHash, status } = receipt
-
-  if (!status) {
-    reporter.error(`\nPublish transaction reverted:\n`)
+  if (dryRun) {
+    console.log(
+      '\n',
+      `${chalk.bold(`Transaction data:`)}`,
+      '\n\n',
+      `From: ${chalk.green(transactionPath[0].from)}`,
+      '\n',
+      `To: ${chalk.green(transactionPath[0].to)}`,
+      '\n',
+      `Gas: ${chalk.blue(transactionPath[0].gas)}`,
+      '\n',
+      `Data: ${chalk.green(transactionPath[0].data)}`,
+      `\n\n`,
+      `${chalk.bold('Radspec description:')}`,
+      `\n\n`,
+      `${chalk.blue(transactionPath[0].description)}`,
+      `\n`
+    )
+    reporter.debug(`GasPrice: ${chalk.green(transactionPath[0].gasPrice)}`)
   } else {
-    // If the version is still the same, the publish intent was forwarded but not immediately executed (p.e. Voting)
-    if (initialVersion === version) {
-      console.log(
-        '\n',
-        `Successfully executed: "${chalk.green(
-          transactionPath[0].description
-        )}"`,
-        '\n'
-      )
+    const { transactionHash, status } = receipt
+
+    if (!status) {
+      reporter.error(`\nPublish transaction reverted:\n`)
     } else {
-      const logVersion = 'v' + version
+      // If the version is still the same, the publish intent was forwarded but not immediately executed (p.e. Voting)
+      if (initialVersion === version) {
+        console.log(
+          '\n',
+          `Successfully executed: "${chalk.green(
+            transactionPath[0].description
+          )}"`,
+          '\n'
+        )
+      } else {
+        const logVersion = 'v' + version
 
-      console.log(
-        '\n',
-        `Successfully published ${appName} ${chalk.green(logVersion)} :`,
-        '\n'
-      )
+        console.log(
+          '\n',
+          `Successfully published ${appName} ${chalk.green(logVersion)} :`,
+          '\n'
+        )
+      }
     }
+
+    console.log(`Transaction hash: ${chalk.blue(transactionHash)}`, '\n')
+
+    reporter.debug(`Published directory: ${chalk.blue(pathToPublish)}\n`)
   }
-
-  console.log(`Transaction hash: ${chalk.blue(transactionHash)}`, '\n')
-
-  reporter.debug(`Published directory: ${chalk.blue(pathToPublish)}\n`)
-
   // Propagate content
   if (!http && propagateContent) {
     if (!skipConfirmation) {
@@ -826,5 +864,6 @@ exports.handler = async function({
     reporter.debug(`Errors: \n${result.errors.map(JSON.stringify).join('\n')}`)
     // TODO: add your own gateways
   }
+
   process.exit()
 }
