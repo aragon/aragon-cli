@@ -99,7 +99,7 @@ module.exports = function environmentMiddleware(argv) {
         )
         process.exit(1)
       }
-      if (!network) network = 'development'
+      if (!network) network = 'rpc'
       return { network: configureNetwork(argv, network) }
     }
 
