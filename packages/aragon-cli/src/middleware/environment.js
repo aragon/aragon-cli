@@ -15,7 +15,6 @@ const configureNetwork = (
 ) => {
   // Catch commands that dont require network and return
   const skipNetworkSubcommands = new Set(['version']) // 'aragon apm version'
-  console.log(getTruffleConfig.networks)
   if (argv._.length >= 2) {
     if (skipNetworkSubcommands.has(argv._[1])) {
       return {}
