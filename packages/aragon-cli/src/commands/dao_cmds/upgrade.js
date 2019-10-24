@@ -67,16 +67,15 @@ exports.task = async ({
             .APP_BASES_NAMESPACE()
             .call()
 
-          const getTransactionPath = wrapper => {
-            const fnArgs = [
+          return execTask({
+            dao,
+            app: dao,
+            method: 'setApp',
+            params: [
               basesNamespace,
               ctx.repo.appId,
               ctx.repo.contractAddress,
-            ]
-            return wrapper.getTransactionPath(dao, 'setApp', fnArgs)
-          }
-
-          return execTask(dao, getTransactionPath, {
+            ],
             ipfsCheck: false,
             reporter,
             gasPrice,

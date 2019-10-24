@@ -124,7 +124,8 @@ exports.task = async ({
             false,
           ]
           
-          return execTask(dao, {
+          return execTask({
+            dao,
             app: dao,
             method: 'newAppInstance',
             params: fnArgs,
@@ -187,15 +188,17 @@ exports.task = async ({
           if (!ctx.accounts) {
             ctx.accounts = await web3.eth.getAccounts()
           }
+          const daoInstance = new web3.eth.Contract(require('./abi/os/Kernel').abi, dao)
+          const aclAddress = await daoInstance.methods.acl().call()
 
           return Promise.all(
             permissions.map(params => {
-              const getTransactionPath = async wrapper => {
-                return wrapper.getACLTransactionPath('createPermission', params)
-              }
-
               return (
-                execTask(dao, getTransactionPath, {
+                execTask({
+                  dao,
+                  app: aclAddress,
+                  method: 'createPermission',
+                  params,
                   reporter,
                   gasPrice,
                   apm: apmOptions,
