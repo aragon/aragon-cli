@@ -1,4 +1,4 @@
-import { initAragonJS, getTransactionPath } from './aragonjs-wrapper'
+import { initAragonJS, getTransactionPath } from '../../../helpers/aragonjs-wrapper'
 const chalk = require('chalk')
 const startIPFS = require('../../ipfs_cmds/start')
 const TaskList = require('listr')

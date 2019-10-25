@@ -1,4 +1,4 @@
-import { initAragonJS, getApps } from './utils/aragonjs-wrapper'
+import { initAragonJS, getApps } from '../../helpers/aragonjs-wrapper'
 const TaskList = require('listr')
 const chalk = require('chalk')
 const daoArg = require('./utils/daoArg')
