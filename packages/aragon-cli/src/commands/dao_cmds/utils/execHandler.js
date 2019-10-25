@@ -60,11 +60,11 @@ exports.task = async function(
               provider: wsProvider || web3.currentProvider,
               accounts,
               onApps: async apps => {
-                appsLoaded = true
-                await tryFindTransactionPath()
-              },
-              onError: err => reject(err),
-            })
+                  appsLoaded = true
+                  await tryFindTransactionPath()
+                },
+                onError: err => reject(err),
+              })
               .then(async initializedWrapper => {
                 wrapper = initializedWrapper
                 await tryFindTransactionPath()
