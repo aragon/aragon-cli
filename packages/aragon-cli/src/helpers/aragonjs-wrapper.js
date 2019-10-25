@@ -75,7 +75,7 @@ export async function initAragonJS(
   } = {}
 ) {
   const isDomain = dao => /[a-z0-9]+\.eth/.test(dao)
-
+  
   const daoAddress = isDomain(dao)
     ? await resolveEnsDomain(dao, {
         provider,
@@ -87,7 +87,7 @@ export async function initAragonJS(
     onError(new Error('The provided DAO address is invalid'))
     return
   }
-
+  
   onDaoAddress(daoAddress)
 
   // TODO: don't reinitialize if cached
@@ -125,7 +125,7 @@ export async function initAragonJS(
       }
     })
   }
-
+  
   return wrapper
 }
 
@@ -137,8 +137,7 @@ export async function initAragonJS(
 export async function getApps(wrapper) {
   return (
     wrapper.apps
-      // The first element of the apps stream is sometimes the kernel alone.
-      // If this is the case, continue.
+      // If the app list contains a single app, wait for more
       .pipe(takeWhile(apps => apps.length <= 1, true))
       .toPromise()
   )
@@ -157,6 +156,7 @@ export async function getTransactionPath(appAddress, method, params, wrapper) {
   // Wait for app info to load
   const app = await wrapper.apps
     .pipe(
+      // If the app list contains a single app, wait for more
       takeWhile(apps => apps.length <= 1, true),
       map(apps =>
         apps.find(app => addressesEqual(appAddress, app.proxyAddress))
