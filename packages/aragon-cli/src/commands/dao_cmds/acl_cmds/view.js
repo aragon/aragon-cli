@@ -95,7 +95,6 @@ exports.handler = async function({
           return new Promise((resolve, reject) => {
             const resolveIfReady = async () => {
               if (ctx.acl && ctx.apps) {
-                await new Promise(res => setTimeout(res, 1000))
                 resolve()
               }
             }
@@ -111,15 +110,16 @@ exports.handler = async function({
                 ctx.daoAddress = addr
               },
               onError: err => reject(err),
-            }).then(async wrapper => {
-              ctx.apps = await getApps(wrapper)
-              resolveIfReady()
             })
-            .catch(err => {
-              reporter.error('Error inspecting DAO')
-              reporter.debug(err)
-              process.exit(1)
-            })
+              .then(async wrapper => {
+                ctx.apps = await getApps(wrapper)
+                resolveIfReady()
+              })
+              .catch(err => {
+                reporter.error('Error inspecting DAO')
+                reporter.debug(err)
+                process.exit(1)
+              })
           })
         },
       },

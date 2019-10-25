@@ -66,14 +66,16 @@ exports.handler = async function({
                 ctx.daoAddress = addr
               },
               onError: err => reject(err),
-            }).then(async wrapper => {
-              ctx.apps = await getApps(wrapper)
-              resolve()
-            }).catch(err => {
-              reporter.error('Error inspecting DAO apps')
-              reporter.debug(err)
-              process.exit(1)
             })
+              .then(async wrapper => {
+                ctx.apps = await getApps(wrapper)
+                resolve()
+              })
+              .catch(err => {
+                reporter.error('Error inspecting DAO apps')
+                reporter.debug(err)
+                process.exit(1)
+              })
           })
         },
       },

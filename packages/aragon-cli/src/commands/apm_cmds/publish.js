@@ -16,8 +16,6 @@ const startIPFS = require('../ipfs_cmds/start')
 const propagateIPFS = require('../ipfs_cmds/propagate')
 const execTask = require('../dao_cmds/utils/execHandler').task
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const { map, filter, first } = require('rxjs/operators')
-const { addressesEqual } = require('../../util')
 
 const {
   prepareFilesForPublishing,

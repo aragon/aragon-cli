@@ -2,12 +2,7 @@ const web3 = require('web3')
 const execHandler = require('./utils/execHandler').handler
 const getAppKernel = require('./utils/app-kernel')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const {
-  parseArgumentStringIfPossible,
-  ZERO_ADDRESS,
-  addressesEqual,
-} = require('../../util')
-const { map, filter, first } = require('rxjs/operators')
+const { parseArgumentStringIfPossible, ZERO_ADDRESS } = require('../../util')
 
 const EXECUTE_FUNCTION_NAME = 'execute'
 

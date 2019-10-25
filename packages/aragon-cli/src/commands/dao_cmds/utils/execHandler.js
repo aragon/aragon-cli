@@ -1,26 +1,27 @@
-import { initAragonJS, getTransactionPath } from '../../../helpers/aragonjs-wrapper'
+import {
+  initAragonJS,
+  getTransactionPath,
+} from '../../../helpers/aragonjs-wrapper'
 const chalk = require('chalk')
 const startIPFS = require('../../ipfs_cmds/start')
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
-exports.task = async function(
-  {
-    dao,
-    app,
-    method,
-    params,
-    ipfsCheck,
-    reporter,
-    apm,
-    web3,
-    wsProvider,
-    gasPrice,
-    silent,
-    debug,
-  }
-) {
+exports.task = async function({
+  dao,
+  app,
+  method,
+  params,
+  ipfsCheck,
+  reporter,
+  apm,
+  web3,
+  wsProvider,
+  gasPrice,
+  silent,
+  debug,
+}) {
   const accounts = await web3.eth.getAccounts()
   return new TaskList(
     [
@@ -60,11 +61,11 @@ exports.task = async function(
               provider: wsProvider || web3.currentProvider,
               accounts,
               onApps: async apps => {
-                  appsLoaded = true
-                  await tryFindTransactionPath()
-                },
-                onError: err => reject(err),
-              })
+                appsLoaded = true
+                await tryFindTransactionPath()
+              },
+              onError: err => reject(err),
+            })
               .then(async initializedWrapper => {
                 wrapper = initializedWrapper
                 await tryFindTransactionPath()

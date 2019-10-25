@@ -1,6 +1,6 @@
 import Aragon, { ensResolve } from '@aragon/wrapper'
 import { takeWhile, map, filter, first, defaultIfEmpty } from 'rxjs/operators'
-import { addressesEqual }from '../util'
+import { addressesEqual } from '../util'
 const noop = () => {}
 
 // Subscribe to wrapper's observables
@@ -9,7 +9,7 @@ const subscribe = (
   { onApps, onForwarders, onTransaction, onPermissions }
 ) => {
   const { apps, forwarders, transactions, permissions } = wrapper
-  
+
   const subscriptions = {
     apps: apps.subscribe(onApps),
     connectedApp: null,
@@ -23,10 +23,10 @@ const subscribe = (
 
 /**
  * Resolve an ens domain
- * 
- * @param {string} domain
- * @param {*} opts
- * @returns {Promise<string>}
+ *
+ * @param {string} domain Domain
+ * @param {*} opts Options
+ * @returns {Promise<string>} Resolved ens domain
  */
 export async function resolveEnsDomain(domain, opts) {
   try {
@@ -42,8 +42,8 @@ export async function resolveEnsDomain(domain, opts) {
 /**
  * Initialize the Aragon.js wrapper and subscribe to the `apps`,
  * `forwarders`, `transactions` and `permissions` observables.
- * 
- * @param {string} dao DAO address 
+ *
+ * @param {string} dao DAO address
  * @param {string} ensRegistryAddress ENS Registry address
  * @param {Object} options Options
  * @param {Object} options.provider Eth provider
@@ -135,43 +135,42 @@ export async function initAragonJS(
  * @returns {Promise<Object[]>} Installed apps
  */
 export async function getApps(wrapper) {
-  return wrapper.apps
-    // The first element of the apps stream is sometimes the kernel alone.
-    // If this is the case, continue.
-    .pipe(takeWhile(apps => apps.length <= 1, true))
-    .toPromise()
+  return (
+    wrapper.apps
+      // The first element of the apps stream is sometimes the kernel alone.
+      // If this is the case, continue.
+      .pipe(takeWhile(apps => apps.length <= 1, true))
+      .toPromise()
+  )
 }
 
 /**
- * Get transaction path on an Aragon app for `method` with `params` 
- * as parameters. 
+ * Get transaction path on an Aragon app for `method` with `params`
+ * as parameters.
  * @param {string} appAddress App address
  * @param {string} method Method name
  * @param {string[]} params Method params
  * @param {Aragon} wrapper Aragon wrapper
+ * @returns {Promise<Object>} Transaction path
  */
 export async function getTransactionPath(appAddress, method, params, wrapper) {
   // Wait for app info to load
   const app = await wrapper.apps
     .pipe(
       takeWhile(apps => apps.length <= 1, true),
-      map(apps => apps.find(app => addressesEqual(appAddress, app.proxyAddress))),
+      map(apps =>
+        apps.find(app => addressesEqual(appAddress, app.proxyAddress))
+      ),
       filter(app => app),
       defaultIfEmpty(null), // If app is not found, default to null
       first()
     )
     .toPromise()
 
-  if (!app)
-    throw new Error(`Can't find app ${appAddress}.`)
+  if (!app) throw new Error(`Can't find app ${appAddress}.`)
 
   // If app is the ACL, call getACLTransactionPath
   return appAddress === wrapper.aclProxy.address
     ? wrapper.getACLTransactionPath(method, params)
     : wrapper.getTransactionPath(appAddress, method, params)
 }
-
-
-
-
-

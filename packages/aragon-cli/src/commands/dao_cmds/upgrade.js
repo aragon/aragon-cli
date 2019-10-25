@@ -71,11 +71,7 @@ exports.task = async ({
             dao,
             app: dao,
             method: 'setApp',
-            params: [
-              basesNamespace,
-              ctx.repo.appId,
-              ctx.repo.contractAddress,
-            ],
+            params: [basesNamespace, ctx.repo.appId, ctx.repo.contractAddress],
             ipfsCheck: false,
             reporter,
             gasPrice,

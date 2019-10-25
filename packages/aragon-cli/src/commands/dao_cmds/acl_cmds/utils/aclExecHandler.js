@@ -9,12 +9,15 @@ module.exports = async function(
   { reporter, apm, network, gasPrice, wsProvider, role, silent, debug }
 ) {
   const web3 = await ensureWeb3(network)
-  const daoInstance = new web3.eth.Contract(require('../../abi/os/Kernel').abi, dao)
+  const daoInstance = new web3.eth.Contract(
+    require('../../abi/os/Kernel').abi,
+    dao
+  )
   const aclAddress = await daoInstance.methods.acl().call()
 
-  const processedParams = role.startsWith('0x') 
+  const processedParams = role.startsWith('0x')
     ? params
-    : params.map(param => param === role ? keccak256(role) : param)
+    : params.map(param => (param === role ? keccak256(role) : param))
 
   return execHandler({
     dao,
