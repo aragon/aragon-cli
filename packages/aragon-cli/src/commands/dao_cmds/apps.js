@@ -55,28 +55,25 @@ exports.handler = async function({
     [
       {
         title: 'Inspecting DAO',
-        task: (ctx, task) => {
+        task: async (ctx, task) => {
           task.output = `Fetching apps for ${dao}...`
+          const { 'ens-registry': ensRegistry, ipfs } = apmOptions
 
-          return new Promise((resolve, reject) => {
-            initAragonJS(dao, apmOptions['ens-registry'], {
-              ipfsConf: apmOptions.ipfs,
+          try {
+            const wrapper = await initAragonJS(dao, ensRegistry, {
+              ipfsConf: ipfs,
               provider: wsProvider || web3.currentProvider,
               onDaoAddress: addr => {
                 ctx.daoAddress = addr
               },
-              onError: err => reject(err),
             })
-              .then(async wrapper => {
-                ctx.apps = await getApps(wrapper)
-                resolve()
-              })
-              .catch(err => {
-                reporter.error('Error inspecting DAO apps')
-                reporter.debug(err)
-                process.exit(1)
-              })
-          })
+
+            ctx.apps = await getApps(wrapper)
+          } catch (err) {
+            reporter.error('Error inspecting DAO apps')
+            reporter.debug(err)
+            process.exit(1)
+          }
         },
       },
       {

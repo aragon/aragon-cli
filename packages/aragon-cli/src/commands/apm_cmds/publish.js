@@ -546,7 +546,7 @@ exports.runPublishTask = ({
         enabled: () => !onlyArtifacts,
         task: async (ctx, task) => {
           try {
-            return execTask(dao, {
+            return execTask({
               dao,
               app: proxyAddress,
               method: methodName,

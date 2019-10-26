@@ -8,6 +8,25 @@ const TaskList = require('listr')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
+/**
+ * Return a task list for executing a method on a
+ * DAO's app.
+ *
+ * @param {Object} params Parameters
+ * @param {string} params.dao DAO name or address
+ * @param {string} params.app App address
+ * @param {string} params.method Method name
+ * @param {Array<*>} params.params Method parameters
+ * @param {boolean} params.ipfsCheck Check if IPFS is running
+ * @param {Object} params.reporter Reporter
+ * @param {Object} params.apm APM config
+ * @param {Object} params.web3 Web3 instance
+ * @param {Object} params.wsProvider Ethereum provider
+ * @param {string} params.gasPrice Gas price
+ * @param {boolean} params.silent Silent task
+ * @param {boolean} params.debug Debug mode
+ * @returns {Promise<TaskList>} Execution task list
+ */
 exports.task = async function({
   dao,
   app,
@@ -36,46 +55,25 @@ exports.task = async function({
         task: async (ctx, task) => {
           task.output = `Fetching DAO at ${dao}...`
 
-          return new Promise((resolve, reject) => {
-            let wrapper, appsLoaded
-
-            const tryFindTransactionPath = async () => {
-              if (appsLoaded && wrapper && !ctx.transactionPath) {
-                try {
-                  ctx.transactionPath = await getTransactionPath(
-                    app,
-                    method,
-                    params,
-                    wrapper
-                  )
-                  resolve()
-                } catch (e) {
-                  reject(e)
-                }
-              }
-            }
-
-            initAragonJS(dao, apm['ens-registry'], {
+          try {
+            const wrapper = await initAragonJS(dao, apm['ens-registry'], {
               ipfsConf: apm.ipfs,
               gasPrice,
               provider: wsProvider || web3.currentProvider,
               accounts,
-              onApps: async apps => {
-                appsLoaded = true
-                await tryFindTransactionPath()
-              },
-              onError: err => reject(err),
             })
-              .then(async initializedWrapper => {
-                wrapper = initializedWrapper
-                await tryFindTransactionPath()
-              })
-              .catch(err => {
-                reporter.error('Error inspecting DAO')
-                reporter.debug(err)
-                process.exit(1)
-              })
-          })
+
+            ctx.transactionPath = await getTransactionPath(
+              app,
+              method,
+              params,
+              wrapper
+            )
+          } catch (err) {
+            reporter.error('Error inspecting DAO')
+            reporter.debug(err)
+            process.exit(1)
+          }
         },
       },
       {
@@ -97,6 +95,24 @@ exports.task = async function({
   )
 }
 
+/**
+ * Execute a method on a DAO's app.
+ *
+ * @param {Object} args Parameters
+ * @param {string} args.dao DAO name or address
+ * @param {string} args.app App address
+ * @param {string} args.method Method name
+ * @param {Array<*>} args.params Method parameters
+ * @param {boolean} args.ipfsCheck Check if IPFS is running
+ * @param {Object} args.reporter Reporter
+ * @param {Object} args.apm APM config
+ * @param {Object} args.web3 Web3 instance
+ * @param {Object} args.wsProvider Ethereum provider
+ * @param {string} args.gasPrice Gas price
+ * @param {boolean} args.silent Silent task
+ * @param {boolean} args.debug Debug mode
+ * @returns {Promise} Execution promise
+ */
 exports.handler = async function(args) {
   args = {
     ...args,

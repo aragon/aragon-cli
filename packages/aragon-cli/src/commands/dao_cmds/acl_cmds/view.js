@@ -109,7 +109,6 @@ exports.handler = async function({
               onDaoAddress: addr => {
                 ctx.daoAddress = addr
               },
-              onError: err => reject(err),
             })
               .then(async wrapper => {
                 ctx.apps = await getApps(wrapper)

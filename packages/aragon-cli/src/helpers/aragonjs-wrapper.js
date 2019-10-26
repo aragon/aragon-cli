@@ -50,7 +50,6 @@ export async function resolveEnsDomain(domain, opts) {
  * @param {string} options.gasPrice Gas price
  * @param {string} options.accounts Eth accounts
  * @param {Object} options.ipfsConf IPFS configuration
- * @param {function} options.onError Error callback
  * @param {function} options.onApps Apps callback
  * @param {function} options.onForwarders Forwarders callback
  * @param {function} options.onTransaction Transaction callback
@@ -66,7 +65,6 @@ export async function initAragonJS(
     gasPrice,
     accounts = '',
     ipfsConf = {},
-    onError = noop,
     onApps = noop,
     onForwarders = noop,
     onTransaction = noop,
@@ -75,7 +73,7 @@ export async function initAragonJS(
   } = {}
 ) {
   const isDomain = dao => /[a-z0-9]+\.eth/.test(dao)
-  
+
   const daoAddress = isDomain(dao)
     ? await resolveEnsDomain(dao, {
         provider,
@@ -84,10 +82,9 @@ export async function initAragonJS(
     : dao
 
   if (!daoAddress) {
-    onError(new Error('The provided DAO address is invalid'))
-    return
+    throw new Error('The provided DAO address is invalid')
   }
-  
+
   onDaoAddress(daoAddress)
 
   // TODO: don't reinitialize if cached
@@ -104,10 +101,7 @@ export async function initAragonJS(
     await wrapper.init({ accounts: { providedAccounts: accounts } })
   } catch (err) {
     if (err.message === 'connection not open') {
-      onError(
-        new Error('The wrapper can not be initialized without a connection')
-      )
-      return
+      throw new Error('The wrapper cannot be initialized without a connection')
     }
     throw err
   }
@@ -125,12 +119,12 @@ export async function initAragonJS(
       }
     })
   }
-  
+
   return wrapper
 }
 
 /**
- * Return a list of all installed apps
+ * Return a list of all installed apps.
  * @param {Aragon} wrapper Aragon wrapper
  * @returns {Promise<Object[]>} Installed apps
  */
@@ -145,10 +139,13 @@ export async function getApps(wrapper) {
 
 /**
  * Get transaction path on an Aragon app for `method` with `params`
- * as parameters.
+ * as parameters. Wait for apps to load before calling
+ * wrapper's `getTransactionPath`. If app is the ACL, call
+ * `getACLTransactionPath`.
+ *
  * @param {string} appAddress App address
  * @param {string} method Method name
- * @param {string[]} params Method params
+ * @param {Array<*>} params Method params
  * @param {Aragon} wrapper Aragon wrapper
  * @returns {Promise<Object>} Transaction path
  */
