@@ -81,7 +81,6 @@
     "tmp-promise": "^2.0.1",
     "truffle": "4.1.14",
     "truffle-flattener": "^1.2.9",
-    "truffle-hdwallet-provider": "^1.0.2",
     "web3": "^1.2.0",
     "which": "^1.3.1",
     "yargs": "^13.2.4"
@@ -136,7 +135,7 @@
   },
   "aragon": {
     "clientRepo": "https://github.com/aragon/aragon",
-    "clientVersion": "8cf20f6acd637ec55899818816d03a653abbd61d",
+    "clientVersion": "775edd606333a111eb2693df53900039722a95dc",
     "clientPort": "3000",
     "defaultGasPrice": "2",
     "defaultIpfsTimeout": "300000"

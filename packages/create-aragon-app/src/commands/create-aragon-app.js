@@ -5,7 +5,23 @@ const TaskList = require('listr')
 const { installDeps, isValidAragonId } = require('../util')
 const defaultAPMName = require('../helpers/default-apm')
 const listrOpts = require('../helpers/listr-options')
+const inquirer = require('inquirer')
 const execa = require('execa')
+
+const templateOptions = {
+  bare: {
+    repo: 'aragon/aragon-bare-boilerplate',
+    name: 'Aragon bare boilerplate',
+  },
+  react: {
+    repo: 'aragon/aragon-react-boilerplate',
+    name: 'Aragon React boilerplate',
+  },
+  tutorial: {
+    repo: 'aragon/your-first-aragon-app',
+    name: 'Your first Aragon app (tutorial)',
+  },
+}
 
 exports.command = '* <name> [template]'
 
@@ -21,34 +37,50 @@ exports.builder = yargs => {
       default: process.cwd(),
     })
     .positional('template', {
-      description: 'The template to scaffold from',
-      default: 'react',
+      description: `The template to scaffold from (${Object.keys(
+        templateOptions
+      ).join(', ')})`,
       coerce: function resolveTemplateName(tmpl) {
-        const aliases = {
-          bare: 'aragon/aragon-bare-boilerplate',
-          react: 'aragon/aragon-react-boilerplate',
-          tutorial: 'aragon/your-first-aragon-app',
-        }
-
-        if (!tmpl.includes('/')) {
+        if (tmpl && !tmpl.includes('/')) {
           if (tmpl === 'react-kit') {
             throw new Error(
               `The 'react-kit' boilerplate has been deprecated and merged with 'react' boilerplate.`
             )
-          } else if (!aliases[tmpl]) {
+          } else if (!templateOptions[tmpl]) {
             throw new Error(`No template named ${tmpl} exists`)
           }
-          tmpl = aliases[tmpl]
         }
 
-        return `https://github.com/${tmpl}`
+        return tmpl
       },
     })
 }
 
-exports.handler = function({ reporter, name, template, silent, debug }) {
+exports.handler = async function({ reporter, name, template, silent, debug }) {
   name = defaultAPMName(name)
   const basename = name.split('.')[0]
+
+  if (!template && !silent) {
+    const { templateChoice } = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'templateChoice',
+        message: 'Chose a template to scaffold from',
+        choices: Object.entries(templateOptions).map(([id, { name }]) => ({
+          name,
+          value: id,
+        })),
+      },
+    ])
+    template = templateChoice
+  } else if (silent) {
+    template = 'react'
+  }
+
+  const repo = (templateOptions[template] || {}).repo
+  if (!repo) throw new Error(`No template repo found for ${template}`)
+
+  const templateUrl = `https://github.com/${repo}`
 
   const tasks = new TaskList(
     [
@@ -70,8 +102,8 @@ exports.handler = function({ reporter, name, template, silent, debug }) {
       {
         title: 'Cloning app template',
         task: async (ctx, task) => {
-          task.output = `Cloning ${template} into ${basename}...`
-          await clone(template, basename, { shallow: true })
+          task.output = `Cloning ${templateUrl} into ${basename}...`
+          await clone(templateUrl, basename, { shallow: true })
         },
       },
       {
@@ -80,7 +112,7 @@ exports.handler = function({ reporter, name, template, silent, debug }) {
           task.output = 'Initiliazing arapp.json and removing Git repository'
           await prepareTemplate(basename, name)
         },
-        enabled: () => !template.includes('your-first-aragon-app'),
+        enabled: () => !templateUrl.includes('your-first-aragon-app'),
       },
       {
         title: 'Installing package dependencies',
