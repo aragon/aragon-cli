@@ -152,8 +152,24 @@ async function generateApplicationArtifact(
 }
 
 async function generateFlattenedCode(dir, sourcePath) {
-  const flattenedCode = await flatten([sourcePath])
-  fs.writeFileSync(path.resolve(dir, SOLIDITY_FILE), flattenedCode)
+  try {
+    const flattenedCode = await flatten([sourcePath])
+    fs.writeFileSync(path.resolve(dir, SOLIDITY_FILE), flattenedCode)
+  } catch (e) {
+    // Better error for a truffle-flattener issue not supporting cyclic dependencies
+    // TODO : remove if this issue is addressed
+    // https://github.com/nomiclabs/truffle-flattener/issues/14
+    // https://github.com/aragon/aragon-cli/issues/780
+    if (/cycle.+dependency/.test(e.message))
+      throw Error(`Cyclic dependencies in .sol files are not supported.
+'truffle-flattener' requires all cyclic dependencies to be resolved before proceeding.
+To do so, you can:
+- Remove unnecessary import statements, if any
+- Abstract the interface of imported contracts in a separate file
+- Merge multiple contracts in a single .sol file
+`)
+    else throw e
+  }
 }
 
 // Sanity check artifact.json
