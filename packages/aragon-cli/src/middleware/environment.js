@@ -72,32 +72,38 @@ const configureNetwork = (
 
 // TODO this can be cleaned up once --network is no longer supported
 module.exports = function environmentMiddleware(argv) {
-  const runsInCwd = argv._[0] === 'init'
+  const [firstCommand] = argv._
+  const runsInCwd = firstCommand === 'init'
   const { reporter, module } = argv
   let { environment, network, apm } = argv
 
-  const isTruffleFwd = argv._[0] === 'contracts'
+  const reportError = message => {
+    reporter.error(message)
+    process.exit(1)
+  }
+
+  const isTruffleFwd = firstCommand === 'contracts'
+
+  if (firstCommand === 'run' && environment && environment !== 'aragon:local')
+    reportError(`'aragon run' can only be executed in a local RPC environment`)
 
   if (environment && network && !isTruffleFwd) {
-    reporter.error(
+    reportError(
       "Arguments '--network' and '--environment' are mutually exclusive. Using '--network'  has been deprecated and  '--environment' should be used instead."
     )
-    process.exit(1)
   }
 
   if (!runsInCwd && module) {
     if (network && module.environments && !isTruffleFwd) {
-      reporter.error(
+      reportError(
         "Your arapp.json contains an `environments` property. The use of '--network' is deprecated and '--environment' should be used instead."
       )
-      process.exit(1)
     }
     if (!module.environments) {
       if (environment) {
-        reporter.error(
+        reportError(
           "Your arapp.json does not contain an `environments` property. The use of '--environment'  is not supported."
         )
-        process.exit(1)
       }
       if (!network) network = 'rpc'
       return { network: configureNetwork(argv, network) }
@@ -108,10 +114,9 @@ module.exports = function environmentMiddleware(argv) {
     const env = module.environments[environment]
 
     if (!env) {
-      reporter.error(
+      reportError(
         `${environment} environment was not defined in your arapp.json.`
       )
-      process.exit(1)
     }
 
     // only include the selected environment in the module
