@@ -1,7 +1,4 @@
 const execa = require('execa')
-const fs = require('fs')
-const path = require('path')
-const os = require('os')
 const ipfsAPI = require('ipfs-api')
 const { getBinary, isPortTaken } = require('../util')
 
@@ -14,7 +11,10 @@ const ensureIPFSInitialized = async () => {
     )
   }
 
-  if (!fs.existsSync(path.join(os.homedir(), '.ipfs'))) {
+  try {
+    // 'ipfs config show' exits with 1 if ipfs is not initialized
+    await execa(ipfsBin, ['config', 'show'])
+  } catch (e) {
     // We could use 'ipfs daemon --init' when https://github.com/ipfs/go-ipfs/issues/3913 is solved
     await execa(ipfsBin, ['init'])
   }
