@@ -1,5 +1,5 @@
 const execTask = require('./utils/execHandler').task
-const { resolveEnsDomain } = require('./utils/aragonjs-wrapper')
+const { resolveEnsDomain } = require('../../helpers/aragonjs-wrapper')
 const TaskList = require('listr')
 const daoArg = require('./utils/daoArg')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
