@@ -18,6 +18,7 @@ const execTask = require('../dao_cmds/utils/execHandler').task
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const { map, filter, first } = require('rxjs/operators')
 const { addressesEqual } = require('../../util')
+const { options, addOption } = require('../../helpers/options')
 
 const {
   prepareFilesForPublishing,
@@ -41,8 +42,9 @@ exports.command = 'publish <bump> [contract]'
 exports.describe = 'Publish a new version of the application'
 
 exports.builder = function(yargs) {
-  return deploy
-    .builder(yargs) // inherit deploy options
+  const cmd = deploy.builder(yargs) // inherit deploy options
+
+  cmd
     .positional('bump', {
       description: 'Type of bump (major, minor or patch) or version number',
       type: 'string',
@@ -73,12 +75,12 @@ exports.builder = function(yargs) {
       default: false,
       boolean: true,
     })
-    .option('files', {
-      description:
-        'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
-      default: ['.'],
-      array: true,
-    })
+    // .option('files', {
+    //   description:
+    //     'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
+    //   default: ['.'],
+    //   array: true,
+    // })
     .option('ignore', {
       description:
         'A gitignore pattern of files to ignore. Specify multiple times to add multiple patterns.',
@@ -101,26 +103,26 @@ exports.builder = function(yargs) {
       default: false,
       boolean: true,
     })
-    .option('build', {
-      description:
-        'Whether publish should try to build the app before publishing, running the script specified in --build-script',
-      default: true,
-      boolean: true,
-    })
-    .option('build-script', {
-      description: 'The npm script that will be run when building the app',
-      default: 'build',
-    })
-    .option('prepublish', {
-      description:
-        'Whether publish should run prepublish script specified in --prepublish-script before publishing',
-      default: true,
-      boolean: true,
-    })
-    .option('prepublish-script', {
-      description: 'The npm script that will be run before publishing the app',
-      default: 'prepublishOnly',
-    })
+    // .option('build', {
+    //   description:
+    //     'Whether publish should try to build the app before publishing, running the script specified in --build-script',
+    //   default: true,
+    //   boolean: true,
+    // })
+    // .option('build-script', {
+    //   description: 'The npm script that will be run when building the app',
+    //   default: 'build',
+    // })
+    // .option('prepublish', {
+    //   description:
+    //     'Whether publish should run prepublish script specified in --prepublish-script before publishing',
+    //   default: true,
+    //   boolean: true,
+    // })
+    // .option('prepublish-script', {
+    //   description: 'The npm script that will be run before publishing the app',
+    //   default: 'prepublishOnly',
+    // })
     .option('http', {
       description: 'URL for where your app is served e.g. localhost:1234',
       default: null,
@@ -140,6 +142,14 @@ exports.builder = function(yargs) {
       boolean: true,
       default: false,
     })
+
+  addOption(cmd, options.FILES)
+  addOption(cmd, options.BUILD)
+  addOption(cmd, options.BUILD_SCRIPT)
+  addOption(cmd, options.PREPUBLISH)
+  addOption(cmd, options.PREPUBLISH_SCRIPT)
+
+  return cmd
 }
 
 exports.runSetupTask = ({

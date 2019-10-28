@@ -13,6 +13,7 @@ const pkg = require('../../package.json')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const APM = require('@aragon/apm')
 const getRepoTask = require('./dao_cmds/utils/getRepoTask')
+const { options, addOption } = require('../helpers/options')
 
 const {
   runSetupTask,
@@ -37,18 +38,18 @@ exports.command = 'run'
 exports.describe = 'Run the current app locally'
 
 exports.builder = function(yargs) {
-  return yargs
+  const cmd = yargs
     .option('client', {
       description: 'Just run the smart contracts, without the Aragon client',
       default: true,
       boolean: true,
     })
-    .option('files', {
-      description:
-        'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
-      default: ['.'],
-      array: true,
-    })
+    // .option('files', {
+    //   description:
+    //     'Path(s) to directories containing files to publish. Specify multiple times to include multiple files.',
+    //   default: ['.'],
+    //   array: true,
+    // })
     .option('port', {
       description: 'Port to start devchain at',
       default: '8545',
@@ -105,31 +106,31 @@ exports.builder = function(yargs) {
         return args.map(parseArgumentStringIfPossible)
       },
     })
-    .option('build', {
-      description:
-        'Whether publish should try to build the app before publishing, running the script specified in --build-script',
-      default: true,
-      boolean: true,
-    })
-    .option('build-script', {
-      description: 'The npm script that will be run when building the app',
-      default: 'build',
-    })
+    // .option('build', {
+    //   description:
+    //     'Whether publish should try to build the app before publishing, running the script specified in --build-script',
+    //   default: true,
+    //   boolean: true,
+    // })
+    // .option('build-script', {
+    //   description: 'The npm script that will be run when building the app',
+    //   default: 'build',
+    // })
     .option('publish-dir', {
       description:
         'Temporary directory where files will be copied before publishing. Defaults to temp dir.',
       default: null,
     })
-    .option('prepublish', {
-      description:
-        'Whether publish should run prepublish script specified in --prepublish-script before publishing',
-      default: true,
-      boolean: true,
-    })
-    .option('prepublish-script', {
-      description: 'The npm script that will be run before publishing the app',
-      default: 'prepublishOnly',
-    })
+    // .option('prepublish', {
+    //   description:
+    //     'Whether publish should run prepublish script specified in --prepublish-script before publishing',
+    //   default: true,
+    //   boolean: true,
+    // })
+    // .option('prepublish-script', {
+    //   description: 'The npm script that will be run before publishing the app',
+    //   default: 'prepublishOnly',
+    // })
     .option('bump', {
       description:
         'Type of bump (major, minor or patch) or version number to publish the app',
@@ -174,6 +175,14 @@ exports.builder = function(yargs) {
       description: 'A path pointing to an existing Aragon client installation',
       default: null,
     })
+
+  addOption(cmd, options.FILES)
+  addOption(cmd, options.BUILD)
+  addOption(cmd, options.BUILD_SCRIPT)
+  addOption(cmd, options.PREPUBLISH)
+  addOption(cmd, options.PREPUBLISH_SCRIPT)
+
+  return cmd
 }
 
 exports.handler = async function({
