@@ -45,10 +45,10 @@ exports.builder = function(yargs) {
   const cmd = deploy.builder(yargs) // inherit deploy options
 
   cmd
-    .positional('bump', {
-      description: 'Type of bump (major, minor or patch) or version number',
-      type: 'string',
-    })
+    // .positional('bump', {
+    //   description: 'Type of bump (major, minor or patch) or version number',
+    //   type: 'string',
+    // })
     .positional('contract', {
       description:
         "The address or name of the contract to publish in this version. If it isn't provided, it will default to the current version's contract.",
@@ -92,11 +92,11 @@ exports.builder = function(yargs) {
       boolean: true,
       default: true,
     })
-    .option('publish-dir', {
-      description:
-        'Temporary directory where files will be copied before publishing. Defaults to temp dir.',
-      default: null,
-    })
+    // .option('publish-dir', {
+    //   description:
+    //     'Temporary directory where files will be copied before publishing. Defaults to temp dir.',
+    //   default: null,
+    // })
     .option('only-content', {
       description:
         'Whether to skip contract compilation, deployment and contract artifact generation',
@@ -123,15 +123,15 @@ exports.builder = function(yargs) {
     //   description: 'The npm script that will be run before publishing the app',
     //   default: 'prepublishOnly',
     // })
-    .option('http', {
-      description: 'URL for where your app is served e.g. localhost:1234',
-      default: null,
-    })
-    .option('http-served-from', {
-      description:
-        'Directory where your files is being served from e.g. ./dist',
-      default: null,
-    })
+    // .option('http', {
+    //   description: 'URL for where your app is served e.g. localhost:1234',
+    //   default: null,
+    // })
+    // .option('http-served-from', {
+    //   description:
+    //     'Directory where your files is being served from e.g. ./dist',
+    //   default: null,
+    // })
     .option('propagate-content', {
       description: 'Whether to propagate the content once published',
       boolean: true,
@@ -143,6 +143,10 @@ exports.builder = function(yargs) {
       default: false,
     })
 
+  addOption(cmd, options.BUMP, true)
+  addOption(cmd, options.HTTP)
+  addOption(cmd, options.HTTP_SERVED_FROM)
+  addOption(cmd, options.PUBLISH_DIR)
   addOption(cmd, options.FILES)
   addOption(cmd, options.BUILD)
   addOption(cmd, options.BUILD_SCRIPT)

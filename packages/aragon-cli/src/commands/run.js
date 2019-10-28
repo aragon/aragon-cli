@@ -116,11 +116,11 @@ exports.builder = function(yargs) {
     //   description: 'The npm script that will be run when building the app',
     //   default: 'build',
     // })
-    .option('publish-dir', {
-      description:
-        'Temporary directory where files will be copied before publishing. Defaults to temp dir.',
-      default: null,
-    })
+    // .option('publish-dir', {
+    //   description:
+    //     'Temporary directory where files will be copied before publishing. Defaults to temp dir.',
+    //   default: null,
+    // })
     // .option('prepublish', {
     //   description:
     //     'Whether publish should run prepublish script specified in --prepublish-script before publishing',
@@ -131,24 +131,24 @@ exports.builder = function(yargs) {
     //   description: 'The npm script that will be run before publishing the app',
     //   default: 'prepublishOnly',
     // })
-    .option('bump', {
-      description:
-        'Type of bump (major, minor or patch) or version number to publish the app',
-      type: 'string',
-      default: 'major',
-    })
-    .option('http', {
-      description: 'URL for where your app is served from e.g. localhost:1234',
-      default: null,
-      coerce: url => {
-        return url && url.substr(0, 7) !== 'http://' ? `http://${url}` : url
-      },
-    })
-    .option('http-served-from', {
-      description:
-        'Directory where your files is being served from e.g. ./dist',
-      default: null,
-    })
+    // .option('bump', {
+    //   description:
+    //     'Type of bump (major, minor or patch) or version number to publish the app',
+    //   type: 'string',
+    //   default: 'major',
+    // })
+    // .option('http', {
+    //   description: 'URL for where your app is served from e.g. localhost:1234',
+    //   default: null,
+    //   coerce: url => {
+    //     return url && url.substr(0, 7) !== 'http://' ? `http://${url}` : url
+    //   },
+    // })
+    // .option('http-served-from', {
+    //   description:
+    //     'Directory where your files is being served from e.g. ./dist',
+    //   default: null,
+    // })
     .option('app-init', {
       description:
         'Name of the function that will be called to initialize an app',
@@ -176,6 +176,10 @@ exports.builder = function(yargs) {
       default: null,
     })
 
+  addOption(cmd, options.BUMP)
+  addOption(cmd, options.HTTP)
+  addOption(cmd, options.HTTP_SERVED_FROM)
+  addOption(cmd, options.PUBLISH_DIR)
   addOption(cmd, options.FILES)
   addOption(cmd, options.BUILD)
   addOption(cmd, options.BUILD_SCRIPT)
