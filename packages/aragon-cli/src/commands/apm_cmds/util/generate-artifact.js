@@ -153,6 +153,7 @@ async function generateApplicationArtifact(
 
 async function generateFlattenedCode(dir, sourcePath) {
   try {
+    // TODO: Refactor this functionality
     const flattenedCode = await flatten([sourcePath])
     fs.writeFileSync(path.resolve(dir, SOLIDITY_FILE), flattenedCode)
   } catch (e) {
