@@ -5,7 +5,7 @@ import { startBackgroundProcess, normalizeOutput } from "../util";
 
 const testSandbox = "./.tmp";
 
-test("should create a new aragon app", async t => {
+test.skip("should create a new aragon app", async t => {
   t.plan(9);
 
   // arrange

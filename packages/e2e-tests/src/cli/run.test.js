@@ -7,7 +7,7 @@ import path from 'path'
 const testSandbox = './.tmp'
 const projectName = 'foobar'
 
-test('should run an aragon app successfully', async t => {
+test.skip('should run an aragon app successfully', async t => {
   t.plan(3)
 
   // Node.js 11 fix (https://github.com/aragon/aragon-cli/issues/731)
