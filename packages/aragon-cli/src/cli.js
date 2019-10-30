@@ -16,7 +16,18 @@ const { ens } = require('@aragon/aragen')
 const ConsoleReporter = require('@aragon/cli-utils/src/reporters/ConsoleReporter')
 const url = require('url')
 
+const reporter = new ConsoleReporter()
+
+const debugMiddleware = argv => {
+  if (argv.debug || process.env.DEBUG) {
+    global.DEBUG_MODE = true
+    reporter.debug(`aragonCLI version: ${require('../package.json').version}`)
+    reporter.debug(`argv: ${JSON.stringify(process.argv)}`)
+  }
+}
+
 const MIDDLEWARES = [
+  debugMiddleware,
   manifestMiddleware,
   moduleMiddleware,
   environmentMiddleware,
@@ -53,12 +64,7 @@ cmd.option('debug', {
   description: 'Show more output to terminal',
   boolean: true,
   default: false,
-  coerce: debug => {
-    if (debug || process.env.DEBUG) {
-      global.DEBUG_MODE = true
-      return true
-    }
-  },
+  coerce: debug => debug || process.env.DEBUG,
 })
 
 cmd.option('gas-price', {
@@ -148,8 +154,6 @@ cmd.option('apm', {
 cmd.epilogue('For more information, check out https://hack.aragon.org')
 
 // Run
-const reporter = new ConsoleReporter()
-reporter.debug(JSON.stringify(process.argv)) // TODO: this ain't working (DEBUG_MODE not set yet?)
 cmd
   .fail((msg, err, yargs) => {
     reporter.error(msg || err.message || 'An error occurred')
