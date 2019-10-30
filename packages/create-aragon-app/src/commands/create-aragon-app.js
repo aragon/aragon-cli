@@ -148,11 +148,13 @@ exports.handler = async function({ reporter, name, template, silent, debug }) {
   return tasks.run().then(() => {
     reporter.success(`Created new application ${name} in ${basename}
 
-To start, set up the development environment and run your Aragon app by typing
+Start your Aragon app by typing:
 
   cd ${basename}
   npm start
     
+Visit https://hack.aragon.org/docs/cli-main-commands for more information.
+
 `)
   })
 }
