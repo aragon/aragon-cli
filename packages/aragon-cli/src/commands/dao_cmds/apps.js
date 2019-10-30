@@ -7,7 +7,7 @@ const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const { addressesEqual } = require('../../util')
 const Table = require('cli-table')
-const kernelAbi = require('@aragon/os/build/contracts/Kernel.json').abi
+const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
 
 let knownApps
 

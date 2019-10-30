@@ -15,7 +15,7 @@ const {
   NO_MANAGER,
   ZERO_ADDRESS,
 } = require('../../util')
-const kernelAbi = require('@aragon/os/build/contracts/Kernel.json').abi
+const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'

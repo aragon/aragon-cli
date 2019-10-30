@@ -9,7 +9,7 @@ const chalk = require('chalk')
 const startIPFS = require('../ipfs_cmds/start')
 const getRepoTask = require('./utils/getRepoTask')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const kernelAbi = require('@aragon/os/build/contracts/Kernel.json').abi
+const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
 
 exports.command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
 

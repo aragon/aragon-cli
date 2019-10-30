@@ -10,7 +10,7 @@ const {
   getRecommendedGasLimit,
   parseArgumentStringIfPossible,
 } = require('../../util')
-const kernelAbi = require('@aragon/os/build/contracts/Kernel.json').abi
+const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
 const assignIdTask = require('./id-assign').task
 
 exports.BARE_TEMPLATE = defaultAPMName('bare-template')

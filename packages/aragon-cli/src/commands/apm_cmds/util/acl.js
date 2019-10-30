@@ -1,8 +1,8 @@
 const { getRecommendedGasLimit } = require('../../../util')
-const aclAbi = require('@aragon/os/build/contracts/ACL.json').abi
-const aragonAppAbi = require('@aragon/os/build/contracts/AragonApp.json').abi
-const kernelAbi = require('@aragon/os/build/contracts/Kernel.json').abi
-const repoAbi = require('@aragon/os/build/contracts/Repo.json').abi
+const aclAbi = require('@aragon/os/build/contracts/ACL').abi
+const aragonAppAbi = require('@aragon/os/build/contracts/AragonApp').abi
+const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
+const repoAbi = require('@aragon/os/build/contracts/Repo').abi
 
 module.exports = ({ web3, gasPrice, network }) => {
   const getACL = async repoAddr => {
