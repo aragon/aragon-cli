@@ -1,5 +1,5 @@
 const execTask = require('./utils/execHandler').task
-const { resolveEnsDomain } = require('./utils/aragonjs-wrapper')
+const { resolveEnsDomain } = require('../../helpers/aragonjs-wrapper')
 const TaskList = require('listr')
 const daoArg = require('./utils/daoArg')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
@@ -65,16 +65,11 @@ exports.task = async ({
             .APP_BASES_NAMESPACE()
             .call()
 
-          const getTransactionPath = wrapper => {
-            const fnArgs = [
-              basesNamespace,
-              ctx.repo.appId,
-              ctx.repo.contractAddress,
-            ]
-            return wrapper.getTransactionPath(dao, 'setApp', fnArgs)
-          }
-
-          return execTask(dao, getTransactionPath, {
+          return execTask({
+            dao,
+            app: dao,
+            method: 'setApp',
+            params: [basesNamespace, ctx.repo.appId, ctx.repo.contractAddress],
             ipfsCheck: false,
             reporter,
             gasPrice,
