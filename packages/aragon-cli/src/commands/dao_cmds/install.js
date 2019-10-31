@@ -1,5 +1,5 @@
 const execTask = require('./utils/execHandler').task
-const { resolveEnsDomain } = require('./utils/aragonjs-wrapper')
+const { resolveEnsDomain } = require('../../helpers/aragonjs-wrapper')
 const TaskList = require('listr')
 const daoArg = require('./utils/daoArg')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
@@ -117,17 +117,18 @@ exports.task = async ({
             ctx.notInitialized = true
           }
 
-          const getTransactionPath = wrapper => {
-            const fnArgs = [
-              ctx.repo.appId,
-              ctx.repo.contractAddress,
-              initPayload,
-              false,
-            ]
-            return wrapper.getTransactionPath(dao, 'newAppInstance', fnArgs)
-          }
+          const fnArgs = [
+            ctx.repo.appId,
+            ctx.repo.contractAddress,
+            initPayload,
+            false,
+          ]
 
-          return execTask(dao, getTransactionPath, {
+          return execTask({
+            dao,
+            app: dao,
+            method: 'newAppInstance',
+            params: fnArgs,
             ipfsCheck: false,
             reporter,
             gasPrice,
@@ -187,15 +188,20 @@ exports.task = async ({
           if (!ctx.accounts) {
             ctx.accounts = await web3.eth.getAccounts()
           }
+          const daoInstance = new web3.eth.Contract(
+            kernelAbi,
+            dao
+          )
+          const aclAddress = await daoInstance.methods.acl().call()
 
           return Promise.all(
             permissions.map(params => {
-              const getTransactionPath = async wrapper => {
-                return wrapper.getACLTransactionPath('createPermission', params)
-              }
-
               return (
-                execTask(dao, getTransactionPath, {
+                execTask({
+                  dao,
+                  app: aclAddress,
+                  method: 'createPermission',
+                  params,
                   reporter,
                   gasPrice,
                   apm: apmOptions,
