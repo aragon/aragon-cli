@@ -61,7 +61,7 @@
     "documentation": "^12.0.0",
     "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
-    "eslint-config-standard": "^12.0.0",
+    "eslint-config-standard": "^14.1.0",
     "eslint-plugin-ava": "^7.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^9.0.1",
