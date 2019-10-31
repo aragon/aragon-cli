@@ -88,14 +88,14 @@ exports.task = async ({
                 break
             }
           }
-          const receipt = await deployMiniMeTokenFactory(
+          const { address, txHash } = await deployMiniMeTokenFactory(
             web3,
             from,
             gasPrice,
             handleProgress
           )
-          ctx.factoryAddress = receipt.address
-          ctx.factoryTxHash = receipt.txHash
+          ctx.factoryAddress = address
+          ctx.factoryTxHash = txHash
         },
       },
       {
