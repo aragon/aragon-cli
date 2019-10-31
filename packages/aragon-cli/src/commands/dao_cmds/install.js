@@ -188,10 +188,7 @@ exports.task = async ({
           if (!ctx.accounts) {
             ctx.accounts = await web3.eth.getAccounts()
           }
-          const daoInstance = new web3.eth.Contract(
-            kernelAbi,
-            dao
-          )
+          const daoInstance = new web3.eth.Contract(kernelAbi, dao)
           const aclAddress = await daoInstance.methods.acl().call()
 
           return Promise.all(
