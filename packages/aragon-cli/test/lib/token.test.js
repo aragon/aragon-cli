@@ -3,18 +3,18 @@ import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 
 test.beforeEach(t => {
-  const utilStub = {
+  const util = {
     getContract: sinon.stub(),
     getRecommendedGasLimit: sinon.stub(),
   }
 
   const tokenLib = proxyquire.noCallThru().load('../../src/lib/token', {
-    '../util': utilStub,
+    '../util': util,
   })
 
   t.context = {
     tokenLib,
-    utilStub,
+    util,
   }
 })
 
@@ -23,17 +23,23 @@ test.afterEach.always(() => {
 })
 
 test('deployMiniMeTokenFactory: should deploy a contract with the right bytecode', async t => {
-  t.plan(3)
+  t.plan(6)
   // arrange
-  const { tokenLib, utilStub } = t.context
-  utilStub.getContract.returns({ bytecode: '0xFACADE' })
+  const { tokenLib, util } = t.context
+  util.getContract.returns({ bytecode: '0xFACADE' })
+  util.getRecommendedGasLimit.returns(101)
 
   const sendPromise = () => Promise.resolve()
-  sendPromise.on = sinon.stub()
+  sendPromise.on = sinon
+    .stub()
+    .onCall(0)
+    .callsArgWith(1, { contractAddress: '0x00009' })
+    .onCall(1)
+    .callsArgWith(1, '0x0000f')
 
   const transaction = {
-    send: () => sendPromise,
-    estimateGas: () => 10,
+    send: sinon.stub().returns(sendPromise),
+    estimateGas: () => 100,
   }
   const Contract = class {
     constructor() {
@@ -42,26 +48,38 @@ test('deployMiniMeTokenFactory: should deploy a contract with the right bytecode
       }
     }
   }
-  const web3Stub = {
+  const web3 = {
     eth: {
       Contract,
     },
   }
   const progressCallback = sinon.stub()
   // act
-  await tokenLib.deployMiniMeTokenFactory(
-    web3Stub,
+  const result = await tokenLib.deployMiniMeTokenFactory(
+    web3,
     '0xSATOSHI',
     21,
     progressCallback
   )
   // assert
   t.true(
-    utilStub.getContract.calledOnceWith(
+    util.getContract.calledOnceWith(
       '@aragon/apps-shared-minime',
       'MiniMeTokenFactory'
     )
   )
+  t.true(util.getRecommendedGasLimit.calledOnceWith(web3, 100))
+  t.true(
+    transaction.send.calledOnceWith({
+      from: '0xSATOSHI',
+      gas: 101,
+      gasPrice: 21,
+    })
+  )
   t.true(sendPromise.on.calledTwice)
   t.true(progressCallback.calledThrice)
+  t.deepEqual(result, {
+    address: '0x00009',
+    txHash: '0x0000f',
+  })
 })
