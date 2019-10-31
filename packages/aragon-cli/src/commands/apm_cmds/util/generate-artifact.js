@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const { readJson, writeJson } = require('fs-extra')
-const flatten = require('truffle-flattener')
+const flattenCode = require('../../../helpers/flattenCode')
 const extract = require('../../../helpers/solidity-extractor')
 const namehash = require('eth-ens-namehash')
 const taskInput = require('listr-input')
@@ -152,7 +152,7 @@ async function generateApplicationArtifact(
 }
 
 async function generateFlattenedCode(dir, sourcePath) {
-  const flattenedCode = await flatten([sourcePath])
+  const flattenedCode = await flattenCode([sourcePath])
   fs.writeFileSync(path.resolve(dir, SOLIDITY_FILE), flattenedCode)
 }
 
