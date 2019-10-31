@@ -10,7 +10,7 @@ module.exports = async function(
 ) {
   const web3 = await ensureWeb3(network)
   const daoInstance = new web3.eth.Contract(
-    require('../../abi/os/Kernel').abi,
+    require('@aragon/os/build/contracts/Kernel').abi,
     dao
   )
   const aclAddress = await daoInstance.methods.acl().call()
