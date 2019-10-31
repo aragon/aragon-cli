@@ -30,7 +30,7 @@ const printAppName = (appId, addr) => {
   if (addr === NO_MANAGER) return NO_MANAGER_TEXT
   return knownApps[appId]
     ? `${knownApps[appId].split('.')[0]} (${addr.slice(0, 6)})`
-    : addr.slice(0, 16) + '...'
+    : `${addr.slice(0, 8)}..${addr.slice(-6)}`
 }
 
 const appFromProxyAddress = (proxyAddress, apps) => {
