@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const { readJson, writeJson } = require('fs-extra')
-const flatten = require('truffle-flattener')
+const flattenCode = require('../../../helpers/flattenCode')
 const extract = require('../../../helpers/solidity-extractor')
 const namehash = require('eth-ens-namehash')
 const taskInput = require('listr-input')
@@ -152,25 +152,8 @@ async function generateApplicationArtifact(
 }
 
 async function generateFlattenedCode(dir, sourcePath) {
-  try {
-    // TODO: Refactor this functionality
-    const flattenedCode = await flatten([sourcePath])
-    fs.writeFileSync(path.resolve(dir, SOLIDITY_FILE), flattenedCode)
-  } catch (e) {
-    // Better error for a truffle-flattener issue not supporting cyclic dependencies
-    // TODO : remove if this issue is addressed
-    // https://github.com/nomiclabs/truffle-flattener/issues/14
-    // https://github.com/aragon/aragon-cli/issues/780
-    if (/cycle.+dependency/.test(e.message))
-      throw Error(`Cyclic dependencies in .sol files are not supported.
-'truffle-flattener' requires all cyclic dependencies to be resolved before proceeding.
-To do so, you can:
-- Remove unnecessary import statements, if any
-- Abstract the interface of imported contracts in a separate file
-- Merge multiple contracts in a single .sol file
-`)
-    else throw e
-  }
+  const flattenedCode = await flattenCode([sourcePath])
+  fs.writeFileSync(path.resolve(dir, SOLIDITY_FILE), flattenedCode)
 }
 
 // Sanity check artifact.json
