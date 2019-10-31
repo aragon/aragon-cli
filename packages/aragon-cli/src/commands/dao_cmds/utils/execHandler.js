@@ -27,7 +27,7 @@ const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
  * @param {boolean} params.debug Debug mode
  * @returns {Promise<TaskList>} Execution task list
  */
-const task = async function({
+async function task({
   dao,
   app,
   method,
@@ -113,7 +113,7 @@ const task = async function({
  * @param {boolean} args.debug Debug mode
  * @returns {Promise} Execution promise
  */
-const handler = async function(args) {
+async function handler(args) {
   args = {
     ...args,
     web3: await ensureWeb3(args.network),
@@ -131,4 +131,7 @@ const handler = async function(args) {
   })
 }
 
-module.exports = { task, handler }
+module.exports = {
+  handler,
+  task,
+}
