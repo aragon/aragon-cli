@@ -1,5 +1,5 @@
 const execTask = require('./utils/execHandler').task
-const { resolveEnsDomain } = require('./utils/aragonjs-wrapper')
+const { resolveEnsDomain } = require('../../helpers/aragonjs-wrapper')
 const TaskList = require('listr')
 const daoArg = require('./utils/daoArg')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
@@ -9,6 +9,7 @@ const chalk = require('chalk')
 const startIPFS = require('../ipfs_cmds/start')
 const getRepoTask = require('./utils/getRepoTask')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
+const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
 
 exports.command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
 
@@ -58,25 +59,17 @@ exports.task = async ({
       {
         title: 'Upgrading app',
         task: async ctx => {
-          const kernel = new web3.eth.Contract(
-            require('./abi/os/Kernel').abi,
-            dao
-          )
+          const kernel = new web3.eth.Contract(kernelAbi, dao)
 
           const basesNamespace = await kernel.methods
             .APP_BASES_NAMESPACE()
             .call()
 
-          const getTransactionPath = wrapper => {
-            const fnArgs = [
-              basesNamespace,
-              ctx.repo.appId,
-              ctx.repo.contractAddress,
-            ]
-            return wrapper.getTransactionPath(dao, 'setApp', fnArgs)
-          }
-
-          return execTask(dao, getTransactionPath, {
+          return execTask({
+            dao,
+            app: dao,
+            method: 'setApp',
+            params: [basesNamespace, ctx.repo.appId, ctx.repo.contractAddress],
             ipfsCheck: false,
             reporter,
             gasPrice,

@@ -1,4 +1,4 @@
-import initAragonJS from './utils/aragonjs-wrapper'
+import { initAragonJS, getApps } from '../../helpers/aragonjs-wrapper'
 const TaskList = require('listr')
 const chalk = require('chalk')
 const daoArg = require('./utils/daoArg')
@@ -7,6 +7,7 @@ const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const { addressesEqual } = require('../../util')
 const Table = require('cli-table')
+const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
 
 let knownApps
 
@@ -55,36 +56,32 @@ exports.handler = async function({
     [
       {
         title: 'Inspecting DAO',
-        task: (ctx, task) => {
+        task: async (ctx, task) => {
           task.output = `Fetching apps for ${dao}...`
+          const { 'ens-registry': ensRegistry, ipfs } = apmOptions
 
-          return new Promise((resolve, reject) => {
-            initAragonJS(dao, apmOptions['ens-registry'], {
+          try {
+            const wrapper = await initAragonJS(dao, ensRegistry, {
+              ipfsConf: ipfs,
               provider: wsProvider || web3.currentProvider,
-              onApps: apps => {
-                ctx.apps = apps
-                resolve()
-              },
               onDaoAddress: addr => {
                 ctx.daoAddress = addr
               },
-              onError: err => reject(err),
-            }).catch(err => {
-              reporter.error('Error inspecting DAO apps')
-              reporter.debug(err)
-              process.exit(1)
             })
-          })
+
+            ctx.apps = await getApps(wrapper)
+          } catch (err) {
+            reporter.error('Error inspecting DAO apps')
+            reporter.debug(err)
+            process.exit(1)
+          }
         },
       },
       {
         title: 'Fetching permissionless apps',
         enabled: () => all,
         task: async (ctx, task) => {
-          const kernel = new web3.eth.Contract(
-            require('./abi/os/Kernel').abi,
-            ctx.daoAddress
-          )
+          const kernel = new web3.eth.Contract(kernelAbi, ctx.daoAddress)
 
           const events = await kernel.getPastEvents('NewAppProxy', {
             fromBlock: await kernel.methods.getInitializationBlock().call(),

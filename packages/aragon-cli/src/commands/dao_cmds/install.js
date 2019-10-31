@@ -1,5 +1,5 @@
 const execTask = require('./utils/execHandler').task
-const { resolveEnsDomain } = require('./utils/aragonjs-wrapper')
+const { resolveEnsDomain } = require('../../helpers/aragonjs-wrapper')
 const TaskList = require('listr')
 const daoArg = require('./utils/daoArg')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
@@ -15,7 +15,7 @@ const {
   NO_MANAGER,
   ZERO_ADDRESS,
 } = require('../../util')
-const kernelABI = require('./abi/os/Kernel').abi
+const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'
@@ -70,7 +70,7 @@ exports.task = async ({
         registryAddress: apmOptions.ensRegistryAddress,
       })
 
-  const kernel = new web3.eth.Contract(require('./abi/os/Kernel').abi, dao)
+  const kernel = new web3.eth.Contract(kernelAbi, dao)
 
   const tasks = new TaskList(
     [
@@ -117,17 +117,18 @@ exports.task = async ({
             ctx.notInitialized = true
           }
 
-          const getTransactionPath = wrapper => {
-            const fnArgs = [
-              ctx.repo.appId,
-              ctx.repo.contractAddress,
-              initPayload,
-              false,
-            ]
-            return wrapper.getTransactionPath(dao, 'newAppInstance', fnArgs)
-          }
+          const fnArgs = [
+            ctx.repo.appId,
+            ctx.repo.contractAddress,
+            initPayload,
+            false,
+          ]
 
-          return execTask(dao, getTransactionPath, {
+          return execTask({
+            dao,
+            app: dao,
+            method: 'newAppInstance',
+            params: fnArgs,
             ipfsCheck: false,
             reporter,
             gasPrice,
@@ -142,7 +143,7 @@ exports.task = async ({
       {
         title: 'Fetching deployed app',
         task: async (ctx, task) => {
-          const logABI = kernelABI.find(
+          const logABI = kernelAbi.find(
             ({ type, name }) => type === 'event' && name === 'NewAppProxy'
           )
           if (!logABI) {
@@ -187,15 +188,20 @@ exports.task = async ({
           if (!ctx.accounts) {
             ctx.accounts = await web3.eth.getAccounts()
           }
+          const daoInstance = new web3.eth.Contract(
+            kernelAbi,
+            dao
+          )
+          const aclAddress = await daoInstance.methods.acl().call()
 
           return Promise.all(
             permissions.map(params => {
-              const getTransactionPath = async wrapper => {
-                return wrapper.getACLTransactionPath('createPermission', params)
-              }
-
               return (
-                execTask(dao, getTransactionPath, {
+                execTask({
+                  dao,
+                  app: aclAddress,
+                  method: 'createPermission',
+                  params,
                   reporter,
                   gasPrice,
                   apm: apmOptions,

@@ -1,4 +1,4 @@
-import initAragonJS from '../utils/aragonjs-wrapper'
+import { initAragonJS, getApps } from '../../../helpers/aragonjs-wrapper'
 const chalk = require('chalk')
 const TaskList = require('listr')
 const daoArg = require('../utils/daoArg')
@@ -30,7 +30,7 @@ const printAppName = (appId, addr) => {
   if (addr === NO_MANAGER) return NO_MANAGER_TEXT
   return knownApps[appId]
     ? `${knownApps[appId].split('.')[0]} (${addr.slice(0, 6)})`
-    : addr.slice(0, 16) + '...'
+    : `${addr.slice(0, 8)}..${addr.slice(-6)}`
 }
 
 const appFromProxyAddress = (proxyAddress, apps) => {
@@ -93,7 +93,7 @@ exports.handler = async function({
           task.output = `Fetching permissions for ${dao}...`
 
           return new Promise((resolve, reject) => {
-            const resolveIfReady = () => {
+            const resolveIfReady = async () => {
               if (ctx.acl && ctx.apps) {
                 resolve()
               }
@@ -101,23 +101,24 @@ exports.handler = async function({
 
             initAragonJS(dao, apm['ens-registry'], {
               provider: wsProvider || web3.currentProvider,
+              ipfsConf: apm.ipfs,
               onPermissions: permissions => {
                 ctx.acl = permissions
-                resolveIfReady()
-              },
-              onApps: apps => {
-                ctx.apps = apps
                 resolveIfReady()
               },
               onDaoAddress: addr => {
                 ctx.daoAddress = addr
               },
-              onError: err => reject(err),
-            }).catch(err => {
-              reporter.error('Error inspecting DAO')
-              reporter.debug(err)
-              process.exit(1)
             })
+              .then(async wrapper => {
+                ctx.apps = await getApps(wrapper)
+                resolveIfReady()
+              })
+              .catch(err => {
+                reporter.error('Error inspecting DAO')
+                reporter.debug(err)
+                process.exit(1)
+              })
           })
         },
       },
