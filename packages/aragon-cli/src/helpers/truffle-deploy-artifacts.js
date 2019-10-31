@@ -12,7 +12,7 @@ module.exports = async contractArtifacts => {
   const solcConfig = getTruffleConfig().solc
   compiler.optimizer = solcConfig ? solcConfig.optimizer : { enabled: false }
 
-  const flattenedCode = await flattenCode(sourcePath)
+  const flattenedCode = await flattenCode([sourcePath])
 
   return {
     contractName,

@@ -1,9 +1,8 @@
 const flatten = require('truffle-flattener')
 
-module.exports = async (sourcePath) => {
-  let flattenedCode
+module.exports = async (sourcePaths) => {
   try {
-    flattenedCode = await flatten([sourcePath])
+    return flatten(sourcePaths)
   } catch (error) {
     const cycleDependencyErrorDetected = /cycle.+dependency/.test(error.message)
     if (cycleDependencyErrorDetected) {
