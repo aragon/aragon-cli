@@ -5,7 +5,7 @@
   "version": "independent",
   "command": {
     "version": {
-      "allowBranch": ["release/*"]
+      "allowBranch": ["develop"]
     }
   }
 }
