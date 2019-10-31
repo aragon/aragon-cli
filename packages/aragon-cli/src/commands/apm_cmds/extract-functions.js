@@ -39,7 +39,7 @@ exports.handler = async function({
 
   const roles = roleIds.map(id => ({
     id,
-    bytes: '0x' + keccak256(id),
+    bytes: keccak256(id),
     name: '', // Name and params can't be extracted from solidity file, must be filled in manually
     params: [],
   }))
