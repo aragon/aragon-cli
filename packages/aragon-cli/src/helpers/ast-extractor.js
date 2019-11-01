@@ -1,8 +1,8 @@
 const { flattenDeep } = require('lodash')
 
 /**
- * @typedef {Object} Modifier
- * @property {string} name         - Role name "CREATE_REPO_ROLE"
+ * @typedef  {Object} ContractRole
+ * @property {string} id           - Role id "CREATE_REPO_ROLE"
  * @property {string[]} params     - ['_arg1', 'arg2']
  * @property {string} functionName - function in which this role is used
  */
@@ -12,8 +12,8 @@ const { flattenDeep } = require('lodash')
  * modifier auth(bytes32 _role)
  * modifier authP(bytes32 _role, uint256[] _params)
  * @param  {string} buildArtifactPath
- *         relative path to the artifact
- * @return {Modifier[]}
+ *         Path to the contract artifact
+ * @return {ContractRole[]}
  *         parsedModifiers
  */
 const extractRoles = buildArtifactPath => {
@@ -38,7 +38,7 @@ const extractRoles = buildArtifactPath => {
       for (const modifier of modifiers) {
         const [roleArg, paramsArg] = modifier.arguments
         parsedModifiers.push({
-          name: parseRoleName(roleArg),
+          id: parseRoleId(roleArg),
           params: paramsArg ? parseParamsArg(paramsArg) : [],
           functionName: fn.name,
         })
@@ -56,7 +56,7 @@ const extractRoles = buildArtifactPath => {
  * @return {string}
  *         Role name: 'CREATE_REPO_ROLE'
  */
-function parseRoleName(node) {
+function parseRoleId(node) {
   if (node.nodeType === 'Identifier' && node.name) return node.name
   return ''
 }

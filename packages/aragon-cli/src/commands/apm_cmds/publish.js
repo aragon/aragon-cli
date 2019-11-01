@@ -16,6 +16,7 @@ const startIPFS = require('../ipfs_cmds/start')
 const propagateIPFS = require('../ipfs_cmds/propagate')
 const execTask = require('../dao_cmds/utils/execHandler').task
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
+const { assertContractRoles } = require('../../helpers/roles-utils')
 
 const {
   prepareFilesForPublishing,
@@ -350,6 +351,12 @@ exports.runPrepareForPublishTask = ({
 }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
+
+  // Assert that there are no differences between the role usage
+  // in the main contract and the roles defined in arapp.json
+  // Note: uses the truffle build artifacts, so MUST be called
+  // after a successful contract compilation
+  assertContractRoles(cwd, module)
 
   return new TaskList(
     [
