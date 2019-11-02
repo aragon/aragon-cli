@@ -16,6 +16,7 @@ const {
   ZERO_ADDRESS,
 } = require('../../util')
 const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
+const ACL = require('./utils/acl')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'
@@ -71,6 +72,11 @@ exports.task = async ({
       })
 
   const kernel = new web3.eth.Contract(kernelAbi, dao)
+
+  // Verify that user has permissions to install
+  const acl = ACL({ web3 })
+  if (!(await acl.userHasCreatePermissionRole(dao)))
+    throw Error(`You don't have permission install an app`)
 
   const tasks = new TaskList(
     [
