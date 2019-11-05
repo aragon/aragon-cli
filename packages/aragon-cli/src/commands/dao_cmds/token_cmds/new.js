@@ -3,13 +3,11 @@ const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const chalk = require('chalk')
 const web3Utils = require('web3').utils
+const { parseArgumentStringIfPossible } = require('../../../util')
 const {
-  getContract,
-  getRecommendedGasLimit,
-  parseArgumentStringIfPossible,
-  ZERO_ADDRESS,
-} = require('../../../util')
-const { deployMiniMeTokenFactory } = require('../../../lib/token')
+  deployMiniMeTokenFactory,
+  deployMiniMeToken,
+} = require('../../../lib/token')
 
 const MAINNET_MINIME_TOKEN_FACTORY =
   '0xA29EF584c389c67178aE9152aC9C543f9156E2B3'
@@ -101,6 +99,7 @@ exports.task = async ({
       {
         title: 'Deploy the MiniMeToken contract',
         task: async (ctx, task) => {
+<<<<<<< HEAD
           const artifact = getContract(
             '@aragon/apps-shared-minime',
             'MiniMeToken'
@@ -120,26 +119,35 @@ exports.task = async ({
             ],
           })
           const estimatedGas = await deployTx.estimateGas()
+=======
+          const handleProgress = (step, data) => {
+            switch (step) {
+              case 1:
+                task.output = 'Estimating gas...'
+                break
+              case 2:
+                task.output = `Estimated gas: ${data}`
+                break
+              case 3:
+                task.output = 'Waiting for the transaction to be mined...'
+                break
+            }
+          }
+>>>>>>> Finish testing token new
 
-          const deployPromise = deployTx.send({
+          const { address, txHash } = await deployMiniMeToken(
+            web3,
             from,
-            gas: await getRecommendedGasLimit(web3, estimatedGas),
             gasPrice,
-          })
-
-          deployPromise
-            .on('receipt', function(receipt) {
-              ctx.tokenAddress = receipt.contractAddress
-            })
-            .on('transactionHash', transactionHash => {
-              ctx.tokenTxHash = transactionHash
-            })
-            .on('error', function(error) {
-              throw error
-            })
-
-          task.output = `Waiting for the transaction to be mined...`
-          return deployPromise
+            tokenName,
+            decimalUnits,
+            symbol,
+            transferEnabled,
+            ctx.factoryAddress || tokenFactoryAddress,
+            handleProgress
+          )
+          ctx.tokenAddress = address
+          ctx.tokenTxHash = txHash
         },
       },
     ],
