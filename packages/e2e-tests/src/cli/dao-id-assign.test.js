@@ -12,11 +12,7 @@ test('assigns an Aragon Id to a DAO address', async t => {
 
   const assignIdResult = await execa('aragon', ['dao', 'id', 'assign', daoAddress, 'newdao2', '--debug'])
   
-  const resultSnapshot = normalizeOutput(assignIdResult.stdout)
-    .replace(daoAddress, '')   // Remove daoAddress from snapshot
-  
-
-  t.snapshot(resultSnapshot)
+  t.true(assignIdResult.stdout.includes('successfully assigned to'))
 })
 
 
