@@ -1,6 +1,7 @@
 import test from 'ava'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
+import { convertDAOIdToUrl } from '../src/util'
 
 test.beforeEach(t => {
   const fsStub = {
@@ -61,6 +62,21 @@ test("getLocalBinary should find the binary path from the parent node_modules ev
   )
   // assert
   t.is(normalizePath(path), 'parent/node_modules/.bin/truff')
+})
+
+test('convertDAOIdToUrl returns the correct format', t => {
+  const daoId = 'dao1'
+  t.is(convertDAOIdToUrl(daoId), `${daoId}.aragonid.eth`)
+})
+
+test('convertDAOIdToUrl returns the same value with an URL as parameter', t => {
+  const daoId = 'daotest2.aragonid.eth'
+  t.is(convertDAOIdToUrl(daoId), daoId)
+})
+
+test('convertDAOIdToUrl throws with an invalid DAO id', t => {
+  const daoId = 'my dao'
+  t.throws(() => convertDAOIdToUrl(daoId))
 })
 
 function normalizePath(path) {

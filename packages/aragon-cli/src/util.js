@@ -319,7 +319,7 @@ function isValidAragonId(aragonId) {
 }
 
 /**
- * Convert a DAO id to its url.
+ * Convert a DAO id to its url
  * E.g. mydao -> mydao.aragonid.eth
  * @param {string} aragonId Aragon Id
  * @returns {string} DAO url
