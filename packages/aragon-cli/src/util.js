@@ -329,8 +329,7 @@ function convertDAOIdToUrl(aragonId) {
   if (new RegExp(`^([a-z0-9-]+).${ARAGON_DOMAIN}$`).test(aragonId))
     return aragonId
 
-  if (!isValidAragonId(aragonId))
-    throw new Error(`Invalid DAO Id: ${aragonId}`)
+  if (!isValidAragonId(aragonId)) throw new Error(`Invalid DAO Id: ${aragonId}`)
 
   return `${aragonId}.${ARAGON_DOMAIN}`
 }
@@ -351,6 +350,7 @@ module.exports = {
   getContract,
   isValidAragonId,
   convertDAOIdToUrl,
+  ARAGON_DOMAIN,
   ANY_ENTITY,
   NO_MANAGER,
   ZERO_ADDRESS,
