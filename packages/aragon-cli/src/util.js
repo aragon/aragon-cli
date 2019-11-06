@@ -227,8 +227,8 @@ const getRecommendedGasLimit = async (
 }
 
 const expandLink = link => {
-  let { name, address } = link
-  let placeholder = `__${name}${'_'.repeat(38 - name.length)}`
+  const { name, address } = link
+  const placeholder = `__${name}${'_'.repeat(38 - name.length)}`
   link.placeholder = placeholder
   link.regex = new RegExp(placeholder, 'g')
   link.addressBytes = address.slice(0, 2) === '0x' ? address.slice(2) : address

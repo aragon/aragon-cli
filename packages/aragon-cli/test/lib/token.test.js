@@ -35,9 +35,13 @@ test('deployMiniMeTokenFactory: should deploy a contract with the right bytecode
     send: () => sendPromise,
     estimateGas: () => 10,
   }
-  const Contract = () => ({
-    deploy: () => transaction,
-  })
+  const Contract = class {
+    constructor() {
+      return {
+        deploy: () => transaction,
+      }
+    }
+  }
   const web3Stub = {
     eth: {
       Contract,

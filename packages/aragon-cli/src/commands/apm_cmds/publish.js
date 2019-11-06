@@ -383,7 +383,7 @@ exports.runPrepareForPublishTask = ({
           const manifestDst = path.resolve(httpServedFrom, MANIFEST_FILE)
 
           if (!pathExistsSync(manifestDst) && pathExistsSync(manifestOrigin)) {
-            let manifest = await readJson(manifestOrigin)
+            const manifest = await readJson(manifestOrigin)
             manifest.start_url = path.basename(manifest.start_url)
             manifest.script = path.basename(manifest.script)
             await writeJson(manifestDst, manifest)
@@ -545,22 +545,18 @@ exports.runPublishTask = ({
         title: `Publish ${module.appName}`,
         enabled: () => !onlyArtifacts,
         task: async (ctx, task) => {
-          try {
-            return execTask({
-              dao,
-              app: proxyAddress,
-              method: methodName,
-              params,
-              ipfsCheck: false,
-              reporter,
-              gasPrice,
-              apm: apmOptions,
-              web3,
-              wsProvider,
-            })
-          } catch (e) {
-            throw e
-          }
+          return execTask({
+            dao,
+            app: proxyAddress,
+            method: methodName,
+            params,
+            ipfsCheck: false,
+            reporter,
+            gasPrice,
+            apm: apmOptions,
+            web3,
+            wsProvider,
+          })
         },
       },
     ],

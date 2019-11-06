@@ -28,7 +28,7 @@ const listApps = (userApps = []) => {
     )
     .concat(userApps)
 
-  let appIds = appNames.reduce(
+  const appIds = appNames.reduce(
     (acc, app) => Object.assign(acc, { [namehash(app)]: app }),
     {}
   )
