@@ -8,17 +8,17 @@ import { utils } from 'web3'
 test('isIdAssigned returns false if ens.addr() throws a NameNotFound error', async t => {
   t.plan(1)
 
-  const { isIdAssigned } = proxyquire.noCallThru().load('../../../src/lib/dao/assign-id.js', {
+  const { isIdAssigned } = getLib({
     'ethereum-ens': getENSStub(true),
   })
 
   t.is(await isIdAssigned('myid', { web3: getWeb3Stub() }), false)
 })
 
-test('isIdAssigned returns true if ens.addr() returns an url', async t => {
+test('isIdAssigned returns true if ens.addr() returns an address', async t => {
   t.plan(1)
 
-  const { isIdAssigned } = proxyquire.noCallThru().load('../../../src/lib/dao/assign-id.js', {
+  const { isIdAssigned } = getLib({
     'ethereum-ens': getENSStub(false),
   })
 
@@ -28,7 +28,7 @@ test('isIdAssigned returns true if ens.addr() returns an url', async t => {
 test('assignId throws when called with an invalid address', async t => {
   t.plan(1)
 
-  const { assignId } = proxyquire.noCallThru().load('../../../src/lib/dao/assign-id.js', {
+  const { assignId } = getLib({
     'ethereum-ens': getENSStub(false),
   })
 
@@ -41,7 +41,7 @@ test('assignId calls register() and register.send() with the correct parameters'
   const daoAddress = '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'
   const id = 'daoid'
 
-  const { assignId } = proxyquire.noCallThru().load('../../../src/lib/dao/assign-id.js', {
+  const { assignId } = getLib({
     'ethereum-ens': getENSStub(false),
   })
 
@@ -56,6 +56,10 @@ test('assignId calls register() and register.send() with the correct parameters'
   t.true(registerStub.calledWith(utils.sha3(id), daoAddress))
   t.true(registerSendStub.called)
 })
+
+function getLib(loadParams) {
+  return proxyquire.noCallThru().load('../../../src/lib/dao/assign-id.js', loadParams)
+}
 
 function getENSStub(throws = false) {
   const ENSStub = sinon.stub().returns({
