@@ -319,13 +319,13 @@ function isValidAragonId(aragonId) {
 }
 
 /**
- * Convert a DAO id to its url
+ * Convert a DAO id to its subdomain
  * E.g. mydao -> mydao.aragonid.eth
  * @param {string} aragonId Aragon Id
- * @returns {string} DAO url
+ * @returns {string} DAO subdomain
  */
-function convertDAOIdToUrl(aragonId) {
-  // If already an URL, return
+function convertDAOIdToSubdomain(aragonId) {
+  // If already a subdomain, return
   if (new RegExp(`^([a-z0-9-]+).${ARAGON_DOMAIN}$`).test(aragonId))
     return aragonId
 
@@ -349,7 +349,7 @@ module.exports = {
   getGlobalBinary,
   getContract,
   isValidAragonId,
-  convertDAOIdToUrl,
+  convertDAOIdToSubdomain,
   ARAGON_DOMAIN,
   ANY_ENTITY,
   NO_MANAGER,

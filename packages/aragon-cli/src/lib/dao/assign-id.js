@@ -1,4 +1,4 @@
-const { convertDAOIdToUrl, ARAGON_DOMAIN } = require('../../util')
+const { convertDAOIdToSubdomain, ARAGON_DOMAIN } = require('../../util')
 const ENS = require('ethereum-ens')
 const ififsResolvingRegistrarAbi = require('@aragon/id/build/contracts/IFIFSResolvingRegistrar')
   .abi
@@ -20,7 +20,6 @@ async function assignId(daoAddress, daoId, options) {
   const { web3, ensRegistry, gasPrice } = options
 
   if (!isAddress(daoAddress)) throw new Error(`Invalid address: ${daoAddress}`)
-
   const ens = new ENS(web3.currentProvider, ensRegistry)
 
   const registrar = new web3.eth.Contract(
@@ -45,13 +44,15 @@ async function assignId(daoAddress, daoId, options) {
  * @returns {Promise<boolean>} true if already assigned
  */
 async function isIdAssigned(daoId, options) {
-  const daoUrl = convertDAOIdToUrl(daoId)
+  const daoUrl = convertDAOIdToSubdomain(daoId)
   const ens = new ENS(options.web3.currentProvider, options.ensRegistry)
 
+  // The only way to know if a domain is not registered is to call
+  // `resolver().addr()` and check if it throws
   try {
     return Boolean(await ens.resolver(daoUrl).addr())
   } catch (err) {
-    // ens.resolver() throws an ENS.NameNotFound error if name doesn't exist
+    // throws an ENS.NameNotFound error if name doesn't exist
     if (err !== ENS.NameNotFound) throw err
     return false
   }
