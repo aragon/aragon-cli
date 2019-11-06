@@ -77,6 +77,7 @@ test('deployMiniMeTokenFactory: should deploy the contract with the right args',
   ])
   t.deepEqual(contract.deploy.getCall(0).args, [
     {
+      arguments: [],
       data: '0xFACADE',
     },
   ])

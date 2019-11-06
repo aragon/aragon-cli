@@ -19,36 +19,15 @@ export const deployMiniMeTokenFactory = async (
   gasPrice,
   progressCallback
 ) => {
-  const artifact = getContract(
-    '@aragon/apps-shared-minime',
-    'MiniMeTokenFactory'
-  )
-  const contract = new web3.eth.Contract(artifact.abi)
-  const transaction = contract.deploy({ data: artifact.bytecode })
-
-  progressCallback(1)
-  const estimatedGas = await transaction.estimateGas()
-  progressCallback(2, estimatedGas)
-
-  const sendPromise = transaction.send({
-    from: senderAccount,
-    gas: await getRecommendedGasLimit(web3, estimatedGas),
+  return deployContract(
+    web3,
+    senderAccount,
     gasPrice,
-  })
-
-  const result = {}
-
-  sendPromise.on('receipt', receipt => {
-    result.address = receipt.contractAddress
-  })
-  sendPromise.on('transactionHash', transactionHash => {
-    result.txHash = transactionHash
-  })
-
-  progressCallback(3)
-  await sendPromise
-
-  return result
+    '@aragon/apps-shared-minime',
+    'MiniMeTokenFactory',
+    [],
+    progressCallback
+  )
 }
 
 /**
@@ -80,12 +59,13 @@ export const deployMiniMeToken = async (
   factoryAddress,
   progressCallback
 ) => {
-  const artifact = getContract('@aragon/apps-shared-minime', 'MiniMeToken')
-  const contract = new web3.eth.Contract(artifact.abi)
-
-  const transaction = contract.deploy({
-    data: artifact.bytecode,
-    arguments: [
+  return deployContract(
+    web3,
+    senderAccount,
+    gasPrice,
+    '@aragon/apps-shared-minime',
+    'MiniMeToken',
+    [
       factoryAddress,
       ZERO_ADDRESS,
       0,
@@ -94,6 +74,25 @@ export const deployMiniMeToken = async (
       symbol,
       transferEnabled,
     ],
+    progressCallback
+  )
+}
+
+export const deployContract = async (
+  web3,
+  senderAccount,
+  gasPrice,
+  artifactPackage,
+  artifactName,
+  contractArgs,
+  progressCallback
+) => {
+  const artifact = getContract(artifactPackage, artifactName)
+  const contract = new web3.eth.Contract(artifact.abi)
+
+  const transaction = contract.deploy({
+    data: artifact.bytecode,
+    arguments: contractArgs,
   })
 
   progressCallback(1)
