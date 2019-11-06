@@ -1,44 +1,41 @@
-const APM = require('@aragon/apm')
 const chalk = require('chalk')
-const TaskList = require('listr')
 const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const getRepoTask = require('../dao_cmds/utils/getRepoTask')
+const getApmRepo = require('../../lib/apm/getApmRepo')
 
 exports.command = 'info <apmRepo> [apmRepoVersion]'
 
 exports.describe = 'Get information about a package'
 
-exports.builder = getRepoTask.args
+exports.builder = yargs => {
+  return yargs
+    .option('apmRepo', {
+      describe: 'Name of the aragonPM repo',
+    })
+    .option('apmRepoVersion', {
+      describe: 'Version of the package upgrading to',
+      default: 'latest',
+    })
+}
 
-exports.handler = async function({
-  apmRepo,
-  apm: apmOptions,
-  apmRepoVersion,
-  network,
-}) {
+exports.handler = async function({ apmRepo, apm: apmOptions, apmRepoVersion, network }) {
   const web3 = await ensureWeb3(network)
-  apmRepo = defaultAPMName(apmRepo)
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
-  const apm = await APM(web3, apmOptions)
+  const apmRepoName = defaultAPMName(apmRepo)
 
-  const tasks = new TaskList([
-    {
-      title: `Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`,
-      task: getRepoTask.task({
-        apm,
-        apmRepo,
-        apmRepoVersion,
-        artifactRequired: false,
-      }),
-    },
-  ])
+  const progressHandler = (step) => {
+    switch(step) {
+      case 1:
+        // TODO: Use reporter instead of chalk? Should reporter have a 'title' function?
+        console.log(`Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`)
+        break
+    }
+  }
 
-  return tasks.run().then(ctx => {
-    delete ctx.repo.abi
-    delete ctx.repo.environments
+  const apmRepoObject = await getApmRepo(web3, apmRepoName, apmRepoVersion, apmOptions)
+  delete apmRepoObject.abi
+  delete apmRepoObject.environments
 
-    console.log(JSON.stringify(ctx.repo, null, 2))
-    process.exit()
-  })
+  const apmRepoJSON = JSON.stringify(apmRepoObject, null, 2)
+  console.log(apmRepoJSON)
+  process.exit()
 }
