@@ -7,7 +7,7 @@ module.exports = yargs => {
     type: 'string',
     coerce: dao =>
       !isAddress(dao) && !isValidAragonID(dao)
-        ? `${dao}.aragonid.eth` // append aragonid.eth if needed
+        ? `${dao}.aragonid.eth` // Append aragonid.eth if needed
         : dao,
   })
 }
