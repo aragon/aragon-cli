@@ -99,27 +99,6 @@ exports.task = async ({
       {
         title: 'Deploy the MiniMeToken contract',
         task: async (ctx, task) => {
-<<<<<<< HEAD
-          const artifact = getContract(
-            '@aragon/apps-shared-minime',
-            'MiniMeToken'
-          )
-          const contract = new web3.eth.Contract(artifact.abi)
-
-          const deployTx = contract.deploy({
-            data: artifact.bytecode,
-            arguments: [
-              ctx.factoryAddress || tokenFactoryAddress,
-              ZERO_ADDRESS,
-              0,
-              tokenName,
-              decimalUnits,
-              symbol,
-              transferEnabled,
-            ],
-          })
-          const estimatedGas = await deployTx.estimateGas()
-=======
           const handleProgress = (step, data) => {
             switch (step) {
               case 1:
@@ -133,7 +112,6 @@ exports.task = async ({
                 break
             }
           }
->>>>>>> Finish testing token new
 
           const { address, txHash } = await deployMiniMeToken(
             web3,
