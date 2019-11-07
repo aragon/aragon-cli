@@ -15,7 +15,8 @@
     "extract-roles": "node scripts/extract-roles",
     "build": "npm run extract-roles && npm run compile-src",
     "build:watch": "npm run build -- -- --watch",
-    "lint": "eslint src test/commands && documentation lint src",
+    "lint": "eslint src test && documentation lint src",
+    "lint:fix": "eslint src test --fix && documentation lint src --fix",
     "test": "ava",
     "test:watch": "ava --watch",
     "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly --exclude 'config/**' --exclude '**/*.test.js' npm run test"

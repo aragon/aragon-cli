@@ -25,7 +25,6 @@ exports.handler = async function({
 }) {
   const web3 = await ensureWeb3(network)
   const repoName = apmRepo ? defaultAPMName(apmRepo) : module.appName
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   const versions = await APM(web3, apmOptions).getAllVersions(repoName)
 

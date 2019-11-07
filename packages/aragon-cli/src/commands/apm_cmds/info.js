@@ -19,7 +19,6 @@ exports.handler = async function({
 }) {
   const web3 = await ensureWeb3(network)
   apmRepo = defaultAPMName(apmRepo)
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
   const tasks = new TaskList([

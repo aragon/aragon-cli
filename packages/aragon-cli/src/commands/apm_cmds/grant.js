@@ -20,7 +20,6 @@ exports.handler = async function({
   // Globals
   reporter,
   gasPrice,
-  cwd,
   network,
   module,
   apm: apmOptions,
@@ -28,7 +27,6 @@ exports.handler = async function({
   grantees,
 }) {
   const web3 = await ensureWeb3(network)
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   const apm = await APM(web3, apmOptions)
   const acl = ACL({ web3, network })
