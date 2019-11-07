@@ -4468,9 +4468,9 @@
       "integrity": "sha1-hZgoeOIbmOHGZCXgPQF0eI9Wnug="
     },
     "byte-size": {
-      "version": "5.0.1",
-      "resolved": "https://registry.npmjs.org/byte-size/-/byte-size-5.0.1.tgz",
-      "integrity": "sha512-/XuKeqWocKsYa/cBY1YbSJSWWqTi4cFgr9S6OyM7PBaPbr9zvNGwWP33vt0uqGhwDdN+y3yhbXVILEUpnwEWGw=="
+      "version": "6.2.0",
+      "resolved": "https://registry.npmjs.org/byte-size/-/byte-size-6.2.0.tgz",
+      "integrity": "sha512-6EspYUCAPMc7E2rltBgKwhG+Cmk0pDm9zDtF1Awe2dczNUL3YpZ8mTs/dueOTS1hqGWBOatqef4jYMGjln7WmA=="
     },
     "bytes": {
       "version": "3.1.0",
