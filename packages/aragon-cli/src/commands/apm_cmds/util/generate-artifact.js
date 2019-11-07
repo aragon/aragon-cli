@@ -106,7 +106,7 @@ async function generateApplicationArtifact(
   reporter
 ) {
   // Set appName, path & roles
-  let artifact = Object.assign({}, module)
+  const artifact = Object.assign({}, module)
 
   // Set `appId`
   artifact.appId = namehash.hash(artifact.appName)

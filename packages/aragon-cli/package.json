@@ -9,14 +9,13 @@
   },
   "scripts": {
     "prepare": "npm run build",
-    "link": "npm link",
-    "unlink": "npm unlink",
     "compile-src": "babel src --out-dir dist --source-maps --copy-files",
     "extract-roles": "node scripts/extract-roles",
     "build": "npm run extract-roles && npm run compile-src",
     "build:watch": "npm run build -- -- --watch",
-    "lint": "eslint src test/commands && documentation lint src",
-    "test": "ava",
+    "lint": "eslint src test",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "ava --verbose",
     "test:watch": "ava --watch",
     "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly --exclude 'config/**' --exclude '**/*.test.js' npm run test"
   },
@@ -103,7 +102,6 @@
     "ava": "^2.1.0",
     "babel-eslint": "^10.0.1",
     "core-js": "^3.1.4",
-    "documentation": "^12.0.0",
     "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
     "eslint-config-standard": "^14.1.0",
@@ -113,26 +111,10 @@
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
-    "husky": "^3.0.0",
-    "lint-staged": "^9.1.0",
     "nyc": "^14.1.1",
     "prettier": "^1.15.3",
     "proxyquire": "^2.1.0",
-    "regenerator-runtime": "^0.13.3",
     "sinon": "^7.3.1"
-  },
-  "engines": {
-    "node": ">=8.0.0"
-  },
-  "ava": {
-    "require": [
-      "core-js",
-      "regenerator-runtime",
-      "@babel/register"
-    ],
-    "files": [
-      "test/**/*.test.js"
-    ]
   },
   "aragon": {
     "clientRepo": "https://github.com/aragon/aragon",
@@ -141,17 +123,50 @@
     "defaultGasPrice": "2",
     "defaultIpfsTimeout": "300000"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm run lint && npm run test"
-    }
+  "engines": {
+    "node": ">=8.0.0"
   },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "documentation lint",
-      "git add"
+  "ava": {
+    "require": [
+      "@babel/register"
+    ],
+    "files": [
+      "test/**/*.test.js"
     ]
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "useBuiltIns": "usage",
+          "corejs": "3",
+          "targets": {
+            "node": true
+          }
+        }
+      ]
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-object-rest-spread"
+    ]
+  },
+  "eslintConfig": {
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "extends": [
+      "standard",
+      "plugin:ava/recommended",
+      "plugin:prettier/recommended"
+    ],
+    "parser": "babel-eslint"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": false,
+    "trailingComma": "es5",
+    "bracketSpacing": true
   }
 }

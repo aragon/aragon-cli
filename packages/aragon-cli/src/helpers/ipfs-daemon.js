@@ -38,6 +38,7 @@ const startIPFSDaemon = () => {
     }, IPFS_START_TIMEOUT)
   })
 
+  /* eslint-disable no-async-promise-executor */
   const start = new Promise(async (resolve, reject) => {
     await ensureIPFSInitialized()
     const ipfsProc = execa(ipfsBin, ['daemon', '--migrate'])
