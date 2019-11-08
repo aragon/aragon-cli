@@ -5,7 +5,9 @@ const LATEST_VERSION = 'latest'
 const DEFAULT_IPFS_TIMEOUT = pkg.aragon.defaultIpfsTimeout
 
 module.exports = async (web3, apmRepoName, apmRepoVersion, apmOptions, progressHandler) => {
-  if (progressHandler) progressHandler(1)
+  if (progressHandler) {
+    progressHandler(1)
+  }
 
   // Ensure the ens-registry property is present,
   // and available with the name "ensRegistryAddress".
@@ -20,15 +22,26 @@ module.exports = async (web3, apmRepoName, apmRepoVersion, apmOptions, progressH
   // Prepare APM object that can comunicate with the apm contracts.
   const apm = await APM(web3, apmOptions)
 
+  if (progressHandler) {
+    progressHandler(2)
+  }
+
   // Query the apm contracts to retrieve an object
   // containing version info about the apm repo.
+  let info
   if (apmRepoVersion === LATEST_VERSION) {
-    return await apm.getLatestVersion(apmRepoName, DEFAULT_IPFS_TIMEOUT)
+    info = await apm.getLatestVersion(apmRepoName, DEFAULT_IPFS_TIMEOUT)
   } else {
-    return await apm.getVersion(
+    info = await apm.getVersion(
       apmRepoName,
       apmRepoVersion.split('.'),
       DEFAULT_IPFS_TIMEOUT
     )
   }
+
+  if (progressHandler) {
+    progressHandler(3)
+  }
+
+  return info
 }
