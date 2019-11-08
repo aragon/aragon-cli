@@ -3,6 +3,7 @@ const chalk = require('chalk')
 const Table = require('cli-table')
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const getApmRegistryPackages = require('../../lib/apm/getApmRegistryPackages')
 
 exports.command = 'packages [apmRegistry]'
 
@@ -23,45 +24,34 @@ exports.handler = async function({
   apm: apmOptions,
 }) {
   const web3 = await ensureWeb3(network)
-
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
-  const apm = APM(web3, apmOptions)
 
-  const tasks = new TaskList([
-    {
-      title: `Fetching APM Registry: ${apmRegistry}`,
-      task: async (ctx, task) => {
-        // TODO add a new method to APM to allow fetching a registry without appId
-        ctx.registry = await apm.getRepoRegistry(`vault.${apmRegistry}`)
-      },
-    },
-    {
-      title: 'Gathering Repos',
-      task: async (ctx, task) => {
-        const e = await ctx.registry.getPastEvents('NewRepo', { fromBlock: 0 })
+  const progressHandler = (step) => {
+    switch(step) {
+      case 1:
+        console.log(`Fetching APM Registry: ${apmRegistry}`)
+        break
+      case 4:
+        console.log(`Gathering packages in registry`)
+        break
+      case 5:
+        console.log(`Successfully fetched packages`)
+        break
+    }
+  }
 
-        ctx.names = e.map(ev => ev.returnValues.name)
-        ctx.versions = await Promise.all(
-          e.map(async ev => apm.getLatestVersion(ev.returnValues.id))
-        )
-      },
-    },
-  ])
+  const packages = await getApmRegistryPackages(web3, apmRegistry, apmOptions, progressHandler)
 
-  return tasks.run().then(ctx => {
-    reporter.success('Successfully fetched packages')
-
-    const rows = ctx.versions.map((info, index) => {
-      return [ctx.names[index], info.version]
-    })
-
-    const table = new Table({
-      head: ['App', 'Latest Version'].map(x => chalk.white(x)),
-    })
-
-    rows.forEach(r => table.push(r))
-
-    console.log(table.toString())
-    process.exit()
+  const table = new Table({
+    head: ['App', 'Latest Version'],
   })
+
+  packages.map(aPackage => {
+    const row = [aPackage.name, aPackage.version]
+    table.push(row)
+  })
+
+  console.log(table.toString())
+
+  process.exit()
 }
