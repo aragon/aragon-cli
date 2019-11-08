@@ -17,7 +17,7 @@
     "lint:fix": "npm run lint -- --fix",
     "test": "ava --verbose",
     "test:watch": "ava --watch",
-    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly --exclude 'config/**' --exclude '**/*.test.js' npm run test"
+    "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test"
   },
   "repository": {
     "type": "git",
@@ -88,11 +88,11 @@
   "devDependencies": {
     "@aragon/apps-agent": "^2.0.0",
     "@aragon/apps-finance": "^3.0.0",
+    "@aragon/apps-payroll": "^1.0.0",
+    "@aragon/apps-survey": "^1.0.0",
     "@aragon/apps-token-manager": "^2.0.0",
     "@aragon/apps-vault": "^4.0.0",
     "@aragon/apps-voting": "^2.0.0",
-    "@aragon/apps-payroll": "^1.0.0",
-    "@aragon/apps-survey": "^1.0.0",
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
     "@babel/node": "^7.0.0",
@@ -101,6 +101,7 @@
     "@babel/register": "^7.0.0",
     "ava": "^2.1.0",
     "babel-eslint": "^10.0.1",
+    "babel-plugin-istanbul": "^5.2.0",
     "core-js": "^3.1.4",
     "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
@@ -134,6 +135,14 @@
       "test/**/*.test.js"
     ]
   },
+  "nyc": {
+    "include": [
+      "src/**/*.js",
+      "scripts/**/*.js"
+    ],
+    "sourceMap": false,
+    "instrument": true
+  },
   "babel": {
     "presets": [
       [
@@ -149,7 +158,12 @@
     ],
     "plugins": [
       "@babel/plugin-proposal-object-rest-spread"
-    ]
+    ],
+    "env": {
+      "test": {
+        "plugins": [ "istanbul" ]
+      }
+    }
   },
   "eslintConfig": {
     "env": {
