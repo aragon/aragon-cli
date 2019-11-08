@@ -1,7 +1,7 @@
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const APM = require('@aragon/apm')
-const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 const chalk = require('chalk')
+const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
+const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const getApmRepoVersions = require('../../lib/apm/getApmRepoVersions')
 
 exports.command = 'versions [apmRepo]'
 
@@ -24,13 +24,20 @@ exports.handler = async function({
   apm: apmOptions,
 }) {
   const web3 = await ensureWeb3(network)
-  const repoName = apmRepo ? defaultAPMName(apmRepo) : module.appName
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
+  const apmRepoName = apmRepo ? defaultAPMName(apmRepo) : module.appName
 
-  const versions = await APM(web3, apmOptions).getAllVersions(repoName)
+  const progressHandler = (step) => {
+    switch(step) {
+      case 1:
+        console.log(`Fetching ${chalk.bold(apmRepoName)} published versions`)
+        break
+    }
+  }
+
+  const versions = await getApmRepoVersions(web3, apmRepoName, apmOptions, progressHandler)
 
   reporter.info(
-    `${chalk.blue(repoName)} has ${chalk.green(
+    `${chalk.blue(apmRepoName)} has ${chalk.green(
       versions.length
     )} published versions`
   )
