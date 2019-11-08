@@ -264,12 +264,24 @@
     },
     "@aragon/cli-utils": {
       "version": "0.0.8",
+      "resolved": "https://registry.npmjs.org/@aragon/cli-utils/-/cli-utils-0.0.8.tgz",
+      "integrity": "sha512-1rNF/Qkq3+qqv8wAcQW3WvS5h3+hF53DK8yaDQcTbE1hzIMZqkcScAOcwkkwrLGreMDT57/RHV7eZcDetEF8MQ==",
       "requires": {
         "chalk": "^2.4.2",
         "figures": "^3.0.0",
         "listr-silent-renderer": "^1.1.1",
         "listr-update-renderer": "^0.5.0",
         "listr-verbose-renderer": "^0.5.0"
+      },
+      "dependencies": {
+        "figures": {
+          "version": "3.1.0",
+          "resolved": "https://registry.npmjs.org/figures/-/figures-3.1.0.tgz",
+          "integrity": "sha512-ravh8VRXqHuMvZt/d8GblBeqDMkdJMBdv/2KntFH+ra5MXkO7nxNKpzQ3n6QD/2da1kH0aWmNISdvhM7gl2gVg==",
+          "requires": {
+            "escape-string-regexp": "^1.0.5"
+          }
+        }
       }
     },
     "@aragon/id": {
@@ -5090,12 +5102,43 @@
       }
     },
     "default-gateway": {
-      "version": "4.2.0",
-      "resolved": "https://registry.npmjs.org/default-gateway/-/default-gateway-4.2.0.tgz",
-      "integrity": "sha512-h6sMrVB1VMWVrW13mSc6ia/DwYYw5MN6+exNu1OaJeFac5aSAvwM7lZ0NVfTABuSkQelr4h5oebg3KB1XPdjgA==",
+      "version": "5.0.4",
+      "resolved": "https://registry.npmjs.org/default-gateway/-/default-gateway-5.0.4.tgz",
+      "integrity": "sha512-RncYZFuHZlB69pT3aAZK/YUjOpllMc3pKm/dIxHR0AyJlhRKSFbLIQbZia1WOrNoY0F1UsqadrHW9mx/lAWAgg==",
       "requires": {
-        "execa": "^1.0.0",
-        "ip-regex": "^2.1.0"
+        "execa": "^3.0.0"
+      },
+      "dependencies": {
+        "execa": {
+          "version": "3.2.0",
+          "resolved": "https://registry.npmjs.org/execa/-/execa-3.2.0.tgz",
+          "integrity": "sha512-kJJfVbI/lZE1PZYDI5VPxp8zXPO9rtxOkhpZ0jMKha56AI9y2gGVC6bkukStQf0ka5Rh15BA5m7cCCH4jmHqkw==",
+          "requires": {
+            "cross-spawn": "^7.0.0",
+            "get-stream": "^5.0.0",
+            "human-signals": "^1.1.1",
+            "is-stream": "^2.0.0",
+            "merge-stream": "^2.0.0",
+            "npm-run-path": "^4.0.0",
+            "onetime": "^5.1.0",
+            "p-finally": "^2.0.0",
+            "signal-exit": "^3.0.2",
+            "strip-final-newline": "^2.0.0"
+          }
+        },
+        "is-stream": {
+          "version": "2.0.0",
+          "resolved": "https://registry.npmjs.org/is-stream/-/is-stream-2.0.0.tgz",
+          "integrity": "sha512-XCoy+WlUr7d1+Z8GgSuXmpuUFC9fOhRXglJMx+dwLKTkL44Cjd4W1Z5P+BQZpr+cR93aGP4S/s7Ftw6Nd/kiEw=="
+        },
+        "npm-run-path": {
+          "version": "4.0.0",
+          "resolved": "https://registry.npmjs.org/npm-run-path/-/npm-run-path-4.0.0.tgz",
+          "integrity": "sha512-8eyAOAH+bYXFPSnNnKr3J+yoybe8O87Is5rtAQ8qRczJz1ajcsjg8l2oZqP+Ppx15Ii3S1vUTjQN2h4YO2tWWQ==",
+          "requires": {
+            "path-key": "^3.0.0"
+          }
+        }
       }
     },
     "default-require-extensions": {
@@ -20811,6 +20854,11 @@
         "sshpk": "^1.7.0"
       }
     },
+    "human-signals": {
+      "version": "1.1.1",
+      "resolved": "https://registry.npmjs.org/human-signals/-/human-signals-1.1.1.tgz",
+      "integrity": "sha512-SEQu7vl8KjNL2eoGBLF3+wAjpsNfA9XMlXAYj/3EdaNfAlxKthD1xjEQfGOUhllCGGJVNY34bRr6lPINhNjyZw=="
+    },
     "iconv-lite": {
       "version": "0.4.24",
       "resolved": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.4.24.tgz",
@@ -21034,12 +21082,19 @@
       }
     },
     "internal-ip": {
-      "version": "4.3.0",
-      "resolved": "https://registry.npmjs.org/internal-ip/-/internal-ip-4.3.0.tgz",
-      "integrity": "sha512-S1zBo1D6zcsyuC6PMmY5+55YMILQ9av8lotMx447Bq6SAgo/sDK6y6uUKmuYhW7eacnIhFfsPmCNYdDzsnnDCg==",
+      "version": "5.0.0",
+      "resolved": "https://registry.npmjs.org/internal-ip/-/internal-ip-5.0.0.tgz",
+      "integrity": "sha512-2rbiwUsG8My+vT/JBdaE2r6EjzOibu4VXjkfdVBP9PbfTn68EE1DCZ4iw6dOnc+FGsFL4uAqap/eeNoqK5sdtA==",
       "requires": {
-        "default-gateway": "^4.2.0",
-        "ipaddr.js": "^1.9.0"
+        "default-gateway": "^5.0.4",
+        "ipaddr.js": "^1.9.1"
+      },
+      "dependencies": {
+        "ipaddr.js": {
+          "version": "1.9.1",
+          "resolved": "https://registry.npmjs.org/ipaddr.js/-/ipaddr.js-1.9.1.tgz",
+          "integrity": "sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g=="
+        }
       }
     },
     "invariant": {
