@@ -1,0 +1,19 @@
+on: push
+name: CI
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install node
+      uses: actions/npm@master
+      with:
+        node-version: 12
+        args: install --unsafe-perm
+    - name: npm install
+      run: npm install
+    - name: npm lint
+      run: npm run lint
+    - name: test
+      run: npm run test:coverage
+    env:
+      CI: true
