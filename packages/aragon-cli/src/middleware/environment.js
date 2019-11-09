@@ -1,5 +1,6 @@
 const Web3 = require('web3')
-const merge = require('lodash.merge')
+const url = require('url')
+const { ens: defaultEnsRegistry } = require('@aragon/aragen')
 const { getTruffleConfig } = require('../helpers/truffle-config')
 
 const FRAME_ENDPOINT = 'ws://localhost:1248'
@@ -14,14 +15,7 @@ const configureNetwork = (
   truffleConfig = getTruffleConfig()
 ) => {
   // Catch commands that dont require network and return
-  const skipNetworkSubcommands = new Set(['version']) // 'aragon apm version'
-  if (argv._.length >= 2) {
-    if (skipNetworkSubcommands.has(argv._[1])) {
-      return {}
-    }
-  }
-  // TODO remove init when commmand not longer supported
-  const skipNetworkCommands = new Set(['init', 'devchain', 'ipfs', 'contracts'])
+  const skipNetworkCommands = new Set(['devchain', 'ipfs', 'contracts'])
 
   if (argv._.length >= 1) {
     if (skipNetworkCommands.has(argv._[0])) {
@@ -70,39 +64,34 @@ const configureNetwork = (
   return truffleNetwork
 }
 
-// TODO this can be cleaned up once --network is no longer supported
-module.exports = function environmentMiddleware(argv) {
-  const runsInCwd = argv._[0] === 'init'
-  const { reporter, module } = argv
-  let { environment, network, apm } = argv
-
-  const isTruffleFwd = argv._[0] === 'contracts'
-
-  if (environment && network && !isTruffleFwd) {
-    reporter.error(
-      "Arguments '--network' and '--environment' are mutually exclusive. Using '--network'  has been deprecated and  '--environment' should be used instead."
-    )
-    process.exit(1)
+const configureAPM = (
+  ipfsRPC,
+  gateway,
+  ensRegistryAddress = defaultEnsRegistry
+) => {
+  const rpc = {}
+  if (ipfsRPC) {
+    const uri = url.URL(ipfsRPC)
+    Object.assign(rpc, {
+      protocol: uri.protocol.replace(':', ''),
+      host: uri.hostname,
+      port: parseInt(uri.port),
+    })
+    if (uri.hash === '#default') {
+      rpc.default = true
+    }
   }
+  return {
+    ensRegistryAddress,
+    ipfs: { rpc, gateway },
+  }
+}
 
-  if (!runsInCwd && module) {
-    if (network && module.environments && !isTruffleFwd) {
-      reporter.error(
-        "Your arapp.json contains an `environments` property. The use of '--network' is deprecated and '--environment' should be used instead."
-      )
-      process.exit(1)
-    }
-    if (!module.environments) {
-      if (environment) {
-        reporter.error(
-          "Your arapp.json does not contain an `environments` property. The use of '--environment'  is not supported."
-        )
-        process.exit(1)
-      }
-      if (!network) network = 'rpc'
-      return { network: configureNetwork(argv, network) }
-    }
+module.exports = function environmentMiddleware(argv) {
+  const { reporter, module } = argv
+  let { environment } = argv
 
+  if (module) {
     if (!environment) environment = 'default'
 
     const env = module.environments[environment]
@@ -123,28 +112,17 @@ module.exports = function environmentMiddleware(argv) {
 
     const response = {
       module: Object.assign({}, module, { appName: env.appName }),
+      apm: configureAPM(
+        env.apm.ipfs.rpc || argv['ipfs-rpc'],
+        env.apm.ipfs.gateway || argv['ipfs-gateway'],
+        env.registry
+      ),
       network: configureNetwork(argv, env.network),
-    }
-
-    // Override apm options that we find in the environment
-    // TODO (daniel) : it should be the other way around though (cli params to override env)
-    if (apm) {
-      if (env.registry) {
-        apm['ens-registry'] = env.registry
-      }
-      if (env.apm) {
-        apm = merge(apm, env.apm)
-      }
-    }
-
-    if (env.registry) {
-      // TODO (daniel) : remove this as it does not seem to be used
-      response.apmEnsRegistry = env.registry
-    }
-
-    if (env.wsRPC) {
-      response.wsProvider = new Web3.providers.WebsocketProvider(env.wsRPC)
-    } else {
+      wsProvider: env.wsRPC && new Web3.providers.WebsocketProvider(env.wsRPC),
+    } 
+    
+    
+    else {
       if (env.network === 'rinkeby')
         response.wsProvider = new Web3.providers.WebsocketProvider(
           ARAGON_RINKEBY_ENDPOINT
@@ -160,11 +138,11 @@ module.exports = function environmentMiddleware(argv) {
 
   // if there is no arapp.json and the command is not init default to the "global" config
   // designed for the dao commands including dao acl
-  if (!module && !runsInCwd) {
+  if (!module) {
     const defaultEnvironments = require('../../config/environments.default')
     const defaultNetworks = require('../../config/truffle.default')
 
-    let { environment, apm } = argv
+    let { environment } = argv
     const env = defaultEnvironments[environment || 'aragon:local']
 
     if (environment && !env) {
@@ -178,20 +156,14 @@ module.exports = function environmentMiddleware(argv) {
       `Could not find 'arapp.json'. Using the default configuration to connect to ${env.network}.`
     )
 
-    // Override apm options that we find in the environment
-    // TODO (daniel) : it should be the other way around though (cli params to override env)
-    if (apm) {
-      if (env.registry) {
-        apm['ens-registry'] = env.registry
-      }
-      if (env.apm) {
-        apm = merge(apm, env.apm)
-      }
-    }
-
     return {
       // TODO (daniel) : remove this as it does not seem to be used
       apmEnsRegistry: env.registry,
+      apm: configureAPM(
+        env.apm.ipfs.rpc || argv['ipfs-rpc'],
+        env.apm.ipfs.gateway || argv['ipfs-gateway'],
+        env.registry
+      ),
       network: configureNetwork(argv, env.network, defaultNetworks),
       wsProvider: env.wsRPC && new Web3.providers.WebsocketProvider(env.wsRPC),
     }

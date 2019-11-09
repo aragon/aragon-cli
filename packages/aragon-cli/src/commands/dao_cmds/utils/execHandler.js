@@ -56,7 +56,7 @@ async function task({
           task.output = `Fetching DAO at ${dao}...`
 
           try {
-            const wrapper = await initAragonJS(dao, apm['ens-registry'], {
+            const wrapper = await initAragonJS(dao, apm.ensRegistryAddress, {
               ipfsConf: apm.ipfs,
               gasPrice,
               provider: wsProvider || web3.currentProvider,

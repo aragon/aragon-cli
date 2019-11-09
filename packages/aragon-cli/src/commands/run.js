@@ -216,8 +216,6 @@ exports.handler = async function({
   clientPort,
   clientPath,
 }) {
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
-
   if (http && !(await isHttpServerOpen(http))) {
     reporter.error(
       `Can't connect to ${http}, make sure the http server is running.`
@@ -400,7 +398,7 @@ exports.handler = async function({
     manifest = fs.readJsonSync(manifestPath)
   }
 
-  return tasks.run({ ens: apmOptions['ens-registry'] }).then(async ctx => {
+  return tasks.run({ ens: apmOptions.ensRegistryAddress }).then(async ctx => {
     if (ctx.portOpen) {
       reporter.warning(
         `Server already listening at port ${chalk.blue(

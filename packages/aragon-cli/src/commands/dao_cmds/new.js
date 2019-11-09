@@ -90,7 +90,6 @@ exports.task = async ({
   ipfsCheck,
   aragonId,
 }) => {
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
   template = defaultAPMName(template)

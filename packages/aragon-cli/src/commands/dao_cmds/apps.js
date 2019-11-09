@@ -58,7 +58,7 @@ exports.handler = async function({
         title: 'Inspecting DAO',
         task: async (ctx, task) => {
           task.output = `Fetching apps for ${dao}...`
-          const { 'ens-registry': ensRegistry, ipfs } = apmOptions
+          const { ensRegistry, ipfs } = apmOptions
 
           try {
             const wrapper = await initAragonJS(dao, ensRegistry, {

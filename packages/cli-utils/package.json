@@ -4,7 +4,7 @@
   "description": "Common building blocks for CLI tools",
   "main": "",
   "scripts": {
-    "test": ""
+    "test": "",
   },
   "repository": {
     "type": "git",
@@ -26,5 +26,12 @@
     "listr-silent-renderer": "^1.1.1",
     "listr-update-renderer": "^0.5.0",
     "listr-verbose-renderer": "^0.5.0"
-  }
+  },
+  "bundleDependencies": [
+    "chalk",
+    "figures",
+    "listr-silent-renderer",
+    "listr-update-renderer",
+    "listr-verbose-renderer"
+  ]
 }
