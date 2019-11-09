@@ -31,8 +31,10 @@ export function loadArappFile() {
   const validate = ajv.compile(arappSchema)
   const valid = validate(arapp)
   if (!valid) {
-    const errors = ajv.errorsText(validate.errors, { dataVar: 'arapp' })
-    throw Error(`Error parsing the aragon config file: ${errors}!`)
+    throw Error(
+      `Error parsing arapp.json:
+${ajv.errorsText(validate.errors, { dataVar: 'arapp', separator: '\n' })}`
+    )
   }
 
   return arapp

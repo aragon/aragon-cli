@@ -11,14 +11,15 @@ const FRAME_ORIGIN = 'aragonCLI'
 const ARAGON_RINKEBY_ENDPOINT = 'wss://rinkeby.eth.aragon.network/ws'
 const ARAGON_MAINNET_ENDPOINT = 'wss://mainnet.eth.aragon.network/ws'
 
+export class NoEnvironmentInArapp extends Error {}
+export class NoEnvironmentInDefaults extends Error {}
+export class NoNetworkInTruffleConfig extends Error {}
+
 function getEnv(arapp, environment) {
   if (arapp) {
     if (!environment) environment = 'default'
     const env = arapp.environments[environment]
-    if (!env)
-      throw Error(
-        `${environment} environment was not defined in your arapp.json.`
-      )
+    if (!env) throw new NoEnvironmentInArapp(environment)
     return env
   }
 
@@ -27,10 +28,7 @@ function getEnv(arapp, environment) {
   else {
     if (!environment) environment = 'aragon:local'
     const env = defaultEnvironments[environment]
-    if (!env)
-      throw Error(
-        `Could not find the ${environment} environment. Try using aragon:local, aragon:rinkeby or aragon:mainnet.`
-      )
+    if (!env) throw new NoEnvironmentInDefaults(environment)
     return env
   }
 }
@@ -52,9 +50,7 @@ function configureNetwork(network, truffleConfig, options) {
 
   const truffleNetwork = truffleConfig.networks[network]
   if (!truffleNetwork) {
-    throw new Error(
-      `aragon <command> requires a network '${network}' in your truffle.js. For an example, see http://truffleframework.com/docs/advanced/configuration`
-    )
+    throw new NoNetworkInTruffleConfig(network)
   }
 
   const { provider, host, port } = truffleNetwork

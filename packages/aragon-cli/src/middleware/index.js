@@ -1,5 +1,12 @@
 const { loadManifestFile, loadArappFile } = require('../lib/loadConfigFiles')
-const { configEnvironment } = require('../lib/configEnvironment')
+const {
+  configEnvironment,
+  NoEnvironmentInArapp,
+  NoEnvironmentInDefaults,
+  NoNetworkInTruffleConfig,
+} = require('../lib/configEnvironment')
+
+class InvalidArguments extends Error {}
 
 export function configCliMiddleware(argv) {
   const [cmd, subcmd] = argv._
@@ -27,15 +34,15 @@ export function configCliMiddleware(argv) {
     const { useFrame, environment, network, apm } = argv
 
     if (environment && network && !isTruffleFwd)
-      throw Error(
+      throw new InvalidArguments(
         "Arguments '--network' and '--environment' are mutually exclusive. Using '--network'  has been deprecated and  '--environment' should be used instead."
       )
     if (network && arapp && arapp.environments && !isTruffleFwd)
-      throw Error(
+      throw new InvalidArguments(
         "Your arapp.json contains an `environments` property. The use of '--network' is deprecated and '--environment' should be used instead."
       )
     if (arapp && !arapp.environments && environment)
-      throw Error(
+      throw new InvalidArguments(
         "Your arapp.json does not contain an `environments` property. The use of '--environment'  is not supported."
       )
 
@@ -62,8 +69,26 @@ export function configCliMiddleware(argv) {
       wsProvider,
     }
   } catch (e) {
-    // Show errors prettier with the reporter
-    argv.reporter.error(e.message)
-    process.exit(1)
+    const prettyError = message => {
+      argv.reporter.error(message)
+      process.exit(1)
+    }
+
+    if (e instanceof InvalidArguments) return prettyError(e.message)
+    // Errors from configEnvironment
+    if (e instanceof NoEnvironmentInArapp)
+      return prettyError(
+        `environment '${e.message}' is not defined in your arapp.json.`
+      )
+    if (e instanceof NoEnvironmentInDefaults)
+      return prettyError(
+        `Default environment '${e.message}' not found. Try using aragon:local, aragon:rinkeby or aragon:mainnet.`
+      )
+    if (e instanceof NoNetworkInTruffleConfig)
+      return prettyError(
+        `aragon <command> requires a network '${e.message}' in your truffle.js. For an example, see http://truffleframework.com/docs/advanced/configuration`
+      )
+
+    throw e
   }
 }
