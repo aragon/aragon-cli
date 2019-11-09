@@ -1,6 +1,5 @@
 const Web3 = require('web3')
 const { merge } = require('lodash')
-const { getTruffleConfig } = require('../helpers/truffle-config')
 
 const defaultEnvironments = require('../../config/environments.default')
 const defaultNetworks = require('../../config/truffle.default')
@@ -68,15 +67,15 @@ function configureNetwork(network, truffleConfig, options) {
 }
 
 export function configEnvironment({
-  arapp,
   ignoreNetwork,
   useFrame,
   environment,
   network,
   apm,
+  arapp,
+  truffleConfig = defaultNetworks,
 }) {
   const networkOptions = { ignoreNetwork, useFrame }
-  const truffleConfig = arapp ? getTruffleConfig() : defaultNetworks
 
   if (arapp && !arapp.environments)
     return {

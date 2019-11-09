@@ -1,3 +1,4 @@
+const { getTruffleConfig } = require('../helpers/truffle-config')
 const { loadManifestFile, loadArappFile } = require('../lib/loadConfigFiles')
 const {
   configEnvironment,
@@ -52,13 +53,13 @@ export function configCliMiddleware(argv) {
       network: networkObj,
       wsProvider,
     } = configEnvironment({
-      arapp,
       ignoreNetwork,
       useFrame,
-      isTruffleFwd,
       environment,
       network,
       apm,
+      arapp,
+      truffleConfig: arapp && getTruffleConfig(),
     })
 
     return {
