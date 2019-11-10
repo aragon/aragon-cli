@@ -1,6 +1,5 @@
 const Web3 = require('web3')
 const url = require('url')
-const { ens: defaultEnsRegistry } = require('@aragon/aragen')
 const { getTruffleConfig } = require('../helpers/truffle-config')
 
 const FRAME_ENDPOINT = 'ws://localhost:1248'
@@ -64,11 +63,7 @@ const configureNetwork = (
   return truffleNetwork
 }
 
-const configureAPM = (
-  ipfsRPC,
-  gateway,
-  ensRegistryAddress = defaultEnsRegistry
-) => {
+const configureAPM = (ipfsRPC, gateway, ensRegistryAddress) => {
   const rpc = {}
   if (ipfsRPC) {
     const uri = url.URL(ipfsRPC)
@@ -110,30 +105,23 @@ module.exports = function environmentMiddleware(argv) {
 
     module.env = env
 
-    const response = {
+    const endPoint =
+      env.network === 'rinkeby'
+        ? ARAGON_RINKEBY_ENDPOINT
+        : env.network === 'mainnet'
+        ? ARAGON_MAINNET_ENDPOINT
+        : env.wsRPC
+
+    return {
       module: Object.assign({}, module, { appName: env.appName }),
       apm: configureAPM(
         env.apm.ipfs.rpc || argv['ipfs-rpc'],
         env.apm.ipfs.gateway || argv['ipfs-gateway'],
-        env.registry
+        env.registry || argv['ens-registry']
       ),
       network: configureNetwork(argv, env.network),
-      wsProvider: env.wsRPC && new Web3.providers.WebsocketProvider(env.wsRPC),
-    } 
-    
-    
-    else {
-      if (env.network === 'rinkeby')
-        response.wsProvider = new Web3.providers.WebsocketProvider(
-          ARAGON_RINKEBY_ENDPOINT
-        )
-      if (env.network === 'mainnet')
-        response.wsProvider = new Web3.providers.WebsocketProvider(
-          ARAGON_MAINNET_ENDPOINT
-        )
+      wsProvider: env.wsRPC && new Web3.providers.WebsocketProvider(endPoint),
     }
-
-    return response
   }
 
   // if there is no arapp.json and the command is not init default to the "global" config
@@ -157,12 +145,10 @@ module.exports = function environmentMiddleware(argv) {
     )
 
     return {
-      // TODO (daniel) : remove this as it does not seem to be used
-      apmEnsRegistry: env.registry,
       apm: configureAPM(
         env.apm.ipfs.rpc || argv['ipfs-rpc'],
         env.apm.ipfs.gateway || argv['ipfs-gateway'],
-        env.registry
+        env.registry || argv['ens-registry']
       ),
       network: configureNetwork(argv, env.network, defaultNetworks),
       wsProvider: env.wsRPC && new Web3.providers.WebsocketProvider(env.wsRPC),

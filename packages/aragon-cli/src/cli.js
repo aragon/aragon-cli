@@ -2,15 +2,18 @@
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
 require('source-map-support/register')
+
 const Web3 = require('web3')
 
 const DEFAULT_GAS_PRICE = require('../package.json').aragon.defaultGasPrice
+const ens = require('../package.json').aragon.defaultEnsRegistry
 
 const {
   environmentMiddleware,
   manifestMiddleware,
   moduleMiddleware,
 } = require('./middleware')
+
 const { findProjectRoot } = require('./util')
 const ConsoleReporter = require('@aragon/cli-utils/src/reporters/ConsoleReporter')
 
