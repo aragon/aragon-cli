@@ -5,7 +5,7 @@ const { parseArgumentStringIfPossible, ZERO_ADDRESS } = require('../../util')
 
 const EXECUTE_FUNCTION_NAME = 'execute'
 
-exports.command = 'act <agent-address> <target> <signature> [call-args..]'
+exports.command = 'act <agent-address> <target> [signature] [call-args..]'
 
 exports.describe = 'Executes an action from the Agent app'
 
@@ -19,7 +19,7 @@ exports.builder = function(yargs) {
       description: 'Address where the action is being executed',
       type: 'string',
     })
-    .positional('signature', {
+    .option('signature', {
       description:
         'Signature of the function to be executed (e.g. "myMethod(uint256,string)"',
       type: 'string',
@@ -28,6 +28,10 @@ exports.builder = function(yargs) {
       description: 'Arguments to be passed to the function',
       array: true,
       default: [],
+    })
+    .option('call-data', {
+      description: 'Raw call data',
+      type: 'string',
     })
     .option('eth-value', {
       description:
@@ -59,6 +63,7 @@ exports.handler = async function({
   target,
   signature,
   callArgs,
+  callData,
   ethValue,
   wsProvider,
 }) {
@@ -77,8 +82,16 @@ exports.handler = async function({
   }
 
   const weiAmount = web3.utils.toWei(ethValue)
-  const fnArgs = [target, weiAmount, encodeCalldata(signature, callArgs, web3)]
-
+  const fnArgs = [target, weiAmount]
+  if (!signature && !callData) {
+    callData = '0x'
+  } else if (!callData) {
+    callData = encodeCalldata(signature, callArgs, web3)
+    if (global.DEBUG_MODE) {
+      console.log('encoded call data', callData)
+    }
+  }
+  fnArgs.push(callData)
   return execHandler({
     dao,
     app: agentAddress,
