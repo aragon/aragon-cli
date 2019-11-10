@@ -1,10 +1,29 @@
 const pkg = require('../../../package.json')
-const APM = require('@aragon/apm')
+const aragonPM = require('@aragon/apm')
 
 const LATEST_VERSION = 'latest'
 const DEFAULT_IPFS_TIMEOUT = pkg.aragon.defaultIpfsTimeout
 
-module.exports = async (web3, apmRepoName, apmRepoVersion, apmOptions, progressHandler) => {
+/**
+ *
+ * Progress callback will be invoked with the following integers:
+ * (1) - Initialize aragonPM object-contract comunication
+ * (2) - Fetch aragonPM contracts and retrive an object containing version info about the aragonPM repo
+ *
+ * @param {*} web3 todo
+ * @param {*} apmRepoName todo
+ * @param {*} apmRepoVersion todo
+ * @param {*} apmOptions todo
+ * @param {*} progressHandler todo
+ * @returns {*} todo
+ */
+module.exports = async (
+  web3,
+  apmRepoName,
+  apmRepoVersion,
+  apmOptions,
+  progressHandler
+) => {
   if (progressHandler) {
     progressHandler(1)
   }
@@ -19,8 +38,8 @@ module.exports = async (web3, apmRepoName, apmRepoVersion, apmOptions, progressH
     }
   }
 
-  // Prepare APM object that can comunicate with the apm contracts.
-  const apm = await APM(web3, apmOptions)
+  // Prepare aragonPM object that can comunicate with the apm contracts.
+  const apm = await aragonPM(web3, apmOptions)
 
   if (progressHandler) {
     progressHandler(2)
@@ -28,20 +47,14 @@ module.exports = async (web3, apmRepoName, apmRepoVersion, apmOptions, progressH
 
   // Query the apm contracts to retrieve an object
   // containing version info about the apm repo.
-  let info
-  if (apmRepoVersion === LATEST_VERSION) {
-    info = await apm.getLatestVersion(apmRepoName, DEFAULT_IPFS_TIMEOUT)
-  } else {
-    info = await apm.getVersion(
-      apmRepoName,
-      apmRepoVersion.split('.'),
-      DEFAULT_IPFS_TIMEOUT
-    )
-  }
-
-  if (progressHandler) {
-    progressHandler(3)
-  }
+  const info =
+    apmRepoVersion === LATEST_VERSION
+      ? await apm.getLatestVersion(apmRepoName, DEFAULT_IPFS_TIMEOUT)
+      : await apm.getVersion(
+          apmRepoName,
+          apmRepoVersion.split('.'),
+          DEFAULT_IPFS_TIMEOUT
+        )
 
   return info
 }
