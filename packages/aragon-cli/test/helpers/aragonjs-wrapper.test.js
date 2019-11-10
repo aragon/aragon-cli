@@ -41,12 +41,15 @@ function createAragonJsStub(
     get apps() {
       return from(apps)
     }
+
     get forwarders() {
       return from(forwarders)
     }
+
     get transactions() {
       return from(transactions)
     }
+
     get permissions() {
       return from(permissions)
     }

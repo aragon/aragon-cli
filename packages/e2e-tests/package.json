@@ -22,7 +22,7 @@
     "@babel/register": "^7.0.0",
     "ava": "^2.0.0",
     "create-aragon-app": "*",
-    "cross-env": "^5.2.0",
+    "cross-env": "^6.0.3",
     "execa": "^1.0.0",
     "fs-extra": "^8.0.1",
     "kill-port": "^1.5.1",

@@ -80,7 +80,7 @@ async function task({
         title: `Sending transaction`,
         task: async (ctx, task) => {
           // aragon.js already calculates the recommended gas
-          let tx = ctx.transactionPath[0] // TODO: Support choosing between possible transaction paths
+          const tx = ctx.transactionPath[0] // TODO: Support choosing between possible transaction paths
 
           if (!tx) {
             throw new Error('Cannot find transaction path for executing action')

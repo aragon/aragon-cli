@@ -49,7 +49,7 @@ const formatRow = ({ to, role, allowedEntities, manager }, apps) => {
   const formattedTo = printAppName(appFromProxyAddress(to, apps).appId, to)
   let formattedRole =
     knownRoles[role] || `${role.slice(0, 8)}..${role.slice(-6)}`
-  if (formattedRole['id']) formattedRole = formattedRole['id']
+  if (formattedRole.id) formattedRole = formattedRole.id
   const formattedAllowed = allowedEntities
     .reduce((acc, addr) => {
       const allowedName = printAppName(
@@ -131,7 +131,7 @@ exports.handler = async function({
       `Successfully fetched DAO apps for ${chalk.green(ctx.daoAddress)}`
     )
 
-    let acl = ctx.acl
+    const acl = ctx.acl
 
     // filter according to cli params will happen here
 

@@ -144,7 +144,7 @@ exports.task = async ({
             events[deployEvent] ||
             events[exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT] ||
             // Some templates use DeployDAO instead of DeployDao
-            events['DeployDAO']
+            events.DeployDAO
 
           // TODO: Include link to documentation
           if (events[exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT])

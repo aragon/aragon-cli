@@ -14,6 +14,6 @@ test('should spawn ganache', async t => {
   })
 
   // assert
-  t.snapshot(normalizeOutput(stdout))
+  t.true(stdout.includes('Devchain running at'))
   // TODO check with web3 if it's all good??
 })
