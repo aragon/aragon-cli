@@ -10,7 +10,7 @@ const defaultAppsRoles = require('../../../../knownRoles.json')
  * @return {Object.<string, RoleDefinition>} Unique known roles
  */
 const getKnownRoles = module => {
-  const currentAppRoles = module.roles || []
+  const currentAppRoles = module ? module.roles : []
   const allRoles = defaultAppsRoles.concat(currentAppRoles)
 
   return keyBy(allRoles, role => keccak256(role.id))
