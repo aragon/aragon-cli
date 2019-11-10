@@ -4,7 +4,7 @@
   "description": "Common building blocks for CLI tools",
   "main": "",
   "scripts": {
-    "test": "",
+    "test": ""
   },
   "repository": {
     "type": "git",

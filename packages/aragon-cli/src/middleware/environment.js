@@ -130,7 +130,7 @@ module.exports = function environmentMiddleware(argv) {
     const defaultEnvironments = require('../../config/environments.default')
     const defaultNetworks = require('../../config/truffle.default')
 
-    let { environment } = argv
+    const { environment } = argv
     const env = defaultEnvironments[environment || 'aragon:local']
 
     if (environment && !env) {
