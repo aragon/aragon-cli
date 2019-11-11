@@ -1,7 +1,6 @@
-const APM = require('@aragon/apm')
-const ACL = require('./util/acl')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const chalk = require('chalk')
+const grantNewVersionsPermission = require('../../lib/apm/grantNewVersionsPermission')
 
 exports.command = 'grant [grantees..]'
 exports.describe =
@@ -30,49 +29,44 @@ exports.handler = async function({
   const web3 = await ensureWeb3(network)
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
-  const apm = await APM(web3, apmOptions)
-  const acl = ACL({ web3, network })
-
-  const repo = await apm.getRepository(module.appName).catch(() => null)
-  if (repo === null) {
-    throw new Error(
-      `Repository ${module.appName} does not exist and it's registry does not exist`
-    )
-  }
-
-  if (grantees.length === 0) {
-    reporter.warning('No grantee addresses provided')
-  }
-
-  /* eslint-disable-next-line */
-  for (const address of grantees) {
-    reporter.info(
-      `Granting permission to publish on ${chalk.blue(
-        module.appName
-      )} for ${chalk.green(address)}`
-    )
-
-    // Decode sender
-    const accounts = await web3.eth.getAccounts()
-    const from = accounts[0]
-
-    // Build transaction
-    const transaction = await acl.grant(repo.options.address, address)
-
-    transaction.from = from
-    transaction.gasPrice = network.gasPrice || gasPrice
-    // the recommended gasLimit is already calculated by the ACL module
-
-    try {
-      const receipt = await web3.eth.sendTransaction(transaction)
-      reporter.success(
-        `Successful transaction (${chalk.blue(receipt.transactionHash)})`
-      )
-    } catch (e) {
-      reporter.error(`${e}\n${chalk.red('Transaction failed')}`)
-      process.exit(1)
+  const progressHandler = (step, data) => {
+    switch(step) {
+      case 1:
+        break
+      case 2:
+        break
+      case 3:
+        const address = data
+        reporter.info(
+          `Granting permission to publish on ${chalk.blue(
+            module.appName
+          )} for ${address}`
+        )
+        break
+      case 4:
+        const txHash = data
+        reporter.success(
+          `Successful transaction (${chalk.blue(txHash)})`
+        )
+        break
+      case 5:
+        reporter.error(`${e}\n${chalk.red('Transaction failed')}`)
+        process.exit(1)
+        break
+      case 6:
+        break
     }
   }
+
+  await grantNewVersionsPermission(
+    web3,
+    module.appName,
+    apmOptions,
+    gasPrice,
+    network,
+    grantees,
+    progressHandler
+  )
 
   process.exit(0)
 }
