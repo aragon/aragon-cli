@@ -4,30 +4,57 @@ import proxyquire from 'proxyquire'
 
 /* Default values */
 
-const web3 = { name: 'web3' }
-const apmRegistryName = 'test.aragonpm.eth'
+const apmRepoName = 'test.aragonpm.eth'
 const apmOptions = {}
 apmOptions['ens-registry'] = '0x1234512345123451234512345123451234512345'
-const progressHandler = (step) => {}
+const gasPrice = 1
+const txOptions = { gasPrice }
+const grantees = ['0x1234512345123451234512345123451234512345']
+const progressHandler = () => {}
 
 /* Setup and cleanup */
 
 test.beforeEach('setup', t => {
+  const web3Stub = {
+    eth: {
+      getAccounts: async () => ['0x1234512345123451234512345123451234512345'],
+      sendTransaction: async () => {
+        return {
+          transactionHash:
+            '0x1234512345123451234512345123451234512345123451234512345123451234',
+        }
+      },
+    },
+  }
+
   const apmStub = sinon.stub()
   apmStub.returns({
-    getRepoRegistry: async () => {
-      return { getPastEvents: () => [] }
+    getRepository: async () => {
+      return {
+        options: { address: '0x1234512345123451234512345123451234512345' },
+      }
     },
-    getLatestVersion: async () => {}
   })
 
-  const grantNewVersionsPermission = proxyquire.noCallThru().load('../../../src/lib/apm/grantNewVersionsPermission', {
-    '@aragon/apm': apmStub,
+  const aclStub = sinon.stub()
+  aclStub.returns({
+    grant: () => {
+      return {}
+    },
   })
+
+  const grantNewVersionsPermission = proxyquire
+    .noCallThru()
+    .load('../../../src/lib/apm/grantNewVersionsPermission', {
+      '@aragon/apm': apmStub,
+      './util/acl': aclStub,
+    })
 
   t.context = {
     grantNewVersionsPermission,
-    apmStub
+    apmStub,
+    aclStub,
+    web3Stub,
   }
 })
 
@@ -37,190 +64,230 @@ test.afterEach('cleanup', t => {
 
 /* Tests */
 
-// test('properly calls the progressHandler', async t => {
-//   const { grantNewVersionsPermission } = t.context
+test('properly calls the progressHandler when something errors', async t => {
+  const { grantNewVersionsPermission, web3Stub } = t.context
 
-//   const progressHandlerSpy = sinon.spy()
+  const progressHandlerSpy = sinon.spy()
 
-//   await grantNewVersionsPermission(
-//     web3,
-//     apmRegistryName,
-//     apmOptions,
-//     progressHandlerSpy
-//   )
+  const sendTransactionStub = sinon.stub()
+  sendTransactionStub.throws('Some error')
+  web3Stub.eth.sendTransaction = sendTransactionStub
 
-//   t.is(progressHandlerSpy.callCount, 5)
-//   t.true(progressHandlerSpy.getCall(0).calledWith(1))
-//   t.true(progressHandlerSpy.getCall(1).calledWith(2))
-//   t.true(progressHandlerSpy.getCall(2).calledWith(3))
-//   t.true(progressHandlerSpy.getCall(3).calledWith(4))
-//   t.true(progressHandlerSpy.getCall(4).calledWith(5))
-// })
+  await grantNewVersionsPermission(
+    web3Stub,
+    apmRepoName,
+    apmOptions,
+    grantees,
+    progressHandlerSpy,
+    txOptions
+  )
 
-// test('tolerates a progressHandler not being specified', async t => {
-//   const { grantNewVersionsPermission } = t.context
+  t.is(progressHandlerSpy.callCount, 5)
+  t.true(progressHandlerSpy.getCall(0).calledWith(1))
+  t.true(progressHandlerSpy.getCall(1).calledWith(2))
+  t.true(progressHandlerSpy.getCall(2).calledWith(3, grantees[0]))
+  // Note: progressHandler(4) should not be called because of the error
+  t.true(progressHandlerSpy.getCall(3).calledWith(5, 'Transaction failed'))
+  t.true(progressHandlerSpy.getCall(4).calledWith(6))
+})
 
-//   await grantNewVersionsPermission(
-//     web3,
-//     apmRegistryName,
-//     apmOptions,
-//     undefined
-//   )
+test('properly calls the progressHandler when nothing errors', async t => {
+  const { grantNewVersionsPermission, web3Stub } = t.context
 
-//   t.pass()
-// })
+  const progressHandlerSpy = sinon.spy()
 
-// test('if events are retrieved, calls apm.getLatestVersion() correctly, and retrieves the appropriate packages object', async t => {
-//   const { grantNewVersionsPermission, apmStub } = t.context
+  const transactionHash =
+    '0x1234512345123451234512345123451234512345123451234512345123451234'
+  const sendTransactionStub = sinon.stub()
+  sendTransactionStub.returns({ transactionHash })
+  web3Stub.eth.sendTransaction = sendTransactionStub
 
-//   const packageName = 'aPackage'
-//   const packageVersion = '0.1.2'
+  await grantNewVersionsPermission(
+    web3Stub,
+    apmRepoName,
+    apmOptions,
+    grantees,
+    progressHandlerSpy,
+    txOptions
+  )
 
-//   const getLatestVersion = sinon.stub()
-//   getLatestVersion.returns({ version: packageVersion })
+  t.is(progressHandlerSpy.callCount, 5)
+  t.true(progressHandlerSpy.getCall(0).calledWith(1))
+  t.true(progressHandlerSpy.getCall(1).calledWith(2))
+  t.true(progressHandlerSpy.getCall(2).calledWith(3, grantees[0]))
+  t.true(progressHandlerSpy.getCall(3).calledWith(4, transactionHash))
+  // Note: progressHandler(5) is called when a tx errors
+  t.true(progressHandlerSpy.getCall(4).calledWith(6))
+})
 
-//   const aNewRepoEvent = {
-//     returnValues: {
-//       name: packageName,
-//       id: '0x123'
-//     }
-//   }
+test('properly calls web3.eth.sendTransaction() with expected transaction parameters', async t => {
+  const { grantNewVersionsPermission, aclStub, web3Stub } = t.context
 
-//   apmStub.returns({
-//     getRepoRegistry: async () => {
-//       return { getPastEvents: async () => [ aNewRepoEvent ] }
-//     },
-//     getLatestVersion
-//   })
+  const grantResponse = { name: 'grantResponse' }
+  const grantStub = sinon.stub()
+  grantStub.returns(grantResponse)
+  aclStub.returns({ grant: grantStub })
 
-//   const packages = await grantNewVersionsPermission(
-//     web3,
-//     apmRegistryName,
-//     apmOptions,
-//     progressHandler
-//   )
+  const sendTransactionStub = sinon.stub()
+  sendTransactionStub.returns({
+    transactionHash:
+      '0x1234512345123451234512345123451234512345123451234512345123451234',
+  })
+  web3Stub.eth.sendTransaction = sendTransactionStub
 
-//   t.true(
-//     getLatestVersion.calledOnceWith(
-//       aNewRepoEvent.returnValues.id
-//     )
-//   )
+  const grantees = ['0x01', '0x02', '0x02']
 
-//   const aPackage = packages[0]
-//   t.is(aPackage.name, packageName)
-//   t.is(aPackage.version, packageVersion)
-// })
+  await grantNewVersionsPermission(
+    web3Stub,
+    apmRepoName,
+    apmOptions,
+    grantees,
+    progressHandler,
+    txOptions
+  )
 
-// test('if no events are retrieved, does not call apm.getLatestVersion()', async t => {
-//   const { grantNewVersionsPermission, apmStub } = t.context
+  let callCounter = 0
+  for (let i = 0; i < sendTransactionStub.callCount; i++) {
+    const stubCall = sendTransactionStub.getCall(i)
+    const arg = stubCall.args[0]
+    if (arg.name && arg.name === 'grantResponse') {
+      callCounter++
+    }
+  }
 
-//   const getLatestVersion = sinon.stub()
+  t.is(callCounter, grantees.length)
+})
 
-//   apmStub.returns({
-//     getRepoRegistry: async () => {
-//       return { getPastEvents: () => [] }
-//     },
-//     getLatestVersion
-//   })
+test('properly calls acl.grant() with each of the grantee addresses', async t => {
+  const { grantNewVersionsPermission, apmStub, aclStub, web3Stub } = t.context
 
-//   await grantNewVersionsPermission(
-//     web3,
-//     apmRegistryName,
-//     apmOptions,
-//     progressHandler
-//   )
+  const repoAddress = '0x1234512345123451234512345123451234512345'
+  apmStub.returns({
+    getRepository: async () => {
+      return {
+        options: { address: repoAddress },
+      }
+    },
+  })
 
-//   t.true(
-//     getLatestVersion.notCalled
-//   )
-// })
+  const grantStub = sinon.stub()
+  grantStub.returns({})
 
-// test('calls registry.getPastEvents() with the correct parameters', async t => {
-//   const { grantNewVersionsPermission, apmStub } = t.context
+  aclStub.returns({ grant: grantStub })
 
-//   const getPastEvents = sinon.stub()
-//   getPastEvents.returns([])
+  const grantees = ['0x01', '0x02', '0x02']
 
-//   apmStub.returns({
-//     getRepoRegistry: async () => {
-//       return { getPastEvents }
-//     },
-//     getLatestVersion: () => {}
-//   })
+  await grantNewVersionsPermission(
+    web3Stub,
+    apmRepoName,
+    apmOptions,
+    grantees,
+    progressHandler,
+    txOptions
+  )
 
-//   await grantNewVersionsPermission(
-//     web3,
-//     apmRegistryName,
-//     apmOptions,
-//     progressHandler
-//   )
+  t.true(grantStub.calledThrice)
+  t.true(grantStub.getCall(0).calledWith(repoAddress, grantees[0]))
+  t.true(grantStub.getCall(1).calledWith(repoAddress, grantees[1]))
+  t.true(grantStub.getCall(2).calledWith(repoAddress, grantees[2]))
+})
 
-//   t.true(
-//     getPastEvents.calledOnceWith(
-//       'NewRepo',
-//       { fromBlock: 0 }
-//     )
-//   )
-// })
+test('tolerates a progressHandler not being specified', async t => {
+  const { grantNewVersionsPermission, web3Stub } = t.context
 
-// test('calls apm.getRepoRegistry() with the correct parameters', async t => {
-//   const { grantNewVersionsPermission, apmStub } = t.context
+  await grantNewVersionsPermission(
+    web3Stub,
+    apmRepoName,
+    apmOptions,
+    grantees,
+    progressHandler,
+    txOptions
+  )
 
-//   const getRepoRegistry = sinon.stub()
-//   getRepoRegistry.returns({ getPastEvents: () => [] })
+  t.pass()
+})
 
-//   apmStub.returns({
-//     getRepoRegistry,
-//     getLatestVersion: async () => {}
-//   })
+test('properly throws if apm.getRepository does not find a repository', async t => {
+  const { grantNewVersionsPermission, apmStub, web3Stub } = t.context
 
-//   await grantNewVersionsPermission(
-//     web3,
-//     apmRegistryName,
-//     apmOptions,
-//     progressHandler
-//   )
+  const getRepository = sinon.stub()
+  getRepository.returns(null)
 
-//   t.true(
-//     getRepoRegistry.calledOnceWith(
-//       `vault.${apmRegistryName}`
-//     )
-//   )
-// })
+  apmStub.returns({
+    getRepository,
+  })
 
-// test('APM constructor gets called with the appropriate parameters', async t => {
-//   const { grantNewVersionsPermission, apmStub } = t.context
+  const error = await t.throwsAsync(async () => {
+    await grantNewVersionsPermission(
+      web3Stub,
+      apmRepoName,
+      apmOptions,
+      grantees,
+      progressHandler,
+      txOptions
+    )
+  })
 
-//   await grantNewVersionsPermission(
-//     web3,
-//     apmRegistryName,
-//     apmOptions,
-//     progressHandler
-//   )
+  t.is(
+    error.message,
+    `Repository ${apmRepoName} does not exist and it's registry does not exist`
+  )
+})
 
-//   t.true(
-//     apmStub.calledOnceWith(
-//       web3,
-//       apmOptions
-//     )
-//   )
-// })
+test('calls apm.getRepository() with the correct parameters', async t => {
+  const { grantNewVersionsPermission, apmStub, web3Stub } = t.context
+
+  const getRepository = sinon.stub()
+  getRepository.returns({
+    options: { address: '0x1234512345123451234512345123451234512345' },
+  })
+
+  apmStub.returns({
+    getRepository,
+  })
+
+  await grantNewVersionsPermission(
+    web3Stub,
+    apmRepoName,
+    apmOptions,
+    grantees,
+    progressHandler,
+    txOptions
+  )
+
+  t.true(getRepository.calledOnceWith(apmRepoName))
+})
+
+test('APM constructor gets called with the appropriate parameters', async t => {
+  const { grantNewVersionsPermission, apmStub, web3Stub } = t.context
+
+  await grantNewVersionsPermission(
+    web3Stub,
+    apmRepoName,
+    apmOptions,
+    grantees,
+    progressHandler,
+    txOptions
+  )
+
+  t.true(apmStub.calledOnceWith(web3Stub, apmOptions))
+})
 
 test('fails if apmOptions does not contain an ens-registry property', async t => {
-  const { grantNewVersionsPermission } = t.context
+  const { grantNewVersionsPermission, web3Stub } = t.context
 
   const emptyApmOptions = {}
 
-  const error = await t.throwsAsync(
-    async () => {
-      await grantNewVersionsPermission(
-        web3,
-        apmRegistryName,
-        emptyApmOptions,
-        progressHandler
-      )
-    }
-  )
+  const error = await t.throwsAsync(async () => {
+    await grantNewVersionsPermission(
+      web3Stub,
+      apmRepoName,
+      emptyApmOptions,
+      grantees,
+      progressHandler,
+      txOptions
+    )
+  })
 
   t.is(error.message, 'ens-registry not found in given apm options.')
 })

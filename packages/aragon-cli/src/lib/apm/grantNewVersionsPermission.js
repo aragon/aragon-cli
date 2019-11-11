@@ -1,7 +1,14 @@
 const APM = require('@aragon/apm')
 const ACL = require('./util/acl')
 
-module.exports = async (web3, apmRepoName, apmOptions, gasPrice, grantees, progressHandler) => {
+module.exports = async (
+  web3,
+  apmRepoName,
+  apmOptions,
+  grantees,
+  progressHandler,
+  { gasPrice }
+) => {
   if (grantees.length === 0) {
     throw new Error('No grantee addresses provided')
   }
@@ -27,7 +34,7 @@ module.exports = async (web3, apmRepoName, apmOptions, gasPrice, grantees, progr
     progressHandler(2)
   }
 
-  const repo = await apm.getRepository(apmRepoName).catch(() => null)
+  const repo = await apm.getRepository(apmRepoName)
   if (repo === null) {
     throw new Error(
       `Repository ${apmRepoName} does not exist and it's registry does not exist`
@@ -56,17 +63,14 @@ module.exports = async (web3, apmRepoName, apmOptions, gasPrice, grantees, progr
       if (progressHandler) {
         progressHandler(4, receipt.transactionHash)
       }
-    } catch (e) {
+    } catch (error) {
       if (progressHandler) {
-        progressHandler(5, 'Transaction failed')
+        progressHandler(5, error)
       }
-      process.exit(1)
     }
   }
 
   if (progressHandler) {
     progressHandler(6)
   }
-
-  process.exit(0)
 }

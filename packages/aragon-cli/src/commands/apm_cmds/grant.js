@@ -30,7 +30,7 @@ exports.handler = async function({
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   const progressHandler = (step, data) => {
-    switch(step) {
+    switch (step) {
       case 1:
         break
       case 2:
@@ -45,14 +45,11 @@ exports.handler = async function({
         break
       case 4:
         const txHash = data
-        reporter.success(
-          `Successful transaction (${chalk.blue(txHash)})`
-        )
+        reporter.success(`Successful transaction (${chalk.blue(txHash)})`)
         break
       case 5:
-        reporter.error(`${e}\n${chalk.red('Transaction failed')}`)
+        reporter.error(`${data}\n${chalk.red('Transaction failed')}`)
         process.exit(1)
-        break
       case 6:
         break
     }
@@ -62,9 +59,9 @@ exports.handler = async function({
     web3,
     module.appName,
     apmOptions,
-    gasPrice || network.gasPrice,
     grantees,
-    progressHandler
+    progressHandler,
+    { gasPrice: gasPrice || network.gasPrice }
   )
 
   process.exit(0)
