@@ -87,7 +87,7 @@ test('properly calls the progressHandler when something errors', async t => {
   t.true(progressHandlerSpy.getCall(1).calledWith(2))
   t.true(progressHandlerSpy.getCall(2).calledWith(3, grantees[0]))
   // Note: progressHandler(4) should not be called because of the error
-  t.true(progressHandlerSpy.getCall(3).calledWith(5, 'Transaction failed'))
+  t.true(progressHandlerSpy.getCall(3).calledWith(5))
   t.true(progressHandlerSpy.getCall(4).calledWith(6))
 })
 
