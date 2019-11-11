@@ -62,8 +62,7 @@ exports.handler = async function({
     web3,
     module.appName,
     apmOptions,
-    gasPrice,
-    network,
+    gasPrice || network.gasPrice,
     grantees,
     progressHandler
   )

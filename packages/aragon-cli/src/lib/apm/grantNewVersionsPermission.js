@@ -1,7 +1,7 @@
 const APM = require('@aragon/apm')
 const ACL = require('./util/acl')
 
-module.exports = async (web3, apmRepoName, apmOptions, gasPrice, network, grantees, progressHandler) => {
+module.exports = async (web3, apmRepoName, apmOptions, gasPrice, grantees, progressHandler) => {
   if (grantees.length === 0) {
     throw new Error('No grantee addresses provided')
   }
@@ -21,7 +21,7 @@ module.exports = async (web3, apmRepoName, apmOptions, gasPrice, network, grante
   }
 
   const apm = await APM(web3, apmOptions)
-  const acl = ACL({ web3, network })
+  const acl = ACL(web3)
 
   if (progressHandler) {
     progressHandler(2)
@@ -48,7 +48,7 @@ module.exports = async (web3, apmRepoName, apmOptions, gasPrice, network, grante
     const transaction = await acl.grant(repo.options.address, address)
 
     transaction.from = from
-    transaction.gasPrice = network.gasPrice || gasPrice
+    transaction.gasPrice = gasPrice
     // the recommended gasLimit is already calculated by the ACL module
 
     try {
