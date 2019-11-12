@@ -11,32 +11,32 @@ const readOutput = () => JSON.parse(fs.readFileSync(outputPath, 'utf8'))
 test.before('create a temp directory and resolve paths', t => {
   contractPath = path.resolve('test/contracts/ParseMe.sol')
 
-  tempDir = tmp.dirSync()
+  tempDir = tmp.dirSync({ unsafeCleanup: true })
   const filename = path.basename(contractPath).replace('.sol', '.json')
   outputPath = path.resolve(tempDir.name, filename)
 })
 
 test.before('call extractContractInfoToFile function', async t => {
-  await extractContractInfoToFile(contractPath, outputPath, (step) => {
+  await extractContractInfoToFile(contractPath, outputPath, step => {
     recordedStep = step
   })
 })
 
-test('generates output', async t => {
+test('generates output', t => {
   t.true(fs.existsSync(outputPath))
 })
 
-test('output file contains 2 roles', async t => {
+test('output file contains 2 roles', t => {
   const output = readOutput()
   t.is(output.roles.length, 2)
 })
 
-test('output file contains 2 functions', async t => {
+test('output file contains 2 functions', t => {
   const output = readOutput()
   t.is(output.functions.length, 2)
 })
 
-test('progress handler was called', async t => {
+test('progress handler was called', t => {
   t.is(recordedStep, 1)
 })
 
