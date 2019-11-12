@@ -15,6 +15,8 @@
     "build:watch": "npm run build -- -- --watch",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
+    "pretest": "node scripts/setup-e2e-tests.js & sleep 5",
+    "posttest": "node scripts/teardown-e2e-tests.js",
     "test": "ava --verbose",
     "test:watch": "ava --watch",
     "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test"
@@ -112,6 +114,7 @@
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
+    "kill-port": "^1.6.0",
     "nyc": "^14.1.1",
     "prettier": "^1.15.3",
     "proxyquire": "^2.1.0",
@@ -161,7 +164,9 @@
     ],
     "env": {
       "test": {
-        "plugins": [ "istanbul" ]
+        "plugins": [
+          "istanbul"
+        ]
       }
     }
   },
