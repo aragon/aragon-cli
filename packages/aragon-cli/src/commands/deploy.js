@@ -109,6 +109,7 @@ exports.task = async ({
             throw new Error('Contract deployment failed')
           }
 
+          ctx.contractName = contractName
           ctx.contractAddress = address
           ctx.transactionHash = transactionHash
         },
@@ -155,7 +156,7 @@ exports.handler = async ({
 
   reporter.success(
     `Successfully deployed ${chalk.blue(ctx.contractName)} at: ${chalk.green(
-      ctx.contract
+      ctx.contractAddress
     )}`
   )
   reporter.info(`Transaction hash: ${chalk.blue(ctx.transactionHash)}`)
