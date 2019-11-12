@@ -8,7 +8,7 @@ const testSandbox = './.tmp'
 const projectName = 'foobar'
 
 test('should run an aragon app successfully', async t => {
-  t.plan(3)
+  t.plan(2)
 
   // Node.js 11 fix (https://github.com/aragon/aragon-cli/issues/731)
   fs.writeFileSync(path.join(testSandbox, projectName, 'truffle.js'), `
@@ -42,34 +42,11 @@ test('should run an aragon app successfully', async t => {
 
   // TODO: fetch the counter app instead
   const fetchResult = await fetch(`http://localhost:3000/#/${daoAddress}`)
-  const fetchBody = await fetchResult.text()
 
   // cleanup
   await exit()
 
-  // delete some output sections that are not deterministic
-  const appBuildOutput = stdout.substring(
-    stdout.indexOf('Building frontend [started]'),
-    stdout.indexOf('Building frontend [completed]')
-  )
-  const publishOutput = stdout.substring(
-    stdout.indexOf('Publish app to aragonPM [started]'),
-    stdout.indexOf('Publish app to aragonPM [completed]')
-  )
-
-  const wrapperInstallOutput = stdout.substring(
-    stdout.indexOf('Fetching client from aragen [started]'),
-    stdout.indexOf('Starting Aragon client [started]')
-  )
-
-  const outputToSnapshot = stdout
-    .replace(publishOutput, '[deleted-publish-output]')
-    .replace(appBuildOutput, '[deleted-app-build-output]')
-    .replace(wrapperInstallOutput, '[deleted-wrapper-install-output]')
-    .replace(new RegExp(daoAddress, 'g'), '[deleted-dao-address]')
-
   // assert
-  t.snapshot(normalizeOutput(outputToSnapshot))
-  t.snapshot(fetchResult.status)
-  t.snapshot(fetchBody)
+  t.true(stdout.includes('You are now ready to open your app in Aragon'))
+  t.is(fetchResult.status, 200)
 })

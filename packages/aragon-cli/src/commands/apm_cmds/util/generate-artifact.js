@@ -18,7 +18,7 @@ const ANSWERS = POSITIVE_ANSWERS.concat(NEGATIVE_ANSWERS)
 const getMajor = version => version.split('.')[0]
 
 const getRoles = roles =>
-  roles.map(role => Object.assign(role, { bytes: '0x' + keccak256(role.id) }))
+  roles.map(role => Object.assign(role, { bytes: keccak256(role.id) }))
 
 async function getEnvironments(cwd) {
   const arappManifestPath = path.resolve(cwd, ARAPP_FILE)
@@ -106,7 +106,7 @@ async function generateApplicationArtifact(
   reporter
 ) {
   // Set appName, path & roles
-  let artifact = Object.assign({}, module)
+  const artifact = Object.assign({}, module)
 
   // Set `appId`
   artifact.appId = namehash.hash(artifact.appName)

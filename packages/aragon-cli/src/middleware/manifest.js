@@ -3,7 +3,7 @@ const fs = require('fs-extra')
 const { findProjectRoot } = require('../util')
 
 module.exports = function manifestMiddleware(argv) {
-  const runsInCwd = argv['_'] === 'init'
+  const runsInCwd = argv._ === 'init'
   if (!runsInCwd) {
     try {
       const manifestPath = path.resolve(findProjectRoot(), 'manifest.json')

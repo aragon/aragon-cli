@@ -8,14 +8,13 @@
   },
   "scripts": {
     "prepare": "npm run build",
-    "link": "npm link",
-    "unlink": "npm unlink",
     "build": "babel src --out-dir dist --source-maps",
     "build:watch": "npm run build -- --watch",
-    "lint": "eslint src test && documentation lint src",
-    "test": "ava",
+    "lint": "eslint src test",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "ava --verbose",
     "test:watch": "ava --watch",
-    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly --exclude 'config/**' --exclude '**/*.test.js' npm run test"
+    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly npm run test"
   },
   "repository": {
     "type": "git",
@@ -44,7 +43,7 @@
     "listr": "^0.14.3",
     "listr-silent-renderer": "^1.1.1",
     "listr-update-renderer": "^0.5.0",
-    "listr-verbose-renderer": "^0.5.0",
+    "listr-verbose-renderer": "^0.6.0",
     "replace": "^1.1.0",
     "yargs": "^13.2.4"
   },
@@ -57,47 +56,77 @@
     "@babel/register": "^7.0.0",
     "ava": "^2.0.0",
     "babel-eslint": "^10.0.1",
+    "babel-plugin-istanbul": "^5.2.0",
     "core-js": "^3.1.4",
-    "documentation": "^12.0.0",
     "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-ava": "^7.0.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-ava": "^9.0.0",
     "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^9.0.1",
+    "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "husky": "^3.0.0",
-    "lint-staged": "^9.1.0",
     "nyc": "^14.1.1",
-    "prettier": "^1.15.3",
-    "regenerator-runtime": "^0.13.3"
+    "prettier": "^1.15.3"
   },
   "engines": {
     "node": ">=8.0.0"
   },
   "ava": {
     "require": [
-      "core-js",
-      "regenerator-runtime",
       "@babel/register"
     ],
     "files": [
       "test/**/*.test.js"
     ]
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm run lint && npm run test"
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "sourceMap": false,
+    "instrument": true
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "useBuiltIns": "usage",
+          "corejs": "3",
+          "targets": {
+            "node": true
+          }
+        }
+      ]
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-object-rest-spread"
+    ],
+    "env": {
+      "test": {
+        "plugins": [ "istanbul" ]
+      }
     }
   },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "documentation lint",
-      "git add"
-    ]
+  "eslintConfig": {
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "extends": [
+      "standard",
+      "plugin:ava/recommended",
+      "plugin:prettier/recommended"
+    ],
+    "parser": "babel-eslint"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": false,
+    "trailingComma": "es5",
+    "bracketSpacing": true
   }
 }

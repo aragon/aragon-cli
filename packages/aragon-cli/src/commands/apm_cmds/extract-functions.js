@@ -33,13 +33,13 @@ exports.handler = async function({
   // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
   const functions = await extract(path.resolve(cwd, contract))
 
-  let roleSet = new Set()
+  const roleSet = new Set()
   functions.forEach(({ roles }) => roles.forEach(role => roleSet.add(role)))
   const roleIds = [...roleSet]
 
   const roles = roleIds.map(id => ({
     id,
-    bytes: '0x' + keccak256(id),
+    bytes: keccak256(id),
     name: '', // Name and params can't be extracted from solidity file, must be filled in manually
     params: [],
   }))

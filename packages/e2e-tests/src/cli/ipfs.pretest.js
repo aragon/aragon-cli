@@ -49,7 +49,7 @@ test('should spawn ipfs', async t => {
   const body = await res.text()
 
   // assert
-  t.snapshot(normalizeOutput(stdout))
-  t.snapshot(JSON.parse(body).Version)
+  t.true(stdout.includes('IPFS daemon is now running'))
+  t.is(JSON.parse(body).Version, '0.4.22')
   // TODO check that ipfs pins our aragen-cache
 })

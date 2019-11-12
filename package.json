@@ -2,8 +2,8 @@
   "name": "@aragon/cli-monorepo",
   "private": true,
   "devDependencies": {
-    "coveralls": "^3.0.3",
-    "lcov-result-merger": "^3.1.0",
+    "codecov": "^3.6.1",
+    "husky": "^3.0.9",
     "lerna": "^3.14.1"
   },
   "scripts": {
@@ -13,16 +13,22 @@
     "bootstrap-e2e-tests": "lerna bootstrap",
     "delete-shrinkwraps": "lerna exec -- rm npm-shrinkwrap.json",
     "create-shrinkwraps": "lerna exec -- npm shrinkwrap",
-    "link": "lerna run link",
-    "unlink": "lerna run unlink",
-    "build": "lerna run build",
+    "link": "lerna exec -- npm link",
+    "unlink": "lerna exec -- npm unlink",
+    "build": "lerna run --parallel build",
     "build:watch": "lerna run --parallel build:watch",
-    "lint": "lerna run lint",
-    "test": "lerna run test --ignore @aragon/e2e-tests",
+    "lint": "lerna run --parallel lint",
+    "test": "lerna run --parallel test --ignore @aragon/e2e-tests",
     "test:e2e": "lerna run test --scope @aragon/e2e-tests",
-    "test:coverage": "lerna run test:coverage --ignore @aragon/e2e-tests",
-    "report-coverage": "lcov-result-merger 'packages/*/coverage/lcov.info' | coveralls",
+    "test:coverage": "lerna run --parallel test:coverage --ignore @aragon/e2e-tests",
+    "report-coverage": "codecov",
     "release": "lerna version",
     "publish:nightly": "lerna publish from-package --dist-tag nightly --yes"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm run test"
+    }
   }
 }
