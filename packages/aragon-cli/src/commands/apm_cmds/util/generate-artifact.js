@@ -4,16 +4,26 @@ const { readJson, writeJson } = require('fs-extra')
 const flattenCode = require('../../../helpers/flattenCode')
 const extract = require('../../../helpers/solidity-extractor')
 const namehash = require('eth-ens-namehash')
-const taskInput = require('listr-input')
 const { keccak256 } = require('web3').utils
+const web3EthAbi = require('web3-eth-abi')
 
-const { ARTIFACT_FILE } = require('./preprare-files')
+const { ARTIFACT_FILE } = require('../../../params')
 const SOLIDITY_FILE = 'code.sol'
 const ARAPP_FILE = 'arapp.json'
 
-const POSITIVE_ANSWERS = ['yes', 'y']
-const NEGATIVE_ANSWERS = ['no', 'n', 'abort', 'a']
-const ANSWERS = POSITIVE_ANSWERS.concat(NEGATIVE_ANSWERS)
+export class MissingFunctionsArtifacts extends Error {}
+
+/**
+ * Note: All exported functions are only used by runPrepareForPublishTask.js
+ */
+
+/**
+ * @typedef {Object} FunctionInfo
+ * @property {string} sig "functionName(address,unit)"
+ * @property {Object[]} roles
+ * @property {string} notice Multiline notice text
+ * @property {Object} [abi] Abi of the function
+ */
 
 const getMajor = version => version.split('.')[0]
 
@@ -36,119 +46,154 @@ async function getContractAbi(cwd, contractPath) {
   return contractInterface.abi
 }
 
-function decorateFunctionsWithAbi(functions, abi, web3) {
+/**
+ * Appends the abi of a function to the functions array
+ * @param {FunctionInfo[]} functions
+ * @param {Object[]} abi
+ * @return {FunctionInfo[]}
+ */
+function decorateFunctionsWithAbi(functions, abi) {
   const abiFunctions = abi.filter(elem => elem.type === 'function')
-  functions.forEach(f => {
-    f.abi = abiFunctions.find(
-      elem =>
-        web3.eth.abi.encodeFunctionSignature(elem) ===
-        web3.eth.abi.encodeFunctionSignature(f.sig)
-    )
-  })
+  return functions.map(f => ({
+    ...f,
+    abi: abiFunctions.find(
+      functionAbi =>
+        web3EthAbi.encodeFunctionSignature(functionAbi) ===
+        web3EthAbi.encodeFunctionSignature(f.sig)
+    ),
+  }))
 }
 
-async function deprecatedFunctions(apm, artifact, web3, reporter) {
+/**
+ * Compute which versions have missing artifact so the front-end
+ * can alert the user that those will be ignored in the
+ * next function getDeprecatedFunctions
+ * @param {Object[]} prevVersions
+ * @return {string[]} versionsWithMissingArtifact
+ */
+function getVersionsWithMissingArtifact(prevVersions) {
+  // First, make sure that all artifacts are available
+  let lastMajor = -1
+  const versionsWithMissingArtifact = []
+  prevVersions.reverse().forEach(({ version, functions }) => {
+    // iterate on major versions
+    if (getMajor(version) !== lastMajor) {
+      lastMajor = getMajor(version)
+      if (!functions) versionsWithMissingArtifact.push(version)
+    }
+  })
+  return versionsWithMissingArtifact
+}
+
+/**
+ * Computes the deprecated functions.
+ * [NOTE] Silently ignores the versions with no artifacts.
+ * To know which versions will be ignored, use getVersionsWithMissingArtifact
+ * @param {Object} artifact
+ * @param {Object[]} prevVersions
+ */
+function getDeprecatedFunctions(artifact, prevVersions) {
   const deprecatedFunctions = {}
-  try {
-    const deprecatedFunctionsSig = new Set()
-    const versions = await apm.getAllVersions(artifact.appName)
-    let lastMajor = -1
-    versions.reverse().forEach(async version => {
-      let deprecatedOnVersion = []
-      // iterate on major versions
-      if (getMajor(version.version) !== lastMajor) {
-        lastMajor = getMajor(version.version)
-        if (version.functions) {
-          version.functions.forEach(f => {
-            if (
-              !artifact.functions.some(obj => obj.sig === f.sig) &&
-              !deprecatedFunctionsSig.has(f.sig)
-            ) {
-              deprecatedOnVersion.push(f)
-              deprecatedFunctionsSig.add(f.sig)
-            }
-          })
-          if (deprecatedOnVersion.length) {
-            deprecatedFunctions[`${lastMajor}.0.0`] = deprecatedOnVersion
-            decorateFunctionsWithAbi(deprecatedOnVersion, version.abi, web3)
-            deprecatedOnVersion = []
+  const deprecatedFunctionsSig = new Set()
+
+  let lastMajor = -1
+  prevVersions.reverse().forEach(version => {
+    let deprecatedOnVersion = []
+    // iterate on major versions
+    if (getMajor(version.version) !== lastMajor) {
+      lastMajor = getMajor(version.version)
+      if (version.functions) {
+        version.functions.forEach(f => {
+          if (
+            !artifact.functions.some(obj => obj.sig === f.sig) &&
+            !deprecatedFunctionsSig.has(f.sig)
+          ) {
+            deprecatedOnVersion.push(f)
+            deprecatedFunctionsSig.add(f.sig)
           }
-        } else {
-          reporter.warning(
-            `Cannot find artifacts for version ${version.version} in aragonPM. Please make sure the package was published and your IPFS or HTTP server are running.\n`
-          )
-          return taskInput(`Abort publication? [y]es/[n]o`, {
-            validate: value => {
-              return ANSWERS.indexOf(value) > -1
-            },
-            done: async answer => {
-              if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
-                throw new Error('Aborting publication...')
-              }
-            },
-          })
+        })
+        if (deprecatedOnVersion.length) {
+          deprecatedFunctions[`${lastMajor}.0.0`] = deprecatedOnVersion
+          decorateFunctionsWithAbi(deprecatedOnVersion, version.abi)
+          deprecatedOnVersion = []
         }
       }
-    })
-  } catch (e) {
-    // Catch ENS error on first version
-  }
+    }
+  })
+
   return deprecatedFunctions
 }
 
+/**
+ * TODO:
+ *
+ *
+ * @param {string} cwd
+ * @param {string} outputPath
+ * @param {???} deployArtifacts
+ * @param {ArappConfigFile} module
+ * @param {APM} apm Apm instance
+ * @param {Web3} web3 Web3 initialized instance
+ */
 async function generateApplicationArtifact(
   cwd,
-  apm,
-  outputPath,
-  module,
   deployArtifacts,
-  web3,
-  reporter
+  arapp, // module
+  apm
 ) {
   // Set appName, path & roles
   let artifact = Object.assign({}, module)
 
-  // Set `appId`
-  artifact.appId = namehash.hash(artifact.appName)
-
-  // Set environments
-  artifact.environments = await getEnvironments(cwd)
-
-  // Set ABI
-  artifact.abi = await getContractAbi(cwd, artifact.path)
-
-  if (deployArtifacts) {
-    artifact.deployment = deployArtifacts
-    artifact.deployment.flattenedCode = `./${SOLIDITY_FILE}`
-  }
+  const appId = namehash.hash(artifact.appName)
+  const environments = await getEnvironments(cwd)
+  const abi = await getContractAbi(cwd, artifact.path)
 
   // Analyse contract functions and returns an array
   // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
-  artifact.functions = await extract(path.resolve(cwd, artifact.path))
+  const functions = await extract(path.resolve(cwd, arapp.path))
   // extract abi for each function
   // > [{ sig: , role: , notice: , abi: }]
-  decorateFunctionsWithAbi(artifact.functions, artifact.abi, web3)
+  const functionsWithAbi = decorateFunctionsWithAbi(functions, abi)
+
+  const prevVersions = await apm.getAllVersions(artifact.appName).catch(e => {
+    // Catch ENS error on first version
+    return []
+  })
 
   // Consult old (major) version's artifacts and return an array
   // of deprecated functions per version
   // > "deprecatedFunctions": { "1.0.0": [{}], "2.0.0": [{}] }
-  artifact.deprecatedFunctions = await deprecatedFunctions(
-    apm,
-    artifact,
-    web3,
-    reporter
-  )
+  const deprecatedFunctions = getDeprecatedFunctions(artifact, prevVersions)
+  const missingArtifactVersions = getVersionsWithMissingArtifact(prevVersions)
 
-  if (artifact.roles) {
-    getRoles(artifact.roles)
+  const artifact = {
+    ...module,
+    appId,
+    environments,
+    abi,
+    functions: functionsWithAbi,
+    deprecatedFunctions,
+    deployment: deployArtifacts
+      ? { ...deployArtifacts, flattenedCode: `./${SOLIDITY_FILE}` }
+      : undefined,
+    // Add bytes property to the roles array
+    roles: getRoles(arapp.roles),
   }
 
-  // Save artifact
+  return {
+    artifact,
+    missingArtifactVersions,
+  }
+}
+
+/**
+ * Save artifact
+ * @param {Object} artifact
+ */
+async function writeApplicationArtifact(artifact, outputPath) {
   await writeJson(path.resolve(outputPath, ARTIFACT_FILE), artifact, {
     spaces: '\t',
   })
-
-  return artifact
 }
 
 async function generateFlattenedCode(dir, sourcePath) {
@@ -242,6 +287,7 @@ module.exports = {
   SOLIDITY_FILE,
   getMajor,
   generateApplicationArtifact,
+  writeApplicationArtifact,
   generateFlattenedCode,
   sanityCheck,
   copyCurrentApplicationArtifacts,

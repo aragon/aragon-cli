@@ -4,9 +4,11 @@ const fs = require('fs')
 const { findProjectRoot } = require('../../../util')
 const { copy, pathExistsSync } = require('fs-extra')
 const { promisify } = require('util')
+const { MANIFEST_FILE, ARTIFACT_FILE } = require('../../../params')
 
-const MANIFEST_FILE = 'manifest.json'
-const ARTIFACT_FILE = 'artifact.json'
+/**
+ * Note: All exported functions are only used by runPrepareForPublishTask.js
+ */
 
 /**
  * Moves the specified files to a temporary directory and returns the path to
@@ -14,7 +16,7 @@ const ARTIFACT_FILE = 'artifact.json'
  * @param {string} tmpDir Temporary directory
  * @param {Array<string>} files An array of file paths to include
  * @param {string} ignorePatterns An array of glob-like pattern of files to ignore
- * @return {string} The path to the temporary directory
+ * @return {Promise<string>} The path to the temporary directory
  */
 async function prepareFilesForPublishing(
   tmpDir,
@@ -80,4 +82,4 @@ async function prepareFilesForPublishing(
   return tmpDir
 }
 
-module.exports = { MANIFEST_FILE, ARTIFACT_FILE, prepareFilesForPublishing }
+module.exports = { prepareFilesForPublishing }

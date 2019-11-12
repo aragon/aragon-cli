@@ -189,6 +189,38 @@ const runScriptTask = async (task, scriptName) => {
   })
 }
 
+/**
+ * Run a npm script. Same as runScriptTask but without being tied to Listr
+ * @param {string} scriptName
+ * @return {Promise<string>} feeback, if the helper aborts early it may return
+ * a string with a reason message
+ */
+const runScriptHelper = async (scriptName, logCallback) => {
+  if (!fs.existsSync('package.json')) {
+    return 'No package.json found'
+  }
+
+  const { scripts = {} } = await readJson('package.json')
+  if (!scripts[scriptName]) {
+    return `${scriptName} script not defined in package.json`
+  }
+
+  const bin = getNodePackageManager()
+  const scriptProcess = execa(bin, ['run', scriptName])
+
+  scriptProcess.stdout.on('data', log => {
+    if (logCallback) logCallback(`npm run ${scriptName}: ${log}`)
+  })
+
+  try {
+    await scriptProcess
+  } catch (e) {
+    throw new Error(
+      `${err.message}\n${err.stderr}\n\nScript ${scriptName} failed. See above output.`
+    )
+  }
+}
+
 const getContract = (pkg, contract) => {
   const artifact = require(`${pkg}/build/contracts/${contract}.json`)
   return artifact
@@ -326,6 +358,7 @@ module.exports = {
   isPortTaken,
   installDeps,
   runScriptTask,
+  runScriptHelper,
   getNodePackageManager,
   getBinary,
   getLocalBinary,

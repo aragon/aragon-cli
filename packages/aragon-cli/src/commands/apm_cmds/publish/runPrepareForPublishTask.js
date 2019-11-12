@@ -3,20 +3,18 @@ const path = require('path')
 const { readJson, writeJson, pathExistsSync } = require('fs-extra')
 const APM = require('@aragon/apm')
 const TaskList = require('listr')
-const taskInput = require('listr-input')
 const { findProjectRoot } = require('../../../util')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const { MANIFEST_FILE, ARTIFACT_FILE } = require('../../../params')
-const { prepareFilesForPublishing } = require('../util/preprare-files')
-
+const { prepareFilesForPublishing } = require('../util/prepare-files')
+const askToConfirm = require('../util/askToConfirm')
 const {
   sanityCheck,
   generateApplicationArtifact,
+  writeApplicationArtifact,
   generateFlattenedCode,
   copyCurrentApplicationArtifacts,
   SOLIDITY_FILE,
-  POSITIVE_ANSWERS,
-  ANSWERS,
 } = require('../util/generate-artifact')
 
 /**
@@ -24,8 +22,6 @@ const {
  * - pathToPublish {string}
  */
 module.exports = function runPrepareForPublishTask({
-  reporter,
-
   // Globals
   cwd,
   web3,
@@ -107,32 +103,51 @@ module.exports = function runPrepareForPublishTask({
         title: 'Generate application artifact',
         skip: () => onlyContent && !module.path,
         task: async (ctx, task) => {
-          const dir = onlyArtifacts ? cwd : ctx.pathToPublish
+          const outputPath = onlyArtifacts ? cwd : ctx.pathToPublish
 
           const contractPath = module.path
           const roles = module.roles
 
-          // TODO: (Gabi) Use inquier to handle confirmation
-          async function invokeArtifactGeneration(answer) {
-            if (POSITIVE_ANSWERS.indexOf(answer) > -1) {
-              await generateApplicationArtifact(
-                cwd,
-                apm,
-                dir,
-                module,
-                deployArtifacts,
-                web3,
-                reporter
+          /**
+           * Define `performArtifcatGeneration` and `invokeArtifactGeneration`
+           * previously so they can be reused below depending on what question
+           * has to be asked to the user.
+           * NOTE: `listr-input` (wrapped in askToConfirm) requires to be
+           * returned in order to work, so it's necessary to nest callbacks
+           *
+           * TODO: (Gabi) Use inquier to handle confirmation
+           */
+
+          async function performArtifcatGeneration(artifact) {
+            await writeApplicationArtifact(artifact, outputPath)
+            await generateFlattenedCode(outputPath, contractPath)
+            return `Saved artifact in ${outputPath}/${ARTIFACT_FILE}`
+          }
+
+          async function invokeArtifactGeneration() {
+            const {
+              artifact,
+              missingArtifactVersions,
+            } = await generateApplicationArtifact(
+              cwd,
+              deployArtifacts,
+              module,
+              apm
+            )
+            if (missingArtifactVersions.length) {
+              const missingVersionsList = missingArtifactVersions.join(', ')
+              return askToConfirm(
+                `Cannot find artifacts for versions ${missingVersionsList} in aragonPM.\nPlease make sure the package was published and your IPFS or HTTP server are running.\nContinue?`,
+                async () => await performArtifcatGeneration(artifact)
               )
-              await generateFlattenedCode(dir, contractPath)
-              return `Saved artifact in ${dir}/${ARTIFACT_FILE}`
+            } else {
+              return await performArtifcatGeneration(artifact)
             }
-            throw new Error('Aborting publication...')
           }
 
           // If an artifact file exist we check it to reuse
-          if (pathExistsSync(`${dir}/${ARTIFACT_FILE}`)) {
-            const existingArtifactPath = path.resolve(dir, ARTIFACT_FILE)
+          if (pathExistsSync(`${outputPath}/${ARTIFACT_FILE}`)) {
+            const existingArtifactPath = path.resolve(outputPath, ARTIFACT_FILE)
             const existingArtifact = await readJson(existingArtifactPath)
             const rebuild = await sanityCheck(
               cwd,
@@ -141,14 +156,9 @@ module.exports = function runPrepareForPublishTask({
               existingArtifact
             )
             if (rebuild) {
-              return taskInput(
-                `Couldn't reuse artifact due to mismatches, regenerate now? [y]es/[a]bort`,
-                {
-                  validate: value => {
-                    return ANSWERS.indexOf(value) > -1
-                  },
-                  done: async answer => invokeArtifactGeneration(answer),
-                }
+              return askToConfirm(
+                "Couldn't reuse artifact due to mismatches, regenerate now?",
+                invokeArtifactGeneration
               )
             } else {
               return task.skip('Using existing artifact')
@@ -156,53 +166,38 @@ module.exports = function runPrepareForPublishTask({
           }
 
           // If only content we fetch artifacts from previous version
-          if (
-            onlyContent &
-            (apm.validInitialVersions.indexOf(version) === -1)
-          ) {
+          if (onlyContent & !apm.validInitialVersions.includes(version)) {
             try {
               task.output = 'Fetching artifacts from previous version'
               await copyCurrentApplicationArtifacts(
                 cwd,
-                dir,
+                outputPath,
                 apm,
                 initialRepo,
                 version,
                 roles,
                 contractPath
               )
-              if (!pathExistsSync(`${dir}/${SOLIDITY_FILE}`)) {
-                await generateFlattenedCode(dir, contractPath)
+              if (!pathExistsSync(`${outputPath}/${SOLIDITY_FILE}`)) {
+                await generateFlattenedCode(outputPath, contractPath)
               }
               return task.skip(`Using artifacts from v${initialVersion}`)
             } catch (e) {
               if (e.message === 'Artifact mismatch') {
-                return taskInput(
-                  "Couldn't reuse existing artifact due to mismatches, regenerate now? [y]es/[a]bort",
-                  {
-                    validate: value => {
-                      return ANSWERS.indexOf(value) > -1
-                    },
-                    done: async answer => invokeArtifactGeneration(answer),
-                  }
+                return askToConfirm(
+                  "Couldn't reuse existing artifact due to mismatches, regenerate now?",
+                  invokeArtifactGeneration
                 )
               } else {
-                return taskInput(
-                  "Couldn't fetch current artifact version to copy it. Please make sure your IPFS or HTTP server are running. Otherwise, generate now? [y]es/[a]bort",
-                  {
-                    validate: value => {
-                      return ANSWERS.indexOf(value) > -1
-                    },
-                    done: async answer => invokeArtifactGeneration(answer),
-                  }
+                return askToConfirm(
+                  "Couldn't fetch current artifact version to copy it. Please make sure your IPFS or HTTP server are running. Otherwise, generate now?",
+                  invokeArtifactGeneration
                 )
               }
             }
           }
 
-          await invokeArtifactGeneration('yes')
-
-          return `Saved artifact in ${dir}/artifact.json`
+          return await invokeArtifactGeneration()
         },
       },
       {
