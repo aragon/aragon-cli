@@ -1,7 +1,4 @@
-const APM = require('@aragon/apm')
-const chalk = require('chalk')
 const Table = require('cli-table')
-const TaskList = require('listr')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const getApmRegistryPackages = require('../../lib/apm/getApmRegistryPackages')
 
@@ -26,8 +23,8 @@ exports.handler = async function({
   const web3 = await ensureWeb3(network)
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
-  const progressHandler = (step) => {
-    switch(step) {
+  const progressHandler = step => {
+    switch (step) {
       case 1:
         console.log(`Fetching APM Registry: ${apmRegistry}`)
         break
@@ -40,7 +37,12 @@ exports.handler = async function({
     }
   }
 
-  const packages = await getApmRegistryPackages(web3, apmRegistry, apmOptions, progressHandler)
+  const packages = await getApmRegistryPackages(
+    web3,
+    apmRegistry,
+    apmOptions,
+    progressHandler
+  )
 
   const table = new Table({
     head: ['App', 'Latest Version'],

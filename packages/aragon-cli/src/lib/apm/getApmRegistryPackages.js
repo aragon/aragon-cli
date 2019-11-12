@@ -27,7 +27,9 @@ module.exports = async (web3, apmRegistryName, apmOptions, progressHandler) => {
     progressHandler(3)
   }
 
-  const newRepoEvents = await registry.getPastEvents('NewRepo', { fromBlock: 0 })
+  const newRepoEvents = await registry.getPastEvents('NewRepo', {
+    fromBlock: 0,
+  })
 
   if (progressHandler) {
     progressHandler(4)
@@ -38,7 +40,7 @@ module.exports = async (web3, apmRegistryName, apmOptions, progressHandler) => {
       const args = event.returnValues
       return {
         name: args.name,
-        version: (await apm.getLatestVersion(args.id)).version
+        version: (await apm.getLatestVersion(args.id)).version,
       }
     })
   )
