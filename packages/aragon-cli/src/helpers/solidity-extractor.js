@@ -85,16 +85,20 @@ const getRoles = declaration => {
   )
 }
 
-const extractFunctions = async (sourceCode) => {
+const extractFunctions = async sourceCode => {
   // Everything between every 'function' and '{' and its @notice.
-  const functionDeclarations = sourceCode.match(/(@notice|^\s*function)(?:[^]*?){/gm)
+  const functionDeclarations = sourceCode.match(
+    /(@notice|^\s*function)(?:[^]*?){/gm
+  )
 
   if (!functionDeclarations) {
     return []
   }
 
   const stateModifyingFunctionDeclarations = functionDeclarations
-    .filter(functionDeclaration => modifiesStateAndIsPublic(functionDeclaration))
+    .filter(functionDeclaration =>
+      modifiesStateAndIsPublic(functionDeclaration)
+    )
     .map(functionDeclaration => ({
       sig: getSignature(functionDeclaration),
       roles: getRoles(functionDeclaration),
@@ -104,10 +108,12 @@ const extractFunctions = async (sourceCode) => {
   return stateModifyingFunctionDeclarations
 }
 
-const extractRoles = async (functionDescriptors) => {
+const extractRoles = async functionDescriptors => {
   // Extract all role ids from the function descriptors.
   let roleSet = new Set()
-  functionDescriptors.forEach(({ roles }) => roles.forEach(role => roleSet.add(role)))
+  functionDescriptors.forEach(({ roles }) =>
+    roles.forEach(role => roleSet.add(role))
+  )
   const roleIds = [...roleSet]
 
   // Parse role ids into objects.
@@ -140,7 +146,7 @@ const extractRoles = async (functionDescriptors) => {
     ...
   ]
 */
-const extractContractInfo = async (sourceCodePath) => {
+const extractContractInfo = async sourceCodePath => {
   const sourceCode = await readFile(sourceCodePath, 'utf8')
 
   const functionDescriptors = await extractFunctions(sourceCode)
@@ -148,7 +154,7 @@ const extractContractInfo = async (sourceCodePath) => {
 
   return {
     roles: roleDescriptors,
-    functions: functionDescriptors
+    functions: functionDescriptors,
   }
 }
 
