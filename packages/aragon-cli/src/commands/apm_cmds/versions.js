@@ -26,15 +26,20 @@ exports.handler = async function({
   const web3 = await ensureWeb3(network)
   const apmRepoName = apmRepo ? defaultAPMName(apmRepo) : module.appName
 
-  const progressHandler = (step) => {
-    switch(step) {
+  const progressHandler = step => {
+    switch (step) {
       case 1:
         console.log(`Fetching ${chalk.bold(apmRepoName)} published versions`)
         break
     }
   }
 
-  const versions = await getApmRepoVersions(web3, apmRepoName, apmOptions, progressHandler)
+  const versions = await getApmRepoVersions(
+    web3,
+    apmRepoName,
+    apmOptions,
+    progressHandler
+  )
 
   reporter.info(
     `${chalk.blue(apmRepoName)} has ${chalk.green(
