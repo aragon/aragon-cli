@@ -31,24 +31,19 @@ module.exports = function runPublishTask({
       {
         title: `Publish ${module.appName}`,
         enabled: () => !onlyArtifacts,
-        task: async (ctx, task) => {
-          try {
-            return execTask({
-              dao,
-              app: proxyAddress,
-              method: methodName,
-              params,
-              ipfsCheck: false,
-              reporter,
-              gasPrice,
-              apm: apmOptions,
-              web3,
-              wsProvider,
-            })
-          } catch (e) {
-            throw e
-          }
-        },
+        task: async (ctx, task) =>
+          execTask({
+            dao,
+            app: proxyAddress,
+            method: methodName,
+            params,
+            ipfsCheck: false,
+            reporter,
+            gasPrice,
+            apm: apmOptions,
+            web3,
+            wsProvider,
+          }),
       },
     ],
     listrOpts(silent, debug)

@@ -1,10 +1,10 @@
 const path = require('path')
 const ignore = require('ignore')
 const fs = require('fs')
-const { findProjectRoot } = require('../../../util')
+const { findProjectRoot } = require('../../util')
 const { copy, pathExistsSync } = require('fs-extra')
 const { promisify } = require('util')
-const { MANIFEST_FILE, ARTIFACT_FILE } = require('../../../params')
+const { MANIFEST_FILE, ARTIFACT_FILE } = require('../../params')
 
 /**
  * Note: All exported functions are only used by runPrepareForPublishTask.js
@@ -18,7 +18,7 @@ const { MANIFEST_FILE, ARTIFACT_FILE } = require('../../../params')
  * @param {string} ignorePatterns An array of glob-like pattern of files to ignore
  * @return {Promise<string>} The path to the temporary directory
  */
-async function prepareFilesForPublishing(
+export async function prepareFilesForPublishing(
   tmpDir,
   files = [],
   ignorePatterns = null
@@ -81,5 +81,3 @@ async function prepareFilesForPublishing(
 
   return tmpDir
 }
-
-module.exports = { prepareFilesForPublishing }

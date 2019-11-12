@@ -9,12 +9,13 @@ const ANSWERS = POSITIVE_ANSWERS.concat(NEGATIVE_ANSWERS)
  *
  * @param {string} message "Are you sure you want to do this?"
  * @param {AsyncCallback} cb Will be invoked only if the user answers yes
+ * @return {any} cb() return value
  */
 module.exports = function askToConfirm(message, cb) {
   return taskInput(`${message} [y]es/[n]o`, {
-    validate: value => ANSWERS.indexOf(value) > -1,
+    validate: value => ANSWERS.includes(value),
     done: async answer => {
-      if (POSITIVE_ANSWERS.indexOf(answer) > -1) return await cb()
+      if (POSITIVE_ANSWERS.includes(answer)) return cb()
       else throw Error(`Aborting...`)
     },
   })

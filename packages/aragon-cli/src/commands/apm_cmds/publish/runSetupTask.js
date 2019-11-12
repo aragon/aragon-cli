@@ -1,5 +1,4 @@
 const APM = require('@aragon/apm')
-const semver = require('semver')
 const TaskList = require('listr')
 const { runScriptHelper, ZERO_ADDRESS } = require('../../../util')
 const { compileContracts } = require('../../../helpers/truffle-runner')
@@ -7,8 +6,10 @@ const web3Utils = require('web3').utils
 const deploy = require('../../deploy')
 const startIPFS = require('../../ipfs_cmds/start')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-
-const ipfsTimeout = 1000 * 60 * 5 // 5min
+const {
+  getPrevAndNextVersion,
+  InvalidBump,
+} = require('../../../lib/apm/getPrevAndNextVersion')
 
 /**
  * @typedef {Object} VersionAppInfo
@@ -31,6 +32,7 @@ const ipfsTimeout = 1000 * 60 * 5 // 5min
  * - initialRepo {VersionAppInfo}
  * - initialVersion {string} Version before release: "0.2.4"
  * - version {string} To release version: "0.2.5"
+ * @return {TaskList} Tasks
  */
 module.exports = function runSetupTask({
   // Globals
@@ -98,49 +100,25 @@ module.exports = function runSetupTask({
       {
         title: `Applying version bump (${bumpOrVersion})`,
         task: async (ctx, task) => {
+          task.output = 'Fetching latest version from aragonPM...'
           try {
-            task.output = 'Fetching latest version from aragonPM...'
-
-            const initialRepo = await apm.getLatestVersion(appName, ipfsTimeout)
-
-            const prevVersion = initialRepo.version
-
-            const version = semver.valid(bumpOrVersion)
-              ? semver.valid(bumpOrVersion)
-              : semver.inc(prevVersion, bumpOrVersion)
-
-            const isValid = await apm.isValidBump(appName, prevVersion, version)
-            if (!isValid) {
-              throw Error(
-                "Version bump is not valid, you have to respect APM's versioning policy. Check the version upgrade rules in the documentation: https://hack.aragon.org/docs/apm-ref.html#version-upgrade-rules"
-              )
-            }
-
-            shouldDeployContract =
-              semver.major(prevVersion) !== semver.major(version)
+            const {
+              initialRepo,
+              prevVersion,
+              version,
+              shouldDeployContract: _shouldDeployContract,
+            } = await getPrevAndNextVersion(appName, bumpOrVersion, apm)
 
             // (TODO): For now MUST be exposed in the context because their are used around
             ctx.initialRepo = initialRepo
             ctx.initialVersion = prevVersion
             ctx.version = version
+            shouldDeployContract = _shouldDeployContract
           } catch (e) {
-            if (e.message.includes('Invalid content URI')) {
-              return
-            }
-            // Repo doesn't exist yet, deploy the first version
-            const version = semver.valid(bump)
-              ? semver.valid(bump)
-              : semver.inc('0.0.0', bump) // All valid initial versions are a version bump from 0.0.0
-            if (!apm.validInitialVersions.includes(version)) {
+            if (e instanceof InvalidBump)
               throw Error(
-                `Invalid initial version  (${ctx.version}). It can only be 0.0.1, 0.1.0 or 1.0.0.`
+                "Version bump is not valid, you have to respect APM's versioning policy.\nCheck the version upgrade rules in the documentation:\n  https://hack.aragon.org/docs/apm-ref.html#version-upgrade-rules"
               )
-            }
-
-            shouldDeployContract = true // assume first version should deploy a contract
-
-            // (TODO): For now MUST be exposed in the context because their are used around
-            ctx.version = version
           }
         },
       },

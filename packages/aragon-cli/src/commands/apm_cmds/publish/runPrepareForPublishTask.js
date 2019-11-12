@@ -1,31 +1,32 @@
 const tmp = require('tmp-promise')
-const path = require('path')
-const { readJson, writeJson, pathExistsSync } = require('fs-extra')
 const APM = require('@aragon/apm')
 const TaskList = require('listr')
-const { findProjectRoot } = require('../../../util')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const { MANIFEST_FILE, ARTIFACT_FILE } = require('../../../params')
-const { prepareFilesForPublishing } = require('../util/prepare-files')
 const askToConfirm = require('../util/askToConfirm')
 const {
-  sanityCheck,
+  prepareFilesForPublishing,
+} = require('../../../lib/apm/prepareFilesForPublishing')
+const {
+  changeManifestForHttpServedFrom,
   generateApplicationArtifact,
   writeApplicationArtifact,
+  flattenCodeFileExists,
   generateFlattenedCode,
+  artifactExists,
+  checkIfNewArticatIsIdentical,
   copyCurrentApplicationArtifacts,
-  SOLIDITY_FILE,
-} = require('../util/generate-artifact')
+} = require('../../../lib/apm/generate-artifact')
 
 /**
  * ctx mandatory output
  * - pathToPublish {string}
+ * @return {TaskList} Tasks
  */
 module.exports = function runPrepareForPublishTask({
   // Globals
   cwd,
   web3,
-  module,
+  module: arapp,
   apm: apmOptions,
   silent,
   debug,
@@ -80,20 +81,10 @@ module.exports = function runPrepareForPublishTask({
           'Check for --http-served-from argument and copy manifest.json to destination',
         enabled: () => http,
         task: async ctx => {
-          if (!httpServedFrom) {
+          if (!httpServedFrom)
             throw new Error('You need to provide --http-served-from argument')
-          }
 
-          const projectRoot = findProjectRoot()
-          const manifestOrigin = path.resolve(projectRoot, MANIFEST_FILE)
-          const manifestDst = path.resolve(httpServedFrom, MANIFEST_FILE)
-
-          if (!pathExistsSync(manifestDst) && pathExistsSync(manifestOrigin)) {
-            let manifest = await readJson(manifestOrigin)
-            manifest.start_url = path.basename(manifest.start_url)
-            manifest.script = path.basename(manifest.script)
-            await writeJson(manifestDst, manifest)
-          }
+          changeManifestForHttpServedFrom(httpServedFrom)
 
           // (TODO): ctx mutation
           ctx.pathToPublish = httpServedFrom
@@ -101,12 +92,12 @@ module.exports = function runPrepareForPublishTask({
       },
       {
         title: 'Generate application artifact',
-        skip: () => onlyContent && !module.path,
+        skip: () => onlyContent && !arapp.path,
         task: async (ctx, task) => {
           const outputPath = onlyArtifacts ? cwd : ctx.pathToPublish
 
-          const contractPath = module.path
-          const roles = module.roles
+          const contractPath = arapp.path
+          const roles = arapp.roles
 
           /**
            * Define `performArtifcatGeneration` and `invokeArtifactGeneration`
@@ -119,9 +110,9 @@ module.exports = function runPrepareForPublishTask({
            */
 
           async function performArtifcatGeneration(artifact) {
-            await writeApplicationArtifact(artifact, outputPath)
+            writeApplicationArtifact(artifact, outputPath)
             await generateFlattenedCode(outputPath, contractPath)
-            return `Saved artifact in ${outputPath}/${ARTIFACT_FILE}`
+            return `Saved artifact in ${outputPath}`
           }
 
           async function invokeArtifactGeneration() {
@@ -131,31 +122,29 @@ module.exports = function runPrepareForPublishTask({
             } = await generateApplicationArtifact(
               cwd,
               deployArtifacts,
-              module,
+              arapp,
               apm
             )
             if (missingArtifactVersions.length) {
               const missingVersionsList = missingArtifactVersions.join(', ')
               return askToConfirm(
                 `Cannot find artifacts for versions ${missingVersionsList} in aragonPM.\nPlease make sure the package was published and your IPFS or HTTP server are running.\nContinue?`,
-                async () => await performArtifcatGeneration(artifact)
+                () => performArtifcatGeneration(artifact)
               )
             } else {
-              return await performArtifcatGeneration(artifact)
+              return performArtifcatGeneration(artifact)
             }
           }
 
           // If an artifact file exist we check it to reuse
-          if (pathExistsSync(`${outputPath}/${ARTIFACT_FILE}`)) {
-            const existingArtifactPath = path.resolve(outputPath, ARTIFACT_FILE)
-            const existingArtifact = await readJson(existingArtifactPath)
-            const rebuild = await sanityCheck(
+          if (artifactExists(outputPath)) {
+            const currentArtifactIsIdentical = !checkIfNewArticatIsIdentical(
               cwd,
               roles,
               contractPath,
-              existingArtifact
+              outputPath
             )
-            if (rebuild) {
+            if (!currentArtifactIsIdentical) {
               return askToConfirm(
                 "Couldn't reuse artifact due to mismatches, regenerate now?",
                 invokeArtifactGeneration
@@ -178,7 +167,7 @@ module.exports = function runPrepareForPublishTask({
                 roles,
                 contractPath
               )
-              if (!pathExistsSync(`${outputPath}/${SOLIDITY_FILE}`)) {
+              if (!flattenCodeFileExists(outputPath)) {
                 await generateFlattenedCode(outputPath, contractPath)
               }
               return task.skip(`Using artifacts from v${initialVersion}`)
@@ -197,7 +186,7 @@ module.exports = function runPrepareForPublishTask({
             }
           }
 
-          return await invokeArtifactGeneration()
+          return invokeArtifactGeneration()
         },
       },
       {
@@ -208,7 +197,7 @@ module.exports = function runPrepareForPublishTask({
           const from = accounts[0]
           ctx.intent = await apm.publishVersionIntent(
             from,
-            module.appName,
+            arapp.appName,
             version,
             http ? 'http' : provider,
             http || ctx.pathToPublish,

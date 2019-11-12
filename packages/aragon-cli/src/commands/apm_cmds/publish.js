@@ -1,17 +1,10 @@
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const tmp = require('tmp-promise')
 const path = require('path')
-const { readJson, writeJson, pathExistsSync } = require('fs-extra')
-const APM = require('@aragon/apm')
-const TaskList = require('listr')
-const taskInput = require('listr-input')
 const inquirer = require('inquirer')
 const chalk = require('chalk')
-const { findProjectRoot, ZERO_ADDRESS } = require('../../util')
+const { ZERO_ADDRESS } = require('../../util')
 const deploy = require('../deploy')
 const propagateIPFS = require('../ipfs_cmds/propagate')
-const execTask = require('../dao_cmds/utils/execHandler').task
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
 // Tasks splitted into other files
 const runSetupTask = require('./publish/runSetupTask')
@@ -144,9 +137,10 @@ exports.handler = async function({
   debug,
 
   // Arguments
-
+  // - Positional
   bump,
   contract,
+  // - Options
   onlyArtifacts,
   reuse,
   provider,
@@ -173,58 +167,54 @@ exports.handler = async function({
     version,
     contract: contractAddress,
     deployArtifacts,
-  } = await exports
-    .runSetupTask({
-      reporter,
-      gasPrice,
-      cwd,
-      web3,
-      network,
-      module,
-      apm: apmOptions,
-      silent,
-      debug,
-      prepublish,
-      prepublishScript,
-      build,
-      buildScript,
-      bump,
-      contract,
-      init,
-      reuse,
-      onlyContent,
-      onlyArtifacts,
-      ipfsCheck,
-      http,
-    })
-    .run()
+  } = await runSetupTask({
+    reporter,
+    gasPrice,
+    cwd,
+    web3,
+    network,
+    module,
+    apm: apmOptions,
+    silent,
+    debug,
+    prepublish,
+    prepublishScript,
+    build,
+    buildScript,
+    bump,
+    contract,
+    init,
+    reuse,
+    onlyContent,
+    onlyArtifacts,
+    ipfsCheck,
+    http,
+  }).run()
 
-  const { pathToPublish, intent } = await exports
-    .runPrepareForPublishTask({
-      reporter,
-      cwd,
-      web3,
-      network,
-      module,
-      apm: apmOptions,
-      silent,
-      debug,
-      publishDir,
-      files,
-      ignore,
-      httpServedFrom,
-      provider,
-      onlyArtifacts,
-      onlyContent,
-      http,
-      // context
-      initialRepo,
-      initialVersion,
-      version,
-      contractAddress,
-      deployArtifacts,
-    })
-    .run()
+  const { pathToPublish, intent } = await runPrepareForPublishTask({
+    reporter,
+    cwd,
+    web3,
+    network,
+    module,
+    apm: apmOptions,
+    silent,
+    debug,
+    publishDir,
+    files,
+    ignore,
+    httpServedFrom,
+    provider,
+    onlyArtifacts,
+    onlyContent,
+    http,
+    // context
+    initialRepo,
+    initialVersion,
+    version,
+    contractAddress,
+    deployArtifacts,
+  }).run()
 
   // Output publish info
 
@@ -277,25 +267,23 @@ exports.handler = async function({
     if (!confirmation) process.exit()
   }
 
-  const { receipt, transactionPath } = await exports
-    .runPublishTask({
-      reporter,
-      gasPrice,
-      web3,
-      wsProvider,
-      module,
-      apm: apmOptions,
-      silent,
-      debug,
-      onlyArtifacts,
-      onlyContent,
-      // context
-      dao,
-      proxyAddress,
-      methodName,
-      params,
-    })
-    .run()
+  const { receipt, transactionPath } = await runPublishTask({
+    reporter,
+    gasPrice,
+    web3,
+    wsProvider,
+    module,
+    apm: apmOptions,
+    silent,
+    debug,
+    onlyArtifacts,
+    onlyContent,
+    // context
+    dao,
+    proxyAddress,
+    methodName,
+    params,
+  }).run()
 
   const { transactionHash, status } = receipt
 
