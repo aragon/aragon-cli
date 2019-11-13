@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+    
+jobs:
+  build:
+    name: Build & test with "Node.js v${{ matrix.node-version }}" on "${{ matrix.os }}"  
+
+    strategy:
+      fail-fast: false # don't cancel all jobs if some of them failed 
+      matrix:
+        node-version: [
+          # 13,
+          12, 
+          11, 
+          10, 
+          9, 
+          8 
+        ]
+        os: [
+          ubuntu-latest,
+          # windows-latest,
+          macOS-latest
+        ]
+    
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Node.js v${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Lint
+        run: npm run lint
+      - name: Test
+        run: npm test:coverage
