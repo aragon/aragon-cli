@@ -3,17 +3,17 @@ import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 
 test.beforeEach(t => {
-  const fsExtraStub = {
+  const fsExtra = {
     readJson: sinon.stub(),
   }
 
-  const ipfsLib = proxyquire.noCallThru().load('../../src/lib/ipfs', {
-    'fs-extra': fsExtraStub,
+  const config = proxyquire.noCallThru().load('../../../src/lib/ipfs/config', {
+    'fs-extra': fsExtra,
   })
 
   t.context = {
-    ipfsLib,
-    fsExtraStub,
+    config,
+    fsExtra,
   }
 })
 
@@ -24,10 +24,10 @@ test.afterEach.always(() => {
 test('getRepoVersion should return the version of a repository', async t => {
   t.plan(1)
   // arrange
-  const { ipfsLib, fsExtraStub } = t.context
-  fsExtraStub.readJson.returns(2008)
+  const { config, fsExtra } = t.context
+  fsExtra.readJson.returns(2008)
   // act
-  const version = await ipfsLib.getRepoVersion('/home/satoshi/.ipfs')
+  const version = await config.getRepoVersion('/home/satoshi/.ipfs')
   // assert
   t.is(version, 2008)
 })
