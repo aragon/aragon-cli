@@ -60,13 +60,13 @@ exports.handler = async function({
         task: async (ctx, task) => {
           task.output = `Fetching apps for ${dao}...`
           const { 'ens-registry': ensRegistry, ipfs } = apmOptions
-          const options = { 
-            registryAddress: ensRegistry, 
-            ipfs, 
-            provider: wsProvider || web3.currentProvider 
+          const options = {
+            registryAddress: ensRegistry,
+            ipfs,
+            provider: wsProvider || web3.currentProvider,
           }
 
-          apps = await getInstalledApps(dao, options)            
+          apps = await getInstalledApps(dao, options)
           daoAddress = await getDaoAddress(dao, options)
         },
       },
