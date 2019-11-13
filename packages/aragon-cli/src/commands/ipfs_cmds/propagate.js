@@ -1,43 +1,40 @@
 import TaskList from 'listr'
+import chalk from 'chalk'
+import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+import { askForInput } from '../../util'
 //
 import {
-  ensureConnection,
+  getClient,
   getMerkleDAG,
   extractCIDsFromMerkleDAG,
   propagateFiles,
+  isValidCID,
 } from '../../lib/ipfs'
-import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
 
-const chalk = require('chalk')
-const startIPFS = require('./start')
+export const command = 'propagate [cid]'
+export const describe =
+  'Request the content and its links at several gateways, making the files more distributed within the network. Uses --ipfs-gateway.'
 
-exports.command = 'propagate <cid>'
-exports.describe =
-  'Request the content and its links at several gateways, making the files more distributed within the network.'
-
-exports.builder = yargs => {
-  return yargs.positional('cid', {
+export const builder = yargs =>
+  yargs.positional('cid', {
     description: 'A self-describing content-addressed identifier',
   })
-}
 
-exports.task = ({ apmOptions, silent, debug, cid }) => {
+const runPropagateTask = ({ cid, ipfsReader, silent, debug }) => {
   return new TaskList(
     [
       {
-        title: 'Check IPFS',
-        task: () => startIPFS.task({ apmOptions }),
-      },
-      {
-        title: 'Connect to IPFS',
-        task: async ctx => {
-          ctx.ipfs = await ensureConnection(apmOptions.ipfs.rpc)
+        title: 'Validate CID',
+        task: () => {
+          if (!isValidCID(cid)) {
+            throw new Error(`"${cid}" is not a valid content identifier.`)
+          }
         },
       },
       {
         title: 'Fetch the links',
         task: async ctx => {
-          ctx.data = await getMerkleDAG(ctx.ipfs.client, cid, {
+          ctx.data = await getMerkleDAG(ipfsReader, cid, {
             recursive: true,
           })
         },
@@ -55,25 +52,31 @@ exports.task = ({ apmOptions, silent, debug, cid }) => {
       },
     ],
     listrOpts(silent, debug)
-  )
+  ).run()
 }
 
-exports.handler = async function({
-  reporter,
-  apm: apmOptions,
-  cid,
-  debug,
-  silent,
-}) {
-  const task = await exports.task({
-    apmOptions,
+export const handler = async argv => {
+  /**
+   * Interactive input
+   */
+  let { cid } = argv
+
+  if (!cid) {
+    cid = await askForInput('Choose a content identifier')
+  }
+
+  const { reporter, apm, debug, silent } = argv
+
+  const ipfsReader = await getClient(apm.ipfs.gateway)
+
+  const ctx = await runPropagateTask({
+    ipfsReader,
     cid,
     debug,
     silent,
   })
 
-  const ctx = await task.run()
-
+  // reporter.message(
   console.log(
     '\n',
     `Queried ${chalk.blue(ctx.CIDs.length)} CIDs at ${chalk.blue(
@@ -91,5 +94,4 @@ exports.handler = async function({
     `Errors: \n${ctx.result.errors.map(JSON.stringify).join('\n')}`
   )
   // TODO add your own gateways
-  process.exit()
 }

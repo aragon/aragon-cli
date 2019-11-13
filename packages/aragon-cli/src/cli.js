@@ -151,6 +151,8 @@ cmd.option('apm', {
 // Add epilogue
 cmd.epilogue('For more information, check out https://hack.aragon.org')
 
+cmd.group(['help', 'version', 'silent', 'debug'], 'Global options:')
+
 // Run
 cmd
   .fail((msg, err, yargs) => {
