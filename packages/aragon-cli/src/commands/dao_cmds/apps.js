@@ -1,4 +1,3 @@
-import { initAragonJS, getApps } from '../../helpers/aragonjs-wrapper'
 const TaskList = require('listr')
 const chalk = require('chalk')
 const daoArg = require('./utils/daoArg')
@@ -8,6 +7,7 @@ const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const { addressesEqual } = require('../../util')
 const Table = require('cli-table')
 const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
+const { getDaoAddress, getInstalledApps } = require('../../lib/dao/apps')
 
 let knownApps
 
@@ -51,6 +51,7 @@ exports.handler = async function({
 }) {
   knownApps = listApps(module ? [module.appName] : [])
   const web3 = await ensureWeb3(network)
+  let apps, daoAddress
 
   const tasks = new TaskList(
     [
@@ -59,29 +60,21 @@ exports.handler = async function({
         task: async (ctx, task) => {
           task.output = `Fetching apps for ${dao}...`
           const { 'ens-registry': ensRegistry, ipfs } = apmOptions
-
-          try {
-            const wrapper = await initAragonJS(dao, ensRegistry, {
-              ipfsConf: ipfs,
-              provider: wsProvider || web3.currentProvider,
-              onDaoAddress: addr => {
-                ctx.daoAddress = addr
-              },
-            })
-
-            ctx.apps = await getApps(wrapper)
-          } catch (err) {
-            reporter.error('Error inspecting DAO apps')
-            reporter.debug(err)
-            process.exit(1)
+          const options = { 
+            registryAddress: ensRegistry, 
+            ipfs, 
+            provider: wsProvider || web3.currentProvider 
           }
+
+          apps = await getInstalledApps(dao, options)            
+          daoAddress = await getDaoAddress(dao, options)
         },
       },
       {
         title: 'Fetching permissionless apps',
         enabled: () => all,
         task: async (ctx, task) => {
-          const kernel = new web3.eth.Contract(kernelAbi, ctx.daoAddress)
+          const kernel = new web3.eth.Contract(kernelAbi, daoAddress)
 
           const events = await kernel.getPastEvents('NewAppProxy', {
             fromBlock: await kernel.methods.getInitializationBlock().call(),
@@ -96,7 +89,7 @@ exports.handler = async function({
             // Remove apps that have permissions
             .filter(
               ({ proxyAddress }) =>
-                !ctx.apps.find(app =>
+                !apps.find(app =>
                   addressesEqual(app.proxyAddress, proxyAddress)
                 )
             )
@@ -108,9 +101,9 @@ exports.handler = async function({
 
   return tasks.run().then(ctx => {
     reporter.success(
-      `Successfully fetched DAO apps for ${chalk.green(ctx.daoAddress)}`
+      `Successfully fetched DAO apps for ${chalk.green(daoAddress)}`
     )
-    const appsContent = ctx.apps
+    const appsContent = apps
       .map(
         ({ appId, proxyAddress, codeAddress, content, appName, version }) => [
           appName
