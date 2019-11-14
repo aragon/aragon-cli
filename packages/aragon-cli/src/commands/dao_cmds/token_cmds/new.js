@@ -11,9 +11,9 @@ const {
 } = require('../../../util')
 
 const MAINNET_MINIME_TOKEN_FACTORY =
-  '0xA29EF584c389c67178aE9152aC9C543f9156E2B3'
+  '0x337c2F12Fd64D6D15aF6BC35632631cE53D1dBEe'
 const RINKEBY_MINIME_TOKEN_FACTORY =
-  '0xad991658443c56b3dE2D7d7f5d8C68F339aEef29'
+  '0x21D6dD694fFFDFfa60590d39Cf87d82b9D1cE222'
 
 exports.command =
   'new <token-name> <symbol> [decimal-units] [transfer-enabled] [token-factory-address]'
