@@ -30,7 +30,7 @@ const configureNetwork = (
   }
 
   if (argv.useFrame) {
-    // TODO: Check Frame is running and displat an appropiate error message otherwise
+    // TODO: Check Frame is running and display an appropriate error message otherwise
     const providerOptions = {
       headers: {
         origin: FRAME_ORIGIN,
