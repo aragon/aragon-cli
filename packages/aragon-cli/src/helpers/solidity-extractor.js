@@ -120,7 +120,7 @@ const extractRoles = async functionDescriptors => {
   // TODO: Name and parameters are currently not being extracted, and it's probably better to get it from an AST instead of the Solidity code. For now, the properties are merely place holders.
   return roleIds.map(id => ({
     id,
-    bytes: '0x' + keccak256(id),
+    bytes: keccak256(id),
     name: '',
     params: [],
   }))
