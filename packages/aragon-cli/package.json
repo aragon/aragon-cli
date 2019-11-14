@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "6.3.3",
+  "version": "6.4.0",
   "description": "Aragon command-line tools",
   "main": "dist/cli.js",
   "bin": {
@@ -89,11 +89,11 @@
   "devDependencies": {
     "@aragon/apps-agent": "^1.1.1",
     "@aragon/apps-finance": "^3.0.0",
+    "@aragon/apps-payroll": "^1.0.0",
+    "@aragon/apps-survey": "^1.0.0",
     "@aragon/apps-token-manager": "^2.0.0",
     "@aragon/apps-vault": "^4.0.0",
     "@aragon/apps-voting": "^2.0.0",
-    "@aragon/apps-payroll": "^1.0.0",
-    "@aragon/apps-survey": "^1.0.0",
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
     "@babel/node": "^7.0.0",
