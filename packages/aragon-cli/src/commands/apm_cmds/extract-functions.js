@@ -25,13 +25,7 @@ exports.handler = async function({ cwd, reporter, contract, output }) {
   const filename = path.basename(contractPath).replace('.sol', '.json')
   const outputPath = path.resolve(output, filename)
 
-  const progressHandler = step => {
-    switch (step) {
-      case 1:
-        reporter.success(`Saved to ${chalk.blue(outputPath)}`)
-        break
-    }
-  }
-
-  await extractContractInfoToFile(contractPath, outputPath, progressHandler)
+  await extractContractInfoToFile(contractPath, outputPath)
+  reporter.success(`Saved to ${chalk.blue(outputPath)}`)
+  process.exit()
 }
