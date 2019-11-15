@@ -37,7 +37,7 @@ exports.builder = function(yargs) {
     })
 }
 
-const encodeCalldata = (signature, params) => {
+const encodeCalldata = (signature, params, web3) => {
   const sigBytes = web3.eth.abi.encodeFunctionSignature(signature)
 
   const types = signature.replace(')', '').split('(')[1]
@@ -78,7 +78,7 @@ exports.handler = async function({
   }
 
   const weiAmount = web3.utils.toWei(ethValue)
-  const fnArgs = [target, weiAmount, encodeCalldata(signature, callArgs)]
+  const fnArgs = [target, weiAmount, encodeCalldata(signature, callArgs, web3)]
 
   return execHandler({
     dao,
