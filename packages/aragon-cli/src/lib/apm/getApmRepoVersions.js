@@ -1,10 +1,6 @@
 const APM = require('@aragon/apm')
 
-module.exports = async (web3, apmRepoName, apmOptions, progressHandler) => {
-  if (progressHandler) {
-    progressHandler(1)
-  }
-
+module.exports = async (web3, apmRepoName, apmOptions) => {
   // Ensure the ens-registry property is present,
   // and available with the name "ensRegistryAddress".
   if (!apmOptions.ensRegistryAddress) {
@@ -18,16 +14,8 @@ module.exports = async (web3, apmRepoName, apmOptions, progressHandler) => {
   // Prepare APM object that can comunicate with the apm contracts.
   const apm = await APM(web3, apmOptions)
 
-  if (progressHandler) {
-    progressHandler(2)
-  }
-
   // Query all versions for this repo.
   const versions = await apm.getAllVersions(apmRepoName)
-
-  if (progressHandler) {
-    progressHandler(3)
-  }
 
   return versions
 }
