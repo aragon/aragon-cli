@@ -1,4 +1,3 @@
-const web3 = require('web3')
 const execHandler = require('./utils/execHandler').handler
 const getAppKernel = require('./utils/app-kernel')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
