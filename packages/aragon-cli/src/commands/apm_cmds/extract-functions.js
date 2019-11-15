@@ -1,6 +1,7 @@
 const path = require('path')
 const chalk = require('chalk')
 const extractContractInfoToFile = require('../../lib/apm/extractContractInfoToFile')
+const TaskList = require('listr')
 
 exports.command = 'extract-functions [contract]'
 
@@ -21,11 +22,21 @@ exports.builder = function(yargs) {
 }
 
 exports.handler = async function({ cwd, reporter, contract, output }) {
-  const contractPath = path.resolve(cwd, contract)
-  const filename = path.basename(contractPath).replace('.sol', '.json')
-  const outputPath = path.resolve(output, filename)
+  let outputPath
 
-  await extractContractInfoToFile(contractPath, outputPath)
+  const tasks = new TaskList([
+    {
+      title: 'Extracting functions',
+      task: async () => {
+        const contractPath = path.resolve(cwd, contract)
+        const filename = path.basename(contractPath).replace('.sol', '.json')
+        outputPath = path.resolve(output, filename)
+        await extractContractInfoToFile(contractPath, outputPath)
+      },
+    },
+  ])
+
+  await tasks.run()
   reporter.success(`Saved to ${chalk.blue(outputPath)}`)
   process.exit()
 }
