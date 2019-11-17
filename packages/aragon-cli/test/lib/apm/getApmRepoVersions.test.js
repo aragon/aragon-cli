@@ -7,23 +7,24 @@ const web3 = { name: 'web3' }
 const apmRepoName = 'test.aragonpm.eth'
 const apmOptions = {}
 apmOptions['ens-registry'] = '0x1234512345123451234512345123451234512345'
-const progressHandler = (step) => {}
 
 /* Setup and cleanup */
 
 test.beforeEach('setup', t => {
   const apmStub = sinon.stub()
   apmStub.returns({
-    getAllVersions: async () => {}
+    getAllVersions: async () => {},
   })
 
-  const getApmRepoVersions = proxyquire.noCallThru().load('../../../src/lib/apm/getApmRepoVersions', {
-    '@aragon/apm': apmStub,
-  })
+  const getApmRepoVersions = proxyquire
+    .noCallThru()
+    .load('../../../src/lib/apm/getApmRepoVersions', {
+      '@aragon/apm': apmStub,
+    })
 
   t.context = {
     getApmRepoVersions,
-    apmStub
+    apmStub,
   }
 })
 
@@ -33,37 +34,6 @@ test.afterEach('cleanup', t => {
 
 /* Tests */
 
-test('properly calls the progressHandler', async t => {
-  const { getApmRepoVersions } = t.context
-
-  const progressHandlerSpy = sinon.spy()
-
-  await getApmRepoVersions(
-    web3,
-    apmRepoName,
-    apmOptions,
-    progressHandlerSpy
-  )
-
-  t.true(progressHandlerSpy.calledThrice)
-  t.true(progressHandlerSpy.getCall(0).calledWith(1))
-  t.true(progressHandlerSpy.getCall(1).calledWith(2))
-  t.true(progressHandlerSpy.getCall(2).calledWith(3))
-})
-
-test('tolerates a progressHandler not being specified', async t => {
-  const { getApmRepoVersions } = t.context
-
-  await getApmRepoVersions(
-    web3,
-    apmRepoName,
-    apmOptions,
-    undefined
-  )
-
-  t.pass()
-})
-
 test('calls apm.getAllVersions() with the correct parameters and returns the expected object', async t => {
   const { getApmRepoVersions, apmStub } = t.context
 
@@ -71,21 +41,12 @@ test('calls apm.getAllVersions() with the correct parameters and returns the exp
   const getAllVersions = sinon.stub()
   getAllVersions.returns(getAllVersionsResponse)
   apmStub.returns({
-    getAllVersions
+    getAllVersions,
   })
 
-  const versions = await getApmRepoVersions(
-    web3,
-    apmRepoName,
-    apmOptions,
-    progressHandler
-  )
+  const versions = await getApmRepoVersions(web3, apmRepoName, apmOptions)
 
-  t.true(
-    getAllVersions.calledOnceWith(
-      apmRepoName
-    )
-  )
+  t.true(getAllVersions.calledOnceWith(apmRepoName))
 
   t.is(versions, getAllVersionsResponse)
 })
@@ -93,19 +54,9 @@ test('calls apm.getAllVersions() with the correct parameters and returns the exp
 test('APM constructor gets called with the appropriate parameters', async t => {
   const { getApmRepoVersions, apmStub } = t.context
 
-  await getApmRepoVersions(
-    web3,
-    apmRepoName,
-    apmOptions,
-    progressHandler
-  )
+  await getApmRepoVersions(web3, apmRepoName, apmOptions)
 
-  t.true(
-    apmStub.calledOnceWith(
-      web3,
-      apmOptions
-    )
-  )
+  t.true(apmStub.calledOnceWith(web3, apmOptions))
 })
 
 test('fails if apmOptions does not contain an ens-registry property', async t => {
@@ -113,16 +64,9 @@ test('fails if apmOptions does not contain an ens-registry property', async t =>
 
   const emptyApmOptions = {}
 
-  const error = await t.throwsAsync(
-    async () => {
-      await getApmRepoVersions(
-        web3,
-        apmRepoName,
-        emptyApmOptions,
-        progressHandler
-      )
-    }
-  )
+  const error = await t.throwsAsync(async () => {
+    await getApmRepoVersions(web3, apmRepoName, emptyApmOptions)
+  })
 
   t.is(error.message, 'ens-registry not found in given apm options.')
 })
