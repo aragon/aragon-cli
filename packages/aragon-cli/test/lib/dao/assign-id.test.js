@@ -4,7 +4,6 @@ import proxyquire from 'proxyquire'
 import ENS from 'ethereum-ens'
 import { utils } from 'web3'
 
-
 test('isIdAssigned returns false if ens.addr() throws a NameNotFound error', async t => {
   t.plan(1)
 
@@ -32,7 +31,10 @@ test('assignId throws when called with an invalid address', async t => {
     'ethereum-ens': getENSStub(false),
   })
 
-  await t.throwsAsync(assignId('INVALID ADDRESS', 'id', { web3: getWeb3Stub() }), { message: /Invalid address/ })
+  await t.throwsAsync(
+    assignId('INVALID ADDRESS', 'id', { web3: getWeb3Stub() }),
+    { message: /Invalid address/ }
+  )
 })
 
 test('assignId calls register() and register.send() with the correct parameters', async t => {
@@ -47,7 +49,7 @@ test('assignId calls register() and register.send() with the correct parameters'
 
   const registerSendStub = sinon.stub()
   const registerStub = sinon.stub().returns({
-    send: registerSendStub
+    send: registerSendStub,
   })
   const web3Stub = getWeb3Stub(registerStub)
 
@@ -58,7 +60,9 @@ test('assignId calls register() and register.send() with the correct parameters'
 })
 
 function getLib(loadParams) {
-  return proxyquire.noCallThru().load('../../../src/lib/dao/assign-id.js', loadParams)
+  return proxyquire
+    .noCallThru()
+    .load('../../../src/lib/dao/assign-id.js', loadParams)
 }
 
 function getENSStub(throws = false) {
@@ -68,22 +72,21 @@ function getENSStub(throws = false) {
     resolver: sinon.stub().returns({
       addr: throws
         ? sinon.stub().throws(ENS.NameNotFound)
-        : sinon.stub().returns('dao.aragonid.eth')
-    })
+        : sinon.stub().returns('dao.aragonid.eth'),
+    }),
   })
   ENSStub.NameNotFound = ENS.NameNotFound
 
   return ENSStub
 }
 
-
 function getWeb3Stub(register) {
   return {
-    eth: { 
+    eth: {
       Contract: sinon.stub().returns({
-        methods: { register }
+        methods: { register },
       }),
-      getAccounts: sinon.stub().returns([''])
-    }
+      getAccounts: sinon.stub().returns(['']),
+    },
   }
 }
