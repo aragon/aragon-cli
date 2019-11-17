@@ -4,7 +4,7 @@ const fs = require('fs')
 const tmp = require('tmp')
 const extractContractInfoToFile = require('../../../src/lib/apm/extractContractInfoToFile')
 
-let tempDir, contractPath, outputPath, recordedStep
+let tempDir, contractPath, outputPath
 
 const readOutput = () => JSON.parse(fs.readFileSync(outputPath, 'utf8'))
 
@@ -17,9 +17,11 @@ test.before('create a temp directory and resolve paths', t => {
 })
 
 test.before('call extractContractInfoToFile function', async t => {
-  await extractContractInfoToFile(contractPath, outputPath, step => {
-    recordedStep = step
-  })
+  await extractContractInfoToFile(contractPath, outputPath)
+})
+
+test.after('remove temp directory', t => {
+  tempDir.removeCallback()
 })
 
 test('generates output', t => {
@@ -31,15 +33,7 @@ test('output file contains 2 roles', t => {
   t.is(output.roles.length, 2)
 })
 
-test('output file contains 2 functions', t => {
+test('output file contains 3 functions', t => {
   const output = readOutput()
-  t.is(output.functions.length, 2)
-})
-
-test('progress handler was called', t => {
-  t.is(recordedStep, 1)
-})
-
-test.after('remove temp directory', t => {
-  tempDir.removeCallback()
+  t.is(output.functions.length, 3)
 })

@@ -110,7 +110,7 @@ const extractFunctions = async sourceCode => {
 
 const extractRoles = async functionDescriptors => {
   // Extract all role ids from the function descriptors.
-  let roleSet = new Set()
+  const roleSet = new Set()
   functionDescriptors.forEach(({ roles }) =>
     roles.forEach(role => roleSet.add(role))
   )
