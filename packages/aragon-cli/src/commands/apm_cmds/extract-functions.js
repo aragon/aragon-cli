@@ -1,8 +1,7 @@
 const path = require('path')
-const { keccak256 } = require('web3').utils
-const { writeJson } = require('fs-extra')
-const extract = require('../../helpers/solidity-extractor')
 const chalk = require('chalk')
+const extractContractInfoToFile = require('../../lib/apm/extractContractInfoToFile')
+const TaskList = require('listr')
 
 exports.command = 'extract-functions [contract]'
 
@@ -22,37 +21,22 @@ exports.builder = function(yargs) {
     })
 }
 
-exports.handler = async function({
-  cwd,
-  reporter,
+exports.handler = async function({ cwd, reporter, contract, output }) {
+  let outputPath
 
-  contract,
-  output,
-}) {
-  // Analyse contract functions and returns an array
-  // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
-  const functions = await extract(path.resolve(cwd, contract))
+  const tasks = new TaskList([
+    {
+      title: 'Extracting functions',
+      task: async () => {
+        const contractPath = path.resolve(cwd, contract)
+        const filename = path.basename(contractPath).replace('.sol', '.json')
+        outputPath = path.resolve(output, filename)
+        await extractContractInfoToFile(contractPath, outputPath)
+      },
+    },
+  ])
 
-  let roleSet = new Set()
-  functions.forEach(({ roles }) => roles.forEach(role => roleSet.add(role)))
-  const roleIds = [...roleSet]
-
-  const roles = roleIds.map(id => ({
-    id,
-    bytes: keccak256(id),
-    name: '', // Name and params can't be extracted from solidity file, must be filled in manually
-    params: [],
-  }))
-
-  const content = {
-    roles,
-    functions,
-  }
-
-  const filename = path.basename(contract).replace('.sol', '.json')
-  const outputPath = path.resolve(output, filename)
-
-  await writeJson(outputPath, content, { spaces: '\t' })
-
+  await tasks.run()
   reporter.success(`Saved to ${chalk.blue(outputPath)}`)
+  process.exit()
 }

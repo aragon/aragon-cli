@@ -106,7 +106,7 @@ async function generateApplicationArtifact(
   reporter
 ) {
   // Set appName, path & roles
-  let artifact = Object.assign({}, module)
+  const artifact = Object.assign({}, module)
 
   // Set `appId`
   artifact.appId = namehash.hash(artifact.appName)
@@ -124,7 +124,9 @@ async function generateApplicationArtifact(
 
   // Analyse contract functions and returns an array
   // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
-  artifact.functions = await extract(path.resolve(cwd, artifact.path))
+  artifact.functions = (await extract(
+    path.resolve(cwd, artifact.path)
+  )).functions
   // extract abi for each function
   // > [{ sig: , role: , notice: , abi: }]
   decorateFunctionsWithAbi(artifact.functions, artifact.abi, web3)
