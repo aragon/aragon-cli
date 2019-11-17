@@ -1,26 +1,19 @@
 const { keccak256 } = require('web3').utils
-const path = require('path')
-const { findProjectRoot } = require('../../../../util')
+const { keyBy } = require('lodash')
 const defaultAppsRoles = require('../../../../knownRoles.json')
 
-const currentAppRoles = () => {
-  try {
-    const arappPath = path.resolve(findProjectRoot(), 'arapp.json')
-    return require(arappPath).roles || []
-  } catch (_) {
-    return []
-  }
+/**
+ * Returns this app roles and default known roles
+ *
+ * TODO: add support for user apps
+ * @param {ArappConfig} module arapp.json contents
+ * @return {Object.<string, RoleDefinition>} Unique known roles
+ */
+const getKnownRoles = module => {
+  const currentAppRoles = module ? module.roles : []
+  const allRoles = defaultAppsRoles.concat(currentAppRoles)
+
+  return keyBy(allRoles, role => keccak256(role.id))
 }
 
-// TODO: add support for user apps
-const rolesForApps = () => {
-  const allRoles = defaultAppsRoles.concat(currentAppRoles())
-  const knownRoles = allRoles.reduce(
-    (acc, role) => Object.assign(acc, { [keccak256(role.id)]: role }),
-    {}
-  )
-
-  return knownRoles
-}
-
-module.exports = { rolesForApps }
+module.exports = { getKnownRoles }
