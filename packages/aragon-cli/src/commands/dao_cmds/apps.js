@@ -51,7 +51,6 @@ exports.handler = async function({
 }) {
   knownApps = listApps(module ? [module.appName] : [])
   const web3 = await ensureWeb3(network)
-  let apps, daoAddress
 
   const tasks = new TaskList(
     [
@@ -66,15 +65,15 @@ exports.handler = async function({
             provider: wsProvider || web3.currentProvider,
           }
 
-          apps = await getInstalledApps(dao, options)
-          daoAddress = await getDaoAddress(dao, options)
+          ctx.apps = await getInstalledApps(dao, options)
+          ctx.daoAddress = await getDaoAddress(dao, options)
         },
       },
       {
         title: 'Fetching permissionless apps',
         enabled: () => all,
         task: async (ctx, task) => {
-          const kernel = new web3.eth.Contract(kernelAbi, daoAddress)
+          const kernel = new web3.eth.Contract(kernelAbi, ctx.daoAddress)
 
           const events = await kernel.getPastEvents('NewAppProxy', {
             fromBlock: await kernel.methods.getInitializationBlock().call(),
@@ -89,7 +88,7 @@ exports.handler = async function({
             // Remove apps that have permissions
             .filter(
               ({ proxyAddress }) =>
-                !apps.find(app =>
+                !ctx.apps.find(app =>
                   addressesEqual(app.proxyAddress, proxyAddress)
                 )
             )
@@ -101,18 +100,16 @@ exports.handler = async function({
 
   return tasks.run().then(ctx => {
     reporter.success(
-      `Successfully fetched DAO apps for ${chalk.green(daoAddress)}`
+      `Successfully fetched DAO apps for ${chalk.green(ctx.daoAddress)}`
     )
-    const appsContent = apps
-      .map(
-        ({ appId, proxyAddress, codeAddress, content, appName, version }) => [
-          appName
-            ? printAppNameAndVersion(appName, version)
-            : printAppNameFromAppId(appId),
-          proxyAddress,
-          printContent(content),
-        ]
-      )
+    const appsContent = ctx.apps
+      .map(({ appId, proxyAddress, content, appName, version }) => [
+        appName
+          ? printAppNameAndVersion(appName, version)
+          : printAppNameFromAppId(appId),
+        proxyAddress,
+        printContent(content),
+      ])
       // filter registry name to make it shorter
       // TODO: Add flag to turn off
       .map(row => {
