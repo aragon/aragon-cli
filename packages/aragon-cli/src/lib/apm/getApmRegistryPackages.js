@@ -16,7 +16,7 @@ module.exports = async (
   web3,
   apmRegistryName,
   apmOptions,
-  progressHandler = () => null
+  progressHandler = () => {}
 ) => {
   // Ensure the ens-registry property is present,
   // and available with the name "ensRegistryAddress".
