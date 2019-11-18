@@ -6,8 +6,7 @@ const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const { addressesEqual } = require('../../util')
 const Table = require('cli-table')
-const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
-const { getDaoAddress, getInstalledApps } = require('../../lib/dao/apps')
+const { getDaoAddress, getInstalledApps, getAllApps } = require('../../lib/dao/apps')
 
 let knownApps
 
@@ -74,6 +73,7 @@ exports.handler = async function({
         title: 'Fetching permissionless apps',
         enabled: () => all,
         task: async (ctx, task) => {
+          /*
           const kernel = new web3.eth.Contract(kernelAbi, daoAddress)
 
           const events = await kernel.getPastEvents('NewAppProxy', {
@@ -92,7 +92,8 @@ exports.handler = async function({
                 !apps.find(app =>
                   addressesEqual(app.proxyAddress, proxyAddress)
                 )
-            )
+            )*/
+          ctx.appsWithoutPermissions = await getAllApps(daoAddress, { web3 })
         },
       },
     ],
