@@ -1,4 +1,3 @@
-import { initAragonJS, getApps } from '../../helpers/aragonjs-wrapper'
 const TaskList = require('listr')
 const chalk = require('chalk')
 const daoArg = require('./utils/daoArg')
@@ -8,6 +7,7 @@ const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const { addressesEqual } = require('../../util')
 const Table = require('cli-table')
 const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
+const { getDaoAddress, getInstalledApps } = require('../../lib/dao/apps')
 
 let knownApps
 
@@ -59,22 +59,14 @@ exports.handler = async function({
         task: async (ctx, task) => {
           task.output = `Fetching apps for ${dao}...`
           const { 'ens-registry': ensRegistry, ipfs } = apmOptions
-
-          try {
-            const wrapper = await initAragonJS(dao, ensRegistry, {
-              ipfsConf: ipfs,
-              provider: wsProvider || web3.currentProvider,
-              onDaoAddress: addr => {
-                ctx.daoAddress = addr
-              },
-            })
-
-            ctx.apps = await getApps(wrapper)
-          } catch (err) {
-            reporter.error('Error inspecting DAO apps')
-            reporter.debug(err)
-            process.exit(1)
+          const options = {
+            registryAddress: ensRegistry,
+            ipfs,
+            provider: wsProvider || web3.currentProvider,
           }
+
+          ctx.apps = await getInstalledApps(dao, options)
+          ctx.daoAddress = await getDaoAddress(dao, options)
         },
       },
       {
@@ -111,15 +103,13 @@ exports.handler = async function({
       `Successfully fetched DAO apps for ${chalk.green(ctx.daoAddress)}`
     )
     const appsContent = ctx.apps
-      .map(
-        ({ appId, proxyAddress, codeAddress, content, appName, version }) => [
-          appName
-            ? printAppNameAndVersion(appName, version)
-            : printAppNameFromAppId(appId),
-          proxyAddress,
-          printContent(content),
-        ]
-      )
+      .map(({ appId, proxyAddress, content, appName, version }) => [
+        appName
+          ? printAppNameAndVersion(appName, version)
+          : printAppNameFromAppId(appId),
+        proxyAddress,
+        printContent(content),
+      ])
       // filter registry name to make it shorter
       // TODO: Add flag to turn off
       .map(row => {
