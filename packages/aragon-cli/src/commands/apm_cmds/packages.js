@@ -15,12 +15,7 @@ exports.builder = function(yargs) {
   })
 }
 
-exports.handler = async function({
-  reporter,
-  apmRegistry,
-  network,
-  apm: apmOptions,
-}) {
+exports.handler = async function({ apmRegistry, network, apm: apmOptions }) {
   const web3 = await ensureWeb3(network)
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   let packages

@@ -7,7 +7,7 @@ const web3 = { name: 'web3' }
 const apmRegistryName = 'test.aragonpm.eth'
 const apmOptions = {}
 apmOptions['ens-registry'] = '0x1234512345123451234512345123451234512345'
-const progressHandler = (step) => {}
+const progressHandler = step => {}
 
 /* Setup and cleanup */
 
@@ -17,16 +17,18 @@ test.beforeEach('setup', t => {
     getRepoRegistry: async () => {
       return { getPastEvents: () => [] }
     },
-    getLatestVersion: async () => {}
+    getLatestVersion: async () => {},
   })
 
-  const getApmRegistryPackages = proxyquire.noCallThru().load('../../../src/lib/apm/getApmRegistryPackages', {
-    '@aragon/apm': apmStub,
-  })
+  const getApmRegistryPackages = proxyquire
+    .noCallThru()
+    .load('../../../src/lib/apm/getApmRegistryPackages', {
+      '@aragon/apm': apmStub,
+    })
 
   t.context = {
     getApmRegistryPackages,
-    apmStub
+    apmStub,
   }
 })
 
@@ -56,12 +58,7 @@ test('properly calls the progressHandler', async t => {
 test('tolerates a progressHandler not being specified', async t => {
   const { getApmRegistryPackages } = t.context
 
-  await getApmRegistryPackages(
-    web3,
-    apmRegistryName,
-    apmOptions,
-    undefined
-  )
+  await getApmRegistryPackages(web3, apmRegistryName, apmOptions, undefined)
 
   t.pass()
 })
@@ -78,15 +75,15 @@ test('if events are retrieved, calls apm.getLatestVersion() correctly, and retri
   const aNewRepoEvent = {
     returnValues: {
       name: packageName,
-      id: '0x123'
-    }
+      id: '0x123',
+    },
   }
 
   apmStub.returns({
     getRepoRegistry: async () => {
-      return { getPastEvents: async () => [ aNewRepoEvent ] }
+      return { getPastEvents: async () => [aNewRepoEvent] }
     },
-    getLatestVersion
+    getLatestVersion,
   })
 
   const packages = await getApmRegistryPackages(
@@ -96,11 +93,7 @@ test('if events are retrieved, calls apm.getLatestVersion() correctly, and retri
     progressHandler
   )
 
-  t.true(
-    getLatestVersion.calledOnceWith(
-      aNewRepoEvent.returnValues.id
-    )
-  )
+  t.true(getLatestVersion.calledOnceWith(aNewRepoEvent.returnValues.id))
 
   const aPackage = packages[0]
   t.is(aPackage.name, packageName)
@@ -116,7 +109,7 @@ test('if no events are retrieved, does not call apm.getLatestVersion()', async t
     getRepoRegistry: async () => {
       return { getPastEvents: () => [] }
     },
-    getLatestVersion
+    getLatestVersion,
   })
 
   await getApmRegistryPackages(
@@ -126,9 +119,7 @@ test('if no events are retrieved, does not call apm.getLatestVersion()', async t
     progressHandler
   )
 
-  t.true(
-    getLatestVersion.notCalled
-  )
+  t.true(getLatestVersion.notCalled)
 })
 
 test('calls registry.getPastEvents() with the correct parameters', async t => {
@@ -141,7 +132,7 @@ test('calls registry.getPastEvents() with the correct parameters', async t => {
     getRepoRegistry: async () => {
       return { getPastEvents }
     },
-    getLatestVersion: () => {}
+    getLatestVersion: () => {},
   })
 
   await getApmRegistryPackages(
@@ -151,12 +142,7 @@ test('calls registry.getPastEvents() with the correct parameters', async t => {
     progressHandler
   )
 
-  t.true(
-    getPastEvents.calledOnceWith(
-      'NewRepo',
-      { fromBlock: 0 }
-    )
-  )
+  t.true(getPastEvents.calledOnceWith('NewRepo', { fromBlock: 0 }))
 })
 
 test('calls apm.getRepoRegistry() with the correct parameters', async t => {
@@ -167,7 +153,7 @@ test('calls apm.getRepoRegistry() with the correct parameters', async t => {
 
   apmStub.returns({
     getRepoRegistry,
-    getLatestVersion: async () => {}
+    getLatestVersion: async () => {},
   })
 
   await getApmRegistryPackages(
@@ -177,11 +163,7 @@ test('calls apm.getRepoRegistry() with the correct parameters', async t => {
     progressHandler
   )
 
-  t.true(
-    getRepoRegistry.calledOnceWith(
-      `vault.${apmRegistryName}`
-    )
-  )
+  t.true(getRepoRegistry.calledOnceWith(`vault.${apmRegistryName}`))
 })
 
 test('APM constructor gets called with the appropriate parameters', async t => {
@@ -194,12 +176,7 @@ test('APM constructor gets called with the appropriate parameters', async t => {
     progressHandler
   )
 
-  t.true(
-    apmStub.calledOnceWith(
-      web3,
-      apmOptions
-    )
-  )
+  t.true(apmStub.calledOnceWith(web3, apmOptions))
 })
 
 test('fails if apmOptions does not contain an ens-registry property', async t => {
@@ -207,16 +184,14 @@ test('fails if apmOptions does not contain an ens-registry property', async t =>
 
   const emptyApmOptions = {}
 
-  const error = await t.throwsAsync(
-    async () => {
-      await getApmRegistryPackages(
-        web3,
-        apmRegistryName,
-        emptyApmOptions,
-        progressHandler
-      )
-    }
-  )
+  const error = await t.throwsAsync(async () => {
+    await getApmRegistryPackages(
+      web3,
+      apmRegistryName,
+      emptyApmOptions,
+      progressHandler
+    )
+  })
 
   t.is(error.message, 'ens-registry not found in given apm options.')
 })
