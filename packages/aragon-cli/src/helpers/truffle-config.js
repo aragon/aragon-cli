@@ -15,7 +15,7 @@ const getTruffleConfig = () => {
   } catch (err) {
     console.log(err)
     // This means you are running init
-    return null
+    return undefined
   }
 
   throw new Error(`Didn't find any truffle.js file`)

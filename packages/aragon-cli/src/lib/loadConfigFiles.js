@@ -9,14 +9,14 @@ const ajv = new Ajv({ allErrors: true })
  * Looks for a filename recursively up from the cwd
  * Return null if the file is not found or can't be loaded
  * @param {string} fileName
- * @return {Object|null} Parsed file JSON content
+ * @return {Object|undefined} Parsed file JSON content
  */
 function loadJsonFileIfFound(fileName) {
   try {
     const filePath = path.resolve(findProjectRoot(), fileName)
     return fs.readJsonSync(filePath)
   } catch (e) {
-    return null
+    return undefined
   }
 }
 
@@ -26,7 +26,7 @@ function loadJsonFileIfFound(fileName) {
  */
 export function loadArappFile() {
   const arapp = loadJsonFileIfFound('arapp.json')
-  if (!arapp) return null
+  if (!arapp) return undefined // use undefined not null; for default values
 
   const validate = ajv.compile(arappSchema)
   const valid = validate(arapp)
