@@ -48,12 +48,9 @@ test('properly calls the progressHandler', async t => {
     progressHandlerSpy
   )
 
-  t.is(progressHandlerSpy.callCount, 5)
+  t.is(progressHandlerSpy.callCount, 2)
   t.true(progressHandlerSpy.getCall(0).calledWith(1))
   t.true(progressHandlerSpy.getCall(1).calledWith(2))
-  t.true(progressHandlerSpy.getCall(2).calledWith(3))
-  t.true(progressHandlerSpy.getCall(3).calledWith(4))
-  t.true(progressHandlerSpy.getCall(4).calledWith(5))
 })
 
 test('tolerates a progressHandler not being specified', async t => {
