@@ -2668,9 +2668,9 @@
       }
     },
     "date-fns": {
-      "version": "1.30.1",
-      "resolved": "https://registry.npmjs.org/date-fns/-/date-fns-1.30.1.tgz",
-      "integrity": "sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw=="
+      "version": "2.7.0",
+      "resolved": "https://registry.npmjs.org/date-fns/-/date-fns-2.7.0.tgz",
+      "integrity": "sha512-wxYp2PGoUDN5ZEACc61aOtYFvSsJUylIvCjpjDOqM1UDaKIIuMJ9fAnMYFHV3TQaDpfTVxhwNK/GiCaHKuemTA=="
     },
     "date-time": {
       "version": "2.1.0",
@@ -5796,6 +5796,32 @@
         "listr-verbose-renderer": "^0.5.0",
         "p-map": "^2.0.0",
         "rxjs": "^6.3.3"
+      },
+      "dependencies": {
+        "date-fns": {
+          "version": "1.30.1",
+          "resolved": "https://registry.npmjs.org/date-fns/-/date-fns-1.30.1.tgz",
+          "integrity": "sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw=="
+        },
+        "figures": {
+          "version": "2.0.0",
+          "resolved": "https://registry.npmjs.org/figures/-/figures-2.0.0.tgz",
+          "integrity": "sha1-OrGi0qYsi/tDGgyUy3l6L84nyWI=",
+          "requires": {
+            "escape-string-regexp": "^1.0.5"
+          }
+        },
+        "listr-verbose-renderer": {
+          "version": "0.5.0",
+          "resolved": "https://registry.npmjs.org/listr-verbose-renderer/-/listr-verbose-renderer-0.5.0.tgz",
+          "integrity": "sha512-04PDPqSlsqIOaaaGZ+41vq5FejI9auqTInicFRndCBgE3bXG8D6W1I+mWhk+1nqbHmyhla/6BUrd5OSiHwKRXw==",
+          "requires": {
+            "chalk": "^2.4.1",
+            "cli-cursor": "^2.1.0",
+            "date-fns": "^1.27.2",
+            "figures": "^2.0.0"
+          }
+        }
       }
     },
     "listr-silent-renderer": {
@@ -5852,13 +5878,13 @@
       }
     },
     "listr-verbose-renderer": {
-      "version": "0.5.0",
-      "resolved": "https://registry.npmjs.org/listr-verbose-renderer/-/listr-verbose-renderer-0.5.0.tgz",
-      "integrity": "sha512-04PDPqSlsqIOaaaGZ+41vq5FejI9auqTInicFRndCBgE3bXG8D6W1I+mWhk+1nqbHmyhla/6BUrd5OSiHwKRXw==",
+      "version": "0.6.0",
+      "resolved": "https://registry.npmjs.org/listr-verbose-renderer/-/listr-verbose-renderer-0.6.0.tgz",
+      "integrity": "sha512-P3bA/giMu432bs3gHiKXKOIHlWanCIlRhbhCfgKNgCoyvTvZsdbfkgX1BvThYXhm36cS8pOX3Z5vxXBFZC+NQw==",
       "requires": {
         "chalk": "^2.4.1",
         "cli-cursor": "^2.1.0",
-        "date-fns": "^1.27.2",
+        "date-fns": "^2.0.1",
         "figures": "^2.0.0"
       },
       "dependencies": {
