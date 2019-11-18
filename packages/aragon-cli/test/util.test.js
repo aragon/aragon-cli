@@ -72,11 +72,14 @@ test('parseArgumentStringIfPossible should parse a boolean string', t => {
   t.is(parseArgumentStringIfPossible('False'), false)
 })
 
-
 test('parseArgumentStringIfPossible should parse an array as string', t => {
-  t.deepEqual(parseArgumentStringIfPossible('["test"]' ), ['test'])
-  t.deepEqual(parseArgumentStringIfPossible('[1, 2, "3"]' ), [1, 2, "3"])
-  t.deepEqual(parseArgumentStringIfPossible('["hello", 1, "true"]'), ['hello', 1, 'true'])
+  t.deepEqual(parseArgumentStringIfPossible('["test"]'), ['test'])
+  t.deepEqual(parseArgumentStringIfPossible('[1, 2, "3"]'), [1, 2, '3'])
+  t.deepEqual(parseArgumentStringIfPossible('["hello", 1, "true"]'), [
+    'hello',
+    1,
+    'true',
+  ])
 })
 
 function normalizePath(path) {
