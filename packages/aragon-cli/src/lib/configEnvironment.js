@@ -16,7 +16,7 @@ export class NoNetworkInTruffleConfig extends Error {}
 
 function getEnv(arapp, environment) {
   if (arapp) {
-    if (!environment) environment = 'rpc'
+    if (!environment) environment = 'default'
     const env = arapp.environments[environment]
     if (!env) throw new NoEnvironmentInArapp(environment)
     return env
