@@ -3,18 +3,19 @@ import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 
 test.beforeEach(t => {
-  const utilStub = {
+  const util = {
     getContract: sinon.stub(),
     getRecommendedGasLimit: sinon.stub(),
+    ZERO_ADDRESS: '0x00000zero000addr',
   }
 
   const tokenLib = proxyquire.noCallThru().load('../../src/lib/token', {
-    '../util': utilStub,
+    '../util': util,
   })
 
   t.context = {
     tokenLib,
-    utilStub,
+    util,
   }
 })
 
@@ -22,46 +23,147 @@ test.afterEach.always(() => {
   sinon.restore()
 })
 
-test('deployMiniMeTokenFactory: should deploy a contract with the right bytecode', async t => {
-  t.plan(3)
+test('deployMiniMeTokenFactory: should deploy the contract with the right args', async t => {
+  t.plan(7)
   // arrange
-  const { tokenLib, utilStub } = t.context
-  utilStub.getContract.returns({ bytecode: '0xFACADE' })
+  const { tokenLib, util } = t.context
+  util.getContract.returns({ bytecode: '0xFACADE' })
+  util.getRecommendedGasLimit.returns(101)
 
   const sendPromise = () => Promise.resolve()
-  sendPromise.on = sinon.stub()
+  sendPromise.on = sinon
+    .stub()
+    .onCall(0)
+    .callsArgWith(1, { contractAddress: '0x00009' })
+    .onCall(1)
+    .callsArgWith(1, '0x0000f')
 
   const transaction = {
-    send: () => sendPromise,
-    estimateGas: () => 10,
+    send: sinon.stub().returns(sendPromise),
+    estimateGas: () => 100,
   }
-  const Contract = class {
-    constructor() {
-      return {
-        deploy: () => transaction,
-      }
-    }
+  const contract = {
+    deploy: sinon.stub().returns(transaction),
   }
-  const web3Stub = {
+  const web3 = {
     eth: {
-      Contract,
+      Contract: class {
+        constructor() {
+          return contract
+        }
+      },
     },
   }
   const progressCallback = sinon.stub()
   // act
-  await tokenLib.deployMiniMeTokenFactory(
-    web3Stub,
+  const result = await tokenLib.deployMiniMeTokenFactory(
+    web3,
     '0xSATOSHI',
     21,
     progressCallback
   )
   // assert
-  t.true(
-    utilStub.getContract.calledOnceWith(
-      '@aragon/apps-shared-minime',
-      'MiniMeTokenFactory'
-    )
-  )
+  t.deepEqual(util.getContract.getCall(0).args, [
+    '@aragon/apps-shared-minime',
+    'MiniMeTokenFactory',
+  ])
+  t.deepEqual(util.getRecommendedGasLimit.getCall(0).args, [web3, 100])
+  t.deepEqual(transaction.send.getCall(0).args, [
+    {
+      from: '0xSATOSHI',
+      gas: 101,
+      gasPrice: 21,
+    },
+  ])
+  t.deepEqual(contract.deploy.getCall(0).args, [
+    {
+      arguments: [],
+      data: '0xFACADE',
+    },
+  ])
   t.true(sendPromise.on.calledTwice)
   t.true(progressCallback.calledThrice)
+  t.deepEqual(result, {
+    address: '0x00009',
+    txHash: '0x0000f',
+  })
+})
+
+test('deployMiniMeToken: should deploy the contract with the right args', async t => {
+  t.plan(7)
+  // arrange
+  const { tokenLib, util } = t.context
+  util.getContract.returns({ bytecode: '0xFACADE' })
+  util.getRecommendedGasLimit.returns(101)
+
+  const sendPromise = () => Promise.resolve()
+  sendPromise.on = sinon
+    .stub()
+    .onCall(0)
+    .callsArgWith(1, { contractAddress: '0x00009' })
+    .onCall(1)
+    .callsArgWith(1, '0x0000f')
+
+  const transaction = {
+    send: sinon.stub().returns(sendPromise),
+    estimateGas: () => 100,
+  }
+  const contract = {
+    deploy: sinon.stub().returns(transaction),
+  }
+  const web3 = {
+    eth: {
+      Contract: class {
+        constructor() {
+          return contract
+        }
+      },
+    },
+  }
+  const progressCallback = sinon.stub()
+  // act
+  const result = await tokenLib.deployMiniMeToken(
+    web3,
+    '0xSATOSHI',
+    21,
+    'New bitcoin',
+    12,
+    'NT',
+    true,
+    '0xMiniMeFactory',
+    progressCallback
+  )
+  // assert
+  t.deepEqual(util.getContract.getCall(0).args, [
+    '@aragon/apps-shared-minime',
+    'MiniMeToken',
+  ])
+  t.deepEqual(util.getRecommendedGasLimit.getCall(0).args, [web3, 100])
+  t.deepEqual(transaction.send.getCall(0).args, [
+    {
+      from: '0xSATOSHI',
+      gas: 101,
+      gasPrice: 21,
+    },
+  ])
+  t.deepEqual(contract.deploy.getCall(0).args, [
+    {
+      arguments: [
+        '0xMiniMeFactory',
+        '0x00000zero000addr',
+        0,
+        'New bitcoin',
+        12,
+        'NT',
+        true,
+      ],
+      data: '0xFACADE',
+    },
+  ])
+  t.true(sendPromise.on.calledTwice)
+  t.true(progressCallback.calledThrice)
+  t.deepEqual(result, {
+    address: '0x00009',
+    txHash: '0x0000f',
+  })
 })
