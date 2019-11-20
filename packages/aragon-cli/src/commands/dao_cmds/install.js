@@ -15,8 +15,12 @@ const {
   NO_MANAGER,
   ZERO_ADDRESS,
 } = require('../../util')
-const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
+const {
+  getAclAddress,
+  getAppProxyAddressFromReceipt,
+  getAppBase,
+} = require('../../lib/dao/kernel')
 
 exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'
 
@@ -70,8 +74,6 @@ exports.task = async ({
         registryAddress: apmOptions.ensRegistryAddress,
       })
 
-  const kernel = new web3.eth.Contract(kernelAbi, dao)
-
   const tasks = new TaskList(
     [
       {
@@ -86,12 +88,7 @@ exports.task = async ({
       {
         title: `Checking installed version`,
         task: async (ctx, task) => {
-          const basesNamespace = await kernel.methods
-            .APP_BASES_NAMESPACE()
-            .call()
-          const currentBase = await kernel.methods
-            .getApp(basesNamespace, ctx.repo.appId)
-            .call()
+          const currentBase = await getAppBase(dao, ctx.repo.appId, web3)
           if (currentBase === ZERO_ADDRESS) {
             task.skip(`Installing the first instance of ${apmRepo} in DAO`)
             return
@@ -143,29 +140,9 @@ exports.task = async ({
       {
         title: 'Fetching deployed app',
         task: async (ctx, task) => {
-          const logABI = kernelAbi.find(
-            ({ type, name }) => type === 'event' && name === 'NewAppProxy'
-          )
-          if (!logABI) {
-            throw new Error(
-              'Kernel ABI in aragon.js doesnt contain NewAppProxy log'
-            )
-          }
-          const logSignature = `${logABI.name}(${logABI.inputs
-            .map(i => i.type)
-            .join(',')})`
-          const logTopic = web3.utils.sha3(logSignature)
-          const deployLog = ctx.receipt.logs.find(({ topics, address }) => {
-            return topics[0] === logTopic && addressesEqual(dao, address)
-          })
-
-          if (!deployLog) {
-            task.skip("App wasn't deployed in transaction.")
-            return
-          }
-
-          const log = web3.eth.abi.decodeLog(logABI.inputs, deployLog.data)
-          ctx.appAddress = log.proxy
+          const appAddress = getAppProxyAddressFromReceipt(dao, ctx.receipt)
+          if (appAddress) ctx.appAddress = appAddress
+          else task.skip("App wasn't deployed in transaction.")
         },
       },
       {
@@ -188,8 +165,8 @@ exports.task = async ({
           if (!ctx.accounts) {
             ctx.accounts = await web3.eth.getAccounts()
           }
-          const daoInstance = new web3.eth.Contract(kernelAbi, dao)
-          const aclAddress = await daoInstance.methods.acl().call()
+
+          const aclAddress = await getAclAddress(dao)
 
           return Promise.all(
             permissions.map(params => {
