@@ -9,7 +9,7 @@ const chalk = require('chalk')
 const startIPFS = require('../ipfs_cmds/start')
 const getRepoTask = require('./utils/getRepoTask')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
+const { getBasesNamespace } = require('../../lib/dao/kernel')
 
 exports.command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
 
@@ -59,11 +59,7 @@ exports.task = async ({
       {
         title: 'Upgrading app',
         task: async ctx => {
-          const kernel = new web3.eth.Contract(kernelAbi, dao)
-
-          const basesNamespace = await kernel.methods
-            .APP_BASES_NAMESPACE()
-            .call()
+          const basesNamespace = await getBasesNamespace(dao, web3)
 
           return execTask({
             dao,

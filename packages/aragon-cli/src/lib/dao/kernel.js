@@ -54,16 +54,30 @@ Kernel ABI log ${newAppProxyLogName} does not have expected argument 'log'`)
  * @param {string} dao DAO address
  * @param {string} appId APP id to get the base of
  * @param {Object} web3 Web3 initialized object
+ * @return {Promise<string>} basesNamespace
+ */
+async function getBasesNamespace(dao, web3) {
+  const kernel = new web3.eth.Contract(kernelAbi, dao)
+  return kernel.methods.APP_BASES_NAMESPACE().call()
+}
+
+/**
+ * Returns the current app base address for an appId
+ *
+ * @param {string} dao DAO address
+ * @param {string} appId APP id to get the base of
+ * @param {Object} web3 Web3 initialized object
  * @return {Promise<string>} currentBaseAddress
  */
 async function getAppBase(dao, appId, web3) {
   const kernel = new web3.eth.Contract(kernelAbi, dao)
-  const basesNamespace = await kernel.methods.APP_BASES_NAMESPACE().call()
+  const basesNamespace = await getBasesNamespace(dao, web3)
   return kernel.methods.getApp(basesNamespace, appId).call()
 }
 
 module.exports = {
   getAclAddress,
   getAppProxyAddressFromReceipt,
+  getBasesNamespace,
   getAppBase,
 }
