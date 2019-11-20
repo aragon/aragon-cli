@@ -64,7 +64,7 @@ test.afterEach('cleanup', t => {
 
 /* Tests */
 
-test('properly calls the progressHandler when something errors', async t => {
+test('properly throws when transaction fails', async t => {
   const { grantNewVersionsPermission, web3Stub } = t.context
 
   const progressHandlerSpy = sinon.spy()
@@ -73,20 +73,16 @@ test('properly calls the progressHandler when something errors', async t => {
   sendTransactionStub.throws('Some error')
   web3Stub.eth.sendTransaction = sendTransactionStub
 
-  await grantNewVersionsPermission(
-    web3Stub,
-    apmRepoName,
-    apmOptions,
-    grantees,
-    progressHandlerSpy,
-    txOptions
+  await t.throwsAsync(
+    grantNewVersionsPermission(
+      web3Stub,
+      apmRepoName,
+      apmOptions,
+      grantees,
+      progressHandlerSpy,
+      txOptions
+    )
   )
-
-  t.is(progressHandlerSpy.callCount, 3)
-  t.true(progressHandlerSpy.getCall(0).calledWith(1))
-  t.true(progressHandlerSpy.getCall(1).calledWith(2, grantees[0]))
-  t.true(progressHandlerSpy.getCall(2).calledWith(4))
-  // Note: progressHandler(3) should not be called because of the error
 })
 
 test('properly calls the progressHandler when nothing errors', async t => {

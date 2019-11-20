@@ -50,11 +50,7 @@ module.exports = async (
     transaction.gasPrice = gasPrice
     // the recommended gasLimit is already calculated by the ACL module
 
-    try {
-      const receipt = await web3.eth.sendTransaction(transaction)
-      progressHandler(3, receipt.transactionHash)
-    } catch (error) {
-      progressHandler(4, error)
-    }
+    const receipt = await web3.eth.sendTransaction(transaction)
+    progressHandler(3, receipt.transactionHash)
   }
 }

@@ -45,20 +45,22 @@ exports.handler = async function({
         const txHash = data
         reporter.success(`Successful transaction (${chalk.blue(txHash)})`)
         break
-      case 4:
-        reporter.error(`${data}\n${chalk.red('Transaction failed')}`)
-        process.exit(1)
     }
   }
 
-  await grantNewVersionsPermission(
-    web3,
-    module.appName,
-    apmOptions,
-    grantees,
-    progressHandler,
-    { gasPrice: gasPrice || network.gasPrice }
-  )
+  try {
+    await grantNewVersionsPermission(
+      web3,
+      module.appName,
+      apmOptions,
+      grantees,
+      progressHandler,
+      { gasPrice: gasPrice || network.gasPrice }
+    )
+  } catch (err) {
+    reporter.error(`${err}\n${chalk.red('Command failed')}`)
+    process.exit(1)
+  }
 
   process.exit(0)
 }
