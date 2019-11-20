@@ -1,5 +1,4 @@
 const execTask = require('./utils/execHandler').task
-const { resolveEnsDomain } = require('../../helpers/aragonjs-wrapper')
 const TaskList = require('listr')
 const daoArg = require('./utils/daoArg')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
@@ -21,6 +20,7 @@ const {
   getAppProxyAddressFromReceipt,
   getAppBase,
 } = require('../../lib/dao/kernel')
+const { resolveAddressOrEnsDomain } = require('../../lib/dao/utils')
 
 exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'
 
@@ -66,13 +66,7 @@ exports.task = async ({
   const apm = await APM(web3, apmOptions)
 
   apmRepo = defaultAPMName(apmRepo)
-
-  dao = /0x[a-fA-F0-9]{40}/.test(dao)
-    ? dao
-    : await resolveEnsDomain(dao, {
-        provider: web3.currentProvider,
-        registryAddress: apmOptions.ensRegistryAddress,
-      })
+  dao = await resolveAddressOrEnsDomain(dao, web3, apmOptions['ens-registry'])
 
   const tasks = new TaskList(
     [
