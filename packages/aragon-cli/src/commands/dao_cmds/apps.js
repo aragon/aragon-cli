@@ -1,5 +1,5 @@
 const TaskList = require('listr')
-const chalk = require('chalk')
+const { blue, green, white } = require('chalk')
 const daoArg = require('./utils/daoArg')
 const { listApps } = require('./utils/knownApps')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
@@ -22,11 +22,11 @@ exports.builder = function(yargs) {
 }
 
 const printAppNameFromAppId = appId => {
-  return knownApps[appId] ? chalk.blue(knownApps[appId]) : appId
+  return knownApps[appId] ? blue(knownApps[appId]) : appId
 }
 
 const printAppNameAndVersion = (appName, version) => {
-  return version ? chalk.blue(`${appName}@v${version}`) : chalk.blue(appName)
+  return version ? blue(`${appName}@v${version}`) : blue(appName)
 }
 
 const printContent = content => {
@@ -35,6 +35,46 @@ const printContent = content => {
   }
 
   return `${content.provider}:${content.location}`
+}
+
+const printApps = apps => {
+  const appsContent = apps
+    .map(
+      ({ appId, proxyAddress, codeAddress, content, appName, version }) => [
+        appName
+          ? printAppNameAndVersion(appName, version)
+          : printAppNameFromAppId(appId),
+        proxyAddress,
+        printContent(content),
+      ]
+    )
+    // filter registry name to make it shorter
+    // TODO: Add flag to turn off
+    .map(row => {
+      row[0] = row[0].replace('.aragonpm.eth', '')
+      return row
+    })
+
+  const table = new Table({
+    head: ['App', 'Proxy address', 'Content'].map(x => white(x)),
+  })
+  appsContent.forEach(row => table.push(row))
+  console.log(table.toString())
+}
+
+const printPermissionlessApps = apps => {
+  if (apps && apps.length) {
+    const tableForPermissionlessApps = new Table({
+      head: ['Permissionless app', 'Proxy address'].map(x => white(x)),
+    })
+    apps.forEach(app =>
+      tableForPermissionlessApps.push([
+        printAppNameFromAppId(app.appId).replace('.aragonpm.eth', ''),
+        app.proxyAddress,
+      ])
+    )
+    console.log(tableForPermissionlessApps.toString())
+  }
 }
 
 exports.handler = async function({
@@ -50,7 +90,7 @@ exports.handler = async function({
 }) {
   knownApps = listApps(module ? [module.appName] : [])
   const web3 = await ensureWeb3(network)
-  let apps, daoAddress
+  let apps, daoAddress, appsWithoutPermissions
 
   const tasks = new TaskList(
     [
@@ -73,74 +113,22 @@ exports.handler = async function({
         title: 'Fetching permissionless apps',
         enabled: () => all,
         task: async (ctx, task) => {
-          /*
-          const kernel = new web3.eth.Contract(kernelAbi, daoAddress)
-
-          const events = await kernel.getPastEvents('NewAppProxy', {
-            fromBlock: await kernel.methods.getInitializationBlock().call(),
-            toBlock: 'latest',
-          })
-
-          ctx.appsWithoutPermissions = events
-            .map(event => ({
-              proxyAddress: event.returnValues.proxy,
-              appId: event.returnValues.appId,
-            }))
-            // Remove apps that have permissions
-            .filter(
-              ({ proxyAddress }) =>
-                !apps.find(app =>
-                  addressesEqual(app.proxyAddress, proxyAddress)
-                )
-            )*/
-          ctx.appsWithoutPermissions = await getAllApps(daoAddress, { web3 })
+          appsWithoutPermissions = (await getAllApps(daoAddress, { web3 }))
+            .filter(({ proxyAddress }) => 
+              !apps.find(app => addressesEqual(app.proxyAddress, proxyAddress))
+            )
         },
       },
     ],
     listrOpts(silent, debug)
   )
 
-  return tasks.run().then(ctx => {
-    reporter.success(
-      `Successfully fetched DAO apps for ${chalk.green(daoAddress)}`
-    )
-    const appsContent = apps
-      .map(
-        ({ appId, proxyAddress, codeAddress, content, appName, version }) => [
-          appName
-            ? printAppNameAndVersion(appName, version)
-            : printAppNameFromAppId(appId),
-          proxyAddress,
-          printContent(content),
-        ]
-      )
-      // filter registry name to make it shorter
-      // TODO: Add flag to turn off
-      .map(row => {
-        row[0] = row[0].replace('.aragonpm.eth', '')
-        return row
-      })
+  await tasks.run()
 
-    const table = new Table({
-      head: ['App', 'Proxy address', 'Content'].map(x => chalk.white(x)),
-    })
-    appsContent.forEach(row => table.push(row))
-    console.log(table.toString())
+  reporter.success(`Successfully fetched DAO apps for ${green(daoAddress)}`)
 
-    // Print permisionless apps
-    if (ctx.appsWithoutPermissions) {
-      const tableForPermissionlessApps = new Table({
-        head: ['Permissionless app', 'Proxy address'].map(x => chalk.white(x)),
-      })
-      ctx.appsWithoutPermissions.forEach(app =>
-        tableForPermissionlessApps.push([
-          printAppNameFromAppId(app.appId).replace('.aragonpm.eth', ''),
-          app.proxyAddress,
-        ])
-      )
-      console.log(tableForPermissionlessApps.toString())
-    }
-
-    process.exit() // force exit, as aragonjs hangs
-  })
+  printApps(apps)
+  printPermissionlessApps(appsWithoutPermissions)
+  process.exit() 
+  
 }
