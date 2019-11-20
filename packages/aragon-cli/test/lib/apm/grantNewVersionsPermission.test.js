@@ -82,13 +82,11 @@ test('properly calls the progressHandler when something errors', async t => {
     txOptions
   )
 
-  t.is(progressHandlerSpy.callCount, 5)
+  t.is(progressHandlerSpy.callCount, 3)
   t.true(progressHandlerSpy.getCall(0).calledWith(1))
-  t.true(progressHandlerSpy.getCall(1).calledWith(2))
-  t.true(progressHandlerSpy.getCall(2).calledWith(3, grantees[0]))
-  // Note: progressHandler(4) should not be called because of the error
-  t.true(progressHandlerSpy.getCall(3).calledWith(5))
-  t.true(progressHandlerSpy.getCall(4).calledWith(6))
+  t.true(progressHandlerSpy.getCall(1).calledWith(2, grantees[0]))
+  t.true(progressHandlerSpy.getCall(2).calledWith(4))
+  // Note: progressHandler(3) should not be called because of the error
 })
 
 test('properly calls the progressHandler when nothing errors', async t => {
@@ -111,13 +109,11 @@ test('properly calls the progressHandler when nothing errors', async t => {
     txOptions
   )
 
-  t.is(progressHandlerSpy.callCount, 5)
+  t.is(progressHandlerSpy.callCount, 3)
   t.true(progressHandlerSpy.getCall(0).calledWith(1))
-  t.true(progressHandlerSpy.getCall(1).calledWith(2))
-  t.true(progressHandlerSpy.getCall(2).calledWith(3, grantees[0]))
-  t.true(progressHandlerSpy.getCall(3).calledWith(4, transactionHash))
-  // Note: progressHandler(5) is called when a tx errors
-  t.true(progressHandlerSpy.getCall(4).calledWith(6))
+  t.true(progressHandlerSpy.getCall(1).calledWith(2, grantees[0]))
+  t.true(progressHandlerSpy.getCall(2).calledWith(3, transactionHash))
+  // Note: progressHandler(4) is called when a tx errors
 })
 
 test('properly calls web3.eth.sendTransaction() with expected transaction parameters', async t => {

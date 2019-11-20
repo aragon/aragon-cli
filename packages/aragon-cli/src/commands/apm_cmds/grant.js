@@ -19,7 +19,6 @@ exports.handler = async function({
   // Globals
   reporter,
   gasPrice,
-  cwd,
   network,
   module,
   apm: apmOptions,
@@ -32,10 +31,9 @@ exports.handler = async function({
   const progressHandler = (step, data) => {
     switch (step) {
       case 1:
+        reporter.info(`Fetching repository`)
         break
       case 2:
-        break
-      case 3:
         const address = data
         reporter.info(
           `Granting permission to publish on ${chalk.blue(
@@ -43,15 +41,13 @@ exports.handler = async function({
           )} for ${address}`
         )
         break
-      case 4:
+      case 3:
         const txHash = data
         reporter.success(`Successful transaction (${chalk.blue(txHash)})`)
         break
-      case 5:
+      case 4:
         reporter.error(`${data}\n${chalk.red('Transaction failed')}`)
         process.exit(1)
-      case 6:
-        break
     }
   }
 

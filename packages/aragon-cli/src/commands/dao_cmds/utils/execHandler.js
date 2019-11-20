@@ -119,7 +119,7 @@ async function handler(args) {
     web3: await ensureWeb3(args.network),
   }
 
-  const tasks = await exports.task(args)
+  const tasks = await task(args)
 
   return tasks.run().then(ctx => {
     args.reporter.success(

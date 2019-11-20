@@ -6,15 +6,11 @@ module.exports = async (
   apmRepoName,
   apmOptions,
   grantees,
-  progressHandler,
+  progressHandler = () => {},
   { gasPrice }
 ) => {
   if (grantees.length === 0) {
     throw new Error('No grantee addresses provided')
-  }
-
-  if (progressHandler) {
-    progressHandler(1)
   }
 
   // Ensure the ens-registry property is present,
@@ -30,9 +26,7 @@ module.exports = async (
   const apm = await APM(web3, apmOptions)
   const acl = ACL(web3)
 
-  if (progressHandler) {
-    progressHandler(2)
-  }
+  progressHandler(1)
 
   const repo = await apm.getRepository(apmRepoName)
   if (repo === null) {
@@ -43,9 +37,7 @@ module.exports = async (
 
   /* eslint-disable-next-line */
   for (const address of grantees) {
-    if (progressHandler) {
-      progressHandler(3, address)
-    }
+    progressHandler(2, address)
 
     // Decode sender
     const accounts = await web3.eth.getAccounts()
@@ -60,17 +52,9 @@ module.exports = async (
 
     try {
       const receipt = await web3.eth.sendTransaction(transaction)
-      if (progressHandler) {
-        progressHandler(4, receipt.transactionHash)
-      }
+      progressHandler(3, receipt.transactionHash)
     } catch (error) {
-      if (progressHandler) {
-        progressHandler(5, error)
-      }
+      progressHandler(4, error)
     }
-  }
-
-  if (progressHandler) {
-    progressHandler(6)
   }
 }
