@@ -6,8 +6,8 @@ import sinon from 'sinon'
 export function apmStub() {
   const apmStub = sinon.stub()
   apmStub.returns({
-    getAllVersions: async () => { },
-    getLatestVersion: async () => { },
+    getAllVersions: async () => {},
+    getLatestVersion: async () => {},
     getRepoRegistry: async () => {
       return { getPastEvents: () => [] }
     },
@@ -16,12 +16,11 @@ export function apmStub() {
         options: { address: '0x1234512345123451234512345123451234512345' },
       }
     },
-    getVersion: async () => { },
+    getVersion: async () => {},
   })
 
   return apmStub
 }
-
 
 /**
  * web3 stub with `eth` object
@@ -38,7 +37,9 @@ export function web3Stub() {
             '0x1234512345123451234512345123451234512345123451234512345123451234',
         }
       },
-      getAccounts: sinon.stub().returns(['0x1234512345123451234512345123451234512345']),
+      getAccounts: sinon
+        .stub()
+        .returns(['0x1234512345123451234512345123451234512345']),
     },
   }
 }
