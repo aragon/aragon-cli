@@ -46,22 +46,23 @@ exports.builder = function(yargs) {
     })
 }
 
-exports.task = async ({
-  wsProvider,
-  web3,
+exports.handler = async function({
   reporter,
   dao,
   gasPrice,
   network,
-  apmOptions,
+  apm: apmOptions,
   apmRepo,
   apmRepoVersion,
   appInit,
   appInitArgs,
   setPermissions,
+  wsProvider,
   silent,
   debug,
-}) => {
+}) {
+  const web3 = await ensureWeb3(network)
+
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
@@ -189,43 +190,7 @@ exports.task = async ({
     listrOpts(silent, debug)
   )
 
-  return tasks
-}
-
-exports.handler = async function({
-  reporter,
-  dao,
-  gasPrice,
-  network,
-  apm: apmOptions,
-  apmRepo,
-  apmRepoVersion,
-  appInit,
-  appInitArgs,
-  setPermissions,
-  wsProvider,
-  silent,
-  debug,
-}) {
-  const web3 = await ensureWeb3(network)
-  const task = await exports.task({
-    web3,
-    reporter,
-    dao,
-    gasPrice,
-    network,
-    apmOptions,
-    apmRepo,
-    apmRepoVersion,
-    appInit,
-    appInitArgs,
-    setPermissions,
-    wsProvider,
-    silent,
-    debug,
-  })
-
-  return task.run().then(ctx => {
+  return tasks.run().then(ctx => {
     reporter.info(
       `Successfully executed: "${chalk.blue(
         ctx.transactionPath[0].description
