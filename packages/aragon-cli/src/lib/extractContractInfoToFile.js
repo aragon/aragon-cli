@@ -1,4 +1,4 @@
-const extract = require('../../helpers/solidity-extractor')
+const extract = require('../helpers/solidity-extractor')
 const { writeJson } = require('fs-extra')
 
 module.exports = async (contractPath, outputPath) => {

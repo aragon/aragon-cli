@@ -36,11 +36,11 @@ exports.task = async ({
       {
         title: 'Changing the MiniMe token controller',
         task: async (ctx, task) => {
-          let artifact = getContract(
+          const artifact = getContract(
             '@aragon/apps-shared-minime',
             'MiniMeToken'
           )
-          let contract = new web3.eth.Contract(artifact.abi, tokenAddress)
+          const contract = new web3.eth.Contract(artifact.abi, tokenAddress)
 
           const tx = contract.methods.changeController(newController)
           // this fails if from is not passed

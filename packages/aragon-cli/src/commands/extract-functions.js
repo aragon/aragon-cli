@@ -1,6 +1,6 @@
 const path = require('path')
 const chalk = require('chalk')
-const extractContractInfoToFile = require('../../lib/apm/extractContractInfoToFile')
+const extractContractInfoToFile = require('../lib/extractContractInfoToFile')
 const TaskList = require('listr')
 
 exports.command = 'extract-functions [contract]'

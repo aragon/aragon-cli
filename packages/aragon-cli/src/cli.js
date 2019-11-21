@@ -1,16 +1,10 @@
 #!/usr/bin/env node
-import 'core-js/stable'
-import 'regenerator-runtime/runtime'
-require('source-map-support/register')
+import 'source-map-support/register'
 const Web3 = require('web3')
 
 const DEFAULT_GAS_PRICE = require('../package.json').aragon.defaultGasPrice
 
-const {
-  environmentMiddleware,
-  manifestMiddleware,
-  moduleMiddleware,
-} = require('./middleware')
+const { configCliMiddleware } = require('./middleware')
 const { findProjectRoot } = require('./util')
 const { ens } = require('@aragon/aragen')
 const ConsoleReporter = require('@aragon/cli-utils/src/reporters/ConsoleReporter')
@@ -26,12 +20,7 @@ const debugMiddleware = argv => {
   }
 }
 
-const MIDDLEWARES = [
-  debugMiddleware,
-  manifestMiddleware,
-  moduleMiddleware,
-  environmentMiddleware,
-]
+const MIDDLEWARES = [debugMiddleware, configCliMiddleware]
 
 // Set up commands
 const cmd = require('yargs')

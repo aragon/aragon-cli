@@ -9,16 +9,17 @@
   },
   "scripts": {
     "prepare": "npm run build",
-    "link": "npm link",
-    "unlink": "npm unlink",
     "compile-src": "babel src --out-dir dist --source-maps --copy-files",
     "extract-roles": "node scripts/extract-roles",
     "build": "npm run extract-roles && npm run compile-src",
     "build:watch": "npm run build -- -- --watch",
-    "lint": "eslint src test/commands && documentation lint src",
+    "lint": "eslint src test",
+    "lint:fix": "npm run lint -- --fix",
+    "pretest": "node scripts/setup-integration-tests.js & sleep 5",
+    "posttest": "node scripts/teardown-integration-tests.js",
     "test": "ava --verbose",
     "test:watch": "ava --watch",
-    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly --exclude 'config/**' --exclude '**/*.test.js' npm run test"
+    "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test"
   },
   "repository": {
     "type": "git",
@@ -51,8 +52,8 @@
     "@aragon/wrapper": "^5.0.0-rc.17",
     "ajv": "^6.6.2",
     "bn.js": "^5.0.0",
-    "byte-size": "^5.0.1",
-    "chalk": "^2.1.0",
+    "byte-size": "^6.2.0",
+    "chalk": "^3.0.0",
     "cli-table": "^0.3.1",
     "dev-null": "^0.1.1",
     "eth-ens-namehash": "^2.0.8",
@@ -68,12 +69,12 @@
     "inquirer": "^7.0.0",
     "internal-ip": "^4.3.0",
     "ipfs-api": "^26.1.2",
-    "ipfs-http-client": "^33.0.1",
+    "ipfs-http-client": "^39.0.2",
     "listr": "^0.14.3",
-    "listr-input": "0.1.3",
+    "listr-input": "0.2.0",
     "lodash.merge": "^4.6.1",
     "node-fetch": "^2.3.0",
-    "open": "^6.0.0",
+    "open": "^7.0.0",
     "public-ip": "^3.1.0",
     "replace": "^1.1.0",
     "semver": "^6.1.1",
@@ -83,8 +84,8 @@
     "truffle": "4.1.14",
     "truffle-flattener": "^1.2.9",
     "web3": "^1.2.0",
-    "which": "^1.3.1",
-    "yargs": "^13.2.4"
+    "which": "^2.0.1",
+    "yargs": "^15.0.1"
   },
   "devDependencies": {
     "@aragon/apps-agent": "^2.0.0",
@@ -102,38 +103,22 @@
     "@babel/register": "^7.0.0",
     "ava": "^2.1.0",
     "babel-eslint": "^10.0.1",
+    "babel-plugin-istanbul": "^5.2.0",
     "core-js": "^3.1.4",
-    "documentation": "^12.0.0",
     "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-ava": "^7.1.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-ava": "^9.0.0",
     "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^9.0.1",
+    "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
-    "husky": "^3.0.0",
-    "lint-staged": "^9.1.0",
+    "kill-port": "^1.6.0",
     "nyc": "^14.1.1",
     "prettier": "^1.15.3",
     "proxyquire": "^2.1.0",
-    "regenerator-runtime": "^0.13.3",
-    "sinon": "^7.3.1",
-    "tmp": "^0.1.0"
-  },
-  "engines": {
-    "node": ">=8.0.0"
-  },
-  "ava": {
-    "require": [
-      "core-js",
-      "regenerator-runtime",
-      "@babel/register"
-    ],
-    "files": [
-      "test/**/*.test.js"
-    ]
+    "sinon": "^7.3.1"
   },
   "aragon": {
     "clientRepo": "https://github.com/aragon/aragon",
@@ -142,17 +127,65 @@
     "defaultGasPrice": "2",
     "defaultIpfsTimeout": "300000"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm run lint && npm run test"
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "ava": {
+    "require": [
+      "@babel/register"
+    ],
+    "files": [
+      "test/**/*.test.js"
+    ]
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.js",
+      "scripts/**/*.js"
+    ],
+    "sourceMap": false,
+    "instrument": true
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "useBuiltIns": "usage",
+          "corejs": "3",
+          "targets": {
+            "node": true
+          }
+        }
+      ]
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-object-rest-spread"
+    ],
+    "env": {
+      "test": {
+        "plugins": [
+          "istanbul"
+        ]
+      }
     }
   },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "documentation lint",
-      "git add"
-    ]
+  "eslintConfig": {
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "extends": [
+      "standard",
+      "plugin:ava/recommended",
+      "plugin:prettier/recommended"
+    ],
+    "parser": "babel-eslint"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": false,
+    "trailingComma": "es5",
+    "bracketSpacing": true
   }
 }
