@@ -34,6 +34,7 @@ exports.handler = async function({
         reporter.info(`Fetching repository`)
         break
       case 2:
+        // eslint-disable-next-line no-case-declarations
         const address = data
         reporter.info(
           `Granting permission to publish on ${chalk.blue(
@@ -42,6 +43,7 @@ exports.handler = async function({
         )
         break
       case 3:
+        // eslint-disable-next-line no-case-declarations
         const txHash = data
         reporter.success(`Successful transaction (${chalk.blue(txHash)})`)
         break
