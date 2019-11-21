@@ -13,6 +13,7 @@ let cachedProjectRoot
 const PGK_MANAGER_BIN_NPM = 'npm'
 const debugLogger = process.env.DEBUG ? console.log : () => {}
 
+const ARAGON_DOMAIN = 'aragonid.eth'
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 /**
@@ -352,6 +353,22 @@ const askForConfirmation = async message => {
   return reply
 }
 
+/**
+ * Convert a DAO id to its subdomain
+ * E.g. mydao -> mydao.aragonid.eth
+ * @param {string} aragonId Aragon Id
+ * @returns {string} DAO subdomain
+ */
+function convertDAOIdToSubdomain(aragonId) {
+  // If already a subdomain, return
+  if (new RegExp(`^([a-z0-9-]+).${ARAGON_DOMAIN}$`).test(aragonId))
+    return aragonId
+
+  if (!isValidAragonId(aragonId)) throw new Error(`Invalid DAO Id: ${aragonId}`)
+
+  return `${aragonId}.${ARAGON_DOMAIN}`
+}
+
 module.exports = {
   addressesEqual,
   parseArgumentStringIfPossible,
@@ -367,6 +384,8 @@ module.exports = {
   getGlobalBinary,
   getContract,
   isValidAragonId,
+  convertDAOIdToSubdomain,
+  ARAGON_DOMAIN,
   ANY_ENTITY,
   NO_MANAGER,
   ZERO_ADDRESS,

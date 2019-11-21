@@ -1,21 +1,18 @@
-import { initAragonJS, getApps } from '../../../helpers/aragonjs-wrapper'
 const chalk = require('chalk')
 const TaskList = require('listr')
 const daoArg = require('../utils/daoArg')
 const { listApps } = require('../utils/knownApps')
-const { rolesForApps } = require('./utils/knownRoles')
+const { getKnownRoles } = require('./utils/knownRoles')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-
 const Table = require('cli-table')
+const { getDaoAddressPermissionsApps } = require('../../../lib/acl/view')
+const { formatAclPermissions } = require('../../../lib/acl/viewFormatter')
+require('../../../lib/acl/typedef') // Load JSDoc types ACL specific
+require('../../../lib/typedef') // Load JSDoc generic types
 
-const knownRoles = rolesForApps()
-const ANY_ENTITY = '0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF'
-const ANY_ENTITY_TEXT = 'Any entity'
+const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
 const { NO_MANAGER, ZERO_ADDRESS } = require('../../../util')
-const NO_MANAGER_TEXT = 'No Manager'
-
-let knownApps
 
 exports.command = 'view <dao>'
 
@@ -25,55 +22,20 @@ exports.builder = function(yargs) {
   return daoArg(yargs)
 }
 
-const printAppName = (appId, addr) => {
-  if (addr === ANY_ENTITY) return ANY_ENTITY_TEXT
-  if (addr === NO_MANAGER) return NO_MANAGER_TEXT
-  return knownApps[appId]
-    ? `${knownApps[appId].split('.')[0]} (${addr.slice(0, 6)})`
-    : `${addr.slice(0, 8)}..${addr.slice(-6)}`
-}
-
-const appFromProxyAddress = (proxyAddress, apps) => {
-  return apps.filter(app => app.proxyAddress === proxyAddress)[0] || {}
-}
-
-const formatRow = ({ to, role, allowedEntities, manager }, apps) => {
-  if (
-    manager === ZERO_ADDRESS ||
-    !allowedEntities ||
-    allowedEntities.length === 0
-  ) {
-    return null
-  }
-
-  const formattedTo = printAppName(appFromProxyAddress(to, apps).appId, to)
-  let formattedRole =
-    knownRoles[role] || `${role.slice(0, 8)}..${role.slice(-6)}`
-  if (formattedRole.id) formattedRole = formattedRole.id
-  const formattedAllowed = allowedEntities
-    .reduce((acc, addr) => {
-      const allowedName = printAppName(
-        appFromProxyAddress(addr, apps).appId,
-        addr
-      )
-      const allowedEmoji = allowedName === ANY_ENTITY_TEXT ? '🆓' : '✅'
-      return acc + '\n' + allowedEmoji + '  ' + allowedName
-    }, '')
-    .slice(1) // remove first newline
-  const formattedManager = (() => {
-    const managerName = printAppName(
-      appFromProxyAddress(manager, apps).appId,
-      manager
-    )
-    const managerEmoji = managerName === NO_MANAGER_TEXT ? '🆓' : ''
-    return managerEmoji + '  ' + managerName
-  })()
-
-  return [formattedTo, formattedRole, formattedAllowed, formattedManager]
-}
-
-exports.handler = async function({
-  reporter,
+/**
+ * Return a task list for viewing DAO ACL permissions
+ *
+ * @param  {Object} args From Listr
+ * @param  {string} args.dao DAO address or ENS name
+ * @param  {NetworkConfig} args.network Network config
+ * @param  {ApmConfig} args.apm APM config
+ * @param  {WebsocketProvider} args.wsProvider Web3 config
+ * @param  {ArappConfig} args.module arapp.json content
+ * @param  {boolean} args.silent Silent flag
+ * @param  {boolean} args.debug Debug flag
+ * @return {Promise<TaskList>} void, will process.exit(0) if successful
+ */
+const handler = async function({
   dao,
   network,
   apm,
@@ -82,56 +44,55 @@ exports.handler = async function({
   silent,
   debug,
 }) {
-  knownApps = listApps(module ? [module.appName] : [])
   const web3 = await ensureWeb3(network)
+
+  // Type common context
+  /**
+   * @type {AclPermissions}
+   */
+  let permissions
+  /**
+   * @type {App[]}
+   */
+  let apps
 
   const tasks = new TaskList(
     [
       {
         title: 'Inspecting DAO Permissions',
-        task: (ctx, task) => {
+        task: async (_, task) => {
           task.output = `Fetching permissions for ${dao}...`
 
-          return new Promise((resolve, reject) => {
-            const resolveIfReady = async () => {
-              if (ctx.acl && ctx.apps) {
-                resolve()
-              }
-            }
-
-            initAragonJS(dao, apm['ens-registry'], {
-              provider: wsProvider || web3.currentProvider,
-              ipfsConf: apm.ipfs,
-              onPermissions: permissions => {
-                ctx.acl = permissions
-                resolveIfReady()
-              },
-              onDaoAddress: addr => {
-                ctx.daoAddress = addr
-              },
-            })
-              .then(async wrapper => {
-                ctx.apps = await getApps(wrapper)
-                resolveIfReady()
-              })
-              .catch(err => {
-                reporter.error('Error inspecting DAO')
-                reporter.debug(err)
-                process.exit(1)
-              })
+          const daoData = await getDaoAddressPermissionsApps({
+            dao,
+            web3Provider: wsProvider || web3.currentProvider,
+            ipfsConf: apm.ipfs,
+            apm,
           })
+
+          permissions = daoData.permissions
+          apps = daoData.apps
+
+          task.title = `Inspected DAO Permissions of ${daoData.daoAddress}`
         },
       },
     ],
     listrOpts(silent, debug)
   )
 
-  return tasks.run().then(ctx => {
-    reporter.success(
-      `Successfully fetched DAO apps for ${chalk.green(ctx.daoAddress)}`
-    )
+  return tasks.run().then(() => {
+    const knownApps = listApps(module ? [module.appName] : [])
+    const knownRoles = getKnownRoles(module)
 
-    const acl = ctx.acl
+    /**
+     * @type {AclPermissionFormatted[]} Force type acknowledgment
+     */
+    const formatedAclPermissions = formatAclPermissions(
+      permissions,
+      apps,
+      knownApps,
+      knownRoles
+    )
 
     // filter according to cli params will happen here
 
@@ -141,21 +102,72 @@ exports.handler = async function({
       ),
     })
 
-    const tos = Object.keys(acl)
+    for (const formatedAclPermission of formatedAclPermissions) {
+      const { to, manager, allowedEntities, role } = formatedAclPermission
 
-    const flattenedACL = tos.reduce((acc, to) => {
-      const roles = Object.keys(acl[to])
-      const permissions = roles.map(role => ({ to, role, ...acl[to][role] }))
+      // Ignore permissions with empty manager or allowed
+      if (manager === ZERO_ADDRESS || !(allowedEntities || []).length) {
+        continue
+      }
 
-      return acc.concat(permissions)
-    }, [])
+      // 1 - To
+      const toFormatted = printNameOrAddress(to)
 
-    flattenedACL
-      .map(row => formatRow(row, ctx.apps))
-      .filter(row => row)
-      .forEach(row => table.push(row))
+      // 2 - Role
+      const roleFormatted = role.id || shortHex(role.hash)
+
+      // 3 - Allowed entities (multiline)
+      const allowedFormatted = allowedEntities
+        .map(allowedEntity =>
+          (allowedEntity.address || '').toLowerCase() === ANY_ENTITY
+            ? `🆓  Any entity`
+            : `✅  ${printNameOrAddress(allowedEntity)}`
+        )
+        .join('\n')
+
+      // 4 - Manager
+      const managerFormatted =
+        manager.address === NO_MANAGER
+          ? `🆓  No manager`
+          : printNameOrAddress(manager)
+
+      table.push([
+        toFormatted,
+        roleFormatted,
+        allowedFormatted,
+        managerFormatted,
+      ])
+    }
 
     console.log(table.toString())
-    process.exit() // force exit, as aragonjs hangs
+    process.exit(0) // force exit, as aragonjs hangs
   })
 }
+
+// Exporting afterwards to solve documentation lint error:
+// ✖ documentation lint found some errors. Please fix them and try committing again.
+// ... /aragon-cli/src/commands/dao_cmds/acl_cmds/view.js
+// 39:1  warning  @memberof reference to view not found
+exports.handler = handler
+
+/**
+ * Helper to short hex string for better readability
+ * @param  {string} hex
+ *         '0x76804359e7b668845d209f4a0391d5482a18c476'
+ * @return {string}
+ *         '0x768043..18c476'
+ */
+const shortHex = hex => {
+  return `${hex.slice(0, 8)}..${hex.slice(-6)}`
+}
+
+/**
+ * Helper to print out the short name of an app or its short address
+ * @param  {AclPermissionAppInfo} appInfo App info
+ * @return {string}
+ *         'acl (0x5a10)' or '0x768043..18c476'
+ */
+const printNameOrAddress = ({ address, name }) =>
+  name
+    ? `${name.split('.')[0]} (${address.slice(0, 6)})`
+    : `${shortHex(address)}`
