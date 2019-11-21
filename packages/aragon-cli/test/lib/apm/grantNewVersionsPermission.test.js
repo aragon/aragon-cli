@@ -109,7 +109,6 @@ test('properly calls the progressHandler when nothing errors', async t => {
   t.true(progressHandlerSpy.getCall(0).calledWith(1))
   t.true(progressHandlerSpy.getCall(1).calledWith(2, grantees[0]))
   t.true(progressHandlerSpy.getCall(2).calledWith(3, transactionHash))
-  // Note: progressHandler(4) is called when a tx errors
 })
 
 test('properly calls web3.eth.sendTransaction() with expected transaction parameters', async t => {
