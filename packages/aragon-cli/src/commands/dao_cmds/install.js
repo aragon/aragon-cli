@@ -1,5 +1,4 @@
 const execTask = require('./utils/execHandler').task
-const { resolveEnsDomain } = require('../../helpers/aragonjs-wrapper')
 const TaskList = require('listr')
 const daoArg = require('./utils/daoArg')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
@@ -15,8 +14,13 @@ const {
   NO_MANAGER,
   ZERO_ADDRESS,
 } = require('../../util')
-const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
+const {
+  getAclAddress,
+  getAppProxyAddressFromReceipt,
+  getAppBase,
+} = require('../../lib/dao/kernel')
+const { resolveAddressOrEnsDomain } = require('../../lib/dao/utils')
 
 exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'
 
@@ -42,35 +46,28 @@ exports.builder = function(yargs) {
     })
 }
 
-exports.task = async ({
-  wsProvider,
-  web3,
+exports.handler = async function({
   reporter,
   dao,
   gasPrice,
   network,
-  apmOptions,
+  apm: apmOptions,
   apmRepo,
   apmRepoVersion,
   appInit,
   appInitArgs,
   setPermissions,
+  wsProvider,
   silent,
   debug,
-}) => {
+}) {
+  const web3 = await ensureWeb3(network)
+
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
   apmRepo = defaultAPMName(apmRepo)
-
-  dao = /0x[a-fA-F0-9]{40}/.test(dao)
-    ? dao
-    : await resolveEnsDomain(dao, {
-        provider: web3.currentProvider,
-        registryAddress: apmOptions.ensRegistryAddress,
-      })
-
-  const kernel = new web3.eth.Contract(kernelAbi, dao)
+  dao = await resolveAddressOrEnsDomain(dao, web3, apmOptions['ens-registry'])
 
   const tasks = new TaskList(
     [
@@ -86,12 +83,7 @@ exports.task = async ({
       {
         title: `Checking installed version`,
         task: async (ctx, task) => {
-          const basesNamespace = await kernel.methods
-            .APP_BASES_NAMESPACE()
-            .call()
-          const currentBase = await kernel.methods
-            .getApp(basesNamespace, ctx.repo.appId)
-            .call()
+          const currentBase = await getAppBase(dao, ctx.repo.appId, web3)
           if (currentBase === ZERO_ADDRESS) {
             task.skip(`Installing the first instance of ${apmRepo} in DAO`)
             return
@@ -143,29 +135,9 @@ exports.task = async ({
       {
         title: 'Fetching deployed app',
         task: async (ctx, task) => {
-          const logABI = kernelAbi.find(
-            ({ type, name }) => type === 'event' && name === 'NewAppProxy'
-          )
-          if (!logABI) {
-            throw new Error(
-              'Kernel ABI in aragon.js doesnt contain NewAppProxy log'
-            )
-          }
-          const logSignature = `${logABI.name}(${logABI.inputs
-            .map(i => i.type)
-            .join(',')})`
-          const logTopic = web3.utils.sha3(logSignature)
-          const deployLog = ctx.receipt.logs.find(({ topics, address }) => {
-            return topics[0] === logTopic && addressesEqual(dao, address)
-          })
-
-          if (!deployLog) {
-            task.skip("App wasn't deployed in transaction.")
-            return
-          }
-
-          const log = web3.eth.abi.decodeLog(logABI.inputs, deployLog.data)
-          ctx.appAddress = log.proxy
+          const appAddress = getAppProxyAddressFromReceipt(dao, ctx.receipt)
+          if (appAddress) ctx.appAddress = appAddress
+          else task.skip("App wasn't deployed in transaction.")
         },
       },
       {
@@ -188,8 +160,8 @@ exports.task = async ({
           if (!ctx.accounts) {
             ctx.accounts = await web3.eth.getAccounts()
           }
-          const daoInstance = new web3.eth.Contract(kernelAbi, dao)
-          const aclAddress = await daoInstance.methods.acl().call()
+
+          const aclAddress = await getAclAddress(dao)
 
           return Promise.all(
             permissions.map(params => {
@@ -218,43 +190,7 @@ exports.task = async ({
     listrOpts(silent, debug)
   )
 
-  return tasks
-}
-
-exports.handler = async function({
-  reporter,
-  dao,
-  gasPrice,
-  network,
-  apm: apmOptions,
-  apmRepo,
-  apmRepoVersion,
-  appInit,
-  appInitArgs,
-  setPermissions,
-  wsProvider,
-  silent,
-  debug,
-}) {
-  const web3 = await ensureWeb3(network)
-  const task = await exports.task({
-    web3,
-    reporter,
-    dao,
-    gasPrice,
-    network,
-    apmOptions,
-    apmRepo,
-    apmRepoVersion,
-    appInit,
-    appInitArgs,
-    setPermissions,
-    wsProvider,
-    silent,
-    debug,
-  })
-
-  return task.run().then(ctx => {
+  return tasks.run().then(ctx => {
     reporter.info(
       `Successfully executed: "${chalk.blue(
         ctx.transactionPath[0].description
