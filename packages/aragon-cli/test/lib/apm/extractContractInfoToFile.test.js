@@ -2,7 +2,7 @@ import test from 'ava'
 const path = require('path')
 const fs = require('fs')
 const tmp = require('tmp')
-const extractContractInfoToFile = require('../../../src/lib/apm/extractContractInfoToFile')
+const extractContractInfoToFile = require('../../../src/lib/extractContractInfoToFile')
 
 let tempDir, contractPath, outputPath
 
