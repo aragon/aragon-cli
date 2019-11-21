@@ -15,6 +15,8 @@
     "build:watch": "npm run build -- -- --watch",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
+    "pretest": "node scripts/setup-integration-tests.js & sleep 5",
+    "posttest": "node scripts/teardown-integration-tests.js",
     "test": "ava --verbose",
     "test:watch": "ava --watch",
     "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test"
@@ -51,7 +53,7 @@
     "ajv": "^6.6.2",
     "bn.js": "^5.0.0",
     "byte-size": "^6.2.0",
-    "chalk": "^2.1.0",
+    "chalk": "^3.0.0",
     "cli-table": "^0.3.1",
     "dev-null": "^0.1.1",
     "eth-ens-namehash": "^2.0.8",
@@ -83,7 +85,7 @@
     "truffle-flattener": "^1.2.9",
     "web3": "^1.2.0",
     "which": "^2.0.1",
-    "yargs": "^13.2.4"
+    "yargs": "^15.0.1"
   },
   "devDependencies": {
     "@aragon/apps-agent": "^2.0.0",
@@ -112,6 +114,7 @@
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
+    "kill-port": "^1.6.0",
     "nyc": "^14.1.1",
     "prettier": "^1.15.3",
     "proxyquire": "^2.1.0",
