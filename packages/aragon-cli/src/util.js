@@ -319,40 +319,6 @@ function isValidAragonId(aragonId) {
   return /^[a-z0-9-]+$/.test(aragonId)
 }
 
-const askForInput = async message => {
-  const { reply } = await inquirer.prompt([
-    {
-      type: 'input',
-      name: 'reply',
-      message,
-    },
-  ])
-  return reply
-}
-
-const askForChoice = async (message, choices) => {
-  const { reply } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'reply',
-      message,
-      choices,
-    },
-  ])
-  return reply
-}
-
-const askForConfirmation = async message => {
-  const { reply } = await inquirer.prompt([
-    {
-      type: 'confirm',
-      name: 'reply',
-      message,
-    },
-  ])
-  return reply
-}
-
 /**
  * Convert a DAO id to its subdomain
  * E.g. mydao -> mydao.aragonid.eth
