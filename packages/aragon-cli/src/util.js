@@ -369,6 +369,40 @@ function convertDAOIdToSubdomain(aragonId) {
   return `${aragonId}.${ARAGON_DOMAIN}`
 }
 
+const askForInput = async message => {
+  const { reply } = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'reply',
+      message,
+    },
+  ])
+  return reply
+}
+
+const askForChoice = async (message, choices) => {
+  const { reply } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'reply',
+      message,
+      choices,
+    },
+  ])
+  return reply
+}
+
+const askForConfirmation = async message => {
+  const { reply } = await inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'reply',
+      message,
+    },
+  ])
+  return reply
+}
+
 module.exports = {
   addressesEqual,
   parseArgumentStringIfPossible,

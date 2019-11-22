@@ -1,5 +1,6 @@
 const fs = require('fs')
 const { promisify } = require('util')
+const { keccak256 } = require('web3').utils
 const readFile = promisify(fs.readFile)
 
 // See https://solidity.readthedocs.io/en/v0.4.24/abi-spec.html#types
@@ -84,21 +85,77 @@ const getRoles = declaration => {
   )
 }
 
-// Takes the path to a solidity file and extracts public function signatures,
-// its auth role if any and its notice statement
-module.exports = async sourceCodePath => {
+const extractFunctions = async sourceCode => {
+  // Everything between every 'function' and '{' and its @notice.
+  const functionDeclarations = sourceCode.match(
+    /(@notice|^\s*function)(?:[^]*?){/gm
+  )
+
+  if (!functionDeclarations) {
+    return []
+  }
+
+  const stateModifyingFunctionDeclarations = functionDeclarations
+    .filter(functionDeclaration =>
+      modifiesStateAndIsPublic(functionDeclaration)
+    )
+    .map(functionDeclaration => ({
+      sig: getSignature(functionDeclaration),
+      roles: getRoles(functionDeclaration),
+      notice: getNotice(functionDeclaration),
+    }))
+
+  return stateModifyingFunctionDeclarations
+}
+
+const extractRoles = async functionDescriptors => {
+  // Extract all role ids from the function descriptors.
+  const roleSet = new Set()
+  functionDescriptors.forEach(({ roles }) =>
+    roles.forEach(role => roleSet.add(role))
+  )
+  const roleIds = [...roleSet]
+
+  // Parse role ids into objects.
+  // TODO: Name and parameters are currently not being extracted, and it's probably better to get it from an AST instead of the Solidity code. For now, the properties are merely place holders.
+  return roleIds.map(id => ({
+    id,
+    bytes: keccak256(id),
+    name: '',
+    params: [],
+  }))
+}
+
+// Given the path to a Solidity file, parses it and returns an object with the form:
+/*
+  roles: [
+    {
+      id: "MINT_ROLE",
+      bytes: "0x0xbf05b9322505d747ab5880dfb677dc4864381e9fc3a25ccfa184a3a53d02f4b2",
+      name: "",
+      params: []
+    },
+    ...
+  ],
+  functions: [
+    {
+      sig: "baz(uint32,bool)",
+      roles: [ "MINT_ROLE", "BURN_ROLE" ],
+      notice: "Sample radspec documentation..."
+    },
+    ...
+  ]
+*/
+const extractContractInfo = async sourceCodePath => {
   const sourceCode = await readFile(sourceCodePath, 'utf8')
 
-  // everything between every 'function' and '{' and its @notice
-  const funcDecs = sourceCode.match(/(@notice|^\s*function)(?:[^]*?){/gm)
+  const functionDescriptors = await extractFunctions(sourceCode)
+  const roleDescriptors = await extractRoles(functionDescriptors)
 
-  if (!funcDecs) return []
-
-  return funcDecs
-    .filter(dec => modifiesStateAndIsPublic(dec))
-    .map(dec => ({
-      sig: getSignature(dec),
-      roles: getRoles(dec),
-      notice: getNotice(dec),
-    }))
+  return {
+    roles: roleDescriptors,
+    functions: functionDescriptors,
+  }
 }
+
+module.exports = extractContractInfo
