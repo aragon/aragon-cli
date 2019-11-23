@@ -85,6 +85,21 @@ test('properly throws when transaction fails', async t => {
   )
 })
 
+test('Should throw when no grantees are provided', async t => {
+  const { grantNewVersionsPermission, web3Stub } = t.context
+
+  await t.throwsAsync(
+    grantNewVersionsPermission(
+      web3Stub,
+      apmRepoName,
+      apmOptions,
+      [],
+      null,
+      txOptions
+    )
+  )
+})
+
 test('properly calls the progressHandler when nothing errors', async t => {
   const { grantNewVersionsPermission, web3Stub } = t.context
 
