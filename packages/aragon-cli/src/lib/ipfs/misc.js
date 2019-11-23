@@ -53,14 +53,6 @@ export function parseAddressAsURL(address) {
   }
 }
 
-// function timeout() {
-//   return new Promise((resolve, reject) => {
-//     setTimeout(() => {
-//       reject(FETCH_TIMEOUT_ERR)
-//     }, FETCH_TIMEOUT)
-//   })
-// }
-
 export const getGlobalNpmPrefix = async () =>
   (await execa('npm', ['prefix', '--global'])).stdout
 

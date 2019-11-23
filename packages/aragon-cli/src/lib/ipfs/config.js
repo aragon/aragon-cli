@@ -1,4 +1,4 @@
-import { join as joinPath } from 'path'
+import path, { join as joinPath } from 'path'
 import oldIpfsAPI from 'ipfs-api'
 import { readJson, writeJson } from 'fs-extra'
 import getFolderSize from 'get-folder-size'
@@ -43,16 +43,20 @@ const IPFSCORS = [
   },
 ]
 
-export const ensureIPFSInitialized = async () => {
+export const ensureIPFSInitialized = async repoPath => {
   if (!getBinary('ipfs')) {
     throw new Error(
       'IPFS is not installed. Use `aragon ipfs install` before proceeding.'
     )
   }
 
-  if (!existsSync(getDefaultRepoPath())) {
+  if (!existsSync(path.resolve(repoPath))) {
     // We could use 'ipfs daemon --init' when https://github.com/ipfs/go-ipfs/issues/3913 is solved
-    await execa(getBinary('ipfs'), ['init'])
+    await execa(getBinary('ipfs'), ['init'], {
+      env: {
+        IPFS_PATH: repoPath,
+      },
+    })
   }
 }
 

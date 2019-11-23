@@ -1,17 +1,14 @@
-// import path from 'path'
 import TaskList from 'listr'
-// import chalk from 'chalk'
-// import IPFS from 'ipfs-api'
 import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
 //
 import {
   startDaemon,
-  // isIPFSCORS,
-  // setIPFSCORS as setCORS,
-  // isIPFSRunning,
   getDefaultRepoPath,
   setPorts,
-  // getClient,
+  ensureIPFSInitialized,
+  getClient,
+  setIPFSCORS,
+  pinArtifacts,
 } from '../../lib/ipfs'
 
 export const command = 'start'
@@ -35,7 +32,8 @@ export const builder = yargs =>
     })
     .option('detached', {
       description: 'Whether to run the daemon in the background',
-      default: true,
+      alias: 'd',
+      default: false,
       boolean: true,
     })
 
@@ -51,51 +49,27 @@ const runStartTask = ({
   return new TaskList(
     [
       {
-        title: 'Configure ports',
+        title: 'Checking repository',
         task: async () => {
-          await setPorts(repoPath, apiPort, gatewayPort, swarmPort)
+          await ensureIPFSInitialized(repoPath)
+        },
+      },
+      {
+        title: 'Configure ports',
+        task: async ctx => {
+          try {
+            await setPorts(repoPath, apiPort, gatewayPort, swarmPort)
+          } catch (e) {
+            ctx.setPortsSuccess = false
+          }
         },
       },
       {
         title: 'Start the daemon',
-        task: async () => {
-          await startDaemon(repoPath, { detached })
+        task: async ctx => {
+          ctx.processController = await startDaemon(repoPath, { detached })
         },
       },
-      // {
-      //   title: 'Connect to the API',
-      //   task: async (ctx) => {
-      //     ctx.apiClient = await getClient(`http://localhost:${apiPort}`)
-      //   },
-      // },
-      // {
-      //   title: 'Configure CORS',
-      //   task: async (ctx) => {
-      //     await setCORS(ctx.apiClient)
-      //   }
-      // },
-      // {
-      // title: 'Pin the latest aragon artifacts',
-      // task: ctx => {
-      // await pinLatestArtifacts(ctx.apiClient)
-      // const ipfs = IPFS('localhost', '5001', { protocol: 'http' })
-      // const files = path.resolve(
-      //   require.resolve('@aragon/aragen'),
-      //   '../ipfs-cache'
-      // )
-
-      // return new Promise((resolve, reject) => {
-      //   ipfs.util.addFromFs(
-      //     files,
-      //     { recursive: true, ignore: 'node_modules' },
-      //     (err, files) => {
-      //       if (err) return reject(err)
-      //       resolve(files)
-      //     }
-      //   )
-      // })
-      // },
-      // },
     ],
     listrOpts(silent, debug)
   ).run()
@@ -110,9 +84,10 @@ export const handler = async argv => {
     gatewayPort,
     swarmPort,
     repoPath,
+    reporter,
   } = argv
 
-  await runStartTask({
+  const { processController } = await runStartTask({
     detached,
     apiPort,
     gatewayPort,
@@ -122,12 +97,25 @@ export const handler = async argv => {
     repoPath,
   })
 
-  // if (ctx.started) {
-  //   reporter.info(
-  //     'IPFS daemon is now running. Stopping this process will stop IPFS'
-  //   )
-  // } else {
-  //   reporter.warning(chalk.yellow("Didn't start IPFS, port busy"))
-  //   process.exit()
-  // }
+  reporter.info(`Daemon output:\n${processController.output}`)
+
+  if (detached) {
+    processController.detach()
+    reporter.warning('The IPFS Daemon will continue running in the background!')
+    reporter.warning('Use the `aragon ipfs stop` command to stop it.')
+  } else {
+    processController.attach()
+    reporter.info(
+      'Did you know you can run the IPFS Daemon in the background using the `-d` flag?'
+    )
+  }
+
+  /**
+   * Configure IPFS with Aragon-specific logic
+   */
+  const apiClient = await getClient(`http://localhost:${apiPort}`)
+  await setIPFSCORS(apiClient)
+  reporter.success('Successfully configured CORS')
+  const hashes = await pinArtifacts(apiClient)
+  reporter.success(`Successfully pinned ${hashes.length} Aragon artifacts.`)
 }

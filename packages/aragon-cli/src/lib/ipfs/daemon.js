@@ -1,99 +1,9 @@
-import execa from 'execa'
 import { getBinary, isPortTaken } from '../../util'
-import oldIpfsAPI from 'ipfs-api'
 import { IPFS_START_TIMEOUT } from './constants'
 import { connectOrThrow } from './misc'
+import { startProcess } from '../node'
 
-let ipfsNode
-
-export const isIPFSRunning = async ipfsRpc => {
-  const portTaken = await isPortTaken(ipfsRpc.port)
-
-  if (portTaken) {
-    if (!ipfsNode) ipfsNode = oldIpfsAPI(ipfsRpc)
-
-    try {
-      // if port is taken, attempt to fetch the node id
-      // if this errors, we can assume the port is taken
-      // by a process other then the ipfs gateway
-      await ipfsNode.id()
-      return true
-    } catch (e) {
-      return false
-    }
-  }
-
-  return false
-}
-export const startIPFSDaemon = () => {
-  if (!getBinary('ipfs')) {
-    throw new Error(
-      'IPFS is not installed. Use `aragon ipfs install` before proceeding.'
-    )
-  }
-
-  let startOutput = ''
-
-  // We add a timeout as starting
-  const timeout = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      reject(new Error(`Starting IPFS timed out:\n${startOutput}`))
-    }, IPFS_START_TIMEOUT)
-  })
-
-  const start = new Promise((resolve, reject) => {
-    // await ensureIPFSInitialized()
-    const ipfsProc = execa(getBinary('ipfs'), ['daemon', '--migrate'])
-
-    ipfsProc.stdout.on('data', data => {
-      startOutput = `${startOutput}${data.toString()}\n`
-      if (data.toString().includes('Daemon is ready')) resolve()
-    })
-
-    ipfsProc.stderr.on('data', data => {
-      reject(new Error(`Starting IPFS failed: ${data.toString()}`))
-    })
-  })
-
-  return Promise.race([start, timeout])
-}
-
-export const startDetachedProcess = async ({
-  cmd,
-  args,
-  execaOpts,
-  readyOutput,
-}) => {
-  return new Promise((resolve, reject) => {
-    // start the process
-    const subprocess = execa(
-      cmd,
-      args,
-      Object.assign({ detached: true }, execaOpts)
-    )
-
-    subprocess.stderr.on('data', data => {
-      // parse
-      data = data.toString()
-      reject(new Error(data))
-    })
-
-    subprocess.stdout.on('data', data => {
-      // parse
-      data = data.toString()
-      // check for ready signal
-      if (data.includes(readyOutput)) {
-        resolve()
-        // prevent the parent from waiting on this subprocess
-        subprocess.stderr.destroy()
-        subprocess.stdout.destroy()
-        subprocess.unref()
-      }
-    })
-  })
-}
-
-export const startDaemon = async (repoPath, options) => {
+export const startDaemon = (repoPath, options = {}) => {
   const ipfsBinary = getBinary('ipfs')
 
   if (!ipfsBinary) {
@@ -102,11 +12,20 @@ export const startDaemon = async (repoPath, options) => {
     )
   }
 
-  await startDetachedProcess({
+  const processSetup = {
+    detached: options.detached,
     cmd: ipfsBinary,
     args: ['daemon', '--migrate'],
+    execaOpts: {
+      env: {
+        IPFS_PATH: repoPath,
+      },
+    },
     readyOutput: 'Daemon is ready',
-  })
+    timeout: IPFS_START_TIMEOUT,
+  }
+
+  return startProcess(processSetup)
 }
 
 /**
