@@ -1,12 +1,11 @@
-const fs = require('fs')
-const findUp = require('find-up')
-const semver = require('semver')
+import fs from 'fs'
+import findUp from 'find-up'
+import semver from 'semver'
 
-exports.command = 'version [bump]'
+export const command = 'version [bump]'
+export const describe = '(deprecated) Bump the application version'
 
-exports.describe = '(deprecated) Bump the application version'
-
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return yargs.positional('bump', {
     description: 'Type of bump (major, minor or patch) or version number',
     type: 'string',
@@ -15,7 +14,7 @@ exports.builder = function(yargs) {
 }
 
 // TODO: Fix always default bump when network is not development
-exports.handler = async function({ reporter, bump, cwd }) {
+export const handler = async function({ reporter, bump, cwd }) {
   const manifestLocation = await findUp('arapp.json', { cwd })
 
   const manifest = JSON.parse(fs.readFileSync(manifestLocation))

@@ -1,15 +1,13 @@
-const TaskList = require('listr')
-const { ensureWeb3 } = require('../../../helpers/web3-fallback')
-const { getContract } = require('../../../util')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const chalk = require('chalk')
-const { getRecommendedGasLimit } = require('../../../util')
+import TaskList from 'listr'
+import { ensureWeb3 } from '../../../helpers/web3-fallback'
+import { getContract, getRecommendedGasLimit } from '../../../util'
+import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+import chalk from 'chalk'
 
-exports.command = 'change-controller <token-address> <new-controller>'
+export const command = 'change-controller <token-address> <new-controller>'
+export const describe = 'Change the controller of a MiniMe token'
 
-exports.describe = 'Change the controller of a MiniMe token'
-
-exports.builder = yargs => {
+export const builder = yargs => {
   return yargs
     .positional('token-address', {
       description: 'Address of the MiniMe token',
@@ -19,7 +17,7 @@ exports.builder = yargs => {
     })
 }
 
-exports.task = async ({
+export const task = async ({
   web3,
   gasPrice,
   tokenAddress,
@@ -67,7 +65,7 @@ exports.task = async ({
   )
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   gasPrice,
   network,
@@ -78,7 +76,7 @@ exports.handler = async function({
 }) {
   const web3 = await ensureWeb3(network)
 
-  const task = await exports.task({
+  const tasks = await task({
     web3,
     gasPrice,
     reporter,
@@ -87,7 +85,7 @@ exports.handler = async function({
     silent,
     debug,
   })
-  return task.run().then(ctx => {
+  return tasks.run().then(ctx => {
     reporter.success(
       `Successfully changed the controller of ${chalk.green(
         tokenAddress

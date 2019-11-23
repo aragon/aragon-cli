@@ -18,7 +18,12 @@ import { initAragonJS, getApps } from '../../helpers/aragonjs-wrapper'
  * @param  {ApmConfig} args.apm APM config
  * @return {Promise<ReturnData>} void, will process.exit(0) if successful
  */
-const getDaoAddressPermissionsApps = ({ dao, web3Provider, ipfsConf, apm }) => {
+export const getDaoAddressPermissionsApps = ({
+  dao,
+  web3Provider,
+  ipfsConf,
+  apm,
+}) => {
   return new Promise((resolve, reject) => {
     /**
      * @type {AclPermissions}
@@ -60,8 +65,4 @@ const getDaoAddressPermissionsApps = ({ dao, web3Provider, ipfsConf, apm }) => {
         reject(err)
       })
   })
-}
-
-module.exports = {
-  getDaoAddressPermissionsApps,
 }

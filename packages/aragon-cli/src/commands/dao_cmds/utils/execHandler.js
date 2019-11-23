@@ -2,11 +2,11 @@ import {
   initAragonJS,
   getTransactionPath,
 } from '../../../helpers/aragonjs-wrapper'
-const chalk = require('chalk')
-const startIPFS = require('../../ipfs_cmds/start')
-const TaskList = require('listr')
-const { ensureWeb3 } = require('../../../helpers/web3-fallback')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
+import chalk from 'chalk'
+import startIPFS from '../../ipfs_cmds/start'
+import TaskList from 'listr'
+import { ensureWeb3 } from '../../../helpers/web3-fallback'
+import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
 
 /**
  * Return a task list for executing a method on a
@@ -27,7 +27,7 @@ const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
  * @param {boolean} params.debug Debug mode
  * @returns {Promise<TaskList>} Execution task list
  */
-async function task({
+export async function task({
   dao,
   app,
   method,
@@ -113,7 +113,7 @@ async function task({
  * @param {boolean} args.debug Debug mode
  * @returns {Promise} Execution promise
  */
-async function handler(args) {
+export async function handler(args) {
   args = {
     ...args,
     web3: await ensureWeb3(args.network),
@@ -129,9 +129,4 @@ async function handler(args) {
     )
     process.exit()
   })
-}
-
-module.exports = {
-  handler,
-  task,
 }

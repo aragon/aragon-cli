@@ -1,42 +1,39 @@
-const TaskList = require('listr')
-const Web3 = require('web3')
-const chalk = require('chalk')
-const path = require('path')
-const devchain = require('./devchain_cmds/start')
-const start = require('./start')
-const deploy = require('./deploy')
-const newDAO = require('./dao_cmds/new')
-const startIPFS = require('./ipfs_cmds/start')
-const encodeInitPayload = require('./dao_cmds/utils/encodeInitPayload')
-const fs = require('fs-extra')
-const pkg = require('../../package.json')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const APM = require('@aragon/apm')
-const getRepoTask = require('./dao_cmds/utils/getRepoTask')
-
-const {
+import TaskList from 'listr'
+import Web3 from 'web3'
+import chalk from 'chalk'
+import path from 'path'
+import devchain from './devchain_cmds/start'
+import start from './start'
+import deploy from './deploy'
+import newDAO from './dao_cmds/new'
+import startIPFS from './ipfs_cmds/start'
+import encodeInitPayload from './dao_cmds/utils/encodeInitPayload'
+import fs from 'fs-extra'
+import pkg from '../../package.json'
+import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+import APM from '@aragon/apm'
+import getRepoTask from './dao_cmds/utils/getRepoTask'
+import {
   runSetupTask,
   runPrepareForPublishTask,
   runPublishTask,
-} = require('./apm_cmds/publish')
-const {
+} from './apm_cmds/publish'
+import {
   findProjectRoot,
   isHttpServerOpen,
   isPortTaken,
   parseArgumentStringIfPossible,
-} = require('../util')
-
-const url = require('url')
+} from '../util'
+import url from 'url'
 
 const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 
-exports.command = 'run'
+export const command = 'run'
+export const describe = 'Run the current app locally'
 
-exports.describe = 'Run the current app locally'
-
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return yargs
     .option('client', {
       description: 'Just run the smart contracts, without the Aragon client',
@@ -176,7 +173,7 @@ exports.builder = function(yargs) {
     })
 }
 
-exports.handler = async function({
+export const handler = async function({
   // Globals
   reporter,
   gasPrice,

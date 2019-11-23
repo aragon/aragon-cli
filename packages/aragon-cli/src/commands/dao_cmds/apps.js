@@ -1,21 +1,20 @@
 import { initAragonJS, getApps } from '../../helpers/aragonjs-wrapper'
-const TaskList = require('listr')
-const chalk = require('chalk')
-const daoArg = require('./utils/daoArg')
-const { listApps } = require('./utils/knownApps')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const { addressesEqual } = require('../../util')
-const Table = require('cli-table')
-const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
+import TaskList from 'listr'
+import chalk from 'chalk'
+import daoArg from './utils/daoArg'
+import { listApps } from './utils/knownApps'
+import { ensureWeb3 } from '../../helpers/web3-fallback'
+import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+import { addressesEqual } from '../../util'
+import Table from 'cli-table'
+import { abi as kernelAbi } from '@aragon/os/build/contracts/Kernel'
 
 let knownApps
 
-exports.command = 'apps <dao>'
+export const command = 'apps <dao>'
+export const describe = 'Get all the apps in a DAO'
 
-exports.describe = 'Get all the apps in a DAO'
-
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return daoArg(yargs).option('all', {
     description: 'Whether to include apps without permissions as well',
     boolean: true,
@@ -38,7 +37,7 @@ const printContent = content => {
   return `${content.provider}:${content.location}`
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   dao,
   all,

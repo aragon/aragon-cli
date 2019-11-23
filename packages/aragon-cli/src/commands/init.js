@@ -1,17 +1,17 @@
 import { checkProjectExists, prepareTemplate } from '../lib/init'
-const { promisify } = require('util')
+import { promisify } from 'util'
+import TaskList from 'listr'
+import { installDeps, isValidAragonId } from '../util'
+import defaultAPMName from '@aragon/cli-utils/src/helpers/default-apm'
+import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+
 const clone = promisify(require('git-clone'))
-const TaskList = require('listr')
-const { installDeps, isValidAragonId } = require('../util')
-const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 
-exports.command = 'init <name> [template]'
-
-exports.describe =
+export const command = 'init <name> [template]'
+export const describe =
   '(deprecated) Initialise a new application. Deprecated in favor of `npx create-aragon-app <name> [template]`'
 
-exports.builder = yargs => {
+export const builder = yargs => {
   return yargs
     .positional('name', {
       description: 'The application name (appname.aragonpm.eth)',
@@ -45,7 +45,7 @@ exports.builder = yargs => {
     })
 }
 
-exports.handler = function({ reporter, name, template, silent, debug }) {
+export const handler = function({ reporter, name, template, silent, debug }) {
   name = defaultAPMName(name)
   const basename = name.split('.')[0]
 

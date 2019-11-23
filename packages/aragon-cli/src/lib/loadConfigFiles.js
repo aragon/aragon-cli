@@ -1,8 +1,9 @@
-const path = require('path')
-const fs = require('fs-extra')
-const { findProjectRoot } = require('../util')
-const Ajv = require('ajv')
-const arappSchema = require('../../schemas/arapp.schema')
+import path from 'path'
+import fs from 'fs-extra'
+import { findProjectRoot } from '../util'
+import Ajv from 'ajv'
+import arappSchema from '../../schemas/arapp.schema'
+
 const ajv = new Ajv({ allErrors: true })
 
 /**

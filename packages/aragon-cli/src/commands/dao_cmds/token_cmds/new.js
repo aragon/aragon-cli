@@ -1,25 +1,21 @@
-const TaskList = require('listr')
-const { ensureWeb3 } = require('../../../helpers/web3-fallback')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const chalk = require('chalk')
-const web3Utils = require('web3').utils
-const { parseArgumentStringIfPossible } = require('../../../util')
-const {
-  deployMiniMeTokenFactory,
-  deployMiniMeToken,
-} = require('../../../lib/token')
+import TaskList from 'listr'
+import { ensureWeb3 } from '../../../helpers/web3-fallback'
+import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+import chalk from 'chalk'
+import { utils as web3Utils } from 'web3'
+import { parseArgumentStringIfPossible } from '../../../util'
+import { deployMiniMeTokenFactory, deployMiniMeToken } from '../../../lib/token'
 
 const MAINNET_MINIME_TOKEN_FACTORY =
   '0xA29EF584c389c67178aE9152aC9C543f9156E2B3'
 const RINKEBY_MINIME_TOKEN_FACTORY =
   '0xad991658443c56b3dE2D7d7f5d8C68F339aEef29'
 
-exports.command =
+export const command =
   'new <token-name> <symbol> [decimal-units] [transfer-enabled] [token-factory-address]'
+export const describe = 'Create a new MiniMe token'
 
-exports.describe = 'Create a new MiniMe token'
-
-exports.builder = yargs => {
+export const builder = yargs => {
   return yargs
     .positional('token-name', {
       description: 'Full name of the new Token',
@@ -41,7 +37,7 @@ exports.builder = yargs => {
     })
 }
 
-exports.task = async ({
+export const task = async ({
   web3,
   gasPrice,
   tokenName,
@@ -133,7 +129,7 @@ exports.task = async ({
   )
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   network,
   gasPrice,
@@ -147,7 +143,7 @@ exports.handler = async function({
 }) {
   const web3 = await ensureWeb3(network)
 
-  const task = await exports.task({
+  const tasks = await task({
     web3,
     gasPrice,
     tokenName,
@@ -158,7 +154,7 @@ exports.handler = async function({
     silent,
     debug,
   })
-  return task.run().then(ctx => {
+  return tasks.run().then(ctx => {
     reporter.success(
       `Successfully deployed the token at ${chalk.green(ctx.tokenAddress)}`
     )

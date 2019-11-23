@@ -1,35 +1,34 @@
-const TaskList = require('listr')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const APM = require('@aragon/apm')
-const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
-const { green, bold } = require('chalk')
-const getRepoTask = require('./utils/getRepoTask')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const startIPFS = require('../ipfs_cmds/start')
-const {
+import TaskList from 'listr'
+import { ensureWeb3 } from '../../helpers/web3-fallback'
+import APM from '@aragon/apm'
+import defaultAPMName from '@aragon/cli-utils/src/helpers/default-apm'
+import { green, bold } from 'chalk'
+import getRepoTask from './utils/getRepoTask'
+import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+import startIPFS from '../ipfs_cmds/start'
+import {
   getRecommendedGasLimit,
   parseArgumentStringIfPossible,
-} = require('../../util')
-const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
-const assignIdTask = require('./id-assign').task
-
-exports.BARE_TEMPLATE = defaultAPMName('bare-template')
-exports.BARE_INSTANCE_FUNCTION = 'newInstance'
-exports.BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
-
-exports.OLD_BARE_TEMPLATE = defaultAPMName('bare-kit')
-exports.OLD_BARE_INSTANCE_FUNCTION = 'newBareInstance'
-exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT = 'DeployInstance'
+} from '../../util'
+import { abi as kernelAbi } from '@aragon/os/build/contracts/Kernel'
+import { task as assignIdTask } from './id-assign'
 
 // TODO: Remove old template once is no longer supported
-const BARE_TEMPLATE_ABI = require('./utils/bare-template-abi')
-const OLD_BARE_TEMPLATE_ABI = require('./utils/old-bare-template-abi')
+import BARE_TEMPLATE_ABI from './utils/bare-template-abi'
 
-exports.command = 'new [template] [template-version]'
+import OLD_BARE_TEMPLATE_ABI from './utils/old-bare-template-abi'
 
-exports.describe = 'Create a new DAO'
+export const BARE_TEMPLATE = defaultAPMName('bare-template')
+export const BARE_INSTANCE_FUNCTION = 'newInstance'
+export const BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
+export const OLD_BARE_TEMPLATE = defaultAPMName('bare-kit')
+export const OLD_BARE_INSTANCE_FUNCTION = 'newBareInstance'
+export const OLD_BARE_TEMPLATE_DEPLOY_EVENT = 'DeployInstance'
 
-exports.builder = yargs => {
+export const command = 'new [template] [template-version]'
+export const describe = 'Create a new DAO'
+
+export const builder = yargs => {
   return yargs
     .positional('kit', {
       description: 'Name of the kit to use creating the DAO',
@@ -73,7 +72,7 @@ exports.builder = yargs => {
     })
 }
 
-exports.task = async ({
+export const task = async ({
   web3,
   reporter,
   gasPrice,
@@ -193,7 +192,7 @@ exports.task = async ({
   return tasks
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   network,
   kit,
@@ -214,7 +213,7 @@ exports.handler = async function({
   template = kit || template
   templateVersion = kitVersion || templateVersion
 
-  const task = await exports.task({
+  const tasks = await task({
     web3,
     reporter,
     network,
@@ -229,7 +228,7 @@ exports.handler = async function({
     silent,
     debug,
   })
-  return task.run().then(ctx => {
+  return tasks.run().then(ctx => {
     if (aragonId) {
       reporter.success(
         `Created DAO: ${green(ctx.domain)} at ${green(ctx.daoAddress)}`

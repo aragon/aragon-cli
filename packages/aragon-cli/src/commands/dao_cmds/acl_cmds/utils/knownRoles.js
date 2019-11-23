@@ -1,6 +1,6 @@
-const { keccak256 } = require('web3').utils
-const { keyBy } = require('lodash')
-const defaultAppsRoles = require('../../../../knownRoles.json')
+import { keccak256 } from 'web3-utils'
+import { keyBy } from 'lodash'
+import defaultAppsRoles from '../../../../knownRoles.json'
 
 /**
  * Returns this app roles and default known roles
@@ -9,11 +9,9 @@ const defaultAppsRoles = require('../../../../knownRoles.json')
  * @param {ArappConfig} module arapp.json contents
  * @return {Object.<string, RoleDefinition>} Unique known roles
  */
-const getKnownRoles = module => {
+export const getKnownRoles = module => {
   const currentAppRoles = module ? module.roles : []
   const allRoles = defaultAppsRoles.concat(currentAppRoles)
 
   return keyBy(allRoles, role => keccak256(role.id))
 }
-
-module.exports = { getKnownRoles }

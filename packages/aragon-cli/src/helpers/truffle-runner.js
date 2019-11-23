@@ -1,10 +1,10 @@
-const execa = require('execa')
-const devnull = require('dev-null')
-const { getBinary } = require('../util')
+import execa from 'execa'
+import devnull from 'dev-null'
+import { getBinary } from '../util'
 
 const truffleBin = getBinary('truffle')
 
-const runTruffle = (args, { stdout, stderr, stdin }) => {
+export const runTruffle = (args, { stdout, stderr, stdin }) => {
   return new Promise((resolve, reject) => {
     const truffle = execa(truffleBin, args)
     let errMsg = ''
@@ -21,7 +21,7 @@ const runTruffle = (args, { stdout, stderr, stdin }) => {
   })
 }
 
-const compileContracts = async () => {
+export const compileContracts = async () => {
   try {
     await runTruffle(['compile'], { stdout: devnull() })
   } catch (err) {
@@ -29,5 +29,3 @@ const compileContracts = async () => {
     process.exit(1)
   }
 }
-
-module.exports = { runTruffle, compileContracts }

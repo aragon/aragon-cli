@@ -1,29 +1,27 @@
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const tmp = require('tmp-promise')
-const path = require('path')
-const { readJson, writeJson, pathExistsSync } = require('fs-extra')
-const APM = require('@aragon/apm')
-const semver = require('semver')
-const TaskList = require('listr')
-const taskInput = require('listr-input')
-const inquirer = require('inquirer')
-const chalk = require('chalk')
-const { findProjectRoot, runScriptTask, ZERO_ADDRESS } = require('../../util')
-const { compileContracts } = require('../../helpers/truffle-runner')
-const web3Utils = require('web3').utils
-const deploy = require('../deploy')
-const startIPFS = require('../ipfs_cmds/start')
-const propagateIPFS = require('../ipfs_cmds/propagate')
-const execTask = require('../dao_cmds/utils/execHandler').task
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-
-const {
+import { ensureWeb3 } from '../../helpers/web3-fallback'
+import tmp from 'tmp-promise'
+import path from 'path'
+import { readJson, writeJson, pathExistsSync } from 'fs-extra'
+import APM from '@aragon/apm'
+import semver from 'semver'
+import TaskList from 'listr'
+import taskInput from 'listr-input'
+import inquirer from 'inquirer'
+import chalk from 'chalk'
+import { findProjectRoot, runScriptTask, ZERO_ADDRESS } from '../../util'
+import { compileContracts } from '../../helpers/truffle-runner'
+import { utils as web3Utils } from 'web3'
+import deploy from '../deploy'
+import startIPFS from '../ipfs_cmds/start'
+import propagateIPFS from '../ipfs_cmds/propagate'
+import { task as execTask } from '../dao_cmds/utils/execHandler'
+import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+import {
   prepareFilesForPublishing,
   MANIFEST_FILE,
   ARTIFACT_FILE,
-} = require('./util/preprare-files')
-
-const {
+} from './util/preprare-files'
+import {
   getMajor,
   sanityCheck,
   generateApplicationArtifact,
@@ -32,13 +30,12 @@ const {
   SOLIDITY_FILE,
   POSITIVE_ANSWERS,
   ANSWERS,
-} = require('./util/generate-artifact')
+} from './util/generate-artifact'
 
-exports.command = 'publish <bump> [contract]'
+export const command = 'publish <bump> [contract]'
+export const describe = 'Publish a new version of the application'
 
-exports.describe = 'Publish a new version of the application'
-
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return deploy
     .builder(yargs) // inherit deploy options
     .positional('bump', {
@@ -140,7 +137,7 @@ exports.builder = function(yargs) {
     })
 }
 
-exports.runSetupTask = ({
+export const runSetupTask = ({
   reporter,
 
   // Globals
@@ -311,7 +308,7 @@ exports.runSetupTask = ({
   )
 }
 
-exports.runPrepareForPublishTask = ({
+export const runPrepareForPublishTask = ({
   reporter,
 
   // Globals
@@ -515,7 +512,7 @@ exports.runPrepareForPublishTask = ({
   )
 }
 
-exports.runPublishTask = ({
+export const runPublishTask = ({
   reporter,
 
   // Globals
@@ -564,7 +561,7 @@ exports.runPublishTask = ({
   )
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
 
   // Globals
@@ -608,58 +605,54 @@ exports.handler = async function({
     version,
     contract: contractAddress,
     deployArtifacts,
-  } = await exports
-    .runSetupTask({
-      reporter,
-      gasPrice,
-      cwd,
-      web3,
-      network,
-      module,
-      apm: apmOptions,
-      silent,
-      debug,
-      prepublish,
-      prepublishScript,
-      build,
-      buildScript,
-      bump,
-      contract,
-      init,
-      reuse,
-      onlyContent,
-      onlyArtifacts,
-      ipfsCheck,
-      http,
-    })
-    .run()
+  } = await runSetupTask({
+    reporter,
+    gasPrice,
+    cwd,
+    web3,
+    network,
+    module,
+    apm: apmOptions,
+    silent,
+    debug,
+    prepublish,
+    prepublishScript,
+    build,
+    buildScript,
+    bump,
+    contract,
+    init,
+    reuse,
+    onlyContent,
+    onlyArtifacts,
+    ipfsCheck,
+    http,
+  }).run()
 
-  const { pathToPublish, intent } = await exports
-    .runPrepareForPublishTask({
-      reporter,
-      cwd,
-      web3,
-      network,
-      module,
-      apm: apmOptions,
-      silent,
-      debug,
-      publishDir,
-      files,
-      ignore,
-      httpServedFrom,
-      provider,
-      onlyArtifacts,
-      onlyContent,
-      http,
-      // context
-      initialRepo,
-      initialVersion,
-      version,
-      contractAddress,
-      deployArtifacts,
-    })
-    .run()
+  const { pathToPublish, intent } = await runPrepareForPublishTask({
+    reporter,
+    cwd,
+    web3,
+    network,
+    module,
+    apm: apmOptions,
+    silent,
+    debug,
+    publishDir,
+    files,
+    ignore,
+    httpServedFrom,
+    provider,
+    onlyArtifacts,
+    onlyContent,
+    http,
+    // context
+    initialRepo,
+    initialVersion,
+    version,
+    contractAddress,
+    deployArtifacts,
+  }).run()
 
   // Output publish info
 
@@ -714,25 +707,23 @@ exports.handler = async function({
     if (!confirmation) process.exit()
   }
 
-  const { receipt, transactionPath } = await exports
-    .runPublishTask({
-      reporter,
-      gasPrice,
-      web3,
-      wsProvider,
-      module,
-      apm: apmOptions,
-      silent,
-      debug,
-      onlyArtifacts,
-      onlyContent,
-      // context
-      dao,
-      proxyAddress,
-      methodName,
-      params,
-    })
-    .run()
+  const { receipt, transactionPath } = await runPublishTask({
+    reporter,
+    gasPrice,
+    web3,
+    wsProvider,
+    module,
+    apm: apmOptions,
+    silent,
+    debug,
+    onlyArtifacts,
+    onlyContent,
+    // context
+    dao,
+    proxyAddress,
+    methodName,
+    params,
+  }).run()
 
   const { transactionHash, status } = receipt
 

@@ -1,7 +1,7 @@
-const APM = require('@aragon/apm')
-const ACL = require('./util/acl')
+import APM from '@aragon/apm'
+import ACL from './util/acl'
 
-module.exports = async (
+export default async (
   web3,
   apmRepoName,
   apmOptions,

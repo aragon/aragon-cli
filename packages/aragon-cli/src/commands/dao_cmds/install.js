@@ -1,28 +1,27 @@
-const execTask = require('./utils/execHandler').task
-const { resolveEnsDomain } = require('../../helpers/aragonjs-wrapper')
-const TaskList = require('listr')
-const daoArg = require('./utils/daoArg')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const APM = require('@aragon/apm')
-const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
-const chalk = require('chalk')
-const startIPFS = require('../ipfs_cmds/start')
-const getRepoTask = require('./utils/getRepoTask')
-const encodeInitPayload = require('./utils/encodeInitPayload')
-const {
+import { task as execTask } from './utils/execHandler'
+import { resolveEnsDomain } from '../../helpers/aragonjs-wrapper'
+import TaskList from 'listr'
+import daoArg from './utils/daoArg'
+import { ensureWeb3 } from '../../helpers/web3-fallback'
+import APM from '@aragon/apm'
+import defaultAPMName from '@aragon/cli-utils/src/helpers/default-apm'
+import chalk from 'chalk'
+import startIPFS from '../ipfs_cmds/start'
+import getRepoTask from './utils/getRepoTask'
+import encodeInitPayload from './utils/encodeInitPayload'
+import {
   addressesEqual,
   ANY_ENTITY,
   NO_MANAGER,
   ZERO_ADDRESS,
-} = require('../../util')
-const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
+} from '../../util'
+import { abi as kernelAbi } from '@aragon/os/build/contracts/Kernel'
+import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
 
-exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'
+export const command = 'install <dao> <apmRepo> [apmRepoVersion]'
+export const describe = 'Install an app into a DAO'
 
-exports.describe = 'Install an app into a DAO'
-
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return getRepoTask
     .args(daoArg(yargs))
     .option('app-init', {
@@ -42,7 +41,7 @@ exports.builder = function(yargs) {
     })
 }
 
-exports.task = async ({
+export const task = async ({
   wsProvider,
   web3,
   reporter,
@@ -221,7 +220,7 @@ exports.task = async ({
   return tasks
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   dao,
   gasPrice,
@@ -237,7 +236,7 @@ exports.handler = async function({
   debug,
 }) {
   const web3 = await ensureWeb3(network)
-  const task = await exports.task({
+  const tasks = await task({
     web3,
     reporter,
     dao,
@@ -254,7 +253,7 @@ exports.handler = async function({
     debug,
   })
 
-  return task.run().then(ctx => {
+  return tasks.run().then(ctx => {
     reporter.info(
       `Successfully executed: "${chalk.blue(
         ctx.transactionPath[0].description

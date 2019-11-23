@@ -2,8 +2,9 @@ import path from 'path'
 import { existsSync, ensureDirSync } from 'fs-extra'
 import os from 'os'
 import { promisify } from 'util'
+import pkg from '../../../package.json'
+
 const clone = promisify(require('git-clone'))
-const pkg = require('../../../package.json')
 
 export async function downloadClient({
   ctx,

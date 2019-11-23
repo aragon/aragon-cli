@@ -1,15 +1,14 @@
-const chalk = require('chalk')
-const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const TaskList = require('listr')
-const getApmRepoVersions = require('../../lib/apm/getApmRepoVersions')
+import chalk from 'chalk'
+import defaultAPMName from '@aragon/cli-utils/src/helpers/default-apm'
+import { ensureWeb3 } from '../../helpers/web3-fallback'
+import TaskList from 'listr'
+import getApmRepoVersions from '../../lib/apm/getApmRepoVersions'
 
-exports.command = 'versions [apmRepo]'
-
-exports.describe =
+export const command = 'versions [apmRepo]'
+export const describe =
   'Shows all the previously published versions of a given repository'
 
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return yargs.option('apmRepo', {
     description: 'Name of the APM repository',
     type: 'string',
@@ -17,7 +16,7 @@ exports.builder = function(yargs) {
   })
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   apmRepo,
   module,

@@ -1,22 +1,22 @@
-const daoArg = require('../utils/daoArg')
-const aclExecHandler = require('./utils/aclExecHandler')
-const { convertStringToParam, encodeParam } = require('./utils/params')
+import daoArg from '../utils/daoArg'
+import aclExecHandler from './utils/aclExecHandler'
+import { convertStringToParam, encodeParam } from './utils/params'
 
 // Note: we usually order these values as entity, proxy, role but this order fits
 //       better with other CLI commands
-exports.command = 'grant <dao> <app> <role> <entity> [params...]'
+export const command = 'grant <dao> <app> <role> <entity> [params...]'
 
-exports.describe =
+export const describe =
   'Grant a permission in a DAO (only permission manager can do it)'
 
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return daoArg(yargs).positional('params', {
     description: 'ACL parameters',
     default: [],
   })
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   dao,
   app,

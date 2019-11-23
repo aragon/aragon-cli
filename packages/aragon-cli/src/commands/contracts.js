@@ -1,10 +1,9 @@
-const { runTruffle } = require('../helpers/truffle-runner')
+import { runTruffle } from '../helpers/truffle-runner'
 
-exports.command = 'contracts'
+export const command = 'contracts'
+export const describe = 'Execute any Truffle command with arguments'
 
-exports.describe = 'Execute any Truffle command with arguments'
-
-exports.handler = async function({ reporter, cwd }) {
+export const handler = async function({ reporter, cwd }) {
   const truffleArgs = process.argv.slice(
     process.argv.indexOf('contracts') + 1,
     process.argv.length

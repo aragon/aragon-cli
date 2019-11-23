@@ -1,13 +1,12 @@
-const chalk = require('chalk')
-const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const getApmRepo = require('../../lib/apm/getApmRepo')
+import chalk from 'chalk'
+import defaultAPMName from '@aragon/cli-utils/src/helpers/default-apm'
+import { ensureWeb3 } from '../../helpers/web3-fallback'
+import getApmRepo from '../../lib/apm/getApmRepo'
 
-exports.command = 'info <apmRepo> [apmRepoVersion]'
+export const command = 'info <apmRepo> [apmRepoVersion]'
+export const describe = 'Get information about a package'
 
-exports.describe = 'Get information about a package'
-
-exports.builder = yargs => {
+export const builder = yargs => {
   return yargs
     .option('apmRepo', {
       describe: 'Name of the aragonPM repo',
@@ -18,7 +17,7 @@ exports.builder = yargs => {
     })
 }
 
-exports.handler = async function({
+export const handler = async function({
   apmRepo,
   apmRepoVersion,
   apm: apmOptions,

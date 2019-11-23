@@ -1,3 +1,3 @@
-const { start } = require('@aragon/aragen').commands
+import { commands } from '@aragon/aragen'
 
-Object.assign(exports, start)
+Object.assign(exports, commands.start)

@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 import 'source-map-support/register'
-const Web3 = require('web3')
+import Web3 from 'web3'
+import { configCliMiddleware } from './middleware'
+import { findProjectRoot } from './util'
+import { ens } from '@aragon/aragen'
+import ConsoleReporter from '@aragon/cli-utils/src/reporters/ConsoleReporter'
+import url from 'url'
 
 const DEFAULT_GAS_PRICE = require('../package.json').aragon.defaultGasPrice
-
-const { configCliMiddleware } = require('./middleware')
-const { findProjectRoot } = require('./util')
-const { ens } = require('@aragon/aragen')
-const ConsoleReporter = require('@aragon/cli-utils/src/reporters/ConsoleReporter')
-const url = require('url')
 
 const reporter = new ConsoleReporter()
 

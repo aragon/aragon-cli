@@ -1,6 +1,6 @@
-const aragonAppAbi = require('@aragon/os/build/contracts/AragonApp').abi
+import { abi as aragonAppAbi } from '@aragon/os/build/contracts/AragonApp'
 
-module.exports = (web3, appAddress) => {
+export default (web3, appAddress) => {
   const app = new web3.eth.Contract(aragonAppAbi, appAddress)
   return app.methods.kernel().call()
 }

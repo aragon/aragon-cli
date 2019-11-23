@@ -1,8 +1,8 @@
-const { convertDAOIdToSubdomain, ARAGON_DOMAIN } = require('../../util')
-const ENS = require('ethereum-ens')
-const ififsResolvingRegistrarAbi = require('@aragon/id/build/contracts/IFIFSResolvingRegistrar')
-  .abi
-const { sha3, isAddress } = require('web3').utils
+import { convertDAOIdToSubdomain, ARAGON_DOMAIN } from '../../util'
+import ENS from 'ethereum-ens'
+import { abi as ififsResolvingRegistrarAbi } from '@aragon/id/build/contracts/IFIFSResolvingRegistrar'
+import { isAddress, sha3 } from 'web3-utils'
+
 const REGISTRAR_GAS_LIMIT = '1000000'
 
 /**
@@ -16,7 +16,7 @@ const REGISTRAR_GAS_LIMIT = '1000000'
  * @param {string} options.gasPrice Gas price
  * @returns {void}
  */
-async function assignId(daoAddress, daoId, options) {
+export async function assignId(daoAddress, daoId, options) {
   const { web3, ensRegistry, gasPrice } = options
 
   if (!isAddress(daoAddress)) throw new Error(`Invalid address: ${daoAddress}`)
@@ -43,7 +43,7 @@ async function assignId(daoAddress, daoId, options) {
  * @param {string} options.ensRegistry ENS registry address
  * @returns {Promise<boolean>} true if already assigned
  */
-async function isIdAssigned(daoId, options) {
+export async function isIdAssigned(daoId, options) {
   const daoUrl = convertDAOIdToSubdomain(daoId)
   const ens = new ENS(options.web3.currentProvider, options.ensRegistry)
 
@@ -57,5 +57,3 @@ async function isIdAssigned(daoId, options) {
     return false
   }
 }
-
-module.exports = { isIdAssigned, assignId }

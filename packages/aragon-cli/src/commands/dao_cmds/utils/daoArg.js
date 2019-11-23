@@ -1,7 +1,7 @@
 const isAddress = addr => /0x[a-fA-F0-9]{40}/.test(addr)
 const isValidAragonID = dao => /[a-z0-9]+\.eth/.test(dao)
 
-module.exports = yargs => {
+export default yargs => {
   return yargs.positional('dao', {
     description: 'Address of the Kernel or AragonID',
     type: 'string',

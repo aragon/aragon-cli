@@ -1,5 +1,5 @@
-const pkg = require('../../../package.json')
-const aragonPM = require('@aragon/apm')
+import pkg from '../../../package.json'
+import aragonPM from '@aragon/apm'
 
 const LATEST_VERSION = 'latest'
 const DEFAULT_IPFS_TIMEOUT = pkg.aragon.defaultIpfsTimeout
@@ -17,7 +17,7 @@ const DEFAULT_IPFS_TIMEOUT = pkg.aragon.defaultIpfsTimeout
  * @param {*} progressHandler todo
  * @returns {*} todo
  */
-module.exports = async (
+export default async (
   web3,
   apmRepoName,
   apmRepoVersion,

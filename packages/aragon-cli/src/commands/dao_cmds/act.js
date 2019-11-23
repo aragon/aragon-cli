@@ -1,16 +1,15 @@
-const web3 = require('web3')
-const execHandler = require('./utils/execHandler').handler
-const getAppKernel = require('./utils/app-kernel')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const { parseArgumentStringIfPossible, ZERO_ADDRESS } = require('../../util')
+import web3 from 'web3'
+import { handler as execHandler } from './utils/execHandler'
+import getAppKernel from './utils/app-kernel'
+import { ensureWeb3 } from '../../helpers/web3-fallback'
+import { parseArgumentStringIfPossible, ZERO_ADDRESS } from '../../util'
 
 const EXECUTE_FUNCTION_NAME = 'execute'
 
-exports.command = 'act <agent-address> <target> <signature> [call-args..]'
+export const command = 'act <agent-address> <target> <signature> [call-args..]'
+export const describe = 'Executes an action from the Agent app'
 
-exports.describe = 'Executes an action from the Agent app'
-
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return yargs
     .positional('agent-address', {
       description: 'Address of the Agent app proxy',
@@ -52,7 +51,7 @@ const encodeCalldata = (signature, params) => {
   return `${sigBytes}${paramBytes.slice(2)}`
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   apm,
   network,

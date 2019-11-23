@@ -1,4 +1,4 @@
-const APM = require('@aragon/apm')
+import APM from '@aragon/apm'
 
 /**
  * Return packages for a given APM registry.
@@ -12,7 +12,7 @@ const APM = require('@aragon/apm')
  * @param {function(number)} progressHandler Progress handler
  * @returns {void}
  */
-module.exports = async (
+export default async (
   web3,
   apmRegistryName,
   apmOptions,

@@ -1,12 +1,11 @@
-const execHandler = require('./utils/execHandler').handler
-const daoArg = require('./utils/daoArg')
-const { parseArgumentStringIfPossible } = require('../../util')
+import { handler as execHandler } from './utils/execHandler'
+import daoArg from './utils/daoArg'
+import { parseArgumentStringIfPossible } from '../../util'
 
-exports.command = 'exec <dao> <proxy-address> <fn> [fn-args..]'
+export const command = 'exec <dao> <proxy-address> <fn> [fn-args..]'
+export const describe = 'Executes a call in an app of a DAO'
 
-exports.describe = 'Executes a call in an app of a DAO'
-
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return daoArg(yargs)
     .positional('proxy-address', {
       description: 'Proxy address of the app with the function to be run',
@@ -21,7 +20,7 @@ exports.builder = function(yargs) {
     })
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   dao,
   apm,

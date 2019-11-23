@@ -1,13 +1,12 @@
-const Table = require('cli-table')
-const TaskList = require('listr')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const getApmRegistryPackages = require('../../lib/apm/getApmRegistryPackages')
+import Table from 'cli-table'
+import TaskList from 'listr'
+import { ensureWeb3 } from '../../helpers/web3-fallback'
+import getApmRegistryPackages from '../../lib/apm/getApmRegistryPackages'
 
-exports.command = 'packages [apmRegistry]'
+export const command = 'packages [apmRegistry]'
+export const describe = 'List all packages in the registry'
 
-exports.describe = 'List all packages in the registry'
-
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return yargs.option('apmRegistry', {
     description: 'The registry to inspect',
     type: 'string',
@@ -15,7 +14,11 @@ exports.builder = function(yargs) {
   })
 }
 
-exports.handler = async function({ apmRegistry, network, apm: apmOptions }) {
+export const handler = async function({
+  apmRegistry,
+  network,
+  apm: apmOptions,
+}) {
   const web3 = await ensureWeb3(network)
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   let packages
