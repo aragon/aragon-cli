@@ -1,7 +1,7 @@
 import test from 'ava'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
-import { convertDAOIdToSubdomain } from '../src/util'
+import { parseArgumentStringIfPossible, convertDAOIdToSubdomain } from '../src/util'
 
 test.beforeEach(t => {
   const fsStub = {
@@ -62,6 +62,24 @@ test("getLocalBinary should find the binary path from the parent node_modules ev
   )
   // assert
   t.is(normalizePath(path), 'parent/node_modules/.bin/truff')
+})
+
+test('parseArgumentStringIfPossible should parse a boolean string', t => {
+  t.is(parseArgumentStringIfPossible('true'), true)
+  t.is(parseArgumentStringIfPossible('True'), true)
+  t.is(parseArgumentStringIfPossible('TRUE'), true)
+  t.is(parseArgumentStringIfPossible('false'), false)
+  t.is(parseArgumentStringIfPossible('False'), false)
+})
+
+test('parseArgumentStringIfPossible should parse an array as string', t => {
+  t.deepEqual(parseArgumentStringIfPossible('["test"]'), ['test'])
+  t.deepEqual(parseArgumentStringIfPossible('[1, 2, "3"]'), [1, 2, '3'])
+  t.deepEqual(parseArgumentStringIfPossible('["hello", 1, "true"]'), [
+    'hello',
+    1,
+    'true',
+  ])
 })
 
 test('convertDAOIdToSubdomain returns the correct format', t => {
