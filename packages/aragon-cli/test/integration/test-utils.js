@@ -1,5 +1,10 @@
 import Web3 from 'web3'
 import execa from 'execa'
+import util from 'util'
+import * as child from 'child_process'
+
+const exec = util.promisify(child.exec)
+const defaultTimeout = 15 * 60 * 1000 // ms
 
 export const isValidTxHash = txHash => /^0x([A-Fa-f0-9]{64})$/.test(txHash)
 export const isAddress = Web3.utils.isAddress
@@ -23,4 +28,52 @@ export const getNewDaoAddress = async () => {
   if (!isAddress(dao))
     throw Error(`Error parsing aragon dao new output: ${daoNewRes}`)
   return dao
+}
+
+/**
+ * Run arbitrary commands in a host shell
+ *
+ * If timeout is greater than 0, the parent will send the signal
+ * identified by the killSignal property (the default is 'SIGTERM')
+ * if the child runs longer than timeout milliseconds.
+ *
+ * NOTE: On error (including any error resulting in an exit code other than 0),
+ * The Error object has two additional properties: stdout and stderr.
+ *
+ * @param {string} cmd Command to run in shell
+ * @param {Object} [options] Options object
+ * @param {number} [options.number] Timeout in ms
+ * @return {Promise<string>}
+ */
+export async function shell(cmd, options) {
+  const timeout = options && options.timeout ? options.timeout : defaultTimeout
+  return exec(cmd, { timeout })
+    .then(res => (res.stdout || '').trim())
+    .catch(err => {
+      if (err.signal === 'SIGTERM') {
+        throw Error(`cmd "${err.cmd}" timed out (${timeout} ms)`)
+      }
+      throw err
+    })
+}
+
+/**
+ * Installs IPFS if necessary. If IPFS is already installed, returns void
+ *
+ * @return {Promise<void>}
+ */
+export async function installIpfsIfNecessary() {
+  try {
+    await shell(`npx aragon ipfs install`)
+  } catch (e) {
+    if (!e.message.includes('already installed')) throw e
+  }
+}
+
+export async function assertIpfsIsInstalled() {
+  try {
+    await shell(`ipfs version`)
+  } catch (e) {
+    throw Error(`IPFS is not installed: ${e.message}`)
+  }
 }
