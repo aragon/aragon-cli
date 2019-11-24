@@ -92,12 +92,13 @@ exports.task = async ({
       {
         title: 'Create new DAO from template',
         task: async ctx => {
+          console.log('registry: ', apmOptions.ensRegistryAddress)
           daoAddress = await newDao({
             repo,
             web3,
             templateInstance,
-            fn,
-            fnArgs,
+            newInstanceMethod: fn,
+            newInstanceArgs: fnArgs,
             deployEvent,
             gasPrice,
           })
