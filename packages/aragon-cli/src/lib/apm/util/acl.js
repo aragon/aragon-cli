@@ -4,7 +4,7 @@ const aragonAppAbi = require('@aragon/os/build/contracts/AragonApp').abi
 const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
 const repoAbi = require('@aragon/os/build/contracts/Repo').abi
 
-module.exports = ({ web3, gasPrice, network }) => {
+module.exports = web3 => {
   const getACL = async repoAddr => {
     const repo = new web3.eth.Contract(aragonAppAbi, repoAddr)
     const daoAddr = await repo.methods.kernel().call()
@@ -32,7 +32,6 @@ module.exports = ({ web3, gasPrice, network }) => {
         to: acl.options.address,
         data: call.encodeABI(),
         gas: await getRecommendedGasLimit(web3, estimatedGas),
-        gasPrice: network.gasPrice || gasPrice,
       }
     },
   }
