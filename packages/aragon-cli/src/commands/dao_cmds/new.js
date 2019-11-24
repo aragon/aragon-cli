@@ -8,24 +8,16 @@ const startIPFS = require('../ipfs_cmds/start')
 const newDao = require('../../lib/dao/new')
 const { assignId } = require('../../lib/dao/assign-id')
 const { parseArgumentStringIfPossible } = require('../../util')
-const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
 
 exports.BARE_TEMPLATE = defaultAPMName('bare-template')
 exports.BARE_INSTANCE_FUNCTION = 'newInstance'
 exports.BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
 
 exports.command = 'new [template] [template-version]'
-
 exports.describe = 'Create a new DAO'
 
 exports.builder = yargs => {
   return yargs
-    .positional('kit', {
-      description: 'Name of the kit to use creating the DAO',
-    })
-    .positional('kit-version', {
-      description: 'Version of the kit to be used',
-    })
     .positional('template', {
       description: 'Name of the template to use creating the DAO',
       default: exports.BARE_TEMPLATE,
@@ -62,16 +54,15 @@ exports.builder = yargs => {
     })
 }
 
+// Task will be moved to handler once `dao start` is refactored
 exports.task = async ({
   web3,
-  reporter,
   gasPrice,
   apmOptions,
   template,
   templateVersion,
   fn,
   fnArgs,
-  skipChecks,
   deployEvent,
   templateInstance,
   silent,
@@ -94,31 +85,34 @@ exports.task = async ({
       {
         title: `Fetching template ${bold(template)}@${templateVersion}`,
         task: async () => {
-          repo = await getApmRepo(web3, template, templateVersion, apmOptions, () => {})          
+          repo = await getApmRepo(web3, template, templateVersion, apmOptions)
         },
         enabled: () => !templateInstance,
       },
       {
         title: 'Create new DAO from template',
-        task: async (ctx) => {
-          daoAddress = await newDao({ repo, web3, templateInstance, fn, fnArgs, deployEvent, gasPrice})
+        task: async ctx => {
+          daoAddress = await newDao({
+            repo,
+            web3,
+            templateInstance,
+            fn,
+            fnArgs,
+            deployEvent,
+            gasPrice,
+          })
           ctx.daoAddress = daoAddress
-        },
-      },
-      {
-        title: 'Checking DAO',
-        skip: () => skipChecks,
-        task: async (ctx) => {
-          const kernel = new web3.eth.Contract(kernelAbi, daoAddress)
-          ctx.aclAddress = await kernel.methods.acl().call()
-          ctx.appManagerRole = await kernel.methods.APP_MANAGER_ROLE().call()
         },
       },
       {
         title: 'Assigning Aragon Id',
         enabled: () => aragonId,
-        task: async (ctx) => {
-          await assignId(daoAddress, aragonId, { web3, ensRegistry: apmOptions.ensRegistryAddress, gasPrice})
+        task: async () => {
+          await assignId(daoAddress, aragonId, {
+            web3,
+            ensRegistry: apmOptions.ensRegistryAddress,
+            gasPrice,
+          })
         },
       },
     ],
@@ -153,25 +147,17 @@ exports.handler = async function({
     fn,
     fnArgs,
     deployEvent,
-    skipChecks: false,
     aragonId,
     silent,
     debug,
   })
-  return task.run().then(ctx => {
-    if (aragonId) {
-      reporter.success(
-        `Created DAO: ${green(aragonId)} at ${green(ctx.daoAddress)}`
-      )
-    } else {
-      reporter.success(`Created DAO: ${green(ctx.daoAddress)}`)
-    }
-    if (kit || kitVersion) {
-      reporter.warning(
-        `The use of kits is deprecated and templates should be used instead. The new options for 'dao new' are '--template' and '--template-version'`
-      )
-    }
+  const ctx = await task.run()
 
-    process.exit()
-  })
+  reporter.success(
+    aragonId
+      ? `Created DAO: ${green(aragonId)} at ${green(ctx.daoAddress)}`
+      : `Created DAO: ${green(ctx.daoAddress)}`
+  )
+
+  process.exit()
 }
