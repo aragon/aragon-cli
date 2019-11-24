@@ -19,7 +19,7 @@ exports.OLD_BARE_INSTANCE_FUNCTION = 'newBareInstance'
 exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT = 'DeployInstance'
 
 // TODO: Remove old template once is no longer supported
-const BARE_TEMPLATE_ABI = require('./utils/bare-template-abi')
+const BARE_TEMPLATE_ABI = require('../../lib/dao/bare-template-abi')
 const OLD_BARE_TEMPLATE_ABI = require('./utils/old-bare-template-abi')
 
 exports.command = 'new [template] [template-version]'
@@ -116,13 +116,14 @@ exports.task = async ({
         title: 'Create new DAO from template',
         task: async (ctx) => {
           daoAddress = await newDao({ repo, web3, templateInstance, fn, fnArgs, deployEvent, gasPrice})
+          ctx.daoAddress = daoAddress
         },
       },
       {
         title: 'Checking DAO',
         skip: () => skipChecks,
         task: async (ctx) => {
-          const kernel = new web3.eth.Contract(kernelAbi, ctx.daoAddress)
+          const kernel = new web3.eth.Contract(kernelAbi, daoAddress)
           ctx.aclAddress = await kernel.methods.acl().call()
           ctx.appManagerRole = await kernel.methods.APP_MANAGER_ROLE().call()
         },

@@ -1,13 +1,9 @@
-const {
-    getRecommendedGasLimit,
-  } = require('../../util')
-const BARE_TEMPLATE_ABI = require('../../commands/dao_cmds/utils/bare-template-abi')
+const { getRecommendedGasLimit } = require('../../util')
 
 module.exports = async function ({repo, web3, templateInstance, fn, fnArgs, deployEvent, gasPrice}) {
-    const abi = repo.abi || BARE_TEMPLATE_ABI
     const template =
       templateInstance ||
-      new web3.eth.Contract(abi, repo.contractAddress)
+      new web3.eth.Contract(repo.abi, repo.contractAddress)
 
     const newInstanceTx = template.methods[fn](...fnArgs)
     const estimatedGas = await newInstanceTx.estimateGas()
