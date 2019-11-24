@@ -5,10 +5,8 @@ const { green, bold } = require('chalk')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const getApmRepo = require('../../lib/apm/getApmRepo')
 const startIPFS = require('../ipfs_cmds/start')
-const {
-  getRecommendedGasLimit,
-  parseArgumentStringIfPossible,
-} = require('../../util')
+const newDao = require('../../lib/dao/new')
+const { parseArgumentStringIfPossible } = require('../../util')
 const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
 const assignIdTask = require('./id-assign').task
 
@@ -91,8 +89,7 @@ exports.task = async ({
 }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   template = defaultAPMName(template)
-  let bareTemplateABI = BARE_TEMPLATE_ABI
-  let repo
+  let repo, daoAddress
 
   if (template === exports.OLD_BARE_TEMPLATE) {
     fn = exports.OLD_BARE_INSTANCE_FUNCTION
@@ -118,47 +115,13 @@ exports.task = async ({
       {
         title: 'Create new DAO from template',
         task: async (ctx) => {
-          if (!ctx.accounts) {
-            ctx.accounts = await web3.eth.getAccounts()
-          }
-          const abi = repo.abi || bareTemplateABI
-          const template =
-            templateInstance ||
-            new web3.eth.Contract(abi, repo.contractAddress)
-
-          const newInstanceTx = template.methods[fn](...fnArgs)
-          const estimatedGas = await newInstanceTx.estimateGas()
-          const { events } = await newInstanceTx.send({
-            from: ctx.accounts[0],
-            gas: await getRecommendedGasLimit(web3, estimatedGas),
-            gasPrice,
-          })
-
-          // Backward compatibility with old event name
-          const deployEventValue =
-            events[deployEvent] ||
-            events[exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT] ||
-            // Some templates use DeployDAO instead of DeployDao
-            events.DeployDAO
-
-          // TODO: Include link to documentation
-          if (events[exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT])
-            reporter.warning(
-              `The use of kits was deprecated and templates should be used instead. The 'DeployInstance' event was replaced, 'DeployDao' should be used instead.`
-            )
-
-          if (deployEventValue)
-            ctx.daoAddress = deployEventValue.returnValues.dao
-          else {
-            reporter.error(`Could not find deploy event: ${deployEvent}`)
-            process.exit(1)
-          }
+          daoAddress = await newDao({ repo, web3, templateInstance, fn, fnArgs, deployEvent, gasPrice})
         },
       },
       {
         title: 'Checking DAO',
         skip: () => skipChecks,
-        task: async (ctx, task) => {
+        task: async (ctx) => {
           const kernel = new web3.eth.Contract(kernelAbi, ctx.daoAddress)
           ctx.aclAddress = await kernel.methods.acl().call()
           ctx.appManagerRole = await kernel.methods.APP_MANAGER_ROLE().call()
@@ -169,7 +132,7 @@ exports.task = async ({
         enabled: () => aragonId,
         task: async ctx => {
           return assignIdTask({
-            dao: ctx.daoAddress,
+            dao: daoAddress,
             aragonId,
             web3,
             gasPrice,
