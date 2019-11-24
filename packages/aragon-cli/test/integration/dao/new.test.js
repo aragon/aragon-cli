@@ -1,9 +1,9 @@
 import test from 'ava'
 import sinon from 'sinon'
-import newDao from '../../src/lib/dao/new'
+import newDao from '../../../src/lib/dao/new'
 import defaultAPMName from '@aragon/cli-utils/src/helpers/default-apm'
-import { getLocalWeb3, isAddress } from './test-utils'
-import getApmRepo from '../../src/lib/apm/getApmRepo'
+import { getLocalWeb3, isAddress } from '../test-utils'
+import getApmRepo from '../../../src/lib/apm/getApmRepo'
 import { ens } from '@aragon/aragen'
 
 test.beforeEach(async t => {
@@ -60,7 +60,7 @@ test('Deploys DAO with template with custom newInstance method and args', async 
     newInstanceArgs: [
       'Token name',
       'TKN',
-      'daoname',
+      'daoname' + Math.floor(Math.random() * 1000000),
       ['0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'],
       ['500000000000000000', '50000000000000000', '604800'],
       '1296000',

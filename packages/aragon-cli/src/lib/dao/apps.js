@@ -4,7 +4,6 @@ import {
   resolveEnsDomain,
 } from '../../helpers/aragonjs-wrapper'
 const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
-const { addressesEqual } = require('../../util')
 
 /**
  * Return installed apps for a DAO
@@ -13,7 +12,7 @@ const { addressesEqual } = require('../../util')
  * @param {Object} options Options
  * @param {Object} options.provider ETH provider
  * @param {string} options.registryAddress ENS registry address
- * @param {string} options.ipfs IPFS configuration
+ * @param {Object} options.ipfs IPFS configuration
  * @param {Object[]} options.userApps User apps
  */
 async function getInstalledApps(dao, options) {
@@ -27,7 +26,7 @@ async function getInstalledApps(dao, options) {
 
 /**
  * Return all apps in a DAO, including permissionless ones
- * 
+ *
  * @param {string} DAO address
  * @param {Object} options Options
  * @param {Object} options.web3 Web3
@@ -42,11 +41,10 @@ async function getAllApps(dao, options) {
     toBlock: 'latest',
   })
 
-  return events
-    .map(event => ({
-      proxyAddress: event.returnValues.proxy,
-      appId: event.returnValues.appId,
-    }))
+  return events.map(event => ({
+    proxyAddress: event.returnValues.proxy,
+    appId: event.returnValues.appId,
+  }))
 }
 
 /**

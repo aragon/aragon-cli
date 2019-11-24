@@ -6,7 +6,11 @@ const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const { addressesEqual } = require('../../util')
 const Table = require('cli-table')
-const { getDaoAddress, getInstalledApps, getAllApps } = require('../../lib/dao/apps')
+const {
+  getDaoAddress,
+  getInstalledApps,
+  getAllApps,
+} = require('../../lib/dao/apps')
 
 let knownApps
 
@@ -39,15 +43,13 @@ const printContent = content => {
 
 const printApps = apps => {
   const appsContent = apps
-    .map(
-      ({ appId, proxyAddress, codeAddress, content, appName, version }) => [
-        appName
-          ? printAppNameAndVersion(appName, version)
-          : printAppNameFromAppId(appId),
-        proxyAddress,
-        printContent(content),
-      ]
-    )
+    .map(({ appId, proxyAddress, codeAddress, content, appName, version }) => [
+      appName
+        ? printAppNameAndVersion(appName, version)
+        : printAppNameFromAppId(appId),
+      proxyAddress,
+      printContent(content),
+    ])
     // filter registry name to make it shorter
     // TODO: Add flag to turn off
     .map(row => {
@@ -113,10 +115,12 @@ exports.handler = async function({
         title: 'Fetching permissionless apps',
         enabled: () => all,
         task: async (ctx, task) => {
-          appsWithoutPermissions = (await getAllApps(daoAddress, { web3 }))
-            .filter(({ proxyAddress }) => 
+          appsWithoutPermissions = (
+            await getAllApps(daoAddress, { web3 })
+          ).filter(
+            ({ proxyAddress }) =>
               !apps.find(app => addressesEqual(app.proxyAddress, proxyAddress))
-            )
+          )
         },
       },
     ],
@@ -129,6 +133,5 @@ exports.handler = async function({
 
   printApps(apps)
   printPermissionlessApps(appsWithoutPermissions)
-  process.exit() 
-  
+  process.exit()
 }
