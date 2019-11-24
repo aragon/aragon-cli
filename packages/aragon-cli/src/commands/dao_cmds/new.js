@@ -6,21 +6,13 @@ const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const getApmRepo = require('../../lib/apm/getApmRepo')
 const startIPFS = require('../ipfs_cmds/start')
 const newDao = require('../../lib/dao/new')
+const { assignId } = require('../../lib/dao/assign-id')
 const { parseArgumentStringIfPossible } = require('../../util')
 const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
-const assignIdTask = require('./id-assign').task
 
 exports.BARE_TEMPLATE = defaultAPMName('bare-template')
 exports.BARE_INSTANCE_FUNCTION = 'newInstance'
 exports.BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
-
-exports.OLD_BARE_TEMPLATE = defaultAPMName('bare-kit')
-exports.OLD_BARE_INSTANCE_FUNCTION = 'newBareInstance'
-exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT = 'DeployInstance'
-
-// TODO: Remove old template once is no longer supported
-const BARE_TEMPLATE_ABI = require('../../lib/dao/bare-template-abi')
-const OLD_BARE_TEMPLATE_ABI = require('./utils/old-bare-template-abi')
 
 exports.command = 'new [template] [template-version]'
 
@@ -91,12 +83,6 @@ exports.task = async ({
   template = defaultAPMName(template)
   let repo, daoAddress
 
-  if (template === exports.OLD_BARE_TEMPLATE) {
-    fn = exports.OLD_BARE_INSTANCE_FUNCTION
-    deployEvent = exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT
-    bareTemplateABI = OLD_BARE_TEMPLATE_ABI
-  }
-
   const tasks = new TaskList(
     [
       {
@@ -131,17 +117,8 @@ exports.task = async ({
       {
         title: 'Assigning Aragon Id',
         enabled: () => aragonId,
-        task: async ctx => {
-          return assignIdTask({
-            dao: daoAddress,
-            aragonId,
-            web3,
-            gasPrice,
-            apmOptions,
-            silent,
-            debug,
-            reporter,
-          })
+        task: async (ctx) => {
+          await assignId(daoAddress, aragonId, { web3, ensRegistry: apmOptions.ensRegistryAddress, gasPrice})
         },
       },
     ],
@@ -154,8 +131,6 @@ exports.task = async ({
 exports.handler = async function({
   reporter,
   network,
-  kit,
-  kitVersion,
   template,
   templateVersion,
   fn,
@@ -167,10 +142,6 @@ exports.handler = async function({
   debug,
 }) {
   const web3 = await ensureWeb3(network)
-
-  // TODO: this can be cleaned up once kits is no longer supported
-  template = kit || template
-  templateVersion = kitVersion || templateVersion
 
   const task = await exports.task({
     web3,
@@ -190,7 +161,7 @@ exports.handler = async function({
   return task.run().then(ctx => {
     if (aragonId) {
       reporter.success(
-        `Created DAO: ${green(ctx.domain)} at ${green(ctx.daoAddress)}`
+        `Created DAO: ${green(aragonId)} at ${green(ctx.daoAddress)}`
       )
     } else {
       reporter.success(`Created DAO: ${green(ctx.daoAddress)}`)
