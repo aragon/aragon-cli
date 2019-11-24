@@ -1,10 +1,9 @@
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const APM = require('@aragon/apm')
 const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 const { green, bold } = require('chalk')
-const getRepoTask = require('./utils/getRepoTask')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
+const getApmRepo = require('../../lib/apm/getApmRepo')
 const startIPFS = require('../ipfs_cmds/start')
 const {
   getRecommendedGasLimit,
@@ -91,11 +90,9 @@ exports.task = async ({
   aragonId,
 }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
-  const apm = await APM(web3, apmOptions)
-
   template = defaultAPMName(template)
-
   let bareTemplateABI = BARE_TEMPLATE_ABI
+  let repo
 
   if (template === exports.OLD_BARE_TEMPLATE) {
     fn = exports.OLD_BARE_INSTANCE_FUNCTION
@@ -113,24 +110,21 @@ exports.task = async ({
       },
       {
         title: `Fetching template ${bold(template)}@${templateVersion}`,
-        task: getRepoTask.task({
-          apm,
-          apmRepo: template,
-          apmRepoVersion: templateVersion,
-          artifactRequired: false,
-        }),
+        task: async () => {
+          repo = await getApmRepo(web3, template, templateVersion, apmOptions, () => {})          
+        },
         enabled: () => !templateInstance,
       },
       {
         title: 'Create new DAO from template',
-        task: async (ctx, task) => {
+        task: async (ctx) => {
           if (!ctx.accounts) {
             ctx.accounts = await web3.eth.getAccounts()
           }
-          const abi = ctx.repo.abi || bareTemplateABI
+          const abi = repo.abi || bareTemplateABI
           const template =
             templateInstance ||
-            new web3.eth.Contract(abi, ctx.repo.contractAddress)
+            new web3.eth.Contract(abi, repo.contractAddress)
 
           const newInstanceTx = template.methods[fn](...fnArgs)
           const estimatedGas = await newInstanceTx.estimateGas()
