@@ -23,6 +23,17 @@ test.beforeEach(async t => {
   }
 })
 
+/**
+ * This test always fail since ava thinks that the promise wrapping AragonJS
+ * never resolves failing with:
+ *
+ *   ✖ Should get formated permissions for a dao apps
+ *   Promise returned by test never resolved
+ *
+ * Trying different async constructions didn't solve the issue. Therefore
+ * the test is skipped until there's more time to find a solution
+ */
+
 /* eslint-disable-next-line ava/no-skip-test */
 test.skip('Should get formated permissions for a dao apps', async t => {
   // arrange
