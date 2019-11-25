@@ -1,6 +1,5 @@
 #!/usr/bin/env node
-import 'core-js/stable'
-import 'regenerator-runtime/runtime'
+import 'source-map-support/register'
 const ConsoleReporter = require('./reporters/ConsoleReporter')
 
 // Set up commands

@@ -1,8 +1,7 @@
-const APM = require('@aragon/apm')
-const chalk = require('chalk')
 const Table = require('cli-table')
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const getApmRegistryPackages = require('../../lib/apm/getApmRegistryPackages')
 
 exports.command = 'packages [apmRegistry]'
 
@@ -16,52 +15,59 @@ exports.builder = function(yargs) {
   })
 }
 
-exports.handler = async function({
-  reporter,
-  apmRegistry,
-  network,
-  apm: apmOptions,
-}) {
+exports.handler = async function({ apmRegistry, network, apm: apmOptions }) {
   const web3 = await ensureWeb3(network)
-
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
-  const apm = APM(web3, apmOptions)
+  let packages
 
   const tasks = new TaskList([
     {
-      title: `Fetching APM Registry: ${apmRegistry}`,
+      title: `Fetching APM packages for ${apmRegistry}`,
       task: async (ctx, task) => {
-        // TODO add a new method to APM to allow fetching a registry without appId
-        ctx.registry = await apm.getRepoRegistry(`vault.${apmRegistry}`)
-      },
-    },
-    {
-      title: 'Gathering Repos',
-      task: async (ctx, task) => {
-        const e = await ctx.registry.getPastEvents('NewRepo', { fromBlock: 0 })
+        task.output = `Initializing APM`
 
-        ctx.names = e.map(ev => ev.returnValues.name)
-        ctx.versions = await Promise.all(
-          e.map(async ev => apm.getLatestVersion(ev.returnValues.id))
+        const progressHandler = step => {
+          switch (step) {
+            case 1:
+              task.output = `Fetching APM Registry`
+              break
+            case 2:
+              task.output = `Gathering packages in registry`
+              break
+          }
+        }
+
+        packages = await getApmRegistryPackages(
+          web3,
+          apmRegistry,
+          apmOptions,
+          progressHandler
         )
       },
     },
   ])
 
-  return tasks.run().then(ctx => {
-    reporter.success('Successfully fetched packages')
+  await tasks.run()
 
-    const rows = ctx.versions.map((info, index) => {
-      return [ctx.names[index], info.version]
-    })
+  displayPackages(packages)
+  process.exit()
+}
 
-    const table = new Table({
-      head: ['App', 'Latest Version'].map(x => chalk.white(x)),
-    })
-
-    rows.forEach(r => table.push(r))
-
-    console.log(table.toString())
-    process.exit()
+/**
+ * Display packages and their version in a table
+ *
+ * @param {Object[]} packages Packages
+ * @returns {void}
+ */
+function displayPackages(packages) {
+  const table = new Table({
+    head: ['App', 'Latest Version'],
   })
+
+  packages.forEach(aPackage => {
+    const row = [aPackage.name, aPackage.version]
+    table.push(row)
+  })
+
+  console.log(table.toString())
 }

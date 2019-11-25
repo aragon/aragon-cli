@@ -1,67 +1,67 @@
 import TaskList from 'listr'
-//
-import {
-  ensureConnection,
-  getMerkleDAG,
-  stringifyMerkleDAG,
-} from '../../lib/ipfs'
 import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+import { cid as isValidCID } from 'is-ipfs'
+import { askForInput } from '../../util'
+//
+import { getMerkleDAG, stringifyMerkleDAG, getClient } from '../../lib/ipfs'
 
-const startIPFS = require('./start')
+export const command = 'view [cid]'
+export const describe =
+  'Show metadata about the content: size, links, etc. Uses --ipfs-gateway.'
 
-exports.command = 'view <cid>'
-exports.describe =
-  'Display metadata about the content, such as size, links, etc.'
-
-exports.builder = yargs => {
-  // TODO add support for "ipfs paths", e.g: QmP49YSJVhQTySqLDFTzFZPG8atf3CLsQSPDVj3iATQkhC/arapp.json
-  return yargs.positional('cid', {
+export const builder = yargs =>
+  yargs.positional('cid', {
+    // TODO add support for "ipfs paths", e.g: QmP49YSJVhQTySqLDFTzFZPG8atf3CLsQSPDVj3iATQkhC/arapp.json
     description: 'A self-describing content-addressed identifier',
   })
-}
 
-exports.task = ({ apmOptions, silent, debug, cid }) => {
+const runViewTask = ({ cid, ipfsReader, silent, debug }) => {
   return new TaskList(
     [
-      // TODO validation of the CID
       {
-        title: 'Check IPFS',
-        task: () => startIPFS.task({ apmOptions }),
-      },
-      {
-        title: 'Connect to IPFS',
-        task: async ctx => {
-          ctx.ipfs = await ensureConnection(apmOptions.ipfs.rpc)
+        title: 'Validate CID',
+        task: () => {
+          if (!isValidCID(cid)) {
+            throw new Error(`"${cid}" is not a valid content identifier.`)
+          }
         },
       },
       {
         title: 'Fetch the links',
         task: async ctx => {
-          ctx.merkleDAG = await getMerkleDAG(ctx.ipfs.client, cid, {
+          // rename to ctx.ipfsClient
+          ctx.merkleDAG = await getMerkleDAG(ipfsReader, cid, {
             recursive: true,
           })
         },
       },
     ],
     listrOpts(silent, debug)
-  )
+  ).run()
 }
 
-exports.handler = async function({
-  reporter,
-  apm: apmOptions,
-  cid,
-  debug,
-  silent,
-}) {
-  const task = await exports.task({
-    reporter,
-    apmOptions,
+export const handler = async argv => {
+  /**
+   * Interactive input
+   */
+  let { cid } = argv
+
+  if (!cid) {
+    cid = await askForInput('Choose a content identifier')
+  }
+
+  const { reporter, apm, debug, silent } = argv
+
+  const ipfsReader = await getClient(apm.ipfs.gateway)
+
+  const ctx = await runViewTask({
     cid,
+    ipfsReader,
+    reporter,
     debug,
     silent,
   })
 
-  const ctx = await task.run()
+  // reporter.message(stringifyMerkleDAG(ctx.merkleDAG))
   console.log(stringifyMerkleDAG(ctx.merkleDAG))
 }

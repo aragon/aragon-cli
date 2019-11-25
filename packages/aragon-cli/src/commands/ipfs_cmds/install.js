@@ -1,22 +1,30 @@
 import TaskList from 'listr'
 import execa from 'execa'
-import goplatform from 'go-platform'
 import inquirer from 'inquirer'
-import { existsSync } from 'fs'
 import chalk from 'chalk'
-//
 import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+//
 import {
   getNodePackageManager,
   getGlobalBinary,
   getLocalBinary,
 } from '../../util'
+import {
+  getPlatform,
+  getArch,
+  getArchForGO,
+  isProject,
+  cleanVersion,
+  getGlobalNpmPrefix,
+  getPlatformForGO,
+  getDistName,
+} from '../../lib/ipfs'
 
-exports.command = 'install'
-exports.describe = 'Download and install the go-ipfs binaries.'
+export const command = 'install'
+export const describe = 'Download and install the go-ipfs binaries.'
 
-exports.builder = yargs => {
-  return yargs
+export const builder = yargs =>
+  yargs
     .option('dist-version', {
       description: 'The version of IPFS that will be installed',
       default: '0.4.22',
@@ -35,7 +43,6 @@ exports.builder = yargs => {
       boolean: true,
       default: false,
     })
-}
 
 const runPrepareTask = ({ silent, debug, local }) => {
   return new TaskList(
@@ -43,15 +50,15 @@ const runPrepareTask = ({ silent, debug, local }) => {
       {
         title: 'Determine platform and architecture',
         task: ctx => {
-          ctx.NODE_OS = process.platform
-          ctx.NODE_ARCH = process.arch
+          ctx.NODE_OS = getPlatform()
+          ctx.NODE_ARCH = getArch()
         },
       },
       {
         title: 'Determine golang distribution',
         task: ctx => {
-          ctx.GO_OS = goplatform.GOOS
-          ctx.GO_ARCH = goplatform.GOARCH
+          ctx.GO_OS = getPlatformForGO()
+          ctx.GO_ARCH = getArchForGO()
         },
       },
       {
@@ -59,15 +66,15 @@ const runPrepareTask = ({ silent, debug, local }) => {
         task: async ctx => {
           if (local) {
             ctx.location = process.cwd()
-            if (!existsSync('./package.json')) {
-              const packageFile = chalk.red('package.json')
-              const currentLocation = chalk.red(ctx.location)
+            if (!isProject(ctx.location)) {
               throw new Error(
-                `${currentLocation} does not have a ${packageFile}. Did you wish to install IPFS globally?`
+                `${chalk.red(ctx.location)} does not have a ${chalk.red(
+                  'package.json'
+                )}. Did you wish to install IPFS globally?`
               )
             }
           } else {
-            ctx.location = (await execa('npm', ['prefix', '--global'])).stdout
+            ctx.location = await getGlobalNpmPrefix()
           }
         },
       },
@@ -129,15 +136,16 @@ const runInstallTask = ({ silent, debug, local, distUrl, distVersion }) => {
   ).run()
 }
 
-exports.handler = async function({
-  debug,
-  silent,
-  distVersion,
-  distUrl,
-  local,
-  reporter,
-  skipConfirmation,
-}) {
+export const handler = async argv => {
+  const {
+    debug,
+    silent,
+    distVersion,
+    distUrl,
+    local,
+    reporter,
+    skipConfirmation,
+  } = argv
   /**
    * Check if it's already installed
    */
@@ -181,10 +189,8 @@ exports.handler = async function({
     }
   )
 
-  // https://github.com/ipfs/npm-go-ipfs/blob/master/link-ipfs.js#L8
-  // https://github.com/ipfs/npm-go-ipfs#publish-a-new-version-of-this-module-with-exact-same-go-ipfs-version
-  const actualVersion = distVersion.replace(/-hacky[0-9]+/, '')
-  const distName = `go-ipfs_v${actualVersion}_${GO_OS}-${GO_ARCH}.tar.gz`
+  const actualVersion = cleanVersion(distVersion)
+  const distName = getDistName(actualVersion, GO_OS, GO_ARCH)
 
   reporter.newLine()
   reporter.info(

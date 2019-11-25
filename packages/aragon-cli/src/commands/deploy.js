@@ -7,7 +7,7 @@ const { findProjectRoot } = require('../util')
 const { ensureWeb3 } = require('../helpers/web3-fallback')
 const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const { getRecommendedGasLimit, expandLink } = require('../util')
+const { linkLibraries, deployContract } = require('../lib/deploy')
 
 exports.command = 'deploy [contract]'
 
@@ -36,12 +36,11 @@ exports.builder = yargs => {
 
 exports.task = async ({
   module,
-  reporter,
   network,
   gasPrice,
   cwd,
   contract,
-  init,
+  init = [],
   web3,
   apmOptions,
   silent,
@@ -56,16 +55,12 @@ exports.task = async ({
     web3 = await ensureWeb3(network)
   }
 
-  init = init || []
-
   // Mappings allow to pass certain init parameters that get replaced for their actual value
-  const mappingMask = key => `@ARAGON_${key}`
+  // const mappingMask = key => `@ARAGON_${key}`
   const mappings = {
-    [mappingMask('ENS')]: () => apmOptions.ensRegistryAddress, // <ens> to ens addr
+    '@ARAGON_ENS': apmOptions['ens-registry'], // <ens> to ens addr
   }
-  const processedInit = init.map(value =>
-    mappings[value] ? mappings[value]() : value
-  )
+  const initArguments = init.map(value => mappings[value] || value)
 
   const contractName = contract
   const tasks = new TaskList(
@@ -79,7 +74,6 @@ exports.task = async ({
       {
         title: `Deploy '${contractName}' to network`,
         task: async (ctx, task) => {
-          ctx.contractName = contractName
           try {
             ctx.contractArtifacts = require(path.join(
               cwd,
@@ -92,8 +86,8 @@ exports.task = async ({
             )
           }
 
-          const { abi } = ctx.contractArtifacts
-          let { bytecode } = ctx.contractArtifacts
+          const { bytecode, abi } = ctx.contractArtifacts || {}
+          const { links } = (module || {}).env || {}
 
           if (!bytecode || bytecode === '0x') {
             throw new Error(
@@ -103,54 +97,28 @@ exports.task = async ({
 
           task.output = `Deploying '${contractName}' to network`
 
-          if (module) {
-            let env = module.env
-            env.links &&
-              env.links.map(expandLink).forEach(l => {
-                bytecode = bytecode.replace(l.regex, l.addressBytes)
-                if (!bytecode.includes(l.addressBytes)) {
-                  reporter.error(`Could not link library ${l.name}`)
-                  process.exit(1)
-                }
-              })
-          }
-
-          const contract = new web3.eth.Contract(abi, { data: bytecode })
-          const accounts = await web3.eth.getAccounts()
-
-          const deployTx = contract.deploy({ arguments: processedInit })
-          const gas = await getRecommendedGasLimit(
-            web3,
-            await deployTx.estimateGas()
-          )
-
-          const args = {
-            from: accounts[0],
+          const { address, transactionHash } = await deployContract({
+            bytecode: links ? linkLibraries(bytecode, links) : bytecode,
+            abi,
+            initArguments,
             gasPrice: network.gasPrice || gasPrice,
-            gas,
-          }
-
-          const deployPromise = deployTx.send(args)
-          deployPromise.on('transactionHash', transactionHash => {
-            ctx.transactionHash = transactionHash
+            web3,
           })
-          const instance = await deployPromise
 
-          if (!instance.options.address) {
+          if (!address) {
             throw new Error('Contract deployment failed')
           }
 
-          ctx.contractInstance = instance
-          ctx.contract = instance.options.address
-          return ctx.contract
+          ctx.contractName = contractName
+          ctx.contractAddress = address
+          ctx.transactionHash = transactionHash
         },
       },
       {
         title: 'Generate deployment artifacts',
-        task: async (ctx, task) => {
+        task: async ctx => {
           ctx.deployArtifacts = await deployArtifacts(ctx.contractArtifacts)
           ctx.deployArtifacts.transactionHash = ctx.transactionHash
-          delete ctx.transactionHash
         },
       },
     ],
@@ -188,12 +156,10 @@ exports.handler = async ({
 
   reporter.success(
     `Successfully deployed ${chalk.blue(ctx.contractName)} at: ${chalk.green(
-      ctx.contract
+      ctx.contractAddress
     )}`
   )
-  reporter.info(
-    `Transaction hash: ${chalk.blue(ctx.deployArtifacts.transactionHash)}`
-  )
+  reporter.info(`Transaction hash: ${chalk.blue(ctx.transactionHash)}`)
 
   process.exit()
 }

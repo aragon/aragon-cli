@@ -18,7 +18,7 @@ exports.builder = function(yargs) {
 exports.handler = async function({ reporter, bump, cwd }) {
   const manifestLocation = await findUp('arapp.json', { cwd })
 
-  let manifest = JSON.parse(fs.readFileSync(manifestLocation))
+  const manifest = JSON.parse(fs.readFileSync(manifestLocation))
 
   if (manifest.environments) {
     throw new Error(

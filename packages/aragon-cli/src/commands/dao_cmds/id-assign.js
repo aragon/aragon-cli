@@ -1,13 +1,8 @@
 const TaskList = require('listr')
-const ENS = require('ethereum-ens')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const { green } = require('chalk')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const { sha3, isAddress } = require('web3').utils
-const ififsResolvingRegistrarAbi = require('@aragon/id/build/contracts/IFIFSResolvingRegistrar')
-  .abi
-
-const ARAGON_DOMAIN = 'aragonid.eth'
+const { isIdAssigned, assignId } = require('../../lib/dao/assign-id')
 
 // dao id assign command
 const idAssignCommand = 'assign <dao> <aragon-id>'
@@ -37,83 +32,6 @@ exports.builder = yargs => {
   )
 }
 
-exports.task = async ({
-  dao,
-  aragonId,
-  web3,
-  gasPrice,
-  apmOptions,
-  silent,
-  debug,
-  reporter,
-}) => {
-  if (!isAddress(dao)) {
-    reporter.error('Invalid DAO address')
-    process.exit(1)
-  }
-
-  const tasks = new TaskList(
-    [
-      {
-        title: 'Validating Id',
-        task: async ctx => {
-          if (
-            !/^([\w-]+)$/.test(aragonId) &&
-            !new RegExp(`^([\\w-]+).${ARAGON_DOMAIN}$`).test(aragonId)
-          ) {
-            reporter.error('Invalid Aragon Id')
-            process.exit(1)
-          }
-
-          const ens = (ctx.ens = new ENS(
-            web3.currentProvider,
-            apmOptions['ens-registry']
-          ))
-
-          ctx.domain = aragonId.includes(ARAGON_DOMAIN)
-            ? aragonId
-            : `${aragonId}.${ARAGON_DOMAIN}`
-
-          // Check name doesn't already exist
-          try {
-            const exists = await ens.resolver(ctx.domain).addr()
-
-            if (exists) {
-              reporter.error(
-                `Cannot assign: ${ctx.domain} is already assigned to ${exists}.`
-              )
-              process.exit(1)
-            }
-          } catch (err) {
-            // ens.resolver() throws an ENS.NameNotFound error if name doesn't exist
-            if (err !== ENS.NameNotFound) throw err
-          }
-        },
-      },
-      {
-        title: 'Assigning Id',
-        task: async ctx => {
-          const registrar = new web3.eth.Contract(
-            ififsResolvingRegistrarAbi,
-            await ctx.ens.owner(ARAGON_DOMAIN)
-          )
-
-          ctx.receipt = await registrar.methods
-            .register(sha3(aragonId), dao)
-            .send({
-              from: (await web3.eth.getAccounts())[0],
-              gas: '1000000',
-              gasPrice: gasPrice,
-            })
-        },
-      },
-    ],
-    listrOpts(silent, debug)
-  )
-
-  return tasks
-}
-
 exports.handler = async function({
   aragonId,
   reporter,
@@ -121,20 +39,32 @@ exports.handler = async function({
   apm: apmOptions,
   dao,
   gasPrice,
+  silent,
+  debug,
 }) {
   const web3 = await ensureWeb3(network)
+  const options = { web3, ensRegistry: apmOptions['ens-registry'] }
 
-  const task = await exports.task({
-    aragonId,
-    dao,
-    web3,
-    reporter,
-    network,
-    apmOptions,
-    gasPrice,
-  })
-  return task.run().then(ctx => {
-    reporter.success(`${green(ctx.domain)} successfully assigned to ${dao}`)
-    process.exit()
-  })
+  const tasks = new TaskList(
+    [
+      {
+        title: 'Validating Id',
+        task: async () => {
+          if (await isIdAssigned(aragonId, options)) {
+            reporter.error(`${aragonId} is already assigned.`)
+            process.exit(1)
+          }
+        },
+      },
+      {
+        title: 'Assigning Id',
+        task: async () => assignId(dao, aragonId, { ...options, gasPrice }),
+      },
+    ],
+    listrOpts(silent, debug)
+  )
+
+  await tasks.run()
+  reporter.success(`${green(aragonId)} successfully assigned to ${dao}`)
+  process.exit()
 }
