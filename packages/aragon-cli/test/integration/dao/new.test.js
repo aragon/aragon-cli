@@ -1,5 +1,4 @@
 import test from 'ava'
-import sinon from 'sinon'
 import newDao from '../../../src/lib/dao/new'
 import defaultAPMName from '@aragon/cli-utils/src/helpers/default-apm'
 import { getLocalWeb3, isAddress } from '../test-utils'
@@ -14,11 +13,9 @@ test.beforeEach(async t => {
   }
 })
 
-test.afterEach.always(() => {
-  sinon.restore()
-})
-
-test('Deploys DAO with valid template', async t => {
+// Disabled until IPFS is added to integration tests
+// eslint-disable-next-line ava/no-skip-test
+test.skip('Deploys DAO with valid template', async t => {
   t.plan(1)
 
   const { web3 } = t.context
@@ -41,7 +38,9 @@ test('Deploys DAO with valid template', async t => {
   t.true(isAddress(daoAddress))
 })
 
-test('Deploys DAO with template with custom newInstance method and args', async t => {
+// Disabled until IPFS is added to integration tests
+// eslint-disable-next-line ava/no-skip-test
+test.skip('Deploys DAO with template with custom newInstance method and args', async t => {
   t.plan(1)
 
   const { web3 } = t.context

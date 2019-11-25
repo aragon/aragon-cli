@@ -20,6 +20,7 @@ module.exports = async function({
   deployEvent,
   gasPrice,
 }) {
+  console.log('abi: ', JSON.stringify(repo))
   const template =
     templateInstance || new web3.eth.Contract(repo.abi, repo.contractAddress)
 
