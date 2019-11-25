@@ -1,7 +1,8 @@
 import test from 'ava'
 import sinon from 'sinon'
 import newDao from '../../../src/lib/dao/new'
-import { getAllApps } from '../../../src/lib/dao/apps'
+import { getAllApps, getDaoAddress } from '../../../src/lib/dao/apps'
+import { assignId } from '../../../src/lib/dao/assign-id'
 import defaultAPMName from '@aragon/cli-utils/src/helpers/default-apm'
 import { getLocalWeb3 } from '../test-utils'
 import getApmRepo from '../../../src/lib/apm/getApmRepo'
@@ -53,3 +54,17 @@ test('getAllApps returns the correct apps', async t => {
     'EVM app id'
   )
 })
+
+test('getDaoAddress returns the correct DAO address', async t => {
+    t.plan(1)
+
+    const daoAddress = '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'
+    const daoName = 'mydaoname' + Math.floor(Math.random() * 1000000)
+    const { web3 } = t.context
+  
+    await assignId(daoAddress, daoName, { web3, ensRegistry: ens})
+
+    const result = await getDaoAddress(daoName, { provider: web3.currentProvider, registryAddress: ens })
+
+    t.is(result, daoName)
+  })
