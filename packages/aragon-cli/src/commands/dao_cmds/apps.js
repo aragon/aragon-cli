@@ -50,8 +50,6 @@ const printApps = apps => {
       proxyAddress,
       printContent(content),
     ])
-    // filter registry name to make it shorter
-    // TODO: Add flag to turn off
     .map(row => {
       row[0] = row[0].replace('.aragonpm.eth', '')
       return row
