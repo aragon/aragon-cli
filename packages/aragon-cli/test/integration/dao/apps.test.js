@@ -56,15 +56,18 @@ test('getAllApps returns the correct apps', async t => {
 })
 
 test('getDaoAddress returns the correct DAO address', async t => {
-    t.plan(1)
+  t.plan(1)
 
-    const daoAddress = '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'
-    const daoName = 'mydaoname' + Math.floor(Math.random() * 1000000)
-    const { web3 } = t.context
-  
-    await assignId(daoAddress, daoName, { web3, ensRegistry: ens})
+  const daoAddress = '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'
+  const daoName = 'mydaoname' + Math.floor(Math.random() * 1000000)
+  const { web3 } = t.context
 
-    const result = await getDaoAddress(daoName, { provider: web3.currentProvider, registryAddress: ens })
+  await assignId(daoAddress, daoName, { web3, ensRegistry: ens })
 
-    t.is(result, daoName)
+  const result = await getDaoAddress(daoName, {
+    provider: web3.currentProvider,
+    registryAddress: ens,
   })
+
+  t.is(result, daoName)
+})
