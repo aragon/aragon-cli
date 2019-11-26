@@ -15,7 +15,7 @@ test.beforeEach(async t => {
 
 // Disabled until IPFS is added to integration tests
 // eslint-disable-next-line ava/no-skip-test
-test.skip('Deploys DAO with valid template', async t => {
+test('Deploys DAO with valid template', async t => {
   t.plan(1)
 
   const { web3 } = t.context
