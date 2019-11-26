@@ -17,7 +17,7 @@
     "lint:fix": "npm run lint -- --fix",
     "pretest": "node scripts/setup-integration-tests.js & sleep 5",
     "posttest": "node scripts/teardown-integration-tests.js",
-    "test": "ava --verbose",
+    "test": "ava --verbose || npm run posttest && exit 1",
     "test:watch": "ava --watch",
     "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test"
   },
