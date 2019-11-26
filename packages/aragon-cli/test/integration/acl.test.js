@@ -23,29 +23,23 @@ test.beforeEach(async t => {
   }
 })
 
-/**
- * This test always fail since ava thinks that the promise wrapping AragonJS
- * never resolves failing with:
- *
- *   ✖ Should get formated permissions for a dao apps
- *   Promise returned by test never resolved
- *
- * Trying different async constructions didn't solve the issue. Therefore
- * the test is skipped until there's more time to find a solution
- */
-
-/* eslint-disable-next-line ava/no-skip-test */
-test.skip('Should get formated permissions for a dao apps', async t => {
+test('Should get formated permissions for a new dao', async t => {
   // arrange
   const { web3, dao } = t.context
   // act
-  const result = await getDaoAddressPermissionsApps({
+  const { permissions, apps } = await getDaoAddressPermissionsApps({
     dao,
     web3Provider: web3.currentProvider,
     ipfsConf,
     apm,
   })
   // assert
-  console.log(result)
-  // t.snapshot(result, 'Probably can snapshot anything about this result')
+  t.snapshot(
+    apps.map(app => app.appName),
+    'Should return the correct apps'
+  )
+  // t.snapshot(
+  //   permissions, // .map(permission => permission),
+  //   'Probably can snapshot anything about this result2'
+  // )
 })
