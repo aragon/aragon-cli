@@ -1,61 +1,31 @@
 #!/usr/bin/env node
 import 'source-map-support/register'
-const ConsoleReporter = require('./reporters/ConsoleReporter')
+import yargs from 'yargs'
+import * as AragonReporter from '@aragon/cli-utils/dist/AragonReporter'
+
+const debugMiddleware = argv => {
+  argv.reporter.debug(
+    `create-aragon-app version: ${require('../package.json').version}`
+  )
+  argv.reporter.debug(`argv: ${JSON.stringify(process.argv)}`)
+}
 
 // Set up commands
-const cmd = require('yargs')
+const cli = yargs
   .parserConfiguration({
     'parse-numbers': false,
   })
-  .commandDir('./commands', {
-    visit: cmd => {
-      return cmd
-    },
-  }) // .strict()
+  .commandDir('./commands')
+  // .strict()
+  .alias('h', 'help')
+  .alias('v', 'version')
+  .group(['help', 'version'], 'Global options:')
+  .demandCommand(1, 'You need to specify a command')
+  .middleware([debugMiddleware])
+  .epilogue('For more information, check out https://hack.aragon.org')
+  .fail(AragonReporter.errorHandler)
 
-cmd.alias('h', 'help')
-cmd.alias('v', 'version')
+AragonReporter.configure(cli)
 
-// Configure CLI behaviour
-cmd.demandCommand(1, 'You need to specify a command')
-
-// Set global options
-cmd.option('silent', {
-  description: 'Silence output to terminal',
-  boolean: true,
-  default: false,
-})
-
-cmd.option('debug', {
-  description: 'Show more output to terminal',
-  boolean: true,
-  default: false,
-  coerce: debug => {
-    if (debug || process.env.DEBUG) {
-      global.DEBUG_MODE = true
-      return true
-    }
-  },
-})
-
-// Add epilogue
-cmd.epilogue('For more information, check out https://hack.aragon.org')
-
-// Run
-const reporter = new ConsoleReporter()
-reporter.debug(JSON.stringify(process.argv))
-cmd
-  .fail((msg, err, yargs) => {
-    reporter.error(msg || err.message || 'An error occurred')
-
-    if (!err) {
-      yargs.showHelp()
-    } else if (err.stack) {
-      reporter.debug(err.stack)
-    }
-
-    process.exit(1)
-  })
-  .parse(process.argv.slice(2), {
-    reporter,
-  })
+// trigger yargs
+cli.argv // eslint-disable-line no-unused-expressions
