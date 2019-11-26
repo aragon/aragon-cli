@@ -45,7 +45,8 @@ test.afterEach(async () => {
  * they are run on
  */
 
-test('Sequential IPFS integration test', async t => {
+// eslint-disable-next-line ava/no-skip-test
+test.skip('Sequential IPFS integration test', async t => {
   /**
    * Test startIPFSDaemon, isIPFSRunning (NOT used variant)
    * - Start the IPFS daemon
