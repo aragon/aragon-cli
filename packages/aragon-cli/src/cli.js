@@ -28,7 +28,6 @@ const cli = yargs
   })
   .usage(`Usage: aragon <command> [options]`)
   .commandDir('./commands')
-  .middleware(MIDDLEWARES)
   .alias('env', 'environment')
   .alias('h', 'help')
   .alias('v', 'version')
@@ -101,6 +100,6 @@ const cli = yargs
   })
 
 AragonReporter.configure(cli)
-
+cli.middleware(MIDDLEWARES)
 // trigger yargs
 cli.argv // eslint-disable-line no-unused-expressions
