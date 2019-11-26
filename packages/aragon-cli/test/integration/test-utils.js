@@ -19,11 +19,23 @@ export const getLocalWeb3 = async () => {
 }
 
 /**
+ *
+ * Run a command using the freshly compiled aragonCLI build from the "dist" folder.
+ *
+ * @param {Array<string>} args the arguments to call the CLI with, e.g.: ['dao', 'new']
+ * @return {Promise<string>} stdout
+ */
+export const runAragonCLI = async args => {
+  const { stdout } = await execa('node', ['dist/cli.js', ...args])
+  return stdout
+}
+
+/**
  * Deploys a new DAO calling 'aragon dao new' and returns it's address
  * @return {Promise<string>} daoAddress
  */
 export const getNewDaoAddress = async () => {
-  const { stdout: daoNewRes } = await execa('npx', ['aragon', 'dao', 'new'])
+  const daoNewRes = await runAragonCLI(['dao', 'new'])
   const dao = (daoNewRes.split('DAO: ')[1] || '').trim()
   if (!isAddress(dao))
     throw Error(`Error parsing aragon dao new output: ${daoNewRes}`)
