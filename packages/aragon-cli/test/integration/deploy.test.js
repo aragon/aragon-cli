@@ -40,6 +40,7 @@ test('should deploy a sample contract', async t => {
   // assert
   const tx = await web3.eth.getTransaction(result.transactionHash)
 
+  t.snapshot(tx.input, 'the deploy bytecode is correct')
   t.is(tx.input, bytecode + constructorArgumentsEncoded)
   t.true(isValidTxHash(result.transactionHash))
   t.true(isAddress(result.address))
