@@ -1,7 +1,8 @@
 const execHandler = require('./utils/execHandler').handler
-const getAppKernel = require('./utils/app-kernel')
+const getAppKernel = require('../../lib/getAppKernel')
+const web3 = require('web3')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const { parseArgumentStringIfPossible, ZERO_ADDRESS } = require('../../util')
+const { parseArgumentStringIfPossible } = require('../../util')
 const encodeActCall = require('../../lib/encodeActCall')
 
 const EXECUTE_FUNCTION_NAME = 'execute'
@@ -48,16 +49,7 @@ exports.handler = async function({
   ethValue,
   wsProvider,
 }) {
-  reporter.debug('call-args after parsing', callArgs)
-
-  const web3 = await ensureWeb3(network)
-  const dao = await getAppKernel(web3, agentAddress)
-
-  if (dao === ZERO_ADDRESS) {
-    throw new Error(
-      'Invalid Agent app address, cannot find Kernel reference in contract'
-    )
-  }
+  const dao = await getAppKernel(await ensureWeb3(network), agentAddress)
 
   return execHandler({
     dao,
