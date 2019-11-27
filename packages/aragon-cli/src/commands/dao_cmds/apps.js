@@ -113,9 +113,11 @@ exports.handler = async function({
         title: 'Fetching permissionless apps',
         enabled: () => all,
         task: async (ctx, task) => {
-          appsWithoutPermissions = (await getAllApps(daoAddress, {
-            web3,
-          })).filter(
+          appsWithoutPermissions = (
+            await getAllApps(daoAddress, {
+              web3,
+            })
+          ).filter(
             ({ proxyAddress }) =>
               !apps.find(app => addressesEqual(app.proxyAddress, proxyAddress))
           )
