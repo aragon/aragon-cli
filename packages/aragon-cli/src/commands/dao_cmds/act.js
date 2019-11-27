@@ -3,7 +3,7 @@ const getAppKernel = require('../../lib/getAppKernel')
 const web3 = require('web3')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const { parseArgumentStringIfPossible } = require('../../util')
-const encodeActCall = require('../../lib/encodeActCall')
+const encodeActCall = require('../../lib/dao/encodeActCall')
 
 const EXECUTE_FUNCTION_NAME = 'execute'
 

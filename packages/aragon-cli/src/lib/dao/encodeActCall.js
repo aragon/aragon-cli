@@ -1,12 +1,12 @@
-const web3 = require('web3')
+const abi = require('web3-eth-abi')
 
 /**
  * Encode ACT function call
  * @param {string} signature Function signature
  * @param {any[]} params
  */
-module.exports = (signature, params) => {
-  const sigBytes = web3.eth.abi.encodeFunctionSignature(signature)
+module.exports = (signature, params = []) => {
+  const sigBytes = abi.encodeFunctionSignature(signature)
 
   const types = signature.replace(')', '').split('(')[1]
 
@@ -15,7 +15,7 @@ module.exports = (signature, params) => {
     return sigBytes
   }
 
-  const paramBytes = web3.eth.abi.encodeParameters(types.split(','), params)
+  const paramBytes = abi.encodeParameters(types.split(','), params)
 
   return `${sigBytes}${paramBytes.slice(2)}`
 }
