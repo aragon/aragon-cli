@@ -1,4 +1,5 @@
 const { getRecommendedGasLimit } = require('../../util')
+const bareTemplateAbi = require('./bare-template-abi')
 
 /**
  * Create a new DAO
@@ -20,8 +21,10 @@ module.exports = async function({
   deployEvent,
   gasPrice,
 }) {
+  // If not connected to IPFS, repo won't have an ABI
+  const repoAbi = repo.abi || bareTemplateAbi
   const template =
-    templateInstance || new web3.eth.Contract(repo.abi, repo.contractAddress)
+    templateInstance || new web3.eth.Contract(repoAbi, repo.contractAddress)
 
   const newInstanceTx = template.methods[newInstanceMethod](...newInstanceArgs)
   const estimatedGas = await newInstanceTx.estimateGas()
