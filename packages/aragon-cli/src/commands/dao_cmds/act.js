@@ -1,8 +1,8 @@
-const web3 = require('web3')
 const execHandler = require('./utils/execHandler').handler
 const getAppKernel = require('./utils/app-kernel')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const { parseArgumentStringIfPossible, ZERO_ADDRESS } = require('../../util')
+const encodeActCall = require('../../lib/encodeActCall')
 
 const EXECUTE_FUNCTION_NAME = 'execute'
 
@@ -37,21 +37,6 @@ exports.builder = function(yargs) {
     })
 }
 
-const encodeCalldata = (signature, params) => {
-  const sigBytes = web3.eth.abi.encodeFunctionSignature(signature)
-
-  const types = signature.replace(')', '').split('(')[1]
-
-  // No params, return signature directly
-  if (types === '') {
-    return sigBytes
-  }
-
-  const paramBytes = web3.eth.abi.encodeParameters(types.split(','), params)
-
-  return `${sigBytes}${paramBytes.slice(2)}`
-}
-
 exports.handler = async function({
   reporter,
   apm,
@@ -63,10 +48,7 @@ exports.handler = async function({
   ethValue,
   wsProvider,
 }) {
-  // TODO (daniel) refactor ConsoleReporter so we can do reporter.debug instead
-  if (global.DEBUG_MODE) console.log('call-args before parsing', callArgs)
-  callArgs = callArgs.map(parseArgumentStringIfPossible)
-  if (global.DEBUG_MODE) console.log('call-args after parsing', callArgs)
+  reporter.debug('call-args after parsing', callArgs)
 
   const web3 = await ensureWeb3(network)
   const dao = await getAppKernel(web3, agentAddress)
@@ -77,14 +59,15 @@ exports.handler = async function({
     )
   }
 
-  const weiAmount = web3.utils.toWei(ethValue)
-  const fnArgs = [target, weiAmount, encodeCalldata(signature, callArgs)]
-
   return execHandler({
     dao,
     app: agentAddress,
     method: EXECUTE_FUNCTION_NAME,
-    params: fnArgs,
+    params: [
+      target,
+      web3.utils.toWei(ethValue),
+      encodeActCall(signature, callArgs.map(parseArgumentStringIfPossible)),
+    ],
     ipfsCheck: true,
     reporter,
     apm,
