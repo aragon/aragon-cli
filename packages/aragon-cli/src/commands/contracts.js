@@ -1,20 +1,12 @@
-const { runTruffle } = require('../helpers/truffle-runner')
+const { contracts, extractTruffleArgs } = require('../lib/contracts')
 
-exports.command = 'contracts'
+exports.command = 'contracts [command]'
 
 exports.describe = 'Execute any Truffle command with arguments'
 
-exports.handler = async function({ reporter, cwd }) {
-  const truffleArgs = process.argv.slice(
-    process.argv.indexOf('contracts') + 1,
-    process.argv.length
-  )
-
+exports.handler = async function({ reporter }) {
+  console.log(process.argv)
   reporter.info('Passing the command to Truffle')
-  try {
-    await runTruffle(truffleArgs, {})
-  } catch (err) {
-    console.error(err)
-  }
+  await contracts(extractTruffleArgs(process.argv))
   process.exit(0)
 }
