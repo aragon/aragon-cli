@@ -32,6 +32,13 @@ test('contracts ["version"] displays truffle verion', async t => {
   t.true(stdout.output.includes('Truffle v'))
 })
 
+test('contracts ["help"] displays truffle help', async t => {
+  const stdout = stringStream()
+  // Truffle outputs the help command in stderr
+  await contracts(['help'], { stdout, stderr: stdout })
+  t.true(stdout.output.includes('Usage: truffle '))
+})
+
 const stringStream = () => {
   const stream = new Writable({
     objectMode: true,

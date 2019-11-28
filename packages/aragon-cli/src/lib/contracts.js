@@ -18,7 +18,12 @@ const extractTruffleArgs = argv => {
  * @returns {Promise<void>}
  */
 const contracts = async (truffleArgs, options = {}) => {
-  return runTruffle(truffleArgs, options)
+  try {
+    return await runTruffle(truffleArgs, options)
+  } catch (err) {
+    // Truffle returns a `code 1` for the help command and makes execa
+    // throw an exception but the output is still valid.
+  }
 }
 
 module.exports = { extractTruffleArgs, contracts }
