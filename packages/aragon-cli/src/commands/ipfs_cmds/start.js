@@ -101,8 +101,8 @@ export const handler = async argv => {
 
   if (detached) {
     processController.detach()
-    reporter.warning('The IPFS Daemon will continue running in the background!')
-    reporter.warning('Use the `aragon ipfs stop` command to stop it.')
+    reporter.warning(`The IPFS Daemon will continue running in the background!
+Use the 'aragon ipfs stop' command to stop it.`)
   } else {
     processController.attach()
     reporter.info(

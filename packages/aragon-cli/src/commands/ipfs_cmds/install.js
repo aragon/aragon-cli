@@ -192,14 +192,14 @@ export const handler = async argv => {
   const actualVersion = cleanVersion(distVersion)
   const distName = getDistName(actualVersion, GO_OS, GO_ARCH)
 
-  reporter.newLine()
   reporter.info(
-    `Platform & architecture: ${chalk.blue(NODE_OS)}, ${chalk.blue(NODE_ARCH)}`
+    `
+Platform & architecture: ${chalk.blue(NODE_OS)}, ${chalk.blue(NODE_ARCH)}
+IPFS tarball: ${chalk.blue(distName)}
+IPFS distributions url: ${chalk.blue(distUrl)}
+NPM version: ${chalk.blue(distVersion)}
+Location: ${chalk.blue(location)}`
   )
-  reporter.info(`IPFS tarball: ${chalk.blue(distName)}`)
-  reporter.info(`IPFS distributions url: ${chalk.blue(distUrl)}`)
-  reporter.info(`NPM version: ${chalk.blue(distVersion)}`)
-  reporter.info(`Location: ${chalk.blue(location)}`)
 
   /**
    * Confirm & install

@@ -128,43 +128,34 @@ export const handler = async argv => {
   })
 
   reporter.info(
-    `Local installation: ${chalk.blue(localBinPath || 'not installed')}`
-  )
-  reporter.info(
-    `Global installation: ${chalk.blue(globalBinPath || 'not installed')}`
+    `
+Local installation: ${chalk.blue(localBinPath || 'not installed')}
+Global installation: ${chalk.blue(globalBinPath || 'not installed')}`
   )
 
   reporter.newLine()
   if (repoExists) {
-    reporter.info(`Repository location: ${chalk.blue(repoPath)}`)
-    reporter.info(`Repository version: ${chalk.blue(repoVersion)}`)
-    reporter.info(`Repository size: ${chalk.blue(repoSize)}`)
-    reporter.newLine()
-    reporter.info(`API port: ${chalk.blue(daemonPorts.api)}`)
-    reporter.info(`Gateway port: ${chalk.blue(daemonPorts.gateway)}`)
-    reporter.info(`Swarm port: ${chalk.blue(daemonPorts.swarm)}`)
-    reporter.newLine()
-    reporter.info(`PeerID: ${chalk.bgWhite(chalk.black(peerID))}`)
-    reporter.info(
-      `Daemon: ${daemonRunning ? chalk.green('running') : chalk.red('stopped')}`
-    )
+    reporter.info(`
+Repository location: ${chalk.blue(repoPath)}
+Repository version: ${chalk.blue(repoVersion)}
+Repository size: ${chalk.blue(repoSize)}
+
+API port: ${chalk.blue(daemonPorts.api)}
+Gateway port: ${chalk.blue(daemonPorts.gateway)}
+Swarm port: ${chalk.blue(daemonPorts.swarm)}
+
+PeerID: ${chalk.bgWhite(chalk.black(peerID))}
+Daemon: ${daemonRunning ? chalk.green('running') : chalk.red('stopped')}`)
   } else {
     reporter.info(`Repository: ${chalk.red('uninitialized')}`)
   }
 
   if (daemonRunning) {
-    reporter.info(
-      `CORS: ${corsEnabled ? chalk.green('enabled') : chalk.red('disabled')}`
-    )
-    reporter.newLine()
-    reporter.info(
-      `Public Swarm MultiAddress: ${chalk.blue(publicSwarmMultiAddr)}`
-    )
-    reporter.info(
-      `Internal Swarm MultiAddress: ${chalk.blue(internalSwarmMultiAddr)}`
-    )
-    reporter.info(
-      `Local Swarm MultiAddress: ${chalk.blue(localSwarmMultiAddr)}`
-    )
+    reporter.info(`
+CORS: ${corsEnabled ? chalk.green('enabled') : chalk.red('disabled')}
+  
+Public Swarm MultiAddress: ${chalk.blue(publicSwarmMultiAddr)}
+Internal Swarm MultiAddress: ${chalk.blue(internalSwarmMultiAddr)}
+Local Swarm MultiAddress: ${chalk.blue(localSwarmMultiAddr)}`)
   }
 }
