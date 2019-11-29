@@ -82,14 +82,25 @@ const getNodePackageManager = () => {
 }
 
 const installDeps = (cwd, task) => {
-  const bin = getNodePackageManager()
-  const installTask = execa(bin, ['install'], { cwd })
-  installTask.stdout.on('data', log => {
-    if (!log) return
+  return installDepsWithoutTask(cwd, log => {
     task.output = log
   })
+}
 
-  return installTask.catch(err => {
+/**
+ * Runs npm install on a directory
+ * @param {string} cwd cwd
+ * @param {(log: string) => void} [logger] Callback to receive updates from
+ * @return {Promise<void>}
+ * the installation process
+ */
+const installDepsWithoutTask = (cwd, logger) => {
+  const bin = getNodePackageManager()
+  const installProcess = execa(bin, ['install'], { cwd })
+  installProcess.stdout.on('data', log => {
+    if (log && logger) logger(log)
+  })
+  return installProcess.catch(err => {
     throw new Error(
       `${err.message}\n${err.stderr}\n\nFailed to install dependencies. See above output.`
     )
@@ -377,6 +388,7 @@ module.exports = {
   isHttpServerOpen,
   isPortTaken,
   installDeps,
+  installDepsWithoutTask,
   runScriptTask,
   getNodePackageManager,
   getBinary,

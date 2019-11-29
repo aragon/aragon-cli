@@ -1,14 +1,15 @@
 import execa from 'execa'
 import { getNodePackageManager } from '../../util'
 
-export async function buildClient(ctx, clientPath) {
+/**
+ * Runs npm run build:local
+ * @param {string} clientPath Client path
+ */
+export async function buildClient(clientPath) {
   const bin = getNodePackageManager()
-
-  const startArguments = {
-    cwd: clientPath || ctx.clientPath,
-  }
-
-  return execa(bin, ['run', 'build:local'], startArguments).catch(err => {
+  const cwd = clientPath
+  // #### Question: Why is an error catched and rethrown?
+  return execa(bin, ['run', 'build:local'], { cwd }).catch(err => {
     throw new Error(err)
   })
 }

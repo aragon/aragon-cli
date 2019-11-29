@@ -1,5 +1,5 @@
 export * from './download-client'
 export * from './start-client'
-export * from './fetch-client'
+export * from './copy-client'
 export * from './open-client'
 export * from './build-client'

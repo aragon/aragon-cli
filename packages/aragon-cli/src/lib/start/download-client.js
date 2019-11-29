@@ -1,29 +1,38 @@
+import os from 'os'
 import path from 'path'
 import { existsSync, ensureDirSync } from 'fs-extra'
-import os from 'os'
 import { promisify } from 'util'
 const clone = promisify(require('git-clone'))
 const pkg = require('../../../package.json')
 
+/**
+ * Computes client path
+ * @param {string} clientVersion "1.0.0"
+ * @return {string} client path
+ */
+export function getClientPath(clientVersion) {
+  return `${os.homedir()}/.aragon/client-${clientVersion}`
+}
+
+/**
+ * Checks if path exists
+ * @param {string} clientPath
+ * @return {boolean}
+ */
+export function existsClientPath(clientPath) {
+  return existsSync(path.resolve(clientPath))
+}
+
+/**
+ * Git clone repo
+ * @param {*} param0
+ * @return {Promise<void>}
+ */
 export async function downloadClient({
-  ctx,
-  task,
+  clientPath,
   clientRepo = pkg.aragon.clientRepo,
   clientVersion,
 }) {
-  const CLIENT_PATH = `${os.homedir()}/.aragon/client-${clientVersion}`
-  ctx.clientPath = CLIENT_PATH
-
-  // Make sure we haven't already downloaded the Client
-  if (existsSync(path.resolve(CLIENT_PATH))) {
-    task.skip('Client already downloaded')
-    ctx.clientAvailable = true
-    return
-  }
-
-  // Ensure folder exists
-  ensureDirSync(CLIENT_PATH)
-
-  // Clone client
-  return clone(clientRepo, CLIENT_PATH, { checkout: clientVersion })
+  ensureDirSync(clientPath)
+  return clone(clientRepo, clientPath, { checkout: clientVersion })
 }

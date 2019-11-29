@@ -1,14 +1,16 @@
 import {
-  fetchClient,
+  copyClient,
+  getClientPath,
+  existsClientPath,
   downloadClient,
   buildClient,
   startClient,
   openClient,
 } from '../lib/start'
-const chalk = require('chalk')
+const { blue } = require('chalk')
 const TaskList = require('listr')
 const pkg = require('../../package.json')
-const { installDeps } = require('../util')
+const { installDepsWithoutTask: installDeps, isPortTaken } = require('../util')
 
 const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
@@ -40,56 +42,120 @@ exports.builder = yargs => {
     })
 }
 
-exports.task = async function({
+/**
+ * This task is used by run.js:391:11 as
+ * start.task({ clientRepo, clientVersion, clientPort, clientPath })
+ */
+exports.task = function({
   clientRepo,
   clientVersion,
   clientPort,
-  clientPath,
+  clientPath: existingClientPath,
 }) {
+  const computedClientPath = getClientPath(clientVersion)
+  const computedClientPathExists = existsClientPath(computedClientPath)
+  const shouldInstallClient = !computedClientPathExists
+  const useAragenClient = clientVersion === DEFAULT_CLIENT_VERSION
+  // Target client path = provided / existing / downloaded / copied client path
+  const clientPath = existingClientPath || computedClientPath
+
   const tasks = new TaskList([
+    /**
+     * [Fetching]
+     * Always
+     * ctx.clientFetch = true
+     * ctx.clientAvailable = true
+     * ctx.clientPath = `${os.homedir()}/.aragon/client-${clientVersion}`
+     *
+     * Skips if
+     * existsSync(path.resolve(`${os.homedir()}/.aragon/client-${clientVersion}`))
+     *
+     * Copies the client files from disk when the version is the defaults
+     */
+    // {
+    //   title: 'Fetching client from aragen',
+    //   task: async (ctx, task) => {
+    //     task.output = 'Fetching client...'
+    //     await fetchClient(ctx, task, DEFAULT_CLIENT_VERSION)
+    //   },
+    //   enabled: () => clientVersion === DEFAULT_CLIENT_VERSION,
+    // },
+    /**
+     * [Downloading]
+     * If the previous fetching happen, clientFetch === true and this
+     * will not be enabled
+     *
+     * Always
+     * ctx.clientPath = `${os.homedir()}/.aragon/client-${clientVersion}`
+     * ctx.clientAvailable = true
+     *
+     * Skips if
+     * existsSync(path.resolve(`${os.homedir()}/.aragon/client-${clientVersion}`))
+     *
+     * It 'git clone's the repo at the request version
+     */
     {
-      title: 'Fetching client from aragen',
-      skip: () => !!clientPath,
-      task: async (ctx, task) => {
-        task.output = 'Fetching client...'
-        await fetchClient(ctx, task, DEFAULT_CLIENT_VERSION)
-      },
-      enabled: () => clientVersion === DEFAULT_CLIENT_VERSION,
+      title: useAragenClient ? 'Copy client' : 'Download client',
+      task: async () =>
+        useAragenClient
+          ? copyClient(computedClientPath)
+          : downloadClient({
+              clientPath: computedClientPath,
+              clientRepo,
+              clientVersion,
+            }),
+      enabled: () => shouldInstallClient,
     },
-    {
-      title: 'Downloading client',
-      skip: ctx => !!clientPath,
-      task: async (ctx, task) => {
-        task.output = 'Downloading client...'
-        await downloadClient({ ctx, task, clientRepo, clientVersion })
-      },
-      enabled: ctx => !ctx.clientFetch,
-    },
+    /**
+     * When is clientAvailable not true? What does it mean?
+     * Why is ctx.clientPath used? It is only set in a code block that
+     * sets ctx.clientAvailable = true, so it won't be set
+     *
+     * #### Question, the aragen client files have to be built?
+     */
     {
       title: 'Installing client dependencies',
-      task: async (ctx, task) => installDeps(ctx.clientPath, task),
-      enabled: ctx => !ctx.clientAvailable && !clientPath,
+      task: (_0, task) =>
+        installDeps(computedClientPath, log => (task.output = log)),
+      enabled: () => shouldInstallClient,
     },
+    /**
+     * Runs npm run build:local
+     *
+     * #### Question, the aragen client files have to be built?
+     */
     {
       title: 'Building Aragon client',
-      task: async (ctx, task) => {
-        task.output = 'Building Aragon client...'
-        await buildClient(ctx, clientPath)
-      },
-      enabled: ctx => !ctx.clientAvailable,
+      task: () => buildClient(computedClientPath),
+      enabled: () => shouldInstallClient,
     },
+    /**
+     * If port is taken
+     * ctx.portOpen = true  - [NOTE] run.js:404:9 uses ctx.portOpen.
+     * and the task is skipped
+     *
+     * Executes an http-server serving the client content
+     */
     {
       title: 'Starting Aragon client',
       task: async (ctx, task) => {
         task.output = 'Starting Aragon client...'
-        await startClient(ctx, clientPort, clientPath)
+        if (await isPortTaken(clientPort)) {
+          ctx.portOpen = true
+        } else {
+          await startClient(clientPort, clientPath)
+        }
       },
     },
+    /**
+     * Opens a browser window
+     * #### Question: Where is `ctx.daoAddress` set, or coming from?
+     */
     {
       title: 'Opening client',
       task: async (ctx, task) => {
         task.output = 'Opening client'
-        await openClient(ctx, clientPort)
+        await openClient(clientPort, ctx.daoAddress)
       },
     },
   ])
@@ -103,19 +169,18 @@ exports.handler = async ({
   clientPort,
   clientPath,
 }) => {
-  const task = await exports.task({
+  const task = exports.task({
     clientRepo,
     clientVersion,
     clientPort,
     clientPath,
   })
-  return task
-    .run()
-    .then(() =>
-      reporter.info(
-        `Aragon client from ${chalk.blue(clientRepo)} version ${chalk.blue(
-          clientVersion
-        )} started on port ${chalk.blue(clientPort)}`
-      )
-    )
+
+  await task.run()
+
+  reporter.info(
+    `Aragon client from ${blue(clientRepo)} version ${blue(
+      clientVersion
+    )} started on port ${blue(clientPort)}`
+  )
 }
