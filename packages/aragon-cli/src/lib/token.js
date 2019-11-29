@@ -119,3 +119,28 @@ export const deployContract = async (
 
   return result
 }
+
+/**
+ * Change the controller of a MiniMe token
+ *
+ * @param {Object} web3 Web3
+ * @param {string} tokenAddress MiniMe token address
+ * @param {string} newController Controller address
+ * @param {string} gasPrice Gas price
+ * @returns {Promise<Object>} Transaction receipt
+ */
+export const changeController = async (
+  web3,
+  tokenAddress,
+  newController,
+  gasPrice
+) => {
+  const tokenAbi = getContract('@aragon/apps-shared-minime', 'MiniMeToken').abi
+
+  const contract = new web3.eth.Contract(tokenAbi, tokenAddress)
+  const from = (await web3.eth.getAccounts())[0]
+  const tx = contract.methods.changeController(newController)
+  const gas = await getRecommendedGasLimit(web3, await tx.estimateGas({ from }))
+
+  return tx.send({ from, gas, gasPrice })
+}
