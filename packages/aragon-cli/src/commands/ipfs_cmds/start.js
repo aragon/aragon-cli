@@ -5,17 +5,24 @@ import {
   startDaemon,
   getDefaultRepoPath,
   setPorts,
-  ensureIPFSInitialized,
+  ensureRepoInitialized,
   getClient,
-  setIPFSCORS,
+  configureCors,
   pinArtifacts,
+  getBinaryPath,
 } from '../../lib/ipfs'
 
 export const command = 'start'
 export const describe = 'Start and configure the daemon.'
 
+const DETACH_ALIAS = 'D'
+
 export const builder = yargs =>
   yargs
+    .option('bin-path', {
+      description: 'The location of the IPFS binary',
+      default: getBinaryPath(),
+    })
     .option('repo-path', {
       description: 'The location of the IPFS repository',
       default: getDefaultRepoPath(),
@@ -32,17 +39,19 @@ export const builder = yargs =>
     })
     .option('detached', {
       description: 'Whether to run the daemon in the background',
-      alias: 'd',
+      // uppercase D to avoid conflicting with --debug
+      alias: DETACH_ALIAS,
       default: false,
       boolean: true,
     })
 
 const runStartTask = ({
-  detached,
+  binPath,
   repoPath,
   apiPort,
   gatewayPort,
   swarmPort,
+  detached,
   silent,
   debug,
 }) => {
@@ -51,23 +60,21 @@ const runStartTask = ({
       {
         title: 'Checking repository',
         task: async () => {
-          await ensureIPFSInitialized(repoPath)
+          await ensureRepoInitialized(binPath, repoPath)
         },
       },
       {
         title: 'Configure ports',
-        task: async ctx => {
-          try {
-            await setPorts(repoPath, apiPort, gatewayPort, swarmPort)
-          } catch (e) {
-            ctx.setPortsSuccess = false
-          }
+        task: async () => {
+          await setPorts(repoPath, apiPort, gatewayPort, swarmPort)
         },
       },
       {
         title: 'Start the daemon',
         task: async ctx => {
-          ctx.processController = await startDaemon(repoPath, { detached })
+          ctx.processController = await startDaemon(binPath, repoPath, {
+            detached,
+          })
         },
       },
     ],
@@ -77,44 +84,52 @@ const runStartTask = ({
 
 export const handler = async argv => {
   const {
-    detached,
-    silent,
-    debug,
+    binPath,
+    repoPath,
     apiPort,
     gatewayPort,
     swarmPort,
-    repoPath,
+    detached,
+    silent,
+    debug,
     reporter,
   } = argv
 
   const { processController } = await runStartTask({
-    detached,
+    binPath,
+    repoPath,
     apiPort,
     gatewayPort,
     swarmPort,
+    detached,
     silent,
     debug,
-    repoPath,
   })
 
-  reporter.info(`Daemon output:\n${processController.output}`)
+  if (!detached) {
+    processController.attach()
+    reporter.info(
+      `Did you know you can run the IPFS Daemon in the background using the '${DETACH_ALIAS}' flag?`
+    )
+  }
+
+  // if (detached && !processController) {
+  //   reporter.warning('The IPFS Daemon is already running on these ports!')
+  //   reporter.warning('Trying to connect to the existing process...')
+  // }
 
   if (detached) {
     processController.detach()
+    reporter.info(`Daemon output:\n${processController.output}`)
     reporter.warning(`The IPFS Daemon will continue running in the background!
 Use the 'aragon ipfs stop' command to stop it.`)
-  } else {
-    processController.attach()
-    reporter.info(
-      'Did you know you can run the IPFS Daemon in the background using the `-d` flag?'
-    )
   }
 
   /**
    * Configure IPFS with Aragon-specific logic
    */
   const apiClient = await getClient(`http://localhost:${apiPort}`)
-  await setIPFSCORS(apiClient)
+  await configureCors(apiClient)
   reporter.success('Successfully configured CORS')
   const hashes = await pinArtifacts(apiClient)
   reporter.success(`Successfully pinned ${hashes.length} Aragon artifacts.`)

@@ -14,7 +14,7 @@ import {
   getPeerIDConfig,
   isDaemonRunning,
   getRepoSize,
-  isIPFSCORS,
+  isCorsConfigured,
 } from '../../lib/ipfs'
 
 export const command = 'status'
@@ -71,7 +71,7 @@ const runCheckTask = ({ silent, debug, repoPath }) => {
         skip: ctx => !ctx.daemonRunning,
         task: async ctx => {
           try {
-            ctx.corsEnabled = await isIPFSCORS({
+            ctx.corsEnabled = await isCorsConfigured({
               protocol: 'http',
               host: '127.0.0.1',
               port: ctx.daemonPorts.api,

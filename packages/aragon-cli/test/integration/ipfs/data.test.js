@@ -48,15 +48,13 @@ test.beforeEach(async t => {
  * Note that the IPFS rpc object is correct, =
  * { protocol: 'https', host: 'ipfs.infura.io', port: 5001 }
  */
-
-/* eslint-disable-next-line ava/no-skip-test */
-test.skip('Get IPFS readme merkle DAG and CIDs', async t => {
+test('Get IPFS readme merkle DAG and CIDs', async t => {
   // arrange
   const { ipfsReader } = t.context
 
   // act
   const merkleDag = await getMerkleDAG(ipfsReader, readmeDirCid)
-  const cids = extractCIDsFromMerkleDAG(merkleDag)
+  const cids = extractCIDsFromMerkleDAG(merkleDag, { recursive: true })
 
   // assert
   t.snapshot(merkleDag, 'IPFS readme merkle DAG')

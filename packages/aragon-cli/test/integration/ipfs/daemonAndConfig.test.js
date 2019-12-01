@@ -1,94 +1,101 @@
-import test from 'ava'
-import killProcessOnPort from 'kill-port'
+import { serial as test } from 'ava'
 import {
-  isIPFSRunning,
-  startIPFSDaemon,
-  isDaemonRunning,
   startDaemon,
-  setIPFSCORS,
-  isIPFSCORS,
-  getDefaultRepoPath,
-  getRepoConfig,
+  ensureRepoInitialized,
+  setPorts,
+  isDaemonRunning,
+  isCorsConfigured,
+  getClient,
+  pinArtifacts,
+  configureCors,
 } from '../../../src/lib/ipfs'
-import { assertIpfsIsInstalled } from '../test-utils'
+import { installGoIpfs } from '../../../src/lib/ipfs/install'
+// import { remove, ensureDir } from 'fs-extra'
+import { initPackage } from '../../../src/lib/node/packages'
+import { killProcessOnPort } from '../../../src/lib/node'
 
-const ipfsRpc = {
+const apiPort = 8010
+const gatewayPort = 8011
+const swarmPort = 8012
+
+const apiUrl = {
   protocol: 'http',
   host: 'localhost',
-  port: 5001,
+  port: apiPort,
 }
 
-async function cleanIpfsProcess() {
-  try {
-    await killProcessOnPort(ipfsRpc.port)
-  } catch (e) {
-    console.error(`Error killing detached IPFS process: ${e.stack}`)
-  }
-}
+const projectPath = './.tmp/ipfs-tests/project'
+const repoPath = './.tmp/ipfs-tests/repo'
+const binPath = './.tmp/ipfs-tests/project/node_modules/.bin/ipfs'
 
 test.before(async () => {
-  await assertIpfsIsInstalled()
+  await initPackage(projectPath)
 })
 
-test.beforeEach(async () => {
-  await cleanIpfsProcess()
+test.after.always(async () => {
+  await killProcessOnPort(apiPort)
+  // await remove(projectPath)
+  // await remove(repoPath)
 })
 
-test.afterEach(async () => {
-  await cleanIpfsProcess()
+test('should install go-ipfs in a new project', async t => {
+  // act
+  const result = await installGoIpfs(true, projectPath)
+  // assert
+  t.snapshot(result.cmd, 'should use the correct command')
 })
 
-/**
- * Run all tests for the IPFS daemon in the same sequential test() function
- * to ensure there are no collisions.
- * This tests are highly dependant and may be fragile depending on the OS
- * they are run on
- */
-
-// eslint-disable-next-line ava/no-skip-test
-test.skip('Sequential IPFS integration test', async t => {
-  /**
-   * Test startIPFSDaemon, isIPFSRunning (NOT used variant)
-   * - Start the IPFS daemon
-   * - kill the process
-   */
-  console.log('Test start IPFS daemon as a detached process')
-  t.false(await isIPFSRunning(ipfsRpc), 'IPFS deamon should NOT be running')
-  await startIPFSDaemon()
-  t.true(await isIPFSRunning(ipfsRpc), 'IPFS deamon should be running')
-  await killProcessOnPort(ipfsRpc.port)
-
-  /**
-   * Test startDaemon, isDaemonRunning (used variant)
-   * - Start IPFS daemon
-   * - Leave it running for tests below
-   */
-  console.log('Test start IPFS daemon')
-  t.false(await isDaemonRunning(ipfsRpc), 'IPFS deamon should NOT be running')
-  await startDaemon()
-  t.true(await isDaemonRunning(ipfsRpc), 'IPFS deamon should be running')
-
-  /**
-   * Config IPFS cors
-   * - Set IPFS cors params
-   * - Check they are set correctly
-   */
-  console.log('Test IPFS cors config')
-  await setIPFSCORS(ipfsRpc)
-  const isCorsConfigured = await isIPFSCORS(ipfsRpc)
-  t.true(isCorsConfigured, 'isIPFSCORS returned false')
+test('should initialize the repository at a custom path', async t => {
+  // act
+  await ensureRepoInitialized(binPath, repoPath)
+  // assert
+  t.pass()
 })
 
-/**
- * getRepoConfig fails on linux since the repo path is wrong
- * IPFS config should be manipulated via its HTTP API or via the CLI
- * Postpone test after a discussion on this approach
- */
+test('should configure the ports', async t => {
+  // act
+  await setPorts(repoPath, apiPort, gatewayPort, swarmPort)
+  // assert
+  t.pass()
+})
 
-/* eslint-disable-next-line ava/no-skip-test */
-test.skip('Config IPFS ports', async t => {
-  //
-  const repoPath = getDefaultRepoPath()
-  const config = await getRepoConfig(repoPath)
-  console.log({ repoPath, config })
+test('should run the daemon', async t => {
+  // act
+  const { output, detach } = await startDaemon(binPath, repoPath, {
+    detached: true,
+  })
+  detach()
+  const daemonRunning = await isDaemonRunning(apiUrl)
+  // assert
+  t.true(daemonRunning)
+  t.true(output.includes('Daemon is ready'))
+  t.true(output.includes(`API server listening on /ip4/0.0.0.0/tcp/${apiPort}`))
+  t.true(output.includes(`WebUI: http://0.0.0.0:${apiPort}/webui`))
+  t.true(output.includes(`Swarm listening on /ip4/127.0.0.1/tcp/${swarmPort}`))
+  t.true(output.includes(`Swarm announcing /ip4/127.0.0.1/tcp/${swarmPort}`))
+  t.true(
+    output.includes(
+      `Gateway (readonly) server listening on /ip4/0.0.0.0/tcp/${gatewayPort}`
+    )
+  )
+})
+
+test('should configure cors & pin artifacts', async t => {
+  // arrange
+  const apiClient = await getClient(`http://localhost:${apiPort}`)
+  // act
+  await configureCors(apiClient)
+  const corsConfigured = await isCorsConfigured(apiClient)
+  const hashes = await pinArtifacts(apiClient)
+  // assert
+  t.true(corsConfigured)
+  t.snapshot(hashes)
+})
+
+test('should stop the daemon', async t => {
+  // act
+  await killProcessOnPort(apiPort)
+  const daemonRunning = await isDaemonRunning(apiUrl)
+  // assert
+  t.false(daemonRunning)
 })

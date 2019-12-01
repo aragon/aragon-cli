@@ -19,6 +19,7 @@
     "posttest": "node scripts/teardown-integration-tests.js",
     "test": "ava --verbose || (npm run posttest && exit 42)",
     "test:watch": "ava --watch",
+    "test:clean": "rm -rf ./.tmp",
     "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test"
   },
   "repository": {
@@ -63,12 +64,12 @@
     "fs-extra": "^8.0.1",
     "get-folder-size": "^2.0.1",
     "git-clone": "^0.1.0",
+    "go-ipfs": "^0.4.22",
     "go-platform": "^1.0.0",
     "http-server": "^0.11.1",
     "ignore": "^4.0.6",
     "inquirer": "^7.0.0",
     "internal-ip": "^5.0.0",
-    "ipfs-api": "^26.1.2",
     "ipfs-http-client": "^39.0.2",
     "listr": "^0.14.3",
     "listr-input": "0.2.0",
