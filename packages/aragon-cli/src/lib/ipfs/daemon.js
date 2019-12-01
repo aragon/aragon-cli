@@ -1,28 +1,31 @@
 import { getBinary, isPortTaken } from '../../util'
-import { IPFS_START_TIMEOUT } from './constants'
 import { connectOrThrow } from './misc'
 import { startProcess } from '../node'
+import {
+  DAEMON_START_TIMEOUT,
+  DAEMON_READY_OUTPUT,
+  DEFAULT_DAEMON_ARGS,
+  NO_INSTALLATION_MSG,
+} from './constants'
 
-export const startDaemon = (repoPath, options = {}) => {
-  const ipfsBinary = getBinary('ipfs')
+export const getBinaryPath = () => getBinary('ipfs')
 
-  if (!ipfsBinary) {
-    throw new Error(
-      'IPFS is not installed. Use `aragon ipfs install` before proceeding.'
-    )
+export const startDaemon = (binPath, repoPath, options = {}) => {
+  if (!binPath) {
+    throw new Error(NO_INSTALLATION_MSG)
   }
 
   const processSetup = {
-    detached: options.detached,
-    cmd: ipfsBinary,
-    args: ['daemon', '--migrate'],
+    cmd: binPath,
+    args: ['daemon', ...DEFAULT_DAEMON_ARGS],
     execaOpts: {
+      detached: options.detached,
       env: {
         IPFS_PATH: repoPath,
       },
     },
-    readyOutput: 'Daemon is ready',
-    timeout: IPFS_START_TIMEOUT,
+    readyOutput: DAEMON_READY_OUTPUT,
+    timeout: DAEMON_START_TIMEOUT,
   }
 
   return startProcess(processSetup)

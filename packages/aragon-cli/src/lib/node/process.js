@@ -1,5 +1,8 @@
 import execa from 'execa'
 import { withTimeout } from './misc'
+import killProcessOnPort from 'kill-port'
+
+export { killProcessOnPort }
 
 export const attachProcess = subprocess => {
   subprocess.stdout.pipe(process.stdout)
@@ -17,24 +20,15 @@ export const detachProcess = subprocess => {
 export const startProcess = async ({
   cmd,
   args,
-  execaOpts,
+  execaOpts = {},
   readyOutput,
   timeout,
-  detached,
 }) => {
   let output = ''
 
   const request = new Promise((resolve, reject) => {
-    const defaultsOptions = {
-      detached,
-    }
-
     // start the process
-    const subprocess = execa(
-      cmd,
-      args,
-      Object.assign(defaultsOptions, execaOpts)
-    )
+    const subprocess = execa(cmd, args, execaOpts)
 
     subprocess.stderr.on('data', data => {
       data = data.toString()

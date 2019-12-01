@@ -1,31 +1,14 @@
 import test from 'ava'
-import proxyquire from 'proxyquire'
-
-const ipfsGateway = 'https://ipfs.eth.aragon.network/ipfs'
-const readmeDirCid = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'
-
-test.beforeEach(t => {
-  const propagation = proxyquire
-    .noCallThru()
-    .load('../../../src/lib/ipfs/propagation', {
-      './constants': {
-        timeout: () =>
-          new Promise((resolve, reject) => setTimeout(resolve, 5 * 1000)),
-        GATEWAYS: [ipfsGateway],
-      },
-    })
-
-  t.context = {
-    propagateFiles: propagation.propagateFiles,
-  }
-})
+import { propagateFiles } from '../../../src/lib/ipfs/propagation'
 
 test('Get IPFS readme merkle DAG and CIDs', async t => {
   // arrange
-  const { propagateFiles } = t.context
-
+  const ipfsGateway = 'https://ipfs.eth.aragon.network/ipfs'
+  const readmeDirCid = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'
   // act
-  const results = await propagateFiles([readmeDirCid])
+  const results = await propagateFiles([readmeDirCid], {
+    gateways: [ipfsGateway],
+  })
 
   // assert
   t.deepEqual(results, {

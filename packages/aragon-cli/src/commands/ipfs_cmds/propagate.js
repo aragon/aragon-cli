@@ -46,8 +46,9 @@ const runPropagateTask = ({ cid, ipfsReader, silent, debug }) => {
             recursive: true,
           })
 
-          const logger = text => (task.output = text)
-          ctx.result = await propagateFiles(ctx.CIDs, logger)
+          ctx.result = await propagateFiles(ctx.CIDs, {
+            logger: text => (task.output = text),
+          })
         },
       },
     ],

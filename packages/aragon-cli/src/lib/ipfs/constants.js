@@ -1,8 +1,5 @@
-/**
- * Constants used throughout the library
- */
-export const FETCH_TIMEOUT = 20000 // 20s
-export const FETCH_TIMEOUT_ERR = 'Request timed out'
+export const GATEWAY_FETCH_TIMEOUT = 20000 // 20s
+export const GATEWAY_FETCH_TIMEOUT_MSG = 'Request timed out'
 
 export const GATEWAYS = [
   'https://ipfs.io/ipfs',
@@ -14,4 +11,12 @@ export const GATEWAYS = [
   'https://ipfs.wa.hle.rs/ipfs',
 ]
 
-export const IPFS_START_TIMEOUT = 20000 // 20s for timeout, may need to be tweaked
+export const DAEMON_START_TIMEOUT = 20000 // 20s
+export const DAEMON_READY_OUTPUT = 'Daemon is ready'
+export const DEFAULT_DAEMON_ARGS = ['--migrate']
+
+export const NO_INSTALLATION_MSG =
+  'IPFS is not installed. Use `aragon ipfs install` before proceeding.'
+
+export const GO_IMPL_DIST_VERSION = '0.4.22'
+export const GO_IMPL_DIST_URL = 'https://dist.ipfs.io'
