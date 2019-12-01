@@ -1,5 +1,4 @@
 import test from 'ava'
-import sinon from 'sinon'
 import newDao from '../../../src/lib/dao/new'
 import { getAllApps, getDaoAddress } from '../../../src/lib/dao/apps'
 import { assignId } from '../../../src/lib/dao/assign-id'
@@ -16,15 +15,9 @@ test.beforeEach(async t => {
   }
 })
 
-test.afterEach.always(() => {
-  sinon.restore()
-})
-
 // Disabled until IPFS is added to integration tests
 // eslint-disable-next-line ava/no-skip-test
 test.skip('getAllApps returns the correct apps', async t => {
-  t.plan(3)
-
   const { web3 } = t.context
 
   const repo = await getApmRepo(
@@ -58,8 +51,6 @@ test.skip('getAllApps returns the correct apps', async t => {
 })
 
 test('getDaoAddress returns the correct DAO address', async t => {
-  t.plan(1)
-
   const daoAddress = '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'
   const daoName = 'mydaoname' + Math.floor(Math.random() * 1000000)
   const { web3 } = t.context

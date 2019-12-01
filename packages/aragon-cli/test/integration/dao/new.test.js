@@ -14,8 +14,6 @@ test.beforeEach(async t => {
 })
 
 test('Deploys DAO with valid template', async t => {
-  t.plan(1)
-
   const { web3 } = t.context
 
   const repo = await getApmRepo(
@@ -39,8 +37,6 @@ test('Deploys DAO with valid template', async t => {
 // Disabled until IPFS is added to integration tests
 // eslint-disable-next-line ava/no-skip-test
 test.skip('Deploys DAO with template with custom newInstance method and args', async t => {
-  t.plan(1)
-
   const { web3 } = t.context
 
   const repo = await getApmRepo(
@@ -70,8 +66,6 @@ test.skip('Deploys DAO with template with custom newInstance method and args', a
 })
 
 test('Throws with invalid newInstance', async t => {
-  t.plan(1)
-
   const { web3 } = t.context
 
   const repo = await getApmRepo(
@@ -93,8 +87,6 @@ test('Throws with invalid newInstance', async t => {
 })
 
 test('Throws with invalid deploy event', async t => {
-  t.plan(1)
-
   const { web3 } = t.context
 
   const repo = await getApmRepo(
