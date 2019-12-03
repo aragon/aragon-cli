@@ -68,17 +68,6 @@ exports.builder = function(yargs) {
       boolean: true,
       description: 'Reset devchain to snapshot',
     })
-    .option('kit', {
-      description: '(deprecated) Kit contract name',
-    })
-    .option('kit-init', {
-      description: '(deprecated) Arguments to be passed to the kit constructor',
-      array: true,
-    })
-    .option('kit-deploy-event', {
-      description:
-        '(deprecated) Event name that the template will fire on success',
-    })
     .option('template', {
       default: newDAO.BARE_TEMPLATE,
       description: 'Template contract name',
@@ -193,9 +182,6 @@ exports.handler = async function({
   blockTime,
   accounts,
   reset,
-  kit,
-  kitInit,
-  kitDeployEvent,
   template,
   templateInit,
   templateDeployEvent,
@@ -224,11 +210,6 @@ exports.handler = async function({
     )
     process.exit(1)
   }
-
-  // TODO: this can be cleaned up once kits is no longer supported
-  template = kit || template
-  templateInit = kitInit || templateInit
-  templateDeployEvent = kitDeployEvent || templateDeployEvent
 
   const showAccounts = accounts
 
@@ -466,12 +447,6 @@ exports.handler = async function({
       reporter.warning('No front-end detected (no manifest.json)')
     } else if (!manifest.start_url) {
       reporter.warning('No front-end detected (no start_url defined)')
-    }
-
-    if (kit || kitInit || kitDeployEvent) {
-      reporter.warning(
-        `The use of kits is deprecated and templates should be used instead. The new options for 'aragon run' are '--template', '--template-init' and 'template-deploy-event'`
-      )
     }
   })
 }
