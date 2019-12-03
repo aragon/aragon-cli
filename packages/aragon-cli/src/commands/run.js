@@ -251,7 +251,7 @@ exports.handler = async function({
       },
       {
         title: 'Check IPFS',
-        task: () => startIPFS.task({ apmOptions }),
+        task: () => startIPFS.handler({ apmOptions }),
         enabled: () => !http || template,
       },
       {
