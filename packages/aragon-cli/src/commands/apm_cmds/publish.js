@@ -191,7 +191,7 @@ exports.runSetupTask = ({
       {
         title: 'Check IPFS',
         enabled: () => !http && ipfsCheck,
-        task: () => startIPFS.task({ apmOptions }),
+        task: () => startIPFS.handler({ apmOptions }),
       },
       {
         title: `Applying version bump (${bump})`,

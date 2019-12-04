@@ -49,7 +49,7 @@ exports.task = async ({
       {
         // IPFS is a dependency of getRepoTask which uses IPFS to fetch the contract ABI
         title: 'Check IPFS',
-        task: () => startIPFS.task({ apmOptions }),
+        task: () => startIPFS.handler({ apmOptions }),
       },
       {
         title: `Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`,

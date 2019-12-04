@@ -17,13 +17,7 @@ exports.BARE_TEMPLATE = defaultAPMName('bare-template')
 exports.BARE_INSTANCE_FUNCTION = 'newInstance'
 exports.BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
 
-exports.OLD_BARE_TEMPLATE = defaultAPMName('bare-kit')
-exports.OLD_BARE_INSTANCE_FUNCTION = 'newBareInstance'
-exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT = 'DeployInstance'
-
-// TODO: Remove old template once is no longer supported
 const BARE_TEMPLATE_ABI = require('./utils/bare-template-abi')
-const OLD_BARE_TEMPLATE_ABI = require('./utils/old-bare-template-abi')
 
 exports.command = 'new [template] [template-version]'
 
@@ -31,12 +25,6 @@ exports.describe = 'Create a new DAO'
 
 exports.builder = yargs => {
   return yargs
-    .positional('kit', {
-      description: 'Name of the kit to use creating the DAO',
-    })
-    .positional('kit-version', {
-      description: 'Version of the kit to be used',
-    })
     .positional('template', {
       description: 'Name of the template to use creating the DAO',
       default: exports.BARE_TEMPLATE,
@@ -95,20 +83,12 @@ exports.task = async ({
 
   template = defaultAPMName(template)
 
-  let bareTemplateABI = BARE_TEMPLATE_ABI
-
-  if (template === exports.OLD_BARE_TEMPLATE) {
-    fn = exports.OLD_BARE_INSTANCE_FUNCTION
-    deployEvent = exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT
-    bareTemplateABI = OLD_BARE_TEMPLATE_ABI
-  }
-
   const tasks = new TaskList(
     [
       {
         // IPFS is a dependency of getRepoTask which uses IPFS to fetch the contract ABI
         title: 'Check IPFS',
-        task: () => startIPFS.task({ apmOptions }),
+        task: () => startIPFS.handler({ apmOptions }),
         enabled: () => ipfsCheck,
       },
       {
@@ -127,7 +107,7 @@ exports.task = async ({
           if (!ctx.accounts) {
             ctx.accounts = await web3.eth.getAccounts()
           }
-          const abi = ctx.repo.abi || bareTemplateABI
+          const abi = ctx.repo.abi || BARE_TEMPLATE_ABI
           const template =
             templateInstance ||
             new web3.eth.Contract(abi, ctx.repo.contractAddress)
@@ -140,18 +120,10 @@ exports.task = async ({
             gasPrice,
           })
 
-          // Backward compatibility with old event name
           const deployEventValue =
             events[deployEvent] ||
-            events[exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT] ||
             // Some templates use DeployDAO instead of DeployDao
             events.DeployDAO
-
-          // TODO: Include link to documentation
-          if (events[exports.OLD_BARE_TEMPLATE_DEPLOY_EVENT])
-            reporter.warning(
-              `The use of kits was deprecated and templates should be used instead. The 'DeployInstance' event was replaced, 'DeployDao' should be used instead.`
-            )
 
           if (deployEventValue)
             ctx.daoAddress = deployEventValue.returnValues.dao
@@ -196,8 +168,6 @@ exports.task = async ({
 exports.handler = async function({
   reporter,
   network,
-  kit,
-  kitVersion,
   template,
   templateVersion,
   fn,
@@ -209,10 +179,6 @@ exports.handler = async function({
   debug,
 }) {
   const web3 = await ensureWeb3(network)
-
-  // TODO: this can be cleaned up once kits is no longer supported
-  template = kit || template
-  templateVersion = kitVersion || templateVersion
 
   const task = await exports.task({
     web3,
@@ -236,11 +202,6 @@ exports.handler = async function({
       )
     } else {
       reporter.success(`Created DAO: ${green(ctx.daoAddress)}`)
-    }
-    if (kit || kitVersion) {
-      reporter.warning(
-        `The use of kits is deprecated and templates should be used instead. The new options for 'dao new' are '--template' and '--template-version'`
-      )
     }
 
     process.exit()
