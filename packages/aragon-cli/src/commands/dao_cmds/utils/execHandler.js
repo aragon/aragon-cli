@@ -47,7 +47,7 @@ async function task({
       {
         // IPFS is a dependency of getRepoTask which uses IPFS to fetch the contract ABI
         title: 'Check IPFS',
-        task: () => startIPFS.task({ apmOptions: apm }),
+        task: () => startIPFS.handler({ apmOptions: apm }),
         enabled: () => ipfsCheck,
       },
       {
