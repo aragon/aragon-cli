@@ -1,5 +1,4 @@
 const execTask = require('./utils/execHandler').task
-const { resolveEnsDomain } = require('../../helpers/aragonjs-wrapper')
 const TaskList = require('listr')
 const daoArg = require('./utils/daoArg')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
@@ -9,7 +8,8 @@ const chalk = require('chalk')
 const startIPFS = require('../ipfs_cmds/start')
 const getRepoTask = require('./utils/getRepoTask')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
+const { getBasesNamespace } = require('../../lib/dao/kernel')
+const { resolveAddressOrEnsDomain } = require('../../lib/dao/utils')
 
 exports.command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
 
@@ -19,30 +19,25 @@ exports.builder = function(yargs) {
   return getRepoTask.args(daoArg(yargs))
 }
 
-exports.task = async ({
-  wsProvider,
-  web3,
+exports.handler = async function({
   reporter,
-  gasPrice,
   dao,
+  gasPrice,
   network,
-  apmOptions,
+  wsProvider,
+  apm: apmOptions,
   apmRepo,
   apmRepoVersion,
-  repo,
   silent,
   debug,
-}) => {
+}) {
+  const web3 = await ensureWeb3(network)
+
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = await APM(web3, apmOptions)
 
   apmRepo = defaultAPMName(apmRepo)
-  dao = /0x[a-fA-F0-9]{40}/.test(dao)
-    ? dao
-    : await resolveEnsDomain(dao, {
-        provider: web3.currentProvider,
-        registryAddress: apmOptions.ensRegistryAddress,
-      })
+  dao = await resolveAddressOrEnsDomain(dao, web3, apmOptions['ens-registry'])
 
   const tasks = new TaskList(
     [
@@ -59,11 +54,7 @@ exports.task = async ({
       {
         title: 'Upgrading app',
         task: async ctx => {
-          const kernel = new web3.eth.Contract(kernelAbi, dao)
-
-          const basesNamespace = await kernel.methods
-            .APP_BASES_NAMESPACE()
-            .call()
+          const basesNamespace = await getBasesNamespace(dao, web3)
 
           return execTask({
             dao,
@@ -83,39 +74,7 @@ exports.task = async ({
     listrOpts(silent, debug)
   )
 
-  return tasks
-}
-
-exports.handler = async function({
-  reporter,
-  dao,
-  gasPrice,
-  network,
-  wsProvider,
-  apm: apmOptions,
-  apmRepo,
-  apmRepoVersion,
-  silent,
-  debug,
-}) {
-  const web3 = await ensureWeb3(network)
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
-
-  const task = await exports.task({
-    web3,
-    reporter,
-    dao,
-    gasPrice,
-    network,
-    apmOptions,
-    apmRepo,
-    apmRepoVersion,
-    wsProvider,
-    silent,
-    debug,
-  })
-
-  return task.run().then(ctx => {
+  return tasks.run().then(ctx => {
     reporter.success(
       `Successfully executed: "${chalk.blue(
         ctx.transactionPath[0].description
