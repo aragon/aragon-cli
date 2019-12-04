@@ -3,6 +3,7 @@ import {
   getApps,
   resolveEnsDomain,
 } from '../../helpers/aragonjs-wrapper'
+const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
 
 /**
  * Return installed apps for a DAO
@@ -11,7 +12,8 @@ import {
  * @param {Object} options Options
  * @param {Object} options.provider ETH provider
  * @param {string} options.registryAddress ENS registry address
- * @param {string} options.ipfs IPFS configuration
+ * @param {Object} options.ipfs IPFS configuration
+ * @param {Object[]} options.userApps User apps
  */
 async function getInstalledApps(dao, options) {
   const wrapper = await initAragonJS(dao, options.registryAddress, {
@@ -20,6 +22,29 @@ async function getInstalledApps(dao, options) {
   })
 
   return getApps(wrapper)
+}
+
+/**
+ * Return all apps in a DAO, including permissionless ones
+ *
+ * @param {string} DAO address
+ * @param {Object} options Options
+ * @param {Object} options.web3 Web3
+ * @param {Object[]} options.userApps User apps
+ */
+async function getAllApps(dao, options) {
+  const { web3 } = options
+  const kernel = new web3.eth.Contract(kernelAbi, dao)
+
+  const events = await kernel.getPastEvents('NewAppProxy', {
+    fromBlock: await kernel.methods.getInitializationBlock().call(),
+    toBlock: 'latest',
+  })
+
+  return events.map(event => ({
+    proxyAddress: event.returnValues.proxy,
+    appId: event.returnValues.appId,
+  }))
 }
 
 /**
@@ -34,4 +59,4 @@ async function getDaoAddress(dao, options) {
   return /[a-z0-9]+\.eth/.test(dao) ? resolveEnsDomain(dao, options) : dao
 }
 
-module.exports = { getDaoAddress, getInstalledApps }
+module.exports = { getDaoAddress, getAllApps, getInstalledApps }

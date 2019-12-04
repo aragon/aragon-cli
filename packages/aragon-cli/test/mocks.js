@@ -25,11 +25,11 @@ export function apmStub() {
 /**
  * web3 stub with `eth` object
  */
-export function web3Stub() {
+export function web3Stub(contractMethods = {}) {
   return {
     eth: {
       Contract: sinon.stub().returns({
-        methods: {},
+        methods: contractMethods,
       }),
       sendTransaction: async () => {
         return {

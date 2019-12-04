@@ -1,9 +1,17 @@
-const startCommand = require('./ipfs_cmds/start')
+import * as commands from './ipfs_cmds'
 
-exports.builder = function(yargs) {
-  return yargs.commandDir('ipfs_cmds')
-}
+export const builder = yargs =>
+  yargs
+    // the order matters for --help
+    .command(commands.install)
+    .command(commands.start)
+    .command(commands.stop)
+    .command(commands.status)
+    .command(commands.view)
+    .command(commands.propagate)
+    .command(commands.uninstall)
+    .usage(`Usage: aragon ipfs <command> [options]`)
+    .demandCommand(1, 'You need to specify a command')
 
-exports.command = 'ipfs'
-exports.describe = 'Shortcut for `aragon ipfs start`.'
-exports.handler = startCommand.handler
+export const command = 'ipfs <command>'
+export const describe = 'Manage an IPFS node'

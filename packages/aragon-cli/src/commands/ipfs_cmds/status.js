@@ -3,29 +3,29 @@ import chalk from 'chalk'
 import publicIp from 'public-ip'
 import internalIp from 'internal-ip'
 import { existsSync } from 'fs'
-//
 import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
 import { getGlobalBinary, getLocalBinary } from '../../util'
+//
 import {
   getRepoVersion,
   getDefaultRepoPath,
   getRepoConfig,
-  getPortsConfig,
+  getPorts,
   getPeerIDConfig,
   isDaemonRunning,
   getRepoSize,
+  isIPFSCORS,
 } from '../../lib/ipfs'
-import { isIPFSCORS } from '../../helpers/ipfs-daemon'
 
-exports.command = 'status'
-exports.describe = 'Status of the IPFS installation & daemon.'
+export const command = 'status'
+export const describe =
+  'Show whether the daemon is running and other useful information.'
 
-exports.builder = yargs => {
-  return yargs.option('repo-path', {
-    description: 'The location of the IPFS repository',
+export const builder = yargs =>
+  yargs.option('repo-path', {
+    description: 'The location of the IPFS repo',
     default: getDefaultRepoPath(),
   })
-}
 
 const runCheckTask = ({ silent, debug, repoPath }) => {
   return new TaskList(
@@ -52,7 +52,7 @@ const runCheckTask = ({ silent, debug, repoPath }) => {
           ctx.repoVersion = version
           ctx.repoSize = size
           ctx.peerID = getPeerIDConfig(config)
-          ctx.daemonPorts = getPortsConfig(config)
+          ctx.daemonPorts = getPorts(config)
         },
       },
       {
@@ -70,11 +70,13 @@ const runCheckTask = ({ silent, debug, repoPath }) => {
         title: 'Check CORS',
         skip: ctx => !ctx.daemonRunning,
         task: async ctx => {
-          ctx.corsEnabled = await isIPFSCORS({
-            protocol: 'http',
-            host: '127.0.0.1',
-            port: ctx.daemonPorts.api,
-          })
+          try {
+            ctx.corsEnabled = await isIPFSCORS({
+              protocol: 'http',
+              host: '127.0.0.1',
+              port: ctx.daemonPorts.api,
+            })
+          } catch (err) {}
         },
       },
       {
@@ -103,7 +105,9 @@ const runCheckTask = ({ silent, debug, repoPath }) => {
   ).run()
 }
 
-exports.handler = async function({ reporter, debug, silent, repoPath }) {
+export const handler = async argv => {
+  const { reporter, debug, silent, repoPath } = argv
+
   const {
     localBinPath,
     globalBinPath,
@@ -136,6 +140,10 @@ exports.handler = async function({ reporter, debug, silent, repoPath }) {
     reporter.info(`Repository version: ${chalk.blue(repoVersion)}`)
     reporter.info(`Repository size: ${chalk.blue(repoSize)}`)
     reporter.newLine()
+    reporter.info(`API port: ${chalk.blue(daemonPorts.api)}`)
+    reporter.info(`Gateway port: ${chalk.blue(daemonPorts.gateway)}`)
+    reporter.info(`Swarm port: ${chalk.blue(daemonPorts.swarm)}`)
+    reporter.newLine()
     reporter.info(`PeerID: ${chalk.bgWhite(chalk.black(peerID))}`)
     reporter.info(
       `Daemon: ${daemonRunning ? chalk.green('running') : chalk.red('stopped')}`
@@ -148,10 +156,6 @@ exports.handler = async function({ reporter, debug, silent, repoPath }) {
     reporter.info(
       `CORS: ${corsEnabled ? chalk.green('enabled') : chalk.red('disabled')}`
     )
-    reporter.newLine()
-    reporter.info(`API port: ${chalk.blue(daemonPorts.api)}`)
-    reporter.info(`Gateway port: ${chalk.blue(daemonPorts.gateway)}`)
-    reporter.info(`Swarm port: ${chalk.blue(daemonPorts.swarm)}`)
     reporter.newLine()
     reporter.info(
       `Public Swarm MultiAddress: ${chalk.blue(publicSwarmMultiAddr)}`

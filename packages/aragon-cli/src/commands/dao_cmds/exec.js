@@ -1,6 +1,8 @@
-const execHandler = require('./utils/execHandler').handler
+const execHandler = require('./utils/execHandler').task
 const daoArg = require('./utils/daoArg')
 const { parseArgumentStringIfPossible } = require('../../util')
+const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const chalk = require('chalk')
 
 exports.command = 'exec <dao> <proxy-address> <fn> [fn-args..]'
 
@@ -31,7 +33,7 @@ exports.handler = async function({
   fnArgs,
   wsProvider,
 }) {
-  return execHandler({
+  const task = await execHandler({
     dao,
     app: proxyAddress,
     method: fn,
@@ -41,5 +43,12 @@ exports.handler = async function({
     apm,
     network,
     wsProvider,
+    web3: await ensureWeb3(network),
   })
+  const { transactionPath } = await task.run()
+
+  reporter.success(
+    `Successfully executed: "${chalk.blue(transactionPath.description)}"`
+  )
+  process.exit()
 }

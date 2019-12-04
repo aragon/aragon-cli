@@ -1,8 +1,10 @@
 import test from 'ava'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
-import { parseArgumentStringIfPossible } from '../src/util'
-import { convertDAOIdToSubdomain } from '../src/util'
+import {
+  parseArgumentStringIfPossible,
+  convertDAOIdToSubdomain,
+} from '../src/util'
 
 test.beforeEach(t => {
   const fsStub = {
@@ -81,6 +83,8 @@ test('parseArgumentStringIfPossible should parse an array as string', t => {
     1,
     'true',
   ])
+})
+
 test('convertDAOIdToSubdomain returns the correct format', t => {
   const daoId = 'dao1'
   t.is(convertDAOIdToSubdomain(daoId), `${daoId}.aragonid.eth`)
