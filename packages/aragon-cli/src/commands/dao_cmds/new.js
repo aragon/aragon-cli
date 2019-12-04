@@ -1,26 +1,19 @@
 const TaskList = require('listr')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const APM = require('@aragon/apm')
 const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 const { green, bold } = require('chalk')
-const getRepoTask = require('./utils/getRepoTask')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
+const getApmRepo = require('../../lib/apm/getApmRepo')
 const startIPFS = require('../ipfs_cmds/start')
-const {
-  getRecommendedGasLimit,
-  parseArgumentStringIfPossible,
-} = require('../../util')
-const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
-const assignIdTask = require('./id-assign').task
+const newDao = require('../../lib/dao/new')
+const { assignId } = require('../../lib/dao/assign-id')
+const { parseArgumentStringIfPossible } = require('../../util')
 
 exports.BARE_TEMPLATE = defaultAPMName('bare-template')
 exports.BARE_INSTANCE_FUNCTION = 'newInstance'
 exports.BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
 
-const BARE_TEMPLATE_ABI = require('./utils/bare-template-abi')
-
 exports.command = 'new [template] [template-version]'
-
 exports.describe = 'Create a new DAO'
 
 exports.builder = yargs => {
@@ -61,16 +54,15 @@ exports.builder = yargs => {
     })
 }
 
+// Task will be moved to handler once `dao start` is refactored
 exports.task = async ({
   web3,
-  reporter,
   gasPrice,
   apmOptions,
   template,
   templateVersion,
   fn,
   fnArgs,
-  skipChecks,
   deployEvent,
   templateInstance,
   silent,
@@ -79,9 +71,8 @@ exports.task = async ({
   aragonId,
 }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
-  const apm = await APM(web3, apmOptions)
-
   template = defaultAPMName(template)
+  let repo, daoAddress
 
   const tasks = new TaskList(
     [
@@ -93,68 +84,34 @@ exports.task = async ({
       },
       {
         title: `Fetching template ${bold(template)}@${templateVersion}`,
-        task: getRepoTask.task({
-          apm,
-          apmRepo: template,
-          apmRepoVersion: templateVersion,
-          artifactRequired: false,
-        }),
+        task: async () => {
+          repo = await getApmRepo(web3, template, templateVersion, apmOptions)
+        },
         enabled: () => !templateInstance,
       },
       {
         title: 'Create new DAO from template',
-        task: async (ctx, task) => {
-          if (!ctx.accounts) {
-            ctx.accounts = await web3.eth.getAccounts()
-          }
-          const abi = ctx.repo.abi || BARE_TEMPLATE_ABI
-          const template =
-            templateInstance ||
-            new web3.eth.Contract(abi, ctx.repo.contractAddress)
-
-          const newInstanceTx = template.methods[fn](...fnArgs)
-          const estimatedGas = await newInstanceTx.estimateGas()
-          const { events } = await newInstanceTx.send({
-            from: ctx.accounts[0],
-            gas: await getRecommendedGasLimit(web3, estimatedGas),
+        task: async ctx => {
+          daoAddress = await newDao({
+            repo,
+            web3,
+            templateInstance,
+            newInstanceMethod: fn,
+            newInstanceArgs: fnArgs,
+            deployEvent,
             gasPrice,
           })
-
-          const deployEventValue =
-            events[deployEvent] ||
-            // Some templates use DeployDAO instead of DeployDao
-            events.DeployDAO
-
-          if (deployEventValue)
-            ctx.daoAddress = deployEventValue.returnValues.dao
-          else {
-            reporter.error(`Could not find deploy event: ${deployEvent}`)
-            process.exit(1)
-          }
-        },
-      },
-      {
-        title: 'Checking DAO',
-        skip: () => skipChecks,
-        task: async (ctx, task) => {
-          const kernel = new web3.eth.Contract(kernelAbi, ctx.daoAddress)
-          ctx.aclAddress = await kernel.methods.acl().call()
-          ctx.appManagerRole = await kernel.methods.APP_MANAGER_ROLE().call()
+          ctx.daoAddress = daoAddress
         },
       },
       {
         title: 'Assigning Aragon Id',
         enabled: () => aragonId,
-        task: async ctx => {
-          return assignIdTask({
-            dao: ctx.daoAddress,
-            aragonId,
+        task: async () => {
+          await assignId(daoAddress, aragonId, {
             web3,
+            ensRegistry: apmOptions.ensRegistryAddress,
             gasPrice,
-            apmOptions,
-            silent,
-            debug,
-            reporter,
           })
         },
       },
@@ -190,20 +147,17 @@ exports.handler = async function({
     fn,
     fnArgs,
     deployEvent,
-    skipChecks: false,
     aragonId,
     silent,
     debug,
   })
-  return task.run().then(ctx => {
-    if (aragonId) {
-      reporter.success(
-        `Created DAO: ${green(ctx.domain)} at ${green(ctx.daoAddress)}`
-      )
-    } else {
-      reporter.success(`Created DAO: ${green(ctx.daoAddress)}`)
-    }
+  const ctx = await task.run()
 
-    process.exit()
-  })
+  reporter.success(
+    aragonId
+      ? `Created DAO: ${green(aragonId)} at ${green(ctx.daoAddress)}`
+      : `Created DAO: ${green(ctx.daoAddress)}`
+  )
+
+  process.exit()
 }

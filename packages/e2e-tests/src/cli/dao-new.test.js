@@ -5,7 +5,7 @@ import { normalizeOutput } from '../util'
 const daoAddressRegex = /Created DAO\: (.*)$/
 const daoIdAndAddressAddressRegex = /Created DAO\: (.*) at (.*)$/
 
-test('creates a new DAO', async t => {
+test.skip('creates a new DAO', async t => {
   t.plan(2)
 
   const result = await execa('aragon', ['dao', 'new', '--debug'])
@@ -17,7 +17,7 @@ test('creates a new DAO', async t => {
   t.snapshot(resultSnapshot)
 })
 
-test('assigns an Aragon Id with the "--aragon-id" param', async t => {
+test.skip('assigns an Aragon Id with the "--aragon-id" param', async t => {
   t.plan(3)
 
   const result = await execa('aragon', [
