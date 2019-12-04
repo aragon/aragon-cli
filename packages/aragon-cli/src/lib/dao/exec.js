@@ -47,9 +47,12 @@ module.exports = async ({
 
   progressHandler(1)
 
-  const transactionPath = (
-    await getTransactionPath(app, method, params, wrapper)
-  )[0]
+  const transactionPath = (await getTransactionPath(
+    app,
+    method,
+    params,
+    wrapper
+  ))[0]
 
   if (!transactionPath)
     throw new Error('Cannot find transaction path for executing action')
