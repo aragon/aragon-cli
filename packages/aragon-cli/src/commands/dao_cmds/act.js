@@ -1,9 +1,9 @@
-const execHandler = require('./utils/execHandler').handler
+const execHandler = require('./utils/execHandler').task
 const getAppKernel = require('../../lib/getAppKernel')
-const web3 = require('web3')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const { parseArgumentStringIfPossible } = require('../../util')
 const encodeActCall = require('../../lib/dao/encodeActCall')
+const chalk = require('chalk')
 
 const EXECUTE_FUNCTION_NAME = 'execute'
 
@@ -49,9 +49,10 @@ exports.handler = async function({
   ethValue,
   wsProvider,
 }) {
-  const dao = await getAppKernel(await ensureWeb3(network), agentAddress)
+  const web3 = await ensureWeb3(network)
+  const dao = await getAppKernel(web3, agentAddress)
 
-  return execHandler({
+  const task = execHandler({
     dao,
     app: agentAddress,
     method: EXECUTE_FUNCTION_NAME,
@@ -65,5 +66,13 @@ exports.handler = async function({
     apm,
     network,
     wsProvider,
+    web3,
   })
+
+  const { transactionPath } = await task.run()
+
+  reporter.success(
+    `Successfully executed: "${chalk.blue(transactionPath.description)}"`
+  )
+  process.exit()
 }
