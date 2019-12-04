@@ -37,7 +37,7 @@
   "dependencies": {
     "@aragon/cli-utils": "^0.0.8",
     "chalk": "^3.0.0",
-    "execa": "^1.0.0",
+    "execa": "^3.4.0",
     "figures": "^3.0.0",
     "fs-extra": "^8.0.1",
     "git-clone": "^0.1.0",
