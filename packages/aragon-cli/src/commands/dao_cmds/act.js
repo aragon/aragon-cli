@@ -3,11 +3,11 @@ const getAppKernel = require('../../lib/getAppKernel')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const { parseArgumentStringIfPossible } = require('../../util')
 const encodeActCall = require('../../lib/dao/encodeActCall')
-const chalk = require('chalk')
+const { blue } = require('chalk')
 
 const EXECUTE_FUNCTION_NAME = 'execute'
 
-exports.command = 'act <agent-address> <target> <signature> [call-args..]'
+exports.command = 'act <agent-address> <target> [signature] [call-args..]'
 
 exports.describe = 'Executes an action from the Agent app'
 
@@ -21,7 +21,7 @@ exports.builder = function(yargs) {
       description: 'Address where the action is being executed',
       type: 'string',
     })
-    .positional('signature', {
+    .option('signature', {
       description:
         'Signature of the function to be executed (e.g. "myMethod(uint256,string)"',
       type: 'string',
@@ -30,6 +30,11 @@ exports.builder = function(yargs) {
       description: 'Arguments to be passed to the function',
       array: true,
       default: [],
+    })
+    .option('call-data', {
+      description: 'Raw call data',
+      type: 'string',
+      default: '0x',
     })
     .option('eth-value', {
       description:
@@ -46,21 +51,24 @@ exports.handler = async function({
   target,
   signature,
   callArgs,
+  callData,
   ethValue,
   wsProvider,
 }) {
   const web3 = await ensureWeb3(network)
   const dao = await getAppKernel(web3, agentAddress)
 
+  const encodedCallData = signature
+    ? encodeActCall(signature, callArgs.map(parseArgumentStringIfPossible))
+    : callData
+
+  reporter.debug('Encoded call data: ', encodedCallData)
+
   const task = execHandler({
     dao,
     app: agentAddress,
     method: EXECUTE_FUNCTION_NAME,
-    params: [
-      target,
-      web3.utils.toWei(ethValue),
-      encodeActCall(signature, callArgs.map(parseArgumentStringIfPossible)),
-    ],
+    params: [target, web3.utils.toWei(ethValue), encodedCallData],
     ipfsCheck: true,
     reporter,
     apm,
@@ -72,7 +80,7 @@ exports.handler = async function({
   const { transactionPath } = await task.run()
 
   reporter.success(
-    `Successfully executed: "${chalk.blue(transactionPath.description)}"`
+    `Successfully executed: "${blue(transactionPath.description)}"`
   )
   process.exit()
 }

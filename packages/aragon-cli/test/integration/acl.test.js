@@ -27,6 +27,7 @@ test('Should get formated permissions for a new dao', async t => {
   // arrange
   const { web3, dao } = t.context
   // act
+  // eslint-disable-next-line
   const { /* permissions, */ apps } = await getDaoAddressPermissionsApps({
     dao,
     web3Provider: web3.currentProvider,
