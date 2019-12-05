@@ -45,7 +45,6 @@ export const ensureRepoInitialized = async (binPath, repoPath) => {
   }
 
   if (!existsSync(path.resolve(repoPath))) {
-    // We could use 'ipfs daemon --init' when https://github.com/ipfs/go-ipfs/issues/3913 is solved
     await execa(binPath, ['init'], {
       env: {
         IPFS_PATH: repoPath,
