@@ -1,6 +1,7 @@
 const TaskList = require('listr')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const exec = require('../../../lib/dao/exec')
+const chalk = require('chalk')
 
 /**
  * Return a task list for executing a method on a
@@ -65,4 +66,38 @@ async function task({
   )
 }
 
-module.exports = { task }
+/**
+ * Execute a method on a DAO's app.
+ *
+ * @param {Object} args Parameters
+ * @param {string} args.dao DAO name or address
+ * @param {string} args.app App address
+ * @param {string} args.method Method name
+ * @param {Array<*>} args.params Method parameters
+ * @param {boolean} args.ipfsCheck Check if IPFS is running
+ * @param {Object} args.reporter Reporter
+ * @param {Object} args.apm APM config
+ * @param {Object} args.web3 Web3 instance
+ * @param {Object} args.wsProvider Ethereum provider
+ * @param {string} args.gasPrice Gas price
+ * @param {boolean} args.silent Silent task
+ * @param {boolean} args.debug Debug mode
+ * @returns {Promise} Execution promise
+ */
+async function handler(args) {
+  const tasks = await task(args)
+
+  return tasks.run().then(ctx => {
+    args.reporter.success(
+      `Successfully executed: "${chalk.blue(
+        ctx.transactionPath.description
+      )}"`
+    )
+    process.exit()
+  })
+}
+
+module.exports = {
+  handler,
+  task,
+}
