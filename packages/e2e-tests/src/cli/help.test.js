@@ -10,5 +10,10 @@ test('should return the correct help info', async t => {
   
   // assert
   result.stdout = normalizeOutput(result.stdout)
+
+  // Remove web3 warning on node 8 and 9
+  if (result.stderr.includes('You can improve web3'))
+    result.stderr = ''
+
   t.snapshot(result);
 })
