@@ -1,0 +1,20 @@
+{
+  "name": "@aragon/node-api",
+  "version": "0.0.1",
+  "description": "Programmatic interface for interacting with Aragon",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aragon/aragon-cli/tree/master/packages/node-api"
+  },
+  "keywords": [
+    "aragon",
+    "cli",
+    "ethereum"
+  ],
+  "author": "Aragon Association <legal@aragon.org>",
+  "license": "GPL-3.0-or-later"
+}
