@@ -81,7 +81,7 @@
     "source-map-support": "^0.5.11",
     "stringify-tree": "^1.0.2",
     "tmp-promise": "^2.0.1",
-    "truffle": "4.1.14",
+    "truffle": "5.1.2",
     "truffle-flattener": "^1.2.9",
     "web3": "^1.2.0",
     "which": "^2.0.1",
