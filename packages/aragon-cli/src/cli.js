@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import 'source-map-support/register'
 import yargs from 'yargs'
 import * as AragonReporter from '@aragon/cli-utils/dist/AragonReporter'

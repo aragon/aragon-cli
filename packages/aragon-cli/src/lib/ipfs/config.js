@@ -1,38 +1,34 @@
-import { join as joinPath } from 'path'
-import oldIpfsAPI from 'ipfs-api'
+import path, { join as joinPath } from 'path'
 import { readJson, writeJson } from 'fs-extra'
 import getFolderSize from 'get-folder-size'
 import { existsSync } from 'fs'
 import { homedir } from 'os'
-import { getBinary } from '../../util'
 import byteSize from 'byte-size'
 import execa from 'execa'
+//
+import { NO_INSTALLATION_MSG } from './constants'
 
-let ipfsNode
-
-export const isIPFSCORS = async ipfsRpc => {
-  if (!ipfsNode) ipfsNode = oldIpfsAPI(ipfsRpc)
-  const conf = await ipfsNode.config.get('API.HTTPHeaders')
-  const allowOrigin = IPFSCORS[0].key.split('.').pop()
-  const allowMethods = IPFSCORS[1].key.split('.').pop()
+export const isCorsConfigured = async httpClient => {
+  const conf = await httpClient.config.get('API.HTTPHeaders')
+  const allowOrigin = CorsAllowAll[0].key.split('.').pop()
+  const allowMethods = CorsAllowAll[1].key.split('.').pop()
   if (conf && conf[allowOrigin] && conf[allowMethods]) {
     return true
   } else {
     throw new Error(`Please set the following flags in your IPFS node:
-    ${IPFSCORS.map(({ key, value }) => {
+    ${CorsAllowAll.map(({ key, value }) => {
       return `${key}: ${value}`
     }).join('\n    ')}`)
   }
 }
 
-export const setIPFSCORS = ipfsRpc => {
-  if (!ipfsNode) ipfsNode = oldIpfsAPI(ipfsRpc)
+export const configureCors = async httpClient => {
   return Promise.all(
-    IPFSCORS.map(({ key, value }) => ipfsNode.config.set(key, value))
+    CorsAllowAll.map(({ key, value }) => httpClient.config.set(key, value))
   )
 }
 
-const IPFSCORS = [
+const CorsAllowAll = [
   {
     key: 'API.HTTPHeaders.Access-Control-Allow-Origin',
     value: ['*'],
@@ -43,16 +39,18 @@ const IPFSCORS = [
   },
 ]
 
-export const ensureIPFSInitialized = async () => {
-  if (!getBinary('ipfs')) {
-    throw new Error(
-      'IPFS is not installed. Use `aragon ipfs install` before proceeding.'
-    )
+export const ensureRepoInitialized = async (binPath, repoPath) => {
+  if (!binPath) {
+    throw new Error(NO_INSTALLATION_MSG)
   }
 
-  if (!existsSync(getDefaultRepoPath())) {
+  if (!existsSync(path.resolve(repoPath))) {
     // We could use 'ipfs daemon --init' when https://github.com/ipfs/go-ipfs/issues/3913 is solved
-    await execa(getBinary('ipfs'), ['init'])
+    await execa(binPath, ['init'], {
+      env: {
+        IPFS_PATH: repoPath,
+      },
+    })
   }
 }
 

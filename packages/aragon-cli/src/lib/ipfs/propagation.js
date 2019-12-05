@@ -1,13 +1,19 @@
 import fetch from 'node-fetch'
-import { timeout, GATEWAYS } from './constants'
+//
+import { withTimeout, noop } from '../node/misc'
+import {
+  GATEWAY_FETCH_TIMEOUT,
+  GATEWAY_FETCH_TIMEOUT_MSG,
+  DEFAULT_GATEWAYS,
+} from './constants'
 
 async function queryCidAtGateway(gateway, cid) {
   try {
-    await Promise.race([
+    await withTimeout(
       fetch(`${gateway}/${cid}`),
-      // Add a timeout because the Fetch API does not implement them
-      timeout(),
-    ])
+      GATEWAY_FETCH_TIMEOUT,
+      new Error(GATEWAY_FETCH_TIMEOUT_MSG)
+    )
 
     return {
       success: true,
@@ -24,13 +30,15 @@ async function queryCidAtGateway(gateway, cid) {
   }
 }
 
-async function propagateFile(cid, logger) {
+export async function propagateFile(cid, options = {}) {
+  const { logger = noop, gateways = DEFAULT_GATEWAYS } = options
+
   const results = await Promise.all(
-    GATEWAYS.map(gateway => queryCidAtGateway(gateway, cid))
+    gateways.map(gateway => queryCidAtGateway(gateway, cid))
   )
 
   const succeeded = results.filter(status => status.success).length
-  const failed = GATEWAYS.length - succeeded
+  const failed = gateways.length - succeeded
 
   logger(
     `Queried ${cid} at ${succeeded} gateways successfully, ${failed} failed.`
@@ -47,10 +55,14 @@ async function propagateFile(cid, logger) {
   }
 }
 
-export async function propagateFiles(CIDs, logger = () => {}) {
-  const results = await Promise.all(CIDs.map(cid => propagateFile(cid, logger)))
+export async function propagateFiles(CIDs, options = {}) {
+  const results = await Promise.all(
+    CIDs.map(cid => propagateFile(cid, options))
+  )
+
+  const { gateways = DEFAULT_GATEWAYS } = options
   return {
-    gateways: GATEWAYS,
+    gateways,
     succeeded: results.reduce((prev, current) => prev + current.succeeded, 0),
     failed: results.reduce((prev, current) => prev + current.failed, 0),
     errors: results.reduce((prev, current) => [...prev, ...current.errors], []),

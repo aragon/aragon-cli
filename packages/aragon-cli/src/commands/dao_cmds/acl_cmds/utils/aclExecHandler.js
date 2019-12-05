@@ -24,7 +24,6 @@ module.exports = async function(
     app: aclAddress,
     method,
     params: processedParams,
-    ipfsCheck: false,
     reporter,
     gasPrice,
     apm,

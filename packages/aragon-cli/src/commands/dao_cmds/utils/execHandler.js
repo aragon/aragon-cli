@@ -11,7 +11,6 @@ const exec = require('../../../lib/dao/exec')
  * @param {string} params.app App address
  * @param {string} params.method Method name
  * @param {Array<*>} params.params Method parameters
- * @param {boolean} params.ipfsCheck Check if IPFS is running
  * @param {Object} params.apm APM config
  * @param {Object} params.web3 Web3 instance
  * @param {string} params.gasPrice Gas price
@@ -24,7 +23,6 @@ async function task({
   app,
   method,
   params,
-  ipfsCheck,
   apm,
   web3,
   gasPrice,
@@ -36,8 +34,6 @@ async function task({
       {
         title: `Executing ${method} on ${dao}`,
         task: async (ctx, task) => {
-          task.output = `Check IPFS`
-
           const progressHandler = progress => {
             switch (progress) {
               case 1:
@@ -59,7 +55,6 @@ async function task({
               params,
               web3,
               gasPrice,
-              ipfsCheck,
               progressHandler,
             })
           )

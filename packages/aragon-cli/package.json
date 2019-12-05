@@ -2,9 +2,8 @@
   "name": "@aragon/cli",
   "version": "6.3.3",
   "description": "Aragon command-line tools",
-  "main": "dist/cli.js",
   "bin": {
-    "aragon": "./dist/cli.js",
+    "aragon": "./dist/index.js",
     "dao": "./aliases/dao"
   },
   "scripts": {
@@ -19,6 +18,7 @@
     "posttest": "node scripts/teardown-integration-tests.js",
     "test": "ava --verbose || (npm run posttest && exit 42)",
     "test:watch": "ava --watch",
+    "test:clean": "rm -rf ./.tmp",
     "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test"
   },
   "repository": {
@@ -56,6 +56,7 @@
     "chalk": "^3.0.0",
     "cli-table": "^0.3.1",
     "dev-null": "^0.1.1",
+    "engine-check": "^1.0.1",
     "eth-ens-namehash": "^2.0.8",
     "ethereum-ens": "^0.7.7",
     "execa": "^1.0.0",
@@ -68,7 +69,6 @@
     "ignore": "^4.0.6",
     "inquirer": "^7.0.0",
     "internal-ip": "^5.0.0",
-    "ipfs-api": "^26.1.2",
     "ipfs-http-client": "^39.0.2",
     "listr": "^0.14.3",
     "listr-input": "0.2.0",
@@ -119,7 +119,7 @@
     "sinon": "^7.3.1"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.0.0"
   },
   "aragon": {
     "clientRepo": "https://github.com/aragon/aragon",

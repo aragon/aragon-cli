@@ -46,8 +46,9 @@ const runPropagateTask = ({ cid, ipfsReader, silent, debug }) => {
             recursive: true,
           })
 
-          const logger = text => (task.output = text)
-          ctx.result = await propagateFiles(ctx.CIDs, logger)
+          ctx.result = await propagateFiles(ctx.CIDs, {
+            logger: text => (task.output = text),
+          })
         },
       },
     ],
@@ -78,20 +79,20 @@ export const handler = async argv => {
 
   // reporter.message(
   console.log(
-    '\n',
-    `Queried ${chalk.blue(ctx.CIDs.length)} CIDs at ${chalk.blue(
+    `
+Queried ${chalk.blue(ctx.CIDs.length)} CIDs at ${chalk.blue(
       ctx.result.gateways.length
-    )} gateways`,
-    '\n',
-    `Requests succeeded: ${chalk.green(ctx.result.succeeded)}`,
-    '\n',
-    `Requests failed: ${chalk.red(ctx.result.failed)}`,
-    '\n'
+    )} gateways
+
+Requests succeeded: ${chalk.green(ctx.result.succeeded)}
+
+Requests failed: ${chalk.red(ctx.result.failed)}
+`
   )
 
-  reporter.debug(`Gateways: ${ctx.result.gateways.join(', ')}`)
-  reporter.debug(
-    `Errors: \n${ctx.result.errors.map(JSON.stringify).join('\n')}`
-  )
+  reporter.debug(`
+Gateways: ${ctx.result.gateways.join(', ')}
+Errors:
+${ctx.result.errors.map(JSON.stringify).join('\n')}`)
   // TODO add your own gateways
 }

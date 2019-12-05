@@ -15,8 +15,8 @@ jobs:
       matrix:
         node-version: [
           # 13,
-          12, 
-          11, 
+          12,
+          11,
           10
         ]
         os: [

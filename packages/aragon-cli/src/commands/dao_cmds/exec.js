@@ -38,7 +38,6 @@ exports.handler = async function({
     app: proxyAddress,
     method: fn,
     params: fnArgs.map(parseArgumentStringIfPossible),
-    ipfsCheck: true,
     reporter,
     apm,
     network,

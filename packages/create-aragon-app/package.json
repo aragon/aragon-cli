@@ -2,9 +2,8 @@
   "name": "create-aragon-app",
   "version": "2.2.14",
   "description": "Aragon command-line tool to create aragon apps",
-  "main": "dist/cli.js",
   "bin": {
-    "create-aragon-app": "./dist/cli.js"
+    "create-aragon-app": "./dist/index.js"
   },
   "scripts": {
     "prepare": "npm run build",
@@ -37,6 +36,7 @@
   "dependencies": {
     "@aragon/cli-utils": "^0.0.8",
     "chalk": "^3.0.0",
+    "engine-check": "^1.0.1",
     "execa": "^1.0.0",
     "figures": "^3.0.0",
     "fs-extra": "^8.0.1",
@@ -71,7 +71,7 @@
     "prettier": "^1.15.3"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.0.0"
   },
   "ava": {
     "require": [

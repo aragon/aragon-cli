@@ -4,7 +4,6 @@ const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 const { green, bold } = require('chalk')
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
 const getApmRepo = require('../../lib/apm/getApmRepo')
-const startIPFS = require('../ipfs_cmds/start')
 const newDao = require('../../lib/dao/new')
 const { assignId } = require('../../lib/dao/assign-id')
 const { parseArgumentStringIfPossible } = require('../../util')
@@ -43,11 +42,6 @@ exports.builder = yargs => {
       description: 'Event name that the template will fire on success',
       default: exports.BARE_TEMPLATE_DEPLOY_EVENT,
     })
-    .option('ipfs-check', {
-      description: 'Whether to have new start IPFS if not started',
-      boolean: true,
-      default: true,
-    })
     .option('aragon-id', {
       description: 'Assign an Aragon Id to the DAO',
       type: 'string',
@@ -67,7 +61,6 @@ exports.task = async ({
   templateInstance,
   silent,
   debug,
-  ipfsCheck,
   aragonId,
 }) => {
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
@@ -76,12 +69,6 @@ exports.task = async ({
 
   const tasks = new TaskList(
     [
-      {
-        // IPFS is a dependency of getRepoTask which uses IPFS to fetch the contract ABI
-        title: 'Check IPFS',
-        task: () => startIPFS.handler({ apmOptions }),
-        enabled: () => ipfsCheck,
-      },
       {
         title: `Fetching template ${bold(template)}@${templateVersion}`,
         task: async () => {
