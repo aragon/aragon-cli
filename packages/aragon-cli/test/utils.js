@@ -91,3 +91,16 @@ export async function assertIpfsIsInstalled() {
     throw Error(`IPFS is not installed: ${e.message}`)
   }
 }
+
+export function matchAddressAtLineContaining(str, query) {
+  function matchAddress(str) {
+    return str.match(new RegExp(`0x[a-fA-F0-9]{40}`))[0]
+  }
+
+  function matchLineContaining(str, query) {
+    return str.match(new RegExp(`.*${query}.*`, 'm'))[0]
+  }
+
+  const line = matchLineContaining(str, query)
+  return matchAddress(line)
+}
