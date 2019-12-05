@@ -35,7 +35,10 @@ test('Should get formated permissions for a new dao', async t => {
     apm,
   })
   // assert
-  t.snapshot(apps.map(app => app.appName), 'Should return the correct apps')
+  t.snapshot(
+    apps.map(app => app.appName),
+    'Should return the correct apps'
+  )
   // t.snapshot(
   //   permissions, // .map(permission => permission),
   //   'Probably can snapshot anything about this result2'

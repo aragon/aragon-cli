@@ -2,12 +2,6 @@ import {
   initAragonJS,
   getTransactionPath,
 } from '../../helpers/aragonjs-wrapper'
-const { startIPFSDaemon, isDaemonRunning } = require('../ipfs/daemon')
-const DEFAULT_IPFS = {
-  protocol: 'http',
-  host: '127.0.0.1',
-  port: 5001,
-}
 
 /**
  * Execute a method on a DAO's app.
@@ -17,7 +11,6 @@ const DEFAULT_IPFS = {
  * @param {string} params.app App address
  * @param {string} params.method Method name
  * @param {Array<*>} params.params Method parameters
- * @param {boolean} params.ipfsCheck Check if IPFS is running
  * @param {Object} params.apm APM config
  * @param {Object} params.web3 Web3 instance
  * @param {string} params.gasPrice Gas price
@@ -32,12 +25,8 @@ module.exports = async ({
   apm,
   web3,
   gasPrice,
-  ipfsCheck,
   progressHandler = () => {},
 }) => {
-  if (ipfsCheck && !(await isDaemonRunning(DEFAULT_IPFS)))
-    await startIPFSDaemon()
-
   const wrapper = await initAragonJS(dao, apm['ens-registry'], {
     ipfsConf: apm.ipfs,
     gasPrice,
@@ -47,12 +36,9 @@ module.exports = async ({
 
   progressHandler(1)
 
-  const transactionPath = (await getTransactionPath(
-    app,
-    method,
-    params,
-    wrapper
-  ))[0]
+  const transactionPath = (
+    await getTransactionPath(app, method, params, wrapper)
+  )[0]
 
   if (!transactionPath)
     throw new Error('Cannot find transaction path for executing action')

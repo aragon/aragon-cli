@@ -12,7 +12,6 @@ const { findProjectRoot, runScriptTask, ZERO_ADDRESS } = require('../../util')
 const { compileContracts } = require('../../helpers/truffle-runner')
 const web3Utils = require('web3').utils
 const deploy = require('../deploy')
-const startIPFS = require('../ipfs_cmds/start')
 const propagateIPFS = require('../ipfs_cmds/propagate')
 const execTask = require('../dao_cmds/utils/execHandler').task
 const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
@@ -172,7 +171,6 @@ exports.runSetupTask = ({
   /// Conditionals
   onlyContent,
   onlyArtifacts,
-  ipfsCheck,
   http,
 }) => {
   if (onlyContent) {
@@ -187,11 +185,6 @@ exports.runSetupTask = ({
         title: 'Running prepublish script',
         enabled: () => prepublish,
         task: async (ctx, task) => runScriptTask(task, prepublishScript),
-      },
-      {
-        title: 'Check IPFS',
-        enabled: () => !http && ipfsCheck,
-        task: () => startIPFS.handler({ apmOptions }),
       },
       {
         title: `Applying version bump (${bump})`,
@@ -550,7 +543,6 @@ exports.runPublishTask = ({
             app: proxyAddress,
             method: methodName,
             params,
-            ipfsCheck: false,
             reporter,
             gasPrice,
             apm: apmOptions,
@@ -587,7 +579,6 @@ exports.handler = async function({
   provider,
   files,
   ignore,
-  ipfsCheck,
   publishDir,
   init,
   onlyContent,
@@ -629,7 +620,6 @@ exports.handler = async function({
       reuse,
       onlyContent,
       onlyArtifacts,
-      ipfsCheck,
       http,
     })
     .run()

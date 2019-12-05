@@ -69,7 +69,6 @@ exports.handler = async function({
     app: agentAddress,
     method: EXECUTE_FUNCTION_NAME,
     params: [target, web3.utils.toWei(ethValue), encodedCallData],
-    ipfsCheck: true,
     reporter,
     apm,
     network,

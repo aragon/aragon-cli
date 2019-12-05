@@ -6,7 +6,6 @@ const devchain = require('./devchain_cmds/start')
 const start = require('./start')
 const deploy = require('./deploy')
 const newDAO = require('./dao_cmds/new')
-const startIPFS = require('./ipfs_cmds/start')
 const encodeInitPayload = require('./dao_cmds/utils/encodeInitPayload')
 const fs = require('fs-extra')
 const pkg = require('../../package.json')
@@ -229,11 +228,6 @@ exports.handler = async function({
         },
         task: async (ctx, task) =>
           devchain.task({ port, networkId, blockTime, reset, showAccounts }),
-      },
-      {
-        title: 'Check IPFS',
-        task: () => startIPFS.handler({ apmOptions }),
-        enabled: () => !http || template,
       },
       {
         title: 'Setup before publish',
