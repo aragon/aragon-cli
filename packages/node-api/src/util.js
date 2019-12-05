@@ -1,20 +1,22 @@
+import {
+  ARAGON_DOMAIN,
+  DEFAULT_GAS_FUZZ_FACTOR,
+  LAST_BLOCK_GAS_LIMIT_FACTOR,
+} from './helpers/constants'
+
 const findUp = require('find-up')
 const path = require('path')
 const execa = require('execa')
+const net = require('net')
 const fs = require('fs')
 const { readJson } = require('fs-extra')
 const which = require('which')
 const { request } = require('http')
-const net = require('net')
 const inquirer = require('inquirer')
 
 let cachedProjectRoot
 
-const PGK_MANAGER_BIN_NPM = 'npm'
 const debugLogger = process.env.DEBUG ? console.log : () => {}
-
-const ARAGON_DOMAIN = 'aragonid.eth'
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 /**
  * Check eth address equality without checksums
@@ -196,11 +198,6 @@ const getContract = (pkg, contract) => {
   return artifact
 }
 
-const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
-const NO_MANAGER = '0x0000000000000000000000000000000000000000'
-const DEFAULT_GAS_FUZZ_FACTOR = 1.5
-const LAST_BLOCK_GAS_LIMIT_FACTOR = 0.95
-
 /**
  *
  * Calculate the recommended gas limit
@@ -237,47 +234,6 @@ const expandLink = link => {
   return link
 }
 
-/**
- * Parse a String to Boolean, or throw an error.
- *
- * The check is **case insensitive**! (Passing `"TRue"` will return `true`)
- *
- * @param {string} target must be a string
- * @returns {boolean} the parsed value
- */
-const parseAsBoolean = target => {
-  if (typeof target !== 'string') {
-    throw new Error(
-      `Expected ${target} to be of type string, not ${typeof target}`
-    )
-  }
-
-  const lowercase = target.toLowerCase()
-
-  if (lowercase === 'true') {
-    return true
-  }
-
-  if (lowercase === 'false') {
-    return false
-  }
-
-  throw new Error(`Cannot parse ${target} as boolean`)
-}
-
-/**
- * Parse a String to Array, or throw an error.
- *
- * @param {string} target must be a string
- * @returns {Array} the parsed value
- */
-const parseAsArray = target => {
-  if (typeof target !== 'string') {
-    throw new Error(
-      `Expected ${target} to be of type string, not ${typeof target}`
-    )
-  }
-
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
   const json = JSON.parse(target)
 
@@ -286,28 +242,6 @@ const parseAsArray = target => {
   }
 
   throw new Error(`Cannot parse ${target} as array`)
-}
-
-/**
- * Parse a String to Boolean or Array, or throw an error.
- *
- * @param {string} target must be a string
- * @returns {boolean|Array} the parsed value
- */
-const parseArgumentStringIfPossible = target => {
-  // convert to boolean: 'false' to false
-  try {
-    return parseAsBoolean(target)
-  } catch (e) {}
-
-  // convert to array: '["hello", 1, "true"]' to ["hello", 1, "true"]
-  // TODO convert children as well ??
-  try {
-    return parseAsArray(target)
-  } catch (e) {}
-
-  // nothing to parse
-  return target
 }
 
 /**
@@ -335,43 +269,8 @@ function convertDAOIdToSubdomain(aragonId) {
   return `${aragonId}.${ARAGON_DOMAIN}`
 }
 
-const askForInput = async message => {
-  const { reply } = await inquirer.prompt([
-    {
-      type: 'input',
-      name: 'reply',
-      message,
-    },
-  ])
-  return reply
-}
-
-const askForChoice = async (message, choices) => {
-  const { reply } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'reply',
-      message,
-      choices,
-    },
-  ])
-  return reply
-}
-
-const askForConfirmation = async message => {
-  const { reply } = await inquirer.prompt([
-    {
-      type: 'confirm',
-      name: 'reply',
-      message,
-    },
-  ])
-  return reply
-}
-
 module.exports = {
   addressesEqual,
-  parseArgumentStringIfPossible,
   debugLogger,
   findProjectRoot,
   isHttpServerOpen,
@@ -385,13 +284,6 @@ module.exports = {
   getContract,
   isValidAragonId,
   convertDAOIdToSubdomain,
-  ARAGON_DOMAIN,
-  ANY_ENTITY,
-  NO_MANAGER,
-  ZERO_ADDRESS,
   getRecommendedGasLimit,
   expandLink,
-  askForInput,
-  askForChoice,
-  askForConfirmation,
 }

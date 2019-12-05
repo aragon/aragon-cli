@@ -1,7 +1,7 @@
 import {
   initAragonJS,
   getTransactionPath,
-} from '../../helpers/aragonjs-wrapper'
+} from '@aragon/node-api/src/aragonjs-wrapper'
 
 /**
  * Execute a method on a DAO's app.
