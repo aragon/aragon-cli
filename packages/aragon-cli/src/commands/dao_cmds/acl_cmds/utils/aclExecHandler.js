@@ -27,8 +27,8 @@ module.exports = async function(
     reporter,
     gasPrice,
     apm,
+    web3,
     wsProvider,
-    network,
     silent,
     debug,
   })

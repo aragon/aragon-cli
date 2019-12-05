@@ -186,7 +186,7 @@ exports.handler = async function({
   return tasks.run().then(ctx => {
     reporter.info(
       `Successfully executed: "${chalk.blue(
-        ctx.transactionPath[0].description
+        ctx.transactionPath.description
       )}"`
     )
 
