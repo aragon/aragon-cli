@@ -49,7 +49,7 @@
     "@aragon/id": "^2.1.0",
     "@aragon/os": "^4.3.0",
     "@aragon/truffle-config-v4": "^1.0.0",
-    "@aragon/wrapper": "^5.0.0-rc.17",
+    "@aragon/wrapper": "5.0.0-rc.17",
     "ajv": "^6.6.2",
     "bn.js": "^5.0.0",
     "byte-size": "^6.2.0",
