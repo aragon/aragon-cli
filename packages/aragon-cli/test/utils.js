@@ -27,9 +27,13 @@ export const getLocalWeb3 = async () => {
  * @param {Array<string>} args the arguments to call the CLI with, e.g.: ['dao', 'new']
  * @return {Promise<string>} stdout
  */
-export const runAragonCLI = async args => {
-  const { stdout } = await execa('node', ['dist/cli.js', ...args])
-  return stdout
+export const runAragonCLI = async (args, verbose = false) => {
+  const subprocess = execa('node', ['dist/cli.js', ...args])
+  if (verbose) {
+    console.log(`\n>>> ${args.join(' ')}`)
+    subprocess.stdout.pipe(process.stdout)
+  }
+  return (await subprocess).stdout
 }
 
 /**
