@@ -1,5 +1,4 @@
 import test from 'ava'
-import execa from 'execa'
 
 import {
   runAragonCLI,
@@ -7,11 +6,9 @@ import {
   matchAddressAtLineContaining
 } from '../test-utils'
 
-// TODO: These tests are currently using the aragon-cli/tests/integration bootstrapping method, but they should use the e2e-tests bootstrapping method. When tests are reordered, these should live in aragon-cli/tests, and use the same bootstrapping method as its neighboring tests.
+// TODO: Split this into multiple tests with contexts once we migrate to mocha.
 
-// TODO: Split this into multiple tests with contexts once we migrate to mocha
-
-test('the guide can be followed without errors', async t => {
+test('https://hack.aragon.org/docs/guides-custom-deploy guide can be followed without errors', async t => {
   // Enable verbose to debug/develop the test, but disable for production.
   const verbose = false
 
