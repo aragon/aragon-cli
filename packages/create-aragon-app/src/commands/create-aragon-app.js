@@ -1,12 +1,13 @@
-import { checkProjectExists, prepareTemplate } from '../lib'
+const TaskList = require('listr')
+const execa = require('execa')
+const inquirer = require('inquirer')
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
-const TaskList = require('listr')
-const { installDeps, isValidAragonId } = require('../util')
+//
 const defaultAPMName = require('../helpers/default-apm')
 const listrOpts = require('../helpers/listr-options')
-const inquirer = require('inquirer')
-const execa = require('execa')
+const { installDeps, isValidAragonId } = require('../util')
+const { checkProjectExists, prepareTemplate } = require('../lib')
 
 const templateOptions = {
   bare: {

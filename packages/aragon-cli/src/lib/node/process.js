@@ -1,6 +1,7 @@
 import execa from 'execa'
-import { withTimeout } from './misc'
 import killProcessOnPort from 'kill-port'
+//
+import { withTimeout } from './misc'
 
 export { killProcessOnPort }
 

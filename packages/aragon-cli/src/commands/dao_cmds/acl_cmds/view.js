@@ -2,27 +2,25 @@ const { white } = require('chalk')
 const TaskList = require('listr')
 const { keyBy } = require('lodash')
 const Table = require('cli-table')
-const { keccak256 } = require('web3').utils
-//
-// TODO: Move to one line import
-require('@aragon/node-api/@types/acl/typedef') // Load JSDoc types ACL specific
-require('@aragon/node-api/@types/typedef') // Load JSDoc generic types
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
+const { keccak256 } = require('web3-utils')
+require('@aragon/toolkit/@types/acl/typedef') // Load JSDoc types ACL specific
+require('@aragon/toolkit/@types/typedef') // Load JSDoc generic types
 const {
   ANY_ENTITY,
   NO_MANAGER,
   ZERO_ADDRESS,
-} = require('@aragon/node-api/src/constants')
+} = require('@aragon/toolkit/dist/helpers/constants')
 const {
   getDaoAddressPermissionsApps,
-} = require('@aragon/node-api/src/acl/view')
+} = require('@aragon/toolkit/dist/acl/view')
 const {
   formatAclPermissions,
-} = require('@aragon/node-api/src/acl/viewFormatter')
+} = require('@aragon/toolkit/dist/acl/viewFormatter')
 //
 const daoArg = require('../utils/daoArg')
 const { listApps } = require('../utils/knownApps')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
+const listrOpts = require('../../../helpers/listr-options')
 const defaultAppsRoles = require('../../../knownRoles.json')
 
 exports.command = 'view <dao>'

@@ -1,5 +1,5 @@
 const { blue, red } = require('chalk')
-const grantNewVersionsPermission = require('@aragon/node-api/src/apm/grantNewVersionsPermission')
+const grantNewVersionsPermission = require('@aragon/toolkit/dist/apm/grantNewVersionsPermission')
 //
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 

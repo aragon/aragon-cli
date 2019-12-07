@@ -1,8 +1,8 @@
 const { bold } = require('chalk')
-const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
-const getApmRepo = require('@aragon/node-api/src/apm/getApmRepo')
+const getApmRepo = require('@aragon/toolkit/dist/apm/getApmRepo')
 //
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const defaultAPMName = require('../../helpers/default-apm')
 
 exports.command = 'info <apmRepo> [apmRepoVersion]'
 

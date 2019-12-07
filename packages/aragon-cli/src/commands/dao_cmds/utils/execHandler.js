@@ -1,7 +1,8 @@
 const TaskList = require('listr')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const exec = require('../../../lib/dao/exec')
-const chalk = require('chalk')
+const { blue } = require('chalk')
+const exec = require('@aragon/toolkit/dist/dao/exec')
+//
+const listrOpts = require('../../../helpers/listr-options')
 
 /**
  * Return a task list for executing a method on a
@@ -89,9 +90,7 @@ async function handler(args) {
 
   return tasks.run().then(ctx => {
     args.reporter.success(
-      `Successfully executed: "${chalk.blue(
-        ctx.transactionPath.description
-      )}"`
+      `Successfully executed: "${blue(ctx.transactionPath.description)}"`
     )
     process.exit()
   })

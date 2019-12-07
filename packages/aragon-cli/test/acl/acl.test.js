@@ -1,5 +1,5 @@
 import test from 'ava'
-import { getDaoAddressPermissionsApps } from '@aragon/node-api/src/acl/view'
+import { getDaoAddressPermissionsApps } from '@aragon/toolkit/dist/acl/view'
 //
 import { getLocalWeb3, getNewDaoAddress } from '../utils'
 

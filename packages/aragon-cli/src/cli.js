@@ -1,6 +1,6 @@
 import 'source-map-support/register'
 import yargs from 'yargs'
-import * as AragonReporter from '@aragon/cli-utils/dist/AragonReporter'
+import * as AragonReporter from './reporters/AragonReporter'
 const Web3 = require('web3')
 
 const DEFAULT_GAS_PRICE = require('../package.json').aragon.defaultGasPrice

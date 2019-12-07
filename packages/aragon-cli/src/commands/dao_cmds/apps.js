@@ -1,16 +1,17 @@
 const TaskList = require('listr')
-const { blue, green, white } = require('chalk')
-const daoArg = require('./utils/daoArg')
-const { listApps } = require('./utils/knownApps')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const { addressesEqual } = require('../../util')
 const Table = require('cli-table')
+const { blue, green, white } = require('chalk')
+const { addressesEqual } = require('@aragon/toolkit/dist/util')
 const {
   getDaoAddress,
   getInstalledApps,
   getAllApps,
-} = require('../../lib/dao/apps')
+} = require('@aragon/toolkit/dist/dao/apps')
+//
+const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const listrOpts = require('../../helpers/listr-options')
+const daoArg = require('./utils/daoArg')
+const { listApps } = require('./utils/knownApps')
 
 let knownApps
 

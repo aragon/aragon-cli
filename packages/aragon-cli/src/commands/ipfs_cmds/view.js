@@ -1,6 +1,7 @@
 import TaskList from 'listr'
-import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
 import { cid as isValidCID } from 'is-ipfs'
+//
+import listrOpts from '../../helpers/listr-options'
 import { askForInput } from '../../util'
 //
 import { getMerkleDAG, stringifyMerkleDAG, getClient } from '../../lib/ipfs'

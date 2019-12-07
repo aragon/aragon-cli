@@ -1,13 +1,14 @@
 const fs = require('fs')
 const path = require('path')
 const { readJson, writeJson } = require('fs-extra')
-const flattenCode = require('../../../helpers/flattenCode')
-const extract = require('../../../helpers/solidity-extractor')
 const namehash = require('eth-ens-namehash')
 const taskInput = require('listr-input')
-const { keccak256 } = require('web3').utils
-
+const { keccak256 } = require('web3-utils')
+const extract = require('@aragon/toolkit/dist/helpers/solidity-extractor')
+//
+const flattenCode = require('../../../helpers/flattenCode')
 const { ARTIFACT_FILE } = require('./preprare-files')
+
 const SOLIDITY_FILE = 'code.sol'
 const ARAPP_FILE = 'arapp.json'
 

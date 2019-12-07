@@ -1,6 +1,6 @@
-const pkg = require('../../../../package.json')
+import { DEFAULT_IPFS_TIMEOUT } from '@aragon/toolkit/dist/helpers/constants'
+//
 const LATEST_VERSION = 'latest'
-const DEFAULT_IPFS_TIMEOUT = pkg.aragon.defaultIpfsTimeout
 
 module.exports = {
   args: yargs => {

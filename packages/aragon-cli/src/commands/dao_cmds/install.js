@@ -1,25 +1,28 @@
-const execTask = require('./utils/execHandler').task
 const TaskList = require('listr')
-const daoArg = require('./utils/daoArg')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const { blue, green, bold } = require('chalk')
 const APM = require('@aragon/apm')
-const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
-const chalk = require('chalk')
-const getRepoTask = require('./utils/getRepoTask')
-const encodeInitPayload = require('./utils/encodeInitPayload')
 const {
-  addressesEqual,
   ANY_ENTITY,
   NO_MANAGER,
   ZERO_ADDRESS,
-} = require('../../util')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
+} = require('@aragon/toolkit/dist/helpers/constants')
+const {
+  resolveAddressOrEnsDomain,
+} = require('@aragon/toolkit/dist/dao/utils/resolveAddressOrEnsDomain')
 const {
   getAclAddress,
   getAppProxyAddressFromReceipt,
   getAppBase,
-} = require('../../lib/dao/kernel')
-const { resolveAddressOrEnsDomain } = require('../../lib/dao/utils')
+} = require('@aragon/toolkit/dist/kernel/kernel')
+const { addressesEqual } = require('@aragon/toolkit/dist/util')
+//
+const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const listrOpts = require('../../helpers/listr-options')
+const defaultAPMName = require('../../helpers/default-apm')
+const encodeInitPayload = require('../../helpers/encodeInitPayload')
+const execTask = require('./utils/execHandler').task
+const getRepoTask = require('./utils/getRepoTask')
+const daoArg = require('./utils/daoArg')
 
 exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'
 
@@ -71,7 +74,7 @@ exports.handler = async function({
   const tasks = new TaskList(
     [
       {
-        title: `Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`,
+        title: `Fetching ${bold(apmRepo)}@${apmRepoVersion}`,
         task: getRepoTask.task({ apm, apmRepo, apmRepoVersion }),
       },
       {
@@ -185,14 +188,12 @@ exports.handler = async function({
 
   return tasks.run().then(ctx => {
     reporter.info(
-      `Successfully executed: "${chalk.blue(
-        ctx.transactionPath.description
-      )}"`
+      `Successfully executed: "${blue(ctx.transactionPath.description)}"`
     )
 
     if (ctx.appAddress) {
       reporter.success(
-        `Installed ${chalk.blue(apmRepo)} at: ${chalk.green(ctx.appAddress)}`
+        `Installed ${blue(apmRepo)} at: ${green(ctx.appAddress)}`
       )
     } else {
       reporter.warning(

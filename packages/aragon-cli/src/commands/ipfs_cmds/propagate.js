@@ -1,6 +1,7 @@
 import TaskList from 'listr'
-import chalk from 'chalk'
-import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+import { blue, red, green } from 'chalk'
+//
+import listrOpts from '../../helpers/listr-options'
 import { askForInput } from '../../util'
 //
 import {
@@ -80,13 +81,13 @@ export const handler = async argv => {
   // reporter.message(
   console.log(
     `
-Queried ${chalk.blue(ctx.CIDs.length)} CIDs at ${chalk.blue(
+Queried ${blue(ctx.CIDs.length)} CIDs at ${blue(
       ctx.result.gateways.length
     )} gateways
 
-Requests succeeded: ${chalk.green(ctx.result.succeeded)}
+Requests succeeded: ${green(ctx.result.succeeded)}
 
-Requests failed: ${chalk.red(ctx.result.failed)}
+Requests failed: ${red(ctx.result.failed)}
 `
   )
 

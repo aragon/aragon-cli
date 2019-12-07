@@ -1,11 +1,13 @@
-const execHandler = require('./utils/execHandler').task
-const getAppKernel = require('../../lib/getAppKernel')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const { parseArgumentStringIfPossible } = require('../../util')
-const encodeActCall = require('../../lib/dao/encodeActCall')
 const { blue } = require('chalk')
-
-const EXECUTE_FUNCTION_NAME = 'execute'
+const {
+  EXECUTE_FUNCTION_NAME,
+} = require('@aragon/toolkit/dist/helpers/constants')
+const getAppKernel = require('@aragon/toolkit/dist/kernel/getAppKernel')
+const encodeActCall = require('@aragon/toolkit/dist/dao/encodeActCall')
+//
+const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const execHandler = require('./utils/execHandler').task
+const { parseArgumentStringIfPossible } = require('../../util')
 
 exports.command = 'act <agent-address> <target> [signature] [call-args..]'
 

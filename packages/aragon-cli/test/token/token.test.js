@@ -1,7 +1,7 @@
 import test from 'ava'
 import sinon from 'sinon'
 import miniMeArtifact from '@aragon/apps-shared-minime/build/contracts/MiniMeToken'
-import * as tokenLib from '@aragon/node-api/src/token'
+import * as tokenLib from '@aragon/toolkit/dist/token/token'
 //
 import { isAddress, isValidTxHash, getLocalWeb3 } from '../utils'
 

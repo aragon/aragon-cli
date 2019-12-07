@@ -1,8 +1,9 @@
 const TaskList = require('listr')
+const { blue, green } = require('chalk')
+const { changeController } = require('@aragon/toolkit/dist/token/token')
+//
+const listrOpts = require('../../../helpers/listr-options')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const chalk = require('chalk')
-const { changeController } = require('../../../lib/token')
 
 exports.command = 'change-controller <token-address> <new-controller>'
 
@@ -49,11 +50,11 @@ exports.handler = async function({
 
   await tasks.run()
   reporter.success(
-    `Successfully changed the controller of ${chalk.green(
-      tokenAddress
-    )} to ${chalk.green(newController)}`
+    `Successfully changed the controller of ${green(tokenAddress)} to ${green(
+      newController
+    )}`
   )
 
-  reporter.info(`Transaction hash: ${chalk.blue(txReceipt.transactionHash)}`)
+  reporter.info(`Transaction hash: ${blue(txReceipt.transactionHash)}`)
   process.exit()
 }

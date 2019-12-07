@@ -8,6 +8,7 @@ const defaultTimeout = 15 * 60 * 1000 // ms
 const exec = util.promisify(child.exec)
 
 export const isValidTxHash = txHash => /^0x([A-Fa-f0-9]{64})$/.test(txHash)
+
 export const isAddress = Web3.utils.isAddress
 
 export const getLocalWeb3 = async () => {

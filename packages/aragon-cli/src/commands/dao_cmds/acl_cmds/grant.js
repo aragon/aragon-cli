@@ -1,9 +1,10 @@
-const daoArg = require('../utils/daoArg')
-const aclExecHandler = require('./utils/aclExecHandler')
 const {
   convertStringToParam,
   encodeParam,
-} = require('@aragon/node-api/src/acl/params')
+} = require('@aragon/toolkit/dist/acl/params')
+//
+const daoArg = require('../utils/daoArg')
+const aclExecHandler = require('./utils/aclExecHandler')
 
 // Note: we usually order these values as entity, proxy, role but this order fits
 //       better with other CLI commands
