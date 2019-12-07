@@ -7,12 +7,22 @@ const extractContractInfoToFile = require('../../src/helpers/extractContractInfo
 
 let tempDir, contractPath, outputPath
 
-const readOutput = () => JSON.parse(fs.readFileSync(outputPath, 'utf8'))
+const readOutput = async () => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(outputPath, (err, data) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(JSON.parse(data.toString('utf8')))
+      }
+    })
+  })
+}
 
 test.before('create a temp directory and resolve paths', t => {
   contractPath = path.resolve('test/contracts/ParseMe.sol')
 
-  tempDir = tmp.dirSync({ unsafeCleanup: true })
+  tempDir = tmp.dirSync({ unsafeCleanup: true, keep: false })
   const filename = path.basename(contractPath).replace('.sol', '.json')
   outputPath = path.resolve(tempDir.name, filename)
 })
@@ -21,20 +31,16 @@ test.before('call extractContractInfoToFile function', async t => {
   await extractContractInfoToFile(contractPath, outputPath)
 })
 
-test.after('remove temp directory', t => {
-  tempDir.removeCallback()
-})
-
 test('generates output', t => {
   t.true(fs.existsSync(outputPath))
 })
 
-test('output file contains 2 roles', t => {
-  const output = readOutput()
+test('output file contains 2 roles', async t => {
+  const output = await readOutput()
   t.is(output.roles.length, 2)
 })
 
-test('output file contains 3 functions', t => {
-  const output = readOutput()
+test('output file contains 3 functions', async t => {
+  const output = await readOutput()
   t.is(output.functions.length, 3)
 })
