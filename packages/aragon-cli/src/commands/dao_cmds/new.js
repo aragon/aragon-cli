@@ -1,11 +1,12 @@
 const TaskList = require('listr')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
 const { green, bold } = require('chalk')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const getApmRepo = require('../../lib/apm/getApmRepo')
-const newDao = require('../../lib/dao/new')
-const { assignId } = require('../../lib/dao/assign-id')
+const getApmRepo = require('@aragon/toolkit/dist/apm/getApmRepo')
+const newDao = require('@aragon/toolkit/dist/dao/new')
+const { assignId } = require('@aragon/toolkit/dist/dao/assign-id')
+//
+const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const listrOpts = require('../../helpers/listr-options')
+const defaultAPMName = require('../../helpers/default-apm')
 const { parseArgumentStringIfPossible } = require('../../util')
 
 exports.BARE_TEMPLATE = defaultAPMName('bare-template')

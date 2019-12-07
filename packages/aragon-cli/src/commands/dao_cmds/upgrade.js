@@ -1,14 +1,17 @@
-const execTask = require('./utils/execHandler').task
 const TaskList = require('listr')
-const daoArg = require('./utils/daoArg')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const APM = require('@aragon/apm')
-const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
-const chalk = require('chalk')
+const { bold, blue } = require('chalk')
+const { getBasesNamespace } = require('@aragon/toolkit/dist/kernel/kernel')
+const {
+  resolveAddressOrEnsDomain,
+} = require('@aragon/toolkit/dist/dao/utils/resolveAddressOrEnsDomain')
+//
+const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const listrOpts = require('../../helpers/listr-options')
+const defaultAPMName = require('../../helpers/default-apm')
+const daoArg = require('./utils/daoArg')
+const execTask = require('./utils/execHandler').task
 const getRepoTask = require('./utils/getRepoTask')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const { getBasesNamespace } = require('../../lib/dao/kernel')
-const { resolveAddressOrEnsDomain } = require('../../lib/dao/utils')
 
 exports.command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
 
@@ -41,7 +44,7 @@ exports.handler = async function({
   const tasks = new TaskList(
     [
       {
-        title: `Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`,
+        title: `Fetching ${bold(apmRepo)}@${apmRepoVersion}`,
         skip: ctx => ctx.repo, // only run if repo isn't passed
         task: getRepoTask.task({ apm, apmRepo, apmRepoVersion }),
       },
@@ -69,9 +72,7 @@ exports.handler = async function({
 
   return tasks.run().then(ctx => {
     reporter.success(
-      `Successfully executed: "${chalk.blue(
-        ctx.transactionPath[0].description
-      )}"`
+      `Successfully executed: "${blue(ctx.transactionPath[0].description)}"`
     )
     process.exit()
   })

@@ -1,8 +1,9 @@
-const chalk = require('chalk')
-const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const { green, blue, bold } = require('chalk')
 const TaskList = require('listr')
-const getApmRepoVersions = require('../../lib/apm/getApmRepoVersions')
+const getApmRepoVersions = require('@aragon/toolkit/dist/apm/getApmRepoVersions')
+//
+const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const defaultAPMName = require('../../helpers/default-apm')
 
 exports.command = 'versions [apmRepo]'
 
@@ -33,7 +34,7 @@ exports.handler = async function({
         const web3 = await ensureWeb3(network)
         apmRepoName = apmRepo ? defaultAPMName(apmRepo) : module.appName
 
-        task.title = `Fetching ${chalk.bold(apmRepoName)} published versions`
+        task.title = `Fetching ${bold(apmRepoName)} published versions`
 
         versions = await getApmRepoVersions(web3, apmRepoName, apmOptions)
       },
@@ -55,9 +56,7 @@ exports.handler = async function({
  */
 function displayVersionNumbers(apmRepoName, versions, reporter) {
   reporter.info(
-    `${chalk.blue(apmRepoName)} has ${chalk.green(
-      versions.length
-    )} published versions`
+    `${blue(apmRepoName)} has ${green(versions.length)} published versions`
   )
 }
 
@@ -71,19 +70,17 @@ function displayVersions(versions, reporter) {
   versions.map(version => {
     if (version && version.content) {
       reporter.success(
-        `${chalk.blue(version.version)}: ${version.contractAddress} ${
+        `${blue(version.version)}: ${version.contractAddress} ${
           version.content.provider
         }:${version.content.location}`
       )
     } else if (version && version.error) {
       reporter.warning(
-        `${chalk.blue(version.version)}: ${version.contractAddress} ${
-          version.error
-        }`
+        `${blue(version.version)}: ${version.contractAddress} ${version.error}`
       )
     } else {
       reporter.error(
-        `${chalk.blue(version.version)}: ${
+        `${blue(version.version)}: ${
           version.contractAddress
         } Version not found in provider`
       )

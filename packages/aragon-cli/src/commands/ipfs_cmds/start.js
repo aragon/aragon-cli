@@ -1,5 +1,6 @@
 import TaskList from 'listr'
-import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+//
+import listrOpts from '../../helpers/listr-options'
 //
 import {
   startLocalDaemon,

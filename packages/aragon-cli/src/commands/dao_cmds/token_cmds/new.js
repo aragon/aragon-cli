@@ -1,13 +1,14 @@
 const TaskList = require('listr')
-const { ensureWeb3 } = require('../../../helpers/web3-fallback')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const chalk = require('chalk')
-const web3Utils = require('web3').utils
-const { parseArgumentStringIfPossible } = require('../../../util')
+const { green, blue } = require('chalk')
+const web3Utils = require('web3-utils')
 const {
   deployMiniMeTokenFactory,
   deployMiniMeToken,
-} = require('../../../lib/token')
+} = require('@aragon/toolkit/dist/token/token')
+//
+const { ensureWeb3 } = require('../../../helpers/web3-fallback')
+const listrOpts = require('../../../helpers/listr-options')
+const { parseArgumentStringIfPossible } = require('../../../util')
 
 const MAINNET_MINIME_TOKEN_FACTORY =
   '0xA29EF584c389c67178aE9152aC9C543f9156E2B3'
@@ -160,18 +161,18 @@ exports.handler = async function({
   })
   return task.run().then(ctx => {
     reporter.success(
-      `Successfully deployed the token at ${chalk.green(ctx.tokenAddress)}`
+      `Successfully deployed the token at ${green(ctx.tokenAddress)}`
     )
-    reporter.info(`Token transaction hash: ${chalk.blue(ctx.tokenTxHash)}`)
+    reporter.info(`Token transaction hash: ${blue(ctx.tokenTxHash)}`)
 
     if (ctx.factoryAddress) {
       reporter.success(
-        `Successfully deployed the token factory at ${chalk.green(
+        `Successfully deployed the token factory at ${green(
           ctx.factoryAddress
         )}`
       )
       reporter.info(
-        `Token factory transaction hash: ${chalk.blue(ctx.factoryTxHash)}`
+        `Token factory transaction hash: ${blue(ctx.factoryTxHash)}`
       )
     }
 

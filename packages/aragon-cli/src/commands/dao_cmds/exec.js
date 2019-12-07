@@ -1,8 +1,9 @@
+const { blue } = require('chalk')
+//
+const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const execHandler = require('./utils/execHandler').task
 const daoArg = require('./utils/daoArg')
 const { parseArgumentStringIfPossible } = require('../../util')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const chalk = require('chalk')
 
 exports.command = 'exec <dao> <proxy-address> <fn> [fn-args..]'
 
@@ -47,7 +48,7 @@ exports.handler = async function({
   const { transactionPath } = await task.run()
 
   reporter.success(
-    `Successfully executed: "${chalk.blue(transactionPath.description)}"`
+    `Successfully executed: "${blue(transactionPath.description)}"`
   )
   process.exit()
 }

@@ -1,10 +1,9 @@
 import test from 'ava'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
-import {
-  parseArgumentStringIfPossible,
-  convertDAOIdToSubdomain,
-} from '../src/util'
+import { convertDAOIdToSubdomain } from '@aragon/toolkit/dist/util'
+//
+import { parseArgumentStringIfPossible } from '../src/util'
 
 test.beforeEach(t => {
   const fsStub = {

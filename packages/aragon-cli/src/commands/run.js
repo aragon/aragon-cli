@@ -1,31 +1,32 @@
 const TaskList = require('listr')
-const Web3 = require('web3')
-const chalk = require('chalk')
 const path = require('path')
-const devchain = require('./devchain_cmds/start')
-const start = require('./start')
-const deploy = require('./deploy')
-const newDAO = require('./dao_cmds/new')
-const encodeInitPayload = require('./dao_cmds/utils/encodeInitPayload')
 const fs = require('fs-extra')
-const pkg = require('../../package.json')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
+const url = require('url')
+// TODO: stop using web3
+const Web3 = require('web3')
 const APM = require('@aragon/apm')
+const { blue, green, bold } = require('chalk')
+//
+const encodeInitPayload = require('../helpers/encodeInitPayload')
+const listrOpts = require('../helpers/listr-options')
 const getRepoTask = require('./dao_cmds/utils/getRepoTask')
-
-const {
-  runSetupTask,
-  runPrepareForPublishTask,
-  runPublishTask,
-} = require('./apm_cmds/publish')
+const pkg = require('../../package.json')
 const {
   findProjectRoot,
   isHttpServerOpen,
   isPortTaken,
   parseArgumentStringIfPossible,
 } = require('../util')
-
-const url = require('url')
+// cmds
+const devchain = require('./devchain_cmds/start')
+const start = require('./start')
+const deploy = require('./deploy')
+const newDAO = require('./dao_cmds/new')
+const {
+  runSetupTask,
+  runPrepareForPublishTask,
+  runPublishTask,
+} = require('./apm_cmds/publish')
 
 const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
@@ -378,7 +379,7 @@ exports.handler = async function({
   return tasks.run({ ens: apmOptions['ens-registry'] }).then(async ctx => {
     if (ctx.portOpen) {
       reporter.warning(
-        `Server already listening at port ${chalk.blue(
+        `Server already listening at port ${blue(
           clientPort
         )}, skipped starting Aragon`
       )
@@ -418,20 +419,20 @@ exports.handler = async function({
       .join('.')
 
     reporter.info(`This is the configuration for your development deployment:
-    ${'Ethereum Node'}: ${chalk.blue(network.provider.connection._url)}
-    ${'ENS registry'}: ${chalk.blue(ctx.ens)}
-    ${`aragonPM registry`}: ${chalk.blue(registry)}
-    ${'DAO address'}: ${chalk.green(ctx.daoAddress)}`)
+    ${'Ethereum Node'}: ${blue(network.provider.connection._url)}
+    ${'ENS registry'}: ${blue(ctx.ens)}
+    ${`aragonPM registry`}: ${blue(registry)}
+    ${'DAO address'}: ${green(ctx.daoAddress)}`)
 
     reporter.newLine()
 
     reporter.info(
       `${
         client !== false
-          ? `Opening ${chalk.bold(
+          ? `Opening ${bold(
               `http://localhost:${clientPort}/#/${ctx.daoAddress}`
             )} to view your DAO`
-          : `Use ${chalk.bold(
+          : `Use ${bold(
               `"aragon dao <command> ${ctx.daoAddress}"`
             )} to interact with your DAO`
       }`

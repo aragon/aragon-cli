@@ -5,8 +5,10 @@ import {
   startClient,
   openClient,
 } from '../lib/start'
-const chalk = require('chalk')
+
+const { blue } = require('chalk')
 const TaskList = require('listr')
+//
 const pkg = require('../../package.json')
 const { installDeps } = require('../util')
 
@@ -113,9 +115,9 @@ exports.handler = async ({
     .run()
     .then(() =>
       reporter.info(
-        `Aragon client from ${chalk.blue(clientRepo)} version ${chalk.blue(
+        `Aragon client from ${blue(clientRepo)} version ${blue(
           clientVersion
-        )} started on port ${chalk.blue(clientPort)}`
+        )} started on port ${blue(clientPort)}`
       )
     )
 }

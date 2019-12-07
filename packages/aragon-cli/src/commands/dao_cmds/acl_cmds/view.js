@@ -1,18 +1,27 @@
-const chalk = require('chalk')
+const { white } = require('chalk')
 const TaskList = require('listr')
+const { keyBy } = require('lodash')
+const Table = require('cli-table')
+const { keccak256 } = require('web3-utils')
+require('@aragon/toolkit/@types/acl/typedef') // Load JSDoc types ACL specific
+require('@aragon/toolkit/@types/typedef') // Load JSDoc generic types
+const {
+  ANY_ENTITY,
+  NO_MANAGER,
+  ZERO_ADDRESS,
+} = require('@aragon/toolkit/dist/helpers/constants')
+const {
+  getDaoAddressPermissionsApps,
+} = require('@aragon/toolkit/dist/acl/view')
+const {
+  formatAclPermissions,
+} = require('@aragon/toolkit/dist/acl/viewFormatter')
+//
 const daoArg = require('../utils/daoArg')
 const { listApps } = require('../utils/knownApps')
-const { getKnownRoles } = require('./utils/knownRoles')
 const { ensureWeb3 } = require('../../../helpers/web3-fallback')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const Table = require('cli-table')
-const { getDaoAddressPermissionsApps } = require('../../../lib/acl/view')
-const { formatAclPermissions } = require('../../../lib/acl/viewFormatter')
-require('../../../lib/acl/typedef') // Load JSDoc types ACL specific
-require('../../../lib/typedef') // Load JSDoc generic types
-
-const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
-const { NO_MANAGER, ZERO_ADDRESS } = require('../../../util')
+const listrOpts = require('../../../helpers/listr-options')
+const defaultAppsRoles = require('../../../knownRoles.json')
 
 exports.command = 'view <dao>'
 
@@ -97,9 +106,7 @@ const handler = async function({
     // filter according to cli params will happen here
 
     const table = new Table({
-      head: ['App', 'Action', 'Allowed entities', 'Manager'].map(x =>
-        chalk.white(x)
-      ),
+      head: ['App', 'Action', 'Allowed entities', 'Manager'].map(x => white(x)),
     })
 
     for (const formatedAclPermission of formatedAclPermissions) {
@@ -171,3 +178,17 @@ const printNameOrAddress = ({ address, name }) =>
   name
     ? `${name.split('.')[0]} (${address.slice(0, 6)})`
     : `${shortHex(address)}`
+
+/**
+ * Returns this app roles and default known roles
+ *
+ * TODO: add support for user apps
+ * @param {ArappConfig} module arapp.json contents
+ * @return {Object.<string, RoleDefinition>} Unique known roles
+ */
+const getKnownRoles = module => {
+  const currentAppRoles = module ? module.roles : []
+  const allRoles = defaultAppsRoles.concat(currentAppRoles)
+
+  return keyBy(allRoles, role => keccak256(role.id))
+}

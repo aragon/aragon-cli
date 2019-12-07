@@ -1,13 +1,14 @@
 const path = require('path')
 const TaskList = require('listr')
-const chalk = require('chalk')
-
+const { blue, green } = require('chalk')
+//
 const { compileContracts } = require('../helpers/truffle-runner')
-const { findProjectRoot } = require('../util')
 const { ensureWeb3 } = require('../helpers/web3-fallback')
 const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const { linkLibraries, deployContract } = require('../lib/deploy')
+const listrOpts = require('../helpers/listr-options')
+const { findProjectRoot } = require('../util')
+
+const { linkLibraries, deployContract } = require('../lib/deploy/deploy')
 
 exports.command = 'deploy [contract]'
 
@@ -155,11 +156,11 @@ exports.handler = async ({
   const ctx = await task.run()
 
   reporter.success(
-    `Successfully deployed ${chalk.blue(ctx.contractName)} at: ${chalk.green(
+    `Successfully deployed ${blue(ctx.contractName)} at: ${green(
       ctx.contractAddress
     )}`
   )
-  reporter.info(`Transaction hash: ${chalk.blue(ctx.transactionHash)}`)
+  reporter.info(`Transaction hash: ${blue(ctx.transactionHash)}`)
 
   process.exit()
 }

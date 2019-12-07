@@ -1,11 +1,14 @@
 const { getTruffleConfig } = require('../helpers/truffle-config')
-const { loadManifestFile, loadArappFile } = require('../lib/loadConfigFiles')
+const {
+  loadManifestFile,
+  loadArappFile,
+} = require('../lib/environment/loadConfigFiles')
 const {
   configEnvironment,
   NoEnvironmentInArapp,
   NoEnvironmentInDefaults,
   NoNetworkInTruffleConfig,
-} = require('../lib/configEnvironment')
+} = require('../lib/environment/configEnvironment')
 
 class InvalidArguments extends Error {}
 

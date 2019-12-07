@@ -1,9 +1,10 @@
 import TaskList from 'listr'
-import chalk from 'chalk'
 import publicIp from 'public-ip'
 import internalIp from 'internal-ip'
 import { existsSync } from 'fs'
-import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+import { black, bgWhite, blue, green, red } from 'chalk'
+//
+import listrOpts from '../../helpers/listr-options'
 import { getGlobalBinary, getLocalBinary } from '../../util'
 //
 import {
@@ -129,33 +130,33 @@ export const handler = async argv => {
 
   reporter.info(
     `
-Local installation: ${chalk.blue(localBinPath || 'not installed')}
-Global installation: ${chalk.blue(globalBinPath || 'not installed')}`
+Local installation: ${blue(localBinPath || 'not installed')}
+Global installation: ${blue(globalBinPath || 'not installed')}`
   )
 
   reporter.newLine()
   if (repoExists) {
     reporter.info(`
-Repository location: ${chalk.blue(repoPath)}
-Repository version: ${chalk.blue(repoVersion)}
-Repository size: ${chalk.blue(repoSize)}
+Repository location: ${blue(repoPath)}
+Repository version: ${blue(repoVersion)}
+Repository size: ${blue(repoSize)}
 
-API port: ${chalk.blue(daemonPorts.api)}
-Gateway port: ${chalk.blue(daemonPorts.gateway)}
-Swarm port: ${chalk.blue(daemonPorts.swarm)}
+API port: ${blue(daemonPorts.api)}
+Gateway port: ${blue(daemonPorts.gateway)}
+Swarm port: ${blue(daemonPorts.swarm)}
 
-PeerID: ${chalk.bgWhite(chalk.black(peerID))}
-Daemon: ${daemonRunning ? chalk.green('running') : chalk.red('stopped')}`)
+PeerID: ${bgWhite(black(peerID))}
+Daemon: ${daemonRunning ? green('running') : red('stopped')}`)
   } else {
-    reporter.info(`Repository: ${chalk.red('uninitialized')}`)
+    reporter.info(`Repository: ${red('uninitialized')}`)
   }
 
   if (daemonRunning) {
     reporter.info(`
-CORS: ${corsEnabled ? chalk.green('enabled') : chalk.red('disabled')}
+CORS: ${corsEnabled ? green('enabled') : red('disabled')}
   
-Public Swarm MultiAddress: ${chalk.blue(publicSwarmMultiAddr)}
-Internal Swarm MultiAddress: ${chalk.blue(internalSwarmMultiAddr)}
-Local Swarm MultiAddress: ${chalk.blue(localSwarmMultiAddr)}`)
+Public Swarm MultiAddress: ${blue(publicSwarmMultiAddr)}
+Internal Swarm MultiAddress: ${blue(internalSwarmMultiAddr)}
+Local Swarm MultiAddress: ${blue(localSwarmMultiAddr)}`)
   }
 }

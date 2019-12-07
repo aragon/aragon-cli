@@ -1,9 +1,10 @@
 import TaskList from 'listr'
 import inquirer from 'inquirer'
-import chalk from 'chalk'
-import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+import { blue, red, yellow, green } from 'chalk'
 //
+import listrOpts from '../../helpers/listr-options'
 import { getGlobalBinary, getLocalBinary } from '../../util'
+//
 import { cleanVersion, getDistName } from '../../lib/ipfs'
 import { installGoIpfs } from '../../lib/ipfs/install'
 import {
@@ -70,7 +71,7 @@ const runPrepareTask = ({ silent, debug, local, projectPath }) => {
             ctx.location = projectPath
             if (!isPackage(ctx.location)) {
               throw new Error(
-                `${chalk.red(ctx.location)} does not have a ${chalk.red(
+                `${red(ctx.location)} does not have a ${red(
                   'package.json'
                 )}. Did you wish to install IPFS globally?`
               )
@@ -127,10 +128,7 @@ export const handler = async argv => {
     : getGlobalBinary('ipfs')
 
   if (existingBinaryLocation) {
-    reporter.error(
-      'IPFS is already installed:',
-      chalk.red(existingBinaryLocation)
-    )
+    reporter.error('IPFS is already installed:', red(existingBinaryLocation))
     reporter.newLine()
 
     const uninstallCommand = local
@@ -138,13 +136,13 @@ export const handler = async argv => {
       : 'aragon ipfs uninstall'
     reporter.warning(
       'To install a different version, you must first run:',
-      chalk.yellow(uninstallCommand)
+      yellow(uninstallCommand)
     )
 
     if (!local) {
       reporter.warning(
         'To install IPFS in a project, use the --local flag:',
-        chalk.yellow('aragon ipfs install --local')
+        yellow('aragon ipfs install --local')
       )
     }
     return process.exit(1)
@@ -168,11 +166,11 @@ export const handler = async argv => {
 
   reporter.info(
     `
-Platform & architecture: ${chalk.blue(NODE_OS)}, ${chalk.blue(NODE_ARCH)}
-IPFS tarball: ${chalk.blue(distName)}
-IPFS distributions url: ${chalk.blue(distUrl)}
-NPM version: ${chalk.blue(distVersion)}
-Location: ${chalk.blue(location)}`
+Platform & architecture: ${blue(NODE_OS)}, ${blue(NODE_ARCH)}
+IPFS tarball: ${blue(distName)}
+IPFS distributions url: ${blue(distUrl)}
+NPM version: ${blue(distVersion)}
+Location: ${blue(location)}`
   )
 
   /**
@@ -184,7 +182,7 @@ Location: ${chalk.blue(location)}`
       {
         type: 'confirm',
         name: 'confirmation',
-        message: `Are you sure you want to ${chalk.green('install IPFS')}?`,
+        message: `Are you sure you want to ${green('install IPFS')}?`,
       },
     ])
     if (!confirmation) return
@@ -202,8 +200,6 @@ Location: ${chalk.blue(location)}`
   reporter.newLine()
   reporter.success('Success!')
   reporter.info(
-    `Try it out with: ${chalk.blue(
-      local ? 'npx ipfs version' : 'ipfs version'
-    )}`
+    `Try it out with: ${blue(local ? 'npx ipfs version' : 'ipfs version')}`
   )
 }

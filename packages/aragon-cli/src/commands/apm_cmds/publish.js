@@ -1,20 +1,27 @@
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const tmp = require('tmp-promise')
 const path = require('path')
-const { readJson, writeJson, pathExistsSync } = require('fs-extra')
-const APM = require('@aragon/apm')
 const semver = require('semver')
 const TaskList = require('listr')
 const taskInput = require('listr-input')
-const inquirer = require('inquirer')
-const chalk = require('chalk')
-const { findProjectRoot, runScriptTask, ZERO_ADDRESS } = require('../../util')
+const APM = require('@aragon/apm')
+const web3Utils = require('web3-utils')
+const { blue, red, green, bold } = require('chalk')
+const { readJson, writeJson, pathExistsSync } = require('fs-extra')
+const { ZERO_ADDRESS } = require('@aragon/toolkit/dist/helpers/constants')
+// helpers
+const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const { compileContracts } = require('../../helpers/truffle-runner')
-const web3Utils = require('web3').utils
+const listrOpts = require('../../helpers/listr-options')
+// cmds
 const deploy = require('../deploy')
-const propagateIPFS = require('../ipfs_cmds/propagate')
 const execTask = require('../dao_cmds/utils/execHandler').task
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
+const propagateIPFS = require('../ipfs_cmds/propagate').handler
+
+const {
+  findProjectRoot,
+  runScriptTask,
+  askForConfirmation,
+} = require('../../util')
 
 const {
   prepareFilesForPublishing,
@@ -669,13 +676,13 @@ exports.handler = async function({
     '\n',
     `The following information will be published:`,
     '\n',
-    `Contract address: ${chalk.blue(contractAddress || ZERO_ADDRESS)}`,
+    `Contract address: ${blue(contractAddress || ZERO_ADDRESS)}`,
     '\n',
-    `Content (${contentProvier}): ${chalk.blue(contentLocation)}`
+    `Content (${contentProvier}): ${blue(contentLocation)}`
     // TODO: (Gabi) Add extra relevant info (e.g. size)
-    // `Size: ${chalk.blue()}`,
+    // `Size: ${blue()}`,
     // '\n',
-    // `Number of files: ${chalk.blue()}`,
+    // `Number of files: ${blue()}`,
     // '\n'
   )
 
@@ -684,7 +691,7 @@ exports.handler = async function({
       '\n',
       'Explore the ipfs content locally:',
       '\n',
-      chalk.bold(
+      bold(
         `http://localhost:8080/ipfs/QmSDgpiHco5yXdyVTfhKxr3aiJ82ynz8V14QcGKicM3rVh/#/explore/${contentLocation}`
       ),
       '\n'
@@ -692,13 +699,9 @@ exports.handler = async function({
   }
 
   if (!skipConfirmation) {
-    const { confirmation } = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'confirmation',
-        message: `${chalk.green(`Publish to ${appName} repo`)}`,
-      },
-    ])
+    const { confirmation } = await askForConfirmation(
+      `${green(`Publish to ${appName} repo`)}`
+    )
     // new line after confirm
     console.log()
     if (!confirmation) process.exit()
@@ -733,9 +736,7 @@ exports.handler = async function({
     if (initialVersion === version) {
       console.log(
         '\n',
-        `Successfully executed: "${chalk.green(
-          transactionPath[0].description
-        )}"`,
+        `Successfully executed: "${green(transactionPath[0].description)}"`,
         '\n'
       )
     } else {
@@ -743,32 +744,28 @@ exports.handler = async function({
 
       console.log(
         '\n',
-        `Successfully published ${appName} ${chalk.green(logVersion)} :`,
+        `Successfully published ${appName} ${green(logVersion)} :`,
         '\n'
       )
     }
   }
 
-  console.log(`Transaction hash: ${chalk.blue(transactionHash)}`, '\n')
+  console.log(`Transaction hash: ${blue(transactionHash)}`, '\n')
 
-  reporter.debug(`Published directory: ${chalk.blue(pathToPublish)}\n`)
+  reporter.debug(`Published directory: ${blue(pathToPublish)}\n`)
 
   // Propagate content
   if (!http && propagateContent) {
     if (!skipConfirmation) {
-      const { confirmation } = await inquirer.prompt([
-        {
-          type: 'confirm',
-          name: 'confirmation',
-          message: chalk.green(`Propagate content`),
-        },
-      ])
+      const { confirmation } = await askForConfirmation(
+        green(`Propagate content`)
+      )
       // new line after confirm
       console.log()
       if (!confirmation) process.exit()
     }
 
-    const propagateTask = await propagateIPFS.task({
+    const propagateTask = await propagateIPFS({
       apmOptions,
       cid: contentLocation,
       debug,
@@ -779,13 +776,13 @@ exports.handler = async function({
 
     console.log(
       '\n',
-      `Queried ${chalk.blue(CIDs.length)} CIDs at ${chalk.blue(
+      `Queried ${blue(CIDs.length)} CIDs at ${blue(
         result.gateways.length
       )} gateways`,
       '\n',
-      `Requests succeeded: ${chalk.green(result.succeeded)}`,
+      `Requests succeeded: ${green(result.succeeded)}`,
       '\n',
-      `Requests failed: ${chalk.red(result.failed)}`,
+      `Requests failed: ${red(result.failed)}`,
       '\n'
     )
 
