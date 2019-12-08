@@ -4,7 +4,7 @@ import {
   runAragonCLI,
   getLocalWeb3,
   matchAddressAtLineContaining
-} from '../test-utils'
+} from '../../utils'
 
 // NOTE: These tests validate that the guide at https://hack.aragon.org/docs/guides-custom-deploy can be followed without errors and as expected.
 
