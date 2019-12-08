@@ -1,6 +1,6 @@
 import { ZERO_ADDRESS } from '../helpers/constants'
 //
-const aragonAppAbi = require('@aragon/os/build/contracts/AragonApp').abi
+import { abi as aragonAppAbi } from '@aragon/os/build/contracts/AragonApp'
 
 /**
  * Return kernel address for an Aragon app
@@ -9,7 +9,7 @@ const aragonAppAbi = require('@aragon/os/build/contracts/AragonApp').abi
  * @param {string} appAddress App address
  * @returns {Promise<string>} Kernel address
  */
-module.exports = async (web3, appAddress) => {
+export default async (web3, appAddress) => {
   const app = new web3.eth.Contract(aragonAppAbi, appAddress)
   const kernel = await app.methods.kernel().call()
 

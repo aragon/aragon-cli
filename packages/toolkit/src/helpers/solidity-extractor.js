@@ -1,6 +1,6 @@
-const fs = require('fs')
-const { promisify } = require('util')
-const { keccak256 } = require('web3-utils')
+import fs from 'fs'
+import { promisify } from 'util'
+import { keccak256 } from 'web3-utils'
 const readFile = promisify(fs.readFile)
 
 // See https://solidity.readthedocs.io/en/v0.4.24/abi-spec.html#types
@@ -146,7 +146,7 @@ const extractRoles = async functionDescriptors => {
     ...
   ]
 */
-const extractContractInfo = async sourceCodePath => {
+export const extractContractInfo = async sourceCodePath => {
   const sourceCode = await readFile(sourceCodePath, 'utf8')
 
   const functionDescriptors = await extractFunctions(sourceCode)
@@ -157,5 +157,3 @@ const extractContractInfo = async sourceCodePath => {
     functions: functionDescriptors,
   }
 }
-
-module.exports = extractContractInfo

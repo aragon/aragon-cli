@@ -10,20 +10,20 @@ import {
  * @param {string} second address
  * @returns {boolean} address equality
  */
-function addressesEqual(first, second) {
+export function addressesEqual(first, second) {
   first = first && first.toLowerCase()
   second = second && second.toLowerCase()
   return first === second
 }
 
-const isAddress = addr => /0x[a-fA-F0-9]{40}/.test(addr)
+export const isAddress = addr => /0x[a-fA-F0-9]{40}/.test(addr)
 
 /**
  * Validates an Aragon Id
  * @param {string} aragonId Aragon Id
  * @returns {boolean} `true` if valid
  */
-function isValidAragonId(aragonId) {
+export function isValidAragonId(aragonId) {
   return /^[a-z0-9-]+$/.test(aragonId)
 }
 
@@ -33,7 +33,7 @@ function isValidAragonId(aragonId) {
  * @param {string} aragonId Aragon Id
  * @returns {string} DAO subdomain
  */
-function convertDAOIdToSubdomain(aragonId) {
+export function convertDAOIdToSubdomain(aragonId) {
   // If already a subdomain, return
   if (new RegExp(`^([a-z0-9-]+).${ARAGON_DOMAIN}$`).test(aragonId))
     return aragonId
@@ -43,7 +43,7 @@ function convertDAOIdToSubdomain(aragonId) {
   return `${aragonId}.${ARAGON_DOMAIN}`
 }
 
-const expandLink = link => {
+export const expandLink = link => {
   const { name, address } = link
   const placeholder = `__${name}${'_'.repeat(38 - name.length)}`
   link.placeholder = placeholder
@@ -61,7 +61,7 @@ const expandLink = link => {
  * @param {number} gasFuzzFactor defaults to 1.5
  * @returns {number} gasLimit
  */
-const getRecommendedGasLimit = async (
+export const getRecommendedGasLimit = async (
   web3,
   estimatedGas,
   gasFuzzFactor = DEFAULT_GAS_FUZZ_FACTOR
@@ -79,17 +79,7 @@ const getRecommendedGasLimit = async (
   return upperGasLimit
 }
 
-const getContract = (pkg, contract) => {
+export const getContract = (pkg, contract) => {
   const artifact = require(`${pkg}/build/contracts/${contract}.json`)
   return artifact
-}
-
-module.exports = {
-  addressesEqual,
-  isAddress,
-  isValidAragonId,
-  convertDAOIdToSubdomain,
-  getContract,
-  getRecommendedGasLimit,
-  expandLink,
 }

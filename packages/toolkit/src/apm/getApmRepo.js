@@ -1,5 +1,5 @@
 import { DEFAULT_IPFS_TIMEOUT } from '../helpers/constants'
-const aragonPM = require('@aragon/apm')
+import aragonPM from '@aragon/apm'
 
 const LATEST_VERSION = 'latest'
 
@@ -16,7 +16,7 @@ const LATEST_VERSION = 'latest'
  * @param {*} progressHandler todo
  * @returns {*} todo
  */
-module.exports = async (
+export default async (
   web3,
   apmRepoName,
   apmRepoVersion,

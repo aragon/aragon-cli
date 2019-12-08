@@ -1,27 +1,25 @@
-const TaskList = require('listr')
-const APM = require('@aragon/apm')
-const { bold, blue } = require('chalk')
-const { getBasesNamespace } = require('@aragon/toolkit/dist/kernel/kernel')
-const {
-  resolveAddressOrEnsDomain,
-} = require('@aragon/toolkit/dist/dao/utils/resolveAddressOrEnsDomain')
+import TaskList from 'listr'
+import APM from '@aragon/apm'
+import { bold, blue } from 'chalk'
+import { getBasesNamespace } from '@aragon/toolkit/dist/kernel/kernel'
+import { resolveAddressOrEnsDomain } from '@aragon/toolkit/dist/dao/utils/resolveAddressOrEnsDomain'
 //
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const listrOpts = require('../../helpers/listr-options')
-const defaultAPMName = require('../../helpers/default-apm')
-const daoArg = require('./utils/daoArg')
-const execTask = require('./utils/execHandler').task
-const getRepoTask = require('./utils/getRepoTask')
+import { ensureWeb3 } from '../../helpers/web3-fallback'
 
-exports.command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
+import listrOpts from '../../helpers/listr-options'
+import defaultAPMName from '../../helpers/default-apm'
+import daoArg from './utils/daoArg'
+import { task as execTask } from './utils/execHandler'
+import getRepoTask from './utils/getRepoTask'
 
-exports.describe = 'Upgrade an app into a DAO'
+export const command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
+export const describe = 'Upgrade an app into a DAO'
 
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return getRepoTask.args(daoArg(yargs))
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   dao,
   gasPrice,

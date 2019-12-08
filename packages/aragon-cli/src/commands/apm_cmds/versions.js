@@ -1,16 +1,16 @@
-const { green, blue, bold } = require('chalk')
-const TaskList = require('listr')
-const getApmRepoVersions = require('@aragon/toolkit/dist/apm/getApmRepoVersions')
+import { green, blue, bold } from 'chalk'
+import TaskList from 'listr'
+import getApmRepoVersions from '@aragon/toolkit/dist/apm/getApmRepoVersions'
 //
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const defaultAPMName = require('../../helpers/default-apm')
+import { ensureWeb3 } from '../../helpers/web3-fallback'
 
-exports.command = 'versions [apmRepo]'
+import defaultAPMName from '../../helpers/default-apm'
 
-exports.describe =
+export const command = 'versions [apmRepo]'
+export const describe =
   'Shows all the previously published versions of a given repository'
 
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return yargs.option('apmRepo', {
     description: 'Name of the APM repository',
     type: 'string',
@@ -18,7 +18,7 @@ exports.builder = function(yargs) {
   })
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   apmRepo,
   module,

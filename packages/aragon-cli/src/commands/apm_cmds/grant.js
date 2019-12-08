@@ -1,13 +1,13 @@
-const { blue, red } = require('chalk')
-const grantNewVersionsPermission = require('@aragon/toolkit/dist/apm/grantNewVersionsPermission')
+import { blue, red } from 'chalk'
+import grantNewVersionsPermission from '@aragon/toolkit/dist/apm/grantNewVersionsPermission'
 //
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
+import { ensureWeb3 } from '../../helpers/web3-fallback'
 
-exports.command = 'grant [grantees..]'
-exports.describe =
+export const command = 'grant [grantees..]'
+export const describe =
   'Grant an address permission to create new versions in this package'
 
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return yargs.positional('grantees', {
     description:
       'The address being granted the permission to publish to the repo',
@@ -16,7 +16,7 @@ exports.builder = function(yargs) {
   })
 }
 
-exports.handler = async function({
+export const handler = async function({
   // Globals
   reporter,
   gasPrice,

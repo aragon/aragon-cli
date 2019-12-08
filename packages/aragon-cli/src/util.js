@@ -1,19 +1,19 @@
-const findUp = require('find-up')
-const path = require('path')
-const execa = require('execa')
-const fs = require('fs')
-const { readJson } = require('fs-extra')
-const which = require('which')
-const { request } = require('http')
-const net = require('net')
-const inquirer = require('inquirer')
+import findUp from 'find-up'
+import path from 'path'
+import execa from 'execa'
+import fs from 'fs'
+import { readJson } from 'fs-extra'
+import which from 'which'
+import { request } from 'http'
+import net from 'net'
+import inquirer from 'inquirer'
 
 let cachedProjectRoot
 
 const PGK_MANAGER_BIN_NPM = 'npm'
 const debugLogger = process.env.DEBUG ? console.log : () => {}
 
-const findProjectRoot = () => {
+export const findProjectRoot = () => {
   if (!cachedProjectRoot) {
     try {
       cachedProjectRoot = path.dirname(findUp.sync('arapp.json'))
@@ -25,7 +25,7 @@ const findProjectRoot = () => {
   return cachedProjectRoot
 }
 
-const isPortTaken = async (port, opts) => {
+export const isPortTaken = async (port, opts) => {
   opts = Object.assign({ timeout: 1000 }, opts)
 
   return new Promise(resolve => {
@@ -52,7 +52,7 @@ const isPortTaken = async (port, opts) => {
  * @param {string} url Server url
  * @returns {boolean} true if server is returning a valid response
  */
-function isHttpServerOpen(url) {
+export function isHttpServerOpen(url) {
   return new Promise(resolve => {
     request(url, { method: 'HEAD' }, r => {
       resolve(r.statusCode >= 200 && r.statusCode < 400)
@@ -62,11 +62,11 @@ function isHttpServerOpen(url) {
   })
 }
 
-const getNodePackageManager = () => {
+export const getNodePackageManager = () => {
   return PGK_MANAGER_BIN_NPM
 }
 
-const installDeps = (cwd, task) => {
+export const installDeps = (cwd, task) => {
   const bin = getNodePackageManager()
   const installTask = execa(bin, ['install'], { cwd })
   installTask.stdout.on('data', log => {
@@ -87,7 +87,7 @@ const installDeps = (cwd, task) => {
  * @param {string} binaryName e.g.: `ipfs`
  * @returns {string} the path to the binary, `null` if unsuccessful
  */
-const getBinary = binaryName => {
+export const getBinary = binaryName => {
   let binaryPath = getLocalBinary(binaryName)
 
   if (binaryPath === null) {
@@ -103,7 +103,7 @@ const getBinary = binaryName => {
   return binaryPath
 }
 
-const getLocalBinary = (binaryName, projectRoot) => {
+export const getLocalBinary = (binaryName, projectRoot) => {
   if (!projectRoot) {
     // __dirname evaluates to the directory of this file (util.js)
     // e.g.: `../dist/` or `../src/`
@@ -137,9 +137,8 @@ const getLocalBinary = (binaryName, projectRoot) => {
   return null
 }
 
-const getGlobalBinary = binaryName => {
+export const getGlobalBinary = binaryName => {
   debugLogger(`Searching binary ${binaryName} in the global PATH variable.`)
-
   try {
     return which.sync(binaryName)
   } catch {
@@ -148,7 +147,7 @@ const getGlobalBinary = binaryName => {
 }
 
 // TODO: Add a cwd paramter
-const runScriptTask = async (task, scriptName) => {
+export const runScriptTask = async (task, scriptName) => {
   if (!fs.existsSync('package.json')) {
     task.skip('No package.json found')
     return
@@ -184,7 +183,7 @@ const runScriptTask = async (task, scriptName) => {
  * @param {string} target must be a string
  * @returns {boolean} the parsed value
  */
-const parseAsBoolean = target => {
+export const parseAsBoolean = target => {
   if (typeof target !== 'string') {
     throw new Error(
       `Expected ${target} to be of type string, not ${typeof target}`
@@ -210,7 +209,7 @@ const parseAsBoolean = target => {
  * @param {string} target must be a string
  * @returns {Array} the parsed value
  */
-const parseAsArray = target => {
+export const parseAsArray = target => {
   if (typeof target !== 'string') {
     throw new Error(
       `Expected ${target} to be of type string, not ${typeof target}`
@@ -233,7 +232,7 @@ const parseAsArray = target => {
  * @param {string} target must be a string
  * @returns {boolean|Array} the parsed value
  */
-const parseArgumentStringIfPossible = target => {
+export const parseArgumentStringIfPossible = target => {
   // convert to boolean: 'false' to false
   try {
     return parseAsBoolean(target)
@@ -249,7 +248,7 @@ const parseArgumentStringIfPossible = target => {
   return target
 }
 
-const askForInput = async message => {
+export const askForInput = async message => {
   const { reply } = await inquirer.prompt([
     {
       type: 'input',
@@ -260,7 +259,7 @@ const askForInput = async message => {
   return reply
 }
 
-const askForChoice = async (message, choices) => {
+export const askForChoice = async (message, choices) => {
   const { reply } = await inquirer.prompt([
     {
       type: 'list',
@@ -272,7 +271,7 @@ const askForChoice = async (message, choices) => {
   return reply
 }
 
-const askForConfirmation = async message => {
+export const askForConfirmation = async message => {
   const { reply } = await inquirer.prompt([
     {
       type: 'confirm',
@@ -281,21 +280,4 @@ const askForConfirmation = async message => {
     },
   ])
   return reply
-}
-
-module.exports = {
-  parseArgumentStringIfPossible,
-  debugLogger,
-  findProjectRoot,
-  isHttpServerOpen,
-  isPortTaken,
-  installDeps,
-  runScriptTask,
-  getNodePackageManager,
-  getBinary,
-  getLocalBinary,
-  getGlobalBinary,
-  askForInput,
-  askForChoice,
-  askForConfirmation,
 }

@@ -20,7 +20,7 @@ test.beforeEach('setup', t => {
     getLatestVersion: async () => {},
   })
 
-  const getApmRegistryPackages = proxyquire
+  const { default: getApmRegistryPackages } = proxyquire
     .noCallThru()
     .load('../../src/apm/getApmRegistryPackages', {
       '@aragon/apm': apmStub,

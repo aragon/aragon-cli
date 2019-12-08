@@ -138,7 +138,7 @@ test('initAragonJS returns an instance of the Aragon wrapper', async t => {
   t.plan(1)
 
   const AragonStub = createAragonJsStub()
-  var { initAragonJS } = proxyquire
+  const { initAragonJS } = proxyquire
     .noCallThru()
     .load('../../src/helpers/aragonjs-wrapper', {
       '@aragon/wrapper': AragonStub,
@@ -153,7 +153,7 @@ test('initAragonJS callbacks subscribe to the right observables', async t => {
   t.plan(4)
 
   const AragonStub = createAragonJsStub()
-  var { initAragonJS } = proxyquire
+  const { initAragonJS } = proxyquire
     .noCallThru()
     .load('../../src/helpers/aragonjs-wrapper', {
       '@aragon/wrapper': AragonStub,

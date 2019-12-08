@@ -1,8 +1,8 @@
-const fs = require('fs')
+import fs from 'fs'
 //
-const { findProjectRoot } = require('../util')
+import { findProjectRoot } from '../util'
 
-const getTruffleConfig = () => {
+export const getTruffleConfig = () => {
   try {
     if (fs.existsSync(`${findProjectRoot()}/truffle.js`)) {
       const truffleConfig = require(`${findProjectRoot()}/truffle`)
@@ -21,5 +21,3 @@ const getTruffleConfig = () => {
 
   throw new Error(`Didn't find any truffle.js file`)
 }
-
-module.exports = { getTruffleConfig }

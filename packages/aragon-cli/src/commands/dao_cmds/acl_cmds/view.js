@@ -1,33 +1,29 @@
-const { white } = require('chalk')
-const TaskList = require('listr')
-const { keyBy } = require('lodash')
-const Table = require('cli-table')
-const { keccak256 } = require('web3-utils')
-require('@aragon/toolkit/@types/acl/typedef') // Load JSDoc types ACL specific
-require('@aragon/toolkit/@types/typedef') // Load JSDoc generic types
-const {
+import { white } from 'chalk'
+import TaskList from 'listr'
+import { keyBy } from 'lodash'
+import Table from 'cli-table'
+import { keccak256 } from 'web3-utils'
+import '@aragon/toolkit/@types/acl/typedef' // Load JSDoc types ACL specific
+import '@aragon/toolkit/@types/typedef' // Load JSDoc generic types
+import {
   ANY_ENTITY,
   NO_MANAGER,
   ZERO_ADDRESS,
-} = require('@aragon/toolkit/dist/helpers/constants')
-const {
-  getDaoAddressPermissionsApps,
-} = require('@aragon/toolkit/dist/acl/view')
-const {
-  formatAclPermissions,
-} = require('@aragon/toolkit/dist/acl/viewFormatter')
+} from '@aragon/toolkit/dist/helpers/constants'
+import { getDaoAddressPermissionsApps } from '@aragon/toolkit/dist/acl/view'
+import { formatAclPermissions } from '@aragon/toolkit/dist/acl/viewFormatter'
 //
-const daoArg = require('../utils/daoArg')
-const { listApps } = require('../utils/knownApps')
-const { ensureWeb3 } = require('../../../helpers/web3-fallback')
-const listrOpts = require('../../../helpers/listr-options')
-const defaultAppsRoles = require('../../../knownRoles.json')
+import daoArg from '../utils/daoArg'
 
-exports.command = 'view <dao>'
+import { listApps } from '../utils/knownApps'
+import { ensureWeb3 } from '../../../helpers/web3-fallback'
+import listrOpts from '../../../helpers/listr-options'
+import defaultAppsRoles from '../../../knownRoles.json'
 
-exports.describe = 'Inspect permissions in a DAO'
+export const command = 'view <dao>'
+export const describe = 'Inspect permissions in a DAO'
 
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return daoArg(yargs)
 }
 
@@ -44,7 +40,7 @@ exports.builder = function(yargs) {
  * @param  {boolean} args.debug Debug flag
  * @return {Promise<TaskList>} void, will process.exit(0) if successful
  */
-const handler = async function({
+export const handler = async function({
   dao,
   network,
   apm,
@@ -150,12 +146,6 @@ const handler = async function({
     process.exit(0) // force exit, as aragonjs hangs
   })
 }
-
-// Exporting afterwards to solve documentation lint error:
-// ✖ documentation lint found some errors. Please fix them and try committing again.
-// ... /aragon-cli/src/commands/dao_cmds/acl_cmds/view.js
-// 39:1  warning  @memberof reference to view not found
-exports.handler = handler
 
 /**
  * Helper to short hex string for better readability

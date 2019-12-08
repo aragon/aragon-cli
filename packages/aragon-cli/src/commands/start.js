@@ -6,21 +6,22 @@ import {
   openClient,
 } from '../lib/start'
 
-const { blue } = require('chalk')
-const TaskList = require('listr')
+import { blue } from 'chalk'
+import TaskList from 'listr'
+
 //
-const pkg = require('../../package.json')
-const { installDeps } = require('../util')
+import pkg from '../../package.json'
+
+import { installDeps } from '../util'
 
 const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 
-exports.command = 'start [client-repo] [client-version]'
+export const command = 'start [client-repo] [client-version]'
+export const describe = 'Start the Aragon GUI (graphical user interface)'
 
-exports.describe = 'Start the Aragon GUI (graphical user interface)'
-
-exports.builder = yargs => {
+export const builder = yargs => {
   return yargs
     .positional('client-repo', {
       description:
@@ -42,7 +43,7 @@ exports.builder = yargs => {
     })
 }
 
-exports.task = async function({
+export const task = async function({
   clientRepo,
   clientVersion,
   clientPort,
@@ -98,20 +99,20 @@ exports.task = async function({
   return tasks
 }
 
-exports.handler = async ({
+export const handler = async ({
   reporter,
   clientRepo,
   clientVersion,
   clientPort,
   clientPath,
 }) => {
-  const task = await exports.task({
+  const tasks = await task({
     clientRepo,
     clientVersion,
     clientPort,
     clientPath,
   })
-  return task
+  return tasks
     .run()
     .then(() =>
       reporter.info(

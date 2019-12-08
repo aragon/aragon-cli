@@ -22,9 +22,11 @@ test.beforeEach('setup', t => {
     getLatestVersion: async () => {},
   })
 
-  const getApmRepo = proxyquire.noCallThru().load('../../src/apm/getApmRepo', {
-    '@aragon/apm': apmStub,
-  })
+  const { default: getApmRepo } = proxyquire
+    .noCallThru()
+    .load('../../src/apm/getApmRepo', {
+      '@aragon/apm': apmStub,
+    })
 
   t.context = {
     getApmRepo,

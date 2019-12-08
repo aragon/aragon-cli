@@ -1,8 +1,8 @@
-const Web3 = require('web3')
-const { merge } = require('lodash')
+import Web3 from 'web3'
+import { merge } from 'lodash'
 //
-const defaultEnvironments = require('../../../config/environments.default')
-const defaultNetworks = require('../../../config/truffle.default')
+import defaultEnvironments from '../../../config/environments.default'
+import defaultNetworks from '../../../config/truffle.default'
 
 const FRAME_ENDPOINT = 'ws://localhost:1248'
 const FRAME_ORIGIN = 'aragonCLI'
@@ -66,7 +66,7 @@ function configureNetwork(network, truffleConfig, options) {
   }
 }
 
-export function configEnvironment({
+export default function configEnvironment({
   ignoreNetwork,
   useFrame,
   environment,

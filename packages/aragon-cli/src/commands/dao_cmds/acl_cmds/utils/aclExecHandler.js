@@ -1,20 +1,19 @@
-const { keccak256 } = require('web3-utils')
+import { keccak256 } from 'web3-utils'
+import { getAclAddress } from '@aragon/toolkit/dist/kernel/kernel'
 //
-const execHandler = require('../../utils/execHandler').handler
-const { ensureWeb3 } = require('../../../../helpers/web3-fallback')
+import { handler as execHandler } from '../../utils/execHandler'
 
-module.exports = async function(
+import { ensureWeb3 } from '../../../../helpers/web3-fallback'
+
+export default async function(
   dao,
   method,
   params,
   { reporter, apm, network, gasPrice, wsProvider, role, silent, debug }
 ) {
   const web3 = await ensureWeb3(network)
-  const daoInstance = new web3.eth.Contract(
-    require('@aragon/os/build/contracts/Kernel').abi,
-    dao
-  )
-  const aclAddress = await daoInstance.methods.acl().call()
+
+  const aclAddress = await getAclAddress(dao, web3)
 
   const processedParams = role.startsWith('0x')
     ? params

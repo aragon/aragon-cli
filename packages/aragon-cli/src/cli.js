@@ -1,14 +1,14 @@
 import 'source-map-support/register'
+import url from 'url'
 import yargs from 'yargs'
+import { toWei } from 'web3-utils'
+import { ens } from '@aragon/aragen'
+//
+import { configCliMiddleware } from './middleware'
 import * as AragonReporter from './reporters/AragonReporter'
-const Web3 = require('web3')
+import { findProjectRoot } from './util'
 
 const DEFAULT_GAS_PRICE = require('../package.json').aragon.defaultGasPrice
-
-const { configCliMiddleware } = require('./middleware')
-const { findProjectRoot } = require('./util')
-const { ens } = require('@aragon/aragen')
-const url = require('url')
 
 const debugMiddleware = argv => {
   argv.reporter.debug(
@@ -43,7 +43,7 @@ const cli = yargs
     description: 'Gas price in Gwei',
     default: DEFAULT_GAS_PRICE,
     coerce: gasPrice => {
-      return Web3.utils.toWei(gasPrice, 'gwei')
+      return toWei(gasPrice, 'gwei')
     },
   })
   .option('cwd', {

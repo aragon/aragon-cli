@@ -1,9 +1,9 @@
-const { writeJson } = require('fs-extra')
+import { writeJson } from 'fs-extra'
 //
-const extract = require('./solidity-extractor')
+import { extractContractInfo } from './solidity-extractor'
 
-module.exports = async (contractPath, outputPath) => {
-  const contractInfo = await extract(contractPath)
+export default async (contractPath, outputPath) => {
+  const contractInfo = await extractContractInfo(contractPath)
 
   await writeJson(outputPath, contractInfo, { spaces: '\t' })
 }

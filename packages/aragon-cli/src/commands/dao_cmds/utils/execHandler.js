@@ -1,8 +1,8 @@
-const TaskList = require('listr')
-const { blue } = require('chalk')
-const exec = require('@aragon/toolkit/dist/dao/exec')
+import TaskList from 'listr'
+import { blue } from 'chalk'
+import exec from '@aragon/toolkit/dist/dao/exec'
 //
-const listrOpts = require('../../../helpers/listr-options')
+import listrOpts from '../../../helpers/listr-options'
 
 /**
  * Return a task list for executing a method on a
@@ -20,7 +20,7 @@ const listrOpts = require('../../../helpers/listr-options')
  * @param {boolean} params.debug Debug mode
  * @returns {Promise<TaskList>} Execution task list
  */
-async function task({
+export async function task({
   dao,
   app,
   method,
@@ -85,7 +85,7 @@ async function task({
  * @param {boolean} args.debug Debug mode
  * @returns {Promise} Execution promise
  */
-async function handler(args) {
+export async function handler(args) {
   const tasks = await task(args)
 
   return tasks.run().then(ctx => {
@@ -94,9 +94,4 @@ async function handler(args) {
     )
     process.exit()
   })
-}
-
-module.exports = {
-  handler,
-  task,
 }

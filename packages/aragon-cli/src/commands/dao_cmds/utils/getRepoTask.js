@@ -2,7 +2,7 @@ import { DEFAULT_IPFS_TIMEOUT } from '@aragon/toolkit/dist/helpers/constants'
 //
 const LATEST_VERSION = 'latest'
 
-module.exports = {
+export default {
   args: yargs => {
     return yargs
       .option('apmRepo', {

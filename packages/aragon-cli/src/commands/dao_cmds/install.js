@@ -1,34 +1,32 @@
-const TaskList = require('listr')
-const { blue, green, bold } = require('chalk')
-const APM = require('@aragon/apm')
-const {
+import TaskList from 'listr'
+import { blue, green, bold } from 'chalk'
+import APM from '@aragon/apm'
+import {
   ANY_ENTITY,
   NO_MANAGER,
   ZERO_ADDRESS,
-} = require('@aragon/toolkit/dist/helpers/constants')
-const {
-  resolveAddressOrEnsDomain,
-} = require('@aragon/toolkit/dist/dao/utils/resolveAddressOrEnsDomain')
-const {
+} from '@aragon/toolkit/dist/helpers/constants'
+import { resolveAddressOrEnsDomain } from '@aragon/toolkit/dist/dao/utils/resolveAddressOrEnsDomain'
+import {
   getAclAddress,
   getAppProxyAddressFromReceipt,
   getAppBase,
-} = require('@aragon/toolkit/dist/kernel/kernel')
-const { addressesEqual } = require('@aragon/toolkit/dist/util')
+} from '@aragon/toolkit/dist/kernel/kernel'
+import { addressesEqual } from '@aragon/toolkit/dist/util'
 //
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const listrOpts = require('../../helpers/listr-options')
-const defaultAPMName = require('../../helpers/default-apm')
-const encodeInitPayload = require('../../helpers/encodeInitPayload')
-const execTask = require('./utils/execHandler').task
-const getRepoTask = require('./utils/getRepoTask')
-const daoArg = require('./utils/daoArg')
+import { ensureWeb3 } from '../../helpers/web3-fallback'
 
-exports.command = 'install <dao> <apmRepo> [apmRepoVersion]'
+import listrOpts from '../../helpers/listr-options'
+import defaultAPMName from '../../helpers/default-apm'
+import encodeInitPayload from '../../helpers/encodeInitPayload'
+import { task as execTask } from './utils/execHandler'
+import getRepoTask from './utils/getRepoTask'
+import daoArg from './utils/daoArg'
 
-exports.describe = 'Install an app into a DAO'
+export const command = 'install <dao> <apmRepo> [apmRepoVersion]'
+export const describe = 'Install an app into a DAO'
 
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return getRepoTask
     .args(daoArg(yargs))
     .option('app-init', {
@@ -48,7 +46,7 @@ exports.builder = function(yargs) {
     })
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   dao,
   gasPrice,

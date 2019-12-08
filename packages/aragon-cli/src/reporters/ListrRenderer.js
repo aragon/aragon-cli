@@ -1,8 +1,8 @@
-const VerboseRenderer = require('listr-verbose-renderer')
-const SilentRenderer = require('listr-silent-renderer')
-const UpdateRenderer = require('listr-update-renderer')
+import VerboseRenderer from 'listr-verbose-renderer'
+import SilentRenderer from 'listr-silent-renderer'
+import UpdateRenderer from 'listr-update-renderer'
 
-module.exports = function(silent, debug) {
+export default function(silent, debug) {
   if (debug) return VerboseRenderer
   if (silent) return SilentRenderer
   return UpdateRenderer

@@ -1,25 +1,25 @@
-const TaskList = require('listr')
-const Table = require('cli-table')
-const { blue, green, white } = require('chalk')
-const { addressesEqual } = require('@aragon/toolkit/dist/util')
-const {
+import TaskList from 'listr'
+import Table from 'cli-table'
+import { blue, green, white } from 'chalk'
+import { addressesEqual } from '@aragon/toolkit/dist/util'
+import {
   getDaoAddress,
   getInstalledApps,
   getAllApps,
-} = require('@aragon/toolkit/dist/dao/apps')
+} from '@aragon/toolkit/dist/dao/apps'
 //
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const listrOpts = require('../../helpers/listr-options')
-const daoArg = require('./utils/daoArg')
-const { listApps } = require('./utils/knownApps')
+import { ensureWeb3 } from '../../helpers/web3-fallback'
+
+import listrOpts from '../../helpers/listr-options'
+import daoArg from './utils/daoArg'
+import { listApps } from './utils/knownApps'
 
 let knownApps
 
-exports.command = 'apps <dao>'
+export const command = 'apps <dao>'
+export const describe = 'Get all the apps in a DAO'
 
-exports.describe = 'Get all the apps in a DAO'
-
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return daoArg(yargs).option('all', {
     description: 'Whether to include apps without permissions as well',
     boolean: true,
@@ -44,7 +44,7 @@ const printContent = content => {
 
 const printApps = apps => {
   const appsContent = apps
-    .map(({ appId, proxyAddress, codeAddress, content, appName, version }) => [
+    .map(({ appId, proxyAddress, content, appName, version }) => [
       appName
         ? printAppNameAndVersion(appName, version)
         : printAppNameFromAppId(appId),
@@ -78,7 +78,7 @@ const printPermissionlessApps = apps => {
   }
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   dao,
   all,
