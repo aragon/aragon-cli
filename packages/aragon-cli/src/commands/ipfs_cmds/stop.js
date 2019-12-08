@@ -1,6 +1,6 @@
 import TaskList from 'listr'
-import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
-import killProcessOnPort from 'kill-port'
+//
+import listrOpts from '../../helpers/listr-options'
 //
 import {
   getDefaultRepoPath,
@@ -8,6 +8,7 @@ import {
   getRepoConfig,
   getClient,
 } from '../../lib/ipfs'
+import { killProcessOnPort } from '../../lib/node'
 
 export const command = 'stop'
 export const describe = 'Stop the daemon.'

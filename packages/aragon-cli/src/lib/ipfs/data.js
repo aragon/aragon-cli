@@ -1,10 +1,12 @@
-export function extractCIDsFromMerkleDAG(merkleDAG, opts = {}) {
+export function extractCIDsFromMerkleDAG(merkleDAG, options = {}) {
   const CIDs = []
   CIDs.push(merkleDAG.cid)
 
-  if (opts.recursive && merkleDAG.isDir && merkleDAG.links) {
+  if (options.recursive && merkleDAG.isDir && merkleDAG.links) {
     merkleDAG.links
-      .map(merkleDAGOfLink => extractCIDsFromMerkleDAG(merkleDAGOfLink, opts))
+      .map(merkleDAGOfLink =>
+        extractCIDsFromMerkleDAG(merkleDAGOfLink, options)
+      )
       .map(CIDsOfLink => CIDs.push(...CIDsOfLink))
   }
 
@@ -30,14 +32,14 @@ export function parseMerkleDAG(dagNode) {
   return parsed
 }
 
-export async function getMerkleDAG(client, cid, opts = {}) {
+export async function getMerkleDAG(client, cid, options = {}) {
   const merkleDAG = parseMerkleDAG(await client.object.get(cid))
   merkleDAG.cid = cid
 
-  if (opts.recursive && merkleDAG.isDir && merkleDAG.links) {
+  if (options.recursive && merkleDAG.isDir && merkleDAG.links) {
     // fetch the MerkleDAG of each link recursively
     const promises = merkleDAG.links.map(async link => {
-      const object = await getMerkleDAG(client, link.cid, opts)
+      const object = await getMerkleDAG(client, link.cid, options)
       return Object.assign(link, object)
     })
 

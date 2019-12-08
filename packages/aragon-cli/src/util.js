@@ -1,32 +1,17 @@
 const findUp = require('find-up')
 const path = require('path')
 const execa = require('execa')
-const net = require('net')
 const fs = require('fs')
 const { readJson } = require('fs-extra')
 const which = require('which')
 const { request } = require('http')
+const net = require('net')
 const inquirer = require('inquirer')
 
 let cachedProjectRoot
 
 const PGK_MANAGER_BIN_NPM = 'npm'
 const debugLogger = process.env.DEBUG ? console.log : () => {}
-
-const ARAGON_DOMAIN = 'aragonid.eth'
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-
-/**
- * Check eth address equality without checksums
- * @param {string} first address
- * @param {string} second address
- * @returns {boolean} address equality
- */
-function addressesEqual(first, second) {
-  first = first && first.toLowerCase()
-  second = second && second.toLowerCase()
-  return first === second
-}
 
 const findProjectRoot = () => {
   if (!cachedProjectRoot) {
@@ -202,52 +187,6 @@ const runScriptTask = async (task, scriptName) => {
   })
 }
 
-const getContract = (pkg, contract) => {
-  const artifact = require(`${pkg}/build/contracts/${contract}.json`)
-  return artifact
-}
-
-const ANY_ENTITY = '0xffffffffffffffffffffffffffffffffffffffff'
-const NO_MANAGER = '0x0000000000000000000000000000000000000000'
-const DEFAULT_GAS_FUZZ_FACTOR = 1.5
-const LAST_BLOCK_GAS_LIMIT_FACTOR = 0.95
-
-/**
- *
- * Calculate the recommended gas limit
- *
- * @param {*} web3 eth provider to get the last block gas limit
- * @param {number} estimatedGas estimated gas
- * @param {number} gasFuzzFactor defaults to 1.5
- * @returns {number} gasLimit
- */
-const getRecommendedGasLimit = async (
-  web3,
-  estimatedGas,
-  gasFuzzFactor = DEFAULT_GAS_FUZZ_FACTOR
-) => {
-  // TODO print these values if --debug is passed
-  const latestBlock = await web3.eth.getBlock('latest')
-  const blockGasLimit = latestBlock.gasLimit
-
-  const upperGasLimit = Math.round(blockGasLimit * LAST_BLOCK_GAS_LIMIT_FACTOR)
-  if (estimatedGas > upperGasLimit) return estimatedGas // TODO print a warning?
-
-  const bufferedGasLimit = Math.round(estimatedGas * gasFuzzFactor)
-
-  if (bufferedGasLimit < upperGasLimit) return bufferedGasLimit
-  return upperGasLimit
-}
-
-const expandLink = link => {
-  const { name, address } = link
-  const placeholder = `__${name}${'_'.repeat(38 - name.length)}`
-  link.placeholder = placeholder
-  link.regex = new RegExp(placeholder, 'g')
-  link.addressBytes = address.slice(0, 2) === '0x' ? address.slice(2) : address
-  return link
-}
-
 /**
  * Parse a String to Boolean, or throw an error.
  *
@@ -321,31 +260,6 @@ const parseArgumentStringIfPossible = target => {
   return target
 }
 
-/**
- * Validates an Aragon Id
- * @param {string} aragonId Aragon Id
- * @returns {boolean} `true` if valid
- */
-function isValidAragonId(aragonId) {
-  return /^[a-z0-9-]+$/.test(aragonId)
-}
-
-/**
- * Convert a DAO id to its subdomain
- * E.g. mydao -> mydao.aragonid.eth
- * @param {string} aragonId Aragon Id
- * @returns {string} DAO subdomain
- */
-function convertDAOIdToSubdomain(aragonId) {
-  // If already a subdomain, return
-  if (new RegExp(`^([a-z0-9-]+).${ARAGON_DOMAIN}$`).test(aragonId))
-    return aragonId
-
-  if (!isValidAragonId(aragonId)) throw new Error(`Invalid DAO Id: ${aragonId}`)
-
-  return `${aragonId}.${ARAGON_DOMAIN}`
-}
-
 const askForInput = async message => {
   const { reply } = await inquirer.prompt([
     {
@@ -381,7 +295,6 @@ const askForConfirmation = async message => {
 }
 
 module.exports = {
-  addressesEqual,
   parseArgumentStringIfPossible,
   debugLogger,
   findProjectRoot,
@@ -394,15 +307,6 @@ module.exports = {
   getBinary,
   getLocalBinary,
   getGlobalBinary,
-  getContract,
-  isValidAragonId,
-  convertDAOIdToSubdomain,
-  ARAGON_DOMAIN,
-  ANY_ENTITY,
-  NO_MANAGER,
-  ZERO_ADDRESS,
-  getRecommendedGasLimit,
-  expandLink,
   askForInput,
   askForChoice,
   askForConfirmation,

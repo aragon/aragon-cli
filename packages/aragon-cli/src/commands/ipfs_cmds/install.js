@@ -1,24 +1,23 @@
 import TaskList from 'listr'
-import execa from 'execa'
 import inquirer from 'inquirer'
-import chalk from 'chalk'
-import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+import { blue, red, yellow, green } from 'chalk'
 //
+import listrOpts from '../../helpers/listr-options'
+import { getGlobalBinary, getLocalBinary } from '../../util'
+//
+import { cleanVersion, getDistName } from '../../lib/ipfs'
+import { installGoIpfs } from '../../lib/ipfs/install'
 import {
-  getNodePackageManager,
-  getGlobalBinary,
-  getLocalBinary,
-} from '../../util'
+  GO_IMPL_DIST_VERSION,
+  GO_IMPL_DIST_URL,
+} from '../../lib/ipfs/constants'
+import { isPackage, getGlobalPackagesLocation } from '../../lib/node/packages'
 import {
   getPlatform,
   getArch,
-  getArchForGO,
-  isProject,
-  cleanVersion,
-  getGlobalNpmPrefix,
   getPlatformForGO,
-  getDistName,
-} from '../../lib/ipfs'
+  getArchForGO,
+} from '../../lib/node'
 
 export const command = 'install'
 export const describe = 'Download and install the go-ipfs binaries.'
@@ -27,16 +26,20 @@ export const builder = yargs =>
   yargs
     .option('dist-version', {
       description: 'The version of IPFS that will be installed',
-      default: '0.4.22',
+      default: GO_IMPL_DIST_VERSION,
     })
     .option('dist-url', {
       description: 'The url from which to download IPFS',
-      default: 'https://dist.ipfs.io',
+      default: GO_IMPL_DIST_URL,
     })
     .option('local', {
       description: 'Whether to install IPFS as a project dependency',
       boolean: true,
       default: false,
+    })
+    .option('project-path', {
+      description: 'The project path to be used when installing locally',
+      default: process.cwd(),
     })
     .option('skip-confirmation', {
       description: 'Whether to skip the confirmation step',
@@ -44,7 +47,7 @@ export const builder = yargs =>
       default: false,
     })
 
-const runPrepareTask = ({ silent, debug, local }) => {
+const runPrepareTask = ({ silent, debug, local, projectPath }) => {
   return new TaskList(
     [
       {
@@ -65,16 +68,16 @@ const runPrepareTask = ({ silent, debug, local }) => {
         title: 'Determine location',
         task: async ctx => {
           if (local) {
-            ctx.location = process.cwd()
-            if (!isProject(ctx.location)) {
+            ctx.location = projectPath
+            if (!isPackage(ctx.location)) {
               throw new Error(
-                `${chalk.red(ctx.location)} does not have a ${chalk.red(
+                `${red(ctx.location)} does not have a ${red(
                   'package.json'
                 )}. Did you wish to install IPFS globally?`
               )
             }
           } else {
-            ctx.location = await getGlobalNpmPrefix()
+            ctx.location = await getGlobalPackagesLocation()
           }
         },
       },
@@ -83,52 +86,22 @@ const runPrepareTask = ({ silent, debug, local }) => {
   ).run()
 }
 
-const runInstallTask = ({ silent, debug, local, distUrl, distVersion }) => {
+const runInstallTask = ({
+  silent,
+  debug,
+  local,
+  location,
+  distUrl,
+  distVersion,
+}) => {
   return new TaskList(
     [
       {
         title: 'Install IPFS',
         task: async task => {
-          const npmBinary = getNodePackageManager()
-          const exacaOptions = {
-            env: {
-              /*
-               *  https://github.com/ipfs/npm-go-ipfs-dep/blob/v0.4.21/src/index.js#L71
-               */
-              GO_IPFS_DIST_URL: distUrl,
-              /*
-               *  specifying `TARGET_VERSION` here, will throw an error, because:
-               *  https://github.com/ipfs/npm-go-ipfs/blob/master/link-ipfs.js#L49
-               */
-              // TARGET_VERSION: distVersion
-            },
-          }
-          const npmArgs = ['install', `go-ipfs@${distVersion}`]
-
-          if (local) {
-            npmArgs.push('--save')
-          } else {
-            npmArgs.push('--global')
-          }
-
-          const logPrefix = `npm ${npmArgs.join(' ')}:`
-          const installProcess = execa(npmBinary, npmArgs, exacaOptions)
-
-          installProcess.stdout.on('data', data => {
-            if (data) task.output = `${logPrefix} ${data}`
+          await installGoIpfs(local, location, distVersion, distUrl, {
+            logger: text => (task.output = text),
           })
-
-          try {
-            await installProcess
-          } catch (execaResult) {
-            if (execaResult.stderr.includes('No matching version found')) {
-              throw new Error(
-                `NPM cannot find version ${distVersion}. For more versions see: http://npmjs.com/package/go-ipfs?activeTab=versions`
-              )
-            } else {
-              throw new Error(execaResult.stderr)
-            }
-          }
         },
       },
     ],
@@ -143,6 +116,7 @@ export const handler = async argv => {
     distVersion,
     distUrl,
     local,
+    projectPath,
     reporter,
     skipConfirmation,
   } = argv
@@ -150,14 +124,11 @@ export const handler = async argv => {
    * Check if it's already installed
    */
   const existingBinaryLocation = local
-    ? getLocalBinary('ipfs', process.cwd())
+    ? getLocalBinary('ipfs', projectPath)
     : getGlobalBinary('ipfs')
 
   if (existingBinaryLocation) {
-    reporter.error(
-      'IPFS is already installed:',
-      chalk.red(existingBinaryLocation)
-    )
+    reporter.error('IPFS is already installed:', red(existingBinaryLocation))
     reporter.newLine()
 
     const uninstallCommand = local
@@ -165,13 +136,13 @@ export const handler = async argv => {
       : 'aragon ipfs uninstall'
     reporter.warning(
       'To install a different version, you must first run:',
-      chalk.yellow(uninstallCommand)
+      yellow(uninstallCommand)
     )
 
     if (!local) {
       reporter.warning(
         'To install IPFS in a project, use the --local flag:',
-        chalk.yellow('aragon ipfs install --local')
+        yellow('aragon ipfs install --local')
       )
     }
     return process.exit(1)
@@ -186,20 +157,21 @@ export const handler = async argv => {
       debug,
       silent,
       local,
+      projectPath,
     }
   )
 
   const actualVersion = cleanVersion(distVersion)
   const distName = getDistName(actualVersion, GO_OS, GO_ARCH)
 
-  reporter.newLine()
   reporter.info(
-    `Platform & architecture: ${chalk.blue(NODE_OS)}, ${chalk.blue(NODE_ARCH)}`
+    `
+Platform & architecture: ${blue(NODE_OS)}, ${blue(NODE_ARCH)}
+IPFS tarball: ${blue(distName)}
+IPFS distributions url: ${blue(distUrl)}
+NPM version: ${blue(distVersion)}
+Location: ${blue(location)}`
   )
-  reporter.info(`IPFS tarball: ${chalk.blue(distName)}`)
-  reporter.info(`IPFS distributions url: ${chalk.blue(distUrl)}`)
-  reporter.info(`NPM version: ${chalk.blue(distVersion)}`)
-  reporter.info(`Location: ${chalk.blue(location)}`)
 
   /**
    * Confirm & install
@@ -210,7 +182,7 @@ export const handler = async argv => {
       {
         type: 'confirm',
         name: 'confirmation',
-        message: `Are you sure you want to ${chalk.green('install IPFS')}?`,
+        message: `Are you sure you want to ${green('install IPFS')}?`,
       },
     ])
     if (!confirmation) return
@@ -222,13 +194,12 @@ export const handler = async argv => {
     distUrl,
     distVersion,
     local,
+    location,
   })
 
   reporter.newLine()
   reporter.success('Success!')
   reporter.info(
-    `Try it out with: ${chalk.blue(
-      local ? 'npx ipfs version' : 'ipfs version'
-    )}`
+    `Try it out with: ${blue(local ? 'npx ipfs version' : 'ipfs version')}`
   )
 }

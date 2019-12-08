@@ -1,7 +1,8 @@
 const Table = require('cli-table')
 const TaskList = require('listr')
+const getApmRegistryPackages = require('@aragon/toolkit/dist/apm/getApmRegistryPackages')
+//
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const getApmRegistryPackages = require('../../lib/apm/getApmRegistryPackages')
 
 exports.command = 'packages [apmRegistry]'
 

@@ -1,7 +1,8 @@
-const chalk = require('chalk')
-const defaultAPMName = require('@aragon/cli-utils/src/helpers/default-apm')
+const { bold } = require('chalk')
+const getApmRepo = require('@aragon/toolkit/dist/apm/getApmRepo')
+//
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const getApmRepo = require('../../lib/apm/getApmRepo')
+const defaultAPMName = require('../../helpers/default-apm')
 
 exports.command = 'info <apmRepo> [apmRepoVersion]'
 
@@ -35,7 +36,7 @@ exports.handler = async function({
         break
       case 2:
         // TODO: Use reporter instead of chalk? Should reporter have a 'title' function?
-        console.log(`Fetching ${chalk.bold(apmRepo)}@${apmRepoVersion}`)
+        console.log(`Fetching ${bold(apmRepo)}@${apmRepoVersion}`)
         break
     }
   }

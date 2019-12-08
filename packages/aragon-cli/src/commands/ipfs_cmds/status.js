@@ -1,9 +1,10 @@
 import TaskList from 'listr'
-import chalk from 'chalk'
 import publicIp from 'public-ip'
 import internalIp from 'internal-ip'
 import { existsSync } from 'fs'
-import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+import { black, bgWhite, blue, green, red } from 'chalk'
+//
+import listrOpts from '../../helpers/listr-options'
 import { getGlobalBinary, getLocalBinary } from '../../util'
 //
 import {
@@ -12,9 +13,9 @@ import {
   getRepoConfig,
   getPorts,
   getPeerIDConfig,
-  isDaemonRunning,
+  isLocalDaemonRunning,
   getRepoSize,
-  isIPFSCORS,
+  isCorsConfigured,
 } from '../../lib/ipfs'
 
 export const command = 'status'
@@ -59,7 +60,7 @@ const runCheckTask = ({ silent, debug, repoPath }) => {
         title: 'Check the daemon',
         skip: ctx => !ctx.repoExists,
         task: async ctx => {
-          ctx.daemonRunning = await isDaemonRunning({
+          ctx.daemonRunning = await isLocalDaemonRunning({
             protocol: 'http',
             host: '127.0.0.1',
             port: ctx.daemonPorts.api,
@@ -71,7 +72,7 @@ const runCheckTask = ({ silent, debug, repoPath }) => {
         skip: ctx => !ctx.daemonRunning,
         task: async ctx => {
           try {
-            ctx.corsEnabled = await isIPFSCORS({
+            ctx.corsEnabled = await isCorsConfigured({
               protocol: 'http',
               host: '127.0.0.1',
               port: ctx.daemonPorts.api,
@@ -128,43 +129,34 @@ export const handler = async argv => {
   })
 
   reporter.info(
-    `Local installation: ${chalk.blue(localBinPath || 'not installed')}`
-  )
-  reporter.info(
-    `Global installation: ${chalk.blue(globalBinPath || 'not installed')}`
+    `
+Local installation: ${blue(localBinPath || 'not installed')}
+Global installation: ${blue(globalBinPath || 'not installed')}`
   )
 
   reporter.newLine()
   if (repoExists) {
-    reporter.info(`Repository location: ${chalk.blue(repoPath)}`)
-    reporter.info(`Repository version: ${chalk.blue(repoVersion)}`)
-    reporter.info(`Repository size: ${chalk.blue(repoSize)}`)
-    reporter.newLine()
-    reporter.info(`API port: ${chalk.blue(daemonPorts.api)}`)
-    reporter.info(`Gateway port: ${chalk.blue(daemonPorts.gateway)}`)
-    reporter.info(`Swarm port: ${chalk.blue(daemonPorts.swarm)}`)
-    reporter.newLine()
-    reporter.info(`PeerID: ${chalk.bgWhite(chalk.black(peerID))}`)
-    reporter.info(
-      `Daemon: ${daemonRunning ? chalk.green('running') : chalk.red('stopped')}`
-    )
+    reporter.info(`
+Repository location: ${blue(repoPath)}
+Repository version: ${blue(repoVersion)}
+Repository size: ${blue(repoSize)}
+
+API port: ${blue(daemonPorts.api)}
+Gateway port: ${blue(daemonPorts.gateway)}
+Swarm port: ${blue(daemonPorts.swarm)}
+
+PeerID: ${bgWhite(black(peerID))}
+Daemon: ${daemonRunning ? green('running') : red('stopped')}`)
   } else {
-    reporter.info(`Repository: ${chalk.red('uninitialized')}`)
+    reporter.info(`Repository: ${red('uninitialized')}`)
   }
 
   if (daemonRunning) {
-    reporter.info(
-      `CORS: ${corsEnabled ? chalk.green('enabled') : chalk.red('disabled')}`
-    )
-    reporter.newLine()
-    reporter.info(
-      `Public Swarm MultiAddress: ${chalk.blue(publicSwarmMultiAddr)}`
-    )
-    reporter.info(
-      `Internal Swarm MultiAddress: ${chalk.blue(internalSwarmMultiAddr)}`
-    )
-    reporter.info(
-      `Local Swarm MultiAddress: ${chalk.blue(localSwarmMultiAddr)}`
-    )
+    reporter.info(`
+CORS: ${corsEnabled ? green('enabled') : red('disabled')}
+  
+Public Swarm MultiAddress: ${blue(publicSwarmMultiAddr)}
+Internal Swarm MultiAddress: ${blue(internalSwarmMultiAddr)}
+Local Swarm MultiAddress: ${blue(localSwarmMultiAddr)}`)
   }
 }

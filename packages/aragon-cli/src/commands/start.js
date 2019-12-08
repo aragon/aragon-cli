@@ -7,8 +7,10 @@ import {
   startClient,
   openClient,
 } from '../lib/start'
+
 const { blue } = require('chalk')
 const TaskList = require('listr')
+//
 const pkg = require('../../package.json')
 const { installDepsWithoutTask: installDeps, isPortTaken } = require('../util')
 

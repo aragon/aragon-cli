@@ -1,5 +1,17 @@
 const killProcessOnPort = require('kill-port')
 
-killProcessOnPort('8545')
-  .then(() => 'Process killed on 8545')
-  .catch(() => 'Cannot kill the process on 8545')
+const IPFS_API_PORT = 5001
+const DEVCHAIN_PORT = 8545
+
+Promise.all([
+  killProcessOnPort(IPFS_API_PORT),
+  killProcessOnPort(DEVCHAIN_PORT),
+])
+  .then(() => {
+    console.log(`Processes killed on ports: ${IPFS_API_PORT}, ${DEVCHAIN_PORT}`)
+  })
+  .catch(() => {
+    console.log(
+      `Cannot kill processes on ports: ${IPFS_API_PORT}, ${DEVCHAIN_PORT}}`
+    )
+  })

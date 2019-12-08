@@ -1,9 +1,10 @@
 const path = require('path')
 const ignore = require('ignore')
 const fs = require('fs')
-const { findProjectRoot } = require('../../../util')
 const { copy, pathExistsSync } = require('fs-extra')
 const { promisify } = require('util')
+//
+const { findProjectRoot } = require('../../../util')
 
 const MANIFEST_FILE = 'manifest.json'
 const ARTIFACT_FILE = 'artifact.json'

@@ -1,7 +1,7 @@
 const path = require('path')
-const chalk = require('chalk')
-const extractContractInfoToFile = require('../lib/extractContractInfoToFile')
+const { blue } = require('chalk')
 const TaskList = require('listr')
+const extractContractInfoToFile = require('@aragon/toolkit/dist/helpers/extractContractInfoToFile')
 
 exports.command = 'extract-functions [contract]'
 
@@ -37,6 +37,6 @@ exports.handler = async function({ cwd, reporter, contract, output }) {
   ])
 
   await tasks.run()
-  reporter.success(`Saved to ${chalk.blue(outputPath)}`)
+  reporter.success(`Saved to ${blue(outputPath)}`)
   process.exit()
 }

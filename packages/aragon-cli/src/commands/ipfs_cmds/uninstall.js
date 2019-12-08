@@ -1,8 +1,9 @@
 import TaskList from 'listr'
 import execa from 'execa'
-import chalk from 'chalk'
 import inquirer from 'inquirer'
-import listrOpts from '@aragon/cli-utils/src/helpers/listr-options'
+import { blue, red } from 'chalk'
+//
+import listrOpts from '../../helpers/listr-options'
 import {
   getGlobalBinary,
   getLocalBinary,
@@ -68,7 +69,7 @@ export const handler = async argv => {
   /**
    * Print confirmation details
    */
-  reporter.info(`Location: ${chalk.blue(ipfsBinPath)}`)
+  reporter.info(`Location: ${blue(ipfsBinPath)}`)
 
   /**
    * Confirm & uninstall
@@ -80,7 +81,7 @@ export const handler = async argv => {
         type: 'confirm',
         name: 'confirmation',
         default: false,
-        message: `Are you sure you want to ${chalk.red('uninstall IPFS')}?`,
+        message: `Are you sure you want to ${red('uninstall IPFS')}?`,
       },
     ])
     if (!confirmation) return

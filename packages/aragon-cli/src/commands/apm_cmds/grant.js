@@ -1,6 +1,7 @@
+const { blue, red } = require('chalk')
+const grantNewVersionsPermission = require('@aragon/toolkit/dist/apm/grantNewVersionsPermission')
+//
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const chalk = require('chalk')
-const grantNewVersionsPermission = require('../../lib/apm/grantNewVersionsPermission')
 
 exports.command = 'grant [grantees..]'
 exports.describe =
@@ -37,7 +38,7 @@ exports.handler = async function({
         // eslint-disable-next-line no-case-declarations
         const address = data
         reporter.info(
-          `Granting permission to publish on ${chalk.blue(
+          `Granting permission to publish on ${blue(
             module.appName
           )} for ${address}`
         )
@@ -45,7 +46,7 @@ exports.handler = async function({
       case 3:
         // eslint-disable-next-line no-case-declarations
         const txHash = data
-        reporter.success(`Successful transaction (${chalk.blue(txHash)})`)
+        reporter.success(`Successful transaction (${blue(txHash)})`)
         break
     }
   }
@@ -60,7 +61,7 @@ exports.handler = async function({
       { gasPrice: gasPrice || network.gasPrice }
     )
   } catch (err) {
-    reporter.error(`${err}\n${chalk.red('Command failed')}`)
+    reporter.error(`${err}\n${red('Command failed')}`)
     process.exit(1)
   }
 

@@ -1,8 +1,9 @@
 const TaskList = require('listr')
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const { green } = require('chalk')
-const listrOpts = require('@aragon/cli-utils/src/helpers/listr-options')
-const { isIdAssigned, assignId } = require('../../lib/dao/assign-id')
+const { isIdAssigned, assignId } = require('@aragon/toolkit/dist/dao/assign-id')
+//
+const { ensureWeb3 } = require('../../helpers/web3-fallback')
+const listrOpts = require('../../helpers/listr-options')
 
 // dao id assign command
 const idAssignCommand = 'assign <dao> <aragon-id>'
