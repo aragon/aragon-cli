@@ -30,7 +30,7 @@
     "@aragon/apps-shared-minime": "^1.0.2",
     "@aragon/id": "^2.1.0",
     "@aragon/os": "^4.3.0",
-    "@aragon/wrapper": "^5.0.0-rc.20",
+    "@aragon/wrapper": "5.0.0-rc.17",
     "@babel/cli": "^7.7.4",
     "@babel/core": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
