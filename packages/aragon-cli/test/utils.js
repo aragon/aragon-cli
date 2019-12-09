@@ -108,3 +108,20 @@ export function matchAddressAtLineContaining(str, query) {
   const line = matchLineContaining(str, query)
   return matchAddress(line)
 }
+
+/**
+ * Some characters are rendered differently depending on the OS.
+ *
+ * @param {string} stdout
+ */
+export function normalizeOutput(stdout) {
+  const next = stdout
+    .replace(/❯/g, '>')
+    .replace(/ℹ/g, 'i')
+    // TODO: remove after https://github.com/aragon/aragon-cli/issues/367 is fixed
+    .replace(/cli.js/g, 'aragon')
+    // sometimes there's an extra LF
+    .trim()
+
+  return next
+}
