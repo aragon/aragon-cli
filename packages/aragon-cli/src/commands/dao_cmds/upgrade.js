@@ -10,13 +10,13 @@ import listrOpts from '../../helpers/listr-options'
 import defaultAPMName from '../../helpers/default-apm'
 import daoArg from './utils/daoArg'
 import { task as execTask } from './utils/execHandler'
-import { task as getRepoTask, args } from './utils/getRepoTask'
+import { getRepoTask, getRepoBuilder } from './utils/getRepoTask'
 
 export const command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
 export const describe = 'Upgrade an app into a DAO'
 
 export const builder = function(yargs) {
-  return args(daoArg(yargs))
+  return getRepoBuilder(daoArg(yargs))
 }
 
 export const handler = async function({

@@ -20,14 +20,14 @@ import listrOpts from '../../helpers/listr-options'
 import defaultAPMName from '../../helpers/default-apm'
 import encodeInitPayload from '../../helpers/encodeInitPayload'
 import { task as execTask } from './utils/execHandler'
-import { task as getRepoTask, args } from './utils/getRepoTask'
+import { getRepoTask, getRepoBuilder } from './utils/getRepoTask'
 import daoArg from './utils/daoArg'
 
 export const command = 'install <dao> <apmRepo> [apmRepoVersion]'
 export const describe = 'Install an app into a DAO'
 
 export const builder = function(yargs) {
-  return args(daoArg(yargs))
+  return getRepoBuilder(daoArg(yargs))
     .option('app-init', {
       description:
         'Name of the function that will be called to initialize an app. Set it to "none" to skip initialization',

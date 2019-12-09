@@ -2,7 +2,7 @@ import { DEFAULT_IPFS_TIMEOUT } from '@aragon/toolkit/dist/helpers/constants'
 //
 const LATEST_VERSION = 'latest'
 
-export const args = function(yargs) {
+export function getRepoBuilder(yargs) {
   return yargs
     .option('apmRepo', {
       describe: 'Name of the aragonPM repo',
@@ -13,12 +13,12 @@ export const args = function(yargs) {
     })
 }
 
-export const task = async ({
+export async function getRepoTask({
   apm,
   apmRepo,
   apmRepoVersion = LATEST_VERSION,
   artifactRequired = true,
-}) => {
+}) {
   return async ctx => {
     if (apmRepoVersion === LATEST_VERSION) {
       ctx.repo = await apm.getLatestVersion(apmRepo, DEFAULT_IPFS_TIMEOUT)
