@@ -13,7 +13,7 @@ import { blue, green, bold } from 'chalk'
 import encodeInitPayload from '../helpers/encodeInitPayload'
 
 import listrOpts from '../helpers/listr-options'
-import getRepoTask from './dao_cmds/utils/getRepoTask'
+import { task as getRepoTask } from './utils/getRepoTask'
 import pkg from '../../package.json'
 import {
   findProjectRoot,
@@ -296,7 +296,7 @@ export const handler = async function({
         title: 'Fetch published repo',
         task: async ctx => {
           // getRepoTask.task() return a function with ctx argument
-          await getRepoTask.task({
+          await getRepoTask({
             apmRepo: module.appName,
             apm: APM(ctx.web3, apmOptions),
             artifactRequired: false,

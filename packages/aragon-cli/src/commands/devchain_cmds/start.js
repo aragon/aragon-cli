@@ -8,8 +8,8 @@ import chalk from 'chalk'
 import fs from 'fs'
 import ethers from 'ethers'
 import { promisify } from 'util'
+import ganache from 'ganache-cli'
 //
-import ganache from '../build/ganache-core.node.cli.js'
 import listrOpts from '../../helpers/listr-options'
 import pjson from '../../package.json'
 import devchainStatus from './status'
@@ -107,7 +107,7 @@ export const task = async function({
         task: async (ctx, task) => {
           await removeDir(snapshotPath)
           await mkDir(path.resolve(snapshotPath, '..'))
-          const snapshot = path.join(__dirname, '../../aragon-ganache')
+          const snapshot = path.join(__dirname, '@aragon/aragen/aragon-ganache')
           await recursiveCopy(snapshot, snapshotPath)
         },
         enabled: () => !fs.existsSync(snapshotPath) || reset,
@@ -117,6 +117,7 @@ export const task = async function({
         task: async (ctx, task) => {
           ctx.id = parseInt(networkId) || parseInt(1e8 * Math.random())
 
+          // TODO: Pass all argv options to ganache server
           const options = {
             network_id: ctx.id,
             blockTime,
