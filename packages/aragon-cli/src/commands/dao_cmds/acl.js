@@ -1,4 +1,4 @@
-import viewCommand from './acl_cmds/view'
+import { handler as viewCommandHandler } from './acl_cmds/view'
 
 export const command = 'acl <dao>'
 export const describe =
@@ -8,4 +8,4 @@ export const builder = function(yargs) {
   return yargs.commandDir('acl_cmds')
 }
 
-export const handler = viewCommand.handler
+export const handler = viewCommandHandler

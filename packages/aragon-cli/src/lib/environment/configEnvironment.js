@@ -66,7 +66,7 @@ function configureNetwork(network, truffleConfig, options) {
   }
 }
 
-export default function configEnvironment({
+export function configEnvironment({
   ignoreNetwork,
   useFrame,
   environment,

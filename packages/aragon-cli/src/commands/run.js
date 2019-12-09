@@ -13,7 +13,7 @@ import { blue, green, bold } from 'chalk'
 import encodeInitPayload from '../helpers/encodeInitPayload'
 
 import listrOpts from '../helpers/listr-options'
-import { task as getRepoTask } from './utils/getRepoTask'
+import { task as getRepoTask } from './dao_cmds/utils/getRepoTask'
 import pkg from '../../package.json'
 import {
   findProjectRoot,

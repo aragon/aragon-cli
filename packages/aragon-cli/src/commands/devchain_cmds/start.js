@@ -11,8 +11,8 @@ import { promisify } from 'util'
 import ganache from 'ganache-cli'
 //
 import listrOpts from '../../helpers/listr-options'
-import pjson from '../../package.json'
-import devchainStatus from './status'
+import pjson from '../../../package.json'
+import { task as devchainStatusTask } from './status'
 import { BLOCK_GAS_LIMIT, MNEMONIC } from './utils/ganache-vars'
 
 export const command = 'start'
@@ -76,7 +76,7 @@ export const task = async function({
 
   const snapshotPath = path.join(
     os.homedir(),
-    `.aragon/aragen-db-${pjson.version}`
+    `.aragon/devchain-db-${pjson.version}`
   )
 
   const tasks = new TaskList(
@@ -84,7 +84,7 @@ export const task = async function({
       {
         title: 'Check devchain status',
         task: async ctx => {
-          const task = await devchainStatus.task({
+          const task = await devchainStatusTask({
             port,
             reset,
             silent,
