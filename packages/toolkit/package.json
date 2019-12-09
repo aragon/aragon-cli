@@ -28,6 +28,7 @@
   "devDependencies": {
     "@aragon/apm": "^3.1.0",
     "@aragon/apps-shared-minime": "^1.0.2",
+    "@aragon/aragen": "^5.4.2",
     "@aragon/id": "^2.1.0",
     "@aragon/os": "^4.3.0",
     "@aragon/wrapper": "5.0.0-rc.17",
