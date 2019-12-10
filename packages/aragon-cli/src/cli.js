@@ -35,7 +35,7 @@ const MIDDLEWARES = [
 
 // Set up commands
 const cmd = require('yargs')
-  .strict()
+  // .strict() TODO: Fix to detect global options
   .parserConfiguration({
     'parse-numbers': false,
   })
