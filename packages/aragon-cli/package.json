@@ -14,9 +14,7 @@
     "build:watch": "npm run build -- -- --watch",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
-    "pretest": "node scripts/setup-integration-tests.js",
-    "posttest": "node scripts/teardown-integration-tests.js",
-    "test": "ava --verbose || (npm run posttest && exit 42)",
+    "test": "ava --verbose",
     "test:watch": "ava --watch",
     "test:clean": "rm -rf ./.tmp",
     "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test"

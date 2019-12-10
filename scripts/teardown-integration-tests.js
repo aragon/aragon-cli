@@ -1,9 +1,9 @@
-const { killProcessOnPort } = require('../dist/node')
+const { killProcessOnPort } = require('../packages/toolkit/dist/node')
 
 const IPFS_API_PORT = 5001
 const DEVCHAIN_PORT = 8545
 
-const LOGGER_PREFIX = '[toolkit:posttest]'
+const LOGGER_PREFIX = '[cli-monorepo:posttest]'
 
 const logger = (...messages) => {
   console.log(LOGGER_PREFIX, ...messages)

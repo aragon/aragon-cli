@@ -1,3 +1,5 @@
+import path from 'path'
+
 import { startProcess, noop, isPortTaken } from '../node'
 import { DEVCHAIN_START_TIMEOUT } from './constants'
 
@@ -7,17 +9,23 @@ export const ensureDevchain = async ({ port, logger = noop }) => {
     return
   }
 
+  const binPath = path.resolve(__dirname, '../../node_modules/.bin/aragen')
+
   logger(`Devchain starting on: ${port}`)
-  const { detach } = await startProcess({
-    cmd: 'node',
-    args: ['node_modules/.bin/aragen', 'start', '--port', port],
-    readyOutput: 'Devchain running at',
-    execaOpts: {
-      detached: true,
-    },
-    timeout: DEVCHAIN_START_TIMEOUT,
-  })
-  logger(`Devchain started on: ${port}`)
-  logger('Devchain ready!!')
-  detach()
+  try {
+    const { detach } = await startProcess({
+      cmd: 'node',
+      args: [binPath, 'start', '--port', port],
+      readyOutput: 'Devchain running at',
+      execaOpts: {
+        detached: true,
+      },
+      timeout: DEVCHAIN_START_TIMEOUT,
+    })
+    logger(`Devchain started on: ${port}`)
+    logger('Devchain ready!!')
+    detach()
+  } catch (err) {
+    logger('Devchain failed to start...')
+  }
 }

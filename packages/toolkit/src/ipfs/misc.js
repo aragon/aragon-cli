@@ -48,18 +48,22 @@ export const ensureLocalDaemon = async ({
   }
 
   logger(`Daemon starting on port: ${apiPort}`)
-  await ensureRepoInitialized(binPath, repoPath)
-  await setPorts(repoPath, apiPort, gatewayPort, swarmPort)
-  const processController = await startLocalDaemon(binPath, repoPath, {
-    detached: true,
-  })
-  processController.detach()
-  logger(`Daemon started on port: ${apiPort}`)
+  try {
+    await ensureRepoInitialized(binPath, repoPath)
+    await setPorts(repoPath, apiPort, gatewayPort, swarmPort)
+    const processController = await startLocalDaemon(binPath, repoPath, {
+      detached: true,
+    })
+    processController.detach()
+    logger(`Daemon started on port: ${apiPort}`)
 
-  const httpClient = await getHttpClient(`http://localhost:${apiPort}`)
-  await configureCors(httpClient)
-  await pinArtifacts(httpClient)
-  logger('Daemon ready!!')
+    const httpClient = await getHttpClient(`http://localhost:${apiPort}`)
+    await configureCors(httpClient)
+    await pinArtifacts(httpClient)
+    logger('Daemon ready!!')
+  } catch (err) {
+    logger('Daemon failed to start...')
+  }
 }
 
 export const getHttpClient = async address => {

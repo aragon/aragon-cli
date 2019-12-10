@@ -1,7 +1,7 @@
-const { ensureLocalDaemon } = require('@aragon/toolkit/dist/ipfs')
-const { ensureDevchain } = require('@aragon/toolkit/dist/ganache')
+const { ensureLocalDaemon } = require('../packages/toolkit/dist/ipfs')
+const { ensureDevchain } = require('../packages/toolkit/dist/ganache')
 
-const LOGGER_PREFIX = '[aragon-cli:pretest]'
+const LOGGER_PREFIX = '[cli-monorepo:pretest]'
 
 const IPFS_API_PORT = 5001
 const IPFS_GATEWAY_PORT = 8080
@@ -9,9 +9,9 @@ const IPFS_SWARM_PORT = 4001
 const DEVCHAIN_PORT = 8545
 
 // BEWARE: packages share the same pretest setup
-const IPFS_PROJECT_PATH = '../.tmp/setup/ipfs-project'
-const IPFS_BIN_PATH = '../.tmp/setup/ipfs-project/node_modules/.bin/ipfs'
-const IPFS_REPO_PATH = '../.tmp/setup/ipfs-repo'
+const IPFS_PROJECT_PATH = './.tmp/setup/ipfs-project'
+const IPFS_BIN_PATH = './.tmp/setup/ipfs-project/node_modules/.bin/ipfs'
+const IPFS_REPO_PATH = './.tmp/setup/ipfs-repo'
 
 const logger = (...messages) => {
   console.log(LOGGER_PREFIX, ...messages)
