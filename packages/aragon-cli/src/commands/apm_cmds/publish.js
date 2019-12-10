@@ -703,8 +703,7 @@ exports.handler = async function({
       `${green(`Publish to ${appName} repo`)}`
     )
     // new line after confirm
-    console.log()
-    if (!confirmation) process.exit()
+    if (!confirmation) return console.log()
   }
 
   const { receipt, transactionPath } = await exports
@@ -761,8 +760,7 @@ exports.handler = async function({
         green(`Propagate content`)
       )
       // new line after confirm
-      console.log()
-      if (!confirmation) process.exit()
+      if (!confirmation) return console.log()
     }
 
     const propagateTask = await propagateIPFS({
