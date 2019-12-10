@@ -205,10 +205,9 @@ exports.handler = async function({
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   if (http && !(await isHttpServerOpen(http))) {
-    reporter.error(
+    throw Error(
       `Can't connect to ${http}, make sure the http server is running.`
     )
-    process.exit(1)
   }
 
   const showAccounts = accounts

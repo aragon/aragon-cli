@@ -23,12 +23,7 @@ const runTruffle = (args, { stdout, stderr, stdin }) => {
 }
 
 const compileContracts = async () => {
-  try {
-    await runTruffle(['compile'], { stdout: devnull() })
-  } catch (err) {
-    console.log(err)
-    process.exit(1)
-  }
+  await runTruffle(['compile'], { stdout: devnull() })
 }
 
 module.exports = { runTruffle, compileContracts }
