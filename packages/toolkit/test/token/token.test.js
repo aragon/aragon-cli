@@ -1,9 +1,9 @@
 import test from 'ava'
 import sinon from 'sinon'
 import miniMeArtifact from '@aragon/apps-shared-minime/build/contracts/MiniMeToken'
-import * as tokenLib from '@aragon/toolkit/dist/token/token'
 //
-import { isAddress, isValidTxHash, getLocalWeb3 } from '../utils'
+import * as tokenLib from '../../src/token/token'
+import { isAddress, isValidTxHash, getLocalWeb3 } from '../test-helpers'
 
 test.beforeEach(async t => {
   const web3 = await getLocalWeb3()

@@ -1,8 +1,8 @@
 import test from 'ava'
-import ACL from '@aragon/toolkit/dist/apm/util/acl'
-import { resolveEnsDomain } from '@aragon/toolkit/dist/helpers/aragonjs-wrapper'
 //
-import { getLocalWeb3 } from '../utils'
+import ACL from '../../src/apm/util/acl'
+import { resolveEnsDomain } from '../../src/helpers/aragonjs-wrapper'
+import { getLocalWeb3 } from '../test-helpers'
 
 /**
  * ############## TODO
