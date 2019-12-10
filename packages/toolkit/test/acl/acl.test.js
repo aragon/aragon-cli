@@ -1,7 +1,7 @@
 import test from 'ava'
-import { getDaoAddressPermissionsApps } from '@aragon/toolkit/dist/acl/view'
 //
-import { getLocalWeb3, getNewDaoAddress } from '../utils'
+import { getDaoAddressPermissionsApps } from '../../src/acl/view'
+import { getLocalWeb3, getNewDaoAddress } from '../test-helpers'
 
 const ipfsConf = {
   rpc: {
