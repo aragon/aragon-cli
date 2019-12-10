@@ -64,6 +64,4 @@ exports.handler = async function({
     reporter.error(`${err}\n${red('Command failed')}`)
     process.exit(1)
   }
-
-  process.exit(0)
 }

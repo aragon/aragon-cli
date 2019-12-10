@@ -67,5 +67,4 @@ exports.handler = async function({
 
   await tasks.run()
   reporter.success(`${green(aragonId)} successfully assigned to ${dao}`)
-  process.exit()
 }

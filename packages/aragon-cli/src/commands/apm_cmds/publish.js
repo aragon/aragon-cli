@@ -790,5 +790,4 @@ exports.handler = async function({
     reporter.debug(`Errors: \n${result.errors.map(JSON.stringify).join('\n')}`)
     // TODO: add your own gateways
   }
-  process.exit()
 }

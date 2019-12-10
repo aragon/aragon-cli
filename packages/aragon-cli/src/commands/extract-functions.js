@@ -38,5 +38,4 @@ exports.handler = async function({ cwd, reporter, contract, output }) {
 
   await tasks.run()
   reporter.success(`Saved to ${blue(outputPath)}`)
-  process.exit()
 }
