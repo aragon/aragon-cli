@@ -1,9 +1,9 @@
-const { killProcessOnPort } = require('../dist/lib/node')
+const { killProcessOnPort } = require('../dist/node')
 
 const IPFS_API_PORT = 5001
 const DEVCHAIN_PORT = 8545
 
-const LOGGER_PREFIX = '[aragon-cli:posttest]'
+const LOGGER_PREFIX = '[toolkit:posttest]'
 
 const logger = (...messages) => {
   console.log(LOGGER_PREFIX, ...messages)

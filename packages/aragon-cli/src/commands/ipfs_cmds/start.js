@@ -7,7 +7,7 @@ import {
   getDefaultRepoPath,
   setPorts,
   ensureRepoInitialized,
-  getClient,
+  getHttpClient,
   configureCors,
   pinArtifacts,
   getBinaryPath,
@@ -129,9 +129,9 @@ Use the 'aragon ipfs stop' command to stop it.`)
   /**
    * Configure IPFS with Aragon-specific logic
    */
-  const apiClient = await getClient(`http://localhost:${apiPort}`)
-  await configureCors(apiClient)
+  const httpClient = await getHttpClient(`http://localhost:${apiPort}`)
+  await configureCors(httpClient)
   reporter.success('Successfully configured CORS')
-  const hashes = await pinArtifacts(apiClient)
+  const hashes = await pinArtifacts(httpClient)
   reporter.success(`Successfully pinned ${hashes.length} Aragon artifacts.`)
 }

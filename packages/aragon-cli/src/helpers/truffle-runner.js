@@ -1,7 +1,7 @@
 const execa = require('execa')
 const devnull = require('dev-null')
 //
-const { getBinary } = require('../util')
+const { getBinary } = require('@aragon/toolkit/dist/node')
 
 const truffleBin = getBinary('truffle')
 

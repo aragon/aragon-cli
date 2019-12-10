@@ -1,7 +1,7 @@
-const { ensureLocalDaemon } = require('@aragon/toolkit/dist/ipfs')
-const { ensureDevchain } = require('@aragon/toolkit/dist/ganache')
+const { ensureLocalDaemon } = require('../dist/ipfs')
+const { ensureDevchain } = require('../dist/ganache')
 
-const LOGGER_PREFIX = '[aragon-cli:pretest]'
+const LOGGER_PREFIX = '[toolkit:pretest]'
 
 const IPFS_API_PORT = 5001
 const IPFS_GATEWAY_PORT = 8080

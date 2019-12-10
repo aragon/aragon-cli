@@ -1,6 +1,6 @@
 import test from 'ava'
 //
-import { propagateFiles } from '../../src/lib/ipfs/propagation'
+import { propagateFiles } from '../../src/ipfs'
 
 test('Get IPFS readme merkle DAG and CIDs', async t => {
   // arrange

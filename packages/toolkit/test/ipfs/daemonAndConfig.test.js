@@ -7,13 +7,12 @@ import {
   setPorts,
   isLocalDaemonRunning,
   isCorsConfigured,
-  getClient,
+  getHttpClient,
   pinArtifacts,
   configureCors,
-} from '../../src/lib/ipfs'
-import { installGoIpfs } from '../../src/lib/ipfs/install'
-import { initPackage } from '../../src/lib/node/packages'
-import { killProcessOnPort } from '../../src/lib/node'
+  installGoIpfs,
+} from '../../src/ipfs'
+import { initPackage, killProcessOnPort } from '../../src/node'
 
 const apiPort = 8010
 const gatewayPort = 8011
@@ -43,7 +42,7 @@ test('should install go-ipfs in a new project', async t => {
   // act
   const result = await installGoIpfs(true, projectPath)
   // assert
-  t.snapshot(result.cmd, 'should use the correct command')
+  t.snapshot(result.command, 'should use the correct command')
 })
 
 test('should initialize the repository at a custom path', async t => {
@@ -83,11 +82,11 @@ test('should run the daemon', async t => {
 
 test('should configure cors & pin artifacts', async t => {
   // arrange
-  const apiClient = await getClient(`http://localhost:${apiPort}`)
+  const httpClient = await getHttpClient(`http://localhost:${apiPort}`)
   // act
-  await configureCors(apiClient)
-  const corsConfigured = await isCorsConfigured(apiClient)
-  const hashes = await pinArtifacts(apiClient)
+  await configureCors(httpClient)
+  const corsConfigured = await isCorsConfigured(httpClient)
+  const hashes = await pinArtifacts(httpClient)
   // assert
   t.true(corsConfigured)
   t.snapshot(hashes)

@@ -6,7 +6,7 @@ import {
   getDefaultRepoPath,
   getPorts,
   getRepoConfig,
-  getClient,
+  getHttpClient,
 } from '../../lib/ipfs'
 import { killProcessOnPort } from '../../lib/node'
 
@@ -34,7 +34,7 @@ const runStartTask = ({ repoPath, silent, debug }) => {
         task: async ctx => {
           try {
             // isPortTaken
-            await getClient(`http://localhost:${ctx.ports.api}`)
+            await getHttpClient(`http://localhost:${ctx.ports.api}`)
           } catch (err) {
             throw new Error('The IPFS Daemon is already stopped')
           }

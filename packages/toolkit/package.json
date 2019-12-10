@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "prepare": "npm run build",
-    "build": "babel src --out-dir dist --source-maps --copy-files",
-    "build:watch": "npm run build -- -- --watch",
+    "build": "babel src --out-dir dist --source-maps",
+    "build:watch": "npm run build -- --watch",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
-    "pretest": "echo 'waiting for the cli to setup the test env' && sleep 40",
-    "test": "ava --verbose",
+    "pretest": "node scripts/setup-integration-tests.js",
+    "posttest": "node scripts/teardown-integration-tests.js",
+    "test": "ava --verbose || (npm run posttest && exit 42)",
     "test:watch": "ava --watch",
     "test:clean": "rm -rf ./.tmp",
     "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test"
@@ -58,7 +59,13 @@
   },
   "dependencies": {
     "babel-eslint": "^10.0.3",
+    "fs-extra": "^8.1.0",
+    "get-folder-size": "^2.0.1",
+    "go-platform": "^1.0.0",
+    "ipfs-http-client": "^40.1.0",
+    "kill-port": "^1.6.0",
     "rxjs": "^6.5.3",
+    "stringify-tree": "^1.0.2",
     "web3": "^1.2.4"
   },
   "engines": {

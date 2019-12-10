@@ -5,7 +5,7 @@ import listrOpts from '../../helpers/listr-options'
 import { askForInput } from '../../util'
 //
 import {
-  getClient,
+  getHttpClient,
   getMerkleDAG,
   extractCIDsFromMerkleDAG,
   propagateFiles,
@@ -69,7 +69,7 @@ export const handler = async argv => {
 
   const { reporter, apm, debug, silent } = argv
 
-  const ipfsReader = await getClient(apm.ipfs.gateway)
+  const ipfsReader = await getHttpClient(apm.ipfs.gateway)
 
   const ctx = await runPropagateTask({
     ipfsReader,

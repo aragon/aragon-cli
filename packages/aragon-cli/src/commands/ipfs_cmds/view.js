@@ -4,7 +4,7 @@ import { cid as isValidCID } from 'is-ipfs'
 import listrOpts from '../../helpers/listr-options'
 import { askForInput } from '../../util'
 //
-import { getMerkleDAG, stringifyMerkleDAG, getClient } from '../../lib/ipfs'
+import { getMerkleDAG, stringifyMerkleDAG, getHttpClient } from '../../lib/ipfs'
 
 export const command = 'view [cid]'
 export const describe =
@@ -53,7 +53,7 @@ export const handler = async argv => {
 
   const { reporter, apm, debug, silent } = argv
 
-  const ipfsReader = await getClient(apm.ipfs.gateway)
+  const ipfsReader = await getHttpClient(apm.ipfs.gateway)
 
   const ctx = await runViewTask({
     cid,

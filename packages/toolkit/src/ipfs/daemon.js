@@ -1,6 +1,5 @@
-import { getBinary, isPortTaken } from '../../util'
 import { connectOrThrow } from './misc'
-import { startProcess } from '../node'
+import { startProcess, getBinary, isPortTaken } from '../node'
 import {
   DAEMON_START_TIMEOUT,
   DAEMON_READY_OUTPUT,
@@ -37,7 +36,7 @@ export const startLocalDaemon = (binPath, repoPath, options = {}) => {
  * @param {URL} address a `URL` object
  * @returns {boolean} true if it is running
  */
-export async function isLocalDaemonRunning(address) {
+export const isLocalDaemonRunning = async address => {
   const portTaken = await isPortTaken(address.port)
 
   if (!portTaken) {

@@ -3,10 +3,10 @@ import execa from 'execa'
 import { ensureDir } from 'fs-extra'
 
 export const isPackage = dir => joinPath(dir, 'package.json')
-export const initPackage = async dir => {
-  await ensureDir(dir)
+export const initPackage = async path => {
+  await ensureDir(path)
   const { stdout } = await execa('npm', ['init', '--yes'], {
-    cwd: dir,
+    cwd: path,
   })
   return stdout
 }
@@ -14,4 +14,8 @@ export const initPackage = async dir => {
 export const getGlobalPackagesLocation = async () => {
   const { stdout } = await execa('npm', ['prefix', '--global'])
   return stdout
+}
+
+export const getNodePackageManager = () => {
+  return 'npm'
 }

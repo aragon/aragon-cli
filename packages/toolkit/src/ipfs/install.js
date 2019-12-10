@@ -1,7 +1,6 @@
 import execa from 'execa'
 //
-import { getNodePackageManager } from '../../util'
-import { noop } from '../node'
+import { noop, getNodePackageManager } from '../node'
 import { GO_IMPL_DIST_URL, GO_IMPL_DIST_VERSION } from './constants'
 
 export const installGoIpfs = async (

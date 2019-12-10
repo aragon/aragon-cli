@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 //
-import { withTimeout, noop } from '../node/misc'
+import { withTimeout, noop } from '../node'
 import {
   GATEWAY_FETCH_TIMEOUT,
   GATEWAY_FETCH_TIMEOUT_MSG,
