@@ -9,6 +9,7 @@
     "build:watch": "npm run build -- -- --watch",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
+    "pretest": "echo 'waiting for the cli to setup the test env' && sleep 40",
     "test": "ava --verbose",
     "test:watch": "ava --watch",
     "test:clean": "rm -rf ./.tmp",
