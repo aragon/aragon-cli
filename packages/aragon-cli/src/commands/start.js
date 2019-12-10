@@ -16,7 +16,7 @@ const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 
-exports.command = 'start [client-repo] [client-version]'
+exports.command = 'start [client-repo] [client-version] [openInBrowser]'
 
 exports.describe = 'Start the Aragon GUI (graphical user interface)'
 
@@ -40,6 +40,10 @@ exports.builder = yargs => {
       description: 'A path pointing to an existing Aragon client installation',
       default: null,
     })
+    .option('openInBrowser', {
+      description: 'Wether to automatically open the client in the browser',
+      default: true,
+    })
 }
 
 exports.task = async function({
@@ -47,6 +51,7 @@ exports.task = async function({
   clientVersion,
   clientPort,
   clientPath,
+  openInBrowser,
 }) {
   const tasks = new TaskList([
     {
@@ -90,8 +95,10 @@ exports.task = async function({
     {
       title: 'Opening client',
       task: async (ctx, task) => {
-        task.output = 'Opening client'
-        await openClient(ctx, clientPort)
+        if (openInBrowser) {
+          task.output = 'Opening client'
+          await openClient(ctx, clientPort)
+        }
       },
     },
   ])
