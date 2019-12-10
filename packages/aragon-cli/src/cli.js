@@ -100,5 +100,11 @@ const cli = yargs
 
 AragonReporter.configure(cli)
 cli.middleware(MIDDLEWARES)
+
+// Runs after a successful command.handler run
+cli.onFinishCommand(() => {
+  process.exit()
+})
+
 // trigger yargs
 cli.argv // eslint-disable-line no-unused-expressions
