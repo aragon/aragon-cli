@@ -1,10 +1,10 @@
 import test from 'ava'
 import { ens } from '@aragon/aragen'
-import newDao from '@aragon/toolkit/dist/dao/new'
-import getApmRepo from '@aragon/toolkit/dist/apm/getApmRepo'
 //
+import getApmRepo from '../../src/apm/getApmRepo'
+import newDao from '../../src/dao/new'
 import defaultAPMName from '../../src/helpers/default-apm'
-import { getLocalWeb3, isAddress } from '../utils'
+import { getLocalWeb3, isAddress } from '../test-helpers'
 
 test.beforeEach(async t => {
   const web3 = await getLocalWeb3()
@@ -27,7 +27,7 @@ test('Deploys DAO with valid template', async t => {
   const daoAddress = await newDao({
     repo,
     web3,
-    newInstanceMethod: 'newInstance',
+    // newInstanceMethod: 'newInstance',
     newInstanceArgs: [],
     deployEvent: 'DeployDao',
   })
@@ -36,7 +36,7 @@ test('Deploys DAO with valid template', async t => {
 })
 
 // eslint-disable-next-line ava/no-skip-test
-test.skip('Deploys DAO with template with custom newInstance method and args', async t => {
+test('Deploys DAO with template with custom newInstance method and args', async t => {
   const { web3 } = t.context
 
   const repo = await getApmRepo(

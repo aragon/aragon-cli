@@ -1,12 +1,12 @@
 import test from 'ava'
 import { ens } from '@aragon/aragen'
-import newDao from '@aragon/toolkit/dist/dao/new'
-import { assignId } from '@aragon/toolkit/dist/dao/assign-id'
-import { getAllApps, getDaoAddress } from '@aragon/toolkit/dist/dao/apps'
-import getApmRepo from '@aragon/toolkit/dist/apm/getApmRepo'
 //
+import { assignId } from '../../src//dao/assign-id'
+import { getAllApps, getDaoAddress } from '../../src/dao/apps'
+import newDao from '../../src/dao/new'
+import getApmRepo from '../../src/apm/getApmRepo'
 import defaultAPMName from '../../src/helpers/default-apm'
-import { getLocalWeb3 } from '../utils'
+import { getLocalWeb3 } from '../test-helpers'
 
 test.beforeEach(async t => {
   const web3 = await getLocalWeb3()

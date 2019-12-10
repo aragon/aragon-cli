@@ -26,7 +26,9 @@ module.exports = async function({
   const template =
     templateInstance || new web3.eth.Contract(repoAbi, repo.contractAddress)
 
-  const newInstanceTx = template.methods[newInstanceMethod](...newInstanceArgs)
+  const newInstanceTx = template.methods[newInstanceMethod || 'newInstance'](
+    ...newInstanceArgs
+  )
   const estimatedGas = await newInstanceTx.estimateGas()
   const { events } = await newInstanceTx.send({
     from: (await web3.eth.getAccounts())[0],
