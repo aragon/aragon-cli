@@ -57,7 +57,8 @@
   },
   "dependencies": {
     "babel-eslint": "^10.0.3",
-    "rxjs": "^6.5.3"
+    "rxjs": "^6.5.3",
+    "web3": "^1.2.4"
   },
   "engines": {
     "node": ">=10.0.0"

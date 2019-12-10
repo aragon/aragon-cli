@@ -1,4 +1,4 @@
-# Snapshot report for `test/e2e/token.test.js`
+# Snapshot report for `test/token/token.test.js`
 
 The actual snapshot is saved in `token.test.js.snap`.
 

@@ -1,4 +1,4 @@
-# Snapshot report for `test/integration/ipfs/daemonAndConfig.test.js`
+# Snapshot report for `test/ipfs/daemonAndConfig.test.js`
 
 The actual snapshot is saved in `daemonAndConfig.test.js.snap`.
 

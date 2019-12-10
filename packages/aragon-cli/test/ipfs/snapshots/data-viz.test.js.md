@@ -1,4 +1,4 @@
-# Snapshot report for `test/lib/ipfs/data-viz.test.js`
+# Snapshot report for `test/ipfs/data-viz.test.js`
 
 The actual snapshot is saved in `data-viz.test.js.snap`.
 

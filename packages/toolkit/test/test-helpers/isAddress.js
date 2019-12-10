@@ -1,5 +1,5 @@
-import Web3 from 'web3'
+import Web3Utils from 'web3-utils'
 
-const isAddress = Web3.utils.isAddress
+const isAddress = Web3Utils.isAddress
 
 export default isAddress

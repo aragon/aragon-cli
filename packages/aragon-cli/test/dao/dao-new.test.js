@@ -7,7 +7,7 @@ const daoIdAndAddressAddressRegex = /Created DAO: (.*) at (.*)$/
 test('creates a new DAO', async t => {
   t.plan(2)
 
-  const stdout = await runAragonCLI(['dao', 'new', '--debug'])
+  const stdout = await runAragonCLI(['dao', 'new'])
   const daoAddress = stdout.match(daoAddressRegex)[1]
 
   const resultSnapshot = normalizeOutput(stdout).replace(daoAddress, '')
