@@ -1,12 +1,16 @@
 import test from 'ava'
 import sinon from 'sinon'
-import proxyquire from 'proxyquire'
+import getApmRepoVersions from '../../src/apm/getApmRegistryPackages'
+import {
+  getLocalWeb3,
+  getApmRegistryName,
+  getApmOptions,
+} from '../test-helpers'
 
-// Default values used to call getApmVersions(...).
-const web3 = { name: 'web3' }
-const apmRepoName = 'test.aragonpm.eth'
-const apmOptions = {}
-apmOptions['ens-registry'] = '0x1234512345123451234512345123451234512345'
+let web3
+let apmRegistryName, apmOptions
+let progressHandler
+let packages
 
 /* Setup and cleanup */
 
