@@ -9,7 +9,7 @@ const MANIFEST_FILE = 'manifest.json'
 const testSandbox = './.tmp'
 const projectName = 'foobar'
 
-test.skip('should publish an aragon app directory successfully', async t => {
+test('should publish an aragon app directory successfully', async t => {
   t.plan(3)
 
   const publishDirPath = path.resolve(`${testSandbox}/publish-dir`)
@@ -21,13 +21,10 @@ test.skip('should publish an aragon app directory successfully', async t => {
       'apm',
       'publish',
       'major',
-      '--build',
-      'false',
       '--publish-dir',
       publishDirPath,
-      '--env',
-      'rinkeby',
-      '--debug',
+      '--skip-confirmation',
+      '--no-propagate-content',
     ],
     execaOpts: {
       cwd: `${testSandbox}/${projectName}`,
@@ -57,22 +54,25 @@ test.skip('should publish an aragon app directory successfully', async t => {
   const manifest = JSON.parse(fs.readFileSync(manifestPath))
 
   // delete some output sections that are not deterministic
-  // TODO: Delete propagate content output
-  const prepublishScriptOutput = stdout.substring(
-    stdout.indexOf('Running prepublish script [started]'),
-    stdout.indexOf('Running prepublish script [completed]')
+  const publishVersion = publishProcess.stdout.match(/v[0-9]+.0.0 :/)[0]
+
+  const buildScriptOutput = publishProcess.stdout.substring(
+    publishProcess.stdout.indexOf('Building frontend [started]'),
+    publishProcess.stdout.indexOf('Building frontend [completed]')
   )
 
   const appDeploymentOutput = publishProcess.stdout.substring(
-    publishProcess.stdout.indexOf('Fetch published repo [completed]')
+    publishProcess.stdout.indexOf('Publish intent [completed]'),
+    publishProcess.stdout.indexOf('Publish foobar.open.aragonpm.eth [started]')
   )
 
   const outputToSnapshot = publishProcess.stdout
-    .replace(prepublishScriptOutput, '[deleted-prepublish-script-output]')
+    .replace(buildScriptOutput, '[deleted-build-script-output]')
     .replace(
       appDeploymentOutput,
-      'Fetch published repo [completed][deleted-app-deployment-output]'
+      'Publish intent [completed][deleted-app-deployment-output]'
     )
+    .replace(publishVersion, '')
 
   // assert
   t.snapshot(normalizeOutput(outputToSnapshot))

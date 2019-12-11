@@ -7,27 +7,41 @@ import path from 'path'
 const testSandbox = './.tmp'
 const projectName = 'foobar'
 
-test('should run an aragon app successfully', async t => {
-  t.plan(2)
+test('should run an aragon app successfully on HTTP', async t => {
+  t.plan(5)
 
   // Node.js 11 fix (https://github.com/aragon/aragon-cli/issues/731)
-  fs.writeFileSync(path.join(testSandbox, projectName, 'truffle.js'), `
+  fs.writeFileSync(
+    path.join(testSandbox, projectName, 'truffle.js'),
+    `
     module.exports = require('@aragon/os/truffle-config'); 
     module.exports.solc.optimizer.enabled = false;
-  `)
+  `
+  )
 
   // act
-  const { stdout, exit } = await startBackgroundProcess({
-    cmd: 'aragon',
-    args: ['run', '--debug', '--files', 'dist', '--reset'],
+  const appProcess = await startBackgroundProcess({
+    cmd: 'npm',
+    args: ['run', 'start:app'],
     execaOpts: {
       cwd: `${testSandbox}/${projectName}`,
-      /**
-       * By default execa will run the aragon binary that is located at '.tmp/foobar/node_modules'.
-       * That is coming from npm and is not the one we want to test.
-       *
-       * We need to tell it to use the one we just built locally and installed in the e2e-tests package
-       */
+      localDir: '.',
+    },
+    readyOutput: 'Server running at http://localhost:8001',
+  })
+
+  const { stdout, exit } = await startBackgroundProcess({
+    cmd: 'aragon',
+    args: [
+      'run',
+      '--http',
+      'localhost:8001',
+      '--http-served-from',
+      './dist',
+      '--reset',
+    ],
+    execaOpts: {
+      cwd: `${testSandbox}/${projectName}`,
       preferLocal: true,
       localDir: '.',
     },
@@ -42,11 +56,25 @@ test('should run an aragon app successfully', async t => {
 
   // TODO: fetch the counter app instead
   const fetchResult = await fetch(`http://localhost:3000/#/${daoAddress}`)
+  const fetchBody = await fetchResult.text()
+
+  // fetch app
+  const fetchApp = await fetch(`http://localhost:8001`)
+  const fetchAppBody = await fetchApp.text()
 
   // cleanup
+  await appProcess.exit()
   await exit()
 
+  const outputToSnapshot = stdout.replace(
+    new RegExp(daoAddress, 'g'),
+    '[deleted-dao-address]'
+  )
+
   // assert
-  t.true(stdout.includes('You are now ready to open your app in Aragon'))
-  t.is(fetchResult.status, 200)
+  t.snapshot(normalizeOutput(outputToSnapshot))
+  t.snapshot(fetchResult.status)
+  t.snapshot(fetchApp.status)
+  t.snapshot(fetchBody)
+  t.snapshot(fetchAppBody)
 })

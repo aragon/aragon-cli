@@ -11,9 +11,15 @@
     "build:watch": "npm run build -- --watch",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
+    "pretest": "ava src/**/*.pretest.js",
+    "posttest": "ava src/**/*.posttest.js",
     "test": "ava --verbose",
     "test:watch": "ava --watch",
-    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly npm run test"
+    "test:debug": "cross-env DEBUG=true npm run test",
+    "test:clean": "npm run posttest && npm run reset-cache",
+    "update-snapshots": "npm run test:clean && npm run pretest -- --update-snapshots && ava --update-snapshots && npm run posttest -- --update-snapshots",
+    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly npm run test",
+    "reset-cache": "ava --reset-cache",
   },
   "repository": {
     "type": "git",
