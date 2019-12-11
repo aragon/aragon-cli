@@ -1,71 +1,36 @@
 import test from 'ava'
-import sinon from 'sinon'
-import getApmRepoVersions from '../../src/apm/getApmRegistryPackages'
+import getApmRepoVersions from '../../src/apm/getApmRepoVersions'
 import {
   getLocalWeb3,
-  getApmRegistryName,
   getApmOptions,
 } from '../test-helpers'
 
 let web3
-let apmRegistryName, apmOptions
-let progressHandler
-let packages
+let apmOptions, apmRepoName
+let versions
 
 /* Setup and cleanup */
 
-test.beforeEach('setup', t => {
-  const apmStub = sinon.stub()
-  apmStub.returns({
-    getAllVersions: async () => {},
-  })
+test.before('setup and make a successful call', async t => {
+  web3 = await getLocalWeb3()
 
-  const getApmRepoVersions = proxyquire
-    .noCallThru()
-    .load('../../src/apm/getApmRepoVersions', {
-      '@aragon/apm': apmStub,
-    })
+  apmOptions = getApmOptions()
+  apmRepoName = 'voting.aragonpm.eth'
 
-  t.context = {
-    getApmRepoVersions,
-    apmStub,
-  }
+  versions = await getApmRepoVersions(web3, apmRepoName, apmOptions)
 })
 
-test.afterEach('cleanup', t => {
-  sinon.restore()
-})
+test('retrieves the expected versions info', async t => {
+  t.is(versions.length, 1)
 
-/* Tests */
+  const version = versions[0]
+  t.is(version.name, 'Voting')
+  t.is(version.version, '1.0.0')
 
-test('calls apm.getAllVersions() with the correct parameters and returns the expected object', async t => {
-  const { getApmRepoVersions, apmStub } = t.context
-
-  const getAllVersionsResponse = { name: 'allVersions' }
-  const getAllVersions = sinon.stub()
-  getAllVersions.returns(getAllVersionsResponse)
-  apmStub.returns({
-    getAllVersions,
-  })
-
-  const versions = await getApmRepoVersions(web3, apmRepoName, apmOptions)
-
-  t.true(getAllVersions.calledOnceWith(apmRepoName))
-
-  t.is(versions, getAllVersionsResponse)
-})
-
-test('APM constructor gets called with the appropriate parameters', async t => {
-  const { getApmRepoVersions, apmStub } = t.context
-
-  await getApmRepoVersions(web3, apmRepoName, apmOptions)
-
-  t.true(apmStub.calledOnceWith(web3, apmOptions))
+  t.pass()
 })
 
 test('fails if apmOptions does not contain an ens-registry property', async t => {
-  const { getApmRepoVersions } = t.context
-
   const emptyApmOptions = {}
 
   const error = await t.throwsAsync(async () => {

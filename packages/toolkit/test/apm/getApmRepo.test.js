@@ -11,7 +11,7 @@ import {
 import { DEFAULT_IPFS_TIMEOUT } from '../../src/helpers/constants'
 
 let web3
-let apmRegistryName, apmOptions, apmRepoName
+let apmOptions, apmRepoName
 let progressHandler
 let info
 
