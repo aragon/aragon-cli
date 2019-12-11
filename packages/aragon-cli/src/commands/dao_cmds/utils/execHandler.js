@@ -92,7 +92,6 @@ async function handler(args) {
     args.reporter.success(
       `Successfully executed: "${blue(ctx.transactionPath.description)}"`
     )
-    process.exit()
   })
 }
 

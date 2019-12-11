@@ -151,7 +151,7 @@ export const handler = async argv => {
         yellow('aragon ipfs install --local')
       )
     }
-    return process.exit(1)
+    throw Error()
   }
 
   /**

@@ -134,5 +134,4 @@ exports.handler = async function({
 
   printApps(apps)
   printPermissionlessApps(appsWithoutPermissions)
-  process.exit()
 }

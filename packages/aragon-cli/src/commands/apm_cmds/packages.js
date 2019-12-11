@@ -51,7 +51,6 @@ exports.handler = async function({ apmRegistry, network, apm: apmOptions }) {
   await tasks.run()
 
   displayPackages(packages)
-  process.exit()
 }
 
 /**

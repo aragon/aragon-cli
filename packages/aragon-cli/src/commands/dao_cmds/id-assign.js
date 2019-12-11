@@ -52,8 +52,7 @@ exports.handler = async function({
         title: 'Validating Id',
         task: async () => {
           if (await isIdAssigned(aragonId, options)) {
-            reporter.error(`${aragonId} is already assigned.`)
-            process.exit(1)
+            throw Error(`${aragonId} is already assigned.`)
           }
         },
       },
@@ -67,5 +66,4 @@ exports.handler = async function({
 
   await tasks.run()
   reporter.success(`${green(aragonId)} successfully assigned to ${dao}`)
-  process.exit()
 }

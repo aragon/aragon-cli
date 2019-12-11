@@ -35,7 +35,7 @@ const cli = yargs
   // blank scriptName so that help text doesn't display "aragon" before each command
   .scriptName('')
   .demandCommand(1, 'You need to specify a command')
-  .fail(AragonReporter.errorHandler)
+
   /**
    * OPTIONS
    */
@@ -100,5 +100,15 @@ const cli = yargs
 
 AragonReporter.configure(cli)
 cli.middleware(MIDDLEWARES)
+
+// Runs if command.handler is successful
+cli.onFinishCommand(() => {
+  process.exit()
+})
+// Runs if command.handler throws
+cli.fail((...args) => {
+  AragonReporter.errorHandler(...args)
+})
+
 // trigger yargs
 cli.argv // eslint-disable-line no-unused-expressions

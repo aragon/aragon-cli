@@ -63,8 +63,7 @@ export const handler = async argv => {
     : getGlobalBinary('ipfs')
 
   if (!ipfsBinPath) {
-    reporter.error('IPFS is not installed')
-    return process.exit(1)
+    throw Error('IPFS is not installed')
   }
   /**
    * Print confirmation details
