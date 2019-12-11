@@ -2,6 +2,7 @@ import util from 'util'
 import * as child from 'child_process'
 import Web3 from 'web3'
 import execa from 'execa'
+import os from 'os'
 
 const defaultTimeout = 15 * 60 * 1000 // ms
 
@@ -120,6 +121,8 @@ export function normalizeOutput(stdout) {
     .replace(/ℹ/g, 'i')
     // TODO: remove after https://github.com/aragon/aragon-cli/issues/367 is fixed
     .replace(/cli.js/g, 'aragon')
+    // replace homedir in paths
+    .replace(new RegExp(os.homedir(), 'g'), '~')
     // sometimes there's an extra LF
     .trim()
 
