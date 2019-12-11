@@ -180,9 +180,6 @@
       "plugin:ava/recommended",
       "plugin:prettier/recommended"
     ],
-    "rules": {
-      "ava/no-skip-test": 0
-    },
     "parser": "babel-eslint"
   },
   "prettier": {

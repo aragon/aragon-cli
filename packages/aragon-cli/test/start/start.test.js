@@ -1,25 +1,31 @@
 import test from 'ava'
-import { buildClient } from '../../src/lib/start'
+import execa from 'execa'
 
-/**
- * Postpone until the refactor is completed
- * The current code in `/lib` includes `listr` logic, which shouldn't happen
- *
- * - build-client.js (buildClient): Skipped
- *   Would have to create a new package.json with a build:local script
- *
- * - download-client.js (downloadClient)
- *
- * - fetch-client.js (fetchClient)
- *
- * - open-client.js (openClient)
- *
- * - start-client.js (startClient)
- *
- */
+test('start', async t => {
+  t.plan(1)
 
-/* eslint-disable-next-line ava/no-skip-test */
-test.skip('Build client', async t => {
-  // arrange
-  await buildClient({}, '.')
+  const subprocess = execa(
+    'node',
+    ['dist/cli.js', 'start', '--openInBrowser', false],
+    { timeout: 8000 }
+  )
+
+  let testPassed = false
+  subprocess.stdout.on('data', data => {
+    const str = data.toString()
+
+    if (str.includes('started on port')) {
+      testPassed = true
+      t.pass()
+      subprocess.kill('SIGTERM', { forceKillAferTimeout: 2000 })
+    }
+  })
+
+  try {
+    await subprocess
+  } catch (err) {
+    if (!testPassed) {
+      t.fail()
+    }
+  }
 })
