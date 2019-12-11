@@ -1,16 +1,15 @@
 import TaskList from 'listr'
 import { blue, red, green } from 'chalk'
-//
-import listrOpts from '../../helpers/listr-options'
-import { askForInput } from '../../util'
-//
 import {
   getHttpClient,
   getMerkleDAG,
   extractCIDsFromMerkleDAG,
   propagateFiles,
   isValidCID,
-} from '../../lib/ipfs'
+} from '@aragon/toolkit/dist/ipfs'
+//
+import listrOpts from '../../helpers/listr-options'
+import { askForInput } from '../../util'
 
 export const command = 'propagate [cid]'
 export const describe =

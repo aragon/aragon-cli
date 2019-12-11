@@ -1,10 +1,13 @@
 import TaskList from 'listr'
 import { cid as isValidCID } from 'is-ipfs'
+import {
+  getMerkleDAG,
+  stringifyMerkleDAG,
+  getHttpClient,
+} from '@aragon/toolkit/dist/ipfs'
 //
 import listrOpts from '../../helpers/listr-options'
 import { askForInput } from '../../util'
-//
-import { getMerkleDAG, stringifyMerkleDAG, getHttpClient } from '../../lib/ipfs'
 
 export const command = 'view [cid]'
 export const describe =

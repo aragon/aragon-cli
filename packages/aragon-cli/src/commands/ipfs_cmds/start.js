@@ -1,7 +1,4 @@
 import TaskList from 'listr'
-//
-import listrOpts from '../../helpers/listr-options'
-//
 import {
   startLocalDaemon,
   getDefaultRepoPath,
@@ -11,7 +8,9 @@ import {
   configureCors,
   pinArtifacts,
   getBinaryPath,
-} from '../../lib/ipfs'
+} from '@aragon/toolkit/dist/ipfs'
+//
+import listrOpts from '../../helpers/listr-options'
 
 export const command = 'start'
 export const describe = 'Start and configure the daemon.'
