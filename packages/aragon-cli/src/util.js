@@ -19,7 +19,6 @@ const findProjectRoot = () => {
       cachedProjectRoot = path.dirname(findUp.sync('arapp.json'))
     } catch (_) {
       throw new Error('This directory is not an Aragon project')
-      // process.exit(1)
     }
   }
   return cachedProjectRoot
