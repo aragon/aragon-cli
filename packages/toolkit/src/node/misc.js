@@ -30,6 +30,7 @@ export const withTimeout = async (promise, timeout, error) => {
  * A useful utility to assign as a default value for callbacks.
  */
 export const noop = () => {}
+export const debugLogger = process.env.DEBUG ? console.log : () => {}
 
 export const getPlatform = () => process.platform
 export const getArch = () => process.arch

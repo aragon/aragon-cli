@@ -116,6 +116,9 @@ export async function getRepoConfig(repoPath) {
 export async function patchRepoConfig(repoPath, patch) {
   const configFilePath = joinPath(repoPath, 'config')
   const repoConfig = await readJson(configFilePath)
+  if (!repoConfig) {
+    throw new Error(`Cannot read the config file at: ${configFilePath}`)
+  }
   const nextConfig = Object.assign(repoConfig, patch)
   await writeJson(configFilePath, nextConfig, { spaces: 2 })
   return nextConfig

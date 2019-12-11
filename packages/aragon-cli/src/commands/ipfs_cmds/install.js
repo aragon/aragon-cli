@@ -1,23 +1,29 @@
 import TaskList from 'listr'
 import inquirer from 'inquirer'
 import { blue, red, yellow, green } from 'chalk'
-//
-import listrOpts from '../../helpers/listr-options'
-import { getGlobalBinary, getLocalBinary } from '../../util'
-//
-import { cleanVersion, getDistName } from '../../lib/ipfs'
-import { installGoIpfs } from '../../lib/ipfs/install'
+import {
+  cleanVersion,
+  getDistName,
+  getGlobalBinary,
+  getLocalBinary,
+} from '@aragon/toolkit/dist/ipfs'
+import { installGoIpfs } from '@aragon/toolkit/dist/ipfs/install'
 import {
   GO_IMPL_DIST_VERSION,
   GO_IMPL_DIST_URL,
-} from '../../lib/ipfs/constants'
-import { isPackage, getGlobalPackagesLocation } from '../../lib/node/packages'
+} from '@aragon/toolkit/dist/ipfs/constants'
+import {
+  isPackage,
+  getGlobalPackagesLocation,
+} from '@aragon/toolkit/dist/node/packages'
 import {
   getPlatform,
   getArch,
   getPlatformForGO,
   getArchForGO,
-} from '../../lib/node'
+} from '@aragon/toolkit/dist/node'
+//
+import listrOpts from '../../helpers/listr-options'
 
 export const command = 'install'
 export const describe = 'Download and install the go-ipfs binaries.'

@@ -34,7 +34,6 @@
   },
   "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
-    "@aragon/cli-utils": "^0.0.8",
     "chalk": "^3.0.0",
     "engine-check": "^1.0.1",
     "execa": "^1.0.0",

@@ -1,17 +1,17 @@
 import test from 'ava'
 //
 import {
-  getClient,
+  getHttpClient,
   getMerkleDAG,
   extractCIDsFromMerkleDAG,
-} from '../../src/lib/ipfs'
+} from '../../src/ipfs'
 
 const ipfsGateway = 'https://ipfs.infura.io:5001'
 const readmeDirCid = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'
 
 test.beforeEach(async t => {
   t.context = {
-    ipfsReader: await getClient(ipfsGateway),
+    ipfsReader: await getHttpClient(ipfsGateway),
   }
 })
 

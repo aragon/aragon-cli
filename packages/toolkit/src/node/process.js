@@ -1,9 +1,6 @@
 import execa from 'execa'
-import killProcessOnPort from 'kill-port'
 //
 import { withTimeout } from './misc'
-
-export { killProcessOnPort }
 
 export const attachProcess = subprocess => {
   subprocess.stdout.pipe(process.stdout)

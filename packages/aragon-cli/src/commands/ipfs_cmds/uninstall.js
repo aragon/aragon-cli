@@ -2,13 +2,13 @@ import TaskList from 'listr'
 import execa from 'execa'
 import inquirer from 'inquirer'
 import { blue, red } from 'chalk'
-//
-import listrOpts from '../../helpers/listr-options'
 import {
   getGlobalBinary,
   getLocalBinary,
   getNodePackageManager,
-} from '../../util'
+} from '@aragon/toolkit/dist/ipfs'
+//
+import listrOpts from '../../helpers/listr-options'
 
 export const command = 'uninstall'
 export const describe = 'Uninstall the go-ipfs binaries.'

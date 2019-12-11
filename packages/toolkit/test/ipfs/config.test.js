@@ -2,14 +2,14 @@ import test from 'ava'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 //
-import { getPorts, getPeerIDConfig } from '../../src/lib/ipfs'
+import { getPorts, getPeerIDConfig } from '../../src/ipfs'
 
 test.beforeEach(t => {
   const fsExtra = {
     readJson: sinon.stub(),
   }
 
-  const config = proxyquire.noCallThru().load('../../src/lib/ipfs/config', {
+  const config = proxyquire.noCallThru().load('../../src/ipfs/config', {
     'fs-extra': fsExtra,
   })
 

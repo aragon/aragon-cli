@@ -1,0 +1,1 @@
+export const DEVCHAIN_START_TIMEOUT = 20000 // 20s
