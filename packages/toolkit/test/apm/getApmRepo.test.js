@@ -1,140 +1,117 @@
 import test from 'ava'
 import sinon from 'sinon'
-import proxyquire from 'proxyquire'
+import getApmRepo from '../../src/apm/getApmRepo'
 
 // Value used in internal APM calls.
 import { DEFAULT_IPFS_TIMEOUT } from '../../src/helpers/constants'
 
-// Default values used to call getApmRepo(...).
-const web3 = { name: 'web3' }
-const apmRepoName = 'test.aragonpm.eth'
-const apmRepoVersion = '0.1.2'
-const apmOptions = {}
-apmOptions['ens-registry'] = '0x1234512345123451234512345123451234512345'
-const progressHandler = step => {}
+let web3
+let apmRegistryName, apmOptions
+let progressHandler
+let packages
 
 /* Setup and cleanup */
 
-test.beforeEach('setup', t => {
-  const apmStub = sinon.stub()
-  apmStub.returns({
-    getVersion: async () => {},
-    getLatestVersion: async () => {},
-  })
+test.before('setup and make a successful call', async t => {
+  web3 = await getLocalWeb3()
 
-  const getApmRepo = proxyquire.noCallThru().load('../../src/apm/getApmRepo', {
-    '@aragon/apm': apmStub,
-  })
+  apmRegistryName = getApmRegistryName()
+  apmOptions = getApmOptions()
 
-  t.context = {
-    getApmRepo,
-    apmStub,
-  }
-})
+  progressHandler = sinon.spy()
 
-test.afterEach('cleanup', t => {
-  sinon.restore()
+  packages = await getApmRepo(
+    web3,
+    apmRegistryName,
+    apmOptions,
+    progressHandler
+  )
+  await getApmRepo(
+    web3,
+    apmRepoName,
+    apmRepoVersion,
+    emptyApmOptions,
+    progressHandler
+  )
 })
 
 /* Tests */
 
 test('properly calls the progressHandler', async t => {
-  const { getApmRepo } = t.context
-
-  const progressHandlerSpy = sinon.spy()
-
-  await getApmRepo(
-    web3,
-    apmRepoName,
-    apmRepoVersion,
-    apmOptions,
-    progressHandlerSpy
-  )
-
   t.true(progressHandlerSpy.calledTwice)
   t.true(progressHandlerSpy.getCall(0).calledWith(1))
   t.true(progressHandlerSpy.getCall(1).calledWith(2))
 })
 
-test('tolerates a progressHandler not being specified', async t => {
-  const { getApmRepo } = t.context
+// test('calls apm.getVersion() with the correct parameters and returns the expected object', async t => {
+//   const { getApmRepo, apmStub } = t.context
 
-  await getApmRepo(web3, apmRepoName, apmRepoVersion, apmOptions, undefined)
+//   const getVersionResponse = { name: 'getVersionResponse' }
+//   const getVersion = sinon.stub()
+//   getVersion.returns(getVersionResponse)
+//   apmStub.returns({
+//     getVersion: getVersion,
+//     getLatestVersion: async () => {},
+//   })
 
-  t.pass()
-})
+//   const info = await getApmRepo(
+//     web3,
+//     apmRepoName,
+//     apmRepoVersion,
+//     apmOptions,
+//     progressHandler
+//   )
 
-test('calls apm.getVersion() with the correct parameters and returns the expected object', async t => {
-  const { getApmRepo, apmStub } = t.context
+//   t.true(
+//     getVersion.calledOnceWith(
+//       apmRepoName,
+//       ['0', '1', '2'],
+//       DEFAULT_IPFS_TIMEOUT
+//     )
+//   )
 
-  const getVersionResponse = { name: 'getVersionResponse' }
-  const getVersion = sinon.stub()
-  getVersion.returns(getVersionResponse)
-  apmStub.returns({
-    getVersion: getVersion,
-    getLatestVersion: async () => {},
-  })
+//   t.is(info, getVersionResponse)
+// })
 
-  const info = await getApmRepo(
-    web3,
-    apmRepoName,
-    apmRepoVersion,
-    apmOptions,
-    progressHandler
-  )
+// test('calls apm.getLatestVersion() with the correct parameters and returns the expected object', async t => {
+//   const { getApmRepo, apmStub } = t.context
 
-  t.true(
-    getVersion.calledOnceWith(
-      apmRepoName,
-      ['0', '1', '2'],
-      DEFAULT_IPFS_TIMEOUT
-    )
-  )
+//   const getVersionResponse = { name: 'getVersionResponse' }
+//   const getLatestVersion = sinon.stub()
+//   getLatestVersion.returns(getVersionResponse)
+//   apmStub.returns({
+//     getVersion: async () => {},
+//     getLatestVersion,
+//   })
 
-  t.is(info, getVersionResponse)
-})
+//   const info = await getApmRepo(
+//     web3,
+//     apmRepoName,
+//     'latest',
+//     apmOptions,
+//     progressHandler
+//   )
 
-test('calls apm.getLatestVersion() with the correct parameters and returns the expected object', async t => {
-  const { getApmRepo, apmStub } = t.context
+//   t.true(getLatestVersion.calledOnceWith(apmRepoName, DEFAULT_IPFS_TIMEOUT))
 
-  const getVersionResponse = { name: 'getVersionResponse' }
-  const getLatestVersion = sinon.stub()
-  getLatestVersion.returns(getVersionResponse)
-  apmStub.returns({
-    getVersion: async () => {},
-    getLatestVersion,
-  })
+//   t.is(info, getVersionResponse)
+// })
 
-  const info = await getApmRepo(
-    web3,
-    apmRepoName,
-    'latest',
-    apmOptions,
-    progressHandler
-  )
+// test('APM constructor gets called with the appropriate parameters', async t => {
+//   const { getApmRepo, apmStub } = t.context
 
-  t.true(getLatestVersion.calledOnceWith(apmRepoName, DEFAULT_IPFS_TIMEOUT))
+//   await getApmRepo(
+//     web3,
+//     apmRepoName,
+//     apmRepoVersion,
+//     apmOptions,
+//     progressHandler
+//   )
 
-  t.is(info, getVersionResponse)
-})
-
-test('APM constructor gets called with the appropriate parameters', async t => {
-  const { getApmRepo, apmStub } = t.context
-
-  await getApmRepo(
-    web3,
-    apmRepoName,
-    apmRepoVersion,
-    apmOptions,
-    progressHandler
-  )
-
-  t.true(apmStub.calledOnceWith(web3, apmOptions))
-})
+//   t.true(apmStub.calledOnceWith(web3, apmOptions))
+// })
 
 test('fails if apmOptions does not contain an ens-registry property', async t => {
-  const { getApmRepo } = t.context
-
   const emptyApmOptions = {}
 
   const error = await t.throwsAsync(async () => {
