@@ -38,5 +38,9 @@ jobs:
         run: npm run build
       - name: Lint
         run: npm run lint
+      - name: Setup tests
+        run: npm run pretest
       - name: Test
         run: npm run test:coverage
+      - name: Cleanup tests
+        run: npm run posttest

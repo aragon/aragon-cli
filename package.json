@@ -22,7 +22,6 @@
     "pretest": "node scripts/setup-integration-tests.js",
     "posttest": "node scripts/teardown-integration-tests.js",
     "test": "lerna run --parallel test --ignore @aragon/e2e-tests",
-    "test:e2e": "lerna run test --scope @aragon/e2e-tests",
     "test:coverage": "lerna run --parallel test:coverage --ignore @aragon/e2e-tests",
     "report-coverage": "codecov",
     "release": "lerna version",

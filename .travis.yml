@@ -16,7 +16,9 @@ install:
   - npm install
 script:
   - npm run lint
+  - npm run pretest
   - npm run test:coverage
+  - npm run posttest
 after_success:
   - test $TRAVIS_NODE_VERSION = "12" && npm run report-coverage
 before_deploy:
