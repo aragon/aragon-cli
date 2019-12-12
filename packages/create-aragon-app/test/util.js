@@ -1,5 +1,6 @@
 import execa from 'execa'
 import psTree from 'ps-tree'
+import path from 'path'
 
 // let's try gracefully, otherwise we can do SIGTERM or SIGKILL
 const defaultKillSignal = 'SIGINT'
@@ -114,6 +115,8 @@ export async function startBackgroundProcess({
  */
 export function normalizeOutput(stdout) {
   const next = stdout
+    // remove user-specific paths
+    .replace(getMonorepoPath(), 'path/to/cli-monorepo')
     .replace(/❯/g, '>')
     .replace(/ℹ/g, 'i')
     // TODO: remove after https://github.com/aragon/aragon-cli/issues/367 is fixed
@@ -123,3 +126,5 @@ export function normalizeOutput(stdout) {
 
   return next
 }
+
+export const getMonorepoPath = () => path.resolve(__dirname, '../../..')

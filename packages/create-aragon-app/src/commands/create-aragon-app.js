@@ -24,7 +24,8 @@ const templateOptions = {
   },
 }
 
-exports.command = '* <name> [template]'
+// $0 because this is the default command
+exports.command = '$0 <name> [template]'
 
 exports.describe = 'Create a new aragon application'
 

@@ -11,7 +11,7 @@ test.after.always(async () => {
 })
 
 test('should create a new aragon app based on the react boilerplate', async t => {
-  t.plan(9)
+  t.plan(10)
 
   // arrange
   ensureDirSync(testSandbox)
@@ -41,4 +41,5 @@ test('should create a new aragon app based on the react boilerplate', async t =>
   t.is(`${projectName}.open.aragonpm.eth`, arapp.environments.default.appName)
   t.is(`${projectName}.open.aragonpm.eth`, arapp.environments.rinkeby.appName)
   t.is(`${projectName}.open.aragonpm.eth`, arapp.environments.mainnet.appName)
+  t.true(await pathExists(`${projectPath}/node_modules/.bin/ipfs`))
 })

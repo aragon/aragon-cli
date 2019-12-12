@@ -12,6 +12,7 @@ const debugMiddleware = argv => {
 
 // Set up commands
 const cli = yargs
+  .scriptName('create-aragon-app')
   .parserConfiguration({
     'parse-numbers': false,
   })
