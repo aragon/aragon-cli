@@ -10,17 +10,19 @@ import replace from 'replace'
  * @param {string} appName - for example `foo.myApmRegistry.eth`
  * @returns {void}
  */
-export async function prepareTemplate(dir, appName) {
+export async function prepareTemplate(dirPath, basename, appName) {
+  const projectPath = `${dirPath}/${basename}`
+
   /**
    * Delete .git
    */
-  const gitFolderPath = path.resolve(dir, '.git')
+  const gitFolderPath = path.resolve(projectPath, '.git')
 
   /**
    * Delete licenses
    */
-  const licensePath = path.resolve(dir, 'LICENSE')
-  const packageJsonPath = path.resolve(dir, 'package.json')
+  const licensePath = path.resolve(projectPath, 'LICENSE')
+  const packageJsonPath = path.resolve(projectPath, 'package.json')
   const packageJson = await fs.readJson(packageJsonPath)
   delete packageJson.license
   await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 })
@@ -29,7 +31,7 @@ export async function prepareTemplate(dir, appName) {
    * Replace the default registries with the preferred one
    */
   const defaultRegistries = [
-    // To keep backwards compability, only change `aragonpm.eth`, leave `open.aragonpm.eth`
+    // To keep backwards compatibility, only change `aragonpm.eth`, leave `open.aragonpm.eth`
     'placeholder-app-name.aragonpm.eth',
     // 'placeholder-app-name.open.aragonpm.eth',
   ]
@@ -38,7 +40,7 @@ export async function prepareTemplate(dir, appName) {
     replace({
       regex: registry,
       replacement: appName,
-      paths: [dir],
+      paths: [projectPath],
       recursive: true,
       silent: true,
     })
@@ -49,8 +51,8 @@ export async function prepareTemplate(dir, appName) {
    */
   replace({
     regex: 'placeholder-app-name',
-    replacement: dir,
-    paths: [dir],
+    replacement: basename,
+    paths: [projectPath],
     recursive: true,
     silent: true,
   })

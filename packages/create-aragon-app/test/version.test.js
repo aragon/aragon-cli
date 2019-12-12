@@ -1,6 +1,6 @@
 import test from 'ava'
 //
-import { runCreateAragonApp } from '../util'
+import { runCreateAragonApp } from './util'
 
 test('should return the correct version', async t => {
   // act

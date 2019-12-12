@@ -6,6 +6,8 @@ import { isValidAragonId } from '../src/util'
 
 import defaultAPMName from '../src/helpers/default-apm'
 
+const dirPath = './.tmp'
+const basename = 'aragon-app'
 const projectPath = './.tmp/aragon-app'
 
 test.beforeEach(t => {
@@ -16,15 +18,6 @@ test.afterEach(t => {
   fs.removeSync(projectPath)
 })
 
-test.serial('check if project folder already exists', async t => {
-  try {
-    await checkProjectExists(projectPath)
-    t.fail()
-  } catch (err) {
-    t.pass()
-  }
-})
-
 test('project name validation', t => {
   t.is(isValidAragonId('testproject'), true)
   t.is(isValidAragonId('project2'), true)
@@ -32,6 +25,15 @@ test('project name validation', t => {
 
   t.is(isValidAragonId('testProject'), false)
   t.is(isValidAragonId('test_project'), false)
+})
+
+test.serial('check if project folder already exists', async t => {
+  try {
+    await checkProjectExists(dirPath, basename)
+    t.fail()
+  } catch (err) {
+    t.pass()
+  }
 })
 
 test.serial('prepare project template', async t => {
@@ -63,7 +65,7 @@ test.serial('prepare project template', async t => {
     version: '0.0.1',
   })
 
-  await prepareTemplate(projectPath, appName)
+  await prepareTemplate(dirPath, basename, appName)
   const project = await fs.readJson(arappPath)
   const packageJson = await fs.readJson(packageJsonPath)
 
@@ -71,9 +73,6 @@ test.serial('prepare project template', async t => {
   t.is(undefined, packageJson.license)
   t.falsy(fs.pathExistsSync(licensePath))
   t.is(`${appName}`, project.environments.default.appName)
-  t.is(`${projectPath}.open.aragonpm.eth`, project.environments.staging.appName)
-  t.is(
-    `${projectPath}.open.aragonpm.eth`,
-    project.environments.production.appName
-  )
+  t.is(`${basename}.open.aragonpm.eth`, project.environments.staging.appName)
+  t.is(`${basename}.open.aragonpm.eth`, project.environments.production.appName)
 })
