@@ -118,13 +118,15 @@ exports.handler = async ({
     clientPort,
     clientPath,
   })
-  return task
-    .run()
-    .then(() =>
-      reporter.info(
-        `Aragon client from ${blue(clientRepo)} version ${blue(
-          clientVersion
-        )} started on port ${blue(clientPort)}`
-      )
-    )
+
+  await task.run()
+
+  reporter.info(
+    `Aragon client from ${blue(clientRepo)} version ${blue(
+      clientVersion
+    )} started on port ${blue(clientPort)}`
+  )
+
+  // Patch to prevent calling the onFinishCommand hook
+  await new Promise((resolve, reject) => {})
 }
