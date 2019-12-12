@@ -1,3 +1,1 @@
-import * as toolkit from '@aragon/toolkit'
-
-export default toolkit
+export * from '@aragon/toolkit'
