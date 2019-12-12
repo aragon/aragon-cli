@@ -1,11 +1,10 @@
 import test from 'ava'
-import execa from 'execa'
+//
+import { runCreateAragonApp } from './util'
 
 test('should return the correct version', async t => {
-  t.plan(1)
-
   // act
-  const result = await execa('create-aragon-app', ['--version'])
+  const result = await runCreateAragonApp(['--version'])
 
   // cleanup
   // we don't care about the version, only that the command did not fail

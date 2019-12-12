@@ -1,9 +1,26 @@
 import execa from 'execa'
 import psTree from 'ps-tree'
+import path from 'path'
 
 // let's try gracefully, otherwise we can do SIGTERM or SIGKILL
 const defaultKillSignal = 'SIGINT'
 const defaultLogger = process.env.DEBUG ? console.log : () => {}
+
+/**
+ *
+ * Run a command using the freshly compiled aragonCLI build from the "dist" folder.
+ *
+ * @param {Array<string>} args the arguments to call the CLI with, e.g.: ['dao', 'new']
+ * @return {Promise<string>} stdout
+ */
+export const runCreateAragonApp = async (args, verbose = false) => {
+  const subprocess = execa('node', ['dist/index.js', ...args])
+  if (verbose) {
+    console.log(`\n>>> ${args.join(' ')}`)
+    subprocess.stdout.pipe(process.stdout)
+  }
+  return subprocess
+}
 
 export async function startBackgroundProcess({
   cmd,
@@ -16,12 +33,12 @@ export async function startBackgroundProcess({
   return new Promise((resolve, reject) => {
     // start the process
     const subprocess = execa(cmd, args, execaOpts)
-    
+
     let stdout = ''
     let stderr = ''
-    let logPrefix 
-    if(args && args.length > 0) {
-      logPrefix = `${cmd} ${args[0]}` 
+    let logPrefix
+    if (args && args.length > 0) {
+      logPrefix = `${cmd} ${args[0]}`
     } else {
       logPrefix = cmd
     }
@@ -98,6 +115,8 @@ export async function startBackgroundProcess({
  */
 export function normalizeOutput(stdout) {
   const next = stdout
+    // remove user-specific paths
+    .replace(getMonorepoPath(), 'path/to/cli-monorepo')
     .replace(/❯/g, '>')
     .replace(/ℹ/g, 'i')
     // TODO: remove after https://github.com/aragon/aragon-cli/issues/367 is fixed
@@ -107,3 +126,5 @@ export function normalizeOutput(stdout) {
 
   return next
 }
+
+export const getMonorepoPath = () => path.resolve(__dirname, '../../..')

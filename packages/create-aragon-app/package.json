@@ -13,6 +13,9 @@
     "lint:fix": "npm run lint -- --fix",
     "test": "ava --verbose",
     "test:watch": "ava --watch",
+    "test:clean": "rm -rf ./.tmp && npm run test:reset-cache",
+    "test:reset-cache": "ava --reset-cache",
+    "test:update-snapshots": "npm run test:clean && npm run test -- --update-snapshots",
     "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly npm run test"
   },
   "repository": {
@@ -57,6 +60,7 @@
     "babel-eslint": "^10.0.1",
     "babel-plugin-istanbul": "^5.2.0",
     "core-js": "^3.1.4",
+    "cross-env": "^6.0.3",
     "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
     "eslint-config-standard": "^14.1.0",
@@ -66,8 +70,10 @@
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
+    "node-fetch": "^2.3.0",
     "nyc": "^14.1.1",
-    "prettier": "^1.15.3"
+    "prettier": "^1.15.3",
+    "ps-tree": "^1.2.0"
   },
   "engines": {
     "node": ">=10.0.0"

@@ -1,7 +1,7 @@
 import 'source-map-support/register'
 import yargs from 'yargs'
 import * as AragonReporter from './reporters/AragonReporter'
-const Web3 = require('web3')
+const { toWei } = require('web3-utils')
 
 const DEFAULT_GAS_PRICE = require('../package.json').aragon.defaultGasPrice
 
@@ -43,7 +43,7 @@ const cli = yargs
     description: 'Gas price in Gwei',
     default: DEFAULT_GAS_PRICE,
     coerce: gasPrice => {
-      return Web3.utils.toWei(gasPrice, 'gwei')
+      return toWei(gasPrice, 'gwei')
     },
   })
   .option('cwd', {
