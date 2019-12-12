@@ -2,7 +2,7 @@
   "name": "@aragon/toolkit",
   "version": "0.0.1-beta.1",
   "description": "Programmatic interface for interacting with Aragon",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "scripts": {
     "prepare": "npm run build",
     "build": "babel src --out-dir dist --source-maps",
