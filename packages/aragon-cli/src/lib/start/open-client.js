@@ -1,5 +1,5 @@
 import open from 'open'
-import { isPortTaken } from '../../util'
+import { isPortTaken } from '@aragon/toolkit/dist/node'
 
 export async function openClient(ctx, clientPort) {
   // Check until the client is served

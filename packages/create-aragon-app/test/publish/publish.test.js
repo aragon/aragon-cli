@@ -10,8 +10,6 @@ const testSandbox = './.tmp'
 const projectName = 'foobar'
 
 test('should publish an aragon app directory successfully', async t => {
-  t.plan(3)
-
   const publishDirPath = path.resolve(`${testSandbox}/publish-dir`)
 
   // act

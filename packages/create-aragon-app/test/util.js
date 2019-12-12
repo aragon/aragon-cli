@@ -5,6 +5,22 @@ import psTree from 'ps-tree'
 const defaultKillSignal = 'SIGINT'
 const defaultLogger = process.env.DEBUG ? console.log : () => {}
 
+/**
+ *
+ * Run a command using the freshly compiled aragonCLI build from the "dist" folder.
+ *
+ * @param {Array<string>} args the arguments to call the CLI with, e.g.: ['dao', 'new']
+ * @return {Promise<string>} stdout
+ */
+export const runCreateAragonApp = async (args, verbose = false) => {
+  const subprocess = execa('node', ['dist/cli.js', ...args])
+  if (verbose) {
+    console.log(`\n>>> ${args.join(' ')}`)
+    subprocess.stdout.pipe(process.stdout)
+  }
+  return subprocess
+}
+
 export async function startBackgroundProcess({
   cmd,
   args,
@@ -16,12 +32,12 @@ export async function startBackgroundProcess({
   return new Promise((resolve, reject) => {
     // start the process
     const subprocess = execa(cmd, args, execaOpts)
-    
+
     let stdout = ''
     let stderr = ''
-    let logPrefix 
-    if(args && args.length > 0) {
-      logPrefix = `${cmd} ${args[0]}` 
+    let logPrefix
+    if (args && args.length > 0) {
+      logPrefix = `${cmd} ${args[0]}`
     } else {
       logPrefix = cmd
     }

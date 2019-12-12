@@ -14,9 +14,7 @@
     "build:watch": "npm run build -- -- --watch",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
-    "pretest": "node scripts/setup-integration-tests.js & sleep 20",
-    "posttest": "node scripts/teardown-integration-tests.js",
-    "test": "ava --verbose || (npm run posttest && exit 42)",
+    "test": "ava --verbose",
     "test:watch": "ava --watch",
     "test:clean": "rm -rf ./.tmp",
     "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test"
@@ -43,14 +41,10 @@
   "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
     "@aragon/apm": "^3.1.0",
-    "@aragon/apps-shared-minime": "^1.0.1",
     "@aragon/aragen": "^5.0.0",
-    "@aragon/cli-utils": "^0.0.8",
-    "@aragon/id": "^2.1.0",
     "@aragon/os": "^4.3.0",
     "@aragon/truffle-config-v4": "^1.0.0",
-    "@aragon/wrapper": "5.0.0-rc.17",
-    "@aragon/toolkit": "^0.0.1",
+    "@aragon/toolkit": "^0.0.1-beta.1",
     "ajv": "^6.6.2",
     "bn.js": "^5.0.0",
     "byte-size": "^6.2.0",
@@ -64,14 +58,12 @@
     "figures": "^3.0.0",
     "find-up": "^4.0.0",
     "fs-extra": "^8.0.1",
-    "get-folder-size": "^2.0.1",
     "git-clone": "^0.1.0",
     "go-platform": "^1.0.0",
     "http-server": "^0.11.1",
     "ignore": "^4.0.6",
     "inquirer": "^7.0.0",
     "internal-ip": "^5.0.0",
-    "ipfs-http-client": "^39.0.2",
     "listr": "^0.14.3",
     "listr-input": "0.2.0",
     "listr-silent-renderer": "^1.1.1",
@@ -88,9 +80,9 @@
     "tmp-promise": "^2.0.1",
     "truffle": "4.1.14",
     "truffle-flattener": "^1.2.9",
-    "web3": "^1.2.0",
+    "web3": "^1.2.4",
     "which": "^2.0.1",
-    "yargs": "^15.0.1"
+    "yargs": "git://github.com/yargs/yargs.git#fe380cd356aa33aef0449facd59c22cab8930ac9"
   },
   "devDependencies": {
     "@aragon/apps-agent": "^2.0.0",
@@ -180,9 +172,6 @@
       "plugin:ava/recommended",
       "plugin:prettier/recommended"
     ],
-    "rules": {
-      "ava/no-skip-test": 0
-    },
     "parser": "babel-eslint"
   },
   "prettier": {

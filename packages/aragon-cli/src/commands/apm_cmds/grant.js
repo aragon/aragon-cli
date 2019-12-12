@@ -1,4 +1,4 @@
-const { blue, red } = require('chalk')
+const { blue } = require('chalk')
 const grantNewVersionsPermission = require('@aragon/toolkit/dist/apm/grantNewVersionsPermission')
 //
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
@@ -51,19 +51,12 @@ exports.handler = async function({
     }
   }
 
-  try {
-    await grantNewVersionsPermission(
-      web3,
-      module.appName,
-      apmOptions,
-      grantees,
-      progressHandler,
-      { gasPrice: gasPrice || network.gasPrice }
-    )
-  } catch (err) {
-    reporter.error(`${err}\n${red('Command failed')}`)
-    process.exit(1)
-  }
-
-  process.exit(0)
+  await grantNewVersionsPermission(
+    web3,
+    module.appName,
+    apmOptions,
+    grantees,
+    progressHandler,
+    { gasPrice: gasPrice || network.gasPrice }
+  )
 }

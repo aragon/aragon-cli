@@ -1,16 +1,15 @@
 import TaskList from 'listr'
 import { blue, red, green } from 'chalk'
-//
-import listrOpts from '../../helpers/listr-options'
-import { askForInput } from '../../util'
-//
 import {
-  getClient,
+  getHttpClient,
   getMerkleDAG,
   extractCIDsFromMerkleDAG,
   propagateFiles,
   isValidCID,
-} from '../../lib/ipfs'
+} from '@aragon/toolkit/dist/ipfs'
+//
+import listrOpts from '../../helpers/listr-options'
+import { askForInput } from '../../util'
 
 export const command = 'propagate [cid]'
 export const describe =
@@ -69,7 +68,7 @@ export const handler = async argv => {
 
   const { reporter, apm, debug, silent } = argv
 
-  const ipfsReader = await getClient(apm.ipfs.gateway)
+  const ipfsReader = await getHttpClient(apm.ipfs.gateway)
 
   const ctx = await runPropagateTask({
     ipfsReader,

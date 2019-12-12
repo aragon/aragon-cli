@@ -8,8 +8,6 @@ const testSandbox = './.tmp'
 const projectName = 'foobar'
 
 test('should run an aragon app successfully on HTTP', async t => {
-  t.plan(5)
-
   // Node.js 11 fix (https://github.com/aragon/aragon-cli/issues/731)
   fs.writeFileSync(
     path.join(testSandbox, projectName, 'truffle.js'),
@@ -42,6 +40,12 @@ test('should run an aragon app successfully on HTTP', async t => {
     ],
     execaOpts: {
       cwd: `${testSandbox}/${projectName}`,
+      /**
+       * By default execa will run the aragon binary that is located at '.tmp/foobar/node_modules'.
+       * That is coming from npm and is not the one we want to test.
+       *
+       * We need to tell it to use the one we just built locally and installed in the e2e-tests package
+       */
       preferLocal: true,
       localDir: '.',
     },

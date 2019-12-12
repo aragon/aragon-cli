@@ -1,7 +1,7 @@
 import 'source-map-support/register'
 import yargs from 'yargs'
 import * as AragonReporter from './reporters/AragonReporter'
-const Web3 = require('web3')
+const { toWei } = require('web3-utils')
 
 const DEFAULT_GAS_PRICE = require('../package.json').aragon.defaultGasPrice
 
@@ -35,7 +35,7 @@ const cli = yargs
   // blank scriptName so that help text doesn't display "aragon" before each command
   .scriptName('')
   .demandCommand(1, 'You need to specify a command')
-  .fail(AragonReporter.errorHandler)
+
   /**
    * OPTIONS
    */
@@ -43,7 +43,7 @@ const cli = yargs
     description: 'Gas price in Gwei',
     default: DEFAULT_GAS_PRICE,
     coerce: gasPrice => {
-      return Web3.utils.toWei(gasPrice, 'gwei')
+      return toWei(gasPrice, 'gwei')
     },
   })
   .option('cwd', {
@@ -100,5 +100,15 @@ const cli = yargs
 
 AragonReporter.configure(cli)
 cli.middleware(MIDDLEWARES)
+
+// Runs if command.handler is successful
+cli.onFinishCommand(() => {
+  process.exit()
+})
+// Runs if command.handler throws
+cli.fail((...args) => {
+  AragonReporter.errorHandler(...args)
+})
+
 // trigger yargs
 cli.argv // eslint-disable-line no-unused-expressions

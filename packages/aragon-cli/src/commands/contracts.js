@@ -16,5 +16,4 @@ exports.handler = async function({ reporter, cwd }) {
   } catch (err) {
     console.error(err)
   }
-  process.exit(0)
 }

@@ -1,17 +1,16 @@
 import TaskList from 'listr'
-//
-import listrOpts from '../../helpers/listr-options'
-//
 import {
   startLocalDaemon,
   getDefaultRepoPath,
   setPorts,
   ensureRepoInitialized,
-  getClient,
+  getHttpClient,
   configureCors,
   pinArtifacts,
   getBinaryPath,
-} from '../../lib/ipfs'
+} from '@aragon/toolkit/dist/ipfs'
+//
+import listrOpts from '../../helpers/listr-options'
 
 export const command = 'start'
 export const describe = 'Start and configure the daemon.'
@@ -129,9 +128,9 @@ Use the 'aragon ipfs stop' command to stop it.`)
   /**
    * Configure IPFS with Aragon-specific logic
    */
-  const apiClient = await getClient(`http://localhost:${apiPort}`)
-  await configureCors(apiClient)
+  const httpClient = await getHttpClient(`http://localhost:${apiPort}`)
+  await configureCors(httpClient)
   reporter.success('Successfully configured CORS')
-  const hashes = await pinArtifacts(apiClient)
+  const hashes = await pinArtifacts(httpClient)
   reporter.success(`Successfully pinned ${hashes.length} Aragon artifacts.`)
 }

@@ -161,6 +161,4 @@ exports.handler = async ({
     )}`
   )
   reporter.info(`Transaction hash: ${blue(ctx.transactionHash)}`)
-
-  process.exit()
 }

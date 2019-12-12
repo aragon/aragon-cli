@@ -6,8 +6,6 @@ const testSandbox = './.tmp'
 const projectName = 'foobar'
 
 test('should build an aragon app successfully', async t => {
-  t.plan(2)
-
   // act
   const appProcess = await startBackgroundProcess({
     cmd: 'npm',

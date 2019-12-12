@@ -21,11 +21,11 @@ const cli = yargs
   .alias('v', 'version')
   .group(['help', 'version'], 'Global options:')
   .demandCommand(1, 'You need to specify a command')
-  .middleware([debugMiddleware])
   .epilogue('For more information, check out https://hack.aragon.org')
   .fail(AragonReporter.errorHandler)
 
 AragonReporter.configure(cli)
+cli.middleware([debugMiddleware])
 
 // trigger yargs
 cli.argv // eslint-disable-line no-unused-expressions

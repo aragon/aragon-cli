@@ -34,6 +34,7 @@ exports.builder = yargs => {
       description: 'The application name (appname.aragonpm.eth)',
     })
     .option('cwd', {
+      // TODO: fix this option
       description: 'The current working directory',
       default: process.cwd(),
     })

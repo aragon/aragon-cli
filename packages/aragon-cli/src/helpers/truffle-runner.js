@@ -1,7 +1,7 @@
 const execa = require('execa')
 const devnull = require('dev-null')
 //
-const { getBinary } = require('../util')
+const { getBinary } = require('@aragon/toolkit/dist/node')
 
 const truffleBin = getBinary('truffle')
 
@@ -23,12 +23,7 @@ const runTruffle = (args, { stdout, stderr, stdin }) => {
 }
 
 const compileContracts = async () => {
-  try {
-    await runTruffle(['compile'], { stdout: devnull() })
-  } catch (err) {
-    console.log(err)
-    process.exit(1)
-  }
+  await runTruffle(['compile'], { stdout: devnull() })
 }
 
 module.exports = { runTruffle, compileContracts }
