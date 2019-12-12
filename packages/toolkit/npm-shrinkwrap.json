@@ -4580,6 +4580,11 @@
 			"resolved": "https://registry.npmjs.org/builtin-status-codes/-/builtin-status-codes-3.0.0.tgz",
 			"integrity": "sha1-hZgoeOIbmOHGZCXgPQF0eI9Wnug="
 		},
+		"byte-size": {
+			"version": "6.2.0",
+			"resolved": "https://registry.npmjs.org/byte-size/-/byte-size-6.2.0.tgz",
+			"integrity": "sha512-6EspYUCAPMc7E2rltBgKwhG+Cmk0pDm9zDtF1Awe2dczNUL3YpZ8mTs/dueOTS1hqGWBOatqef4jYMGjln7WmA=="
+		},
 		"bytes": {
 			"version": "3.1.0",
 			"resolved": "https://registry.npmjs.org/bytes/-/bytes-3.1.0.tgz",

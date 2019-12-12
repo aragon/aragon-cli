@@ -60,6 +60,7 @@
     "@aragon/os": "^4.3.0",
     "@aragon/wrapper": "5.0.0-rc.9",
     "babel-eslint": "^10.0.3",
+    "byte-size": "^6.2.0",
     "ethereum-ens": "^0.7.8",
     "fs-extra": "^8.1.0",
     "get-folder-size": "^2.0.1",
