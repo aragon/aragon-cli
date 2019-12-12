@@ -69,11 +69,9 @@ test.before('setup and make a successful call', async t => {
 test('permissions are not set for any accounts', async t => {
   const anyone = accounts[2]
 
-  const hasPermission = await acl.methods.hasPermission(
-    anyone,
-    repoAddress,
-    role
-  ).call()
+  const hasPermission = await acl.methods
+    .hasPermission(anyone, repoAddress, role)
+    .call()
 
   t.false(hasPermission)
 })
@@ -81,11 +79,9 @@ test('permissions are not set for any accounts', async t => {
 test('properly sets permissions for grantees', async t => {
   const grantee = grantees[0]
 
-  const hasPermission = await acl.methods.hasPermission(
-    grantee,
-    repoAddress,
-    role
-  ).call()
+  const hasPermission = await acl.methods
+    .hasPermission(grantee, repoAddress, role)
+    .call()
 
   t.true(hasPermission)
 })
