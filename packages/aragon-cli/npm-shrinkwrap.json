@@ -790,8 +790,8 @@
 			"dev": true
 		},
 		"@aragon/toolkit": {
-			"version": "0.0.1-beta.2",
-			"resolved": "https://registry.npmjs.org/@aragon/toolkit/-/toolkit-0.0.1-beta.2.tgz",
+			"version": "0.0.1-beta.3",
+			"resolved": "https://registry.npmjs.org/@aragon/toolkit/-/toolkit-0.0.1-beta.3.tgz",
 			"integrity": "sha512-63a0TEkYb42IES+/FFyttm8M0cmr45gFeGjp2wOr0CfFo8bO6CtUk5fKJNNEtXDLWojj6fDj85YpYd7fvFck+g==",
 			"requires": {
 				"@aragon/apm": "^3.1.0",
