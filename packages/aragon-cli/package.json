@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "7.0.0-beta.4",
+  "version": "7.0.0-beta.5",
   "description": "Aragon command-line tools",
   "main": "./dist/toolkit.js",
   "bin": {
