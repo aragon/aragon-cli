@@ -1,5 +1,4 @@
 import test from 'ava'
-import { from } from 'rxjs'
 import sinon from 'sinon'
 //
 import getApmRepo from '../../src/apm/getApmRepo'
@@ -8,7 +7,6 @@ import defaultAPMName from '../../src/helpers/default-apm'
 import { initAragonJS, getTransactionPath, getApps } from '../../src/helpers/aragonjs-wrapper'
 import { getLocalWeb3, getApmOptions } from '../test-helpers'
 
-const DEFAULT_ACL = '0x53e13d3a893d4a95ff4fe1480ea291fdaec51233'
 const DEFAULT_APPS = [
     {
       name: 'Kernel',
@@ -23,9 +21,6 @@ const DEFAULT_APPS = [
       appId: '0xddbcfd564f642ab5627cf68b9b7d374fb4f8a36e941a75d89c87998cef03bd61',
     },
   ]
-const DEFAULT_FORWARDERS = [[{}]]
-const DEFAULT_TRANSACTIONS = [[{}]]
-const DEFAULT_PERMISSIONS = [[{}]]
 
 let wrapper
 let web3
@@ -38,7 +33,9 @@ let onDaoAddress
 test.before('setup', async t => {
   web3 = await getLocalWeb3()
 
-  ensRegistryAddress = getApmOptions()['ens-registry']
+  const apmOpts = getApmOptions()
+  ensRegistryAddress = apmOpts['ens-registry']
+
   dao = await createDAO()
 
   onDaoAddress = sinon.spy()
@@ -48,7 +45,9 @@ test.before('setup', async t => {
     ensRegistryAddress,
     {
       provider: web3.currentProvider,
-      onDaoAddress
+      accounts: await web3.eth.getAccounts(),
+      ipfsConf: apmOpts.ipfs,
+      onDaoAddress,
     }
   )
 })
@@ -77,27 +76,23 @@ test('getApps returns the correct app list', async t => {
   }
 })
 
-// TODO test getTransactionPath and getACLTransactionPath
-test('getTransactionPath ...', async t => {
-  const apps = await getApps(wrapper)
-
-  const kernel = apps[0]
-  const app = apps[2]
-
-  const accounts = await web3.eth.getAccounts()
+test.skip('getTransactionPath provides an expected path', async t => {
+  const votingAppId = '0x9fa3927f639745e587912d4b0fea7ef9013bf93fb907d29faeab57417ba6e1d4'
+  const votingBase = '0xb31E9e3446767AaDe9E48C4B1B6D13Cc6eDce172'
 
   const path = await getTransactionPath(
-    kernel.proxyAddress,
+    dao,
     'newAppInstance',
-    [app.appId, app.codeAddress],
+    [votingAppId, votingBase, '0x00', false],
     wrapper
   )
-  console.log(path)
 
+  // TODO: Not sure why path is returning empty
+  console.log(`path`, path)
+
+  // TODO: validate
   t.pass()
 })
-
-// TODO test observables
 
 /* Utils */
 
