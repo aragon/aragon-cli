@@ -1523,9 +1523,9 @@
 			"integrity": "sha512-5wjnpaT/3dV+XB4borEsnAYQchn00XSgTAWKDkEqv+K8KevjbzmofK6hfJ9TZIlpj2N0xQpazy7PiRQiWHqzWg=="
 		},
 		"core-js-compat": {
-			"version": "3.4.8",
-			"resolved": "https://registry.npmjs.org/core-js-compat/-/core-js-compat-3.4.8.tgz",
-			"integrity": "sha512-l3WTmnXHV2Sfu5VuD7EHE2w7y+K68+kULKt5RJg8ZJk3YhHF1qLD4O8v8AmNq+8vbOwnPFFDvds25/AoEvMqlQ==",
+			"version": "3.5.0",
+			"resolved": "https://registry.npmjs.org/core-js-compat/-/core-js-compat-3.5.0.tgz",
+			"integrity": "sha512-E7iJB72svRjJTnm9HDvujzNVMCm3ZcDYEedkJ/sDTNsy/0yooCd9Cg7GSzE7b4e0LfIkjijdB1tqg0pGwxWeWg==",
 			"requires": {
 				"browserslist": "^4.8.2",
 				"semver": "^6.3.0"
