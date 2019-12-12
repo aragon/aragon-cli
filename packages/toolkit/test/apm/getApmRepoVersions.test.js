@@ -1,9 +1,6 @@
 import test from 'ava'
 import getApmRepoVersions from '../../src/apm/getApmRepoVersions'
-import {
-  getLocalWeb3,
-  getApmOptions,
-} from '../test-helpers'
+import { getLocalWeb3, getApmOptions } from '../test-helpers'
 
 let web3
 let apmOptions, apmRepoName
@@ -20,7 +17,7 @@ test.before('setup and make a successful call', async t => {
   versions = await getApmRepoVersions(web3, apmRepoName, apmOptions)
 })
 
-test('retrieves the expected versions info', async t => {
+test('retrieves the expected versions info', t => {
   t.is(versions.length, 1)
 
   const version = versions[0]
