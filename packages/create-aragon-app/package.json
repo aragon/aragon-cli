@@ -60,7 +60,6 @@
     "babel-eslint": "^10.0.1",
     "babel-plugin-istanbul": "^5.2.0",
     "core-js": "^3.1.4",
-    "cross-env": "^6.0.3",
     "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
     "eslint-config-standard": "^14.1.0",
@@ -72,8 +71,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "node-fetch": "^2.3.0",
     "nyc": "^14.1.1",
-    "prettier": "^1.15.3",
-    "ps-tree": "^1.2.0"
+    "prettier": "^1.15.3"
   },
   "engines": {
     "node": ">=10.0.0"
