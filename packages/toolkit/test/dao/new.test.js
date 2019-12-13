@@ -35,8 +35,7 @@ test('Deploys DAO with valid template', async t => {
   t.true(isAddress(daoAddress))
 })
 
-// eslint-disable-next-line ava/no-skip-test
-test.skip('Deploys DAO with template with custom newInstance method and args', async t => {
+test('Deploys DAO with template with custom newInstance method and args', async t => {
   const { web3 } = t.context
 
   const repo = await getApmRepo(

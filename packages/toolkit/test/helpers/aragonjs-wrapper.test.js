@@ -11,26 +11,12 @@ import {
 } from '../../src/helpers/aragonjs-wrapper'
 import { getLocalWeb3, getApmOptions } from '../test-helpers'
 
-const DEFAULT_APPS = [
-  {
-    name: 'Kernel',
-    appId: '0x3b4bf6bf3ad5000ecf0f989d5befde585c6860fea3e574a4fab4c49d1c177d9c',
-  },
-  {
-    name: 'ACL',
-    appId: '0xe3262375f45a6e2026b7e7b18c2b807434f2508fe1a2a3dfb493c7df8f4aad6a',
-  },
-  {
-    name: 'EVM Script Registry',
-    appId: '0xddbcfd564f642ab5627cf68b9b7d374fb4f8a36e941a75d89c87998cef03bd61',
-  },
-]
-
 let wrapper
 let web3
 let dao
 let ensRegistryAddress
 let onDaoAddress
+let apps
 
 /* Setup */
 
@@ -50,6 +36,8 @@ test.before('setup', async t => {
     ipfsConf: apmOpts.ipfs,
     onDaoAddress,
   })
+
+  apps = await getApps(wrapper)
 })
 
 /* Tests */
@@ -59,40 +47,30 @@ test('onDaoAddress is called correctly', t => {
   t.true(onDaoAddress.getCall(0).calledWith(dao))
 })
 
-test('getApps returns the correct app list', async t => {
-  const apps = await getApps(wrapper)
+test('getApps returns the correct app list', t => {
+  const reducedApps = apps.map(app => {
+    return { name: app.name, appId: app.appId }
+  })
 
-  t.is(apps.length, DEFAULT_APPS.length)
-
-  function verifyApp(idx) {
-    const app = apps[idx]
-    const expectedApp = DEFAULT_APPS[idx]
-    t.is(app.name, expectedApp.name, 'incorrect name')
-    t.is(app.appId, expectedApp.appId, 'incorrect appId')
-  }
-
-  for (let i = 0; i < apps.length; i++) {
-    verifyApp(i)
-  }
+  t.snapshot(reducedApps)
 })
 
 test('getTransactionPath provides an expected path', async t => {
-  const votingAppId =
-    '0x9fa3927f639745e587912d4b0fea7ef9013bf93fb907d29faeab57417ba6e1d4'
-  const votingBase = '0xb31E9e3446767AaDe9E48C4B1B6D13Cc6eDce172'
+  const voting = apps.filter(app => app.name === 'Voting')[0]
 
-  const path = await getTransactionPath(
-    dao,
-    'newAppInstance',
-    [votingAppId, votingBase, '0x00', false],
+  const paths = await getTransactionPath(
+    voting.proxyAddress,
+    'changeSupportRequiredPct',
+    ['490000000000000000'],
     wrapper
   )
 
-  // TODO: Not sure why path is returning empty
-  console.log(`path`, path)
-
-  // TODO: validate
-  t.pass()
+  t.is(paths.length, 3)
+  t.true(
+    paths[1].description.includes(
+      'Creates a vote to execute the desired action'
+    )
+  )
 })
 
 /* Utils */
@@ -100,7 +78,7 @@ test('getTransactionPath provides an expected path', async t => {
 async function createDAO() {
   const repo = await getApmRepo(
     web3,
-    defaultAPMName('bare-template'),
+    defaultAPMName('membership-template'),
     'latest',
     { ensRegistryAddress }
   )
@@ -108,8 +86,16 @@ async function createDAO() {
   const daoAddress = await newDao({
     repo,
     web3,
-    // newInstanceMethod: 'newInstance',
-    newInstanceArgs: [],
+    newInstanceMethod: 'newTokenAndInstance',
+    newInstanceArgs: [
+      'Token name',
+      'TKN',
+      'daoname' + Math.floor(Math.random() * 1000000),
+      ['0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'],
+      ['500000000000000000', '50000000000000000', '604800'],
+      '1296000',
+      true,
+    ],
     deployEvent: 'DeployDao',
   })
 
