@@ -268,8 +268,9 @@ exports.runSetupTask = ({
             web3,
             apmOptions,
           }
-
-          return deploy.task(deployTaskParams)
+          const deployTasks = await deploy.task(deployTaskParams)
+          const { contractAddress } = await deployTasks.run()
+          ctx.contract = contractAddress
         },
       },
       {
