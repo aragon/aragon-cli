@@ -5,7 +5,7 @@ import '../../@types/acl/typedef'
  * @param {AclPermissions} permissions Permissions
  * @return {AclPermission[]} acl permissions data
  */
-const flattenAclPermissions = permissions => {
+export const flattenAclPermissions = permissions => {
   const aclPermissions = []
   for (const [to, roles] of Object.entries(permissions)) {
     for (const [roleHash, data] of Object.entries(roles)) {
@@ -29,7 +29,12 @@ const flattenAclPermissions = permissions => {
  * @param {KnownRoles} knownRoles Known roles
  * @return {AclPermissionFormatted} with human readable names if any
  */
-const formatAclPermission = (aclPermission, apps, knownApps, knownRoles) => {
+export const formatAclPermission = (
+  aclPermission,
+  apps,
+  knownApps,
+  knownRoles
+) => {
   const {
     to: toAddress,
     role: roleHash,
@@ -73,14 +78,8 @@ const formatAclPermission = (aclPermission, apps, knownApps, knownRoles) => {
  * @param  {KnownRoles} knownRoles Known roles
  * @return {AclPermissionFormatted[]} Formated acl permissions data
  */
-function formatAclPermissions(permissions, apps, knownApps, knownRoles) {
+export function formatAclPermissions(permissions, apps, knownApps, knownRoles) {
   return flattenAclPermissions(permissions).map(aclPermission =>
     formatAclPermission(aclPermission, apps, knownApps, knownRoles)
   )
-}
-
-module.exports = {
-  flattenAclPermissions,
-  formatAclPermission,
-  formatAclPermissions,
 }
