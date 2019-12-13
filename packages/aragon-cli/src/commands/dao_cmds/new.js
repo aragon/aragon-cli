@@ -5,7 +5,6 @@ import newDao from '@aragon/toolkit/dist/dao/new'
 import { assignId } from '@aragon/toolkit/dist/dao/assign-id'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
-
 import listrOpts from '../../helpers/listr-options'
 import defaultAPMName from '../../helpers/default-apm'
 import { parseArgumentStringIfPossible } from '../../util'

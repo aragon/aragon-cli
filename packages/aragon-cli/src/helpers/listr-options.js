@@ -9,7 +9,7 @@ import ListrRenderer from '../reporters/ListrRenderer'
  * @param {boolean} debug Option debug
  * @returns {Object} listr options object
  */
-export function listrOpts(silent, debug) {
+export default function listrOpts(silent, debug) {
   return {
     renderer: ListrRenderer(silent, debug),
     dateFormat: false,
