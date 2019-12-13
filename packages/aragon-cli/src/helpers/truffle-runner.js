@@ -1,9 +1,8 @@
 import execa from 'execa'
 import devnull from 'dev-null'
-//
-import { getBinary } from '@aragon/toolkit/dist/node'
+import { getBinary, getPackageRoot } from '@aragon/toolkit/dist/node'
 
-const truffleBin = getBinary('truffle')
+const truffleBin = getBinary('truffle', getPackageRoot(__dirname))
 
 export const runTruffle = (args, { stdout, stderr, stdin }) => {
   return new Promise((resolve, reject) => {

@@ -239,6 +239,8 @@ export const handler = async function({
             files,
             ignore: ['node_modules'],
             reporter,
+            debug,
+            silent,
             gasPrice,
             cwd,
             network,
