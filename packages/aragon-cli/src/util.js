@@ -1,3 +1,4 @@
+import os from 'os'
 const findUp = require('find-up')
 const path = require('path')
 const execa = require('execa')
@@ -6,7 +7,28 @@ const { readJson } = require('fs-extra')
 const { request } = require('http')
 const inquirer = require('inquirer')
 const { getNodePackageManager } = require('@aragon/toolkit/dist/node')
+
 let cachedProjectRoot
+
+/**
+ * Some characters are rendered differently depending on the OS.
+ *
+ * @param {string} stdout
+ */
+function normalizeOutput(stdout) {
+  const next = stdout
+    // remove user-specific paths
+    .replace(/❯/g, '>')
+    .replace(/ℹ/g, 'i')
+    // TODO: remove after https://github.com/aragon/aragon-cli/issues/367 is fixed
+    .replace(/cli.js/g, 'aragon')
+    // replace homedir in paths
+    .replace(new RegExp(os.homedir(), 'g'), '~')
+    // sometimes there's an extra LF
+    .trim()
+
+  return next
+}
 
 const findProjectRoot = () => {
   if (!cachedProjectRoot) {
@@ -186,6 +208,7 @@ const askForConfirmation = async message => {
 }
 
 module.exports = {
+  normalizeOutput,
   parseArgumentStringIfPossible,
   findProjectRoot,
   isHttpServerOpen,

@@ -4,7 +4,7 @@ import {
   runAragonCLI,
   getLocalWeb3,
   matchAddressAtLineContaining,
-} from '../utils'
+} from '../util'
 
 // NOTE: These tests validate that the guide at https://hack.aragon.org/docs/guides-custom-deploy can be followed without errors and as expected.
 
@@ -26,7 +26,7 @@ test.before(async t => {
 })
 
 test.serial('creates a dao', async t => {
-  const stdout = await runAragonCLI(['dao', 'new'], verbose)
+  const { stdout } = await runAragonCLI(['dao', 'new'], verbose)
   DAO = matchAddressAtLineContaining(stdout, 'Created DAO')
   if (verbose) console.log(`DAO`, DAO)
 
@@ -34,7 +34,7 @@ test.serial('creates a dao', async t => {
 })
 
 test.serial('creates a token', async t => {
-  const stdout = await runAragonCLI(
+  const { stdout } = await runAragonCLI(
     ['dao', 'token', 'new', 'Member token', 'MBR', 0],
     verbose
   )
@@ -48,7 +48,7 @@ test.serial('creates a token', async t => {
 })
 
 test.serial('installs a token manager app', async t => {
-  const stdout = await runAragonCLI(
+  const { stdout } = await runAragonCLI(
     ['dao', 'install', DAO, 'token-manager', '--app-init', 'none'],
     verbose
   )
@@ -62,7 +62,7 @@ test.serial('installs a token manager app', async t => {
 })
 
 test.serial('retrieves a list of apps', async t => {
-  const stdout = await runAragonCLI(['dao', 'apps', DAO, '--all'], verbose)
+  const { stdout } = await runAragonCLI(['dao', 'apps', DAO, '--all'], verbose)
   ACL = matchAddressAtLineContaining(stdout, 'acl')
   if (verbose) console.log(`ACL`, ACL)
 
@@ -119,7 +119,7 @@ test.serial('mints tokens', async t => {
 })
 
 test.serial('installs the voting app', async t => {
-  const stdout = await runAragonCLI(
+  const { stdout } = await runAragonCLI(
     [
       'dao',
       'install',
@@ -179,7 +179,10 @@ test.serial('sets the voting app permissions', async t => {
 })
 
 test.serial('installs the vault app', async t => {
-  const stdout = await runAragonCLI(['dao', 'install', DAO, 'vault'], verbose)
+  const { stdout } = await runAragonCLI(
+    ['dao', 'install', DAO, 'vault'],
+    verbose
+  )
   VAULT = matchAddressAtLineContaining(stdout, 'Installed vault')
   if (verbose) console.log(`VAULT`, VAULT)
 
@@ -187,7 +190,7 @@ test.serial('installs the vault app', async t => {
 })
 
 test.serial('installs the finance app', async t => {
-  const stdout = await runAragonCLI(
+  const { stdout } = await runAragonCLI(
     ['dao', 'install', DAO, 'finance', '--app-init-args', VAULT, '2592000'],
     verbose
   )

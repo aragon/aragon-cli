@@ -34,7 +34,7 @@ export const runAragonCLI = async (args, verbose = false) => {
     console.log(`\n>>> ${args.join(' ')}`)
     subprocess.stdout.pipe(process.stdout)
   }
-  return (await subprocess).stdout
+  return subprocess
 }
 
 /**
@@ -42,7 +42,7 @@ export const runAragonCLI = async (args, verbose = false) => {
  * @return {Promise<string>} daoAddress
  */
 export const getNewDaoAddress = async () => {
-  const daoNewRes = await runAragonCLI(['dao', 'new'])
+  const { stdout: daoNewRes } = await runAragonCLI(['dao', 'new'])
   const dao = (daoNewRes.split('DAO: ')[1] || '').trim()
   if (!isAddress(dao))
     throw Error(`Error parsing aragon dao new output: ${daoNewRes}`)

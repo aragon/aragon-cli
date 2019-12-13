@@ -1,5 +1,6 @@
 import test from 'ava'
 import { remove, ensureDirSync, pathExists, readJson } from 'fs-extra'
+//
 import { normalizeOutput, runCreateAragonApp } from './util'
 
 const testSandbox = './.tmp'
@@ -11,8 +12,6 @@ test.after.always(async () => {
 })
 
 test('should create a new aragon app based on the react boilerplate', async t => {
-  t.plan(9)
-
   // arrange
   ensureDirSync(testSandbox)
   const repoPath = `${projectPath}/.git`

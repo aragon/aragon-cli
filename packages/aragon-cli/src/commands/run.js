@@ -6,6 +6,7 @@ const url = require('url')
 const Web3 = require('web3')
 const APM = require('@aragon/apm')
 const { blue, green, bold } = require('chalk')
+const { isPortTaken } = require('@aragon/toolkit/dist/node')
 //
 const encodeInitPayload = require('../helpers/encodeInitPayload')
 const listrOpts = require('../helpers/listr-options')
@@ -14,7 +15,6 @@ const pkg = require('../../package.json')
 const {
   findProjectRoot,
   isHttpServerOpen,
-  isPortTaken,
   parseArgumentStringIfPossible,
 } = require('../util')
 // cmds

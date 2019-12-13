@@ -3,7 +3,7 @@ import path from 'path'
 import { startProcess, noop, isPortTaken } from '../node'
 import { DEVCHAIN_START_TIMEOUT } from './constants'
 
-export const ensureDevchain = async ({ port, logger = noop }) => {
+export const ensureDevchain = async ({ port, reset, logger = noop }) => {
   if (await isPortTaken(port)) {
     logger(`Devchain already started on: ${port}`)
     return
@@ -15,13 +15,14 @@ export const ensureDevchain = async ({ port, logger = noop }) => {
   try {
     const { detach } = await startProcess({
       cmd: 'node',
-      args: [binPath, 'start', '--port', port],
+      args: [binPath, 'start', '--port', port, reset ? '--reset' : ''],
       readyOutput: 'Devchain running at',
       execaOpts: {
         detached: true,
       },
       timeout: DEVCHAIN_START_TIMEOUT,
     })
+    console.log()
     logger(`Devchain started on: ${port}`)
     logger('Devchain ready!!')
     detach()

@@ -1,10 +1,10 @@
 import test from 'ava'
-import { runAragonCLI } from '../utils'
+import { runAragonCLI } from '../util'
 
 test('should return the correct version', async t => {
-  t.plan(1)
+  const result = await runAragonCLI(['--version'])
 
-  const stdout = await runAragonCLI(['--version'])
+  delete result.stdout
 
-  t.snapshot(stdout)
+  t.snapshot(result)
 })
