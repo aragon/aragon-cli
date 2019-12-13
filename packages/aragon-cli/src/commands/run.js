@@ -442,5 +442,8 @@ exports.handler = async function({
     } else if (!manifest.start_url) {
       reporter.warning('No front-end detected (no start_url defined)')
     }
+
+    // Patch to prevent calling the onFinishCommand hook
+    await new Promise((resolve, reject) => {})
   })
 }
