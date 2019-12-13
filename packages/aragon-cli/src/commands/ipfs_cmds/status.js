@@ -3,10 +3,6 @@ import publicIp from 'public-ip'
 import internalIp from 'internal-ip'
 import { existsSync } from 'fs'
 import { black, bgWhite, blue, green, red } from 'chalk'
-//
-import listrOpts from '../../helpers/listr-options'
-import { getGlobalBinary, getLocalBinary } from '../../util'
-//
 import {
   getRepoVersion,
   getDefaultRepoPath,
@@ -16,7 +12,11 @@ import {
   isLocalDaemonRunning,
   getRepoSize,
   isCorsConfigured,
-} from '../../lib/ipfs'
+  getGlobalBinary,
+  getLocalBinary,
+} from '@aragon/toolkit/dist/ipfs'
+//
+import listrOpts from '../../helpers/listr-options'
 
 export const command = 'status'
 export const describe =

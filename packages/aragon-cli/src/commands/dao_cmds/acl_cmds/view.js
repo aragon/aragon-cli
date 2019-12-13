@@ -38,7 +38,7 @@ export const builder = function(yargs) {
  * @param  {ArappConfig} args.module arapp.json content
  * @param  {boolean} args.silent Silent flag
  * @param  {boolean} args.debug Debug flag
- * @return {Promise<TaskList>} void, will process.exit(0) if successful
+ * @return {Promise<TaskList>} void
  */
 export const handler = async function({
   dao,
@@ -143,7 +143,6 @@ export const handler = async function({
     }
 
     console.log(table.toString())
-    process.exit(0) // force exit, as aragonjs hangs
   })
 }
 

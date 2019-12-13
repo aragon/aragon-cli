@@ -1,7 +1,8 @@
 {
   "name": "@aragon/cli",
-  "version": "6.3.3",
+  "version": "7.0.0-beta.8",
   "description": "Aragon command-line tools",
+  "main": "./dist/toolkit.js",
   "bin": {
     "aragon": "./dist/index.js",
     "dao": "./aliases/dao"
@@ -14,13 +15,19 @@
     "build:watch": "npm run build -- -- --watch",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
-    "pretest": "node scripts/setup-integration-tests.js & sleep 20",
-    "posttest": "node scripts/teardown-integration-tests.js",
-    "test": "ava --verbose || (npm run posttest && exit 42)",
+    "test": "ava --verbose",
     "test:watch": "ava --watch",
-    "test:clean": "rm -rf ./.tmp",
+    "test:clean": "rm -rf ./.tmp && npm run test:reset-cache",
+    "test:reset-cache": "ava --reset-cache",
+    "test:update-snapshots": "npm run test:clean && npm run test -- --update-snapshots",
     "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test"
   },
+  "files": [
+    "aliases",
+    "config",
+    "dist",
+    "schemas"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/aragon/aragon-cli/tree/master/packages/aragon-cli"
@@ -44,6 +51,7 @@
   "dependencies": {
     "@aragon/apm": "^3.1.0",
     "@aragon/aragen": "^5.0.0",
+    "@aragon/toolkit": "^0.0.1-beta.6",
     "@aragon/truffle-config-v4": "^1.0.0",
     "ajv": "^6.6.2",
     "byte-size": "^6.2.0",
@@ -56,15 +64,12 @@
     "figures": "^3.0.0",
     "find-up": "^4.0.0",
     "fs-extra": "^8.0.1",
-    "ganache-cli": "^6.7.0",
-    "get-folder-size": "^2.0.1",
     "git-clone": "^0.1.0",
     "go-platform": "^1.0.0",
     "http-server": "^0.11.1",
     "ignore": "^4.0.6",
     "inquirer": "^7.0.0",
     "internal-ip": "^5.0.0",
-    "ipfs-http-client": "^39.0.2",
     "listr": "^0.14.3",
     "listr-input": "0.2.0",
     "listr-silent-renderer": "^1.1.1",
@@ -83,7 +88,7 @@
     "truffle-flattener": "^1.2.9",
     "web3": "^1.2.4",
     "which": "^2.0.1",
-    "yargs": "^15.0.1"
+    "yargs": "git://github.com/yargs/yargs.git#fe380cd356aa33aef0449facd59c22cab8930ac9"
   },
   "devDependencies": {
     "@aragon/apps-agent": "^2.0.0",

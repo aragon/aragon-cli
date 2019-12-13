@@ -18,7 +18,7 @@ import { initAragonJS, getApps } from '../helpers/aragonjs-wrapper'
  * @param  {WebsocketProvider} args.web3Provider Web3 config
  * @param  {Object} args.ipfsConf IPFS config
  * @param  {ApmConfig} args.apm APM config
- * @return {Promise<ReturnData>} void, will process.exit(0) if successful
+ * @return {Promise<ReturnData>} void
  */
 export const getDaoAddressPermissionsApps = ({
   dao,

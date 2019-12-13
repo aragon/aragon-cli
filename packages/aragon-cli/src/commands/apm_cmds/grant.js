@@ -1,4 +1,4 @@
-import { blue, red } from 'chalk'
+import { blue } from 'chalk'
 import grantNewVersionsPermission from '@aragon/toolkit/dist/apm/grantNewVersionsPermission'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
@@ -51,19 +51,12 @@ export const handler = async function({
     }
   }
 
-  try {
-    await grantNewVersionsPermission(
-      web3,
-      module.appName,
-      apmOptions,
-      grantees,
-      progressHandler,
-      { gasPrice: gasPrice || network.gasPrice }
-    )
-  } catch (err) {
-    reporter.error(`${err}\n${red('Command failed')}`)
-    process.exit(1)
-  }
-
-  process.exit(0)
+  await grantNewVersionsPermission(
+    web3,
+    module.appName,
+    apmOptions,
+    grantees,
+    progressHandler,
+    { gasPrice: gasPrice || network.gasPrice }
+  )
 }

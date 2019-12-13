@@ -44,7 +44,6 @@ export const handler = async function({
 
   displayVersionNumbers(apmRepoName, versions, reporter)
   displayVersions(versions, reporter)
-  process.exit()
 }
 
 /**

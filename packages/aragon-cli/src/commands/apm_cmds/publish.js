@@ -264,8 +264,9 @@ export const runSetupTask = ({
             web3,
             apmOptions,
           }
-
-          return deploy.task(deployTaskParams)
+          const deployTasks = await deploy.task(deployTaskParams)
+          const { contractAddress } = await deployTasks.run()
+          ctx.contract = contractAddress
         },
       },
       {
@@ -695,8 +696,7 @@ export const handler = async function({
       `${green(`Publish to ${appName} repo`)}`
     )
     // new line after confirm
-    console.log()
-    if (!confirmation) process.exit()
+    if (!confirmation) return console.log()
   }
 
   const { receipt, transactionPath } = await runPublishTask({
@@ -751,8 +751,7 @@ export const handler = async function({
         green(`Propagate content`)
       )
       // new line after confirm
-      console.log()
-      if (!confirmation) process.exit()
+      if (!confirmation) return console.log()
     }
 
     const propagateTask = await propagateIPFS({
@@ -780,5 +779,4 @@ export const handler = async function({
     reporter.debug(`Errors: \n${result.errors.map(JSON.stringify).join('\n')}`)
     // TODO: add your own gateways
   }
-  process.exit()
 }

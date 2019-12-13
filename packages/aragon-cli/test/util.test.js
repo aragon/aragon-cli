@@ -24,51 +24,6 @@ test.afterEach.always(() => {
   sinon.restore()
 })
 
-test('getLocalBinary should find the binary path from the local node_modules', t => {
-  t.plan(1)
-  const { util, fsStub } = t.context
-
-  // arrange
-  fsStub.existsSync.returns(true)
-  // act
-  const path = util.getLocalBinary('truffle', 'project_root')
-  // assert
-  t.is(normalizePath(path), 'project_root/node_modules/.bin/truffle')
-})
-
-test('getLocalBinary should find the binary path from the parent node_modules', t => {
-  t.plan(1)
-  const { util, fsStub } = t.context
-
-  // arrange
-  fsStub.existsSync.onCall(0).returns(false)
-  fsStub.existsSync.onCall(1).returns(true)
-  // act
-  const path = util.getLocalBinary(
-    'truffle',
-    'parent/node_modules/project_root'
-  )
-  // assert
-  t.is(normalizePath(path), 'parent/node_modules/.bin/truffle')
-})
-
-test("getLocalBinary should find the binary path from the parent node_modules even when it's scoped", t => {
-  t.plan(1)
-  const { util, fsStub } = t.context
-
-  // arrange
-  fsStub.existsSync.onCall(0).returns(false)
-  fsStub.existsSync.onCall(1).returns(false)
-  fsStub.existsSync.onCall(2).returns(true)
-  // act
-  const path = util.getLocalBinary(
-    'truffle',
-    'parent/node_modules/@scope/project_root'
-  )
-  // assert
-  t.is(normalizePath(path), 'parent/node_modules/.bin/truffle')
-})
-
 test('parseArgumentStringIfPossible should parse a boolean string', t => {
   t.is(parseArgumentStringIfPossible('true'), true)
   t.is(parseArgumentStringIfPossible('True'), true)
@@ -101,9 +56,3 @@ test('convertDAOIdToSubdomain throws when called with an invalid DAO id', t => {
   const daoId = 'my dao'
   t.throws(() => convertDAOIdToSubdomain(daoId))
 })
-
-function normalizePath(path) {
-  // on Windows the directory separator is '\' not '/'
-  const next = path.replace(/\\/g, '/')
-  return next
-}

@@ -54,5 +54,4 @@ export const handler = async function({
 
   const apmRepoJSON = JSON.stringify(apmRepoObject, null, 2)
   console.log(apmRepoJSON)
-  process.exit()
 }

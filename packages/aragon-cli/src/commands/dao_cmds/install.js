@@ -203,7 +203,5 @@ export const handler = async function({
         'App could not be initialized, check the --app-init flag. Functions protected behind the ACL will not work until the app is initialized'
       )
     }
-
-    process.exit()
   })
 }

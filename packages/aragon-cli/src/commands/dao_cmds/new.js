@@ -146,6 +146,4 @@ export const handler = async function({
       ? `Created DAO: ${green(aragonId)} at ${green(ctx.daoAddress)}`
       : `Created DAO: ${green(ctx.daoAddress)}`
   )
-
-  process.exit()
 }

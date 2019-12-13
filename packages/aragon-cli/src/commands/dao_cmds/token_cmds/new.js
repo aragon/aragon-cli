@@ -175,7 +175,5 @@ export const handler = async function({
         `Token factory transaction hash: ${blue(ctx.factoryTxHash)}`
       )
     }
-
-    process.exit()
   })
 }

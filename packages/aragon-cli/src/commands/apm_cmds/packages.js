@@ -54,7 +54,6 @@ export const handler = async function({
   await tasks.run()
 
   displayPackages(packages)
-  process.exit()
 }
 
 /**

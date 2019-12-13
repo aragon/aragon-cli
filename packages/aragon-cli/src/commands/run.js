@@ -2,13 +2,11 @@ import TaskList from 'listr'
 import path from 'path'
 import fs from 'fs-extra'
 import url from 'url'
-
 // TODO: stop using web3
 import Web3 from 'web3'
-
 import APM from '@aragon/apm'
 import { blue, green, bold } from 'chalk'
-
+import { isPortTaken } from '@aragon/toolkit/dist/node'
 //
 import encodeInitPayload from '../helpers/encodeInitPayload'
 
@@ -18,7 +16,6 @@ import pkg from '../../package.json'
 import {
   findProjectRoot,
   isHttpServerOpen,
-  isPortTaken,
   parseArgumentStringIfPossible,
 } from '../util'
 
@@ -210,10 +207,9 @@ export const handler = async function({
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   if (http && !(await isHttpServerOpen(http))) {
-    reporter.error(
+    throw Error(
       `Can't connect to ${http}, make sure the http server is running.`
     )
-    process.exit(1)
   }
 
   const showAccounts = accounts
@@ -448,5 +444,8 @@ export const handler = async function({
     } else if (!manifest.start_url) {
       reporter.warning('No front-end detected (no start_url defined)')
     }
+
+    // Patch to prevent calling the onFinishCommand hook
+    await new Promise((resolve, reject) => {})
   })
 }

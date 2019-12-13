@@ -1,4 +1,4 @@
-# Snapshot report for `test/integration/deploy.test.js`
+# Snapshot report for `test/deploy/deploy.test.js`
 
 The actual snapshot is saved in `deploy.test.js.snap`.
 

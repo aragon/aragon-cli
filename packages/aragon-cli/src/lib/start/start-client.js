@@ -1,6 +1,6 @@
 import execa from 'execa'
 import path from 'path'
-import { isPortTaken, getBinary } from '../../util'
+import { isPortTaken, getBinary } from '@aragon/toolkit/dist/node'
 
 export async function startClient(ctx, clientPort, clientPath) {
   if (await isPortTaken(clientPort)) {

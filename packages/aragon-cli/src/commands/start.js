@@ -41,6 +41,10 @@ export const builder = yargs => {
       description: 'A path pointing to an existing Aragon client installation',
       default: null,
     })
+    .option('openInBrowser', {
+      description: 'Wether to automatically open the client in the browser',
+      default: true,
+    })
 }
 
 export const task = async function({
@@ -48,6 +52,7 @@ export const task = async function({
   clientVersion,
   clientPort,
   clientPath,
+  openInBrowser,
 }) {
   const tasks = new TaskList([
     {
@@ -91,8 +96,10 @@ export const task = async function({
     {
       title: 'Opening client',
       task: async (ctx, task) => {
-        task.output = 'Opening client'
-        await openClient(ctx, clientPort)
+        if (openInBrowser) {
+          task.output = 'Opening client'
+          await openClient(ctx, clientPort)
+        }
       },
     },
   ])
@@ -112,13 +119,15 @@ export const handler = async ({
     clientPort,
     clientPath,
   })
-  return tasks
-    .run()
-    .then(() =>
-      reporter.info(
-        `Aragon client from ${blue(clientRepo)} version ${blue(
-          clientVersion
-        )} started on port ${blue(clientPort)}`
-      )
-    )
+
+  await tasks.run()
+
+  reporter.info(
+    `Aragon client from ${blue(clientRepo)} version ${blue(
+      clientVersion
+    )} started on port ${blue(clientPort)}`
+  )
+
+  // Patch to prevent calling the onFinishCommand hook
+  await new Promise((resolve, reject) => {})
 }

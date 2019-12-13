@@ -24,7 +24,8 @@ const templateOptions = {
   },
 }
 
-exports.command = '* <name> [template]'
+// $0 because this is the default command
+exports.command = '$0 <name> [template]'
 
 exports.describe = 'Create a new aragon application'
 
@@ -33,8 +34,8 @@ exports.builder = yargs => {
     .positional('name', {
       description: 'The application name (appname.aragonpm.eth)',
     })
-    .option('cwd', {
-      description: 'The current working directory',
+    .option('path', {
+      description: 'Where to create the new app',
       default: process.cwd(),
     })
     .positional('template', {
@@ -57,9 +58,17 @@ exports.builder = yargs => {
     })
 }
 
-exports.handler = async function({ reporter, name, template, silent, debug }) {
+exports.handler = async function({
+  reporter,
+  name,
+  template,
+  path: dirPath,
+  silent,
+  debug,
+}) {
   name = defaultAPMName(name)
   const basename = name.split('.')[0]
+  const projectPath = `${dirPath}/${basename}`
 
   if (!template && !silent) {
     const { templateChoice } = await inquirer.prompt([
@@ -97,34 +106,34 @@ exports.handler = async function({ reporter, name, template, silent, debug }) {
             )
           }
 
-          await checkProjectExists(basename)
+          await checkProjectExists(dirPath, basename)
         },
       },
       {
         title: 'Cloning app template',
         task: async (ctx, task) => {
-          task.output = `Cloning ${templateUrl} into ${basename}...`
-          await clone(templateUrl, basename, { shallow: true })
+          task.output = `Cloning ${templateUrl} into ${projectPath}...`
+          await clone(templateUrl, projectPath, { shallow: true })
         },
       },
       {
         title: 'Preparing template',
         task: async (ctx, task) => {
-          task.output = 'Initiliazing arapp.json and removing Git repository'
-          await prepareTemplate(basename, name)
+          task.output = 'Initializing arapp.json and removing Git repository'
+          await prepareTemplate(dirPath, basename, name)
         },
         enabled: () => !templateUrl.includes('your-first-aragon-app'),
       },
       {
         title: 'Installing package dependencies',
-        task: async (ctx, task) => installDeps(basename, task),
+        task: async (ctx, task) => installDeps(projectPath, task),
       },
       {
         title: 'Check IPFS',
         task: async (ctx, task) => {
           try {
             ctx.ipfsMissing = false
-            await execa('ipfs', ['version'])
+            await execa('ipfs', ['version'], { cwd: projectPath })
           } catch {
             ctx.ipfsMissing = true
           }
@@ -134,12 +143,11 @@ exports.handler = async function({ reporter, name, template, silent, debug }) {
         title: 'Installing IPFS',
         enabled: ctx => ctx.ipfsMissing,
         task: async (ctx, task) => {
-          await execa('npx', [
-            'aragon',
-            'ipfs',
-            'install',
-            '--skip-confirmation',
-          ])
+          await execa(
+            'npx',
+            ['aragon', 'ipfs', 'install', '--skip-confirmation'],
+            { cwd: projectPath }
+          )
         },
       },
     ],

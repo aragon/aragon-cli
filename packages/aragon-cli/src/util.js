@@ -2,16 +2,33 @@ import findUp from 'find-up'
 import path from 'path'
 import execa from 'execa'
 import fs from 'fs'
+import os from 'os'
 import { readJson } from 'fs-extra'
-import which from 'which'
 import { request } from 'http'
-import net from 'net'
 import inquirer from 'inquirer'
+import { getNodePackageManager } from '@aragon/toolkit/dist/node'
 
 let cachedProjectRoot
 
-const PGK_MANAGER_BIN_NPM = 'npm'
-const debugLogger = process.env.DEBUG ? console.log : () => {}
+/**
+ * Some characters are rendered differently depending on the OS.
+ *
+ * @param {string} stdout
+ */
+export function normalizeOutput(stdout) {
+  const next = stdout
+    // remove user-specific paths
+    .replace(/❯/g, '>')
+    .replace(/ℹ/g, 'i')
+    // TODO: remove after https://github.com/aragon/aragon-cli/issues/367 is fixed
+    .replace(/cli.js/g, 'aragon')
+    // replace homedir in paths
+    .replace(new RegExp(os.homedir(), 'g'), '~')
+    // sometimes there's an extra LF
+    .trim()
+
+  return next
+}
 
 export const findProjectRoot = () => {
   if (!cachedProjectRoot) {
@@ -19,32 +36,9 @@ export const findProjectRoot = () => {
       cachedProjectRoot = path.dirname(findUp.sync('arapp.json'))
     } catch (_) {
       throw new Error('This directory is not an Aragon project')
-      // process.exit(1)
     }
   }
   return cachedProjectRoot
-}
-
-export const isPortTaken = async (port, opts) => {
-  opts = Object.assign({ timeout: 1000 }, opts)
-
-  return new Promise(resolve => {
-    const socket = new net.Socket()
-
-    const onError = () => {
-      socket.destroy()
-      resolve(false)
-    }
-
-    socket.setTimeout(opts.timeout)
-    socket.on('error', onError)
-    socket.on('timeout', onError)
-
-    socket.connect(port, opts.host, () => {
-      socket.end()
-      resolve(true)
-    })
-  })
 }
 
 /**
@@ -62,10 +56,6 @@ export function isHttpServerOpen(url) {
   })
 }
 
-export const getNodePackageManager = () => {
-  return PGK_MANAGER_BIN_NPM
-}
-
 export const installDeps = (cwd, task) => {
   const bin = getNodePackageManager()
   const installTask = execa(bin, ['install'], { cwd })
@@ -79,71 +69,6 @@ export const installDeps = (cwd, task) => {
       `${err.message}\n${err.stderr}\n\nFailed to install dependencies. See above output.`
     )
   })
-}
-
-/**
- * Attempts to find the binary path locally and then globally.
- *
- * @param {string} binaryName e.g.: `ipfs`
- * @returns {string} the path to the binary, `null` if unsuccessful
- */
-export const getBinary = binaryName => {
-  let binaryPath = getLocalBinary(binaryName)
-
-  if (binaryPath === null) {
-    binaryPath = getGlobalBinary(binaryName)
-  }
-
-  if (binaryPath === null) {
-    debugLogger(`Cannot find binary ${binaryName}.`)
-  } else {
-    debugLogger(`Found binary ${binaryName} at ${binaryPath}.`)
-  }
-
-  return binaryPath
-}
-
-export const getLocalBinary = (binaryName, projectRoot) => {
-  if (!projectRoot) {
-    // __dirname evaluates to the directory of this file (util.js)
-    // e.g.: `../dist/` or `../src/`
-    projectRoot = path.join(__dirname, '..')
-  }
-
-  // check local node_modules
-  let binaryPath = path.join(projectRoot, 'node_modules', '.bin', binaryName)
-
-  debugLogger(`Searching binary ${binaryName} at ${binaryPath}`)
-  if (fs.existsSync(binaryPath)) {
-    return binaryPath
-  }
-
-  // check parent node_modules
-  binaryPath = path.join(projectRoot, '..', '.bin', binaryName)
-
-  debugLogger(`Searching binary ${binaryName} at ${binaryPath}.`)
-  if (fs.existsSync(binaryPath)) {
-    return binaryPath
-  }
-
-  // check parent node_modules if this module is scoped (e.g.: @scope/package)
-  binaryPath = path.join(projectRoot, '..', '..', '.bin', binaryName)
-
-  debugLogger(`Searching binary ${binaryName} at ${binaryPath}.`)
-  if (fs.existsSync(binaryPath)) {
-    return binaryPath
-  }
-
-  return null
-}
-
-export const getGlobalBinary = binaryName => {
-  debugLogger(`Searching binary ${binaryName} in the global PATH variable.`)
-  try {
-    return which.sync(binaryName)
-  } catch {
-    return null
-  }
 }
 
 // TODO: Add a cwd paramter

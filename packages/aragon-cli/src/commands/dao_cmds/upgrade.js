@@ -72,6 +72,5 @@ export const handler = async function({
     reporter.success(
       `Successfully executed: "${blue(ctx.transactionPath[0].description)}"`
     )
-    process.exit()
   })
 }

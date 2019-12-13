@@ -236,4 +236,7 @@ export const handler = async ({
   reporter.info(
     `Devchain running at: ${chalk.blue('http://localhost:' + port)}.`
   )
+
+  // Patch to prevent calling the onFinishCommand hook
+  await new Promise((resolve, reject) => {})
 }

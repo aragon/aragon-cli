@@ -56,5 +56,4 @@ export const handler = async function({
   )
 
   reporter.info(`Transaction hash: ${blue(txReceipt.transactionHash)}`)
-  process.exit()
 }
