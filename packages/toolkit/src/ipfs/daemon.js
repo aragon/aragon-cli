@@ -1,5 +1,5 @@
 import { connectOrThrow } from './misc'
-import { startProcess, getBinary, isPortTaken } from '../node'
+import { startProcess, getBinary, isPortTaken, getPackageRoot } from '../node'
 import {
   DAEMON_START_TIMEOUT,
   DAEMON_READY_OUTPUT,
@@ -7,7 +7,7 @@ import {
   NO_INSTALLATION_MSG,
 } from './constants'
 
-export const getBinaryPath = () => getBinary('ipfs')
+export const getBinaryPath = () => getBinary('ipfs', getPackageRoot(__dirname))
 
 export const startLocalDaemon = (binPath, repoPath, options = {}) => {
   if (!binPath) {

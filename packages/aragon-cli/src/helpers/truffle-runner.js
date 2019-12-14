@@ -1,9 +1,9 @@
 const execa = require('execa')
 const devnull = require('dev-null')
 //
-const { getBinary } = require('@aragon/toolkit/dist/node')
+const { getBinary, getPackageRoot } = require('@aragon/toolkit/dist/node')
 
-const truffleBin = getBinary('truffle')
+const truffleBin = getBinary('truffle', getPackageRoot(__dirname))
 
 const runTruffle = (args, { stdout, stderr, stdin }) => {
   return new Promise((resolve, reject) => {
