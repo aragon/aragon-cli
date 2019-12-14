@@ -26,3 +26,31 @@ npm start
 Once finished, this will open [http://localhost:3000/](http://localhost:3000/) in your default browser.
 
 _Note: [npx](https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner-55f7d4bd282b) comes with npm 5.2+ and higher. If you use npm 5.1 or earlier, you can't use `npx`. Instead, install `create-aragon-app` globally._
+
+# Tests
+
+To test only one file, try:
+
+```sh
+npm test -- test/version/version.test.js
+```
+
+## Local environment
+
+Some commands like `aragon run` depend on a local dev environment (ipfs, ganache).
+
+We set up this up during the `pretest` hook & tear it down during the `posttest` hook.
+
+Pretest:
+
+- Start IPFS
+- Start Ganache
+- Create a test app
+
+Posttest:
+
+- Stop IPFS
+- Stop Ganache
+- Delete the test app
+
+**Tip**: Did a test fail and the local environment was cleaned up? Try `npm run test:clean`.

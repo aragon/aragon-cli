@@ -6,6 +6,7 @@ const url = require('url')
 const Web3 = require('web3')
 const APM = require('@aragon/apm')
 const { blue, green, bold } = require('chalk')
+const { isPortTaken } = require('@aragon/toolkit/dist/node')
 //
 const encodeInitPayload = require('../helpers/encodeInitPayload')
 const listrOpts = require('../helpers/listr-options')
@@ -14,7 +15,6 @@ const pkg = require('../../package.json')
 const {
   findProjectRoot,
   isHttpServerOpen,
-  isPortTaken,
   parseArgumentStringIfPossible,
 } = require('../util')
 // cmds
@@ -205,10 +205,9 @@ exports.handler = async function({
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   if (http && !(await isHttpServerOpen(http))) {
-    reporter.error(
+    throw Error(
       `Can't connect to ${http}, make sure the http server is running.`
     )
-    process.exit(1)
   }
 
   const showAccounts = accounts
@@ -238,6 +237,8 @@ exports.handler = async function({
             files,
             ignore: ['node_modules'],
             reporter,
+            debug,
+            silent,
             gasPrice,
             cwd,
             network,
@@ -443,5 +444,8 @@ exports.handler = async function({
     } else if (!manifest.start_url) {
       reporter.warning('No front-end detected (no start_url defined)')
     }
+
+    // Patch to prevent calling the onFinishCommand hook
+    await new Promise((resolve, reject) => {})
   })
 }

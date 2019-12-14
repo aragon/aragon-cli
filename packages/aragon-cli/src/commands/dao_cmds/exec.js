@@ -50,5 +50,4 @@ exports.handler = async function({
   reporter.success(
     `Successfully executed: "${blue(transactionPath.description)}"`
   )
-  process.exit()
 }

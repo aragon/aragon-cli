@@ -13,6 +13,9 @@
     "lint:fix": "npm run lint -- --fix",
     "test": "ava --verbose",
     "test:watch": "ava --watch",
+    "test:clean": "rm -rf ./.tmp && npm run test:reset-cache",
+    "test:reset-cache": "ava --reset-cache",
+    "test:update-snapshots": "npm run test:clean && npm run test -- --update-snapshots",
     "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly npm run test"
   },
   "repository": {
@@ -34,7 +37,6 @@
   },
   "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
-    "@aragon/cli-utils": "^0.0.8",
     "chalk": "^3.0.0",
     "engine-check": "^1.0.1",
     "execa": "^1.0.0",
@@ -67,6 +69,7 @@
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
+    "node-fetch": "^2.3.0",
     "nyc": "^14.1.1",
     "prettier": "^1.15.3"
   },

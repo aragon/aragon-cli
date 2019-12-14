@@ -26,7 +26,16 @@ module.exports = async function({
   const template =
     templateInstance || new web3.eth.Contract(repoAbi, repo.contractAddress)
 
-  const newInstanceTx = template.methods[newInstanceMethod](...newInstanceArgs)
+  const method = newInstanceMethod || 'newInstance'
+  if (!template.methods[method]) {
+    throw new Error(
+      `Template abi does not contain the requested function: ${method}(...). This may be due to the template's abi not being retrieved from IPFS. Is IPFS running?`
+    )
+  }
+
+  const newInstanceTx = template.methods[newInstanceMethod || 'newInstance'](
+    ...newInstanceArgs
+  )
   const estimatedGas = await newInstanceTx.estimateGas()
   const { events } = await newInstanceTx.send({
     from: (await web3.eth.getAccounts())[0],

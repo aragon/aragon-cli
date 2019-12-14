@@ -1,5 +1,5 @@
 import open from 'open'
-import { isPortTaken } from '../../util'
+import { isPortTaken } from '@aragon/toolkit/dist/node'
 
 /**
  * Open the default browser to the Aragon client's URL

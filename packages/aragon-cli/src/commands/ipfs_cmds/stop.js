@@ -1,14 +1,13 @@
 import TaskList from 'listr'
-//
-import listrOpts from '../../helpers/listr-options'
-//
 import {
   getDefaultRepoPath,
   getPorts,
   getRepoConfig,
-  getClient,
-} from '../../lib/ipfs'
-import { killProcessOnPort } from '../../lib/node'
+  getHttpClient,
+} from '@aragon/toolkit/dist/ipfs'
+import { killProcessOnPort } from '@aragon/toolkit/dist/node'
+//
+import listrOpts from '../../helpers/listr-options'
 
 export const command = 'stop'
 export const describe = 'Stop the daemon.'
@@ -34,7 +33,7 @@ const runStartTask = ({ repoPath, silent, debug }) => {
         task: async ctx => {
           try {
             // isPortTaken
-            await getClient(`http://localhost:${ctx.ports.api}`)
+            await getHttpClient(`http://localhost:${ctx.ports.api}`)
           } catch (err) {
             throw new Error('The IPFS Daemon is already stopped')
           }
