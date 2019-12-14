@@ -58,7 +58,7 @@
     "@aragon/aragen": "^5.4.2",
     "@aragon/id": "^2.1.0",
     "@aragon/os": "^4.3.0",
-    "@aragon/wrapper": "5.0.0-rc.9",
+    "@aragon/wrapper": "5.0.0-rc.20",
     "babel-eslint": "^10.0.3",
     "byte-size": "^6.2.0",
     "ethereum-ens": "^0.7.8",
