@@ -1,5 +1,6 @@
 const tmp = require('tmp-promise')
 const path = require('path')
+const execa = require('execa')
 const semver = require('semver')
 const TaskList = require('listr')
 const taskInput = require('listr-input')
@@ -10,7 +11,6 @@ const { readJson, writeJson, pathExistsSync } = require('fs-extra')
 const { ZERO_ADDRESS } = require('@aragon/toolkit/dist/helpers/constants')
 // helpers
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const { compileContracts } = require('../../helpers/truffle-runner')
 const listrOpts = require('../../helpers/listr-options')
 // cmds
 const deploy = require('../deploy')
@@ -249,7 +249,10 @@ exports.runSetupTask = ({
       {
         title: 'Compile contracts',
         enabled: () => !onlyContent && web3Utils.isAddress(contract),
-        task: async () => compileContracts(),
+        task: async () => {
+          await execa('truffle', ['compile'])
+          return 'Contracts compiled'
+        },
       },
       {
         title: 'Deploy contract',
@@ -700,11 +703,12 @@ exports.handler = async function({
   }
 
   if (!skipConfirmation) {
-    const { confirmation } = await askForConfirmation(
+    const reply = await askForConfirmation(
       `${green(`Publish to ${appName} repo`)}`
     )
+    console.log()
     // new line after confirm
-    if (!confirmation) return console.log()
+    if (!reply) return console.log()
   }
 
   const { receipt, transactionPath } = await exports
@@ -757,15 +761,13 @@ exports.handler = async function({
   // Propagate content
   if (!http && propagateContent) {
     if (!skipConfirmation) {
-      const { confirmation } = await askForConfirmation(
-        green(`Propagate content`)
-      )
+      const reply = await askForConfirmation(green(`Propagate content`))
       // new line after confirm
-      if (!confirmation) return console.log()
+      if (!reply) return console.log()
     }
 
     const propagateTask = await propagateIPFS({
-      apmOptions,
+      apm: apmOptions,
       cid: contentLocation,
       debug,
       silent,
