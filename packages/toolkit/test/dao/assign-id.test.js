@@ -1,90 +1,44 @@
 import test from 'ava'
-import sinon from 'sinon'
-import proxyquire from 'proxyquire'
-import ENS from 'ethereum-ens'
-import utils from 'web3-utils'
+//
+import { assignId, isIdAssigned } from '../../src/dao/assign-id'
+import { getLocalWeb3, getApmOptions } from '../test-helpers'
 
-test('isIdAssigned returns false if ens.addr() throws a NameNotFound error', async t => {
-  t.plan(1)
+let web3
+let ensRegistry
+let daoAddress, daoId
 
-  const { isIdAssigned } = getLib({
-    'ethereum-ens': getENSStub(true),
-  })
+/* Setup and cleanup */
 
-  t.is(await isIdAssigned('myid', { web3: getWeb3Stub() }), false)
+test.before('setup and successful call', async t => {
+  web3 = await getLocalWeb3()
+
+  daoAddress = (await web3.eth.getAccounts())[2]
+
+  ensRegistry = getApmOptions()['ens-registry']
+
+  daoId = `thedao${new Date().getTime()}`
+  await assignId(daoAddress, daoId, { web3, ensRegistry })
 })
 
-test('isIdAssigned returns true if ens.addr() returns an address', async t => {
-  t.plan(1)
+/* Tests */
 
-  const { isIdAssigned } = getLib({
-    'ethereum-ens': getENSStub(false),
+test('isIdAssigned returns false for an id that was not set', async t => {
+  t.false(await isIdAssigned('unassigned', { web3, ensRegistry }))
+})
+
+test('isIdAssigned returns true for an id that was set', async t => {
+  t.true(await isIdAssigned(daoId, { web3, ensRegistry }))
+})
+
+test('assignId throws when tyring to re-assign the same address', async t => {
+  await t.throwsAsync(assignId(daoAddress, daoId, { web3, ensRegistry }), {
+    message: /VM Exception while processing transaction/,
   })
-
-  t.is(await isIdAssigned('myid', { web3: getWeb3Stub() }), true)
 })
 
 test('assignId throws when called with an invalid address', async t => {
-  t.plan(1)
-
-  const { assignId } = getLib({
-    'ethereum-ens': getENSStub(false),
-  })
-
   await t.throwsAsync(
-    assignId('INVALID ADDRESS', 'id', { web3: getWeb3Stub() }),
+    assignId('INVALID ADDRESS', 'id', { web3, ensRegistry }),
     { message: /Invalid address/ }
   )
 })
-
-test('assignId calls register() and register.send() with the correct parameters', async t => {
-  t.plan(2)
-
-  const daoAddress = '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'
-  const id = 'daoid'
-
-  const { assignId } = getLib({
-    'ethereum-ens': getENSStub(false),
-  })
-
-  const registerSendStub = sinon.stub()
-  const registerStub = sinon.stub().returns({
-    send: registerSendStub,
-  })
-  const web3Stub = getWeb3Stub(registerStub)
-
-  await assignId(daoAddress, id, { web3: web3Stub })
-
-  t.true(registerStub.calledWith(utils.sha3(id), daoAddress))
-  t.true(registerSendStub.called)
-})
-
-function getLib(loadParams) {
-  return proxyquire.noCallThru().load('../../src/dao/assign-id.js', loadParams)
-}
-
-function getENSStub(throws = false) {
-  const ENSStub = sinon.stub().returns({
-    owner: sinon.stub(),
-
-    resolver: sinon.stub().returns({
-      addr: throws
-        ? sinon.stub().throws(ENS.NameNotFound)
-        : sinon.stub().returns('dao.aragonid.eth'),
-    }),
-  })
-  ENSStub.NameNotFound = ENS.NameNotFound
-
-  return ENSStub
-}
-
-function getWeb3Stub(register) {
-  return {
-    eth: {
-      Contract: sinon.stub().returns({
-        methods: { register },
-      }),
-      getAccounts: sinon.stub().returns(['']),
-    },
-  }
-}

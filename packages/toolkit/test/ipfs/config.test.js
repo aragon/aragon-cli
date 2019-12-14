@@ -1,41 +1,12 @@
 import test from 'ava'
-import sinon from 'sinon'
-import proxyquire from 'proxyquire'
-//
-import { getPorts, getPeerIDConfig } from '../../src/ipfs'
+import fs from 'fs-extra'
+import { getPorts, getPeerIDConfig, getRepoVersion } from '../../src/ipfs'
 
-test.beforeEach(t => {
-  const fsExtra = {
-    readJson: sinon.stub(),
-  }
+const IPFS_PATH = './.tmp/ipfs-tests/config'
+const IPFS_VERSION = 3
 
-  const config = proxyquire.noCallThru().load('../../src/ipfs/config', {
-    'fs-extra': fsExtra,
-  })
-
-  t.context = {
-    config,
-    fsExtra,
-  }
-})
-
-test.afterEach.always(() => {
-  sinon.restore()
-})
-
-test('getRepoVersion should return the version of a repository', async t => {
-  t.plan(1)
-  // arrange
-  const { config, fsExtra } = t.context
-  fsExtra.readJson.returns(2008)
-  // act
-  const version = await config.getRepoVersion('/home/satoshi/.ipfs')
-  // assert
-  t.is(version, 2008)
-})
-
-const PeerID = 'QmQZCPSPhVvthk12345678r55gJgJGCLdfgas4aCS8jGcFt'
-const ipfsConfig = {
+const PEER_ID = 'QmQZCPSPhVvthk12345678r55gJgJGCLdfgas4aCS8jGcFt'
+const IPFS_CONFIG_JSON = {
   API: {
     HTTPHeaders: {
       'Access-Control-Allow-Methods': ['PUT', 'GET', 'POST'],
@@ -54,12 +25,26 @@ const ipfsConfig = {
     },
   },
   Identity: {
-    PeerID,
+    PeerID: PEER_ID,
   },
 }
 
+test.beforeEach(t => {
+  fs.mkdirpSync(IPFS_PATH)
+  fs.writeFileSync(`${IPFS_PATH}/version`, IPFS_VERSION)
+})
+
+test.afterEach.always(() => {
+  fs.removeSync(IPFS_PATH)
+})
+
+test('getRepoVersion should return the version of a repository', async t => {
+  const version = await getRepoVersion(IPFS_PATH)
+  t.is(version, IPFS_VERSION)
+})
+
 test('Get ports from config JSON', t => {
-  const ports = getPorts(ipfsConfig)
+  const ports = getPorts(IPFS_CONFIG_JSON)
   t.deepEqual(ports, {
     api: '5001',
     gateway: '8080',
@@ -68,6 +53,6 @@ test('Get ports from config JSON', t => {
 })
 
 test('Get peer ID from config JSON', t => {
-  const peerId = getPeerIDConfig(ipfsConfig)
-  t.is(peerId, PeerID)
+  const peerId = getPeerIDConfig(IPFS_CONFIG_JSON)
+  t.is(peerId, PEER_ID)
 })
