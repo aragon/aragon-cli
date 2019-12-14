@@ -49,8 +49,6 @@ test('should deploy a sample contract', async t => {
 })
 
 test('Deploy > linkLibraries', t => {
-  t.plan(1)
-
   const link = {
     name: 'Library1',
     address: '0x1111111111111111111111111111111111111111',

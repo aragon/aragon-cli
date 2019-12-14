@@ -1,5 +1,6 @@
 import test from 'ava'
 import sinon from 'sinon'
+//
 import grantNewVersionsPermission from '../../src/apm/grantNewVersionsPermission'
 import { getLocalWeb3, getApmOptions } from '../test-helpers'
 

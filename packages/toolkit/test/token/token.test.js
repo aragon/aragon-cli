@@ -20,7 +20,6 @@ test.afterEach.always(() => {
 })
 
 test('deployMiniMeTokenFactory: should deploy the contract with the right args', async t => {
-  t.plan(5)
   // arrange
   const { web3, accounts } = t.context
   // act
@@ -41,8 +40,6 @@ test('deployMiniMeTokenFactory: should deploy the contract with the right args',
 })
 
 test('changeControler: should set the correct controller', async t => {
-  t.plan(2)
-
   const { web3, accounts } = t.context
 
   const factory = await tokenLib.deployMiniMeTokenFactory(

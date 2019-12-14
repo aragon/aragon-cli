@@ -20,7 +20,7 @@ const readOutput = async () => {
 }
 
 test.before('create a temp directory and resolve paths', t => {
-  contractPath = path.resolve('test/contracts/ParseMe.sol')
+  contractPath = path.resolve('test/helpers/contracts/ParseMe.sol')
 
   tempDir = tmp.dirSync({ unsafeCleanup: true, keep: false })
   const filename = path.basename(contractPath).replace('.sol', '.json')

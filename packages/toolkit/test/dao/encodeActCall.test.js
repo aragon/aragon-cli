@@ -3,8 +3,6 @@ import test from 'ava'
 import encodeActCall from '../../src/dao/encodeActCall'
 
 test('Returns the correct encoded call with no params', t => {
-  t.plan(1)
-
   t.is(encodeActCall('myMethod()'), '0x70dce926')
 })
 

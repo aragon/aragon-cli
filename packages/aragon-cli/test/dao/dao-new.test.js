@@ -1,12 +1,11 @@
 import test from 'ava'
+//
 import { runAragonCLI } from '../util'
 
 const daoAddressRegex = /Created DAO: (.*)$/
 const daoIdAndAddressAddressRegex = /Created DAO: (.*) at (.*)$/
 
 test('creates a new DAO', async t => {
-  t.plan(1)
-
   const { stdout } = await runAragonCLI(['dao', 'new'])
   const daoAddress = stdout.match(daoAddressRegex)[1]
 
@@ -14,8 +13,6 @@ test('creates a new DAO', async t => {
 })
 
 test('assigns an Aragon Id with the "--aragon-id" param', async t => {
-  t.plan(2)
-
   const date = new Date().getTime()
   const id = `newdao${date}`
 

@@ -1,5 +1,6 @@
 import test from 'ava'
 import fs from 'fs-extra'
+//
 import { getLocalBinary } from '../../src/node'
 
 const TMP_DIR = '.tmp/node/os'
