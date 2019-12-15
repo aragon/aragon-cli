@@ -11,11 +11,14 @@ export const getProcessTree = subprocess => promisify(psTree)(subprocess.pid)
 export const killProcessTree = async (subprocess, { logger = noop }) => {
   const { children } = await getProcessTree(subprocess)
 
-  children.forEach(child => {
-    // each child has the properties: COMMAND, PPID, PID, STAT
-    logger(`killing process with PID ${child.pid}, child of ${subprocess.pid}`)
-    process.kill(child.PID, defaultKillSignal)
-  })
+  children &&
+    children.forEach(child => {
+      // each child has the properties: COMMAND, PPID, PID, STAT
+      logger(
+        `killing process with PID ${child.pid}, child of ${subprocess.pid}`
+      )
+      process.kill(child.PID, defaultKillSignal)
+    })
 }
 
 export const attachProcess = subprocess => {
@@ -60,7 +63,9 @@ export const startProcess = async ({
       if (data.includes(readyOutput)) {
         resolve({
           output,
-          kill: () => killProcessTree(subprocess, { logger }),
+          kill: () => {
+            killProcessTree(subprocess, { logger })
+          },
           attach: () => attachProcess(subprocess),
           detach: () => detachProcess(subprocess),
         })

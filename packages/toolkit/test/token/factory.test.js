@@ -1,5 +1,6 @@
 import test from 'ava'
 import sinon from 'sinon'
+//
 import { getLocalWeb3 } from '../test-helpers'
 import { getContract } from '../../src/util'
 import {

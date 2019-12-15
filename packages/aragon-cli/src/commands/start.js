@@ -5,7 +5,6 @@ import {
   startClient,
   openClient,
 } from '../lib/start'
-
 const { blue } = require('chalk')
 const TaskList = require('listr')
 //
