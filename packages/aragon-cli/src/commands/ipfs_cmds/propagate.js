@@ -77,22 +77,21 @@ export const handler = async argv => {
     silent,
   })
 
-  // reporter.message(
-  console.log(
-    `
-Queried ${blue(ctx.CIDs.length)} CIDs at ${blue(
+  reporter.message(
+    '\n',
+    `Queried ${blue(ctx.CIDs.length)} CIDs at ${blue(
       ctx.result.gateways.length
-    )} gateways
-
-Requests succeeded: ${green(ctx.result.succeeded)}
-
-Requests failed: ${red(ctx.result.failed)}
-`
+    )} gateways`,
+    '\n',
+    `Requests succeeded: ${green(ctx.result.succeeded)}`,
+    '\n',
+    `Requests failed: ${red(ctx.result.failed)}`,
+    '\n'
   )
 
-  reporter.debug(`
-Gateways: ${ctx.result.gateways.join(', ')}
-Errors:
-${ctx.result.errors.map(JSON.stringify).join('\n')}`)
+  reporter.debug(`Gateways: ${ctx.result.gateways.join(', ')}`)
+  reporter.debug(
+    `Errors: \n${ctx.result.errors.map(JSON.stringify).join('\n')}`
+  )
   // TODO add your own gateways
 }
