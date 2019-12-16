@@ -1,8 +1,8 @@
 const path = require('path')
 const TaskList = require('listr')
-const execa = require('execa')
 const { blue, green } = require('chalk')
 //
+const { compileContracts } = require('../helpers/truffle-compile')
 const { ensureWeb3 } = require('../helpers/web3-fallback')
 const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
 const listrOpts = require('../helpers/listr-options')
@@ -68,10 +68,7 @@ exports.task = async ({
     [
       {
         title: 'Compile contracts',
-        task: async () => {
-          await execa('truffle', ['compile'])
-          return 'Contracts compiled'
-        },
+        task: async () => compileContracts(),
       },
       {
         title: `Deploy '${contractName}' to network`,

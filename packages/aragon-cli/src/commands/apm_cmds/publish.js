@@ -1,6 +1,5 @@
 const tmp = require('tmp-promise')
 const path = require('path')
-const execa = require('execa')
 const semver = require('semver')
 const TaskList = require('listr')
 const taskInput = require('listr-input')
@@ -10,6 +9,7 @@ const { blue, red, green, bold } = require('chalk')
 const { readJson, writeJson, pathExistsSync } = require('fs-extra')
 const { ZERO_ADDRESS } = require('@aragon/toolkit/dist/helpers/constants')
 // helpers
+const { compileContracts } = require('../../helpers/truffle-compile')
 const { ensureWeb3 } = require('../../helpers/web3-fallback')
 const listrOpts = require('../../helpers/listr-options')
 // cmds
@@ -118,7 +118,7 @@ exports.builder = function(yargs) {
     .option('prepublish', {
       description:
         'Whether publish should run prepublish script specified in --prepublish-script before publishing',
-      default: true,
+      default: false,
       boolean: true,
     })
     .option('prepublish-script', {
@@ -195,11 +195,13 @@ exports.runSetupTask = ({
       },
       {
         title: `Applying version bump (${bump})`,
-        task: async ctx => {
+        task: async (ctx, task) => {
           let isValid = true
           try {
             const ipfsTimeout = 1000 * 60 * 5 // 5min
-            reporter.info('Fetching latest version from aragonPM...')
+
+            task.output = 'Fetching latest version from aragonPM...'
+
             ctx.initialRepo = await apm.getLatestVersion(
               module.appName,
               ipfsTimeout
@@ -249,10 +251,7 @@ exports.runSetupTask = ({
       {
         title: 'Compile contracts',
         enabled: () => !onlyContent && web3Utils.isAddress(contract),
-        task: async () => {
-          await execa('truffle', ['compile'])
-          return 'Contracts compiled'
-        },
+        task: async () => compileContracts(),
       },
       {
         title: 'Deploy contract',
@@ -271,15 +270,14 @@ exports.runSetupTask = ({
             web3,
             apmOptions,
           }
-          const deployTasks = await deploy.task(deployTaskParams)
-          const { contractAddress } = await deployTasks.run()
-          ctx.contract = contractAddress
+          return deploy.task(deployTaskParams)
         },
       },
       {
         title: 'Determine contract address for version',
         enabled: () => !onlyArtifacts,
         task: async (ctx, task) => {
+          ctx.contract = ctx.contractAddress
           if (web3Utils.isAddress(contract)) {
             ctx.contract = contract
           }
@@ -307,7 +305,7 @@ exports.runSetupTask = ({
             throw new Error('No contract address supplied for initial version')
           }
 
-          return `Using ${contract}`
+          return `Using ${ctx.contract}`
         },
       },
     ],
@@ -548,8 +546,8 @@ exports.runPublishTask = ({
       {
         title: `Publish ${module.appName}`,
         enabled: () => !onlyArtifacts,
-        task: async (ctx, task) => {
-          return execTask({
+        task: async (ctx, task) =>
+          execTask({
             dao,
             app: proxyAddress,
             method: methodName,
@@ -559,8 +557,7 @@ exports.runPublishTask = ({
             apm: apmOptions,
             web3,
             wsProvider,
-          })
-        },
+          }),
       },
     ],
     listrOpts(silent, debug)
@@ -682,7 +679,8 @@ exports.handler = async function({
     '\n',
     `Contract address: ${blue(contractAddress || ZERO_ADDRESS)}`,
     '\n',
-    `Content (${contentProvier}): ${blue(contentLocation)}`
+    `Content (${contentProvier}): ${blue(contentLocation)}`,
+    '\n'
     // TODO: (Gabi) Add extra relevant info (e.g. size)
     // `Size: ${blue()}`,
     // '\n',
@@ -691,8 +689,7 @@ exports.handler = async function({
   )
 
   if (contentProvier === 'ipfs') {
-    console.log(
-      '\n',
+    reporter.debug(
       'Explore the ipfs content locally:',
       '\n',
       bold(

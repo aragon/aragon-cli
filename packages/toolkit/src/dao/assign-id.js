@@ -1,7 +1,7 @@
 import { REGISTRAR_GAS_LIMIT, ARAGON_DOMAIN } from '../helpers/constants'
 const ENS = require('ethereum-ens')
 const { sha3, isAddress } = require('web3-utils')
-const ififsResolvingRegistrarAbi = require('@aragon/id/build/contracts/IFIFSResolvingRegistrar')
+const ififsResolvingRegistrarAbi = require('@aragon/abis/id/abi/IFIFSResolvingRegistrar')
   .abi
 //
 const { convertDAOIdToSubdomain } = require('../util')

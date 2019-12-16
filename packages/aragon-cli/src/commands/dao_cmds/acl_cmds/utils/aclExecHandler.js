@@ -1,4 +1,5 @@
 const { keccak256 } = require('web3-utils')
+const { getAclAddress } = require('@aragon/toolkit/dist/kernel/kernel')
 //
 const execHandler = require('../../utils/execHandler').handler
 const {
@@ -14,12 +15,10 @@ module.exports = async function(
 ) {
   const web3 = await ensureWeb3(network)
   const apmRegistry = apm.registryAddress || apm['ens-registry']
-
-  const daoInstance = new web3.eth.Contract(
-    require('@aragon/os/build/contracts/Kernel').abi,
-    await resolveAddressOrEnsDomain(dao, web3, apmRegistry)
+  const aclAddress = await getAclAddress(
+    await resolveAddressOrEnsDomain(dao, web3, apmRegistry), 
+    web3
   )
-  const aclAddress = await daoInstance.methods.acl().call()
 
   const processedParams = role.startsWith('0x')
     ? params
