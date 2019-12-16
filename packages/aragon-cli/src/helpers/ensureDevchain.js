@@ -11,8 +11,6 @@ export const ensureDevchain = async ({ port, logger = noop }) => {
 
   const binPath = path.resolve(__dirname, '../cli.js')
 
-  console.log(binPath)
-
   logger(`Devchain starting on: ${port}`)
   try {
     const { detach } = await startProcess({
