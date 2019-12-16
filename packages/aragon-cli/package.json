@@ -51,7 +51,6 @@
   "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
     "@aragon/apm": "^3.1.2-beta.2",
-    "@aragon/os": "^4.3.0",
     "@aragon/toolkit": "^0.0.1-beta.6",
     "@aragon/truffle-config-v5": "^1.0.0",
     "ajv": "^6.6.2",
