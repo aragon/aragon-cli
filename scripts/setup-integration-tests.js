@@ -10,8 +10,6 @@ const IPFS_GATEWAY_PORT = 8080
 const IPFS_SWARM_PORT = 4001
 const DEVCHAIN_PORT = 8545
 
-const DEVCHAIN_RESET = true
-
 // BEWARE: packages share the same pretest setup
 const IPFS_PROJECT_PATH = './.tmp/setup/ipfs-project'
 const IPFS_BIN_PATH = './.tmp/setup/ipfs-project/node_modules/.bin/ipfs'
@@ -33,6 +31,5 @@ ensureLocalDaemon({
 
 ensureDevchain({
   port: DEVCHAIN_PORT,
-  reset: DEVCHAIN_RESET,
   logger,
 })
