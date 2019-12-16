@@ -128,36 +128,31 @@ export const handler = async argv => {
     repoPath,
   })
 
-  reporter.info(`Local installation: ${blue(localBinPath || 'not installed')}`)
-  reporter.info(
-    `Global installation: ${blue(globalBinPath || 'not installed')}`
-  )
+  reporter.info(`Local installation: ${blue(
+    localBinPath || 'not installed'
+  )}Global installation: ${blue(globalBinPath || 'not installed')}
+    `)
 
-  reporter.newLine()
   if (repoExists) {
-    reporter.info(`Repository location: ${blue(repoPath)}`)
-    reporter.info(`Repository version: ${blue(repoVersion)}`)
-    reporter.info(`Repository size: ${blue(repoSize)}`)
-    reporter.newLine()
-    reporter.info(`API port: ${blue(daemonPorts.api)}`)
-    reporter.info(`Gateway port: ${blue(daemonPorts.gateway)}`)
-    reporter.info(`Swarm port: ${blue(daemonPorts.swarm)}`)
-    reporter.newLine()
-    reporter.info(`PeerID: ${bgWhite(black(peerID))}`)
-    reporter.info(
-      `Daemon: ${daemonRunning ? green('running') : red('stopped')}`
-    )
+    reporter.info(`Repository location: ${blue(repoPath)}
+    Repository version: ${blue(repoVersion)}
+    Repository size: ${blue(repoSize)}
+    
+    API port: ${blue(daemonPorts.api)}
+    Gateway port: ${blue(daemonPorts.gateway)}
+    Swarm port: ${blue(daemonPorts.swarm)}
+    
+    PeerID: ${bgWhite(black(peerID))}
+      Daemon: ${daemonRunning ? green('running') : red('stopped')}`)
   } else {
     reporter.info(`Repository: ${red('uninitialized')}`)
   }
 
   if (daemonRunning) {
-    reporter.info(`CORS: ${corsEnabled ? green('enabled') : red('disabled')}`)
-    reporter.newLine()
-    reporter.info(`Public Swarm MultiAddress: ${blue(publicSwarmMultiAddr)}`)
-    reporter.info(
-      `Internal Swarm MultiAddress: ${blue(internalSwarmMultiAddr)}`
-    )
-    reporter.info(`Local Swarm MultiAddress: ${blue(localSwarmMultiAddr)}`)
+    reporter.info(`CORS: ${corsEnabled ? green('enabled') : red('disabled')}
+    
+    Public Swarm MultiAddress: ${blue(publicSwarmMultiAddr)}
+        Internal Swarm MultiAddress: ${blue(internalSwarmMultiAddr)}
+        Local Swarm MultiAddress: ${blue(localSwarmMultiAddr)}`)
   }
 }

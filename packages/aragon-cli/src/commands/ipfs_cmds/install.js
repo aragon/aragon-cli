@@ -164,17 +164,17 @@ export const handler = async argv => {
   const actualVersion = cleanVersion(distVersion)
   const distName = getDistName(actualVersion, GO_OS, GO_ARCH)
 
-  reporter.newLine()
-  reporter.info(`Platform & architecture: ${blue(NODE_OS)}, ${blue(NODE_ARCH)}`)
-  reporter.info(`IPFS tarball: ${blue(distName)}`)
-  reporter.info(`IPFS distributions url: ${blue(distUrl)}`)
-  reporter.info(`NPM version: ${blue(distVersion)}`)
-  reporter.info(`Location: ${blue(location)}`)
+  reporter.info(`
+  Platform & architecture: ${blue(NODE_OS)}, ${blue(NODE_ARCH)}
+  IPFS tarball: ${blue(distName)}
+  IPFS distributions url: ${blue(distUrl)}
+  NPM version: ${blue(distVersion)}
+  Location: ${blue(location)}
+  `)
 
   /**
    * Confirm & install
    */
-  reporter.newLine()
   if (!skipConfirmation) {
     const { confirmation } = await inquirer.prompt([
       {
@@ -195,8 +195,8 @@ export const handler = async argv => {
     location,
   })
 
-  reporter.newLine()
-  reporter.success('Success!')
+  reporter.success(`
+  Success!`)
   reporter.info(
     `Try it out with: ${blue(local ? 'npx ipfs version' : 'ipfs version')}`
   )
