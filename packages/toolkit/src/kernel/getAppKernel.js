@@ -1,6 +1,7 @@
-import { ZERO_ADDRESS } from '../helpers/constants'
-//
 import { abi as aragonAppAbi } from '@aragon/os/build/contracts/AragonApp'
+//
+import { ZERO_ADDRESS } from '../helpers/constants'
+
 
 /**
  * Return kernel address for an Aragon app

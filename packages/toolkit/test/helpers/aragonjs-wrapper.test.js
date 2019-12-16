@@ -1,168 +1,105 @@
 import test from 'ava'
-import { from } from 'rxjs'
 import sinon from 'sinon'
-import proxyquire from 'proxyquire'
 //
-import { getTransactionPath, getApps } from '../../src/helpers/aragonjs-wrapper'
+import getApmRepo from '../../src/apm/getApmRepo'
+import newDao from '../../src/dao/new'
+import defaultAPMName from '../../src/helpers/default-apm'
+import {
+  initAragonJS,
+  getTransactionPath,
+  getApps,
+} from '../../src/helpers/aragonjs-wrapper'
+import { getLocalWeb3, getApmOptions } from '../test-helpers'
 
-const DEFAULT_ACL = '0x15737d270F7Bc777cD38592fbD50cEF74eE2F88a'
-const DEFAULT_APPS = [
-  [
-    {
-      appId: '0x01',
-      proxyAddress: '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7',
-    },
-    {
-      appId: '0x02',
-      proxyAddress: '0x8401Eb5ff34cc943f096A32EF3d5113FEbE8D4Eb',
-    },
-    { appId: '0x03', proxyAddress: DEFAULT_ACL },
-  ],
-]
-const DEFAULT_FORWARDERS = [[{}]]
-const DEFAULT_TRANSACTIONS = [[{}]]
-const DEFAULT_PERMISSIONS = [[{}]]
+let wrapper
+let web3
+let dao
+let ensRegistryAddress
+let onDaoAddress
+let apps
 
-function createAragonJsStub(
-  apps = DEFAULT_APPS,
-  acl = DEFAULT_ACL,
-  forwarders = DEFAULT_FORWARDERS,
-  transactions = DEFAULT_TRANSACTIONS,
-  permissions = DEFAULT_PERMISSIONS
-) {
-  const AragonStub = class {
-    constructor() {
-      this.getTransactionPath = sinon.stub()
-      this.getACLTransactionPath = sinon.stub()
+/* Setup */
 
-      this.aclProxy = { address: acl }
-    }
+test.before('setup', async t => {
+  web3 = await getLocalWeb3()
 
-    async init() {}
-    get apps() {
-      return from(apps)
-    }
+  const apmOpts = getApmOptions()
+  ensRegistryAddress = apmOpts['ens-registry']
 
-    get forwarders() {
-      return from(forwarders)
-    }
+  dao = await createDAO()
 
-    get transactions() {
-      return from(transactions)
-    }
+  onDaoAddress = sinon.spy()
 
-    get permissions() {
-      return from(permissions)
-    }
-  }
-
-  AragonStub.ensResolve = sinon
-    .stub()
-    .returns('0x8401Eb5ff34cc943f096A32EF3d5113FEbE8D4Eb')
-
-  return AragonStub
-}
-
-test('getApps returns the correct app list', async t => {
-  t.plan(1)
-
-  const AragonStub = createAragonJsStub()
-  const wrapperStub = new AragonStub()
-
-  t.deepEqual(await getApps(wrapperStub), DEFAULT_APPS[0])
-})
-
-test('getApps waits for more elements if first list contains only 1 app', async t => {
-  t.plan(1)
-
-  const apps = [
-    [{ appId: '0x01' }],
-    [{ appId: '0x01' }, { appId: '0x02' }, { appId: '0x03' }],
-  ]
-
-  const AragonStub = createAragonJsStub(apps)
-  const wrapperStub = new AragonStub()
-
-  t.deepEqual(await getApps(wrapperStub), apps[1])
-})
-
-test('getTransactionPath throws if DAO does not contain app', async t => {
-  t.plan(1)
-
-  const AragonStub = createAragonJsStub()
-  const wrapperStub = new AragonStub()
-
-  await t.throwsAsync(
-    getTransactionPath(
-      '0x8401Eb5ff34cc943f096A32EF3d5113FEbE8D4Ec',
-      'method',
-      [],
-      wrapperStub
-    )
-  )
-})
-
-test('getTransactionPath calls wrapper getTransactionPath by default', async t => {
-  t.plan(2)
-
-  const AragonStub = createAragonJsStub()
-  const wrapperStub = new AragonStub()
-
-  const app = '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'
-  const method = 'myMethod'
-  const params = ['1', '0x00001']
-
-  await getTransactionPath(app, method, params, wrapperStub)
-
-  t.deepEqual(wrapperStub.getTransactionPath.args, [[app, method, params]])
-  t.is(wrapperStub.getACLTransactionPath.called, false)
-})
-
-test('getTransactionPath calls wrapper getACLTransactionPath if app is the ACL', async t => {
-  t.plan(2)
-
-  const AragonStub = createAragonJsStub()
-  const wrapperStub = new AragonStub()
-
-  const app = DEFAULT_ACL
-  const method = 'myAclMethod'
-  const params = ['2', '0x00001']
-
-  await getTransactionPath(app, method, params, wrapperStub)
-
-  t.is(wrapperStub.getTransactionPath.called, false)
-  t.deepEqual(wrapperStub.getACLTransactionPath.args, [[method, params]])
-})
-
-test('initAragonJS returns an instance of the Aragon wrapper', async t => {
-  t.plan(1)
-
-  const AragonStub = createAragonJsStub()
-  const { initAragonJS } = proxyquire
-    .noCallThru()
-    .load('../../src/helpers/aragonjs-wrapper', {
-      '@aragon/wrapper': AragonStub,
-    })
-
-  const wrapper = await initAragonJS('test', '')
-
-  t.is(wrapper instanceof AragonStub, true)
-})
-
-test('initAragonJS callbacks subscribe to the right observables', async t => {
-  t.plan(4)
-
-  const AragonStub = createAragonJsStub()
-  const { initAragonJS } = proxyquire
-    .noCallThru()
-    .load('../../src/helpers/aragonjs-wrapper', {
-      '@aragon/wrapper': AragonStub,
-    })
-
-  await initAragonJS('test', '', {
-    onApps: apps => t.is(apps, DEFAULT_APPS[0]),
-    onPermissions: permissions => t.is(permissions, DEFAULT_PERMISSIONS[0]),
-    onForwarders: forwarders => t.is(forwarders, DEFAULT_FORWARDERS[0]),
-    onTransaction: transactions => t.is(transactions, DEFAULT_TRANSACTIONS[0]),
+  wrapper = await initAragonJS(dao, ensRegistryAddress, {
+    provider: web3.currentProvider,
+    accounts: await web3.eth.getAccounts(),
+    ipfsConf: apmOpts.ipfs,
+    onDaoAddress,
   })
+
+  apps = await getApps(wrapper)
 })
+
+/* Tests */
+
+test('onDaoAddress is called correctly', t => {
+  t.is(onDaoAddress.callCount, 1)
+  t.true(onDaoAddress.getCall(0).calledWith(dao))
+})
+
+test('getApps returns the correct app list', t => {
+  const reducedApps = apps.map(app => {
+    return { name: app.name, appId: app.appId }
+  })
+
+  t.snapshot(reducedApps)
+})
+
+test('getTransactionPath provides an expected path', async t => {
+  const voting = apps.filter(app => app.name === 'Voting')[0]
+
+  const paths = await getTransactionPath(
+    voting.proxyAddress,
+    'changeSupportRequiredPct',
+    ['490000000000000000'],
+    wrapper
+  )
+
+  t.is(paths.length, 3)
+
+  /* Accessing the description prop currently throws an exception in node 10
+  t.true(
+    paths[1].description.includes(
+      'Creates a vote to execute the desired action'
+    )
+  ) */
+})
+
+/* Utils */
+
+async function createDAO() {
+  const repo = await getApmRepo(
+    web3,
+    defaultAPMName('membership-template'),
+    'latest',
+    { ensRegistryAddress }
+  )
+
+  const daoAddress = await newDao({
+    repo,
+    web3,
+    newInstanceMethod: 'newTokenAndInstance',
+    newInstanceArgs: [
+      'Token name',
+      'TKN',
+      'daoname' + Math.floor(Math.random() * 1000000),
+      ['0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'],
+      ['500000000000000000', '50000000000000000', '604800'],
+      '1296000',
+      true,
+    ],
+    deployEvent: 'DeployDao',
+  })
+
+  return daoAddress
+}

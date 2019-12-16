@@ -1,10 +1,10 @@
+import { abi as kernelAbi } from '@aragon/os/build/contracts/Kernel'
+//
 import {
   initAragonJS,
   getApps,
   resolveEnsDomain,
 } from '../helpers/aragonjs-wrapper'
-//
-import { abi as kernelAbi } from '@aragon/os/build/contracts/Kernel'
 
 /**
  * Return installed apps for a DAO

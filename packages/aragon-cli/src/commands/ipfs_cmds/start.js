@@ -8,7 +8,7 @@ import {
   configureCors,
   pinArtifacts,
   getBinaryPath,
-} from '@aragon/toolkit/dist/ipfs'
+} from '@aragon/toolkit'
 //
 import listrOpts from '../../helpers/listr-options'
 
@@ -119,10 +119,10 @@ export const handler = async argv => {
   // }
 
   if (detached) {
-    processController.detach()
     reporter.info(`Daemon output:\n${processController.output}`)
-    reporter.warning(`The IPFS Daemon will continue running in the background!
-Use the 'aragon ipfs stop' command to stop it.`)
+    processController.detach()
+    reporter.warning('The IPFS Daemon will continue running in the background!')
+    reporter.warning('Use the `aragon ipfs stop` command to stop it.')
   }
 
   /**
@@ -133,4 +133,9 @@ Use the 'aragon ipfs stop' command to stop it.`)
   reporter.success('Successfully configured CORS')
   const hashes = await pinArtifacts(httpClient)
   reporter.success(`Successfully pinned ${hashes.length} Aragon artifacts.`)
+
+  if (!detached) {
+    // Patch to prevent calling the onFinishCommand hook
+    await new Promise((resolve, reject) => {})
+  }
 }

@@ -4,12 +4,13 @@ import os from 'os'
 import path from 'path'
 import rimraf from 'rimraf'
 import mkdirp from 'mkdirp'
-import chalk from 'chalk'
 import fs from 'fs'
-import ethers from 'ethers'
+import Web3 from 'web3'
+import {blue, red, green, yellow} from 'chalk'
 import { promisify } from 'util'
-import ganache from 'ganache-cli'
+import { getAragonGanacheFiles } from '@aragon/toolkit/dist/util'
 //
+import ganache from '../../../ganache/build/ganache-core.node.cli'
 import listrOpts from '../../helpers/listr-options'
 import pjson from '../../../package.json'
 import { task as devchainStatusTask } from './status'
@@ -95,9 +96,9 @@ export const task = async function({
 
           if (portTaken && !reset) {
             throw new Error(
-              `Process with ID ${chalk.red(
-                processID
-              )} already running at port ${chalk.blue(port)}`
+              `Process with ID ${red(processID)} already running at port ${blue(
+                port
+              )}`
             )
           }
         },
@@ -107,7 +108,7 @@ export const task = async function({
         task: async (ctx, task) => {
           await removeDir(snapshotPath)
           await mkDir(path.resolve(snapshotPath, '..'))
-          const snapshot = path.join(__dirname, '@aragon/aragen/aragon-ganache')
+          const snapshot = getAragonGanacheFiles()
           await recursiveCopy(snapshot, snapshotPath)
         },
         enabled: () => !fs.existsSync(snapshotPath) || reset,
@@ -117,7 +118,6 @@ export const task = async function({
         task: async (ctx, task) => {
           ctx.id = parseInt(networkId) || parseInt(1e8 * Math.random())
 
-          // TODO: Pass all argv options to ganache server
           const options = {
             network_id: ctx.id,
             blockTime,
@@ -135,20 +135,28 @@ export const task = async function({
               server.listen(port, err => {
                 if (err) return reject(err)
 
-                task.title = `Local chain started at port ${chalk.blue(port)}\n`
+                task.title = `Local chain started at port ${blue(port)}\n`
                 resolve()
               })
             })
           await listen()
 
+          ctx.web3 = new Web3(
+            new Web3.providers.WebsocketProvider(`ws://localhost:${port}`)
+          )
+          const accounts = await ctx.web3.eth.getAccounts()
+
+          ctx.accounts = accounts.slice(0, parseInt(showAccounts))
+
           ctx.mnemonic = MNEMONIC
 
-          ctx.wallets = []
-
-          for (let i = 1; i <= showAccounts; i++) {
-            const path = `m/44'/60'/0'/0/${i - 1}`
-            ctx.wallets.push(ethers.Wallet.fromMnemonic(MNEMONIC, path))
-          }
+          const ganacheAccounts = server.provider.manager.state.accounts
+          ctx.privateKeys = ctx.accounts.map(address => ({
+            key: ganacheAccounts[address.toLowerCase()].secretKey.toString(
+              'hex'
+            ),
+            address,
+          }))
         },
       },
     ],
@@ -158,16 +166,16 @@ export const task = async function({
   return tasks
 }
 
-export const printAccounts = (reporter, wallets) => {
+exports.printAccounts = (reporter, privateKeys) => {
   const firstAccountComment =
     '(account used to deploy DAOs, has more permissions)'
 
-  const formattedAccounts = wallets.map(
-    ({ address, privateKey }, i) =>
-      `Address #${i + 1}:  ${chalk.green(address)} ${
+  const formattedAccounts = privateKeys.map(
+    ({ address, key }, i) =>
+      `Address #${i + 1}:  ${green(address)} ${
         i === 0 ? firstAccountComment : ''
       }\nPrivate key: ` +
-      chalk.blue(privateKey) +
+      blue(key) +
       '\n'
   )
 
@@ -177,17 +185,17 @@ export const printAccounts = (reporter, wallets) => {
   \n${formattedAccounts.join('\n')}`)
 }
 
-export const printMnemonic = (reporter, mnemonic) => {
+exports.printMnemonic = (reporter, mnemonic) => {
   reporter.info(
-    `The accounts were generated from the following mnemonic phrase:\n${chalk.blue(
+    `The accounts were generated from the following mnemonic phrase:\n${blue(
       mnemonic
     )}\n`
   )
 }
 
-export const printResetNotice = (reporter, reset) => {
+exports.printResetNotice = (reporter, reset) => {
   if (reset) {
-    reporter.warning(`${chalk.yellow(
+    reporter.warning(`${yellow(
       'The devchain was reset, some steps need to be done to prevent issues:'
     )}
     - Reset the application cache in Aragon Client by going to Settings -> Troubleshooting.
@@ -220,22 +228,20 @@ export const handler = async ({
     silent,
     debug,
   })
-  const { wallets, id, mnemonic } = await tasks.run()
-  printAccounts(reporter, wallets)
-  printMnemonic(reporter, mnemonic)
-  printResetNotice(reporter, reset)
+  const { privateKeys, id, mnemonic } = await tasks.run()
+  exports.printAccounts(reporter, privateKeys)
+  exports.printMnemonic(reporter, mnemonic)
+  exports.printResetNotice(reporter, reset)
 
   reporter.info(
     'ENS instance deployed at:',
-    chalk.green('0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1'),
+    green('0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1'),
     '\n'
   )
 
-  reporter.info(`Network Id: ${chalk.blue(id)}`, '\n')
+  reporter.info(`Network Id: ${blue(id)}`, '\n')
 
-  reporter.info(
-    `Devchain running at: ${chalk.blue('http://localhost:' + port)}.`
-  )
+  reporter.info(`Devchain running at: ${blue('http://localhost:' + port)}.`)
 
   // Patch to prevent calling the onFinishCommand hook
   await new Promise((resolve, reject) => {})

@@ -6,22 +6,16 @@ import {
   getDistName,
   getGlobalBinary,
   getLocalBinary,
-} from '@aragon/toolkit/dist/ipfs'
-import { installGoIpfs } from '@aragon/toolkit/dist/ipfs/install'
-import {
+  installGoIpfs,
   GO_IMPL_DIST_VERSION,
   GO_IMPL_DIST_URL,
-} from '@aragon/toolkit/dist/ipfs/constants'
-import {
   isPackage,
   getGlobalPackagesLocation,
-} from '@aragon/toolkit/dist/node/packages'
-import {
   getPlatform,
   getArch,
   getPlatformForGO,
   getArchForGO,
-} from '@aragon/toolkit/dist/node'
+} from '@aragon/toolkit'
 //
 import listrOpts from '../../helpers/listr-options'
 
@@ -170,19 +164,17 @@ export const handler = async argv => {
   const actualVersion = cleanVersion(distVersion)
   const distName = getDistName(actualVersion, GO_OS, GO_ARCH)
 
-  reporter.info(
-    `
-Platform & architecture: ${blue(NODE_OS)}, ${blue(NODE_ARCH)}
-IPFS tarball: ${blue(distName)}
-IPFS distributions url: ${blue(distUrl)}
-NPM version: ${blue(distVersion)}
-Location: ${blue(location)}`
-  )
+  reporter.info(`
+  Platform & architecture: ${blue(NODE_OS)}, ${blue(NODE_ARCH)}
+  IPFS tarball: ${blue(distName)}
+  IPFS distributions url: ${blue(distUrl)}
+  NPM version: ${blue(distVersion)}
+  Location: ${blue(location)}
+  `)
 
   /**
    * Confirm & install
    */
-  reporter.newLine()
   if (!skipConfirmation) {
     const { confirmation } = await inquirer.prompt([
       {
@@ -203,8 +195,8 @@ Location: ${blue(location)}`
     location,
   })
 
-  reporter.newLine()
-  reporter.success('Success!')
+  reporter.success(`
+  Success!`)
   reporter.info(
     `Try it out with: ${blue(local ? 'npx ipfs version' : 'ipfs version')}`
   )

@@ -1,10 +1,8 @@
 import path from 'path'
 import TaskList from 'listr'
 import { blue, green } from 'chalk'
-
 //
-import { compileContracts } from '../helpers/truffle-runner'
-
+import { compileContracts } from '../helpers/truffle-compile'
 import { ensureWeb3 } from '../helpers/web3-fallback'
 import deployArtifacts from '../helpers/truffle-deploy-artifacts'
 import listrOpts from '../helpers/listr-options'
@@ -68,9 +66,7 @@ export const task = async ({
     [
       {
         title: 'Compile contracts',
-        task: async () => {
-          await compileContracts()
-        },
+        task: async () => compileContracts(),
       },
       {
         title: `Deploy '${contractName}' to network`,

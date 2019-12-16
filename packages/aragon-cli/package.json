@@ -1,17 +1,17 @@
 {
-  "name": "@aragon/cli",
-  "version": "7.0.0-beta.8",
-  "description": "Aragon command-line tools",
-  "main": "./dist/toolkit.js",
-  "bin": {
-    "aragon": "./dist/index.js",
-    "dao": "./aliases/dao"
-  },
-  "scripts": {
-    "prepare": "npm run build",
+	"name": "@aragon/cli",
+	"version": "7.0.0-beta.12",
+	"description": "Aragon command-line tools",
+	"main": "./dist/toolkit.js",
+	"bin": {
+		"aragon": "./dist/index.js",
+		"dao": "./aliases/dao"
+	},
+	"scripts": {
     "compile-src": "babel src --out-dir dist --source-maps --copy-files",
     "extract-roles": "node scripts/extract-roles",
-    "build": "npm run extract-roles && npm run compile-src",
+    "extract-ganache": "scripts/extract-ganache",
+    "build": "npm run extract-roles && npm run extract-ganache && npm run compile-src",
     "build:watch": "npm run build -- -- --watch",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
@@ -22,170 +22,167 @@
     "test:update-snapshots": "npm run test:clean && npm run test -- --update-snapshots",
     "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test"
   },
-  "files": [
-    "aliases",
-    "config",
-    "dist",
-    "schemas"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/aragon/aragon-cli/tree/master/packages/aragon-cli"
-  },
-  "keywords": [
-    "cli",
-    "aragon",
-    "ethereum"
-  ],
-  "author": "Aragon Association <legal@aragon.org>",
-  "contributors": [
-    "Jorge Izquierdo <jorge@aragon.one>",
-    "Luis Cuende <luis@aragon.one>",
-    "Oliver Nordbjerg <oliver@aragon.one>"
-  ],
-  "license": "GPL-3.0-or-later",
-  "bugs": {
-    "url": "https://github.com/aragon/aragon-cli/issues"
-  },
-  "homepage": "https://github.com/aragon/aragon-cli#readme",
-  "dependencies": {
-    "@aragon/apm": "^3.1.0",
-    "@aragon/aragen": "^5.0.0",
-    "@aragon/toolkit": "^0.0.1-beta.6",
-    "@aragon/truffle-config-v4": "^1.0.0",
-    "ajv": "^6.6.2",
-    "byte-size": "^6.2.0",
-    "chalk": "^3.0.0",
-    "cli-table": "^0.3.1",
-    "dev-null": "^0.1.1",
-    "engine-check": "^1.0.1",
-    "eth-ens-namehash": "^2.0.8",
-    "execa": "^1.0.0",
-    "figures": "^3.0.0",
-    "find-up": "^4.0.0",
-    "fs-extra": "^8.0.1",
-    "ganache-cli": "^6.7.0",
-    "git-clone": "^0.1.0",
-    "go-platform": "^1.0.0",
-    "http-server": "^0.11.1",
-    "ignore": "^4.0.6",
-    "inquirer": "^7.0.0",
-    "internal-ip": "^5.0.0",
-    "listr": "^0.14.3",
-    "listr-input": "0.2.0",
-    "listr-silent-renderer": "^1.1.1",
-    "listr-update-renderer": "^0.5.0",
-    "listr-verbose-renderer": "^0.6.0",
-    "lodash.merge": "^4.6.1",
-    "node-fetch": "^2.3.0",
-    "open": "^7.0.0",
-    "public-ip": "^3.1.0",
-    "replace": "^1.1.0",
-    "semver": "^6.1.1",
-    "source-map-support": "^0.5.11",
-    "stringify-tree": "^1.0.2",
-    "tmp-promise": "^2.0.1",
-    "truffle": "4.1.14",
-    "truffle-flattener": "^1.2.9",
-    "web3": "^1.2.4",
-    "which": "^2.0.1",
-    "yargs": "git://github.com/yargs/yargs.git#fe380cd356aa33aef0449facd59c22cab8930ac9"
-  },
-  "devDependencies": {
-    "@aragon/apps-agent": "^2.0.0",
-    "@aragon/apps-finance": "^3.0.0",
-    "@aragon/apps-payroll": "^1.0.0",
-    "@aragon/apps-survey": "^1.0.0",
-    "@aragon/apps-shared-minime": "^1.0.2",
-    "@aragon/apps-token-manager": "^2.0.0",
-    "@aragon/apps-vault": "^4.0.0",
-    "@aragon/apps-voting": "^2.0.0",
-    "@babel/cli": "^7.1.2",
-    "@babel/core": "^7.1.2",
-    "@babel/preset-env": "^7.1.0",
-    "@babel/register": "^7.0.0",
-    "ava": "^2.1.0",
-    "babel-eslint": "^10.0.1",
-    "babel-plugin-istanbul": "^5.2.0",
-    "core-js": "^3.1.4",
-    "eslint": "^6.0.1",
-    "eslint-config-prettier": "^6.0.0",
-    "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-ava": "^9.0.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^10.0.0",
-    "eslint-plugin-prettier": "^3.0.0",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "kill-port": "^1.6.0",
-    "nyc": "^14.1.1",
-    "prettier": "^1.15.3",
-    "proxyquire": "^2.1.0",
-    "sinon": "^7.3.1"
-  },
-  "engines": {
-    "node": ">=10.0.0"
-  },
-  "aragon": {
-    "clientRepo": "https://github.com/aragon/aragon",
-    "clientVersion": "775edd606333a111eb2693df53900039722a95dc",
-    "clientPort": "3000",
-    "defaultGasPrice": "2",
-    "defaultIpfsTimeout": "300000"
-  },
-  "ava": {
-    "require": [
-      "@babel/register"
-    ],
-    "files": [
-      "test/**/*.test.js"
-    ]
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.js",
-      "scripts/**/*.js"
-    ],
-    "sourceMap": false,
-    "instrument": true
-  },
-  "babel": {
-    "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "useBuiltIns": "usage",
-          "corejs": "3",
-          "targets": {
-            "node": true
-          }
-        }
-      ]
-    ],
-    "env": {
-      "test": {
-        "plugins": [
-          "istanbul"
-        ]
-      }
-    }
-  },
-  "eslintConfig": {
-    "env": {
-      "es6": true,
-      "node": true
-    },
-    "extends": [
-      "standard",
-      "plugin:ava/recommended",
-      "plugin:prettier/recommended"
-    ],
-    "parser": "babel-eslint"
-  },
-  "prettier": {
-    "singleQuote": true,
-    "semi": false,
-    "trailingComma": "es5",
-    "bracketSpacing": true
-  }
+	"files": [
+		"aliases",
+		"config",
+		"ganache",
+		"dist",
+		"schemas"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/aragon/aragon-cli/tree/master/packages/aragon-cli"
+	},
+	"keywords": [
+		"cli",
+		"aragon",
+		"ethereum"
+	],
+	"author": "Aragon Association <legal@aragon.org>",
+	"contributors": [
+		"Jorge Izquierdo <jorge@aragon.one>",
+		"Luis Cuende <luis@aragon.one>",
+		"Oliver Nordbjerg <oliver@aragon.one>"
+	],
+	"license": "GPL-3.0-or-later",
+	"bugs": {
+		"url": "https://github.com/aragon/aragon-cli/issues"
+	},
+	"homepage": "https://github.com/aragon/aragon-cli#readme",
+	"dependencies": {
+		"@aragon/apm": "^3.1.2-beta.2",
+		"@aragon/truffle-config-v5": "^1.0.0",
+		"ajv": "^6.6.2",
+		"bn.js": "^5.0.0",
+		"chalk": "^3.0.0",
+		"cli-table": "^0.3.1",
+		"engine-check": "^1.0.1",
+		"eth-ens-namehash": "^2.0.8",
+		"execa": "^1.0.0",
+		"figures": "^3.0.0",
+		"find-process": "^1.4.2",
+		"find-up": "^4.0.0",
+		"fs-extra": "^8.0.1",
+		"ganache-cli": "^6.7.0",
+		"git-clone": "^0.1.0",
+		"http-server": "^0.12.0",
+		"ignore": "^4.0.6",
+		"inquirer": "^7.0.0",
+		"internal-ip": "^5.0.0",
+		"listr": "^0.14.3",
+		"listr-input": "0.2.0",
+		"listr-silent-renderer": "^1.1.1",
+		"listr-update-renderer": "^0.5.0",
+		"listr-verbose-renderer": "^0.6.0",
+		"mkdirp": "^0.5.1",
+		"ncp": "^2.0.0",
+		"open": "^7.0.0",
+		"public-ip": "^3.1.0",
+		"rimraf": "^2.6.2",
+		"semver": "^6.1.1",
+		"source-map-support": "^0.5.11",
+		"tmp-promise": "^2.0.1",
+		"truffle": "5.1.4",
+		"truffle-flattener": "^1.2.9",
+		"web3": "^1.2.4",
+		"web3-utils": "^1.2.4",
+		"which": "^2.0.1",
+		"yargs": "git://github.com/yargs/yargs.git#fe380cd356aa33aef0449facd59c22cab8930ac9"
+	},
+	"devDependencies": {
+		"@aragon/apps-agent": "^2.0.0",
+		"@aragon/apps-finance": "^3.0.0",
+		"@aragon/apps-payroll": "^1.0.0",
+		"@aragon/apps-shared-minime": "^1.0.2",
+		"@aragon/apps-survey": "^1.0.0",
+		"@aragon/apps-token-manager": "^2.0.0",
+		"@aragon/apps-vault": "^4.0.0",
+		"@aragon/apps-voting": "^2.0.0",
+		"@babel/cli": "^7.1.2",
+		"@babel/core": "^7.1.2",
+		"@babel/preset-env": "^7.1.0",
+		"@babel/register": "^7.0.0",
+		"ava": "^2.1.0",
+		"babel-eslint": "^10.0.1",
+		"babel-plugin-istanbul": "^5.2.0",
+		"core-js": "^3.1.4",
+		"eslint": "^6.0.1",
+		"eslint-config-prettier": "^6.0.0",
+		"eslint-config-standard": "^14.1.0",
+		"eslint-plugin-ava": "^9.0.0",
+		"eslint-plugin-import": "^2.14.0",
+		"eslint-plugin-node": "^10.0.0",
+		"eslint-plugin-prettier": "^3.0.0",
+		"eslint-plugin-promise": "^4.0.1",
+		"eslint-plugin-standard": "^4.0.0",
+		"nyc": "^14.1.1",
+		"prettier": "^1.15.3",
+		"proxyquire": "^2.1.0",
+		"sinon": "^7.3.1"
+	},
+	"engines": {
+		"node": ">=10.0.0"
+	},
+	"aragon": {
+		"clientRepo": "https://github.com/aragon/aragon",
+		"clientVersion": "775edd606333a111eb2693df53900039722a95dc",
+		"clientPort": "3000",
+		"defaultGasPrice": "2",
+		"defaultIpfsTimeout": "300000"
+	},
+	"ava": {
+		"require": [
+			"@babel/register"
+		],
+		"files": [
+			"test/**/*.test.js"
+		]
+	},
+	"nyc": {
+		"include": [
+			"src/**/*.js",
+			"scripts/**/*.js"
+		],
+		"sourceMap": false,
+		"instrument": true
+	},
+	"babel": {
+		"presets": [
+			[
+				"@babel/preset-env",
+				{
+					"useBuiltIns": "usage",
+					"corejs": "3",
+					"targets": {
+						"node": true
+					}
+				}
+			]
+		],
+		"env": {
+			"test": {
+				"plugins": [
+					"istanbul"
+				]
+			}
+		}
+	},
+	"eslintConfig": {
+		"env": {
+			"es6": true,
+			"node": true
+		},
+		"extends": [
+			"standard",
+			"plugin:ava/recommended",
+			"plugin:prettier/recommended"
+		],
+		"parser": "babel-eslint"
+	},
+	"prettier": {
+		"singleQuote": true,
+		"semi": false,
+		"trailingComma": "es5",
+		"bracketSpacing": true
+	}
 }

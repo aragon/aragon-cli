@@ -86,18 +86,14 @@ export const runScriptTask = async (task, scriptName) => {
   }
 
   const bin = getNodePackageManager()
-  const scriptTask = execa(bin, ['run', scriptName])
-
-  scriptTask.stdout.on('data', log => {
-    if (!log) return
-    task.output = `npm run ${scriptName}: ${log}`
-  })
-
-  return scriptTask.catch(err => {
+  try {
+    await execa(bin, ['run', scriptName])
+    return 'Script completed'
+  } catch (err) {
     throw new Error(
       `${err.message}\n${err.stderr}\n\nFailed to build. See above output.`
     )
-  })
+  }
 }
 
 /**

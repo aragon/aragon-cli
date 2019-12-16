@@ -11,8 +11,7 @@ import { ZERO_ADDRESS } from '@aragon/toolkit/dist/helpers/constants'
 
 // helpers
 import { ensureWeb3 } from '../../helpers/web3-fallback'
-
-import { compileContracts } from '../../helpers/truffle-runner'
+import { compileContracts } from '../../helpers/truffle-compile'
 import listrOpts from '../../helpers/listr-options'
 
 // cmds
@@ -114,7 +113,7 @@ export const builder = function(yargs) {
     .option('prepublish', {
       description:
         'Whether publish should run prepublish script specified in --prepublish-script before publishing',
-      default: true,
+      default: false,
       boolean: true,
     })
     .option('prepublish-script', {
@@ -191,11 +190,13 @@ export const runSetupTask = ({
       },
       {
         title: `Applying version bump (${bump})`,
-        task: async ctx => {
+        task: async (ctx, task) => {
           let isValid = true
           try {
             const ipfsTimeout = 1000 * 60 * 5 // 5min
-            reporter.info('Fetching latest version from aragonPM...')
+
+            task.output = 'Fetching latest version from aragonPM...'
+
             ctx.initialRepo = await apm.getLatestVersion(
               module.appName,
               ipfsTimeout
@@ -264,9 +265,7 @@ export const runSetupTask = ({
             web3,
             apmOptions,
           }
-          const deployTasks = await deploy.task(deployTaskParams)
-          const { contractAddress } = await deployTasks.run()
-          ctx.contract = contractAddress
+          return deploy.task(deployTaskParams)
         },
       },
       {
@@ -300,7 +299,7 @@ export const runSetupTask = ({
             throw new Error('No contract address supplied for initial version')
           }
 
-          return `Using ${contract}`
+          return `Using ${ctx.contract}`
         },
       },
     ],
@@ -541,8 +540,8 @@ export const runPublishTask = ({
       {
         title: `Publish ${module.appName}`,
         enabled: () => !onlyArtifacts,
-        task: async (ctx, task) => {
-          return execTask({
+        task: async (ctx, task) =>
+          execTask({
             dao,
             app: proxyAddress,
             method: methodName,
@@ -552,8 +551,7 @@ export const runPublishTask = ({
             apm: apmOptions,
             web3,
             wsProvider,
-          })
-        },
+          }),
       },
     ],
     listrOpts(silent, debug)
@@ -672,7 +670,8 @@ export const handler = async function({
     '\n',
     `Contract address: ${blue(contractAddress || ZERO_ADDRESS)}`,
     '\n',
-    `Content (${contentProvier}): ${blue(contentLocation)}`
+    `Content (${contentProvier}): ${blue(contentLocation)}`,
+    '\n'
     // TODO: (Gabi) Add extra relevant info (e.g. size)
     // `Size: ${blue()}`,
     // '\n',
@@ -681,8 +680,7 @@ export const handler = async function({
   )
 
   if (contentProvier === 'ipfs') {
-    console.log(
-      '\n',
+    reporter.debug(
       'Explore the ipfs content locally:',
       '\n',
       bold(
@@ -693,11 +691,12 @@ export const handler = async function({
   }
 
   if (!skipConfirmation) {
-    const { confirmation } = await askForConfirmation(
+    const reply = await askForConfirmation(
       `${green(`Publish to ${appName} repo`)}`
     )
+    console.log()
     // new line after confirm
-    if (!confirmation) return console.log()
+    if (!reply) return console.log()
   }
 
   const { receipt, transactionPath } = await runPublishTask({
@@ -748,15 +747,13 @@ export const handler = async function({
   // Propagate content
   if (!http && propagateContent) {
     if (!skipConfirmation) {
-      const { confirmation } = await askForConfirmation(
-        green(`Propagate content`)
-      )
+      const reply = await askForConfirmation(green(`Propagate content`))
       // new line after confirm
-      if (!confirmation) return console.log()
+      if (!reply) return console.log()
     }
 
     const propagateTask = await propagateIPFS({
-      apmOptions,
+      apm: apmOptions,
       cid: contentLocation,
       debug,
       silent,

@@ -1,3 +1,6 @@
+import { blue } from 'chalk'
+import TaskList from 'listr'
+//
 import {
   fetchClient,
   downloadClient,
@@ -6,10 +9,6 @@ import {
   openClient,
 } from '../lib/start'
 
-import { blue } from 'chalk'
-import TaskList from 'listr'
-
-//
 import pkg from '../../package.json'
 
 import { installDeps } from '../util'

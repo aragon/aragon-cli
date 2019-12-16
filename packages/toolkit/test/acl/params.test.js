@@ -3,8 +3,6 @@ import test from 'ava'
 import { convertStringToParam, encodeParam, Op } from '../../src/acl/params'
 
 test('simple parameter', t => {
-  t.plan(4)
-
   const param = convertStringToParam('0, GT, 42')
   const encodedParam = encodeParam(param)
 
@@ -19,8 +17,6 @@ test('simple parameter', t => {
 })
 
 test('lowercase operator, spaces variations', t => {
-  t.plan(4)
-
   const param = convertStringToParam('1,lt,  5')
   const encodedParam = encodeParam(param)
 
@@ -35,8 +31,6 @@ test('lowercase operator, spaces variations', t => {
 })
 
 test('hex value', t => {
-  t.plan(4)
-
   const param = convertStringToParam(
     '2, EQ, 0xC7f8dDbc7B3BFd432dEAc0CA270110467EcE01c3'
   )
@@ -53,8 +47,6 @@ test('hex value', t => {
 })
 
 test('logic operator with 2 values', t => {
-  t.plan(2)
-
   const param = convertStringToParam('LOGIC_OP_PARAM_ID, OR, (1,2)')
   const encodedParam = encodeParam(param)
 
@@ -66,8 +58,6 @@ test('logic operator with 2 values', t => {
 })
 
 test('logic operator with 3 values', t => {
-  t.plan(1)
-
   const param = convertStringToParam('LOGIC_OP_PARAM_ID, IF_ELSE, (1,2,3)')
   const encodedParam = encodeParam(param)
 

@@ -263,8 +263,8 @@ export const handler = async function({
       },
       {
         title: 'Prepare for publish',
-        task: async ctx => {
-          return runPrepareForPublishTask({
+        task: async ctx =>
+          runPrepareForPublishTask({
             ...ctx.publishParams,
             // context
             initialRepo: ctx.initialRepo,
@@ -272,8 +272,7 @@ export const handler = async function({
             version: ctx.version,
             contractAddress: ctx.contract,
             deployArtifacts: ctx.deployArtifacts,
-          })
-        },
+          }),
       },
       {
         title: 'Publish app to aragonPM',
@@ -321,7 +320,7 @@ export const handler = async function({
         },
       },
       {
-        title: 'Create DAO',
+        title: 'Create Organization',
         task: ctx => {
           const roles = ctx.repo.roles || []
           const rolesBytes = roles.map(role => role.bytes)
@@ -364,7 +363,7 @@ export const handler = async function({
         },
       },
       {
-        title: 'Open DAO',
+        title: 'Start Client',
         enabled: () => client === true,
         task: async (ctx, task) =>
           start.task({ clientRepo, clientVersion, clientPort, clientPath }),
@@ -425,19 +424,19 @@ export const handler = async function({
     ${'Ethereum Node'}: ${blue(network.provider.connection._url)}
     ${'ENS registry'}: ${blue(ctx.ens)}
     ${`aragonPM registry`}: ${blue(registry)}
-    ${'DAO address'}: ${green(ctx.daoAddress)}`)
+    ${'Organization address'}: ${green(ctx.daoAddress)}`)
 
     reporter.newLine()
 
     reporter.info(
       `${
         client !== false
-          ? `Opening ${bold(
+          ? `Open ${bold(
               `http://localhost:${clientPort}/#/${ctx.daoAddress}`
             )} to view your DAO`
           : `Use ${bold(
               `"aragon dao <command> ${ctx.daoAddress}"`
-            )} to interact with your DAO`
+            )} to interact with your Organization`
       }`
     )
 

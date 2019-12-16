@@ -1,5 +1,7 @@
 const { ensureLocalDaemon } = require('../packages/toolkit/dist/ipfs')
-const { ensureDevchain } = require('../packages/toolkit/dist/ganache')
+const {
+  ensureDevchain,
+} = require('../packages/aragon-cli/dist/helpers/ensureDevchain')
 
 const LOGGER_PREFIX = '[cli-monorepo:pretest]'
 
@@ -7,8 +9,6 @@ const IPFS_API_PORT = 5001
 const IPFS_GATEWAY_PORT = 8080
 const IPFS_SWARM_PORT = 4001
 const DEVCHAIN_PORT = 8545
-
-const DEVCHAIN_RESET = true
 
 // BEWARE: packages share the same pretest setup
 const IPFS_PROJECT_PATH = './.tmp/setup/ipfs-project'
@@ -31,6 +31,5 @@ ensureLocalDaemon({
 
 ensureDevchain({
   port: DEVCHAIN_PORT,
-  reset: DEVCHAIN_RESET,
   logger,
 })

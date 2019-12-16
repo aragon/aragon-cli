@@ -35,6 +35,8 @@ export default async (
     )
   }
 
+  const receipts = []
+
   /* eslint-disable-next-line */
   for (const address of grantees) {
     progressHandler(2, address)
@@ -52,5 +54,9 @@ export default async (
 
     const receipt = await web3.eth.sendTransaction(transaction)
     progressHandler(3, receipt.transactionHash)
+
+    receipts.push(receipt)
   }
+
+  return receipts
 }

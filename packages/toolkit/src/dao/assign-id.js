@@ -1,8 +1,8 @@
-import { REGISTRAR_GAS_LIMIT, ARAGON_DOMAIN } from '../helpers/constants'
 import ENS from 'ethereum-ens'
 import { sha3, isAddress } from 'web3-utils'
 import { abi as ififsResolvingRegistrarAbi } from '@aragon/id/build/contracts/IFIFSResolvingRegistrar'
 //
+import { REGISTRAR_GAS_LIMIT, ARAGON_DOMAIN } from '../helpers/constants'
 import { convertDAOIdToSubdomain } from '../util'
 
 /**

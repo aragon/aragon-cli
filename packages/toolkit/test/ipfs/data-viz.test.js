@@ -1,6 +1,5 @@
 import test from 'ava'
 import stripAnsi from 'strip-ansi'
-//
 import {
   stringifyMerkleDAG,
   stringifyMerkleDAGNode,

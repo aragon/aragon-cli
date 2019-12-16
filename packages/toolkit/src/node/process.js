@@ -11,6 +11,10 @@ export const getProcessTree = subprocess => promisify(psTree)(subprocess.pid)
 export const killProcessTree = async (subprocess, { logger = noop }) => {
   const { children } = await getProcessTree(subprocess)
 
+  if (!children) {
+    return
+  }
+
   children.forEach(child => {
     // each child has the properties: COMMAND, PPID, PID, STAT
     logger(`killing process with PID ${child.pid}, child of ${subprocess.pid}`)
@@ -48,7 +52,7 @@ export const startProcess = async ({
     subprocess.stderr.on('data', data => {
       data = data.toString()
       logger(`stderr: ${data}`)
-      reject(new Error(data))
+      if (!data.includes('DeprecationWarning')) reject(new Error(data))
     })
 
     subprocess.stdout.on('data', data => {
