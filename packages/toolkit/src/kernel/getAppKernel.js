@@ -1,6 +1,6 @@
 import { ZERO_ADDRESS } from '../helpers/constants'
 //
-const aragonAppAbi = require('@aragon/os/build/contracts/AragonApp').abi
+const aragonAppAbi = require('@aragon/abis/os/artifacts/AragonApp').abi
 
 /**
  * Return kernel address for an Aragon app

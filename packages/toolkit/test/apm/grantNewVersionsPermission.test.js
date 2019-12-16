@@ -4,10 +4,10 @@ import sinon from 'sinon'
 import grantNewVersionsPermission from '../../src/apm/grantNewVersionsPermission'
 import { getLocalWeb3, getApmOptions } from '../test-helpers'
 
-const aclAbi = require('@aragon/os/build/contracts/ACL').abi
-const aragonAppAbi = require('@aragon/os/build/contracts/AragonApp').abi
-const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
-const repoAbi = require('@aragon/os/build/contracts/Repo').abi
+const aclAbi = require('@aragon/abis/os/artifacts/ACL').abi
+const aragonAppAbi = require('@aragon/abis/os/artifacts/AragonApp').abi
+const kernelAbi = require('@aragon/abis/os/artifacts/Kernel').abi
+const repoAbi = require('@aragon/abis/os/artifacts/Repo').abi
 
 /* Default values */
 

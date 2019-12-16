@@ -29,7 +29,7 @@ const cli = yargs
   .commandDir('./commands')
   .alias('env', 'environment')
   .alias('h', 'help')
-  .alias('v', 'version')
+  // .alias('v', 'version') // TODO: Review if we can prevent clash with aragen verbose option
   .epilogue('For more information, check out https://hack.aragon.org')
   .group(['help', 'version'], 'Global options:')
   // blank scriptName so that help text doesn't display "aragon" before each command

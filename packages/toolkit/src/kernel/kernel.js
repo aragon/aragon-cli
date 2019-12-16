@@ -1,5 +1,5 @@
 const web3EthAbi = require('web3-eth-abi')
-const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
+const kernelAbi = require('@aragon/abis/os/artifacts/Kernel').abi
 //
 const { addressesEqual } = require('../util')
 
