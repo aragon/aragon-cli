@@ -133,4 +133,9 @@ Use the 'aragon ipfs stop' command to stop it.`)
   reporter.success('Successfully configured CORS')
   const hashes = await pinArtifacts(httpClient)
   reporter.success(`Successfully pinned ${hashes.length} Aragon artifacts.`)
+
+  if (!detached) {
+    // Patch to prevent calling the onFinishCommand hook
+    await new Promise((resolve, reject) => {})
+  }
 }
