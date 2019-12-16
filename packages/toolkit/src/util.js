@@ -1,3 +1,5 @@
+import path from 'path'
+//
 import {
   ARAGON_DOMAIN,
   DEFAULT_GAS_FUZZ_FACTOR,
@@ -84,6 +86,14 @@ const getContract = (pkg, contract) => {
   return artifact
 }
 
+const getIpfsCacheFiles = () => {
+  return path.resolve(require.resolve('@aragon/aragen'), '../ipfs-cache')
+}
+
+const getAragonGanacheFiles = () => {
+  return path.resolve(require.resolve('@aragon/aragen'), '../aragon-ganache')
+}
+
 module.exports = {
   addressesEqual,
   isAddress,
@@ -92,4 +102,6 @@ module.exports = {
   getContract,
   getRecommendedGasLimit,
   expandLink,
+  getIpfsCacheFiles,
+  getAragonGanacheFiles,
 }

@@ -1,5 +1,7 @@
 const { ensureLocalDaemon } = require('../packages/toolkit/dist/ipfs')
-const { ensureDevchain } = require('../packages/toolkit/dist/ganache')
+const {
+  ensureDevchain,
+} = require('../packages/aragon-cli/dist/helpers/ensureDevchain')
 
 const LOGGER_PREFIX = '[cli-monorepo:pretest]'
 
