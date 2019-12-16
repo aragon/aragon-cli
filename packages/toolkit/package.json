@@ -34,7 +34,7 @@
   "dependencies": {
     "@aragon/apm": "^3.1.2-beta.2",
     "@aragon/apps-shared-minime": "^1.0.2",
-    "@aragon/aragen": "^5.4.2",
+    "@aragon/aragen": "^6.0.0-beta.1",
     "@aragon/abis": "^1.0.0",
     "aragon-cli-wrapper": "2.0.0",
     "babel-eslint": "^10.0.3",

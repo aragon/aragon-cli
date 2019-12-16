@@ -157,7 +157,7 @@ exports.handler = async function({
             ctx.accounts = await web3.eth.getAccounts()
           }
 
-          const aclAddress = await getAclAddress(dao)
+          const aclAddress = await getAclAddress(dao, web3)
 
           return Promise.all(
             permissions.map(params => {

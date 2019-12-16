@@ -12,7 +12,7 @@ module.exports = async function(
 ) {
   const web3 = await ensureWeb3(network)
 
-  const aclAddress = await getAclAddress(dao)
+  const aclAddress = await getAclAddress(dao, web3)
 
   const processedParams = role.startsWith('0x')
     ? params
