@@ -6,22 +6,16 @@ import {
   getDistName,
   getGlobalBinary,
   getLocalBinary,
-} from '@aragon/toolkit/dist/ipfs'
-import { installGoIpfs } from '@aragon/toolkit/dist/ipfs/install'
-import {
+  installGoIpfs,
   GO_IMPL_DIST_VERSION,
   GO_IMPL_DIST_URL,
-} from '@aragon/toolkit/dist/ipfs/constants'
-import {
   isPackage,
   getGlobalPackagesLocation,
-} from '@aragon/toolkit/dist/node/packages'
-import {
   getPlatform,
   getArch,
   getPlatformForGO,
   getArchForGO,
-} from '@aragon/toolkit/dist/node'
+} from '@aragon/toolkit'
 //
 import listrOpts from '../../helpers/listr-options'
 

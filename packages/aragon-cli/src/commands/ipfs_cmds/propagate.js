@@ -6,7 +6,7 @@ import {
   extractCIDsFromMerkleDAG,
   propagateFiles,
   isValidCID,
-} from '@aragon/toolkit/dist/ipfs'
+} from '@aragon/toolkit'
 //
 import listrOpts from '../../helpers/listr-options'
 import { askForInput } from '../../util'

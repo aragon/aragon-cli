@@ -8,7 +8,7 @@ import {
   configureCors,
   pinArtifacts,
   getBinaryPath,
-} from '@aragon/toolkit/dist/ipfs'
+} from '@aragon/toolkit'
 //
 import listrOpts from '../../helpers/listr-options'
 

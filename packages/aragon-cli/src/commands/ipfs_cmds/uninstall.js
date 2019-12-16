@@ -6,7 +6,7 @@ import {
   getGlobalBinary,
   getLocalBinary,
   getNodePackageManager,
-} from '@aragon/toolkit/dist/ipfs'
+} from '@aragon/toolkit'
 //
 import listrOpts from '../../helpers/listr-options'
 

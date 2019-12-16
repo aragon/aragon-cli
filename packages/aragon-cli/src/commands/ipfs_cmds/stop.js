@@ -4,8 +4,8 @@ import {
   getPorts,
   getRepoConfig,
   getHttpClient,
-} from '@aragon/toolkit/dist/ipfs'
-import { killProcessOnPort } from '@aragon/toolkit/dist/node'
+  killProcessOnPort,
+} from '@aragon/toolkit'
 //
 import listrOpts from '../../helpers/listr-options'
 
