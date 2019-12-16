@@ -1,7 +1,7 @@
 export const GATEWAY_FETCH_TIMEOUT = 20000 // 20s
 export const GATEWAY_FETCH_TIMEOUT_MSG = 'Request timed out'
 
-export const GATEWAYS = [
+export const DEFAULT_GATEWAYS = [
   'https://ipfs.io/ipfs',
   'https://ipfs.infura.io/ipfs',
   'https://cloudflare-ipfs.com/ipfs',
