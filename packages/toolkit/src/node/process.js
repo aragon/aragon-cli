@@ -52,7 +52,7 @@ export const startProcess = async ({
     subprocess.stderr.on('data', data => {
       data = data.toString()
       logger(`stderr: ${data}`)
-      reject(new Error(data))
+      if (!data.includes('DeprecationWarning')) reject(new Error(data))
     })
 
     subprocess.stdout.on('data', data => {

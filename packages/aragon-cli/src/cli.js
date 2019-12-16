@@ -2,13 +2,13 @@ import 'source-map-support/register'
 import yargs from 'yargs'
 import * as AragonReporter from './reporters/AragonReporter'
 const { toWei } = require('web3-utils')
+const url = require('url')
 
 const DEFAULT_GAS_PRICE = require('../package.json').aragon.defaultGasPrice
 
 const { configCliMiddleware } = require('./middleware')
 const { findProjectRoot } = require('./util')
-const { ens } = require('@aragon/aragen')
-const url = require('url')
+const { DEVCHAIN_ENS } = require('./commands/devchain_cmds/utils/constants')
 
 const debugMiddleware = argv => {
   argv.reporter.debug(
@@ -69,7 +69,7 @@ const cli = yargs
   .option('apm.ens-registry', {
     description:
       "Address of the ENS registry. This will be overwritten if the selected '--environment' from your arapp.json includes a `registry` property",
-    default: ens,
+    default: DEVCHAIN_ENS,
   })
   .group(['apm.ens-registry'], 'APM:')
   .option('apm.ipfs.rpc', {

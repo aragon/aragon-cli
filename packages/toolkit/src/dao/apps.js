@@ -4,7 +4,7 @@ import {
   resolveEnsDomain,
 } from '../helpers/aragonjs-wrapper'
 //
-const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
+const kernelAbi = require('@aragon/abis/os/artifacts/Kernel').abi
 
 /**
  * Return installed apps for a DAO
