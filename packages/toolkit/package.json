@@ -1,6 +1,6 @@
 {
   "name": "@aragon/toolkit",
-  "version": "0.0.1-beta.7",
+  "version": "0.0.1-beta.8",
   "description": "Programmatic interface for interacting with Aragon",
   "main": "./dist/index.js",
   "scripts": {
