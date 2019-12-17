@@ -1,8 +1,7 @@
 import { keccak256 } from 'web3-utils'
-import { getAclAddress } from '@aragon/toolkit/dist/kernel/kernel'
+import { getAclAddress } from '@aragon/toolkit'
 //
 import { handler as execHandler } from '../../utils/execHandler'
-
 import { ensureWeb3 } from '../../../../helpers/web3-fallback'
 
 export default async function(

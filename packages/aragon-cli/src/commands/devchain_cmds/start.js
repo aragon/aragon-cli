@@ -8,7 +8,7 @@ import fs from 'fs'
 import Web3 from 'web3'
 import { blue, red, green, yellow } from 'chalk'
 import { promisify } from 'util'
-import { getAragonGanacheFiles } from '@aragon/toolkit/dist/util'
+import { getAragonGanacheFiles } from '@aragon/toolkit'
 //
 import ganache from '../../../ganache/build/ganache-core.node.cli'
 import listrOpts from '../../helpers/listr-options'

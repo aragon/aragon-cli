@@ -8,18 +8,18 @@
 		"url": "https://github.com/aragon/aragon-cli/tree/master/packages/toolkit"
 	},
 	"scripts": {
-    "prepare": "npm run build",
-    "build": "babel src --out-file dist/bundle.js --source-maps",
-    "build:watch": "npm run build -- --watch",
-    "lint": "eslint src test",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "ava --verbose",
-    "test:watch": "ava --watch",
-    "test:clean": "rm -rf ./.tmp && npm run test:reset-cache",
-    "test:reset-cache": "ava --reset-cache",
-    "test:update-snapshots": "npm run test:clean && npm run test -- --update-snapshots",
-    "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test"
-  },
+		"prepare": "npm run build",
+		"build": "babel src --out-file dist/bundle.js --source-maps",
+		"build:watch": "npm run build -- --watch",
+		"lint": "eslint src test",
+		"lint:fix": "npm run lint -- --fix",
+		"test": "ava --verbose",
+		"test:watch": "ava --watch",
+		"test:clean": "rm -rf ./.tmp && npm run test:reset-cache",
+		"test:reset-cache": "ava --reset-cache",
+		"test:update-snapshots": "npm run test:clean && npm run test -- --update-snapshots",
+		"test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test"
+	},
 	"keywords": [
 		"aragon",
 		"cli",

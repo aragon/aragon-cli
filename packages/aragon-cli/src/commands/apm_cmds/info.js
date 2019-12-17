@@ -1,5 +1,5 @@
 import { bold } from 'chalk'
-import getApmRepo from '@aragon/toolkit/dist/apm/getApmRepo'
+import getApmRepo from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
 

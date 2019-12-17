@@ -1,10 +1,6 @@
-import {
-  convertStringToParam,
-  encodeParam,
-} from '@aragon/toolkit/dist/acl/params'
+import { convertStringToParam, encodeParam } from '@aragon/toolkit'
 //
 import daoArg from '../utils/daoArg'
-
 import aclExecHandler from './utils/aclExecHandler'
 
 // Note: we usually order these values as entity, proxy, role but this order fits

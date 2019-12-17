@@ -1,7 +1,7 @@
 import path from 'path'
 import { copy, existsSync, ensureDirSync } from 'fs-extra'
 import os from 'os'
-import { getIpfsCacheFiles } from '@aragon/toolkit/dist/util'
+import { getIpfsCacheFiles } from '@aragon/toolkit'
 
 export async function fetchClient(ctx, task, clientVersion) {
   ctx.clientFetch = true

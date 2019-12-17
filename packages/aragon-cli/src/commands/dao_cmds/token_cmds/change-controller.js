@@ -1,6 +1,6 @@
 import TaskList from 'listr'
 import { blue, green } from 'chalk'
-import { changeController } from '@aragon/toolkit/dist/token/token'
+import { changeController } from '@aragon/toolkit'
 //
 import listrOpts from '../../../helpers/listr-options'
 

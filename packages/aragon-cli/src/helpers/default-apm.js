@@ -1,4 +1,4 @@
-import { DEFAULT_APM_REGISTRY } from '@aragon/toolkit/dist/helpers/constants'
+import { DEFAULT_APM_REGISTRY } from '@aragon/toolkit'
 
 // insert default apm if the provided name doesnt have the suffix
 export default name =>

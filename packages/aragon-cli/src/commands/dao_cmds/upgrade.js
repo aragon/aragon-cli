@@ -1,11 +1,9 @@
 import TaskList from 'listr'
 import APM from '@aragon/apm'
 import { bold, blue } from 'chalk'
-import { getBasesNamespace } from '@aragon/toolkit/dist/kernel/kernel'
-import { resolveAddressOrEnsDomain } from '@aragon/toolkit/dist/dao/utils/resolveAddressOrEnsDomain'
+import { getBasesNamespace, resolveAddressOrEnsDomain } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
-
 import listrOpts from '../../helpers/listr-options'
 import defaultAPMName from '../../helpers/default-apm'
 import daoArg from './utils/daoArg'

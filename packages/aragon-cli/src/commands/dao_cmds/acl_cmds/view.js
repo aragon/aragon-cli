@@ -9,12 +9,11 @@ import {
   ANY_ENTITY,
   NO_MANAGER,
   ZERO_ADDRESS,
-} from '@aragon/toolkit/dist/helpers/constants'
-import { getDaoAddressPermissionsApps } from '@aragon/toolkit/dist/acl/view'
-import { formatAclPermissions } from '@aragon/toolkit/dist/acl/viewFormatter'
+  getDaoAddressPermissionsApps,
+  formatAclPermissions,
+} from '@aragon/toolkit'
 //
 import daoArg from '../utils/daoArg'
-
 import { listApps } from '../utils/knownApps'
 import { ensureWeb3 } from '../../../helpers/web3-fallback'
 import listrOpts from '../../../helpers/listr-options'

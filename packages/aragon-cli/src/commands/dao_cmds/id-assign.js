@@ -1,9 +1,8 @@
 import TaskList from 'listr'
 import { green } from 'chalk'
-import { isIdAssigned, assignId } from '@aragon/toolkit/dist/dao/assign-id'
+import { isIdAssigned, assignId } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
-
 import listrOpts from '../../helpers/listr-options'
 
 // dao id assign command

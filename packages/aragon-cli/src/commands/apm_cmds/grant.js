@@ -1,5 +1,5 @@
 import { blue } from 'chalk'
-import grantNewVersionsPermission from '@aragon/toolkit/dist/apm/grantNewVersionsPermission'
+import grantNewVersionsPermission from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
 

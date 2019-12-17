@@ -1,16 +1,16 @@
 import TaskList from 'listr'
 import Table from 'cli-table'
 import { blue, green, white } from 'chalk'
-import { addressesEqual } from '@aragon/toolkit/dist/util'
 import {
   getDaoAddress,
   getInstalledApps,
   getAllApps,
-} from '@aragon/toolkit/dist/dao/apps'
+  addressesEqual,
+} from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
-
 import listrOpts from '../../helpers/listr-options'
+
 import daoArg from './utils/daoArg'
 import { listApps } from './utils/knownApps'
 

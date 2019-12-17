@@ -1,7 +1,9 @@
 import { blue } from 'chalk'
-import { EXECUTE_FUNCTION_NAME } from '@aragon/toolkit/dist/helpers/constants'
-import getAppKernel from '@aragon/toolkit/dist/kernel/getAppKernel'
-import encodeActCall from '@aragon/toolkit/dist/dao/encodeActCall'
+import {
+  EXECUTE_FUNCTION_NAME,
+  getAppKernel,
+  encodeActCall,
+} from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
 

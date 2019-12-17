@@ -1,6 +1,6 @@
 import test from 'ava'
 import web3EthAbi from 'web3-eth-abi'
-import { expandLink } from '@aragon/toolkit/dist/util'
+import { expandLink } from '@aragon/toolkit'
 //
 import { deployContract, linkLibraries } from '../../src/lib/deploy/deploy'
 import { isAddress, isValidTxHash, getLocalWeb3 } from '../util'

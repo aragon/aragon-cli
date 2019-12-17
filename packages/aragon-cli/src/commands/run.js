@@ -6,10 +6,9 @@ import url from 'url'
 import Web3 from 'web3'
 import APM from '@aragon/apm'
 import { blue, green, bold } from 'chalk'
-import { isPortTaken } from '@aragon/toolkit/dist/node'
+import { isPortTaken } from '@aragon/toolkit'
 //
 import encodeInitPayload from '../helpers/encodeInitPayload'
-
 import listrOpts from '../helpers/listr-options'
 import { task as getRepoTask } from './dao_cmds/utils/getRepoTask'
 import pkg from '../../package.json'
