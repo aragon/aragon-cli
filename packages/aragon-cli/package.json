@@ -59,7 +59,7 @@
 		"cli-table": "^0.3.1",
 		"engine-check": "^1.0.1",
 		"eth-ens-namehash": "^2.0.8",
-		"execa": "^1.0.0",
+		"execa": "^3.0.0",
 		"figures": "^3.0.0",
 		"find-process": "^1.4.2",
 		"find-up": "^4.0.0",

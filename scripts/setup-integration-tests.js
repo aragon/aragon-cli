@@ -1,4 +1,4 @@
-const { ensureLocalDaemon } = require('../packages/toolkit/dist/ipfs')
+const { ensureLocalDaemon } = require('../packages/toolkit')
 const {
   ensureDevchain,
 } = require('../packages/aragon-cli/dist/helpers/ensureDevchain')

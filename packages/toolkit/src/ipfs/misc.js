@@ -53,6 +53,7 @@ export const ensureLocalDaemon = async ({
     await setPorts(repoPath, apiPort, gatewayPort, swarmPort)
     const processController = await startLocalDaemon(binPath, repoPath, {
       detached: true,
+      logger,
     })
     processController.detach()
     logger(`Daemon started on port: ${apiPort}`)
