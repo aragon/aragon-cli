@@ -6,7 +6,6 @@
     "create-aragon-app": "./dist/index.js"
   },
   "scripts": {
-    "prepare": "npm run build",
     "build": "babel src --out-dir dist --source-maps",
     "build:watch": "npm run build -- --watch",
     "lint": "eslint src test",
@@ -39,7 +38,7 @@
   "dependencies": {
     "chalk": "^3.0.0",
     "engine-check": "^1.0.1",
-    "execa": "^1.0.0",
+    "execa": "^3.0.0",
     "figures": "^3.0.0",
     "fs-extra": "^8.0.1",
     "git-clone": "^0.1.0",
