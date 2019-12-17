@@ -1,13 +1,15 @@
 import execa from 'execa'
 import path from 'path'
-import { isPortTaken, getBinary } from '@aragon/toolkit/dist/node'
+import { isPortTaken, getBinary, getPackageRoot } from '@aragon/toolkit'
 
 export async function startClient(ctx, clientPort, clientPath) {
   if (await isPortTaken(clientPort)) {
     ctx.portOpen = true
     return
   }
-  const bin = getBinary('http-server')
+
+  const packageRoot = getPackageRoot(__dirname)
+  const bin = getBinary('http-server', packageRoot)
 
   const rootPath = clientPath || ctx.clientPath
 

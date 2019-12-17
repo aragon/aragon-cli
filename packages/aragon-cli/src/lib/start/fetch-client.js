@@ -1,6 +1,7 @@
 import path from 'path'
 import { copy, existsSync, ensureDirSync } from 'fs-extra'
 import os from 'os'
+import { getIpfsCacheFiles } from '@aragon/toolkit/dist/util'
 
 export async function fetchClient(ctx, task, clientVersion) {
   ctx.clientFetch = true
@@ -15,12 +16,8 @@ export async function fetchClient(ctx, task, clientVersion) {
     return
   }
 
-  // Get prebuild client from aragen
-  const files = path.resolve(
-    require.resolve('@aragon/aragen'),
-    '../ipfs-cache',
-    '@aragon/aragon'
-  )
+  // Get prebuild client
+  const files = path.resolve(getIpfsCacheFiles(), '@aragon/aragon')
 
   // Ensure folder exists
   const BUILD_PATH = path.join(CLIENT_PATH, 'build')

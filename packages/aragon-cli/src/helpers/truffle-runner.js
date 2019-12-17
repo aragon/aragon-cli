@@ -1,11 +1,10 @@
-const execa = require('execa')
-const devnull = require('dev-null')
-//
-const { getBinary } = require('@aragon/toolkit/dist/node')
+import execa from 'execa'
+import devnull from 'dev-null'
+import { getBinary, getPackageRoot } from '@aragon/toolkit/dist/node'
 
-const truffleBin = getBinary('truffle')
+const truffleBin = getBinary('truffle', getPackageRoot(__dirname))
 
-const runTruffle = (args, { stdout, stderr, stdin }) => {
+export const runTruffle = (args, { stdout, stderr, stdin }) => {
   return new Promise((resolve, reject) => {
     const truffle = execa(truffleBin, args)
     let errMsg = ''
@@ -22,8 +21,6 @@ const runTruffle = (args, { stdout, stderr, stdin }) => {
   })
 }
 
-const compileContracts = async () => {
+export const compileContracts = async () => {
   await runTruffle(['compile'], { stdout: devnull() })
 }
-
-module.exports = { runTruffle, compileContracts }

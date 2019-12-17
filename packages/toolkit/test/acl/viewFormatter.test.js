@@ -6,8 +6,6 @@ import {
 } from '../../src/acl/viewFormatter'
 
 test('viewFormatter > flattenAclPermissions', t => {
-  t.plan(1)
-
   const toAppAddress1 = '0xbc4d08eb94caf68faf73be40780b68b1de369d15'
   const toAppAddress2 = '0xb123451234512345123451234512345123451234'
   const roleHash =
@@ -48,8 +46,6 @@ test('viewFormatter > flattenAclPermissions', t => {
 })
 
 test('viewFormatter > formatAclPermissions', t => {
-  t.plan(1)
-
   // Mock addresses, appIds and names
 
   const toAppAddress = '0x' + 'a'.repeat(40)

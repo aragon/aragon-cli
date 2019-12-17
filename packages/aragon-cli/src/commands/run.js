@@ -1,42 +1,44 @@
-const TaskList = require('listr')
-const path = require('path')
-const fs = require('fs-extra')
-const url = require('url')
+import TaskList from 'listr'
+import path from 'path'
+import fs from 'fs-extra'
+import url from 'url'
 // TODO: stop using web3
-const Web3 = require('web3')
-const APM = require('@aragon/apm')
-const { blue, green, bold } = require('chalk')
-const { isPortTaken } = require('@aragon/toolkit/dist/node')
+import Web3 from 'web3'
+import APM from '@aragon/apm'
+import { blue, green, bold } from 'chalk'
+import { isPortTaken } from '@aragon/toolkit/dist/node'
 //
-const encodeInitPayload = require('../helpers/encodeInitPayload')
-const listrOpts = require('../helpers/listr-options')
-const getRepoTask = require('./dao_cmds/utils/getRepoTask')
-const pkg = require('../../package.json')
-const {
+import encodeInitPayload from '../helpers/encodeInitPayload'
+
+import listrOpts from '../helpers/listr-options'
+import { task as getRepoTask } from './dao_cmds/utils/getRepoTask'
+import pkg from '../../package.json'
+import {
   findProjectRoot,
   isHttpServerOpen,
   parseArgumentStringIfPossible,
-} = require('../util')
+} from '../util'
+
 // cmds
-const devchain = require('./devchain_cmds/start')
-const start = require('./start')
-const deploy = require('./deploy')
-const newDAO = require('./dao_cmds/new')
-const {
+import devchain from './devchain_cmds/start'
+
+import start from './start'
+import deploy from './deploy'
+import newDAO from './dao_cmds/new'
+import {
   runSetupTask,
   runPrepareForPublishTask,
   runPublishTask,
-} = require('./apm_cmds/publish')
+} from './apm_cmds/publish'
 
 const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 
-exports.command = 'run'
+export const command = 'run'
+export const describe = 'Run the current app locally'
 
-exports.describe = 'Run the current app locally'
-
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return yargs
     .option('client', {
       description: 'Just run the smart contracts, without the Aragon client',
@@ -165,7 +167,7 @@ exports.builder = function(yargs) {
     })
 }
 
-exports.handler = async function({
+export const handler = async function({
   // Globals
   reporter,
   gasPrice,
@@ -237,6 +239,8 @@ exports.handler = async function({
             files,
             ignore: ['node_modules'],
             reporter,
+            debug,
+            silent,
             gasPrice,
             cwd,
             network,
@@ -259,8 +263,8 @@ exports.handler = async function({
       },
       {
         title: 'Prepare for publish',
-        task: async ctx => {
-          return runPrepareForPublishTask({
+        task: async ctx =>
+          runPrepareForPublishTask({
             ...ctx.publishParams,
             // context
             initialRepo: ctx.initialRepo,
@@ -268,8 +272,7 @@ exports.handler = async function({
             version: ctx.version,
             contractAddress: ctx.contract,
             deployArtifacts: ctx.deployArtifacts,
-          })
-        },
+          }),
       },
       {
         title: 'Publish app to aragonPM',
@@ -290,7 +293,7 @@ exports.handler = async function({
         title: 'Fetch published repo',
         task: async ctx => {
           // getRepoTask.task() return a function with ctx argument
-          await getRepoTask.task({
+          await getRepoTask({
             apmRepo: module.appName,
             apm: APM(ctx.web3, apmOptions),
             artifactRequired: false,
@@ -317,7 +320,7 @@ exports.handler = async function({
         },
       },
       {
-        title: 'Create DAO',
+        title: 'Create Organization',
         task: ctx => {
           const roles = ctx.repo.roles || []
           const rolesBytes = roles.map(role => role.bytes)
@@ -360,7 +363,7 @@ exports.handler = async function({
         },
       },
       {
-        title: 'Open DAO',
+        title: 'Start Client',
         enabled: () => client === true,
         task: async (ctx, task) =>
           start.task({ clientRepo, clientVersion, clientPort, clientPath }),
@@ -421,19 +424,19 @@ exports.handler = async function({
     ${'Ethereum Node'}: ${blue(network.provider.connection._url)}
     ${'ENS registry'}: ${blue(ctx.ens)}
     ${`aragonPM registry`}: ${blue(registry)}
-    ${'DAO address'}: ${green(ctx.daoAddress)}`)
+    ${'Organization address'}: ${green(ctx.daoAddress)}`)
 
     reporter.newLine()
 
     reporter.info(
       `${
         client !== false
-          ? `Opening ${bold(
+          ? `Open ${bold(
               `http://localhost:${clientPort}/#/${ctx.daoAddress}`
             )} to view your DAO`
           : `Use ${bold(
               `"aragon dao <command> ${ctx.daoAddress}"`
-            )} to interact with your DAO`
+            )} to interact with your Organization`
       }`
     )
 
@@ -442,5 +445,8 @@ exports.handler = async function({
     } else if (!manifest.start_url) {
       reporter.warning('No front-end detected (no start_url defined)')
     }
+
+    // Patch to prevent calling the onFinishCommand hook
+    await new Promise((resolve, reject) => {})
   })
 }

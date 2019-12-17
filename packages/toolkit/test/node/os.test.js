@@ -1,69 +1,52 @@
 import test from 'ava'
-import sinon from 'sinon'
-import proxyquire from 'proxyquire'
+import fs from 'fs-extra'
+//
+import { getLocalBinary } from '../../src/node'
 
-test.beforeEach(t => {
-  const fsStub = {
-    existsSync: sinon.stub(),
-  }
+const TMP_DIR = '.tmp/node/os'
+const LOCAL_PATH = `${TMP_DIR}/local`
+const PARENT_PATH = `${TMP_DIR}/parent`
 
-  const node = proxyquire.noCallThru().load('../../src/node', {
-    fs: fsStub,
-  })
+test.before(t => {
+  fs.mkdirpSync(`${LOCAL_PATH}/node_modules/.bin`)
+  fs.writeFileSync(`${LOCAL_PATH}/node_modules/.bin/truffle`, '')
 
-  t.context = {
-    node,
-    fsStub,
-  }
+  fs.mkdirpSync(`${PARENT_PATH}/node_modules/.bin`)
+  fs.writeFileSync(`${PARENT_PATH}/node_modules/.bin/truffle`, '')
+
+  // Create a child folder without truffle
+  fs.mkdirpSync(`${PARENT_PATH}/node_modules/package/node_modules/.bin`)
+
+  // Create scopped folder
+  fs.mkdirpSync(`${PARENT_PATH}/node_modules/@scope/package/node_modules/.bin`)
 })
 
-test.afterEach.always(() => {
-  sinon.restore()
+test.after.always(() => {
+  fs.remove(TMP_DIR)
 })
 
-// eslint-disable-next-line ava/no-skip-test
-test.skip('getLocalBinary should find the binary path from the local node_modules', t => {
-  t.plan(1)
-  const { node, fsStub } = t.context
+test('getLocalBinary should find the binary path from the local node_modules', t => {
+  const binaryPath = getLocalBinary('truffle', LOCAL_PATH)
 
-  // arrange
-  fsStub.existsSync.returns(true)
-  // act
-  const path = node.getLocalBinary('truff', 'project_root')
-  // assert
-  t.is(normalizePath(path), 'project_root/node_modules/.bin/truff')
+  t.is(normalizePath(binaryPath), `${LOCAL_PATH}/node_modules/.bin/truffle`)
 })
 
-// eslint-disable-next-line ava/no-skip-test
-test.skip('getLocalBinary should find the binary path from the parent node_modules', t => {
-  t.plan(1)
-  const { node, fsStub } = t.context
-
-  // arrange
-  fsStub.existsSync.onCall(0).returns(false)
-  fsStub.existsSync.onCall(1).returns(true)
-  // act
-  const path = node.getLocalBinary('truff', 'parent/node_modules/project_root')
-  // assert
-  t.is(normalizePath(path), 'parent/node_modules/.bin/truff')
-})
-
-// eslint-disable-next-line ava/no-skip-test
-test.skip("getLocalBinary should find the binary path from the parent node_modules even when it's scoped", t => {
-  t.plan(1)
-  const { node, fsStub } = t.context
-
-  // arrange
-  fsStub.existsSync.onCall(0).returns(false)
-  fsStub.existsSync.onCall(1).returns(false)
-  fsStub.existsSync.onCall(2).returns(true)
-  // act
-  const path = node.getLocalBinary(
-    'truff',
-    'parent/node_modules/@scope/project_root'
+test('getLocalBinary should find the binary path from the parent node_modules', t => {
+  const binaryPath = getLocalBinary(
+    'truffle',
+    `${PARENT_PATH}/node_modules/package`
   )
-  // assert
-  t.is(normalizePath(path), 'parent/node_modules/.bin/truff')
+
+  t.is(normalizePath(binaryPath), `${PARENT_PATH}/node_modules/.bin/truffle`)
+})
+
+test("getLocalBinary should find the binary path from the parent node_modules even when it's scoped", t => {
+  const binaryPath = getLocalBinary(
+    'truffle',
+    `${PARENT_PATH}/node_modules/@scope/package`
+  )
+
+  t.is(normalizePath(binaryPath), `${PARENT_PATH}/node_modules/.bin/truffle`)
 })
 
 function normalizePath(path) {

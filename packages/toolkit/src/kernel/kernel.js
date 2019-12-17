@@ -1,7 +1,7 @@
-const web3EthAbi = require('web3-eth-abi')
-const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
+import web3EthAbi from 'web3-eth-abi'
+import { abi as kernelAbi } from '@aragon/abis/os/artifacts/Kernel'
 //
-const { addressesEqual } = require('../util')
+import { addressesEqual } from '../util'
 
 const newAppProxyLogName = 'NewAppProxy'
 const newAppProxyLogAbi = kernelAbi.find(
@@ -21,7 +21,7 @@ Kernel ABI does not include expected log '${newAppProxyLogName}'`)
  * @param {Object} web3 Web3 initialized object
  * @return {Promise<string>} aclAddress
  */
-async function getAclAddress(dao, web3) {
+export async function getAclAddress(dao, web3) {
   const daoInstance = new web3.eth.Contract(kernelAbi, dao)
   return daoInstance.methods.acl().call()
 }
@@ -33,7 +33,7 @@ async function getAclAddress(dao, web3) {
  * @param {Object} receipt Web3 receipt object
  * @return {string|undefined} app proxy contract address
  */
-function getAppProxyAddressFromReceipt(dao, receipt) {
+export function getAppProxyAddressFromReceipt(dao, receipt) {
   const logTopic = web3EthAbi.encodeEventSignature(newAppProxyLogAbi)
 
   const deployLog = receipt.logs.find(({ topics, address }) => {
@@ -57,7 +57,7 @@ Kernel ABI log ${newAppProxyLogName} does not have expected argument 'log'`)
  * @param {Object} web3 Web3 initialized object
  * @return {Promise<string>} basesNamespace
  */
-async function getBasesNamespace(dao, web3) {
+export async function getBasesNamespace(dao, web3) {
   const kernel = new web3.eth.Contract(kernelAbi, dao)
   return kernel.methods.APP_BASES_NAMESPACE().call()
 }
@@ -70,15 +70,8 @@ async function getBasesNamespace(dao, web3) {
  * @param {Object} web3 Web3 initialized object
  * @return {Promise<string>} currentBaseAddress
  */
-async function getAppBase(dao, appId, web3) {
+export async function getAppBase(dao, appId, web3) {
   const kernel = new web3.eth.Contract(kernelAbi, dao)
   const basesNamespace = await getBasesNamespace(dao, web3)
   return kernel.methods.getApp(basesNamespace, appId).call()
-}
-
-module.exports = {
-  getAclAddress,
-  getAppProxyAddressFromReceipt,
-  getBasesNamespace,
-  getAppBase,
 }

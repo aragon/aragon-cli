@@ -1,15 +1,15 @@
-const TaskList = require('listr')
-const { blue, green } = require('chalk')
-const { changeController } = require('@aragon/toolkit/dist/token/token')
+import TaskList from 'listr'
+import { blue, green } from 'chalk'
+import { changeController } from '@aragon/toolkit/dist/token/token'
 //
-const listrOpts = require('../../../helpers/listr-options')
-const { ensureWeb3 } = require('../../../helpers/web3-fallback')
+import listrOpts from '../../../helpers/listr-options'
 
-exports.command = 'change-controller <token-address> <new-controller>'
+import { ensureWeb3 } from '../../../helpers/web3-fallback'
 
-exports.describe = 'Change the controller of a MiniMe token'
+export const command = 'change-controller <token-address> <new-controller>'
+export const describe = 'Change the controller of a MiniMe token'
 
-exports.builder = yargs => {
+export const builder = yargs => {
   return yargs
     .positional('token-address', {
       description: 'Address of the MiniMe token',
@@ -19,7 +19,7 @@ exports.builder = yargs => {
     })
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   gasPrice,
   network,
@@ -49,6 +49,7 @@ exports.handler = async function({
   )
 
   await tasks.run()
+  reporter.newLine()
   reporter.success(
     `Successfully changed the controller of ${green(tokenAddress)} to ${green(
       newController

@@ -1,6 +1,6 @@
-const Web3 = require('web3')
+import Web3 from 'web3'
 
-const ensureWeb3 = async network => {
+export const ensureWeb3 = async network => {
   let web3
 
   try {
@@ -10,10 +10,8 @@ const ensureWeb3 = async network => {
   } catch (err) {
     throw new Error(`Web3 cannot connect using the network provider.
 
-Make sure 'aragon devchain' is running or your provider settings are correct.
+Make sure 'aragon devchain' or Frame are running, and your provider settings are correct.
 
 For more info you can check the Truffle docs on network configuration: https://truffleframework.com/docs/truffle/reference/configuration#networks`)
   }
 }
-
-module.exports = { ensureWeb3 }

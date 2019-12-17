@@ -1,5 +1,5 @@
-const web3Utils = require('web3-utils')
-const { resolveEnsDomain } = require('../../helpers/aragonjs-wrapper')
+import web3Utils from 'web3-utils'
+import { resolveEnsDomain } from '../../helpers/aragonjs-wrapper'
 
 /**
  * Returns aclAddress for a DAO
@@ -9,7 +9,7 @@ const { resolveEnsDomain } = require('../../helpers/aragonjs-wrapper')
  * @param {string} ensRegistryAddress ENS registry address
  * @return {Promise<string>} aclAddress
  */
-async function resolveAddressOrEnsDomain(dao, web3, registryAddress) {
+export async function resolveAddressOrEnsDomain(dao, web3, registryAddress) {
   return web3Utils.isAddress(dao)
     ? dao
     : resolveEnsDomain(dao, {
@@ -17,5 +17,3 @@ async function resolveAddressOrEnsDomain(dao, web3, registryAddress) {
         registryAddress,
       })
 }
-
-module.exports = { resolveAddressOrEnsDomain }

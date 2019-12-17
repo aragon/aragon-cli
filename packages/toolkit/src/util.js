@@ -1,3 +1,5 @@
+import path from 'path'
+//
 import {
   ARAGON_DOMAIN,
   DEFAULT_GAS_FUZZ_FACTOR,
@@ -82,4 +84,12 @@ export const getRecommendedGasLimit = async (
 export const getContract = (pkg, contract) => {
   const artifact = require(`${pkg}/build/contracts/${contract}.json`)
   return artifact
+}
+
+export const getIpfsCacheFiles = () => {
+  return path.resolve(require.resolve('@aragon/aragen'), '../ipfs-cache')
+}
+
+export const getAragonGanacheFiles = () => {
+  return path.resolve(require.resolve('@aragon/aragen'), '../aragon-ganache')
 }

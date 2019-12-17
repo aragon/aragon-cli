@@ -1,7 +1,7 @@
-const APM = require('@aragon/apm')
-const ACL = require('./util/acl')
+import APM from '@aragon/apm'
+import ACL from './util/acl'
 
-module.exports = async (
+export default async (
   web3,
   apmRepoName,
   apmOptions,
@@ -35,6 +35,8 @@ module.exports = async (
     )
   }
 
+  const receipts = []
+
   /* eslint-disable-next-line */
   for (const address of grantees) {
     progressHandler(2, address)
@@ -52,5 +54,9 @@ module.exports = async (
 
     const receipt = await web3.eth.sendTransaction(transaction)
     progressHandler(3, receipt.transactionHash)
+
+    receipts.push(receipt)
   }
+
+  return receipts
 }

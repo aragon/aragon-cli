@@ -1,22 +1,21 @@
-const TaskList = require('listr')
-const { green, bold } = require('chalk')
-const getApmRepo = require('@aragon/toolkit/dist/apm/getApmRepo')
-const newDao = require('@aragon/toolkit/dist/dao/new')
-const { assignId } = require('@aragon/toolkit/dist/dao/assign-id')
+import TaskList from 'listr'
+import { green, bold } from 'chalk'
+import getApmRepo from '@aragon/toolkit/dist/apm/getApmRepo'
+import newDao from '@aragon/toolkit/dist/dao/new'
+import { assignId } from '@aragon/toolkit/dist/dao/assign-id'
 //
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const listrOpts = require('../../helpers/listr-options')
-const defaultAPMName = require('../../helpers/default-apm')
-const { parseArgumentStringIfPossible } = require('../../util')
+import { ensureWeb3 } from '../../helpers/web3-fallback'
+import listrOpts from '../../helpers/listr-options'
+import defaultAPMName from '../../helpers/default-apm'
+import { parseArgumentStringIfPossible } from '../../util'
 
-exports.BARE_TEMPLATE = defaultAPMName('bare-template')
-exports.BARE_INSTANCE_FUNCTION = 'newInstance'
-exports.BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
+export const BARE_TEMPLATE = defaultAPMName('bare-template')
+export const BARE_INSTANCE_FUNCTION = 'newInstance'
+export const BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
+export const command = 'new [template] [template-version]'
+export const describe = 'Create a new DAO'
 
-exports.command = 'new [template] [template-version]'
-exports.describe = 'Create a new DAO'
-
-exports.builder = yargs => {
+export const builder = yargs => {
   return yargs
     .positional('template', {
       description: 'Name of the template to use creating the DAO',
@@ -50,7 +49,7 @@ exports.builder = yargs => {
 }
 
 // Task will be moved to handler once `dao start` is refactored
-exports.task = async ({
+export const task = async ({
   web3,
   gasPrice,
   apmOptions,
@@ -110,7 +109,7 @@ exports.task = async ({
   return tasks
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   network,
   template,
@@ -125,7 +124,7 @@ exports.handler = async function({
 }) {
   const web3 = await ensureWeb3(network)
 
-  const task = await exports.task({
+  const tasks = await task({
     web3,
     reporter,
     network,
@@ -139,8 +138,9 @@ exports.handler = async function({
     silent,
     debug,
   })
-  const ctx = await task.run()
+  const ctx = await tasks.run()
 
+  reporter.newLine()
   reporter.success(
     aragonId
       ? `Created DAO: ${green(aragonId)} at ${green(ctx.daoAddress)}`

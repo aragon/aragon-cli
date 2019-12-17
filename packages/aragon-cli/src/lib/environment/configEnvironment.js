@@ -1,8 +1,8 @@
-const Web3 = require('web3')
-const { merge } = require('lodash')
+import Web3 from 'web3'
+import { merge } from 'lodash'
 //
-const defaultEnvironments = require('../../../config/environments.default')
-const defaultNetworks = require('../../../config/truffle.default')
+import defaultEnvironments from '../../../config/environments.default'
+import defaultNetworks from '../../../config/truffle.default'
 
 const FRAME_ENDPOINT = 'ws://localhost:1248'
 const FRAME_ORIGIN = 'aragonCLI'
@@ -20,11 +20,9 @@ function getEnv(arapp, environment) {
     const env = arapp.environments[environment]
     if (!env) throw new NoEnvironmentInArapp(environment)
     return env
-  }
-
-  // if there is no arapp.json and the command is not init default to the "global" config
-  // designed for the dao commands including dao acl
-  else {
+  } else {
+    // if there is no arapp.json and the command is not init default to the "global" config
+    // designed for the dao commands including dao acl
     if (!environment) environment = 'aragon:local'
     const env = defaultEnvironments[environment]
     if (!env) throw new NoEnvironmentInDefaults(environment)
@@ -70,21 +68,11 @@ export function configEnvironment({
   ignoreNetwork,
   useFrame,
   environment,
-  network,
   apm,
   arapp,
   truffleConfig = defaultNetworks,
 }) {
   const networkOptions = { ignoreNetwork, useFrame }
-
-  if (arapp && !arapp.environments)
-    return {
-      network: configureNetwork(
-        network || 'rpc',
-        truffleConfig,
-        networkOptions
-      ),
-    }
 
   // default environment (no arapp.json) uses different naming
   const env = getEnv(arapp, environment)

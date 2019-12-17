@@ -1,5 +1,5 @@
-const { isString } = require('lodash')
-const BN = require('bn.js')
+import { isString } from 'lodash'
+import BN from 'bn.js'
 
 /**
  * @typedef {Object} AclParam ACL parameter

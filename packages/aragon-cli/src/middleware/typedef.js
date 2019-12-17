@@ -1,5 +1,5 @@
 /**
- * @typedef {Object} ArappConfigEnvironment
+ * @tyedef {Object} ArappConfigEnvironment
  * @property {string} registry '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1'
  * @property {string} appName 'finance.aragonpm.eth'
  * @property {string} wsRPC 'ws://my.rinkeby.dnp.dappnode.eth:8546'

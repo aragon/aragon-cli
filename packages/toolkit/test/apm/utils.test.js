@@ -43,7 +43,7 @@ test.beforeEach('setup', t => {
     },
   })
 
-  const grantNewVersionsPermission = proxyquire
+  const { default: grantNewVersionsPermission } = proxyquire
     .noCallThru()
     .load('../../src/apm/grantNewVersionsPermission', {
       '@aragon/apm': apmStub,

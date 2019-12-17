@@ -1,9 +1,9 @@
 import test from 'ava'
-const path = require('path')
-const fs = require('fs')
-const tmp = require('tmp')
+import path from 'path'
+import fs from 'fs'
+import tmp from 'tmp'
 //
-const extractContractInfoToFile = require('../../src/helpers/extractContractInfoToFile')
+import extractContractInfoToFile from '../../src/helpers/extractContractInfoToFile'
 
 let tempDir, contractPath, outputPath
 
@@ -20,7 +20,7 @@ const readOutput = async () => {
 }
 
 test.before('create a temp directory and resolve paths', t => {
-  contractPath = path.resolve('test/contracts/ParseMe.sol')
+  contractPath = path.resolve('test/helpers/contracts/ParseMe.sol')
 
   tempDir = tmp.dirSync({ unsafeCleanup: true, keep: false })
   const filename = path.basename(contractPath).replace('.sol', '.json')

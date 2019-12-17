@@ -1,6 +1,6 @@
-const flatten = require('truffle-flattener')
+import flatten from 'truffle-flattener'
 
-module.exports = async sourcePaths => {
+export default async sourcePaths => {
   try {
     return flatten(sourcePaths)
   } catch (error) {

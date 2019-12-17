@@ -1,6 +1,6 @@
 import { serial as test } from 'ava'
-// import { remove, ensureDir } from 'fs-extra'
-//
+import { remove } from 'fs-extra'
+
 import {
   startLocalDaemon,
   ensureRepoInitialized,
@@ -34,39 +34,34 @@ test.before(async () => {
 
 test.after.always(async () => {
   await killProcessOnPort(apiPort)
-  // await remove(projectPath)
-  // await remove(repoPath)
+  await remove(projectPath)
+  await remove(repoPath)
 })
 
 test('should install go-ipfs in a new project', async t => {
-  // act
   const result = await installGoIpfs(true, projectPath)
-  // assert
-  t.snapshot(result.command, 'should use the correct command')
+  t.snapshot(result.cmd, 'should use the correct command')
 })
 
 test('should initialize the repository at a custom path', async t => {
-  // act
   await ensureRepoInitialized(binPath, repoPath)
-  // assert
+
   t.pass()
 })
 
 test('should configure the ports', async t => {
-  // act
   await setPorts(repoPath, apiPort, gatewayPort, swarmPort)
-  // assert
+
   t.pass()
 })
 
 test('should run the daemon', async t => {
-  // act
   const { output, detach } = await startLocalDaemon(binPath, repoPath, {
     detached: true,
   })
   detach()
   const daemonRunning = await isLocalDaemonRunning(apiUrl)
-  // assert
+
   t.true(daemonRunning)
   t.true(output.includes('Daemon is ready'))
   t.true(output.includes(`API server listening on /ip4/0.0.0.0/tcp/${apiPort}`))
@@ -81,21 +76,19 @@ test('should run the daemon', async t => {
 })
 
 test('should configure cors & pin artifacts', async t => {
-  // arrange
   const httpClient = await getHttpClient(`http://localhost:${apiPort}`)
-  // act
+
   await configureCors(httpClient)
   const corsConfigured = await isCorsConfigured(httpClient)
   const hashes = await pinArtifacts(httpClient)
-  // assert
+
   t.true(corsConfigured)
   t.snapshot(hashes)
 })
 
 test('should stop the daemon', async t => {
-  // act
   await killProcessOnPort(apiPort)
   const daemonRunning = await isLocalDaemonRunning(apiUrl)
-  // assert
+
   t.false(daemonRunning)
 })

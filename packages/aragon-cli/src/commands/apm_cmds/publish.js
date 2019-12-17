@@ -1,35 +1,31 @@
-const tmp = require('tmp-promise')
-const path = require('path')
-const semver = require('semver')
-const TaskList = require('listr')
-const taskInput = require('listr-input')
-const APM = require('@aragon/apm')
-const web3Utils = require('web3-utils')
-const { blue, red, green, bold } = require('chalk')
-const { readJson, writeJson, pathExistsSync } = require('fs-extra')
-const { ZERO_ADDRESS } = require('@aragon/toolkit/dist/helpers/constants')
+import tmp from 'tmp-promise'
+import path from 'path'
+import semver from 'semver'
+import TaskList from 'listr'
+import taskInput from 'listr-input'
+import APM from '@aragon/apm'
+import { isAddress } from 'web3-utils'
+import { blue, red, green, bold } from 'chalk'
+import { readJson, writeJson, pathExistsSync } from 'fs-extra'
+import { ZERO_ADDRESS } from '@aragon/toolkit/dist/helpers/constants'
+
 // helpers
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const { compileContracts } = require('../../helpers/truffle-runner')
-const listrOpts = require('../../helpers/listr-options')
+import { ensureWeb3 } from '../../helpers/web3-fallback'
+import { compileContracts } from '../../helpers/truffle-compile'
+import listrOpts from '../../helpers/listr-options'
+
 // cmds
-const deploy = require('../deploy')
-const execTask = require('../dao_cmds/utils/execHandler').task
-const propagateIPFS = require('../ipfs_cmds/propagate').handler
+import deploy from '../deploy'
 
-const {
-  findProjectRoot,
-  runScriptTask,
-  askForConfirmation,
-} = require('../../util')
-
-const {
+import { task as execTask } from '../dao_cmds/utils/execHandler'
+import { handler as propagateIPFS } from '../ipfs_cmds/propagate'
+import { findProjectRoot, runScriptTask, askForConfirmation } from '../../util'
+import {
   prepareFilesForPublishing,
   MANIFEST_FILE,
   ARTIFACT_FILE,
-} = require('./util/preprare-files')
-
-const {
+} from './util/preprare-files'
+import {
   getMajor,
   sanityCheck,
   generateApplicationArtifact,
@@ -38,13 +34,12 @@ const {
   SOLIDITY_FILE,
   POSITIVE_ANSWERS,
   ANSWERS,
-} = require('./util/generate-artifact')
+} from './util/generate-artifact'
 
-exports.command = 'publish <bump> [contract]'
+export const command = 'publish <bump> [contract]'
+export const describe = 'Publish a new version of the application'
 
-exports.describe = 'Publish a new version of the application'
-
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return deploy
     .builder(yargs) // inherit deploy options
     .positional('bump', {
@@ -118,7 +113,7 @@ exports.builder = function(yargs) {
     .option('prepublish', {
       description:
         'Whether publish should run prepublish script specified in --prepublish-script before publishing',
-      default: true,
+      default: false,
       boolean: true,
     })
     .option('prepublish-script', {
@@ -146,7 +141,7 @@ exports.builder = function(yargs) {
     })
 }
 
-exports.runSetupTask = ({
+export const runSetupTask = ({
   reporter,
 
   // Globals
@@ -195,11 +190,13 @@ exports.runSetupTask = ({
       },
       {
         title: `Applying version bump (${bump})`,
-        task: async ctx => {
+        task: async (ctx, task) => {
           let isValid = true
           try {
             const ipfsTimeout = 1000 * 60 * 5 // 5min
-            reporter.info('Fetching latest version from aragonPM...')
+
+            task.output = 'Fetching latest version from aragonPM...'
+
             ctx.initialRepo = await apm.getLatestVersion(
               module.appName,
               ipfsTimeout
@@ -248,14 +245,14 @@ exports.runSetupTask = ({
       },
       {
         title: 'Compile contracts',
-        enabled: () => !onlyContent && web3Utils.isAddress(contract),
+        enabled: () => !onlyContent && isAddress(contract),
         task: async () => compileContracts(),
       },
       {
         title: 'Deploy contract',
         enabled: ctx =>
           !onlyContent &&
-          ((contract && !web3Utils.isAddress(contract)) ||
+          ((contract && !isAddress(contract)) ||
             (!contract && ctx.shouldDeployContract && !reuse)),
         task: async ctx => {
           const deployTaskParams = {
@@ -268,7 +265,6 @@ exports.runSetupTask = ({
             web3,
             apmOptions,
           }
-
           return deploy.task(deployTaskParams)
         },
       },
@@ -276,7 +272,7 @@ exports.runSetupTask = ({
         title: 'Determine contract address for version',
         enabled: () => !onlyArtifacts,
         task: async (ctx, task) => {
-          if (web3Utils.isAddress(contract)) {
+          if (isAddress(contract)) {
             ctx.contract = contract
           }
 
@@ -303,7 +299,7 @@ exports.runSetupTask = ({
             throw new Error('No contract address supplied for initial version')
           }
 
-          return `Using ${contract}`
+          return `Using ${ctx.contract}`
         },
       },
     ],
@@ -311,7 +307,7 @@ exports.runSetupTask = ({
   )
 }
 
-exports.runPrepareForPublishTask = ({
+export const runPrepareForPublishTask = ({
   reporter,
 
   // Globals
@@ -515,7 +511,7 @@ exports.runPrepareForPublishTask = ({
   )
 }
 
-exports.runPublishTask = ({
+export const runPublishTask = ({
   reporter,
 
   // Globals
@@ -544,8 +540,8 @@ exports.runPublishTask = ({
       {
         title: `Publish ${module.appName}`,
         enabled: () => !onlyArtifacts,
-        task: async (ctx, task) => {
-          return execTask({
+        task: async (ctx, task) =>
+          execTask({
             dao,
             app: proxyAddress,
             method: methodName,
@@ -555,15 +551,14 @@ exports.runPublishTask = ({
             apm: apmOptions,
             web3,
             wsProvider,
-          })
-        },
+          }),
       },
     ],
     listrOpts(silent, debug)
   )
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
 
   // Globals
@@ -606,57 +601,53 @@ exports.handler = async function({
     version,
     contract: contractAddress,
     deployArtifacts,
-  } = await exports
-    .runSetupTask({
-      reporter,
-      gasPrice,
-      cwd,
-      web3,
-      network,
-      module,
-      apm: apmOptions,
-      silent,
-      debug,
-      prepublish,
-      prepublishScript,
-      build,
-      buildScript,
-      bump,
-      contract,
-      init,
-      reuse,
-      onlyContent,
-      onlyArtifacts,
-      http,
-    })
-    .run()
+  } = await runSetupTask({
+    reporter,
+    gasPrice,
+    cwd,
+    web3,
+    network,
+    module,
+    apm: apmOptions,
+    silent,
+    debug,
+    prepublish,
+    prepublishScript,
+    build,
+    buildScript,
+    bump,
+    contract,
+    init,
+    reuse,
+    onlyContent,
+    onlyArtifacts,
+    http,
+  }).run()
 
-  const { pathToPublish, intent } = await exports
-    .runPrepareForPublishTask({
-      reporter,
-      cwd,
-      web3,
-      network,
-      module,
-      apm: apmOptions,
-      silent,
-      debug,
-      publishDir,
-      files,
-      ignore,
-      httpServedFrom,
-      provider,
-      onlyArtifacts,
-      onlyContent,
-      http,
-      // context
-      initialRepo,
-      initialVersion,
-      version,
-      contractAddress,
-      deployArtifacts,
-    })
-    .run()
+  const { pathToPublish, intent } = await runPrepareForPublishTask({
+    reporter,
+    cwd,
+    web3,
+    network,
+    module,
+    apm: apmOptions,
+    silent,
+    debug,
+    publishDir,
+    files,
+    ignore,
+    httpServedFrom,
+    provider,
+    onlyArtifacts,
+    onlyContent,
+    http,
+    // context
+    initialRepo,
+    initialVersion,
+    version,
+    contractAddress,
+    deployArtifacts,
+  }).run()
 
   // Output publish info
 
@@ -668,6 +659,7 @@ exports.handler = async function({
 
   if (files.length === 1 && path.normalize(files[0]) === '.') {
     reporter.warning(
+      '\n',
       `Publishing files from the project's root folder is not recommended. Consider using the distribution folder of your project: "--files <folder>".`
     )
   }
@@ -678,7 +670,8 @@ exports.handler = async function({
     '\n',
     `Contract address: ${blue(contractAddress || ZERO_ADDRESS)}`,
     '\n',
-    `Content (${contentProvier}): ${blue(contentLocation)}`
+    `Content (${contentProvier}): ${blue(contentLocation)}`,
+    '\n'
     // TODO: (Gabi) Add extra relevant info (e.g. size)
     // `Size: ${blue()}`,
     // '\n',
@@ -687,8 +680,7 @@ exports.handler = async function({
   )
 
   if (contentProvier === 'ipfs') {
-    console.log(
-      '\n',
+    reporter.debug(
       'Explore the ipfs content locally:',
       '\n',
       bold(
@@ -699,32 +691,31 @@ exports.handler = async function({
   }
 
   if (!skipConfirmation) {
-    const { confirmation } = await askForConfirmation(
+    const reply = await askForConfirmation(
       `${green(`Publish to ${appName} repo`)}`
     )
+    console.log()
     // new line after confirm
-    if (!confirmation) return console.log()
+    if (!reply) return console.log()
   }
 
-  const { receipt, transactionPath } = await exports
-    .runPublishTask({
-      reporter,
-      gasPrice,
-      web3,
-      wsProvider,
-      module,
-      apm: apmOptions,
-      silent,
-      debug,
-      onlyArtifacts,
-      onlyContent,
-      // context
-      dao,
-      proxyAddress,
-      methodName,
-      params,
-    })
-    .run()
+  const { receipt, transactionPath } = await runPublishTask({
+    reporter,
+    gasPrice,
+    web3,
+    wsProvider,
+    module,
+    apm: apmOptions,
+    silent,
+    debug,
+    onlyArtifacts,
+    onlyContent,
+    // context
+    dao,
+    proxyAddress,
+    methodName,
+    params,
+  }).run()
 
   const { transactionHash, status } = receipt
 
@@ -756,15 +747,13 @@ exports.handler = async function({
   // Propagate content
   if (!http && propagateContent) {
     if (!skipConfirmation) {
-      const { confirmation } = await askForConfirmation(
-        green(`Propagate content`)
-      )
+      const reply = await askForConfirmation(green(`Propagate content`))
       // new line after confirm
-      if (!confirmation) return console.log()
+      if (!reply) return console.log()
     }
 
     const propagateTask = await propagateIPFS({
-      apmOptions,
+      apm: apmOptions,
       cid: contentLocation,
       debug,
       silent,

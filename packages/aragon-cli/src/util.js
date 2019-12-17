@@ -1,12 +1,12 @@
+import findUp from 'find-up'
+import path from 'path'
+import execa from 'execa'
+import fs from 'fs'
 import os from 'os'
-const findUp = require('find-up')
-const path = require('path')
-const execa = require('execa')
-const fs = require('fs')
-const { readJson } = require('fs-extra')
-const { request } = require('http')
-const inquirer = require('inquirer')
-const { getNodePackageManager } = require('@aragon/toolkit/dist/node')
+import { readJson } from 'fs-extra'
+import { request } from 'http'
+import inquirer from 'inquirer'
+import { getNodePackageManager } from '@aragon/toolkit/dist/node'
 
 let cachedProjectRoot
 
@@ -15,7 +15,7 @@ let cachedProjectRoot
  *
  * @param {string} stdout
  */
-function normalizeOutput(stdout) {
+export function normalizeOutput(stdout) {
   const next = stdout
     // remove user-specific paths
     .replace(/❯/g, '>')
@@ -30,7 +30,7 @@ function normalizeOutput(stdout) {
   return next
 }
 
-const findProjectRoot = () => {
+export const findProjectRoot = () => {
   if (!cachedProjectRoot) {
     try {
       cachedProjectRoot = path.dirname(findUp.sync('arapp.json'))
@@ -46,7 +46,7 @@ const findProjectRoot = () => {
  * @param {string} url Server url
  * @returns {boolean} true if server is returning a valid response
  */
-function isHttpServerOpen(url) {
+export function isHttpServerOpen(url) {
   return new Promise(resolve => {
     request(url, { method: 'HEAD' }, r => {
       resolve(r.statusCode >= 200 && r.statusCode < 400)
@@ -56,7 +56,7 @@ function isHttpServerOpen(url) {
   })
 }
 
-const installDeps = (cwd, task) => {
+export const installDeps = (cwd, task) => {
   const bin = getNodePackageManager()
   const installTask = execa(bin, ['install'], { cwd })
   installTask.stdout.on('data', log => {
@@ -72,7 +72,7 @@ const installDeps = (cwd, task) => {
 }
 
 // TODO: Add a cwd paramter
-const runScriptTask = async (task, scriptName) => {
+export const runScriptTask = async (task, scriptName) => {
   if (!fs.existsSync('package.json')) {
     task.skip('No package.json found')
     return
@@ -86,18 +86,14 @@ const runScriptTask = async (task, scriptName) => {
   }
 
   const bin = getNodePackageManager()
-  const scriptTask = execa(bin, ['run', scriptName])
-
-  scriptTask.stdout.on('data', log => {
-    if (!log) return
-    task.output = `npm run ${scriptName}: ${log}`
-  })
-
-  return scriptTask.catch(err => {
+  try {
+    await execa(bin, ['run', scriptName])
+    return 'Script completed'
+  } catch (err) {
     throw new Error(
       `${err.message}\n${err.stderr}\n\nFailed to build. See above output.`
     )
-  })
+  }
 }
 
 /**
@@ -108,7 +104,7 @@ const runScriptTask = async (task, scriptName) => {
  * @param {string} target must be a string
  * @returns {boolean} the parsed value
  */
-const parseAsBoolean = target => {
+export const parseAsBoolean = target => {
   if (typeof target !== 'string') {
     throw new Error(
       `Expected ${target} to be of type string, not ${typeof target}`
@@ -134,7 +130,7 @@ const parseAsBoolean = target => {
  * @param {string} target must be a string
  * @returns {Array} the parsed value
  */
-const parseAsArray = target => {
+export const parseAsArray = target => {
   if (typeof target !== 'string') {
     throw new Error(
       `Expected ${target} to be of type string, not ${typeof target}`
@@ -157,7 +153,7 @@ const parseAsArray = target => {
  * @param {string} target must be a string
  * @returns {boolean|Array} the parsed value
  */
-const parseArgumentStringIfPossible = target => {
+export const parseArgumentStringIfPossible = target => {
   // convert to boolean: 'false' to false
   try {
     return parseAsBoolean(target)
@@ -173,7 +169,7 @@ const parseArgumentStringIfPossible = target => {
   return target
 }
 
-const askForInput = async message => {
+export const askForInput = async message => {
   const { reply } = await inquirer.prompt([
     {
       type: 'input',
@@ -184,7 +180,7 @@ const askForInput = async message => {
   return reply
 }
 
-const askForChoice = async (message, choices) => {
+export const askForChoice = async (message, choices) => {
   const { reply } = await inquirer.prompt([
     {
       type: 'list',
@@ -196,7 +192,7 @@ const askForChoice = async (message, choices) => {
   return reply
 }
 
-const askForConfirmation = async message => {
+export const askForConfirmation = async message => {
   const { reply } = await inquirer.prompt([
     {
       type: 'confirm',
@@ -205,16 +201,4 @@ const askForConfirmation = async message => {
     },
   ])
   return reply
-}
-
-module.exports = {
-  normalizeOutput,
-  parseArgumentStringIfPossible,
-  findProjectRoot,
-  isHttpServerOpen,
-  installDeps,
-  runScriptTask,
-  askForInput,
-  askForChoice,
-  askForConfirmation,
 }

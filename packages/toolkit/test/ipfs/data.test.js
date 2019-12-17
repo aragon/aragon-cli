@@ -1,29 +1,19 @@
 import test from 'ava'
-//
 import {
   getHttpClient,
   getMerkleDAG,
   extractCIDsFromMerkleDAG,
 } from '../../src/ipfs'
 
-const ipfsGateway = 'https://ipfs.infura.io:5001'
+const ipfsGateway = 'http://localhost:8080'
 const readmeDirCid = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'
 
-test.beforeEach(async t => {
-  t.context = {
-    ipfsReader: await getHttpClient(ipfsGateway),
-  }
-})
-
 test('Get IPFS readme merkle DAG and CIDs', async t => {
-  // arrange
-  const { ipfsReader } = t.context
+  const ipfsReader = await getHttpClient(ipfsGateway)
 
-  // act
   const merkleDag = await getMerkleDAG(ipfsReader, readmeDirCid)
   const cids = extractCIDsFromMerkleDAG(merkleDag, { recursive: true })
 
-  // assert
   t.snapshot(merkleDag, 'IPFS readme merkle DAG')
   t.snapshot(cids, 'IPFS readme CID list')
 })

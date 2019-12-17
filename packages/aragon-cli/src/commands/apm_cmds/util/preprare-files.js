@@ -1,13 +1,14 @@
-const path = require('path')
-const ignore = require('ignore')
-const fs = require('fs')
-const { copy, pathExistsSync } = require('fs-extra')
-const { promisify } = require('util')
-//
-const { findProjectRoot } = require('../../../util')
+import path from 'path'
+import ignore from 'ignore'
+import fs from 'fs'
+import { copy, pathExistsSync } from 'fs-extra'
+import { promisify } from 'util'
 
-const MANIFEST_FILE = 'manifest.json'
-const ARTIFACT_FILE = 'artifact.json'
+//
+import { findProjectRoot } from '../../../util'
+
+export const MANIFEST_FILE = 'manifest.json'
+export const ARTIFACT_FILE = 'artifact.json'
 
 /**
  * Moves the specified files to a temporary directory and returns the path to
@@ -17,7 +18,7 @@ const ARTIFACT_FILE = 'artifact.json'
  * @param {string} ignorePatterns An array of glob-like pattern of files to ignore
  * @return {string} The path to the temporary directory
  */
-async function prepareFilesForPublishing(
+export async function prepareFilesForPublishing(
   tmpDir,
   files = [],
   ignorePatterns = null
@@ -80,5 +81,3 @@ async function prepareFilesForPublishing(
 
   return tmpDir
 }
-
-module.exports = { MANIFEST_FILE, ARTIFACT_FILE, prepareFilesForPublishing }

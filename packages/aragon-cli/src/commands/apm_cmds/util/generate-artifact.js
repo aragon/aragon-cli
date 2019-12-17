@@ -1,22 +1,24 @@
-const fs = require('fs')
-const path = require('path')
-const { readJson, writeJson } = require('fs-extra')
-const namehash = require('eth-ens-namehash')
-const taskInput = require('listr-input')
-const { keccak256 } = require('web3-utils')
-const extract = require('@aragon/toolkit/dist/helpers/solidity-extractor')
-//
-const flattenCode = require('../../../helpers/flattenCode')
-const { ARTIFACT_FILE } = require('./preprare-files')
+import fs from 'fs'
+import path from 'path'
+import { readJson, writeJson } from 'fs-extra'
+import namehash from 'eth-ens-namehash'
+import taskInput from 'listr-input'
+import { keccak256 } from 'web3-utils'
+import extract from '@aragon/toolkit/dist/helpers/solidity-extractor'
 
-const SOLIDITY_FILE = 'code.sol'
+//
+import flattenCode from '../../../helpers/flattenCode'
+
+import { ARTIFACT_FILE } from './preprare-files'
+
+export const SOLIDITY_FILE = 'code.sol'
 const ARAPP_FILE = 'arapp.json'
 
-const POSITIVE_ANSWERS = ['yes', 'y']
-const NEGATIVE_ANSWERS = ['no', 'n', 'abort', 'a']
-const ANSWERS = POSITIVE_ANSWERS.concat(NEGATIVE_ANSWERS)
+export const POSITIVE_ANSWERS = ['yes', 'y']
+export const NEGATIVE_ANSWERS = ['no', 'n', 'abort', 'a']
+export const ANSWERS = POSITIVE_ANSWERS.concat(NEGATIVE_ANSWERS)
 
-const getMajor = version => version.split('.')[0]
+export const getMajor = version => version.split('.')[0]
 
 const getRoles = roles =>
   roles.map(role => Object.assign(role, { bytes: keccak256(role.id) }))
@@ -97,7 +99,7 @@ async function deprecatedFunctions(apm, artifact, web3, reporter) {
   return deprecatedFunctions
 }
 
-async function generateApplicationArtifact(
+export async function generateApplicationArtifact(
   cwd,
   apm,
   outputPath,
@@ -154,13 +156,13 @@ async function generateApplicationArtifact(
   return artifact
 }
 
-async function generateFlattenedCode(dir, sourcePath) {
+export async function generateFlattenedCode(dir, sourcePath) {
   const flattenedCode = await flattenCode([sourcePath])
   fs.writeFileSync(path.resolve(dir, SOLIDITY_FILE), flattenedCode)
 }
 
 // Sanity check artifact.json
-async function sanityCheck(cwd, newRoles, newContractPath, oldArtifact) {
+export async function sanityCheck(cwd, newRoles, newContractPath, oldArtifact) {
   const { roles, environments, abi, path } = oldArtifact
 
   const newContractRoles = await getRoles(newRoles)
@@ -175,7 +177,7 @@ async function sanityCheck(cwd, newRoles, newContractPath, oldArtifact) {
   )
 }
 
-async function copyCurrentApplicationArtifacts(
+export async function copyCurrentApplicationArtifacts(
   cwd,
   outputPath,
   apm,
@@ -236,16 +238,4 @@ async function copyCurrentApplicationArtifacts(
   copyArray.forEach(({ fileName, filePath, fileContent }) =>
     fs.writeFileSync(filePath, fileContent)
   )
-}
-
-module.exports = {
-  POSITIVE_ANSWERS,
-  NEGATIVE_ANSWERS,
-  ANSWERS,
-  SOLIDITY_FILE,
-  getMajor,
-  generateApplicationArtifact,
-  generateFlattenedCode,
-  sanityCheck,
-  copyCurrentApplicationArtifacts,
 }
