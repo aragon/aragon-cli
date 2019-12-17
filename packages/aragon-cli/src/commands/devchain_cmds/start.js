@@ -183,7 +183,7 @@ export const printAccounts = (reporter, privateKeys) => {
   The first one will be used for all the actions the aragonCLI performs.
   You can use your favorite Ethereum provider or wallet to import their private keys.
   \n${formattedAccounts.join('\n')}`)
-};
+}
 
 export const printMnemonic = (reporter, mnemonic) => {
   reporter.info(
@@ -191,7 +191,7 @@ export const printMnemonic = (reporter, mnemonic) => {
       mnemonic
     )}\n`
   )
-};
+}
 
 export const printResetNotice = (reporter, reset) => {
   if (reset) {
@@ -202,7 +202,7 @@ export const printResetNotice = (reporter, reset) => {
     - If using Metamask: switch to a different network, and then switch back to the 'Private Network' (this will clear the nonce cache and prevent errors when sending transactions)
   `)
   }
-};
+}
 
 export const handler = async ({
   reporter,

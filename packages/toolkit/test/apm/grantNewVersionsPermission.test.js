@@ -4,10 +4,10 @@ import sinon from 'sinon'
 import grantNewVersionsPermission from '../../src/apm/grantNewVersionsPermission'
 import { getLocalWeb3, getApmOptions } from '../test-helpers'
 
-import { abi as aclAbi } from '@aragon/abis/os/artifacts/ACL';
-import { abi as aragonAppAbi } from '@aragon/abis/os/artifacts/AragonApp';
-import { abi as kernelAbi } from '@aragon/abis/os/artifacts/Kernel';
-import { abi as repoAbi } from '@aragon/abis/os/artifacts/Repo';
+import { abi as aclAbi } from '@aragon/abis/os/artifacts/ACL'
+import { abi as aragonAppAbi } from '@aragon/abis/os/artifacts/AragonApp'
+import { abi as kernelAbi } from '@aragon/abis/os/artifacts/Kernel'
+import { abi as repoAbi } from '@aragon/abis/os/artifacts/Repo'
 
 /* Default values */
 
