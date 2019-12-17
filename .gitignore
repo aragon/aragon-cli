@@ -18,7 +18,7 @@ coverage
 lerna-debug.log
 
 # Extra
-packages/aragon-cli/src/knownRoles.json
+packages/cli/src/knownRoles.json
 
 ## Lockfiles that are not shrinkwraps
 package-lock.json
