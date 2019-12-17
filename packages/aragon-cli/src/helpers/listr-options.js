@@ -1,4 +1,4 @@
-const ListrRenderer = require('../reporters/ListrRenderer')
+import ListrRenderer from '../reporters/ListrRenderer'
 
 /**
  * https://github.com/SamVerschueren/listr#options
@@ -9,11 +9,9 @@ const ListrRenderer = require('../reporters/ListrRenderer')
  * @param {boolean} debug Option debug
  * @returns {Object} listr options object
  */
-function listrOpts(silent, debug) {
+export default function listrOpts(silent, debug) {
   return {
     renderer: ListrRenderer(silent, debug),
     dateFormat: false,
   }
 }
-
-module.exports = listrOpts

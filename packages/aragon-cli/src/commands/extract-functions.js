@@ -1,13 +1,12 @@
-const path = require('path')
-const { blue } = require('chalk')
-const TaskList = require('listr')
-const extractContractInfoToFile = require('@aragon/toolkit/dist/helpers/extractContractInfoToFile')
+import path from 'path'
+import { blue } from 'chalk'
+import TaskList from 'listr'
+import extractContractInfoToFile from '@aragon/toolkit/dist/helpers/extractContractInfoToFile'
 
-exports.command = 'extract-functions [contract]'
+export const command = 'extract-functions [contract]'
+export const describe = 'Extract function information from a Solidity file'
 
-exports.describe = 'Extract function information from a Solidity file'
-
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return yargs
     .positional('contract', {
       description: 'Path to the Solidity file to extract functions from',
@@ -21,7 +20,7 @@ exports.builder = function(yargs) {
     })
 }
 
-exports.handler = async function({ cwd, reporter, contract, output }) {
+export const handler = async function({ cwd, reporter, contract, output }) {
   let outputPath
 
   const tasks = new TaskList([

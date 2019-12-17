@@ -1,7 +1,7 @@
-const flattenCode = require('../helpers/flattenCode')
-const { getTruffleConfig } = require('./truffle-config')
+import flattenCode from '../helpers/flattenCode'
+import { getTruffleConfig } from './truffle-config'
 
-module.exports = async contractArtifacts => {
+export default async contractArtifacts => {
   const {
     contractName,
     sourcePath,

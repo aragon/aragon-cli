@@ -1,5 +1,5 @@
-const namehash = require('eth-ens-namehash').hash
-const { keccak256 } = require('web3-utils')
+import { hash as namehash } from 'eth-ens-namehash'
+import { keccak256 } from 'web3-utils'
 
 const knownAppNames = [
   'voting',
@@ -19,7 +19,7 @@ const knownAppNames = [
 
 const knownAPMRegistries = ['aragonpm.eth', 'open.aragonpm.eth']
 
-const listApps = (userApps = []) => {
+export const listApps = (userApps = []) => {
   const appNames = knownAppNames
     .reduce(
       (acc, appName) =>
@@ -39,5 +39,3 @@ const listApps = (userApps = []) => {
     appIds
   )
 }
-
-module.exports = { listApps }

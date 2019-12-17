@@ -1,7 +1,4 @@
-const {
-  getRecommendedGasLimit,
-  expandLink,
-} = require('@aragon/toolkit/dist/util')
+import { getRecommendedGasLimit, expandLink } from '@aragon/toolkit/dist/util'
 
 /**
  * @typedef {Object} LibraryLink
@@ -16,7 +13,7 @@ const {
  * @param  {LibraryLink[]} links Library links
  * @return {string} bytecode with replaced library addresses
  */
-const linkLibraries = (bytecode, links) => {
+export const linkLibraries = (bytecode, links) => {
   for (const link of links.map(expandLink)) {
     bytecode = bytecode.replace(link.regex, link.addressBytes)
     if (!bytecode.includes(link.addressBytes)) {
@@ -42,7 +39,7 @@ const linkLibraries = (bytecode, links) => {
  * @param  {Object} param.web3 Web3 initialized object
  * @return {Promise<DeployContractReturnData>} Tx hash and deployed contract address
  */
-const deployContract = async ({
+export const deployContract = async ({
   bytecode,
   abi,
   initArguments,
@@ -74,9 +71,4 @@ const deployContract = async ({
     transactionHash,
     address: instance.options.address,
   }
-}
-
-module.exports = {
-  linkLibraries,
-  deployContract,
 }

@@ -1,13 +1,13 @@
-const { keccak256 } = require('web3-utils')
-const { getAclAddress } = require('@aragon/toolkit/dist/kernel/kernel')
-//
-const execHandler = require('../../utils/execHandler').handler
-const {
+import { keccak256 } from 'web3-utils'
+import { getAclAddress } from '@aragon/toolkit/dist/kernel/kernel'
+import {
   resolveAddressOrEnsDomain,
-} = require('@aragon/toolkit/dist/dao/utils/resolveAddressOrEnsDomain')
-const { ensureWeb3 } = require('../../../../helpers/web3-fallback')
+} from '@aragon/toolkit/dist/dao/utils/resolveAddressOrEnsDomain'
+//
+import { handler as execHandler } from '../../utils/execHandler'
+import { ensureWeb3 } from '../../../../helpers/web3-fallback'
 
-module.exports = async function(
+export default async function(
   dao,
   method,
   params,

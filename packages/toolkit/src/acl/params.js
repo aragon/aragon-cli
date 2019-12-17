@@ -1,5 +1,5 @@
-const { isString } = require('lodash')
-const BN = require('bn.js')
+import { isString } from 'lodash'
+import BN from 'bn.js'
 
 /**
  * @typedef {Object} AclParam ACL parameter
@@ -12,7 +12,7 @@ const BN = require('bn.js')
  * ACL operators. See https://hack.aragon.org/docs/aragonos-ref#parameter-interpretation
  * for more information.
  */
-const Op = {
+export const Op = {
   NONE: '0',
   EQ: '1',
   NEQ: '2',
@@ -47,7 +47,7 @@ const ArgumentIds = {
  * @param {string} str String param
  * @returns {AclParam} Param object
  */
-function convertStringToParam(str) {
+export function convertStringToParam(str) {
   try {
     // Remove square brackets, quotes and spaces
     const cleanStr = str
@@ -76,7 +76,7 @@ function convertStringToParam(str) {
  * @param {AclParam} param ACL Parameter
  * @returns {string} Encoded param
  */
-function encodeParam(param) {
+export function encodeParam(param) {
   const encodedParam = new BN(param.id)
     .shln(248)
     .or(new BN(param.op).shln(240))
@@ -152,5 +152,3 @@ function parseNumber(number) {
     ? new BN(number.substr(2), 16)
     : new BN(number)
 }
-
-module.exports = { encodeParam, convertStringToParam, Op }

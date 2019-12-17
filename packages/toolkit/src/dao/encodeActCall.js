@@ -1,11 +1,11 @@
-const abi = require('web3-eth-abi')
+import abi from 'web3-eth-abi'
 
 /**
  * Encode ACT function call
  * @param {string} signature Function signature
  * @param {any[]} params
  */
-module.exports = (signature, params = []) => {
+export default (signature, params = []) => {
   const sigBytes = abi.encodeFunctionSignature(signature)
 
   const types = signature.replace(')', '').split('(')[1]

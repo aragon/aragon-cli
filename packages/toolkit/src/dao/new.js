@@ -1,5 +1,5 @@
-const bareTemplateAbi = require('./utils/bare-template-abi')
-const { getRecommendedGasLimit } = require('../util')
+import bareTemplateAbi from './utils/bare-template-abi'
+import { getRecommendedGasLimit } from '../util'
 
 /**
  * Create a new DAO
@@ -12,7 +12,7 @@ const { getRecommendedGasLimit } = require('../util')
  * @param {string[]} newInstanceArgs New instance arguments
  * @param {string} gasPrice Gas price
  */
-module.exports = async function({
+export default async function({
   repo,
   web3,
   templateInstance,

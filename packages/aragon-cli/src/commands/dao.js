@@ -1,10 +1,9 @@
-const daoArg = require('./dao_cmds/utils/daoArg')
+import daoArg from './dao_cmds/utils/daoArg'
 
-exports.command = 'dao <command>'
+export const command = 'dao <command>'
+export const describe = 'Manage your Aragon DAO'
 
-exports.describe = 'Manage your Aragon DAO'
-
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   if (
     process.argv[3] !== 'new' &&
     process.argv[3] !== 'act' &&

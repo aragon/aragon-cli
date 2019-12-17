@@ -1,9 +1,9 @@
 import test from 'ava'
-const path = require('path')
-const fs = require('fs')
-const tmp = require('tmp')
+import path from 'path'
+import fs from 'fs'
+import tmp from 'tmp'
 //
-const extractContractInfoToFile = require('../../src/helpers/extractContractInfoToFile')
+import extractContractInfoToFile from '../../src/helpers/extractContractInfoToFile'
 
 let tempDir, contractPath, outputPath
 

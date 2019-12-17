@@ -1,17 +1,17 @@
-const daoArg = require('../utils/daoArg')
-const aclExecHandler = require('./utils/aclExecHandler')
+import daoArg from '../utils/daoArg'
+import aclExecHandler from './utils/aclExecHandler'
 
 // Note: we usually order these values as entity, proxy, role but this order fits
 //       better with other CLI commands
-exports.command = 'revoke <dao> <app> <role> <entity>'
+export const command = 'revoke <dao> <app> <role> <entity>'
 
-exports.describe = 'Revoke a permission in a DAO'
+export const describe = 'Revoke a permission in a DAO'
 
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return daoArg(yargs)
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   dao,
   app,

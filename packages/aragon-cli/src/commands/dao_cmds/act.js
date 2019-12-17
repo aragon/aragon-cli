@@ -1,19 +1,17 @@
-const { blue } = require('chalk')
-const {
-  EXECUTE_FUNCTION_NAME,
-} = require('@aragon/toolkit/dist/helpers/constants')
-const getAppKernel = require('@aragon/toolkit/dist/kernel/getAppKernel')
-const encodeActCall = require('@aragon/toolkit/dist/dao/encodeActCall')
+import { blue } from 'chalk'
+import { EXECUTE_FUNCTION_NAME } from '@aragon/toolkit/dist/helpers/constants'
+import getAppKernel from '@aragon/toolkit/dist/kernel/getAppKernel'
+import encodeActCall from '@aragon/toolkit/dist/dao/encodeActCall'
 //
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const execHandler = require('./utils/execHandler').task
-const { parseArgumentStringIfPossible } = require('../../util')
+import { ensureWeb3 } from '../../helpers/web3-fallback'
 
-exports.command = 'act <agent-address> <target> [signature] [call-args..]'
+import { task as execHandler } from './utils/execHandler'
+import { parseArgumentStringIfPossible } from '../../util'
 
-exports.describe = 'Executes an action from the Agent app'
+export const command = 'act <agent-address> <target> [signature] [call-args..]'
+export const describe = 'Executes an action from the Agent app'
 
-exports.builder = function(yargs) {
+export const builder = function(yargs) {
   return yargs
     .positional('agent-address', {
       description: 'Address of the Agent app proxy',
@@ -45,7 +43,7 @@ exports.builder = function(yargs) {
     })
 }
 
-exports.handler = async function({
+export const handler = async function({
   reporter,
   apm,
   network,
@@ -80,6 +78,7 @@ exports.handler = async function({
 
   const { transactionPath } = await task.run()
 
+  reporter.newLine()
   reporter.success(
     `Successfully executed: "${blue(transactionPath.description)}"`
   )

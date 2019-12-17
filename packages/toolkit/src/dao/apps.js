@@ -1,10 +1,10 @@
+import { abi as kernelAbi } from '@aragon/abis/os/artifacts/Kernel'
+//
 import {
   initAragonJS,
   getApps,
   resolveEnsDomain,
 } from '../helpers/aragonjs-wrapper'
-//
-const kernelAbi = require('@aragon/abis/os/artifacts/Kernel').abi
 
 /**
  * Return installed apps for a DAO
@@ -16,7 +16,7 @@ const kernelAbi = require('@aragon/abis/os/artifacts/Kernel').abi
  * @param {Object} options.ipfs IPFS configuration
  * @param {Object[]} options.userApps User apps
  */
-async function getInstalledApps(dao, options) {
+export async function getInstalledApps(dao, options) {
   const wrapper = await initAragonJS(dao, options.registryAddress, {
     ipfsConf: options.ipfs,
     provider: options.provider,
@@ -33,7 +33,7 @@ async function getInstalledApps(dao, options) {
  * @param {Object} options.web3 Web3
  * @param {Object[]} options.userApps User apps
  */
-async function getAllApps(dao, options) {
+export async function getAllApps(dao, options) {
   const { web3 } = options
   const kernel = new web3.eth.Contract(kernelAbi, dao)
 
@@ -56,8 +56,6 @@ async function getAllApps(dao, options) {
  * @param {Object} options.provider ETH provider
  * @param {string} options.registryAddress ENS registry address
  */
-async function getDaoAddress(dao, options) {
+export async function getDaoAddress(dao, options) {
   return /[a-z0-9]+\.eth/.test(dao) ? resolveEnsDomain(dao, options) : dao
 }
-
-module.exports = { getDaoAddress, getAllApps, getInstalledApps }

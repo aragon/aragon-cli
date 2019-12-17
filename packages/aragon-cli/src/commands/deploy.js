@@ -1,20 +1,18 @@
-const path = require('path')
-const TaskList = require('listr')
-const { blue, green } = require('chalk')
+import path from 'path'
+import TaskList from 'listr'
+import { blue, green } from 'chalk'
 //
-const { compileContracts } = require('../helpers/truffle-compile')
-const { ensureWeb3 } = require('../helpers/web3-fallback')
-const deployArtifacts = require('../helpers/truffle-deploy-artifacts')
-const listrOpts = require('../helpers/listr-options')
-const { findProjectRoot } = require('../util')
+import { compileContracts } from '../helpers/truffle-compile'
+import { ensureWeb3 } from '../helpers/web3-fallback'
+import deployArtifacts from '../helpers/truffle-deploy-artifacts'
+import listrOpts from '../helpers/listr-options'
+import { findProjectRoot } from '../util'
+import { linkLibraries, deployContract } from '../lib/deploy/deploy'
 
-const { linkLibraries, deployContract } = require('../lib/deploy/deploy')
+export const command = 'deploy [contract]'
+export const describe = 'Deploys contract code of the app to the chain'
 
-exports.command = 'deploy [contract]'
-
-exports.describe = 'Deploys contract code of the app to the chain'
-
-exports.arappContract = () => {
+export const arappContract = () => {
   const contractPath = require(path.resolve(findProjectRoot(), 'arapp.json'))
     .path
   const contractName = path.basename(contractPath).split('.')[0]
@@ -22,7 +20,7 @@ exports.arappContract = () => {
   return contractName
 }
 
-exports.builder = yargs => {
+export const builder = yargs => {
   return yargs
     .positional('contract', {
       description:
@@ -35,7 +33,7 @@ exports.builder = yargs => {
     })
 }
 
-exports.task = async ({
+export const task = async ({
   module,
   network,
   gasPrice,
@@ -48,7 +46,7 @@ exports.task = async ({
   debug,
 }) => {
   if (!contract) {
-    contract = exports.arappContract()
+    contract = arappContract()
   }
   apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
@@ -127,7 +125,7 @@ exports.task = async ({
   return tasks
 }
 
-exports.handler = async ({
+export const handler = async ({
   module,
   reporter,
   gasPrice,
@@ -139,7 +137,7 @@ exports.handler = async ({
   silent,
   debug,
 }) => {
-  const task = await exports.task({
+  const tasks = await task({
     module,
     reporter,
     gasPrice,
@@ -151,7 +149,7 @@ exports.handler = async ({
     silent,
     debug,
   })
-  const ctx = await task.run()
+  const ctx = await tasks.run()
 
   reporter.success(
     `Successfully deployed ${blue(ctx.contractName)} at: ${green(
