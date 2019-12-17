@@ -8,7 +8,6 @@
 		"url": "https://github.com/aragon/aragon-cli/tree/master/packages/toolkit"
 	},
 	"scripts": {
-    "prepare": "npm run build",
     "build": "babel src --out-dir dist --source-maps",
     "build:watch": "npm run build -- --watch",
     "lint": "eslint src test",
