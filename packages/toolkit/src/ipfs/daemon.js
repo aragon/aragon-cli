@@ -25,6 +25,7 @@ export const startLocalDaemon = (binPath, repoPath, options = {}) => {
     },
     readyOutput: DAEMON_READY_OUTPUT,
     timeout: DAEMON_START_TIMEOUT,
+    logger: options.logger,
   }
 
   return startProcess(processSetup)

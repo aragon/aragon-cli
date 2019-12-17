@@ -40,7 +40,7 @@ test.after.always(async () => {
 
 test('should install go-ipfs in a new project', async t => {
   const result = await installGoIpfs(true, projectPath)
-  t.snapshot(result.cmd, 'should use the correct command')
+  t.snapshot(result.command, 'should use the correct command')
 })
 
 test('should initialize the repository at a custom path', async t => {

@@ -1,5 +1,5 @@
 import { keccak256 } from 'web3-utils'
-import { getAclAddress } from '@aragon/toolkit'
+import { getAclAddress, resolveAddressOrEnsDomain } from '@aragon/toolkit'
 //
 import { handler as execHandler } from '../../utils/execHandler'
 import { ensureWeb3 } from '../../../../helpers/web3-fallback'
@@ -11,8 +11,11 @@ export default async function(
   { reporter, apm, network, gasPrice, wsProvider, role, silent, debug }
 ) {
   const web3 = await ensureWeb3(network)
-
-  const aclAddress = await getAclAddress(dao, web3)
+  const apmRegistry = apm.registryAddress || apm['ens-registry']
+  const aclAddress = await getAclAddress(
+    await resolveAddressOrEnsDomain(dao, web3, apmRegistry),
+    web3
+  )
 
   const processedParams = role.startsWith('0x')
     ? params
