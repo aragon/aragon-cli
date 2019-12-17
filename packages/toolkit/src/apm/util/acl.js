@@ -1,7 +1,7 @@
-import { abi as aclAbi } from '@aragon/os/build/contracts/ACL'
-import { abi as aragonAppAbi } from '@aragon/os/build/contracts/AragonApp'
-import { abi as kernelAbi } from '@aragon/os/build/contracts/Kernel'
-import { abi as repoAbi } from '@aragon/os/build/contracts/Repo'
+import { abi as aclAbi } from '@aragon/abis/os/artifacts/ACL'
+import { abi as aragonAppAbi } from '@aragon/abis/os/artifacts/AragonApp'
+import { abi as kernelAbi } from '@aragon/abis/os/artifacts/Kernel'
+import { abi as repoAbi } from '@aragon/abis/os/artifacts/Repo'
 //
 import { getRecommendedGasLimit } from '../../util'
 

@@ -72,7 +72,7 @@ export const handler = async function({
     [
       {
         title: `Fetching ${bold(apmRepo)}@${apmRepoVersion}`,
-        task: getRepoTask({ apm, apmRepo, apmRepoVersion }),
+        task: await getRepoTask({ apm, apmRepo, apmRepoVersion }),
       },
       {
         title: `Checking installed version`,
@@ -184,10 +184,11 @@ export const handler = async function({
   )
 
   return tasks.run().then(ctx => {
+    reporter.newLine()
     reporter.info(
       `Successfully executed: "${blue(ctx.transactionPath.description)}"`
     )
-
+    reporter.newLine()
     if (ctx.appAddress) {
       reporter.success(
         `Installed ${blue(apmRepo)} at: ${green(ctx.appAddress)}`
@@ -199,6 +200,7 @@ export const handler = async function({
     }
 
     if (ctx.notInitialized) {
+      reporter.newLine()
       reporter.warning(
         'App could not be initialized, check the --app-init flag. Functions protected behind the ACL will not work until the app is initialized'
       )

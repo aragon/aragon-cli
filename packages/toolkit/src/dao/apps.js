@@ -1,4 +1,4 @@
-import { abi as kernelAbi } from '@aragon/os/build/contracts/Kernel'
+import { abi as kernelAbi } from '@aragon/abis/os/artifacts/Kernel'
 //
 import {
   initAragonJS,

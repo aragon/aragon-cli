@@ -42,6 +42,7 @@ export const handler = async function({
   ])
   await tasks.run()
 
+  reporter.newLine()
   displayVersionNumbers(apmRepoName, versions, reporter)
   displayVersions(versions, reporter)
 }

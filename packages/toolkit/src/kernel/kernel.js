@@ -1,5 +1,5 @@
 import web3EthAbi from 'web3-eth-abi'
-import { abi as kernelAbi } from '@aragon/os/build/contracts/Kernel'
+import { abi as kernelAbi } from '@aragon/abis/os/artifacts/Kernel'
 //
 import { addressesEqual } from '../util'
 

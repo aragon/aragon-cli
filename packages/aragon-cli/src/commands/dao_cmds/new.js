@@ -140,6 +140,7 @@ export const handler = async function({
   })
   const ctx = await tasks.run()
 
+  reporter.newLine()
   reporter.success(
     aragonId
       ? `Created DAO: ${green(aragonId)} at ${green(ctx.daoAddress)}`

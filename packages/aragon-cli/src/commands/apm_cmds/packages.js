@@ -72,5 +72,5 @@ function displayPackages(packages) {
     table.push(row)
   })
 
-  console.log(table.toString())
+  console.log('\n', table.toString())
 }

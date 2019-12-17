@@ -86,22 +86,10 @@ export const getContract = (pkg, contract) => {
   return artifact
 }
 
-const getIpfsCacheFiles = () => {
+export const getIpfsCacheFiles = () => {
   return path.resolve(require.resolve('@aragon/aragen'), '../ipfs-cache')
 }
 
-const getAragonGanacheFiles = () => {
+export const getAragonGanacheFiles = () => {
   return path.resolve(require.resolve('@aragon/aragen'), '../aragon-ganache')
-}
-
-module.exports = {
-  addressesEqual,
-  isAddress,
-  isValidAragonId,
-  convertDAOIdToSubdomain,
-  getContract,
-  getRecommendedGasLimit,
-  expandLink,
-  getIpfsCacheFiles,
-  getAragonGanacheFiles,
 }

@@ -53,5 +53,5 @@ export const handler = async function({
   delete apmRepoObject.environments
 
   const apmRepoJSON = JSON.stringify(apmRepoObject, null, 2)
-  console.log(apmRepoJSON)
+  console.log('\n', apmRepoJSON)
 }

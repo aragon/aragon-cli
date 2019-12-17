@@ -49,6 +49,7 @@ export const handler = async function({
   )
 
   await tasks.run()
+  reporter.newLine()
   reporter.success(
     `Successfully changed the controller of ${green(tokenAddress)} to ${green(
       newController

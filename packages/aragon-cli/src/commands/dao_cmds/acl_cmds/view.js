@@ -141,8 +141,7 @@ export const handler = async function({
         managerFormatted,
       ])
     }
-
-    console.log(table.toString())
+    console.log('\n', table.toString())
   })
 }
 

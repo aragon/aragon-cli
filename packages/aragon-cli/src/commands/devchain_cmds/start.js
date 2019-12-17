@@ -6,7 +6,7 @@ import rimraf from 'rimraf'
 import mkdirp from 'mkdirp'
 import fs from 'fs'
 import Web3 from 'web3'
-import {blue, red, green, yellow} from 'chalk'
+import { blue, red, green, yellow } from 'chalk'
 import { promisify } from 'util'
 import { getAragonGanacheFiles } from '@aragon/toolkit/dist/util'
 //
@@ -166,7 +166,7 @@ export const task = async function({
   return tasks
 }
 
-exports.printAccounts = (reporter, privateKeys) => {
+export const printAccounts = (reporter, privateKeys) => {
   const firstAccountComment =
     '(account used to deploy DAOs, has more permissions)'
 
@@ -183,17 +183,17 @@ exports.printAccounts = (reporter, privateKeys) => {
   The first one will be used for all the actions the aragonCLI performs.
   You can use your favorite Ethereum provider or wallet to import their private keys.
   \n${formattedAccounts.join('\n')}`)
-}
+};
 
-exports.printMnemonic = (reporter, mnemonic) => {
+export const printMnemonic = (reporter, mnemonic) => {
   reporter.info(
     `The accounts were generated from the following mnemonic phrase:\n${blue(
       mnemonic
     )}\n`
   )
-}
+};
 
-exports.printResetNotice = (reporter, reset) => {
+export const printResetNotice = (reporter, reset) => {
   if (reset) {
     reporter.warning(`${yellow(
       'The devchain was reset, some steps need to be done to prevent issues:'
@@ -202,7 +202,7 @@ exports.printResetNotice = (reporter, reset) => {
     - If using Metamask: switch to a different network, and then switch back to the 'Private Network' (this will clear the nonce cache and prevent errors when sending transactions)
   `)
   }
-}
+};
 
 export const handler = async ({
   reporter,
@@ -229,9 +229,9 @@ export const handler = async ({
     debug,
   })
   const { privateKeys, id, mnemonic } = await tasks.run()
-  exports.printAccounts(reporter, privateKeys)
-  exports.printMnemonic(reporter, mnemonic)
-  exports.printResetNotice(reporter, reset)
+  printAccounts(reporter, privateKeys)
+  printMnemonic(reporter, mnemonic)
+  printResetNotice(reporter, reset)
 
   reporter.info(
     'ENS instance deployed at:',

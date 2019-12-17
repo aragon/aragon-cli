@@ -89,6 +89,7 @@ export async function handler(args) {
   const tasks = await task(args)
 
   return tasks.run().then(ctx => {
+    args.reporter.newLine()
     args.reporter.success(
       `Successfully executed: "${blue(ctx.transactionPath.description)}"`
     )

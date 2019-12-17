@@ -160,12 +160,14 @@ export const handler = async function({
     debug,
   })
   return tasks.run().then(ctx => {
+    reporter.newLine()
     reporter.success(
       `Successfully deployed the token at ${green(ctx.tokenAddress)}`
     )
     reporter.info(`Token transaction hash: ${blue(ctx.tokenTxHash)}`)
 
     if (ctx.factoryAddress) {
+      reporter.newLine()
       reporter.success(
         `Successfully deployed the token factory at ${green(
           ctx.factoryAddress

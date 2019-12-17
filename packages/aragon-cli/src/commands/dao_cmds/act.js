@@ -78,6 +78,7 @@ export const handler = async function({
 
   const { transactionPath } = await task.run()
 
+  reporter.newLine()
   reporter.success(
     `Successfully executed: "${blue(transactionPath.description)}"`
   )

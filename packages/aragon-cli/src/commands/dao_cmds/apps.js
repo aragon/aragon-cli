@@ -130,6 +130,7 @@ export const handler = async function({
 
   await tasks.run()
 
+  reporter.newLine()
   reporter.success(`Successfully fetched DAO apps for ${green(daoAddress)}`)
 
   printApps(apps)
