@@ -123,7 +123,7 @@ export const builder = function(yargs) {
     .option('prepublish', {
       description:
         'Whether publish should run prepublish script specified in --prepublish-script before publishing',
-      default: true,
+      default: false,
       boolean: true,
     })
     .option('prepublish-script', {
