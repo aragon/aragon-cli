@@ -4,7 +4,7 @@ import { readJson, writeJson } from 'fs-extra'
 import namehash from 'eth-ens-namehash'
 import taskInput from 'listr-input'
 import { keccak256 } from 'web3-utils'
-import extract from '@aragon/toolkit'
+import { extract } from '@aragon/toolkit'
 
 //
 import flattenCode from '../../../helpers/flattenCode'

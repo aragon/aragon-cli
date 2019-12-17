@@ -1,6 +1,6 @@
 import TaskList from 'listr'
 import { blue } from 'chalk'
-import exec from '@aragon/toolkit'
+import { exec } from '@aragon/toolkit'
 //
 import listrOpts from '../../../helpers/listr-options'
 
