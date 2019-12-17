@@ -55,7 +55,6 @@ export const builder = yargs => {
       default: false,
       type: 'boolean',
       description: 'Enable verbose devchain output',
-      alias: 'v',
     })
 }
 

@@ -8,8 +8,6 @@ import {
 
 // NOTE: These tests validate that the guide at https://hack.aragon.org/docs/guides-custom-deploy can be followed without errors and as expected.
 
-// TODO: These tests simply assure that there is no error thrown when running commands from the guide. Additionally, some assertions could be made on each test.
-
 // Enable verbose to debug/develop the test, but disable for production.
 const verbose = false
 

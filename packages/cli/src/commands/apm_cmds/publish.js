@@ -15,7 +15,7 @@ import { compileContracts } from '../../helpers/truffle-compile'
 import listrOpts from '../../helpers/listr-options'
 
 // cmds
-import deploy from '../deploy'
+import { task as deployTask, builder as deployBuilder } from '../deploy'
 
 import { task as execTask } from '../dao_cmds/utils/execHandler'
 import { handler as propagateIPFS } from '../ipfs_cmds/propagate'
@@ -40,8 +40,7 @@ export const command = 'publish <bump> [contract]'
 export const describe = 'Publish a new version of the application'
 
 export const builder = function(yargs) {
-  return deploy
-    .builder(yargs) // inherit deploy options
+  return deployBuilder(yargs) // inherit deploy options
     .positional('bump', {
       description: 'Type of bump (major, minor or patch) or version number',
       type: 'string',
@@ -265,7 +264,7 @@ export const runSetupTask = ({
             web3,
             apmOptions,
           }
-          return deploy.task(deployTaskParams)
+          return deployTask(deployTaskParams)
         },
       },
       {
