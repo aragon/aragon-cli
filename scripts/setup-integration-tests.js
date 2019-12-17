@@ -1,7 +1,7 @@
 const { ensureLocalDaemon } = require('../packages/toolkit')
 const {
   ensureDevchain,
-} = require('../packages/aragon-cli/dist/helpers/ensureDevchain')
+} = require('../packages/cli/dist/helpers/ensureDevchain')
 
 const LOGGER_PREFIX = '[cli-monorepo:pretest]'
 
