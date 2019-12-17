@@ -40,8 +40,9 @@ export const builder = yargs => {
       description: 'A path pointing to an existing Aragon client installation',
       default: null,
     })
-    .option('openInBrowser', {
+    .option('auto-open', {
       description: 'Wether to automatically open the client in the browser',
+      boolean: true,
       default: true,
     })
 }
@@ -51,7 +52,7 @@ export const task = async function({
   clientVersion,
   clientPort,
   clientPath,
-  openInBrowser,
+  autoOpen,
 }) {
   const tasks = new TaskList([
     {
@@ -95,7 +96,7 @@ export const task = async function({
     {
       title: 'Opening client',
       task: async (ctx, task) => {
-        if (openInBrowser) {
+        if (autoOpen === true) {
           task.output = 'Opening client'
           await openClient(ctx, clientPort)
         }
@@ -111,12 +112,14 @@ export const handler = async ({
   clientVersion,
   clientPort,
   clientPath,
+  autoOpen,
 }) => {
   const tasks = await task({
     clientRepo,
     clientVersion,
     clientPort,
     clientPath,
+    autoOpen,
   })
 
   await tasks.run()
