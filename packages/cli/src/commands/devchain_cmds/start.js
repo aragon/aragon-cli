@@ -10,7 +10,7 @@ import { blue, red, green, yellow } from 'chalk'
 import { promisify } from 'util'
 import { getAragonGanacheFiles } from '@aragon/toolkit'
 //
-import ganache from '../../../ganache/build/ganache-core.node.cli'
+import ganache from 'ganache-core'
 import listrOpts from '../../helpers/listr-options'
 import pjson from '../../../package.json'
 import { task as devchainStatusTask } from './status'
