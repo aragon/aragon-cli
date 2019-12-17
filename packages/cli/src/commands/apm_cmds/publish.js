@@ -15,7 +15,7 @@ import { compileContracts } from '../../helpers/truffle-compile'
 import listrOpts from '../../helpers/listr-options'
 
 // cmds
-import deploy from '../deploy'
+import { task as deployTask } from '../deploy'
 
 import { task as execTask } from '../dao_cmds/utils/execHandler'
 import { handler as propagateIPFS } from '../ipfs_cmds/propagate'
@@ -265,7 +265,7 @@ export const runSetupTask = ({
             web3,
             apmOptions,
           }
-          return deploy.task(deployTaskParams)
+          return deployTask(deployTaskParams)
         },
       },
       {

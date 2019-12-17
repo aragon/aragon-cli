@@ -19,11 +19,21 @@ import {
 } from '../util'
 
 // cmds
-import devchain from './devchain_cmds/start'
+import {
+  devchainTask,
+  printAccounts,
+  printMnemonic,
+  printResetNotice,
+} from './devchain_cmds/start'
 
-import start from './start'
-import deploy from './deploy'
-import newDAO from './dao_cmds/new'
+import { task as startTask } from './start'
+import { arappContract, task as deployTask } from './deploy'
+import {
+  task as newDAOTask,
+  BARE_TEMPLATE,
+  BARE_INSTANCE_FUNCTION,
+  BARE_TEMPLATE_DEPLOY_EVENT,
+} from './dao_cmds/new'
 import {
   runSetupTask,
   runPrepareForPublishTask,
@@ -70,7 +80,7 @@ export const builder = function(yargs) {
       description: 'Reset devchain to snapshot',
     })
     .option('template', {
-      default: newDAO.BARE_TEMPLATE,
+      default: BARE_TEMPLATE,
       description: 'Template contract name',
     })
     .option('template-init', {
@@ -80,11 +90,11 @@ export const builder = function(yargs) {
     })
     .option('template-deploy-event', {
       description: 'Event name that the template will fire on success',
-      default: newDAO.BARE_TEMPLATE_DEPLOY_EVENT,
+      default: BARE_TEMPLATE_DEPLOY_EVENT,
     })
     .option('template-new-instance', {
       description: 'Function to be called to create template instance',
-      default: newDAO.BARE_INSTANCE_FUNCTION,
+      default: BARE_INSTANCE_FUNCTION,
     })
     .option('template-args', {
       description:
@@ -228,7 +238,7 @@ export const handler = async function({
           }
         },
         task: async (ctx, task) =>
-          devchain.task({ port, networkId, blockTime, reset, showAccounts }),
+          devchainTask({ port, networkId, blockTime, reset, showAccounts }),
       },
       {
         title: 'Setup before publish',
@@ -249,7 +259,7 @@ export const handler = async function({
             publishDir,
             prepublishScript,
             prepublish,
-            contract: deploy.arappContract(),
+            contract: arappContract(),
             web3: ctx.web3,
             apm: apmOptions,
             bump,
@@ -301,7 +311,7 @@ export const handler = async function({
       },
       {
         title: 'Deploy Template',
-        enabled: () => template !== newDAO.BARE_TEMPLATE,
+        enabled: () => template !== BARE_TEMPLATE,
         task: ctx => {
           const deployParams = {
             module,
@@ -315,7 +325,7 @@ export const handler = async function({
             apmOptions,
           }
 
-          return deploy.task(deployParams)
+          return deployTask(deployParams)
         },
       },
       {
@@ -358,14 +368,14 @@ export const handler = async function({
             apmOptions,
           }
 
-          return newDAO.task(newDAOParams)
+          return newDAOTask(newDAOParams)
         },
       },
       {
         title: 'Start Client',
         enabled: () => client === true,
         task: async (ctx, task) =>
-          start.task({ clientRepo, clientVersion, clientPort, clientPath }),
+          startTask({ clientRepo, clientVersion, clientPort, clientPath }),
       },
     ],
     listrOpts(silent, debug)
@@ -405,14 +415,14 @@ export const handler = async function({
     reporter.newLine()
 
     if (ctx.privateKeys) {
-      devchain.printAccounts(reporter, ctx.privateKeys)
+      printAccounts(reporter, ctx.privateKeys)
     }
 
     if (ctx.mnemonic) {
-      devchain.printMnemonic(reporter, ctx.mnemonic)
+      printMnemonic(reporter, ctx.mnemonic)
     }
 
-    devchain.printResetNotice(reporter, reset)
+    printResetNotice(reporter, reset)
 
     const registry = module.appName
       .split('.')
