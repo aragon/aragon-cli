@@ -1,5 +1,5 @@
 export * from './aragonjs-wrapper'
 export * from './constants'
-export * from './default-apm'
-export * from './extractContractInfoToFile'
+export { default as defaultApm } from './default-apm'
+export { default as extractContractInfoToFile } from './extractContractInfoToFile'
 export * from './solidity-extractor'

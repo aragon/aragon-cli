@@ -1,10 +1,9 @@
 import TaskList from 'listr'
 import { green, bold } from 'chalk'
-import { getApmRepo, newDao, assignId } from '@aragon/toolkit'
+import { getApmRepo, newDao, assignId, defaultAPMName } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
 import listrOpts from '../../helpers/listr-options'
-import defaultAPMName from '../../helpers/default-apm'
 import { parseArgumentStringIfPossible } from '../../util'
 
 export const BARE_TEMPLATE = defaultAPMName('bare-template')

@@ -2,7 +2,7 @@
 	"name": "@aragon/toolkit",
 	"version": "0.0.1-beta.10",
 	"description": "Programmatic interface for interacting with Aragon",
-	"main": "./dist/index.js",
+	"main": "./dist/bundle.js",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/aragon/aragon-cli/tree/master/packages/toolkit"

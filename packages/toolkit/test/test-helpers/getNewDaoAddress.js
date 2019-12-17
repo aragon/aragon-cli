@@ -1,11 +1,11 @@
 import { ens } from '@aragon/aragen'
 //
-import newDao from '../../src/dao/new'
-import getApmRepo from '../../src/apm/getApmRepo'
-import defaultAPMName from '../../src/helpers/default-apm'
-import getLocalWeb3 from './getLocalWeb3'
+import { newDao } from '../../src/dao/new'
+import { getApmRepo } from '../../src/apm/getApmRepo'
+import { defaultAPMName } from '../../src/helpers/default-apm'
+import { getLocalWeb3 } from './getLocalWeb3'
 
-const getNewDaoAddress = async () => {
+export default async () => {
   const web3 = await getLocalWeb3()
 
   const repo = await getApmRepo(
@@ -25,5 +25,3 @@ const getNewDaoAddress = async () => {
 
   return daoAddress
 }
-
-export default getNewDaoAddress

@@ -1,4 +1,4 @@
-export * from './getApmRegistryPackages'
-export * from './getApmRepo'
-export * from './getApmRepoVersions'
-export * from './grantNewVersionsPermission'
+export { default as getApmRegistryPackages } from './getApmRegistryPackages'
+export { default as getApmRepo } from './getApmRepo'
+export { default as getApmRepoVersions } from './getApmRepoVersions'
+export { default as grantNewVersionsPermission } from './grantNewVersionsPermission'

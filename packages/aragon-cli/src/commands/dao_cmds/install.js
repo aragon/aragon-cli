@@ -10,11 +10,11 @@ import {
   getAclAddress,
   getAppProxyAddressFromReceipt,
   getAppBase,
+  defaultAPMName,
 } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
 import listrOpts from '../../helpers/listr-options'
-import defaultAPMName from '../../helpers/default-apm'
 import encodeInitPayload from '../../helpers/encodeInitPayload'
 import { task as execTask } from './utils/execHandler'
 import { task as getRepoTask, args } from './utils/getRepoTask'
