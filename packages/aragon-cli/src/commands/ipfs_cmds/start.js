@@ -106,6 +106,8 @@ export const handler = async argv => {
     debug,
   })
 
+  reporter.newLine()
+
   if (!detached) {
     processController.attach()
     reporter.info(

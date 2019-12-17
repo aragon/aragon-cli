@@ -10,7 +10,7 @@ test.beforeEach(t => {
     existsSync: sinon.stub(),
   }
 
-  const util = proxyquire.noCallThru().load('../src/util', {
+  const { default: util } = proxyquire.noCallThru().load('../src/util', {
     fs: fsStub,
   })
 

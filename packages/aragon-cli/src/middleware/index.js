@@ -1,22 +1,19 @@
-const { getTruffleConfig } = require('../helpers/truffle-config')
-const {
+import { getTruffleConfig } from '../helpers/truffle-config'
+import {
   loadManifestFile,
   loadArappFile,
-} = require('../lib/environment/loadConfigFiles')
-const {
+} from '../lib/environment/loadConfigFiles'
+import {
   configEnvironment,
   NoEnvironmentInArapp,
   NoEnvironmentInDefaults,
   NoNetworkInTruffleConfig,
-} = require('../lib/environment/configEnvironment')
+} from '../lib/environment/configEnvironment'
 
 class InvalidArguments extends Error {}
 
 export function configCliMiddleware(argv) {
   const [cmd, subcmd] = argv._
-  const isInit = cmd === 'init'
-
-  if (isInit) return {}
 
   try {
     // Load config files
@@ -24,31 +21,17 @@ export function configCliMiddleware(argv) {
     const manifest = loadManifestFile()
     const arapp = loadArappFile()
 
-    // Configure environment (+ network)
+    // Configure environment
 
     if (!arapp)
       argv.reporter.debug(
         `Could not find 'arapp.json'. Using the default configuration`
       )
 
-    const ignoreNetCmd = new Set(['version']) // i.e. 'aragon apm version'
-    const ignoreNetSubCmd = new Set(['init', 'devchain', 'ipfs', 'contracts']) // (TODO): remove init
-    const isTruffleFwd = cmd === 'contracts'
+    const ignoreNetCmd = new Set([''])
+    const ignoreNetSubCmd = new Set(['devchain', 'ipfs'])
     const ignoreNetwork = ignoreNetSubCmd.has(subcmd) || ignoreNetCmd.has(cmd)
-    const { useFrame, environment, network, apm } = argv
-
-    if (environment && network && !isTruffleFwd)
-      throw new InvalidArguments(
-        "Arguments '--network' and '--environment' are mutually exclusive. Using '--network'  has been deprecated and  '--environment' should be used instead."
-      )
-    if (network && arapp && arapp.environments && !isTruffleFwd)
-      throw new InvalidArguments(
-        "Your arapp.json contains an `environments` property. The use of '--network' is deprecated and '--environment' should be used instead."
-      )
-    if (arapp && !arapp.environments && environment)
-      throw new InvalidArguments(
-        "Your arapp.json does not contain an `environments` property. The use of '--environment'  is not supported."
-      )
+    const { useFrame, environment, apm } = argv
 
     const {
       arapp: arappMutated,
@@ -59,7 +42,6 @@ export function configCliMiddleware(argv) {
       ignoreNetwork,
       useFrame,
       environment,
-      network,
       apm,
       arapp,
       truffleConfig: arapp && getTruffleConfig(),

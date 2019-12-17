@@ -1,6 +1,6 @@
 import { isAddress, convertDAOIdToSubdomain } from '@aragon/toolkit/dist/util'
 
-module.exports = yargs => {
+export default yargs => {
   return yargs.positional('dao', {
     description: 'Address of the Kernel or AragonID',
     type: 'string',

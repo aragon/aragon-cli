@@ -1,6 +1,6 @@
-const APM = require('@aragon/apm')
+import APM from '@aragon/apm'
 
-module.exports = async (web3, apmRepoName, apmOptions) => {
+export default async (web3, apmRepoName, apmOptions) => {
   // Ensure the ens-registry property is present,
   // and available with the name "ensRegistryAddress".
   if (!apmOptions.ensRegistryAddress) {

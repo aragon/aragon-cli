@@ -1,9 +1,10 @@
-const TaskList = require('listr')
-const { green } = require('chalk')
-const { isIdAssigned, assignId } = require('@aragon/toolkit/dist/dao/assign-id')
+import TaskList from 'listr'
+import { green } from 'chalk'
+import { isIdAssigned, assignId } from '@aragon/toolkit/dist/dao/assign-id'
 //
-const { ensureWeb3 } = require('../../helpers/web3-fallback')
-const listrOpts = require('../../helpers/listr-options')
+import { ensureWeb3 } from '../../helpers/web3-fallback'
+
+import listrOpts from '../../helpers/listr-options'
 
 // dao id assign command
 const idAssignCommand = 'assign <dao> <aragon-id>'
@@ -21,10 +22,11 @@ const idAssignBuilder = yargs => {
 }
 
 // dao id shortcut
-exports.command = 'id <dao> <aragon-id>'
-exports.describe = 'Shortcut for `dao id assign`'
+export const command = 'id <dao> <aragon-id>'
 
-exports.builder = yargs => {
+export const describe = 'Shortcut for `dao id assign`'
+
+export const builder = yargs => {
   return idAssignBuilder(yargs).command(
     idAssignCommand,
     idAssignDescribe,
@@ -33,7 +35,7 @@ exports.builder = yargs => {
   )
 }
 
-exports.handler = async function({
+export const handler = async function({
   aragonId,
   reporter,
   network,
@@ -65,5 +67,6 @@ exports.handler = async function({
   )
 
   await tasks.run()
+  reporter.newLine()
   reporter.success(`${green(aragonId)} successfully assigned to ${dao}`)
 }

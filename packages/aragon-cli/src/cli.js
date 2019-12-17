@@ -1,14 +1,14 @@
 import 'source-map-support/register'
+import url from 'url'
 import yargs from 'yargs'
+import { toWei } from 'web3-utils'
+//
+import { configCliMiddleware } from './middleware'
 import * as AragonReporter from './reporters/AragonReporter'
-const { toWei } = require('web3-utils')
-const url = require('url')
+import { findProjectRoot } from './util'
+import { DEVCHAIN_ENS } from './commands/devchain_cmds/utils/constants'
 
 const DEFAULT_GAS_PRICE = require('../package.json').aragon.defaultGasPrice
-
-const { configCliMiddleware } = require('./middleware')
-const { findProjectRoot } = require('./util')
-const { DEVCHAIN_ENS } = require('./commands/devchain_cmds/utils/constants')
 
 const debugMiddleware = argv => {
   argv.reporter.debug(

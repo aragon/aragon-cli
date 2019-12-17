@@ -14,7 +14,7 @@ import { initAragonJS, getTransactionPath } from '../helpers/aragonjs-wrapper'
  * @param {function} params.progressHandler Progress handler
  * @returns {Promise<{ transactionPath, receipt }>} Transaction path and receipt
  */
-module.exports = async ({
+export default async function({
   dao,
   app,
   method,
@@ -23,7 +23,7 @@ module.exports = async ({
   web3,
   gasPrice,
   progressHandler = () => {},
-}) => {
+}) {
   const wrapper = await initAragonJS(dao, apm['ens-registry'], {
     ipfsConf: apm.ipfs,
     gasPrice,

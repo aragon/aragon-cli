@@ -1,28 +1,26 @@
-const fs = require('fs')
-const os = require('os')
-const path = require('path')
-const TaskList = require('listr')
-const Web3 = require('web3')
-const { promisify } = require('util')
-const { blue, red, green, yellow } = require('chalk')
-const ncp = require('ncp')
-const rimraf = require('rimraf')
-const mkdirp = require('mkdirp')
-const { getAragonGanacheFiles } = require('@aragon/toolkit/dist/util')
+import TaskList from 'listr'
+import ncp from 'ncp'
+import os from 'os'
+import path from 'path'
+import rimraf from 'rimraf'
+import mkdirp from 'mkdirp'
+import fs from 'fs'
+import Web3 from 'web3'
+import { blue, red, green, yellow } from 'chalk'
+import { promisify } from 'util'
+import { getAragonGanacheFiles } from '@aragon/toolkit/dist/util'
 //
-const ganache = require('../../../ganache/build/ganache-core.node.cli')
-const listrOpts = require('../../helpers/listr-options')
-const pjson = require('../../../package.json')
-const devchainStatus = require('./status')
+import ganache from '../../../ganache/build/ganache-core.node.cli'
+import listrOpts from '../../helpers/listr-options'
+import pjson from '../../../package.json'
+import { task as devchainStatusTask } from './status'
+import { BLOCK_GAS_LIMIT, MNEMONIC } from './utils/ganache-vars'
 
-const { BLOCK_GAS_LIMIT, MNEMONIC } = require('./utils/constants')
-
-exports.command = 'start'
-
-exports.describe =
+export const command = 'start'
+export const describe =
   'Open a test chain for development and pass arguments to ganache'
 
-exports.builder = yargs => {
+export const builder = yargs => {
   return yargs
     .option('port', {
       description: 'The port to run the local chain on',
@@ -57,10 +55,11 @@ exports.builder = yargs => {
       default: false,
       type: 'boolean',
       description: 'Enable verbose devchain output',
+      alias: 'v',
     })
 }
 
-exports.task = async function({
+export const task = async function({
   port = 8545,
   networkId,
   blockTime,
@@ -78,7 +77,7 @@ exports.task = async function({
 
   const snapshotPath = path.join(
     os.homedir(),
-    `.aragon/aragen-db-${pjson.version}`
+    `.aragon/devchain-db-${pjson.version}`
   )
 
   const tasks = new TaskList(
@@ -86,7 +85,7 @@ exports.task = async function({
       {
         title: 'Check devchain status',
         task: async ctx => {
-          const task = await devchainStatus.task({
+          const task = await devchainStatusTask({
             port,
             reset,
             silent,
@@ -167,7 +166,7 @@ exports.task = async function({
   return tasks
 }
 
-exports.printAccounts = (reporter, privateKeys) => {
+export const printAccounts = (reporter, privateKeys) => {
   const firstAccountComment =
     '(account used to deploy DAOs, has more permissions)'
 
@@ -184,17 +183,17 @@ exports.printAccounts = (reporter, privateKeys) => {
   The first one will be used for all the actions the aragonCLI performs.
   You can use your favorite Ethereum provider or wallet to import their private keys.
   \n${formattedAccounts.join('\n')}`)
-}
+};
 
-exports.printMnemonic = (reporter, mnemonic) => {
+export const printMnemonic = (reporter, mnemonic) => {
   reporter.info(
     `The accounts were generated from the following mnemonic phrase:\n${blue(
       mnemonic
     )}\n`
   )
-}
+};
 
-exports.printResetNotice = (reporter, reset) => {
+export const printResetNotice = (reporter, reset) => {
   if (reset) {
     reporter.warning(`${yellow(
       'The devchain was reset, some steps need to be done to prevent issues:'
@@ -203,9 +202,9 @@ exports.printResetNotice = (reporter, reset) => {
     - If using Metamask: switch to a different network, and then switch back to the 'Private Network' (this will clear the nonce cache and prevent errors when sending transactions)
   `)
   }
-}
+};
 
-exports.handler = async ({
+export const handler = async ({
   reporter,
   port,
   networkId,
@@ -217,7 +216,7 @@ exports.handler = async ({
   silent,
   debug,
 }) => {
-  const task = await exports.task({
+  const tasks = await task({
     port,
     networkId,
     blockTime,
@@ -229,10 +228,10 @@ exports.handler = async ({
     silent,
     debug,
   })
-  const { privateKeys, id, mnemonic } = await task.run()
-  exports.printAccounts(reporter, privateKeys)
-  exports.printMnemonic(reporter, mnemonic)
-  exports.printResetNotice(reporter, reset)
+  const { privateKeys, id, mnemonic } = await tasks.run()
+  printAccounts(reporter, privateKeys)
+  printMnemonic(reporter, mnemonic)
+  printResetNotice(reporter, reset)
 
   reporter.info(
     'ENS instance deployed at:',

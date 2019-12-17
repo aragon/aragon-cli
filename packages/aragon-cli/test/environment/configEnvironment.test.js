@@ -27,8 +27,7 @@ test('configEnvironment - with frame on rinkeby', t => {
 test('configEnvironment - default networks - localhost', t => {
   const config = configEnvironment({
     environment: '',
-    network: '',
-    arapp: {},
+    arapp: { environments: { default: { network: 'rpc' } } },
   })
   t.is(config.network.name, 'rpc', 'Wrong network name')
   t.is(
@@ -40,9 +39,8 @@ test('configEnvironment - default networks - localhost', t => {
 
 test('configEnvironment - default networks - rinkeby', t => {
   const config = configEnvironment({
-    environment: '',
-    network: 'rinkeby',
-    arapp: {},
+    environment: 'rinkeby',
+    arapp: { environments: { rinkeby: { network: 'rinkeby' } } },
   })
   t.is(config.network.name, 'rinkeby', 'Wrong network name')
 })

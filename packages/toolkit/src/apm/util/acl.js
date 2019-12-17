@@ -1,11 +1,11 @@
-const aclAbi = require('@aragon/abis/os/artifacts/ACL').abi
-const aragonAppAbi = require('@aragon/abis/os/artifacts/AragonApp').abi
-const kernelAbi = require('@aragon/abis/os/artifacts/Kernel').abi
-const repoAbi = require('@aragon/abis/os/artifacts/Repo').abi
+import { abi as aclAbi } from '@aragon/abis/os/artifacts/ACL'
+import { abi as aragonAppAbi } from '@aragon/abis/os/artifacts/AragonApp'
+import { abi as kernelAbi } from '@aragon/abis/os/artifacts/Kernel'
+import { abi as repoAbi } from '@aragon/abis/os/artifacts/Repo'
 //
-const { getRecommendedGasLimit } = require('../../util')
+import { getRecommendedGasLimit } from '../../util'
 
-module.exports = web3 => {
+export default web3 => {
   const getACL = async repoAddr => {
     const repo = new web3.eth.Contract(aragonAppAbi, repoAddr)
     const daoAddr = await repo.methods.kernel().call()
