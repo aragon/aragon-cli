@@ -1,9 +1,9 @@
 import test from 'ava'
 import { ens } from '@aragon/aragen'
 //
-import { getApmRepo } from '../../src/apm/getApmRepo'
-import { newDao } from '../../src/dao/new'
-import { defaultAPMName } from '../../src/helpers/default-apm'
+import getApmRepo from '../../src/apm/getApmRepo'
+import newDao from '../../src/dao/new'
+import defaultAPMName from '../../src/helpers/default-apm'
 import { getLocalWeb3, isAddress } from '../test-helpers'
 
 test.beforeEach(async t => {

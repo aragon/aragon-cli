@@ -1,5 +1,5 @@
 export * from './getApmOptions'
-export { default as getLocalWeb3 } from './getLocalWeb3'
+export * from './getLocalWeb3'
 export { isAddress } from './isAddress'
 export { default as getNewDaoAddress } from './getNewDaoAddress'
 export { isValidTxHash } from './isValidTxHash'

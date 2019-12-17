@@ -3,7 +3,7 @@ import path from 'path'
 import fs from 'fs'
 import tmp from 'tmp'
 //
-import { extractContractInfoToFile } from '../../src/helpers/extractContractInfoToFile'
+import extractContractInfoToFile from '../../src/helpers/extractContractInfoToFile'
 
 let tempDir, contractPath, outputPath
 

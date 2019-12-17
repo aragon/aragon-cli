@@ -1,6 +1,6 @@
 import test from 'ava'
 import sinon from 'sinon'
-import { getAppKernel } from '../../src/kernel/getAppKernel'
+import getAppKernel from '../../src/kernel/getAppKernel'
 
 test('Returns the correct address', async t => {
   const kernelAddress = '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'

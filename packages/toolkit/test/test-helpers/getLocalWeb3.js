@@ -1,6 +1,6 @@
 import Web3 from 'web3'
 
-export default async () => {
+export const getLocalWeb3 = async () => {
   const web3 = new Web3(
     new Web3.providers.WebsocketProvider(`ws://localhost:8545`)
   )

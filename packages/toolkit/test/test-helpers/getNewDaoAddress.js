@@ -1,8 +1,8 @@
 import { ens } from '@aragon/aragen'
 //
-import { newDao } from '../../src/dao/new'
-import { getApmRepo } from '../../src/apm/getApmRepo'
-import { defaultAPMName } from '../../src/helpers/default-apm'
+import newDao from '../../src/dao/new'
+import getApmRepo from '../../src/apm/getApmRepo'
+import defaultAPMName from '../../src/helpers/default-apm'
 import { getLocalWeb3 } from './getLocalWeb3'
 
 export default async () => {
