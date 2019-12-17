@@ -1,6 +1,5 @@
 import { keccak256 } from 'web3-utils'
-import { getAclAddress } from '@aragon/toolkit/dist/kernel/kernel'
-import { resolveAddressOrEnsDomain } from '@aragon/toolkit/dist/dao/utils/resolveAddressOrEnsDomain'
+import { getAclAddress, resolveAddressOrEnsDomain } from '@aragon/toolkit'
 //
 import { handler as execHandler } from '../../utils/execHandler'
 import { ensureWeb3 } from '../../../../helpers/web3-fallback'

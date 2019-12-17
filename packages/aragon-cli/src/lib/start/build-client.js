@@ -1,5 +1,5 @@
 import execa from 'execa'
-import { getNodePackageManager } from '@aragon/toolkit/dist/node'
+import { getNodePackageManager } from '@aragon/toolkit'
 
 export async function buildClient(ctx, clientPath) {
   const bin = getNodePackageManager()

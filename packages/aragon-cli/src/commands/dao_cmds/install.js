@@ -5,19 +5,16 @@ import {
   ANY_ENTITY,
   NO_MANAGER,
   ZERO_ADDRESS,
-} from '@aragon/toolkit/dist/helpers/constants'
-import { resolveAddressOrEnsDomain } from '@aragon/toolkit/dist/dao/utils/resolveAddressOrEnsDomain'
-import {
+  addressesEqual,
+  resolveAddressOrEnsDomain,
   getAclAddress,
   getAppProxyAddressFromReceipt,
   getAppBase,
-} from '@aragon/toolkit/dist/kernel/kernel'
-import { addressesEqual } from '@aragon/toolkit/dist/util'
+  defaultAPMName,
+} from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
-
 import listrOpts from '../../helpers/listr-options'
-import defaultAPMName from '../../helpers/default-apm'
 import encodeInitPayload from '../../helpers/encodeInitPayload'
 import { task as execTask } from './utils/execHandler'
 import { task as getRepoTask, args } from './utils/getRepoTask'

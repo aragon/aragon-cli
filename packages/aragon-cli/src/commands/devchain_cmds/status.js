@@ -2,7 +2,7 @@ import TaskList from 'listr'
 import { blue } from 'chalk'
 import execa from 'execa'
 import find from 'find-process'
-import { isPortTaken } from '@aragon/toolkit/dist/node'
+import { isPortTaken } from '@aragon/toolkit'
 //
 import listrOpts from '../../helpers/listr-options'
 

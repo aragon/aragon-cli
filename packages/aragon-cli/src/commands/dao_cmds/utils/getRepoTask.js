@@ -1,4 +1,4 @@
-import { DEFAULT_IPFS_TIMEOUT } from '@aragon/toolkit/dist/helpers/constants'
+import { DEFAULT_IPFS_TIMEOUT } from '@aragon/toolkit'
 //
 const LATEST_VERSION = 'latest'
 

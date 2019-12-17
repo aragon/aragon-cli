@@ -1,7 +1,7 @@
 import path from 'path'
 import { blue } from 'chalk'
 import TaskList from 'listr'
-import extractContractInfoToFile from '@aragon/toolkit/dist/helpers/extractContractInfoToFile'
+import { extractContractInfoToFile } from '@aragon/toolkit'
 
 export const command = 'extract-functions [contract]'
 export const describe = 'Extract function information from a Solidity file'

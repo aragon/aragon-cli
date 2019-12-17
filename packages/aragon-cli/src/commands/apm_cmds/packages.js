@@ -1,6 +1,6 @@
 import Table from 'cli-table'
 import TaskList from 'listr'
-import getApmRegistryPackages from '@aragon/toolkit/dist/apm/getApmRegistryPackages'
+import { getApmRegistryPackages } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
 

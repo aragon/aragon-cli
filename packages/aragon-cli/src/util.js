@@ -6,7 +6,7 @@ import os from 'os'
 import { readJson } from 'fs-extra'
 import { request } from 'http'
 import inquirer from 'inquirer'
-import { getNodePackageManager } from '@aragon/toolkit/dist/node'
+import { getNodePackageManager } from '@aragon/toolkit'
 
 let cachedProjectRoot
 

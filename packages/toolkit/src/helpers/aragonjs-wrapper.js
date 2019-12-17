@@ -2,7 +2,7 @@ import Aragon, { ensResolve } from 'aragon-cli-wrapper'
 import { takeWhile, map, filter, first, defaultIfEmpty } from 'rxjs/operators'
 //
 import { addressesEqual } from '../util'
-const noop = () => {}
+import { noop } from '../node'
 
 // Subscribe to wrapper's observables
 const subscribe = (

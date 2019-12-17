@@ -1,6 +1,6 @@
 import execa from 'execa'
 import devnull from 'dev-null'
-import { getBinary, getPackageRoot } from '@aragon/toolkit/dist/node'
+import { getBinary, getPackageRoot } from '@aragon/toolkit'
 
 const truffleBin = getBinary('truffle', getPackageRoot(__dirname))
 

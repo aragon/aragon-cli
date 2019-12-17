@@ -1,7 +1,7 @@
 import test from 'ava'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
-import { convertDAOIdToSubdomain } from '@aragon/toolkit/dist/util'
+import { convertDAOIdToSubdomain } from '@aragon/toolkit'
 //
 import { parseArgumentStringIfPossible } from '../src/util'
 

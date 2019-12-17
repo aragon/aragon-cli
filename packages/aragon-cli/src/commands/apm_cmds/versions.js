@@ -1,10 +1,8 @@
 import { green, blue, bold } from 'chalk'
 import TaskList from 'listr'
-import getApmRepoVersions from '@aragon/toolkit/dist/apm/getApmRepoVersions'
+import { getApmRepoVersions, defaultAPMName } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
-
-import defaultAPMName from '../../helpers/default-apm'
 
 export const command = 'versions [apmRepo]'
 export const describe =

@@ -1,4 +1,4 @@
-import { isAddress, convertDAOIdToSubdomain } from '@aragon/toolkit/dist/util'
+import { isAddress, convertDAOIdToSubdomain } from '@aragon/toolkit'
 
 export default yargs => {
   return yargs.positional('dao', {

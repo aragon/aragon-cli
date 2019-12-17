@@ -1,9 +1,7 @@
 import { bold } from 'chalk'
-import getApmRepo from '@aragon/toolkit/dist/apm/getApmRepo'
+import { getApmRepo, defaultAPMName } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
-
-import defaultAPMName from '../../helpers/default-apm'
 
 export const command = 'info <apmRepo> [apmRepoVersion]'
 export const describe = 'Get information about a package'

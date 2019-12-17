@@ -1,4 +1,4 @@
-import { getRecommendedGasLimit, expandLink } from '@aragon/toolkit/dist/util'
+import { getRecommendedGasLimit, expandLink } from '@aragon/toolkit'
 
 /**
  * @typedef {Object} LibraryLink

@@ -1,13 +1,9 @@
 import TaskList from 'listr'
 import { green, blue } from 'chalk'
 import web3Utils from 'web3-utils'
-import {
-  deployMiniMeTokenFactory,
-  deployMiniMeToken,
-} from '@aragon/toolkit/dist/token/token'
+import { deployMiniMeTokenFactory, deployMiniMeToken } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../../helpers/web3-fallback'
-
 import listrOpts from '../../../helpers/listr-options'
 import { parseArgumentStringIfPossible } from '../../../util'
 
