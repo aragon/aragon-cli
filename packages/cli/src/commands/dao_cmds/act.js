@@ -66,7 +66,7 @@ export const handler = async function({
 
   reporter.debug('Encoded call data: ', encodedCallData)
 
-  const task = execHandler({
+  const task = await execHandler({
     dao,
     app: agentAddress,
     method: EXECUTE_FUNCTION_NAME,
