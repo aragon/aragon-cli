@@ -1,0 +1,146 @@
+[
+	{
+		"name": "Create new votes",
+		"id": "CREATE_VOTES_ROLE"
+	},
+	{
+		"name": "Modify support",
+		"id": "MODIFY_SUPPORT_ROLE"
+	},
+	{
+		"name": "Modify quorum",
+		"id": "MODIFY_QUORUM_ROLE"
+	},
+	{
+		"name": "Mint tokens",
+		"id": "MINT_ROLE"
+	},
+	{
+		"name": "Issue tokens",
+		"id": "ISSUE_ROLE"
+	},
+	{
+		"name": "Assign tokens",
+		"id": "ASSIGN_ROLE"
+	},
+	{
+		"name": "Revoke vesting",
+		"id": "REVOKE_VESTINGS_ROLE"
+	},
+	{
+		"name": "Burn tokens",
+		"id": "BURN_ROLE"
+	},
+	{
+		"name": "Transfer Vault's tokens",
+		"id": "TRANSFER_ROLE"
+	},
+	{
+		"name": "Create new payments",
+		"id": "CREATE_PAYMENTS_ROLE"
+	},
+	{
+		"name": "Change period duration",
+		"id": "CHANGE_PERIOD_ROLE"
+	},
+	{
+		"name": "Change budgets",
+		"id": "CHANGE_BUDGETS_ROLE"
+	},
+	{
+		"name": "Execute payments",
+		"id": "EXECUTE_PAYMENTS_ROLE"
+	},
+	{
+		"name": "Manage payments",
+		"id": "MANAGE_PAYMENTS_ROLE"
+	},
+	{
+		"name": "Transfer Agent's tokens",
+		"id": "TRANSFER_ROLE"
+	},
+	{
+		"name": "Execute actions",
+		"id": "EXECUTE_ROLE"
+	},
+	{
+		"name": "Execute safe actions",
+		"id": "SAFE_EXECUTE_ROLE"
+	},
+	{
+		"name": "Add protected tokens",
+		"id": "ADD_PROTECTED_TOKEN_ROLE"
+	},
+	{
+		"name": "Remove protected tokens",
+		"id": "REMOVE_PROTECTED_TOKEN_ROLE"
+	},
+	{
+		"name": "Add presigned hashes",
+		"id": "ADD_PRESIGNED_HASH_ROLE"
+	},
+	{
+		"name": "Set designated signer",
+		"id": "DESIGNATE_SIGNER_ROLE"
+	},
+	{
+		"name": "Run EVM Script",
+		"id": "RUN_SCRIPT_ROLE"
+	},
+	{
+		"name": "Add employees",
+		"id": "ADD_EMPLOYEE_ROLE"
+	},
+	{
+		"name": "Terminate employees",
+		"id": "TERMINATE_EMPLOYEE_ROLE"
+	},
+	{
+		"name": "Set employee salary",
+		"id": "SET_EMPLOYEE_SALARY_ROLE"
+	},
+	{
+		"name": "Add bonuses for employee",
+		"id": "ADD_BONUS_ROLE"
+	},
+	{
+		"name": "Add reimbursements for employee",
+		"id": "ADD_REIMBURSEMENT_ROLE"
+	},
+	{
+		"name": "Manage allowed tokens",
+		"id": "MANAGE_ALLOWED_TOKENS_ROLE"
+	},
+	{
+		"name": "Modify Price Feed",
+		"id": "MODIFY_PRICE_FEED_ROLE"
+	},
+	{
+		"name": "Modify Rate Expiry Time",
+		"id": "MODIFY_RATE_EXPIRY_ROLE"
+	},
+	{
+		"name": "Create new surveys",
+		"id": "CREATE_SURVEYS_ROLE"
+	},
+	{
+		"name": "Modify minimum participation rate",
+		"id": "MODIFY_PARTICIPATION_ROLE"
+	},
+	{
+		"id": "APP_MANAGER_ROLE",
+		"name": "Manage DAO apps"
+	},
+	{
+		"id": "CREATE_PERMISSIONS_ROLE",
+		"name": "Create new permissions"
+	},
+	{
+		"id": "REGISTRY_ADD_EXECUTOR_ROLE",
+		"name": "Add executors"
+	},
+	{
+		"id": "REGISTRY_MANAGER_ROLE",
+		"name": "Enable and disable executors"
+	}
+]
