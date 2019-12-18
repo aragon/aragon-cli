@@ -48,7 +48,6 @@ export const task = async ({
   if (!contract) {
     contract = arappContract()
   }
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   if (!web3) {
     web3 = await ensureWeb3(network)
@@ -57,7 +56,7 @@ export const task = async ({
   // Mappings allow to pass certain init parameters that get replaced for their actual value
   // const mappingMask = key => `@ARAGON_${key}`
   const mappings = {
-    '@ARAGON_ENS': apmOptions['ens-registry'], // <ens> to ens addr
+    '@ARAGON_ENS': apmOptions.ensRegistryAddress, // <ens> to ens addr
   }
   const initArguments = init.map(value => mappings[value] || value)
 

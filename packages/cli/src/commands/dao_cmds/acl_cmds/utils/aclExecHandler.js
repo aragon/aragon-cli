@@ -11,9 +11,8 @@ export default async function(
   { reporter, apm, network, gasPrice, wsProvider, role, silent, debug }
 ) {
   const web3 = await ensureWeb3(network)
-  const apmRegistry = apm.registryAddress || apm['ens-registry']
   const aclAddress = await getAclAddress(
-    await resolveAddressOrEnsDomain(dao, web3, apmRegistry),
+    await resolveAddressOrEnsDomain(dao, web3, apm.ensRegistryAddress),
     web3
   )
 

@@ -99,9 +99,9 @@ export const handler = async function({
         title: 'Inspecting DAO',
         task: async (ctx, task) => {
           task.output = `Fetching apps for ${dao}...`
-          const { 'ens-registry': ensRegistry, ipfs } = apmOptions
+          const { ensRegistryAddress, ipfs } = apmOptions
           const options = {
-            registryAddress: ensRegistry,
+            registryAddress: ensRegistryAddress,
             ipfs,
             provider: wsProvider || web3.currentProvider,
           }

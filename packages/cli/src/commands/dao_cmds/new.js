@@ -60,7 +60,6 @@ export const task = async ({
   debug,
   aragonId,
 }) => {
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   template = defaultAPMName(template)
   let repo, daoAddress
 
