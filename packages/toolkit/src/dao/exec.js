@@ -24,7 +24,7 @@ export default async function({
   gasPrice,
   progressHandler = () => {},
 }) {
-  const wrapper = await initAragonJS(dao, apm['ens-registry'], {
+  const wrapper = await initAragonJS(dao, apm.ensRegistryAddress, {
     ipfsConf: apm.ipfs,
     gasPrice,
     provider: web3.currentProvider,

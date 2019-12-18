@@ -13,16 +13,6 @@ export default async (
     throw new Error('No grantee addresses provided')
   }
 
-  // Ensure the ens-registry property is present,
-  // and available with the name "ensRegistryAddress".
-  if (!apmOptions.ensRegistryAddress) {
-    if (apmOptions['ens-registry']) {
-      apmOptions.ensRegistryAddress = apmOptions['ens-registry']
-    } else {
-      throw new Error('ens-registry not found in given apm options.')
-    }
-  }
-
   const apm = await APM(web3, apmOptions)
   const acl = ACL(web3)
 
