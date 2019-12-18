@@ -7,7 +7,7 @@ const ARTIFACT_FILE = 'artifact.json'
 const MANIFEST_FILE = 'manifest.json'
 
 const PUBLISH_CMD_TIMEOUT = 120000 // 2min
-const VERSIONS_CMD_TIMEOUT = 15000 // 15s
+const VERSIONS_CMD_TIMEOUT = 50000 // 50s
 
 const testSandbox = './.tmp/publish'
 
