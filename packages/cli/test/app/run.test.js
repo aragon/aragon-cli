@@ -32,55 +32,58 @@ test.serial('should run an aragon app successfully on IPFS', async t => {
   t.pass()
 })
 
-test.serial(('should run an aragon app successfully on IPFS using a Template', async t => {
-  const publishDirPath = path.resolve(
-    `${mockappPath}/${testSandbox}/ipfs-template`
-  )
+test.serial(
+  'should run an aragon app successfully on IPFS using a Template',
+  async t => {
+    const publishDirPath = path.resolve(
+      `${mockappPath}/${testSandbox}/ipfs-template`
+    )
 
-  const { kill } = await startProcess({
-    cmd: 'node',
-    args: [
-      cliPath,
-      'run',
-      '--files',
-      'dist',
-      '--publish-dir',
-      publishDirPath,
-      // Template args
-      '--template',
-      'Template',
-      '--template-init',
-      '0x5d94e3e7aec542ab0f9129b9a7badeb5b3ca0f77',
-      '@ARAGON_ENS',
-      '0xd526b7aba39cccf76422835e7fd5327b98ad73c9',
-      '0xf1f8aac64036cdd399886b1c157b7e3b361093f3',
-      '--template-new-instance',
-      'newTokenAndInstance',
-      '--template-args',
-      'MyToken',
-      'TKN',
-      '["0xb4124cEB3451635DAcedd11767f004d8a28c6eE7"]',
-      '["1000000000000000000"]',
-      '["500000000000000000","150000000000000000","86400"]',
-    ],
-    execaOpts: {
-      cwd: mockappPath,
-      localDir: '.',
-      detached: true,
-    },
-    readyOutput: 'Open http://localhost:',
-    timeout: RUN_CMD_TIMEOUT,
-  })
+    const { kill } = await startProcess({
+      cmd: 'node',
+      args: [
+        cliPath,
+        'run',
+        '--files',
+        'dist',
+        '--publish-dir',
+        publishDirPath,
+        // Template args
+        '--template',
+        'Template',
+        '--template-init',
+        '0x5d94e3e7aec542ab0f9129b9a7badeb5b3ca0f77',
+        '@ARAGON_ENS',
+        '0xd526b7aba39cccf76422835e7fd5327b98ad73c9',
+        '0xf1f8aac64036cdd399886b1c157b7e3b361093f3',
+        '--template-new-instance',
+        'newTokenAndInstance',
+        '--template-args',
+        'MyToken',
+        'TKN',
+        '["0xb4124cEB3451635DAcedd11767f004d8a28c6eE7"]',
+        '["1000000000000000000"]',
+        '["500000000000000000","150000000000000000","86400"]',
+      ],
+      execaOpts: {
+        cwd: mockappPath,
+        localDir: '.',
+        detached: true,
+      },
+      readyOutput: 'Open http://localhost:',
+      timeout: RUN_CMD_TIMEOUT,
+    })
 
-  // cleanup
-  await kill()
+    // cleanup
+    await kill()
 
-  t.pass()
-})
+    t.pass()
+  }
+)
 
-test.serial(('should run an aragon app successfully on HTTP', async t => {
+test.serial('should run an aragon app successfully on HTTP', async t => {
   const publishDirPath = path.resolve(`${mockappPath}/${testSandbox}/http`)
-    const appPort = 8001
+  const appPort = 8001
 
   // start app server
   const packageRoot = getPackageRoot(__dirname)
@@ -116,69 +119,72 @@ test.serial(('should run an aragon app successfully on HTTP', async t => {
   // cleanup
   await kill()
   await serverProcess.kill('SIGTERM', {
-		forceKillAfterTimeout: 2000
-	});
+    forceKillAfterTimeout: 2000,
+  })
 
   t.pass()
 })
 
-test.serial(('should run an aragon app successfully on HTTP using a Template', async t => {
-  const publishDirPath = path.resolve(
-    `${mockappPath}/${testSandbox}/http-template`
-  )
-  const appPort = 8001
+test.serial(
+  'should run an aragon app successfully on HTTP using a Template',
+  async t => {
+    const publishDirPath = path.resolve(
+      `${mockappPath}/${testSandbox}/http-template`
+    )
+    const appPort = 8001
 
-  // start app server
-  const packageRoot = getPackageRoot(__dirname)
-  const bin = getBinary('http-server', packageRoot)
-  const serverProcess = execa(bin, ['dist', '-p', appPort], {
-    cwd: mockappPath,
-  }).catch(err => {
-    throw new Error(err)
-  })
-
-  const { kill } = await startProcess({
-    cmd: 'node',
-    args: [
-      cliPath,
-      'run',
-      '--http',
-      `localhost:${appPort}`,
-      '--http-served-from',
-      './dist',
-      '--publish-dir',
-      publishDirPath,
-      // Template args
-      '--template',
-      'Template',
-      '--template-init',
-      '0x5d94e3e7aec542ab0f9129b9a7badeb5b3ca0f77',
-      '@ARAGON_ENS',
-      '0xd526b7aba39cccf76422835e7fd5327b98ad73c9',
-      '0xf1f8aac64036cdd399886b1c157b7e3b361093f3',
-      '--template-new-instance',
-      'newTokenAndInstance',
-      '--template-args',
-      'MyToken',
-      'TKN',
-      '["0xb4124cEB3451635DAcedd11767f004d8a28c6eE7"]',
-      '["1000000000000000000"]',
-      '["500000000000000000","150000000000000000","86400"]',
-    ],
-    execaOpts: {
+    // start app server
+    const packageRoot = getPackageRoot(__dirname)
+    const bin = getBinary('http-server', packageRoot)
+    const serverProcess = execa(bin, ['dist', '-p', appPort], {
       cwd: mockappPath,
-      localDir: '.',
-      detached: true,
-    },
-    readyOutput: 'Open http://localhost:',
-    timeout: RUN_CMD_TIMEOUT,
-  })
+    }).catch(err => {
+      throw new Error(err)
+    })
 
-  // cleanup
-  await kill()
-  await serverProcess.kill('SIGTERM', {
-		forceKillAfterTimeout: 2000
-	});
+    const { kill } = await startProcess({
+      cmd: 'node',
+      args: [
+        cliPath,
+        'run',
+        '--http',
+        `localhost:${appPort}`,
+        '--http-served-from',
+        './dist',
+        '--publish-dir',
+        publishDirPath,
+        // Template args
+        '--template',
+        'Template',
+        '--template-init',
+        '0x5d94e3e7aec542ab0f9129b9a7badeb5b3ca0f77',
+        '@ARAGON_ENS',
+        '0xd526b7aba39cccf76422835e7fd5327b98ad73c9',
+        '0xf1f8aac64036cdd399886b1c157b7e3b361093f3',
+        '--template-new-instance',
+        'newTokenAndInstance',
+        '--template-args',
+        'MyToken',
+        'TKN',
+        '["0xb4124cEB3451635DAcedd11767f004d8a28c6eE7"]',
+        '["1000000000000000000"]',
+        '["500000000000000000","150000000000000000","86400"]',
+      ],
+      execaOpts: {
+        cwd: mockappPath,
+        localDir: '.',
+        detached: true,
+      },
+      readyOutput: 'Open http://localhost:',
+      timeout: RUN_CMD_TIMEOUT,
+    })
 
-  t.pass()
-})
+    // cleanup
+    await kill()
+    await serverProcess.kill('SIGTERM', {
+      forceKillAfterTimeout: 2000,
+    })
+
+    t.pass()
+  }
+)
