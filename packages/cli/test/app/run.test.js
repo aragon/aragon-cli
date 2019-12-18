@@ -16,24 +16,14 @@ test.serial('should run an aragon app successfully on IPFS', async t => {
 
   const { kill } = await startProcess({
     cmd: 'node',
-    args: [
-      cliPath,
-      'run',
-      '--files',
-      'dist',
-      '--publish-dir',
-      publishDirPath,
-      '--client-port',
-      clientPort,
-    ],
+    args: [cliPath, 'run', '--files', 'dist', '--publish-dir', publishDirPath],
     execaOpts: {
       cwd: mockappPath,
       localDir: '.',
       detached: true,
     },
-    readyOutput: `Open http://localhost:`,
+    readyOutput: 'Open http://localhost:',
     timeout: RUN_CMD_TIMEOUT,
-    logger: console.log,
   })
 
   // cleanup
@@ -46,7 +36,6 @@ test.serial(('should run an aragon app successfully on IPFS using a Template', a
   const publishDirPath = path.resolve(
     `${mockappPath}/${testSandbox}/ipfs-template`
   )
-  const clientPort = '3002'
 
   const { kill } = await startProcess({
     cmd: 'node',
@@ -79,9 +68,8 @@ test.serial(('should run an aragon app successfully on IPFS using a Template', a
       localDir: '.',
       detached: true,
     },
-    readyOutput: `Open http://localhost:${clientPort}`,
+    readyOutput: 'Open http://localhost:',
     timeout: RUN_CMD_TIMEOUT,
-    logger: console.log,
   })
 
   // cleanup
@@ -90,11 +78,9 @@ test.serial(('should run an aragon app successfully on IPFS using a Template', a
   t.pass()
 })
 
-
 test.serial(('should run an aragon app successfully on HTTP', async t => {
   const publishDirPath = path.resolve(`${mockappPath}/${testSandbox}/http`)
-  const clientPort = '3001'
-  const appPort = '8001'
+    const appPort = 8001
 
   // start app server
   const packageRoot = getPackageRoot(__dirname)
@@ -122,7 +108,7 @@ test.serial(('should run an aragon app successfully on HTTP', async t => {
       localDir: '.',
       detached: true,
     },
-    readyOutput: `Open http://localhost:${clientPort}`,
+    readyOutput: 'Open http://localhost:',
     timeout: RUN_CMD_TIMEOUT,
     logger: console.log,
   })
@@ -136,13 +122,11 @@ test.serial(('should run an aragon app successfully on HTTP', async t => {
   t.pass()
 })
 
-
 test.serial(('should run an aragon app successfully on HTTP using a Template', async t => {
   const publishDirPath = path.resolve(
     `${mockappPath}/${testSandbox}/http-template`
   )
-  const clientPort = '3003'
-  const appPort = '8002'
+  const appPort = 8001
 
   // start app server
   const packageRoot = getPackageRoot(__dirname)
@@ -186,9 +170,8 @@ test.serial(('should run an aragon app successfully on HTTP using a Template', a
       localDir: '.',
       detached: true,
     },
-    readyOutput: `Open http://localhost:${clientPort}`,
+    readyOutput: 'Open http://localhost:',
     timeout: RUN_CMD_TIMEOUT,
-    logger: console.log,
   })
 
   // cleanup
