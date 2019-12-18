@@ -9,7 +9,7 @@ test('start', async t => {
   // act
   const { kill } = await startProcess({
     cmd: 'node',
-    args: [cliPath, 'start', '--no-openInBrowser'],
+    args: [cliPath, 'start'],
     execaOpts: {
       localDir: '.',
     },
