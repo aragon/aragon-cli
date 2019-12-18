@@ -94,7 +94,7 @@ export const task = async ({
 
           task.output = `Deploying '${contractName}' to network`
 
-          const { address, transactionHash } = await deployContract({
+          const { instance, address, transactionHash } = await deployContract({
             bytecode: links ? linkLibraries(bytecode, links) : bytecode,
             abi,
             initArguments,
@@ -106,6 +106,7 @@ export const task = async ({
             throw new Error('Contract deployment failed')
           }
 
+          ctx.contractInstance = instance
           ctx.contractName = contractName
           ctx.contractAddress = address
           ctx.transactionHash = transactionHash

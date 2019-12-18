@@ -7,6 +7,6 @@
   "devDependencies": {
   },
   "scripts": {
-    "build": "cd app && echo mock-build"
+    "build": "cp -r app dist"
   }
 }
