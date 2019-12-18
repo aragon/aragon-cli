@@ -42,7 +42,7 @@ test.serial('should run an aragon app successfully on IPFS', async t => {
   t.pass()
 })
 
-test.serial(('should run an aragon app successfully on IPFS using a Template', async t => {
+test.serial('should run an aragon app successfully on IPFS using a Template', async t => {
   const publishDirPath = path.resolve(
     `${mockappPath}/${testSandbox}/ipfs-template`
   )
@@ -91,7 +91,7 @@ test.serial(('should run an aragon app successfully on IPFS using a Template', a
 })
 
 
-test.serial(('should run an aragon app successfully on HTTP', async t => {
+test.serial('should run an aragon app successfully on HTTP', async t => {
   const publishDirPath = path.resolve(`${mockappPath}/${testSandbox}/http`)
   const clientPort = '3001'
   const appPort = '8001'
@@ -137,7 +137,7 @@ test.serial(('should run an aragon app successfully on HTTP', async t => {
 })
 
 
-test.serial(('should run an aragon app successfully on HTTP using a Template', async t => {
+test.serial('should run an aragon app successfully on HTTP using a Template', async t => {
   const publishDirPath = path.resolve(
     `${mockappPath}/${testSandbox}/http-template`
   )
