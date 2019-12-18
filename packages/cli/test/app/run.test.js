@@ -113,7 +113,6 @@ test.serial('should run an aragon app successfully on HTTP', async t => {
     },
     readyOutput: 'Open http://localhost:',
     timeout: RUN_CMD_TIMEOUT,
-    logger: console.log,
   })
 
   // cleanup
