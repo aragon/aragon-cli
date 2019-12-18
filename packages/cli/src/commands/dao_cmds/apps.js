@@ -105,9 +105,7 @@ export const handler = async function({
             ipfs,
             provider: wsProvider || web3.currentProvider,
           }
-          console.log('>>>')
           apps = await getInstalledApps(dao, options)
-          console.log('>>> 2')
           daoAddress = await getDaoAddress(dao, options)
         },
       },

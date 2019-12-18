@@ -8,6 +8,7 @@ ipfs.cmd
 
 # Artifacts
 dist
+build
 
 # Tests and coverage
 .tmp
