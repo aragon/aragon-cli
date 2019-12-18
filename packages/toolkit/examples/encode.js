@@ -1,12 +1,12 @@
 const Web3 = require('web3')
+const { encodeCallScript } = require('@aragon/test-helpers/evmScript')
 const {
   newDao,
   getApmRepo,
   getInstalledApps,
   encodeActCall,
   exec
-} = require('@aragon/toolkit')
-const { encodeCallScript } = require('@aragon/test-helpers/evmScript')
+} = require('../dist/index')
 
 async function main() {
 

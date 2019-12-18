@@ -125,6 +125,12 @@
 				"uuid": "^3.2.1"
 			}
 		},
+		"@aragon/test-helpers": {
+			"version": "2.1.0",
+			"resolved": "https://registry.npmjs.org/@aragon/test-helpers/-/test-helpers-2.1.0.tgz",
+			"integrity": "sha512-lL0seKOPBr0BDt5EiXQhevdXCtkJbv/ZFoJFLWmhlcdd8TKsWffj+c/hzYXP9l9OjCqPbO61JsDBPS0ZDF7ERA==",
+			"dev": true
+		},
 		"@ava/babel-plugin-throws-helper": {
 			"version": "4.0.0",
 			"resolved": "https://registry.npmjs.org/@ava/babel-plugin-throws-helper/-/babel-plugin-throws-helper-4.0.0.tgz",
@@ -5017,6 +5023,24 @@
 			"version": "1.0.0",
 			"resolved": "https://registry.npmjs.org/ethereum-ens-network-map/-/ethereum-ens-network-map-1.0.0.tgz",
 			"integrity": "sha1-Q812ac6VCnieFRABEY1NZfIQ7rc="
+		},
+		"ethereumjs-abi": {
+			"version": "0.6.8",
+			"resolved": "https://registry.npmjs.org/ethereumjs-abi/-/ethereumjs-abi-0.6.8.tgz",
+			"integrity": "sha512-Tx0r/iXI6r+lRsdvkFDlut0N08jWMnKRZ6Gkq+Nmw75lZe4e6o3EkSnkaBP5NF6+m5PTGAr9JP43N3LyeoglsA==",
+			"dev": true,
+			"requires": {
+				"bn.js": "^4.11.8",
+				"ethereumjs-util": "^6.0.0"
+			},
+			"dependencies": {
+				"bn.js": {
+					"version": "4.11.8",
+					"resolved": "https://registry.npmjs.org/bn.js/-/bn.js-4.11.8.tgz",
+					"integrity": "sha512-ItfYfPLkWHUjckQCk8xC+LwxgK8NYcXywGigJgSwOP8Y2iyWT4f2vsZnoOXTTbo+o5yXmIUJ4gn5538SO5S3gA==",
+					"dev": true
+				}
+			}
 		},
 		"ethereumjs-common": {
 			"version": "1.5.0",
