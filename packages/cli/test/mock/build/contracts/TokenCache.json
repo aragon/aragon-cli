@@ -1,0 +1,1550 @@
+{
+  "contractName": "TokenCache",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.4.24+commit.e67f0147\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"@aragon/templates-shared/contracts/TokenCache.sol\":\"TokenCache\"},\"evmVersion\":\"byzantium\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":10000},\"remappings\":[]},\"sources\":{\"@aragon/apps-shared-minime/contracts/ITokenController.sol\":{\"keccak256\":\"0x030d1ea5543fd23d3c962cbf34b1c3b6e15d9bbfb711416e1cf4160c3bcdccaa\",\"urls\":[\"bzzr://64ccd0852c1b90d55248f9b56898854c32bd881a9eb61637d6ecb7430a77764c\"]},\"@aragon/apps-shared-minime/contracts/MiniMeToken.sol\":{\"keccak256\":\"0xae8693d9ccee144cfd4949f87d0994d12e7d232b0b39d3f2f72a7b5c1e54800c\",\"urls\":[\"bzzr://077b0f24788509f8aecd01587c0522a3b22c15c6bbdfe8b65a5234f3ae3502cf\"]},\"@aragon/templates-shared/contracts/TokenCache.sol\":{\"keccak256\":\"0x4833cbc00e49435915ff189e021a88293fcbd87c6c0cf8cd4d7359d943c17552\",\"urls\":[\"bzzr://67f8d33177ad13ac8ae57710af34a90e221a8883875bf754a1916df0e97bb349\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3006080604052600080fd00a165627a7a72305820e272b005abeda97cebb7aaba1f6ace862500181009f8f3787b8d03ee1b0fe3c90029",
+  "deployedBytecode": "0x6080604052600080fd00a165627a7a72305820e272b005abeda97cebb7aaba1f6ace862500181009f8f3787b8d03ee1b0fe3c90029",
+  "sourceMap": "90:563:69:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;90:563:69;;;;;;;",
+  "deployedSourceMap": "90:563:69:-;;;;;",
+  "source": "pragma solidity 0.4.24;\n\nimport \"@aragon/apps-shared-minime/contracts/MiniMeToken.sol\";\n\n\ncontract TokenCache {\n    string constant private ERROR_MISSING_TOKEN_CACHE = \"TEMPLATE_MISSING_TOKEN_CACHE\";\n\n    mapping (address => address) internal tokenCache;\n\n    function _cacheToken(MiniMeToken _token, address _owner) internal {\n        tokenCache[_owner] = _token;\n    }\n\n    function _popTokenCache(address _owner) internal returns (MiniMeToken) {\n        require(tokenCache[_owner] != address(0), ERROR_MISSING_TOKEN_CACHE);\n\n        MiniMeToken token = MiniMeToken(tokenCache[_owner]);\n        delete tokenCache[_owner];\n        return token;\n    }\n}\n",
+  "sourcePath": "@aragon/templates-shared/contracts/TokenCache.sol",
+  "ast": {
+    "absolutePath": "@aragon/templates-shared/contracts/TokenCache.sol",
+    "exportedSymbols": {
+      "TokenCache": [
+        18238
+      ]
+    },
+    "id": 18239,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 18181,
+        "literals": [
+          "solidity",
+          "0.4",
+          ".24"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:69"
+      },
+      {
+        "absolutePath": "@aragon/apps-shared-minime/contracts/MiniMeToken.sol",
+        "file": "@aragon/apps-shared-minime/contracts/MiniMeToken.sol",
+        "id": 18182,
+        "nodeType": "ImportDirective",
+        "scope": 18239,
+        "sourceUnit": 6887,
+        "src": "25:62:69",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 18238,
+        "linearizedBaseContracts": [
+          18238
+        ],
+        "name": "TokenCache",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": true,
+            "id": 18185,
+            "name": "ERROR_MISSING_TOKEN_CACHE",
+            "nodeType": "VariableDeclaration",
+            "scope": 18238,
+            "src": "116:82:69",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_string_memory",
+              "typeString": "string"
+            },
+            "typeName": {
+              "id": 18183,
+              "name": "string",
+              "nodeType": "ElementaryTypeName",
+              "src": "116:6:69",
+              "typeDescriptions": {
+                "typeIdentifier": "t_string_storage_ptr",
+                "typeString": "string"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "54454d504c4154455f4d495353494e475f544f4b454e5f4341434845",
+              "id": 18184,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "string",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "168:30:69",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_stringliteral_197108a42cabdd0ce209b6012b80388071804ff87851f28a27030e5190b97097",
+                "typeString": "literal_string \"TEMPLATE_MISSING_TOKEN_CACHE\""
+              },
+              "value": "TEMPLATE_MISSING_TOKEN_CACHE"
+            },
+            "visibility": "private"
+          },
+          {
+            "constant": false,
+            "id": 18189,
+            "name": "tokenCache",
+            "nodeType": "VariableDeclaration",
+            "scope": 18238,
+            "src": "205:48:69",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_mapping$_t_address_$_t_address_$",
+              "typeString": "mapping(address => address)"
+            },
+            "typeName": {
+              "id": 18188,
+              "keyType": {
+                "id": 18186,
+                "name": "address",
+                "nodeType": "ElementaryTypeName",
+                "src": "214:7:69",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                }
+              },
+              "nodeType": "Mapping",
+              "src": "205:28:69",
+              "typeDescriptions": {
+                "typeIdentifier": "t_mapping$_t_address_$_t_address_$",
+                "typeString": "mapping(address => address)"
+              },
+              "valueType": {
+                "id": 18187,
+                "name": "address",
+                "nodeType": "ElementaryTypeName",
+                "src": "225:7:69",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                }
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 18202,
+              "nodeType": "Block",
+              "src": "326:44:69",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 18200,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "baseExpression": {
+                        "argumentTypes": null,
+                        "id": 18196,
+                        "name": "tokenCache",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 18189,
+                        "src": "336:10:69",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_mapping$_t_address_$_t_address_$",
+                          "typeString": "mapping(address => address)"
+                        }
+                      },
+                      "id": 18198,
+                      "indexExpression": {
+                        "argumentTypes": null,
+                        "id": 18197,
+                        "name": "_owner",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 18193,
+                        "src": "347:6:69",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "nodeType": "IndexAccess",
+                      "src": "336:18:69",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 18199,
+                      "name": "_token",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 18191,
+                      "src": "357:6:69",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                        "typeString": "contract MiniMeToken"
+                      }
+                    },
+                    "src": "336:27:69",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "id": 18201,
+                  "nodeType": "ExpressionStatement",
+                  "src": "336:27:69"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 18203,
+            "implemented": true,
+            "isConstructor": false,
+            "isDeclaredConst": false,
+            "modifiers": [],
+            "name": "_cacheToken",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 18194,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 18191,
+                  "name": "_token",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 18203,
+                  "src": "281:18:69",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                    "typeString": "contract MiniMeToken"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 18190,
+                    "name": "MiniMeToken",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 6845,
+                    "src": "281:11:69",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                      "typeString": "contract MiniMeToken"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 18193,
+                  "name": "_owner",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 18203,
+                  "src": "301:14:69",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 18192,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "301:7:69",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "280:36:69"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 18195,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "326:0:69"
+            },
+            "scope": 18238,
+            "src": "260:110:69",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 18236,
+              "nodeType": "Block",
+              "src": "447:204:69",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "id": 18217,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "baseExpression": {
+                            "argumentTypes": null,
+                            "id": 18211,
+                            "name": "tokenCache",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 18189,
+                            "src": "465:10:69",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_mapping$_t_address_$_t_address_$",
+                              "typeString": "mapping(address => address)"
+                            }
+                          },
+                          "id": 18213,
+                          "indexExpression": {
+                            "argumentTypes": null,
+                            "id": 18212,
+                            "name": "_owner",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 18205,
+                            "src": "476:6:69",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_address",
+                              "typeString": "address"
+                            }
+                          },
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "IndexAccess",
+                          "src": "465:18:69",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "!=",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "30",
+                              "id": 18215,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "number",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "495:1:69",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              },
+                              "value": "0"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              }
+                            ],
+                            "id": 18214,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "lValueRequested": false,
+                            "nodeType": "ElementaryTypeNameExpression",
+                            "src": "487:7:69",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_type$_t_address_$",
+                              "typeString": "type(address)"
+                            },
+                            "typeName": "address"
+                          },
+                          "id": 18216,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "typeConversion",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "487:10:69",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "src": "465:32:69",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 18218,
+                        "name": "ERROR_MISSING_TOKEN_CACHE",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 18185,
+                        "src": "499:25:69",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_string_memory",
+                          "typeString": "string memory"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_string_memory",
+                          "typeString": "string memory"
+                        }
+                      ],
+                      "id": 18210,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        18256,
+                        18257
+                      ],
+                      "referencedDeclaration": 18257,
+                      "src": "457:7:69",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 18219,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "457:68:69",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 18220,
+                  "nodeType": "ExpressionStatement",
+                  "src": "457:68:69"
+                },
+                {
+                  "assignments": [
+                    18222
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 18222,
+                      "name": "token",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 18237,
+                      "src": "536:17:69",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                        "typeString": "contract MiniMeToken"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 18221,
+                        "name": "MiniMeToken",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 6845,
+                        "src": "536:11:69",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                          "typeString": "contract MiniMeToken"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 18228,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "baseExpression": {
+                          "argumentTypes": null,
+                          "id": 18224,
+                          "name": "tokenCache",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 18189,
+                          "src": "568:10:69",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_mapping$_t_address_$_t_address_$",
+                            "typeString": "mapping(address => address)"
+                          }
+                        },
+                        "id": 18226,
+                        "indexExpression": {
+                          "argumentTypes": null,
+                          "id": 18225,
+                          "name": "_owner",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 18205,
+                          "src": "579:6:69",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "nodeType": "IndexAccess",
+                        "src": "568:18:69",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      ],
+                      "id": 18223,
+                      "name": "MiniMeToken",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 6845,
+                      "src": "556:11:69",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_contract$_MiniMeToken_$6845_$",
+                        "typeString": "type(contract MiniMeToken)"
+                      }
+                    },
+                    "id": 18227,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "typeConversion",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "556:31:69",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                      "typeString": "contract MiniMeToken"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "536:51:69"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 18232,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "UnaryOperation",
+                    "operator": "delete",
+                    "prefix": true,
+                    "src": "597:25:69",
+                    "subExpression": {
+                      "argumentTypes": null,
+                      "baseExpression": {
+                        "argumentTypes": null,
+                        "id": 18229,
+                        "name": "tokenCache",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 18189,
+                        "src": "604:10:69",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_mapping$_t_address_$_t_address_$",
+                          "typeString": "mapping(address => address)"
+                        }
+                      },
+                      "id": 18231,
+                      "indexExpression": {
+                        "argumentTypes": null,
+                        "id": 18230,
+                        "name": "_owner",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 18205,
+                        "src": "615:6:69",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "nodeType": "IndexAccess",
+                      "src": "604:18:69",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 18233,
+                  "nodeType": "ExpressionStatement",
+                  "src": "597:25:69"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 18234,
+                    "name": "token",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 18222,
+                    "src": "639:5:69",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                      "typeString": "contract MiniMeToken"
+                    }
+                  },
+                  "functionReturnParameters": 18209,
+                  "id": 18235,
+                  "nodeType": "Return",
+                  "src": "632:12:69"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 18237,
+            "implemented": true,
+            "isConstructor": false,
+            "isDeclaredConst": false,
+            "modifiers": [],
+            "name": "_popTokenCache",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 18206,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 18205,
+                  "name": "_owner",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 18237,
+                  "src": "400:14:69",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 18204,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "400:7:69",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "399:16:69"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 18209,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 18208,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 18237,
+                  "src": "434:11:69",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                    "typeString": "contract MiniMeToken"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 18207,
+                    "name": "MiniMeToken",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 6845,
+                    "src": "434:11:69",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                      "typeString": "contract MiniMeToken"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "433:13:69"
+            },
+            "scope": 18238,
+            "src": "376:275:69",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 18239,
+        "src": "90:563:69"
+      }
+    ],
+    "src": "0:654:69"
+  },
+  "legacyAST": {
+    "absolutePath": "@aragon/templates-shared/contracts/TokenCache.sol",
+    "exportedSymbols": {
+      "TokenCache": [
+        18238
+      ]
+    },
+    "id": 18239,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 18181,
+        "literals": [
+          "solidity",
+          "0.4",
+          ".24"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:69"
+      },
+      {
+        "absolutePath": "@aragon/apps-shared-minime/contracts/MiniMeToken.sol",
+        "file": "@aragon/apps-shared-minime/contracts/MiniMeToken.sol",
+        "id": 18182,
+        "nodeType": "ImportDirective",
+        "scope": 18239,
+        "sourceUnit": 6887,
+        "src": "25:62:69",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 18238,
+        "linearizedBaseContracts": [
+          18238
+        ],
+        "name": "TokenCache",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": true,
+            "id": 18185,
+            "name": "ERROR_MISSING_TOKEN_CACHE",
+            "nodeType": "VariableDeclaration",
+            "scope": 18238,
+            "src": "116:82:69",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_string_memory",
+              "typeString": "string"
+            },
+            "typeName": {
+              "id": 18183,
+              "name": "string",
+              "nodeType": "ElementaryTypeName",
+              "src": "116:6:69",
+              "typeDescriptions": {
+                "typeIdentifier": "t_string_storage_ptr",
+                "typeString": "string"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "54454d504c4154455f4d495353494e475f544f4b454e5f4341434845",
+              "id": 18184,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "string",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "168:30:69",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_stringliteral_197108a42cabdd0ce209b6012b80388071804ff87851f28a27030e5190b97097",
+                "typeString": "literal_string \"TEMPLATE_MISSING_TOKEN_CACHE\""
+              },
+              "value": "TEMPLATE_MISSING_TOKEN_CACHE"
+            },
+            "visibility": "private"
+          },
+          {
+            "constant": false,
+            "id": 18189,
+            "name": "tokenCache",
+            "nodeType": "VariableDeclaration",
+            "scope": 18238,
+            "src": "205:48:69",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_mapping$_t_address_$_t_address_$",
+              "typeString": "mapping(address => address)"
+            },
+            "typeName": {
+              "id": 18188,
+              "keyType": {
+                "id": 18186,
+                "name": "address",
+                "nodeType": "ElementaryTypeName",
+                "src": "214:7:69",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                }
+              },
+              "nodeType": "Mapping",
+              "src": "205:28:69",
+              "typeDescriptions": {
+                "typeIdentifier": "t_mapping$_t_address_$_t_address_$",
+                "typeString": "mapping(address => address)"
+              },
+              "valueType": {
+                "id": 18187,
+                "name": "address",
+                "nodeType": "ElementaryTypeName",
+                "src": "225:7:69",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                }
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 18202,
+              "nodeType": "Block",
+              "src": "326:44:69",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 18200,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "baseExpression": {
+                        "argumentTypes": null,
+                        "id": 18196,
+                        "name": "tokenCache",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 18189,
+                        "src": "336:10:69",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_mapping$_t_address_$_t_address_$",
+                          "typeString": "mapping(address => address)"
+                        }
+                      },
+                      "id": 18198,
+                      "indexExpression": {
+                        "argumentTypes": null,
+                        "id": 18197,
+                        "name": "_owner",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 18193,
+                        "src": "347:6:69",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "nodeType": "IndexAccess",
+                      "src": "336:18:69",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 18199,
+                      "name": "_token",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 18191,
+                      "src": "357:6:69",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                        "typeString": "contract MiniMeToken"
+                      }
+                    },
+                    "src": "336:27:69",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "id": 18201,
+                  "nodeType": "ExpressionStatement",
+                  "src": "336:27:69"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 18203,
+            "implemented": true,
+            "isConstructor": false,
+            "isDeclaredConst": false,
+            "modifiers": [],
+            "name": "_cacheToken",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 18194,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 18191,
+                  "name": "_token",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 18203,
+                  "src": "281:18:69",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                    "typeString": "contract MiniMeToken"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 18190,
+                    "name": "MiniMeToken",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 6845,
+                    "src": "281:11:69",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                      "typeString": "contract MiniMeToken"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 18193,
+                  "name": "_owner",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 18203,
+                  "src": "301:14:69",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 18192,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "301:7:69",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "280:36:69"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 18195,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "326:0:69"
+            },
+            "scope": 18238,
+            "src": "260:110:69",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 18236,
+              "nodeType": "Block",
+              "src": "447:204:69",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "id": 18217,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "baseExpression": {
+                            "argumentTypes": null,
+                            "id": 18211,
+                            "name": "tokenCache",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 18189,
+                            "src": "465:10:69",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_mapping$_t_address_$_t_address_$",
+                              "typeString": "mapping(address => address)"
+                            }
+                          },
+                          "id": 18213,
+                          "indexExpression": {
+                            "argumentTypes": null,
+                            "id": 18212,
+                            "name": "_owner",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 18205,
+                            "src": "476:6:69",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_address",
+                              "typeString": "address"
+                            }
+                          },
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "IndexAccess",
+                          "src": "465:18:69",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "!=",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "30",
+                              "id": 18215,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "number",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "495:1:69",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              },
+                              "value": "0"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              }
+                            ],
+                            "id": 18214,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "lValueRequested": false,
+                            "nodeType": "ElementaryTypeNameExpression",
+                            "src": "487:7:69",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_type$_t_address_$",
+                              "typeString": "type(address)"
+                            },
+                            "typeName": "address"
+                          },
+                          "id": 18216,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "typeConversion",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "487:10:69",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "src": "465:32:69",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 18218,
+                        "name": "ERROR_MISSING_TOKEN_CACHE",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 18185,
+                        "src": "499:25:69",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_string_memory",
+                          "typeString": "string memory"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_string_memory",
+                          "typeString": "string memory"
+                        }
+                      ],
+                      "id": 18210,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        18256,
+                        18257
+                      ],
+                      "referencedDeclaration": 18257,
+                      "src": "457:7:69",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 18219,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "457:68:69",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 18220,
+                  "nodeType": "ExpressionStatement",
+                  "src": "457:68:69"
+                },
+                {
+                  "assignments": [
+                    18222
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 18222,
+                      "name": "token",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 18237,
+                      "src": "536:17:69",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                        "typeString": "contract MiniMeToken"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 18221,
+                        "name": "MiniMeToken",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 6845,
+                        "src": "536:11:69",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                          "typeString": "contract MiniMeToken"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 18228,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "baseExpression": {
+                          "argumentTypes": null,
+                          "id": 18224,
+                          "name": "tokenCache",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 18189,
+                          "src": "568:10:69",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_mapping$_t_address_$_t_address_$",
+                            "typeString": "mapping(address => address)"
+                          }
+                        },
+                        "id": 18226,
+                        "indexExpression": {
+                          "argumentTypes": null,
+                          "id": 18225,
+                          "name": "_owner",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 18205,
+                          "src": "579:6:69",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "nodeType": "IndexAccess",
+                        "src": "568:18:69",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      ],
+                      "id": 18223,
+                      "name": "MiniMeToken",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 6845,
+                      "src": "556:11:69",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_contract$_MiniMeToken_$6845_$",
+                        "typeString": "type(contract MiniMeToken)"
+                      }
+                    },
+                    "id": 18227,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "typeConversion",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "556:31:69",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                      "typeString": "contract MiniMeToken"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "536:51:69"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 18232,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "UnaryOperation",
+                    "operator": "delete",
+                    "prefix": true,
+                    "src": "597:25:69",
+                    "subExpression": {
+                      "argumentTypes": null,
+                      "baseExpression": {
+                        "argumentTypes": null,
+                        "id": 18229,
+                        "name": "tokenCache",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 18189,
+                        "src": "604:10:69",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_mapping$_t_address_$_t_address_$",
+                          "typeString": "mapping(address => address)"
+                        }
+                      },
+                      "id": 18231,
+                      "indexExpression": {
+                        "argumentTypes": null,
+                        "id": 18230,
+                        "name": "_owner",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 18205,
+                        "src": "615:6:69",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "nodeType": "IndexAccess",
+                      "src": "604:18:69",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 18233,
+                  "nodeType": "ExpressionStatement",
+                  "src": "597:25:69"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 18234,
+                    "name": "token",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 18222,
+                    "src": "639:5:69",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                      "typeString": "contract MiniMeToken"
+                    }
+                  },
+                  "functionReturnParameters": 18209,
+                  "id": 18235,
+                  "nodeType": "Return",
+                  "src": "632:12:69"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 18237,
+            "implemented": true,
+            "isConstructor": false,
+            "isDeclaredConst": false,
+            "modifiers": [],
+            "name": "_popTokenCache",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 18206,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 18205,
+                  "name": "_owner",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 18237,
+                  "src": "400:14:69",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 18204,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "400:7:69",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "399:16:69"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 18209,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 18208,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 18237,
+                  "src": "434:11:69",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                    "typeString": "contract MiniMeToken"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 18207,
+                    "name": "MiniMeToken",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 6845,
+                    "src": "434:11:69",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_MiniMeToken_$6845",
+                      "typeString": "contract MiniMeToken"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "433:13:69"
+            },
+            "scope": 18238,
+            "src": "376:275:69",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 18239,
+        "src": "90:563:69"
+      }
+    ],
+    "src": "0:654:69"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.24+commit.e67f0147.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.19",
+  "updatedAt": "2019-12-18T00:52:30.720Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

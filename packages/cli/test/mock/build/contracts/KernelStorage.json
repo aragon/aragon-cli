@@ -1,0 +1,322 @@
+{
+  "contractName": "KernelStorage",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "apps",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "recoveryVaultAppId",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.4.24+commit.e67f0147\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes32\"},{\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"apps\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"recoveryVaultAppId\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"@aragon/os/contracts/kernel/KernelStorage.sol\":\"KernelStorage\"},\"evmVersion\":\"byzantium\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":10000},\"remappings\":[]},\"sources\":{\"@aragon/os/contracts/kernel/KernelStorage.sol\":{\"keccak256\":\"0x682eac86f7a617281098c15cadbaeec72a50cbe49101861a1454519df1718a4c\",\"urls\":[\"bzzr://f988478fa117c50841e0ecebb437b5bce214c3965de387e248e72f3266e86be5\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50610114806100206000396000f30060806040526004361060485763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416634558850c8114604d57806386070cfe14608e575b600080fd5b348015605857600080fd5b50606560043560243560b2565b6040805173ffffffffffffffffffffffffffffffffffffffff9092168252519081900360200190f35b348015609957600080fd5b5060a060e2565b60408051918252519081900360200190f35b600060208181529281526040808220909352908152205473ffffffffffffffffffffffffffffffffffffffff1681565b600154815600a165627a7a72305820b7afcbfed4927ccc0cd2d05141555536f70cdffa6a0126e343f89727af3e6ecb0029",
+  "deployedBytecode": "0x60806040526004361060485763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416634558850c8114604d57806386070cfe14608e575b600080fd5b348015605857600080fd5b50606560043560243560b2565b6040805173ffffffffffffffffffffffffffffffffffffffff9092168252519081900360200190f35b348015609957600080fd5b5060a060e2565b60408051918252519081900360200190f35b600060208181529281526040808220909352908152205473ffffffffffffffffffffffffffffffffffffffff1681565b600154815600a165627a7a72305820b7afcbfed4927ccc0cd2d05141555536f70cdffa6a0126e343f89727af3e6ecb0029",
+  "sourceMap": "26:170:59:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;26:170:59;;;;;;;",
+  "deployedSourceMap": "26:170:59:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;93:61;;8:9:-1;5:2;;;30:1;27;20:12;5:2;-1:-1;93:61:59;;;;;;;;;;;;;;;;;;;;;;;;;;160:33;;8:9:-1;5:2;;;30:1;27;20:12;5:2;160:33:59;;;;;;;;;;;;;;;;;;;;93:61;;;;;;;;;;;;;;;;;;;;;;;;:::o;160:33::-;;;;:::o",
+  "source": "pragma solidity 0.4.24;\n\n\ncontract KernelStorage {\n    // namespace => app id => address\n    mapping (bytes32 => mapping (bytes32 => address)) public apps;\n    bytes32 public recoveryVaultAppId;\n}\n",
+  "sourcePath": "@aragon/os/contracts/kernel/KernelStorage.sol",
+  "ast": {
+    "absolutePath": "@aragon/os/contracts/kernel/KernelStorage.sol",
+    "exportedSymbols": {
+      "KernelStorage": [
+        15466
+      ]
+    },
+    "id": 15467,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 15457,
+        "literals": [
+          "solidity",
+          "0.4",
+          ".24"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:59"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 15466,
+        "linearizedBaseContracts": [
+          15466
+        ],
+        "name": "KernelStorage",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 15463,
+            "name": "apps",
+            "nodeType": "VariableDeclaration",
+            "scope": 15466,
+            "src": "93:61:59",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_mapping$_t_bytes32_$_t_mapping$_t_bytes32_$_t_address_$_$",
+              "typeString": "mapping(bytes32 => mapping(bytes32 => address))"
+            },
+            "typeName": {
+              "id": 15462,
+              "keyType": {
+                "id": 15458,
+                "name": "bytes32",
+                "nodeType": "ElementaryTypeName",
+                "src": "102:7:59",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes32",
+                  "typeString": "bytes32"
+                }
+              },
+              "nodeType": "Mapping",
+              "src": "93:49:59",
+              "typeDescriptions": {
+                "typeIdentifier": "t_mapping$_t_bytes32_$_t_mapping$_t_bytes32_$_t_address_$_$",
+                "typeString": "mapping(bytes32 => mapping(bytes32 => address))"
+              },
+              "valueType": {
+                "id": 15461,
+                "keyType": {
+                  "id": 15459,
+                  "name": "bytes32",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "122:7:59",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  }
+                },
+                "nodeType": "Mapping",
+                "src": "113:28:59",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_mapping$_t_bytes32_$_t_address_$",
+                  "typeString": "mapping(bytes32 => address)"
+                },
+                "valueType": {
+                  "id": 15460,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "133:7:59",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                }
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "constant": false,
+            "id": 15465,
+            "name": "recoveryVaultAppId",
+            "nodeType": "VariableDeclaration",
+            "scope": 15466,
+            "src": "160:33:59",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bytes32",
+              "typeString": "bytes32"
+            },
+            "typeName": {
+              "id": 15464,
+              "name": "bytes32",
+              "nodeType": "ElementaryTypeName",
+              "src": "160:7:59",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bytes32",
+                "typeString": "bytes32"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 15467,
+        "src": "26:170:59"
+      }
+    ],
+    "src": "0:197:59"
+  },
+  "legacyAST": {
+    "absolutePath": "@aragon/os/contracts/kernel/KernelStorage.sol",
+    "exportedSymbols": {
+      "KernelStorage": [
+        15466
+      ]
+    },
+    "id": 15467,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 15457,
+        "literals": [
+          "solidity",
+          "0.4",
+          ".24"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:59"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 15466,
+        "linearizedBaseContracts": [
+          15466
+        ],
+        "name": "KernelStorage",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 15463,
+            "name": "apps",
+            "nodeType": "VariableDeclaration",
+            "scope": 15466,
+            "src": "93:61:59",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_mapping$_t_bytes32_$_t_mapping$_t_bytes32_$_t_address_$_$",
+              "typeString": "mapping(bytes32 => mapping(bytes32 => address))"
+            },
+            "typeName": {
+              "id": 15462,
+              "keyType": {
+                "id": 15458,
+                "name": "bytes32",
+                "nodeType": "ElementaryTypeName",
+                "src": "102:7:59",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes32",
+                  "typeString": "bytes32"
+                }
+              },
+              "nodeType": "Mapping",
+              "src": "93:49:59",
+              "typeDescriptions": {
+                "typeIdentifier": "t_mapping$_t_bytes32_$_t_mapping$_t_bytes32_$_t_address_$_$",
+                "typeString": "mapping(bytes32 => mapping(bytes32 => address))"
+              },
+              "valueType": {
+                "id": 15461,
+                "keyType": {
+                  "id": 15459,
+                  "name": "bytes32",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "122:7:59",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  }
+                },
+                "nodeType": "Mapping",
+                "src": "113:28:59",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_mapping$_t_bytes32_$_t_address_$",
+                  "typeString": "mapping(bytes32 => address)"
+                },
+                "valueType": {
+                  "id": 15460,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "133:7:59",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                }
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "constant": false,
+            "id": 15465,
+            "name": "recoveryVaultAppId",
+            "nodeType": "VariableDeclaration",
+            "scope": 15466,
+            "src": "160:33:59",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bytes32",
+              "typeString": "bytes32"
+            },
+            "typeName": {
+              "id": 15464,
+              "name": "bytes32",
+              "nodeType": "ElementaryTypeName",
+              "src": "160:7:59",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bytes32",
+                "typeString": "bytes32"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 15467,
+        "src": "26:170:59"
+      }
+    ],
+    "src": "0:197:59"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.24+commit.e67f0147.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.19",
+  "updatedAt": "2019-12-18T00:52:30.696Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

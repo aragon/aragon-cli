@@ -2,7 +2,7 @@ import path from 'path'
 import TaskList from 'listr'
 import { blue, green } from 'chalk'
 //
-import { compileContracts } from '../helpers/truffle-compile'
+import { compileContracts } from '../helpers/truffle-runner'
 import { ensureWeb3 } from '../helpers/web3-fallback'
 import deployArtifacts from '../helpers/truffle-deploy-artifacts'
 import listrOpts from '../helpers/listr-options'

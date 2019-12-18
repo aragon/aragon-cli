@@ -45,7 +45,8 @@ export const handler = async function({
       {
         title: `Fetching ${bold(apmRepo)}@${apmRepoVersion}`,
         skip: ctx => ctx.repo, // only run if repo isn't passed
-        task: getRepoTask({ apm, apmRepo, apmRepoVersion }),
+        task: async (ctx, task) =>
+          getRepoTask({ apm, apmRepo, apmRepoVersion }),
       },
       {
         title: 'Upgrading app',

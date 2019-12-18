@@ -69,7 +69,8 @@ export const handler = async function({
     [
       {
         title: `Fetching ${bold(apmRepo)}@${apmRepoVersion}`,
-        task: await getRepoTask({ apm, apmRepo, apmRepoVersion }),
+        task: async (ctx, task) =>
+          getRepoTask({ apm, apmRepo, apmRepoVersion }),
       },
       {
         title: `Checking installed version`,
