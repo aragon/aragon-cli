@@ -20,7 +20,7 @@ import {
 
 // cmds
 import {
-  devchainTask,
+  task as devchainTask,
   printAccounts,
   printMnemonic,
   printResetNotice,
