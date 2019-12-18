@@ -31,7 +31,7 @@
   "author": "Aragon Association <legal@aragon.org>",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@aragon/abis": "^1.0.0",
+    "@aragon/abis": "^1.1.0",
     "@aragon/apm": "^3.1.2-beta.2",
     "@aragon/apps-shared-minime": "^1.0.2",
     "@aragon/aragen": "^6.0.0-beta.1",

@@ -64,7 +64,6 @@
     "find-process": "^1.4.2",
     "find-up": "^4.0.0",
     "fs-extra": "^8.0.1",
-    "ganache-cli": "^6.7.0",
     "git-clone": "^0.1.0",
     "http-server": "^0.12.0",
     "ignore": "^4.0.6",
@@ -91,6 +90,7 @@
     "yargs": "git://github.com/yargs/yargs.git#fe380cd356aa33aef0449facd59c22cab8930ac9"
   },
   "devDependencies": {
+    "@aragon/abis": "^1.1.0",
     "@aragon/apps-agent": "^2.0.0",
     "@aragon/apps-finance": "^3.0.0",
     "@aragon/apps-payroll": "^1.0.0",
@@ -99,7 +99,6 @@
     "@aragon/apps-token-manager": "^2.0.0",
     "@aragon/apps-vault": "^4.0.0",
     "@aragon/apps-voting": "^2.0.0",
-    "@aragon/os": "^4.3.0",
     "@aragon/templates-shared": "^1.0.1",
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",

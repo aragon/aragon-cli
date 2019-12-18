@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
-import "@aragon/os/contracts/apps/AragonApp.sol";
-import "@aragon/os/contracts/lib/math/SafeMath.sol";
+import "@aragon/abis/os/contracts/apps/AragonApp.sol";
+import "@aragon/abis/os/contracts/lib/math/SafeMath.sol";
 
 
 contract CounterApp is AragonApp {

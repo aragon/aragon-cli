@@ -22,8 +22,6 @@ export async function getInstalledApps(dao, options) {
     provider: options.provider,
   })
 
-  console.log('>>> luego de wrapper')
-
   return getApps(wrapper)
 }
 

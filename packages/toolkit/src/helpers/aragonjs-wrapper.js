@@ -130,7 +130,6 @@ export async function initAragonJS(
  * @returns {Promise<Object[]>} Installed apps
  */
 export async function getApps(wrapper) {
-  console.log('>>> llega a getApps')
   return (
     wrapper.apps
       // If the app list contains a single app, wait for more
