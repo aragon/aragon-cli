@@ -11,18 +11,17 @@ const mockappPath = path.resolve('./test/mock')
 const cliPath = '../../dist/cli.js'
 
 test('should run an aragon app successfully on IPFS', async t => {
-  // arrange
   const publishDirPath = path.resolve(`${mockappPath}/${testSandbox}`)
 
-  // act
   const { kill } = await startProcess({
     cmd: 'node',
     args: [cliPath, 'run', '--files', 'app', '--publish-dir', publishDirPath],
     execaOpts: {
       cwd: mockappPath,
       localDir: '.',
+      detached: true,
     },
-    readyOutput: 'Opening http://localhost:',
+    readyOutput: 'Open http://localhost:',
     timeout: RUN_CMD_TIMEOUT,
     logger: console.log,
   })
@@ -30,7 +29,6 @@ test('should run an aragon app successfully on IPFS', async t => {
   // cleanup
   await kill()
 
-  // assert
   t.pass()
 })
 
