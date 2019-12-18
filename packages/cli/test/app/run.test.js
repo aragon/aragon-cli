@@ -88,7 +88,7 @@ test.serial('should run an aragon app successfully on HTTP', async t => {
   // start app server
   const packageRoot = getPackageRoot(__dirname)
   const bin = getBinary('http-server', packageRoot)
-  const serverProcess = execa(bin, ['dist', '-p', appPort], {
+  execa(bin, ['dist', '-p', appPort], {
     cwd: mockappPath,
   }).catch(err => {
     throw new Error(err)
@@ -117,9 +117,6 @@ test.serial('should run an aragon app successfully on HTTP', async t => {
 
   // cleanup
   await kill()
-  await serverProcess.kill('SIGTERM', {
-    forceKillAfterTimeout: 2000,
-  })
 
   t.pass()
 })
@@ -130,12 +127,12 @@ test.serial(
     const publishDirPath = path.resolve(
       `${mockappPath}/${testSandbox}/http-template`
     )
-    const appPort = 8001
+    const appPort = 8002
 
     // start app server
     const packageRoot = getPackageRoot(__dirname)
     const bin = getBinary('http-server', packageRoot)
-    const serverProcess = execa(bin, ['dist', '-p', appPort], {
+    execa(bin, ['dist', '-p', appPort], {
       cwd: mockappPath,
     }).catch(err => {
       throw new Error(err)
@@ -180,9 +177,6 @@ test.serial(
 
     // cleanup
     await kill()
-    await serverProcess.kill('SIGTERM', {
-      forceKillAfterTimeout: 2000,
-    })
 
     t.pass()
   }
