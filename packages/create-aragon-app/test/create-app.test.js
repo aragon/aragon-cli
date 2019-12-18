@@ -7,19 +7,21 @@ const testSandbox = './.tmp'
 const projectName = 'foobar'
 const projectPath = `${testSandbox}/${projectName}`
 
+test.before(async t => {
+  if (await pathExists(projectPath)) await remove(projectPath)
+})
+
 test.after.always(async () => {
   await remove(projectPath)
 })
 
 test('should create a new aragon app based on the react boilerplate', async t => {
-  // arrange
   ensureDirSync(testSandbox)
   const repoPath = `${projectPath}/.git`
   const arappPath = `${projectPath}/arapp.json`
   const packageJsonPath = `${projectPath}/package.json`
   const licensePath = `${projectPath}/LICENSE`
 
-  // act
   const { stdout } = await runCreateAragonApp([
     projectName,
     'react',
@@ -30,7 +32,6 @@ test('should create a new aragon app based on the react boilerplate', async t =>
   const packageJson = await readJson(packageJsonPath)
   const arapp = await readJson(arappPath)
 
-  // assert
   t.true(normalizeOutput(stdout).includes('Created new application'))
   t.true(await pathExists(projectPath))
   t.true(await pathExists(arappPath))
