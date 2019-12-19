@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "7.0.0-beta.12",
+  "version": "7.0.1",
   "description": "Aragon command-line tools",
   "main": "./dist/toolkit.js",
   "bin": {
@@ -49,12 +49,13 @@
   "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
     "@aragon/apm": "^3.1.2-beta.2",
-    "@aragon/toolkit": "^0.0.1-beta.10",
+    "@aragon/toolkit": "^0.0.1",
     "@aragon/truffle-config-v5": "^1.0.0",
     "ajv": "^6.6.2",
     "bn.js": "^5.0.0",
     "chalk": "^3.0.0",
     "cli-table": "^0.3.1",
+    "dev-null": "^0.1.1",
     "engine-check": "^1.0.1",
     "eth-ens-namehash": "^2.0.8",
     "execa": "^3.0.0",
@@ -107,7 +108,6 @@
     "babel-eslint": "^10.0.1",
     "babel-plugin-istanbul": "^5.2.0",
     "core-js": "^3.1.4",
-    "dev-null": "^0.1.1",
     "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
     "eslint-config-standard": "^14.1.0",

@@ -1,6 +1,6 @@
 {
   "name": "create-aragon-app",
-  "version": "2.2.14",
+  "version": "2.5.0",
   "description": "Aragon command-line tool to create aragon apps",
   "bin": {
     "create-aragon-app": "./dist/index.js"
@@ -17,6 +17,9 @@
     "test:update-snapshots": "npm run test:clean && npm run test -- --update-snapshots",
     "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly npm run test"
   },
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/aragon/aragon-cli/tree/master/packages/create-aragon-app"
