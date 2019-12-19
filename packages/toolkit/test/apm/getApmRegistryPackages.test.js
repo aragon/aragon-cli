@@ -61,5 +61,8 @@ test('fails if apmOptions does not contain an ens-registry property', async t =>
     )
   })
 
-  t.is(error.message, 'ens-registry not found in given apm options.')
+  t.is(
+    error.message,
+    'The EthJsENS Constructor requires a network or registry address.'
+  )
 })

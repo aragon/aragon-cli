@@ -24,7 +24,7 @@ test.before('setup', async t => {
   web3 = await getLocalWeb3()
 
   const apmOpts = getApmOptions()
-  ensRegistryAddress = apmOpts['ens-registry']
+  ensRegistryAddress = apmOpts.ensRegistryAddress
 
   dao = await createDAO()
 

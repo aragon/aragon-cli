@@ -6,7 +6,7 @@ import proxyquire from 'proxyquire'
 
 const apmRepoName = 'test.aragonpm.eth'
 const apmOptions = {}
-apmOptions['ens-registry'] = '0x1234512345123451234512345123451234512345'
+apmOptions.ensRegistryAddress = '0x1234512345123451234512345123451234512345'
 const gasPrice = 1
 const txOptions = { gasPrice }
 const grantees = ['0x1234512345123451234512345123451234512345']

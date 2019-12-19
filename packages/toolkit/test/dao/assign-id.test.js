@@ -14,7 +14,9 @@ test.before('setup and successful call', async t => {
 
   daoAddress = (await web3.eth.getAccounts())[2]
 
-  ensRegistry = getApmOptions()['ens-registry']
+  const apmOptions = getApmOptions()
+
+  ensRegistry = apmOptions.ensRegistryAddress
 
   daoId = `thedao${new Date().getTime()}`
   await assignId(daoAddress, daoId, { web3, ensRegistry })
