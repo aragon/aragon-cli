@@ -177,7 +177,6 @@ export const runSetupTask = ({
   if (onlyContent) {
     contract = ZERO_ADDRESS
   }
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
 
   return new TaskList(
@@ -343,7 +342,6 @@ export const runPrepareForPublishTask = ({
   contractAddress,
   deployArtifacts,
 }) => {
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   const apm = APM(web3, apmOptions)
 
   return new TaskList(
@@ -533,7 +531,6 @@ export const runPublishTask = ({
   methodName,
   params,
 }) => {
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
   return new TaskList(
     [
       {

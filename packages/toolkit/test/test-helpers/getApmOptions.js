@@ -5,7 +5,7 @@ export function getApmRegistryName() {
 export function getApmOptions() {
   const options = {}
 
-  options['ens-registry'] = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1'
+  options.ensRegistryAddress = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1'
 
   options.ipfs = {
     rpc: {

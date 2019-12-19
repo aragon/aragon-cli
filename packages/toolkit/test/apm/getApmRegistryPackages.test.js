@@ -48,18 +48,3 @@ test('properly calls the progressHandler', t => {
   t.true(progressHandler.getCall(0).calledWith(1))
   t.true(progressHandler.getCall(1).calledWith(2))
 })
-
-test('fails if apmOptions does not contain an ens-registry property', async t => {
-  const emptyApmOptions = {}
-
-  const error = await t.throwsAsync(async () => {
-    await getApmRegistryPackages(
-      web3,
-      apmRegistryName,
-      emptyApmOptions,
-      progressHandler
-    )
-  })
-
-  t.is(error.message, 'ens-registry not found in given apm options.')
-})

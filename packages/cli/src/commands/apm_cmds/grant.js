@@ -27,7 +27,6 @@ export const handler = async function({
   grantees,
 }) {
   const web3 = await ensureWeb3(network)
-  apmOptions.ensRegistryAddress = apmOptions['ens-registry']
 
   const progressHandler = (step, data) => {
     switch (step) {

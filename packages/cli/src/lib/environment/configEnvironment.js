@@ -1,14 +1,18 @@
 import Web3 from 'web3'
-import { merge } from 'lodash'
+import url from 'url'
 //
 import defaultEnvironments from '../../../config/environments.default'
 import defaultNetworks from '../../../config/truffle.default'
+import { DEVCHAIN_ENS } from '../../commands/devchain_cmds/utils/constants'
 
 const FRAME_ENDPOINT = 'ws://localhost:1248'
 const FRAME_ORIGIN = 'aragonCLI'
 
 const ARAGON_RINKEBY_ENDPOINT = 'wss://rinkeby.eth.aragon.network/ws'
 const ARAGON_MAINNET_ENDPOINT = 'wss://mainnet.eth.aragon.network/ws'
+
+const IPFS_RPC = 'http://localhost:5001#default'
+const IPFS_GATEWAY = 'http://localhost:8080/ipfs'
 
 export class NoEnvironmentInArapp extends Error {}
 export class NoEnvironmentInDefaults extends Error {}
@@ -27,6 +31,25 @@ function getEnv(arapp, environment) {
     const env = defaultEnvironments[environment]
     if (!env) throw new NoEnvironmentInDefaults(environment)
     return env
+  }
+}
+
+const configureAPM = (ipfsRPC, gateway, ensRegistryAddress) => {
+  const rpc = {}
+  if (ipfsRPC) {
+    const uri = new url.URL(ipfsRPC)
+    Object.assign(rpc, {
+      protocol: uri.protocol.replace(':', ''),
+      host: uri.hostname,
+      port: parseInt(uri.port),
+    })
+    if (uri.hash === '#default') {
+      rpc.default = true
+    }
+  }
+  return {
+    ensRegistryAddress,
+    ipfs: { rpc, gateway },
   }
 }
 
@@ -68,7 +91,9 @@ export function configEnvironment({
   ignoreNetwork,
   useFrame,
   environment,
-  apm,
+  ensRegistry,
+  ipfsRpc,
+  ipfsGateway,
   arapp,
   truffleConfig = defaultNetworks,
 }) {
@@ -93,12 +118,11 @@ export function configEnvironment({
     : null
 
   return {
-    apm: {
-      'ens-registry': env.registry,
-      ...merge(env.apm || {}, apm || {}),
-    },
-    // if there is no arapp.json and the command is not init default to the "global" config
-    // designed for the dao commands including dao acl
+    apm: configureAPM(
+      ipfsRpc || env.wsRPC || IPFS_RPC,
+      ipfsGateway || (env.apm && env.apm.ipfs.gateway) || IPFS_GATEWAY,
+      ensRegistry || env.registry || DEVCHAIN_ENS
+    ),
     network: configureNetwork(env.network, truffleConfig, networkOptions),
     wsProvider: wsProviderUrl
       ? new Web3.providers.WebsocketProvider(wsProviderUrl)

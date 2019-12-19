@@ -46,7 +46,7 @@ export const getDaoAddressPermissionsApps = ({
       }
     }
 
-    initAragonJS(dao, apm['ens-registry'], {
+    initAragonJS(dao, apm.ensRegistryAddress, {
       provider: web3Provider,
       ipfsConf,
       onPermissions: _permissions => {

@@ -31,7 +31,7 @@ export function configCliMiddleware(argv) {
     const ignoreNetCmd = new Set([''])
     const ignoreNetSubCmd = new Set(['devchain', 'ipfs'])
     const ignoreNetwork = ignoreNetSubCmd.has(subcmd) || ignoreNetCmd.has(cmd)
-    const { useFrame, environment, apm } = argv
+    const { useFrame, environment, ensRegistry, ipfsRpc, ipfsGateway } = argv
 
     const {
       arapp: arappMutated,
@@ -42,7 +42,9 @@ export function configCliMiddleware(argv) {
       ignoreNetwork,
       useFrame,
       environment,
-      apm,
+      ensRegistry,
+      ipfsRpc,
+      ipfsGateway,
       arapp,
       truffleConfig: arapp && getTruffleConfig(),
     })

@@ -1,12 +1,10 @@
 import 'source-map-support/register'
-import url from 'url'
 import yargs from 'yargs'
 import { toWei } from 'web3-utils'
 //
 import { configCliMiddleware } from './middleware'
 import * as AragonReporter from './reporters/AragonReporter'
 import { findProjectRoot } from './util'
-import { DEVCHAIN_ENS } from './commands/devchain_cmds/utils/constants'
 
 const DEFAULT_GAS_PRICE = require('../package.json').aragon.defaultGasPrice
 
@@ -40,6 +38,7 @@ const cli = yargs
    * OPTIONS
    */
   .option('gas-price', {
+    // TODO: Use ethgasprice with inquier promt list
     description: 'Gas price in Gwei',
     default: DEFAULT_GAS_PRICE,
     coerce: gasPrice => {
@@ -47,6 +46,7 @@ const cli = yargs
     },
   })
   .option('cwd', {
+    // TODO: remove once move to power cli
     description: 'The project working directory',
     default: () => {
       try {
@@ -63,40 +63,19 @@ const cli = yargs
   })
   .option('environment', {
     description: 'The environment in your arapp.json that you want to use',
-    // default: 'default'
   })
   // APM
-  .option('apm.ens-registry', {
+  .option('ens-registry', {
     description:
       "Address of the ENS registry. This will be overwritten if the selected '--environment' from your arapp.json includes a `registry` property",
-    default: DEVCHAIN_ENS,
   })
-  .group(['apm.ens-registry'], 'APM:')
-  .option('apm.ipfs.rpc', {
+  .option('ipfs-rpc', {
     description: 'An URI to the IPFS node used to publish files',
-    default: 'http://localhost:5001#default',
   })
-  .option('apm.ipfs.gateway', {
+  .option('ipfs-gateway', {
     description: 'An URI to the IPFS Gateway to read files from',
-    default: 'http://localhost:8080/ipfs',
   })
-  .group(['apm.ipfs.rpc', 'apm.ipfs.gateway'], 'APM providers:')
-  .option('apm', {
-    coerce: apm => {
-      if (apm.ipfs && apm.ipfs.rpc) {
-        const uri = new url.URL(apm.ipfs.rpc)
-        apm.ipfs.rpc = {
-          protocol: uri.protocol.replace(':', ''),
-          host: uri.hostname,
-          port: parseInt(uri.port),
-        }
-        if (uri.hash === '#default') {
-          apm.ipfs.rpc.default = true
-        }
-      }
-      return apm
-    },
-  })
+  .group(['ipfs-rpc', 'ipfs-gateway', 'ens-registry'], 'APM:')
 
 AragonReporter.configure(cli)
 cli.middleware(MIDDLEWARES)

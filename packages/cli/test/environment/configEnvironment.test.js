@@ -65,14 +65,13 @@ const arapp = {
 test('configEnvironment - custom environment - rinkeby', t => {
   const config = configEnvironment({
     environment: customEnvironment,
-    network: '',
     arapp,
   })
 
   const selectedEnv = arapp.environments[customEnvironment]
   t.is(config.network.name, selectedEnv.network, 'Wrong network name')
   t.is(
-    config.apm['ens-registry'],
+    config.apm.ensRegistryAddress,
     selectedEnv.registry,
     'Wrong registry address'
   )

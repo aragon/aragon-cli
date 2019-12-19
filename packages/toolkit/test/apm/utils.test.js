@@ -6,7 +6,7 @@ import proxyquire from 'proxyquire'
 
 const apmRepoName = 'test.aragonpm.eth'
 const apmOptions = {}
-apmOptions['ens-registry'] = '0x1234512345123451234512345123451234512345'
+apmOptions.ensRegistryAddress = '0x1234512345123451234512345123451234512345'
 const gasPrice = 1
 const txOptions = { gasPrice }
 const grantees = ['0x1234512345123451234512345123451234512345']
@@ -277,23 +277,4 @@ test('APM constructor gets called with the appropriate parameters', async t => {
   )
 
   t.true(apmStub.calledOnceWith(web3Stub, apmOptions))
-})
-
-test('fails if apmOptions does not contain an ens-registry property', async t => {
-  const { grantNewVersionsPermission, web3Stub } = t.context
-
-  const emptyApmOptions = {}
-
-  const error = await t.throwsAsync(async () => {
-    await grantNewVersionsPermission(
-      web3Stub,
-      apmRepoName,
-      emptyApmOptions,
-      grantees,
-      progressHandler,
-      txOptions
-    )
-  })
-
-  t.is(error.message, 'ens-registry not found in given apm options.')
 })

@@ -13,7 +13,7 @@ const ipfsConf = {
   gateway: 'http://localhost:8080/ipfs',
 }
 const apm = {
-  'ens-registry': '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1',
+  ensRegistryAddress: '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1',
   ipfs: ipfsConf,
 }
 
