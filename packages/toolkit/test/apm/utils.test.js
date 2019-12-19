@@ -278,25 +278,3 @@ test('APM constructor gets called with the appropriate parameters', async t => {
 
   t.true(apmStub.calledOnceWith(web3Stub, apmOptions))
 })
-
-test('fails if apmOptions does not contain an ens-registry property', async t => {
-  const { grantNewVersionsPermission, web3Stub } = t.context
-
-  const emptyApmOptions = {}
-
-  const error = await t.throwsAsync(async () => {
-    await grantNewVersionsPermission(
-      web3Stub,
-      apmRepoName,
-      emptyApmOptions,
-      grantees,
-      progressHandler,
-      txOptions
-    )
-  })
-
-  t.is(
-    error.message,
-    'The EthJsENS Constructor requires a network or registry address.'
-  )
-})

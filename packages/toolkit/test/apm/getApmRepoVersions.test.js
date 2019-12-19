@@ -27,13 +27,3 @@ test('retrieves the expected versions info', t => {
 
   t.pass()
 })
-
-test('fails if apmOptions does not contain an ens-registry property', async t => {
-  const emptyApmOptions = {}
-
-  const error = await t.throwsAsync(async () => {
-    await getApmRepoVersions(web3, apmRepoName, emptyApmOptions)
-  })
-
-  t.is(error.message, 'ens-registry not found in given apm options.')
-})

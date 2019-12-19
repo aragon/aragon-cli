@@ -108,20 +108,3 @@ test('Should throw when no grantees are provided', async t => {
     )
   )
 })
-
-test('fails if apmOptions does not contain an ens-registry property', async t => {
-  const emptyApmOptions = {}
-
-  const error = await t.throwsAsync(async () => {
-    await grantNewVersionsPermission(
-      web3,
-      apmRepoName,
-      emptyApmOptions,
-      grantees,
-      progressHandler,
-      txOptions
-    )
-  })
-
-  t.is(error.message, 'ens-registry not found in given apm options.')
-})
