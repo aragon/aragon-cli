@@ -29,5 +29,11 @@ npm run pretest
 And then in packages/toolkit, run:
 
 ```sh
-npm run test
+npm test
+```
+
+To test only one file, try:
+
+```sh
+npm test -- <path to test file>
 ```

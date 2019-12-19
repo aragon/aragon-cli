@@ -149,3 +149,17 @@ npm install
 [toolkit-npm-link]: https://npmjs.org/package/@aragon/toolkit
 [toolkit-npm-badge-nightly]: https://img.shields.io/npm/v/@aragon/toolkit/nightly.svg?style=flat-square&color=blueviolet
 [toolkit-downloads-badge]: https://img.shields.io/npm/dm/@aragon/toolkit.svg?style=flat-square
+
+## Tests
+
+In the root of the repository, run:
+
+```sh
+npm run pretest
+```
+
+And then run:
+
+```sh
+npm test
+```
