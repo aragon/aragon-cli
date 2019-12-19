@@ -5,9 +5,9 @@
 	"requires": true,
 	"dependencies": {
 		"@aragon/abis": {
-			"version": "1.0.1",
-			"resolved": "https://registry.npmjs.org/@aragon/abis/-/abis-1.0.1.tgz",
-			"integrity": "sha512-+ObDY9H0GKGcPJOCeHftc984dwxtvvxNGR2QyAsQhkyqCIejHB81tMbEf2ys44k3NsOvwS3AXonvxKo2izd2VQ=="
+			"version": "1.1.0",
+			"resolved": "https://registry.npmjs.org/@aragon/abis/-/abis-1.1.0.tgz",
+			"integrity": "sha512-SbdF3JkU+57N19GEENtUvs/nsjOKdK+YlG35o3qdhK8AMZO+AWZU3wb5FyezR4hHHDZfijxhzYTXGIf0zNAdPQ=="
 		},
 		"@aragon/apm": {
 			"version": "3.1.2-beta.2",

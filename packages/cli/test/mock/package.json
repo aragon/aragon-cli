@@ -1,0 +1,12 @@
+{
+  "name": "mock-app",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "build": "cp -r app dist"
+  }
+}

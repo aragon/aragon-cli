@@ -4,8 +4,7 @@ import { readJson, writeJson } from 'fs-extra'
 import namehash from 'eth-ens-namehash'
 import taskInput from 'listr-input'
 import { keccak256 } from 'web3-utils'
-import { extract } from '@aragon/toolkit'
-
+import { extractContractInfo } from '@aragon/toolkit'
 //
 import flattenCode from '../../../helpers/flattenCode'
 
@@ -128,7 +127,7 @@ export async function generateApplicationArtifact(
   // Analyse contract functions and returns an array
   // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
   artifact.functions = (
-    await extract(path.resolve(cwd, artifact.path))
+    await extractContractInfo(path.resolve(cwd, artifact.path))
   ).functions
   // extract abi for each function
   // > [{ sig: , role: , notice: , abi: }]

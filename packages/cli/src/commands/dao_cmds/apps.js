@@ -105,7 +105,6 @@ export const handler = async function({
             ipfs,
             provider: wsProvider || web3.currentProvider,
           }
-
           apps = await getInstalledApps(dao, options)
           daoAddress = await getDaoAddress(dao, options)
         },

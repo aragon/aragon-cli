@@ -21,12 +21,18 @@ export default async function({
   deployEvent,
   gasPrice,
 }) {
-  // If not connected to IPFS, repo won't have an ABI
-  const repoAbi = repo.abi || bareTemplateAbi
-  const template =
-    templateInstance || new web3.eth.Contract(repoAbi, repo.contractAddress)
+  let template
+
+  if (!templateInstance) {
+    // If not connected to IPFS, repo won't have an ABI
+    const repoAbi = repo.abi || bareTemplateAbi
+    template = new web3.eth.Contract(repoAbi, repo.contractAddress)
+  } else {
+    template = templateInstance
+  }
 
   const method = newInstanceMethod || 'newInstance'
+
   if (!template.methods[method]) {
     throw new Error(
       `Template abi does not contain the requested function: ${method}(...). This may be due to the template's abi not being retrieved from IPFS. Is IPFS running?`

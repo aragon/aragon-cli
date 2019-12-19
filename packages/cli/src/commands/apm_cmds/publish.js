@@ -11,7 +11,7 @@ import { ZERO_ADDRESS } from '@aragon/toolkit'
 
 // helpers
 import { ensureWeb3 } from '../../helpers/web3-fallback'
-import { compileContracts } from '../../helpers/truffle-compile'
+import { compileContracts } from '../../helpers/truffle-runner'
 import listrOpts from '../../helpers/listr-options'
 
 // cmds
@@ -270,6 +270,8 @@ export const runSetupTask = ({
         title: 'Determine contract address for version',
         enabled: () => !onlyArtifacts,
         task: async (ctx, task) => {
+          // Get address of deployed contract
+          ctx.contract = ctx.contractAddress
           if (isAddress(contract)) {
             ctx.contract = contract
           }
@@ -654,8 +656,8 @@ export const handler = async function({
   const [contentProvier, contentLocation] = contentURI.split(/:(.+)/)
 
   if (files.length === 1 && path.normalize(files[0]) === '.') {
+    reporter.newLine()
     reporter.warning(
-      '\n',
       `Publishing files from the project's root folder is not recommended. Consider using the distribution folder of your project: "--files <folder>".`
     )
   }

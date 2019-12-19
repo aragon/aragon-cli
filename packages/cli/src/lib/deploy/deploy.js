@@ -70,5 +70,6 @@ export const deployContract = async ({
   return {
     transactionHash,
     address: instance.options.address,
+    instance,
   }
 }

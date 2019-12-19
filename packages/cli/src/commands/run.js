@@ -20,7 +20,7 @@ import {
 
 // cmds
 import {
-  devchainTask,
+  task as devchainTask,
   printAccounts,
   printMnemonic,
   printResetNotice,
@@ -298,14 +298,12 @@ export const handler = async function({
       },
       {
         title: 'Fetch published repo',
-        task: async ctx => {
-          // getRepoTask.task() return a function with ctx argument
-          await getRepoTask({
+        task: async ctx =>
+          getRepoTask({
             apmRepo: module.appName,
             apm: APM(ctx.web3, apmOptions),
             artifactRequired: false,
-          })(ctx)
-        },
+          }),
       },
       {
         title: 'Deploy Template',
