@@ -137,7 +137,8 @@
       "@babel/register"
     ],
     "files": [
-      "test/**/*.test.js"
+      "test/**/*.test.js",
+      "!test/app/app.test.js"
     ]
   },
   "nyc": {
