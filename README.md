@@ -117,8 +117,8 @@ It can also be built and installed from the source code:
 
 ```sh
 git clone https://github.com/aragon/aragon-cli.git
+cd aragon-cli
 npm install
-npm run link
 ```
 
 [nightly-npm-badge]: https://img.shields.io/npm/v/@aragon/cli/nightly.svg?style=flat-square&color=blueviolet
@@ -138,8 +138,14 @@ npm run link
 | Package             | Version (latest/stable)                       | Version (nightly)                                     | Downloads                                         |
 | ------------------- | --------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------- |
 | `create-aragon-app` | [![NPM version][caa-npm-badge]][caa-npm-link] | [![NPM version][caa-npm-badge-nightly]][caa-npm-link] | [![Downloads][caa-downloads-badge]][caa-npm-link] |
+| `toolkit`           | [![NPM version][toolkit-npm-badge]][toolkit-npm-link] | [![NPM version][toolkit-npm-badge-nightly]][toolkit-npm-link] | [![Downloads][toolkit-downloads-badge]][toolkit-npm-link] |
 
 [caa-npm-badge]: https://img.shields.io/npm/v/create-aragon-app/latest.svg?style=flat-square
 [caa-npm-link]: https://npmjs.org/package/create-aragon-app
 [caa-npm-badge-nightly]: https://img.shields.io/npm/v/create-aragon-app/nightly.svg?style=flat-square&color=blueviolet
 [caa-downloads-badge]: https://img.shields.io/npm/dm/create-aragon-app.svg?style=flat-square
+
+[toolkit-npm-badge]: https://img.shields.io/npm/v/@aragon/toolkit/latest.svg?style=flat-square
+[toolkit-npm-link]: https://npmjs.org/package/@aragon/toolkit
+[toolkit-npm-badge-nightly]: https://img.shields.io/npm/v/@aragon/toolkit/nightly.svg?style=flat-square&color=blueviolet
+[toolkit-downloads-badge]: https://img.shields.io/npm/dm/@aragon/toolkit.svg?style=flat-square
