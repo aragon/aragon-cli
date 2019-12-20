@@ -113,7 +113,7 @@ export const handler = async function({
           return execTask({
             dao,
             app: dao,
-            method: 'newAppInstance',
+            method: 'newAppInstance(bytes32,address,bytes,bool)', // Use signature, method is overloaded
             params: fnArgs,
             reporter,
             gasPrice,
