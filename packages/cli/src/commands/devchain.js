@@ -4,6 +4,7 @@ import {
 } from './devchain_cmds/start'
 
 export const builder = function(yargs) {
+  yargs
   return startCommandBuilder(yargs).commandDir('devchain_cmds')
 }
 
