@@ -76,7 +76,7 @@ export const handler = async function({
   return tasks.run().then(ctx => {
     reporter.newLine()
     reporter.success(
-      `Successfully executed: "${blue(ctx.transactionPath[0].description)}"`
+      `Successfully executed: "${blue(ctx.transactionPath.description)}"`
     )
   })
 }
