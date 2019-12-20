@@ -18,7 +18,7 @@ const mockappPath = path.resolve('./test/mock')
 const cliPath = '../../dist/cli.js'
 
 // eslint-disable-next-line ava/no-skip-test
-test('should publish an aragon app directory successfully', async t => {
+test.skip('should publish an aragon app directory successfully', async t => {
   // arrange
   const publishDirPath = path.resolve(`${mockappPath}/${testSandbox}`)
 
