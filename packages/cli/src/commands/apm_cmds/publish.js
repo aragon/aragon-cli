@@ -17,7 +17,7 @@ import listrOpts from '../../helpers/listr-options'
 // cmds
 import { task as deployTask, builder as deployBuilder } from '../deploy'
 
-import { task as execTask } from '../dao_cmds/utils/execHandler'
+// import { task as execTask } from '../dao_cmds/utils/execHandler'
 import { handler as propagateIPFS } from '../ipfs_cmds/propagate'
 import { findProjectRoot, runScriptTask, askForConfirmation } from '../../util'
 import {
@@ -729,7 +729,7 @@ export const handler = async function({
     if (!reply) return console.log()
   }
 
-  const { receipt /*, transactionPath */} = await runPublishTask({
+  const { receipt /*, transactionPath */ } = await runPublishTask({
     reporter,
     gasPrice,
     web3,
@@ -765,13 +765,13 @@ export const handler = async function({
     //     '\n'
     //   )
     // } else {
-      const logVersion = 'v' + version
+    const logVersion = 'v' + version
 
-      console.log(
-        '\n',
-        `Successfully published ${appName} ${green(logVersion)} :`,
-        '\n'
-      )
+    console.log(
+      '\n',
+      `Successfully published ${appName} ${green(logVersion)} :`,
+      '\n'
+    )
     // }
   }
 
