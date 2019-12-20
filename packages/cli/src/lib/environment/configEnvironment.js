@@ -74,16 +74,22 @@ function configureNetwork(network, truffleConfig, options) {
   }
 
   const { provider, host, port } = truffleNetwork
+
+  const getProvider = provider => {
+    if (provider) {
+      if (typeof provider === 'function') return provider()
+      else return provider
+    } else if (host && port) {
+      return new Web3.providers.WebsocketProvider(`ws://${host}:${port}`)
+    } else {
+      return new Web3.providers.HttpProvider('http://localhost:8545')
+    }
+  }
+
   return {
     ...truffleNetwork,
     name: network,
-    provider: provider
-      ? typeof provider === 'function'
-        ? provider()
-        : provider
-      : new Web3.providers.WebsocketProvider(
-          host && port ? `ws://${host}:${port}` : `http://localhost:8545`
-        ),
+    provider: getProvider(provider),
   }
 }
 
@@ -119,7 +125,7 @@ export function configEnvironment({
 
   return {
     apm: configureAPM(
-      ipfsRpc || env.wsRPC || IPFS_RPC,
+      ipfsRpc || IPFS_RPC,
       ipfsGateway || (env.apm && env.apm.ipfs.gateway) || IPFS_GATEWAY,
       ensRegistry || env.registry || DEVCHAIN_ENS
     ),

@@ -10,7 +10,8 @@
   "scripts": {
     "compile-src": "babel src --out-dir dist --source-maps --copy-files",
     "extract-roles": "node scripts/extract-roles",
-    "build": "npm run extract-roles && npm run compile-src",
+    "extract-ganache": "scripts/extract-ganache",
+    "build": "npm run extract-roles && npm run extract-ganache && npm run compile-src",
     "build:watch": "npm run build -- -- --watch",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
@@ -24,6 +25,7 @@
   "files": [
     "aliases",
     "config",
+    "ganache",
     "dist",
     "schemas"
   ],
@@ -48,7 +50,7 @@
   },
   "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
-    "@aragon/apm": "^3.1.2-beta.2",
+    "@aragon/apm": "3.1.2-beta.3",
     "@aragon/toolkit": "^0.0.1",
     "@aragon/truffle-config-v5": "^1.0.0",
     "ajv": "^6.6.2",
@@ -63,7 +65,6 @@
     "find-process": "^1.4.2",
     "find-up": "^4.0.0",
     "fs-extra": "^8.0.1",
-    "ganache-core": "^2.8.0",
     "git-clone": "^0.1.0",
     "http-server": "^0.12.0",
     "ignore": "^4.0.6",
@@ -117,6 +118,7 @@
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
+    "ganache-cli": "^6.7.0",
     "nyc": "^14.1.1",
     "prettier": "^1.15.3",
     "proxyquire": "^2.1.0",

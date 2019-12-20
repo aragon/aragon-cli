@@ -516,8 +516,10 @@ export const runPublishTask = ({
   // Globals
   gasPrice,
   web3,
-  wsProvider,
+  // wsProvider,
   module,
+  http,
+  provider,
   apm: apmOptions,
   silent,
   debug,
@@ -525,31 +527,61 @@ export const runPublishTask = ({
   // Arguments
   /// Conditionals
   onlyArtifacts,
-  onlyContent,
 
   /// Context
-  dao,
-  proxyAddress,
-  methodName,
-  params,
+  version,
+  pathToPublish,
+  contractAddress,
+  // dao,
+  // proxyAddress,
+  // methodName,
+  // params,
 }) => {
+  const apm = APM(web3, apmOptions)
   return new TaskList(
     [
+      // { // TODO: Use this task once we fix publish with intent
+      //   title: `Publish ${module.appName}`,
+      //   enabled: () => !onlyArtifacts,
+      //   task: async (ctx, task) =>
+      //     execTask({
+      //       dao,
+      //       app: proxyAddress,
+      //       method: methodName,
+      //       params,
+      //       reporter,
+      //       gasPrice,
+      //       apm: apmOptions,
+      //       web3,
+      //       wsProvider,
+      //     }),
+      // },
       {
         title: `Publish ${module.appName}`,
         enabled: () => !onlyArtifacts,
-        task: async (ctx, task) =>
-          execTask({
-            dao,
-            app: proxyAddress,
-            method: methodName,
-            params,
-            reporter,
-            gasPrice,
-            apm: apmOptions,
-            web3,
-            wsProvider,
-          }),
+        task: async (ctx, task) => {
+          ctx.contractInstance = null // clean up deploy sub-command artifacts
+
+          task.output = 'Generating transaction and waiting for confirmation'
+          const accounts = await web3.eth.getAccounts()
+          const from = accounts[0]
+
+          const transaction = await apm.publishVersion(
+            from,
+            module.appName,
+            version,
+            http ? 'http' : provider,
+            http || pathToPublish,
+            contractAddress,
+            from
+          )
+
+          transaction.from = from
+          transaction.gasPrice = gasPrice
+          // apm.js already calculates the recommended gas
+
+          ctx.receipt = await web3.eth.sendTransaction(transaction)
+        },
       },
     ],
     listrOpts(silent, debug)
@@ -697,18 +729,23 @@ export const handler = async function({
     if (!reply) return console.log()
   }
 
-  const { receipt, transactionPath } = await runPublishTask({
+  const { receipt /*, transactionPath */} = await runPublishTask({
     reporter,
     gasPrice,
     web3,
     wsProvider,
     module,
+    http,
+    provider,
     apm: apmOptions,
     silent,
     debug,
     onlyArtifacts,
     onlyContent,
     // context
+    version,
+    pathToPublish,
+    contractAddress,
     dao,
     proxyAddress,
     methodName,
@@ -721,13 +758,13 @@ export const handler = async function({
     reporter.error(`\nPublish transaction reverted:\n`)
   } else {
     // If the version is still the same, the publish intent was forwarded but not immediately executed (p.e. Voting)
-    if (initialVersion === version) {
-      console.log(
-        '\n',
-        `Successfully executed: "${green(transactionPath[0].description)}"`,
-        '\n'
-      )
-    } else {
+    // if (initialVersion === version) {
+    //   console.log(
+    //     '\n',
+    //     `Successfully executed: "${green(transactionPath[0].description)}"`,
+    //     '\n'
+    //   )
+    // } else {
       const logVersion = 'v' + version
 
       console.log(
@@ -735,7 +772,7 @@ export const handler = async function({
         `Successfully published ${appName} ${green(logVersion)} :`,
         '\n'
       )
-    }
+    // }
   }
 
   console.log(`Transaction hash: ${blue(transactionHash)}`, '\n')

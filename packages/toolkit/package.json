@@ -32,10 +32,10 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@aragon/abis": "^1.1.0",
-    "@aragon/apm": "^3.1.2-beta.2",
+    "@aragon/apm": "3.1.2-beta.3",
     "@aragon/apps-shared-minime": "^1.0.2",
     "@aragon/aragen": "^6.0.0-beta.1",
-    "aragon-cli-wrapper": "2.0.0",
+    "@aragon/wrapper": "^5.0.0-rc.21",
     "babel-eslint": "^10.0.3",
     "byte-size": "^6.2.0",
     "ethereum-ens": "^0.7.8",
