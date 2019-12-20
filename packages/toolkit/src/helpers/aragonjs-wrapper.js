@@ -1,4 +1,4 @@
-import Aragon, { ensResolve } from '@aragon/wrapper'
+import Aragon, { ensResolve } from 'aragon-cli-wrapper'
 import { takeWhile, map, filter, first, defaultIfEmpty } from 'rxjs/operators'
 //
 import { addressesEqual } from '../util'
