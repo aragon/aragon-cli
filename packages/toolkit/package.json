@@ -95,7 +95,7 @@
       "source-map-support/register"
     ],
     "files": [
-      "test/**/*.test.js"
+      "test/**/*.test.{js,ts}"
     ]
   },
   "nyc": {

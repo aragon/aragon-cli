@@ -1,9 +1,16 @@
 import test from 'ava'
-//
 import {
   flattenAclPermissions,
   formatAclPermissions,
 } from '../../src/acl/viewFormatter'
+import {
+  AclPermissions,
+  App,
+  KnownApps,
+  KnownRoles,
+  AclPermissionFormatted,
+  AclPermission,
+} from '../../src/types'
 
 test('viewFormatter > flattenAclPermissions', t => {
   const toAppAddress1 = '0xbc4d08eb94caf68faf73be40780b68b1de369d15'
@@ -27,9 +34,10 @@ test('viewFormatter > flattenAclPermissions', t => {
       },
     },
   }
-  const flattenedAclPermissions = flattenAclPermissions(permissions)
 
-  t.deepEqual(flattenedAclPermissions, [
+  // Pre-declaring result to get strong immediate type checking
+  // through Typescript instead of an AVA test run.
+  const expectedFlattenedAclPermissions: AclPermission[] = [
     {
       to: toAppAddress1,
       role: roleHash,
@@ -42,7 +50,11 @@ test('viewFormatter > flattenAclPermissions', t => {
       allowedEntities,
       manager,
     },
-  ])
+  ]
+
+  const flattenedAclPermissions = flattenAclPermissions(permissions)
+
+  t.deepEqual(flattenedAclPermissions, expectedFlattenedAclPermissions)
 })
 
 test('viewFormatter > formatAclPermissions', t => {
@@ -74,7 +86,7 @@ test('viewFormatter > formatAclPermissions', t => {
 
   // Construct permissions object to be flattened
 
-  const permissions = {
+  const permissions: AclPermissions = {
     [toAppAddress]: {
       [role1Hash]: {
         allowedEntities: [allowedApp1Address, allowedApp2Address],
@@ -89,33 +101,26 @@ test('viewFormatter > formatAclPermissions', t => {
 
   // Construct mappings to human names
 
-  const apps = [
+  const apps: App[] = [
     { proxyAddress: toAppAddress, appId: toAppId },
     { proxyAddress: managerAppAddress, appId: managerAppId },
     { proxyAddress: allowedApp1Address, appId: allowedApp1Id },
     { proxyAddress: allowedApp2Address, appId: allowedApp2Id },
   ]
-  const knownApps = {
+  const knownApps: KnownApps = {
     [toAppId]: toAppName,
     [managerAppId]: managerAppName,
     [allowedApp1Id]: allowedApp1Name,
     [allowedApp2Id]: allowedApp2Name,
   }
-  const knownRoles = {
+  const knownRoles: KnownRoles = {
     [role1Hash]: { name: role1Name, id: role1Id },
     [role2Hash]: { name: role2Name, id: role2Id },
   }
 
-  const formattedAclPermissions = formatAclPermissions(
-    permissions,
-    apps,
-    knownApps,
-    knownRoles
-  )
-
-  // Make sure that human names are assigned correctly for both roles
-
-  t.deepEqual(formattedAclPermissions, [
+  // Pre-declaring result to get strong immediate type checking
+  // through Typescript instead of an AVA test run.
+  const expectedFormattedAclPermissions: AclPermissionFormatted[] = [
     {
       to: { address: toAppAddress, name: toAppName },
       manager: { address: managerAppAddress, name: managerAppName },
@@ -134,5 +139,15 @@ test('viewFormatter > formatAclPermissions', t => {
       ],
       role: { hash: role2Hash, id: role2Id },
     },
-  ])
+  ]
+
+  const formattedAclPermissions = formatAclPermissions(
+    permissions,
+    apps,
+    knownApps,
+    knownRoles
+  )
+
+  // Make sure that human names are assigned correctly for both roles
+  t.deepEqual(formattedAclPermissions, expectedFormattedAclPermissions)
 })

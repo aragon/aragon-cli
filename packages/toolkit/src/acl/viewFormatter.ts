@@ -1,9 +1,21 @@
+import {
+  AclPermissions,
+  AclPermission,
+  App,
+  KnownApps,
+  KnownRoles,
+  AclPermissionFormatted,
+  AclPermissionAppInfo,
+} from '../types'
+
 /**
  * Flattens all ACL permissions from an acl object into a single array
- * @param {AclPermissions} permissions Permissions
- * @return {AclPermission[]} acl permissions data
+ * @param permissions Permissions
+ * @return ACL permissions data
  */
-export const flattenAclPermissions = permissions => {
+export const flattenAclPermissions = (
+  permissions: AclPermissions
+): AclPermission[] => {
   const aclPermissions = []
   for (const [to, roles] of Object.entries(permissions)) {
     for (const [roleHash, data] of Object.entries(roles)) {
@@ -21,18 +33,18 @@ export const flattenAclPermissions = permissions => {
 
 /**
  * Formats one acl permission data attaching human readable names to its raw data
- * @param {AclPermission} aclPermission ACL permission data
- * @param {App[]} apps Apps
- * @param {KnownApps} knownApps Known apps
- * @param {KnownRoles} knownRoles Known roles
- * @return {AclPermissionFormatted} with human readable names if any
+ * @param aclPermission ACL permission data
+ * @param apps Apps
+ * @param knownApps Known apps
+ * @param knownRoles Known roles
+ * @return With human readable names if any
  */
 export const formatAclPermission = (
-  aclPermission,
-  apps,
-  knownApps,
-  knownRoles
-) => {
+  aclPermission: AclPermission,
+  apps: App[],
+  knownApps: KnownApps,
+  knownRoles: KnownRoles
+): AclPermissionFormatted => {
   const {
     to: toAddress,
     role: roleHash,
@@ -43,10 +55,10 @@ export const formatAclPermission = (
   /**
    * Shortcut to TRY get an app name from it's proxy address
    * If the app can't be found, returns an empty string: ''
-   * @param  {string} address Proxy address of a possible app
-   * @return {AclPermissionAppInfo} app info
+   * @param address Proxy address of a possible app
+   * @return app info
    */
-  const getAppInfo = address => {
+  const getAppInfo = (address: string): AclPermissionAppInfo => {
     const app = apps.find(({ proxyAddress }) => address === proxyAddress)
     return {
       address,
@@ -70,13 +82,18 @@ export const formatAclPermission = (
 
 /**
  * Formats acl permissions attaching human readable names to its raw data
- * @param  {AclPermissions} permissions Permissions
- * @param  {App[]} apps Apps
- * @param  {KnownApps} knownApps Known apps
- * @param  {KnownRoles} knownRoles Known roles
- * @return {AclPermissionFormatted[]} Formated acl permissions data
+ * @param permissions Permissions
+ * @param apps Apps
+ * @param knownApps Known apps
+ * @param knownRoles Known roles
+ * @return Formated acl permissions data
  */
-export function formatAclPermissions(permissions, apps, knownApps, knownRoles) {
+export function formatAclPermissions(
+  permissions: AclPermissions,
+  apps: App[],
+  knownApps: KnownApps,
+  knownRoles: KnownRoles
+): AclPermissionFormatted[] {
   return flattenAclPermissions(permissions).map(aclPermission =>
     formatAclPermission(aclPermission, apps, knownApps, knownRoles)
   )
