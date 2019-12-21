@@ -6,7 +6,13 @@ import url from 'url'
 import Web3 from 'web3'
 import APM from '@aragon/apm'
 import { blue, green, bold } from 'chalk'
-import { isPortTaken } from '@aragon/toolkit'
+import {
+  isPortTaken,
+  startLocalDaemon,
+  getBinaryPath,
+  getDefaultRepoPath,
+  isLocalDaemonRunning,
+} from '@aragon/toolkit'
 //
 import encodeInitPayload from '../helpers/encodeInitPayload'
 import listrOpts from '../helpers/listr-options'
@@ -223,6 +229,15 @@ export const handler = async function({
 
   const tasks = new TaskList(
     [
+      {
+        title: 'Start IPFS',
+        skip: async () => isLocalDaemonRunning(),
+        task: async () => {
+          await startLocalDaemon(getBinaryPath(), getDefaultRepoPath(), {
+            detached: false,
+          })
+        },
+      },
       {
         title: 'Start a local Ethereum network',
         skip: async ctx => {
