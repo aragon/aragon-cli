@@ -1,4 +1,3 @@
-import '../../@types/acl/typedef'
 import { initAragonJS, getApps } from '../helpers/aragonjs-wrapper'
 
 // TODO: Stop using wrapper

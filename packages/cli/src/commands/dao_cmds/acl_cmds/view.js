@@ -3,8 +3,6 @@ import TaskList from 'listr'
 import { keyBy } from 'lodash'
 import Table from 'cli-table'
 import { keccak256 } from 'web3-utils'
-import '@aragon/toolkit/@types/acl/typedef' // Load JSDoc types ACL specific
-import '@aragon/toolkit/@types/typedef' // Load JSDoc generic types
 import {
   ANY_ENTITY,
   NO_MANAGER,

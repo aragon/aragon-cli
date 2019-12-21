@@ -1,0 +1,25 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:ava/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module" // Allows for the use of ES6 imports
+  },
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "rules": {
+    // TODO: Disable for now until there's a good coverage of .ts good practices
+    "@typescript-eslint/explicit-function-return-type": "off",
+    // TODO: Discuss if we want to enforce this rule
+    "@typescript-eslint/no-empty-function": "off",
+    // ##### Some libraries do not have typings and the compiler does not understand .d.ts files
+    "@typescript-eslint/no-var-requires": "off",
+    // ##### typescript does not understand hoisting
+    "@typescript-eslint/no-use-before-define": "off"
+  }
+}

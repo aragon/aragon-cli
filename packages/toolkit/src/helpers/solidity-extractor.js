@@ -32,6 +32,7 @@ const expandTypeForSignature = type => {
 
 // extracts function signature from function declaration
 const getSignature = declaration => {
+  /* eslint-disable-next-line prefer-const */
   let [name, params] = declaration
     .match(/^\s*function ([^]*?)\)/m)[1]
     .split('(')
