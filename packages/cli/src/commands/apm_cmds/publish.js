@@ -7,7 +7,7 @@ import APM from '@aragon/apm'
 import { isAddress } from 'web3-utils'
 import { blue, red, green, bold } from 'chalk'
 import { readJson, writeJson, pathExistsSync } from 'fs-extra'
-import { ZERO_ADDRESS } from '@aragon/toolkit'
+import { ZERO_ADDRESS, isLocalDaemonRunning, startLocalDaemon, getBinaryPath, getDefaultRepoPath } from '@aragon/toolkit'
 
 // helpers
 import { ensureWeb3 } from '../../helpers/web3-fallback'
@@ -181,6 +181,15 @@ export const runSetupTask = ({
 
   return new TaskList(
     [
+      {
+        title: 'Start IPFS',
+        skip: async () => isLocalDaemonRunning(),
+        task: async () => {
+          await startLocalDaemon(getBinaryPath(), getDefaultRepoPath(), {
+            detached: false,
+          })
+        },
+      },
       {
         title: 'Running prepublish script',
         enabled: () => prepublish,
