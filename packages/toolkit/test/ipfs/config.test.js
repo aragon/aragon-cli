@@ -30,12 +30,12 @@ const IPFS_CONFIG_JSON = {
   },
 }
 
-test.beforeEach(t => {
+test.before(t => {
   fs.mkdirpSync(IPFS_PATH)
   fs.writeFileSync(`${IPFS_PATH}/version`, IPFS_VERSION)
 })
 
-test.afterEach.always(() => {
+test.after.always(() => {
   fs.removeSync(IPFS_PATH)
 })
 
