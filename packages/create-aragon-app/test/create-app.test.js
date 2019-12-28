@@ -15,7 +15,7 @@ test.after.always(async () => {
   await remove(projectPath)
 })
 
-test('should create a new aragon app based on the react boilerplate', async t => {
+test.skip('should create a new aragon app based on the react boilerplate', async t => {
   ensureDirSync(testSandbox)
   const repoPath = `${projectPath}/.git`
   const arappPath = `${projectPath}/arapp.json`
