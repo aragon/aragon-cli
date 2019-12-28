@@ -810,7 +810,9 @@ export const handler = async function({
     reporter.debug(`Gateways: ${result.gateways.join(', ')}`)
 
     if (result.errors && result.errors.length) {
-      reporter.debug(`Errors: \n${result.errors.map(JSON.stringify).join('\n')}`)
+      reporter.debug(
+        `Errors: \n${result.errors.map(JSON.stringify).join('\n')}`
+      )
     }
     // TODO: add your own gateways
   }

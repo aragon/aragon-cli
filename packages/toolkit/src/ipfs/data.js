@@ -43,6 +43,6 @@ export async function getMerkleDAG(client, cid, options = {}) {
       return Object.assign(link, object)
     }
   }
-  
+
   return merkleDAG
 }
