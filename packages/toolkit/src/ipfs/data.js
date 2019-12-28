@@ -38,16 +38,11 @@ export async function getMerkleDAG(client, cid, options = {}) {
 
   if (options.recursive && merkleDAG.isDir && merkleDAG.links) {
     // fetch the MerkleDAG of each link recursively
-    const promises = merkleDAG.links.map(async link => {
+    for (const link of merkleDAG.links) {
       const object = await getMerkleDAG(client, link.cid, options)
       return Object.assign(link, object)
-    })
-
-    return Promise.all(promises).then(links => {
-      merkleDAG.links = links
-      return merkleDAG
-    })
+    }
   }
-
+  
   return merkleDAG
 }
