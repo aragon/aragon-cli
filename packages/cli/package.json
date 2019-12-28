@@ -10,8 +10,7 @@
   "scripts": {
     "compile-src": "babel src --out-dir dist --source-maps --copy-files",
     "extract-roles": "node scripts/extract-roles",
-    "extract-ganache": "scripts/extract-ganache",
-    "build": "npm run extract-roles && npm run extract-ganache && npm run compile-src",
+    "build": "npm run extract-roles && npm run compile-src",
     "build:watch": "npm run build -- -- --watch",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
