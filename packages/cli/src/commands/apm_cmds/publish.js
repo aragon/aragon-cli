@@ -495,6 +495,7 @@ export const runPrepareForPublishTask = ({
           ctx.contractInstance = null // clean up deploy sub-command artifacts
           const accounts = await web3.eth.getAccounts()
           const from = accounts[0]
+
           ctx.intent = await apm.publishVersionIntent(
             from,
             module.appName,
