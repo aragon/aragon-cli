@@ -7,7 +7,7 @@ import APM from '@aragon/apm'
 import { isAddress } from 'web3-utils'
 import { blue, red, green, bold } from 'chalk'
 import { readJson, writeJson, pathExistsSync } from 'fs-extra'
-import { ZERO_ADDRESS } from '@aragon/toolkit'
+import { ZERO_ADDRESS, getHttpClient } from '@aragon/toolkit'
 
 // helpers
 import { ensureWeb3 } from '../../helpers/web3-fallback'
@@ -17,8 +17,7 @@ import listrOpts from '../../helpers/listr-options'
 // cmds
 import { task as deployTask, builder as deployBuilder } from '../deploy'
 
-// import { task as execTask } from '../dao_cmds/utils/execHandler'
-import { handler as propagateIPFS } from '../ipfs_cmds/propagate'
+import { runPropagateTask } from '../ipfs_cmds/propagate'
 import { findProjectRoot, runScriptTask, askForConfirmation } from '../../util'
 import {
   prepareFilesForPublishing,
@@ -788,14 +787,14 @@ export const handler = async function({
       if (!reply) return console.log()
     }
 
-    const propagateTask = await propagateIPFS({
-      apm: apmOptions,
+    const ipfsReader = await getHttpClient(apmOptions.ipfs.gateway)
+
+    const { CIDs, result } = await runPropagateTask({
+      ipfsReader,
       cid: contentLocation,
       debug,
       silent,
     })
-
-    const { CIDs, result } = await propagateTask.run()
 
     console.log(
       '\n',
@@ -810,7 +809,12 @@ export const handler = async function({
     )
 
     reporter.debug(`Gateways: ${result.gateways.join(', ')}`)
-    reporter.debug(`Errors: \n${result.errors.map(JSON.stringify).join('\n')}`)
+
+    if (result.errors && result.errors.length) {
+      reporter.debug(
+        `Errors: \n${result.errors.map(JSON.stringify).join('\n')}`
+      )
+    }
     // TODO: add your own gateways
   }
 }

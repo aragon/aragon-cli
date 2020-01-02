@@ -20,7 +20,7 @@ export const builder = yargs =>
     description: 'A self-describing content-addressed identifier',
   })
 
-const runPropagateTask = ({ cid, ipfsReader, silent, debug }) => {
+export const runPropagateTask = ({ cid, ipfsReader, silent, debug }) => {
   return new TaskList(
     [
       {
@@ -90,8 +90,11 @@ export const handler = async argv => {
   )
 
   reporter.debug(`Gateways: ${ctx.result.gateways.join(', ')}`)
-  reporter.debug(
-    `Errors: \n${ctx.result.errors.map(JSON.stringify).join('\n')}`
-  )
+
+  if (ctx.result.errors && ctx.result.errors.length) {
+    reporter.debug(
+      `Errors: \n${ctx.result.errors.map(JSON.stringify).join('\n')}`
+    )
+  }
   // TODO add your own gateways
 }
