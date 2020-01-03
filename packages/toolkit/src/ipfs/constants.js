@@ -6,9 +6,9 @@ export const DEFAULT_GATEWAYS = [
   'https://ipfs.infura.io/ipfs',
   'https://cloudflare-ipfs.com/ipfs',
   'https://ipfs.eth.aragon.network/ipfs',
-  'https://ipfs.jes.xxx/ipfs',
+  // 'https://ipfs.jes.xxx/ipfs',
   'https://www.eternum.io/ipfs',
-  'https://ipfs.wa.hle.rs/ipfs',
+  // 'https://ipfs.wa.hle.rs/ipfs',
 ]
 
 export const DAEMON_START_TIMEOUT = 20000 // 20s

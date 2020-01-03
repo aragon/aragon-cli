@@ -304,6 +304,9 @@ export const handler = async function({
           return runPublishTask({
             ...ctx.publishParams,
             // context
+            version: ctx.version,
+            contractAddress: ctx.contract,
+            pathToPublish: ctx.pathToPublish,
             dao,
             proxyAddress,
             methodName,

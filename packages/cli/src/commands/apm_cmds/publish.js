@@ -13,6 +13,7 @@ import {
   startLocalDaemon,
   getBinaryPath,
   getDefaultRepoPath,
+  getHttpClient,
 } from '@aragon/toolkit'
 
 // helpers
@@ -23,8 +24,7 @@ import listrOpts from '../../helpers/listr-options'
 // cmds
 import { task as deployTask, builder as deployBuilder } from '../deploy'
 
-// import { task as execTask } from '../dao_cmds/utils/execHandler'
-import { handler as propagateIPFS } from '../ipfs_cmds/propagate'
+import { runPropagateTask } from '../ipfs_cmds/propagate'
 import { findProjectRoot, runScriptTask, askForConfirmation } from '../../util'
 import {
   prepareFilesForPublishing,
@@ -510,6 +510,7 @@ export const runPrepareForPublishTask = ({
           ctx.contractInstance = null // clean up deploy sub-command artifacts
           const accounts = await web3.eth.getAccounts()
           const from = accounts[0]
+
           ctx.intent = await apm.publishVersionIntent(
             from,
             module.appName,
@@ -802,14 +803,14 @@ export const handler = async function({
       if (!reply) return console.log()
     }
 
-    const propagateTask = await propagateIPFS({
-      apm: apmOptions,
+    const ipfsReader = await getHttpClient(apmOptions.ipfs.gateway)
+
+    const { CIDs, result } = await runPropagateTask({
+      ipfsReader,
       cid: contentLocation,
       debug,
       silent,
     })
-
-    const { CIDs, result } = await propagateTask.run()
 
     console.log(
       '\n',
@@ -824,7 +825,12 @@ export const handler = async function({
     )
 
     reporter.debug(`Gateways: ${result.gateways.join(', ')}`)
-    reporter.debug(`Errors: \n${result.errors.map(JSON.stringify).join('\n')}`)
+
+    if (result.errors && result.errors.length) {
+      reporter.debug(
+        `Errors: \n${result.errors.map(JSON.stringify).join('\n')}`
+      )
+    }
     // TODO: add your own gateways
   }
 }
