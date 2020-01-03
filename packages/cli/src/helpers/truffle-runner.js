@@ -3,7 +3,7 @@ import devnull from 'dev-null'
 
 export const runTruffle = (args, { stdout, stderr, stdin }) => {
   return new Promise((resolve, reject) => {
-    const truffle = execa('truffle', args, { preferLocal: true } )
+    const truffle = execa('truffle', args, { preferLocal: true })
     let errMsg = ''
     truffle.on('exit', code => {
       code === 0 ? resolve() : reject(errMsg)
