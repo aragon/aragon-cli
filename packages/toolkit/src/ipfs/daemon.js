@@ -38,6 +38,11 @@ export const startLocalDaemon = (binPath, repoPath, options = {}) => {
  * @returns {boolean} true if it is running
  */
 export const isLocalDaemonRunning = async address => {
+  address = address || {
+    protocol: 'http',
+    host: '127.0.0.1',
+    port: 5001,
+  }
   const portTaken = await isPortTaken(address.port)
 
   if (!portTaken) {
