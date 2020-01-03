@@ -17,8 +17,7 @@ const mockappPath = path.resolve('./test/mock')
 
 const cliPath = '../../dist/cli.js'
 
-// eslint-disable-next-line ava/no-skip-test
-test.skip('should publish an aragon app directory successfully', async t => {
+test.serial('should publish an aragon app directory successfully', async t => {
   // arrange
   const publishDirPath = path.resolve(`${mockappPath}/${testSandbox}`)
 
@@ -60,8 +59,7 @@ test.skip('should publish an aragon app directory successfully', async t => {
   t.snapshot(manifest)
 })
 
-// eslint-disable-next-line ava/no-skip-test
-test.skip('should fetch published versions to aragonPM', async t => {
+test.serial('should fetch published versions to aragonPM', async t => {
   // act
   await startProcess({
     cmd: 'node',
@@ -78,8 +76,7 @@ test.skip('should fetch published versions to aragonPM', async t => {
   t.pass()
 })
 
-// eslint-disable-next-line ava/no-skip-test
-test.skip('should run an aragon app successfully on IPFS', async t => {
+test.serial('should run an aragon app successfully on IPFS', async t => {
   const publishDirPath = path.resolve(`${mockappPath}/${testSandbox}/ipfs`)
 
   const { kill } = await startProcess({
@@ -100,8 +97,7 @@ test.skip('should run an aragon app successfully on IPFS', async t => {
   t.pass()
 })
 
-// eslint-disable-next-line ava/no-skip-test
-test.skip('should run an aragon app successfully on IPFS using a Template', async t => {
+test.serial('should run an aragon app successfully on IPFS using a Template', async t => {
   const publishDirPath = path.resolve(
     `${mockappPath}/${testSandbox}/ipfs-template`
   )
@@ -147,8 +143,7 @@ test.skip('should run an aragon app successfully on IPFS using a Template', asyn
   t.pass()
 })
 
-// eslint-disable-next-line ava/no-skip-test
-test.skip('should run an aragon app successfully on HTTP', async t => {
+test.serial('should run an aragon app successfully on HTTP', async t => {
   const publishDirPath = path.resolve(`${mockappPath}/${testSandbox}/http`)
   const appPort = 8001
 
@@ -179,7 +174,7 @@ test.skip('should run an aragon app successfully on HTTP', async t => {
       detached: true,
     },
     readyOutput: 'Open http://localhost:',
-    timeout: RUN_CMD_TIMEOUT,
+    timeout: RUN_CMD_TIMEOUT
   })
 
   // cleanup
@@ -188,8 +183,7 @@ test.skip('should run an aragon app successfully on HTTP', async t => {
   t.pass()
 })
 
-// eslint-disable-next-line ava/no-skip-test
-test.skip('should run an aragon app successfully on HTTP using a Template', async t => {
+test.serial('should run an aragon app successfully on HTTP using a Template', async t => {
   const publishDirPath = path.resolve(
     `${mockappPath}/${testSandbox}/http-template`
   )
