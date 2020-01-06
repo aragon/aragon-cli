@@ -6,6 +6,7 @@ Toolkit for accessing aragonCLI utilities programmatically.
 
 ```sh
 npm install @aragon/toolkit
+npm run build
 ```
 
 ## Examples
@@ -13,7 +14,7 @@ npm install @aragon/toolkit
 Import the toolkit in your project:
 
 ```js
-import { newDAO, getInstalledApps, /*etc*/ } from '@aragon/toolkit'
+import { newDAO, getInstalledApps /*etc*/ } from '@aragon/toolkit'
 ```
 
 Please visit the examples folder for further details on how to use the toolkit in your projects.

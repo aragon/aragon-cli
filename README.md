@@ -71,6 +71,7 @@ Stable versions:
 
 | Version  | NPM page                              | Docs                                     | Release date |
 | -------- | ------------------------------------- | ---------------------------------------- | ------------ |
+| `v7.0.3` | [![NPM][730-npm-badge]][730-npm-link] | [![Docs][730-docs-badge]][730-docs-link] | 2020-01-03   |
 | `v6.4.0` | [![NPM][640-npm-badge]][640-npm-link] | [![Docs][640-docs-badge]][640-docs-link] | 2019-11-14   |
 | `v5.9.7` | [![NPM][597-npm-badge]][597-npm-link] | [![Docs][597-docs-badge]][597-docs-link] | 2019-07-15   |
 | `v5.8.0` | [![NPM][580-npm-badge]][580-npm-link] | [![Docs][580-docs-badge]][580-docs-link] | 2019-05-18   |
@@ -79,6 +80,8 @@ Stable versions:
 [latest-stable-npm-badge]: https://img.shields.io/npm/v/@aragon/cli/stable.svg?style=flat-square
 [latest-stable-docs-badge]: https://img.shields.io/badge/docs-latest%20stable-blue.svg?style=flat-square
 [latest-stable-docs-link]: https://hack.aragon.org/docs/cli-intro.html
+[730-npm-badge]: https://img.shields.io/badge/npm-v7.3.0-blue.svg?style=flat-square
+[730-npm-link]: https://www.npmjs.com/package/@aragon/cli/v/7.3.0
 [640-npm-badge]: https://img.shields.io/badge/npm-v6.4.0-blue.svg?style=flat-square
 [640-npm-link]: https://www.npmjs.com/package/@aragon/cli/v/6.4.0
 [640-docs-badge]: https://img.shields.io/badge/docs-v6.4.0-blue.svg?style=flat-square
@@ -119,6 +122,7 @@ It can also be built and installed from the source code:
 git clone https://github.com/aragon/aragon-cli.git
 cd aragon-cli
 npm install
+npm run build
 ```
 
 [nightly-npm-badge]: https://img.shields.io/npm/v/@aragon/cli/nightly.svg?style=flat-square&color=blueviolet
@@ -135,16 +139,15 @@ npm install
 
 ## Related packages
 
-| Package             | Version (latest/stable)                       | Version (nightly)                                     | Downloads                                         |
-| ------------------- | --------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------- |
-| `create-aragon-app` | [![NPM version][caa-npm-badge]][caa-npm-link] | [![NPM version][caa-npm-badge-nightly]][caa-npm-link] | [![Downloads][caa-downloads-badge]][caa-npm-link] |
+| Package             | Version (latest/stable)                               | Version (nightly)                                             | Downloads                                                 |
+| ------------------- | ----------------------------------------------------- | ------------------------------------------------------------- | --------------------------------------------------------- |
+| `create-aragon-app` | [![NPM version][caa-npm-badge]][caa-npm-link]         | [![NPM version][caa-npm-badge-nightly]][caa-npm-link]         | [![Downloads][caa-downloads-badge]][caa-npm-link]         |
 | `toolkit`           | [![NPM version][toolkit-npm-badge]][toolkit-npm-link] | [![NPM version][toolkit-npm-badge-nightly]][toolkit-npm-link] | [![Downloads][toolkit-downloads-badge]][toolkit-npm-link] |
 
 [caa-npm-badge]: https://img.shields.io/npm/v/create-aragon-app/latest.svg?style=flat-square
 [caa-npm-link]: https://npmjs.org/package/create-aragon-app
 [caa-npm-badge-nightly]: https://img.shields.io/npm/v/create-aragon-app/nightly.svg?style=flat-square&color=blueviolet
 [caa-downloads-badge]: https://img.shields.io/npm/dm/create-aragon-app.svg?style=flat-square
-
 [toolkit-npm-badge]: https://img.shields.io/npm/v/@aragon/toolkit/latest.svg?style=flat-square
 [toolkit-npm-link]: https://npmjs.org/package/@aragon/toolkit
 [toolkit-npm-badge-nightly]: https://img.shields.io/npm/v/@aragon/toolkit/nightly.svg?style=flat-square&color=blueviolet

@@ -2,7 +2,30 @@
 
 All changes to this project will be documented in this file and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v7.0.0 - 2019-12-18 (🌳 STABLE)
+## v7.0.3 - 2020-01-03 (🌳 STABLE)
+
+### 💡 Feature updates
+
+- Use local truffle (#1163) @macor161
+- Export constants from `toolkit` (#1159) @macor161
+
+### 🐛 Bug Fixes
+
+- IPFS hanging issue (#1137) @macor161
+- Fix publishing process (#1143) @macor161
+- Fix critical shebang issue on linux (#1140) @macor161
+
+---
+
+## v7.0.2 - 2019-12-20
+
+---
+
+## v7.0.1 - 2019-12-18
+
+---
+
+## v7.0.0 - 2019-12-18
 
 ### 💥 Breaking changes
 
@@ -11,7 +34,7 @@ All changes to this project will be documented in this file and this project adh
 ### 🐛 Bug fixes
 
 - Fix acl commands used with a dao id (#1076) @macor161
-- Fix envrionments adding configure APM function (#1100) @0xGabi
+- Fix envrionments adding configure apm function (#1100) @0xGabi
 - Fixes a bug where start command wouldnt open in browser (#1089) @ajsantander
 - Patch to prevent long running commands to call `onFinishCommand` hook (#1032) @dapplion
 - Fix `getBinary` (#1042) @0x6431346e
@@ -257,7 +280,7 @@ All changes to this project will be documented in this file and this project adh
 
 ### 🚀 New features
 
-- New flag `--apm.ipfs.gateway` used to read APM artifacts from.
+- New flag `--apm.ipfs.gateway` used to read apm artifacts from.
   Defaults to `http://localhost:8080/ipfs`, but some defaults environment now point to `https://ipfs.eth.aragon.network/ipfs`, see [environments.default.json](https://github.com/aragon/aragon-cli/blob/master/packages/aragon-cli/config/environments.default.json) (#519)
 
 ### 💡 Feature updates
@@ -335,7 +358,7 @@ All changes to this project will be documented in this file and this project adh
 ### 💡 Feature updates
 
 - `aragon apm versions` now accepts a `[apmRepo]` parameter to inspect packages, other than the one in `arapp.json` (#458)
-- the APM timeout has been increased to 5 minutes and made configurable in the `package.json` of the CLI (you can tweak it by building from source) (#481)
+- the apm timeout has been increased to 5 minutes and made configurable in the `package.json` of the CLI (you can tweak it by building from source) (#481)
 
 ---
 
