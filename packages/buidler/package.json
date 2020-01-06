@@ -1,0 +1,20 @@
+{
+  "name": "@aragon/buidler-aragon",
+  "version": "0.0.1",
+  "description": "Aragon Buidler plugin",
+  "main": "index.js",
+  "author": "Aragon Association <legal@aragon.org>",
+  "license": "GPL-3.0-or-later",
+  "keywords": [
+    "aragon",
+    "buidler",
+    "plugin",
+    "ethereum"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@nomiclabs/buidler": "^1.0.2"
+  }
+}
