@@ -71,7 +71,7 @@ Stable versions:
 
 | Version  | NPM page                              | Docs                                     | Release date |
 | -------- | ------------------------------------- | ---------------------------------------- | ------------ |
-| `v7.0.3` | [![NPM][703-npm-badge]][730-npm-link] | [![Docs][703-docs-badge]][730-docs-link] | 2020-01-03   |
+| `v7.0.3` | [![NPM][703-npm-badge]][703-npm-link] | [![Docs][703-docs-badge]][703-docs-link] | 2020-01-03   |
 | `v6.4.0` | [![NPM][640-npm-badge]][640-npm-link] | [![Docs][640-docs-badge]][640-docs-link] | 2019-11-14   |
 | `v5.9.7` | [![NPM][597-npm-badge]][597-npm-link] | [![Docs][597-docs-badge]][597-docs-link] | 2019-07-15   |
 | `v5.8.0` | [![NPM][580-npm-badge]][580-npm-link] | [![Docs][580-docs-badge]][580-docs-link] | 2019-05-18   |
@@ -82,6 +82,8 @@ Stable versions:
 [latest-stable-docs-link]: https://hack.aragon.org/docs/cli-intro.html
 [703-npm-badge]: https://img.shields.io/badge/npm-v7.0.3-blue.svg?style=flat-square
 [703-npm-link]: https://www.npmjs.com/package/@aragon/cli/v/7.0.3
+[703-docs-badge]: https://img.shields.io/badge/docs-v7.0.3-blue.svg?style=flat-square
+[703-docs-link]: https://github.com/aragon/aragon-cli/blob/v7.0.3/docs/Intro.md
 [640-npm-badge]: https://img.shields.io/badge/npm-v6.4.0-blue.svg?style=flat-square
 [640-npm-link]: https://www.npmjs.com/package/@aragon/cli/v/6.4.0
 [640-docs-badge]: https://img.shields.io/badge/docs-v6.4.0-blue.svg?style=flat-square
