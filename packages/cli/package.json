@@ -1,6 +1,6 @@
 {
-  "name": "@aragon/cli",
-  "version": "7.0.3",
+  "name": "gabi-cli",
+  "version": "7.0.4",
   "description": "Aragon command-line tools",
   "main": "./dist/toolkit.js",
   "bin": {
