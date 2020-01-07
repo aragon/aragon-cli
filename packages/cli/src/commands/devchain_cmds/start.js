@@ -14,7 +14,7 @@ import ganache from 'ganache-core'
 import listrOpts from '../../helpers/listr-options'
 import pjson from '../../../package.json'
 import { task as devchainStatusTask } from './status'
-import { BLOCK_GAS_LIMIT, MNEMONIC } from './utils/ganache-vars'
+import { BLOCK_GAS_LIMIT, MNEMONIC } from './utils/constants'
 
 export const command = 'start'
 export const describe =
@@ -30,6 +30,10 @@ export const builder = yargs => {
     .option('network-id', {
       description: 'Network id to connect with',
       alias: 'i',
+    })
+    .option('hardfork', {
+      description:
+        'Allows to specify which hardfork should be used. Supported hardforks are byzantium, constantinople, petersburg (default), and istanbul (beta).',
     })
     .option('block-time', {
       description: 'Specify blockTime in seconds for automatic mining',
@@ -61,6 +65,7 @@ export const builder = yargs => {
 export const task = async function({
   port = 8545,
   networkId,
+  hardfork = 'istanbul',
   blockTime,
   gasLimit = BLOCK_GAS_LIMIT,
   verbose = false,
@@ -119,6 +124,7 @@ export const task = async function({
 
           const options = {
             network_id: ctx.id,
+            hardfork,
             blockTime,
             gasLimit,
             mnemonic: MNEMONIC,
