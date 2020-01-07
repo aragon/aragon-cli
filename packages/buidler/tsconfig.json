@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "noImplicitAny": false,
+    "allowJs": true
+  },
+  "include": ["./scripts", "./test"],
+  "files": [
+    "./buidler.config.ts",
+    "./node_modules/@nomiclabs/buidler-web3/src/type-extensions.d.ts",
+    "./node_modules/@nomiclabs/buidler-truffle5/src/type-extensions.d.ts"
+  ]
+}
