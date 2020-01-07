@@ -17,5 +17,5 @@
       "appName": "counter.aragonpm.eth"
     }
   },
-  "path": "contracts/CounterApp.sol"
+  "path": "contracts/Counter.sol"
 }
