@@ -73,6 +73,10 @@ export const builder = function(yargs) {
     .option('network-id', {
       description: 'Network id to connect with',
     })
+    .option('hardfork', {
+      description:
+        'Allows to specify which hardfork should be used. Supported hardforks are byzantium, constantinople, petersburg, and istanbul (default).',
+    })
     .option('block-time', {
       description: 'Specify blockTime in seconds for automatic mining',
     })
@@ -196,6 +200,7 @@ export const handler = async function({
   files,
   port,
   networkId,
+  hardfork,
   blockTime,
   accounts,
   reset,
@@ -251,7 +256,14 @@ export const handler = async function({
           }
         },
         task: async (ctx, task) =>
-          devchainTask({ port, networkId, blockTime, reset, showAccounts }),
+          devchainTask({
+            port,
+            networkId,
+            hardfork,
+            blockTime,
+            reset,
+            showAccounts,
+          }),
       },
       {
         title: 'Setup before publish',
