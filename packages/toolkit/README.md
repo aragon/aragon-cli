@@ -1,4 +1,4 @@
-# Create Aragon App
+# Aragon Toolkit
 
 Toolkit for accessing aragonCLI utilities programmatically.
 
