@@ -12,10 +12,6 @@ import {
 } from './task-names';
 import filewatcher from 'filewatcher';
 
-// import {
-//   TASK_COMPILE
-// } from '@nomiclabs/buidler/src/builtin-tasks/task-names'
-
 // Define internal tasks.
 internalTask(TASK_START_NEW_DAO, newDao);
 internalTask(TASK_START_NEW_APP_PROXY, newAppProxy);
@@ -47,6 +43,9 @@ task(TASK_START, 'Starts Aragon app development').setAction(
   }
 );
 
+/**
+ * Listens for changes in the app's main contract
+ */
 async function watchContracts(
   { root, dao },
   { run }: BuidlerRuntimeEnvironment
@@ -69,6 +68,9 @@ async function watchContracts(
   return new Promise((resolve, reject) => {});
 }
 
+/**
+ * Updates the app proxy's implementation in the Kernel
+ */
 async function updateProxyImplementation(
   { root, dao },
   { artifacts }: BuidlerRuntimeEnvironment
@@ -87,6 +89,10 @@ async function updateProxyImplementation(
   });
 }
 
+/**
+ * Creates a new app proxy
+ * @return proxy App TruffleContract
+ */
 async function newAppProxy(
   { root, dao },
   { artifacts }: BuidlerRuntimeEnvironment
@@ -112,6 +118,10 @@ async function newAppProxy(
   return proxy;
 }
 
+/**
+ * Deploys a new DAO
+ * @return DAO's Kernel TruffleContract
+ */
 async function newDao({ root }, { artifacts }: BuidlerRuntimeEnvironment) {
   // Create Kernel instance.
   const Kernel = artifacts.require('Kernel');
