@@ -2,6 +2,14 @@
 
 All changes to this project will be documented in this file and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v7.0.4 - 2020-01-06 (🌒 NIGHTLY)
+
+### 💡 Feature updates
+
+- Support istanbul on devchain (#1180) @0xGabi
+
+---
+
 ## v7.0.3 - 2020-01-03 (🌳 STABLE)
 
 ### 💡 Feature updates
