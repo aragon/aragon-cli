@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@aragon/toolkit": "^0.0.3",
+    "@aragon/os": "4.0.1",
     "@nomiclabs/buidler": "^1.0.2",
     "@nomiclabs/buidler-truffle5": "^1.0.2",
     "@nomiclabs/buidler-web3": "^1.0.2",
