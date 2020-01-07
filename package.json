@@ -19,7 +19,7 @@
     "lint:fix": "lerna run --parallel lint:fix",
     "pretest": "node scripts/setup-integration-tests.js",
     "posttest": "node scripts/teardown-integration-tests.js",
-    "test": "lerna run --parallel test",
+    "test": "lerna run --concurrency 1 test",
     "test:coverage": "lerna run --parallel test:coverage",
     "report-coverage": "codecov",
     "release": "lerna version",
