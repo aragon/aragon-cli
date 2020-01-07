@@ -24,6 +24,11 @@
     "@types/node": "^13.1.4",
     "filewatcher": "^3.0.1",
     "ts-node": "^8.5.4",
-    "typescript": "^3.7.4"
+    "typescript": "^3.7.4",
+    "web3": "^1.2.4"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "bracketSpacing": true
   }
 }

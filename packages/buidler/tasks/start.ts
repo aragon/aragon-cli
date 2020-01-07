@@ -1,37 +1,40 @@
+import fs from 'fs';
+import path from 'path';
 import { task, internalTask } from '@nomiclabs/buidler/config';
-
+import { BuidlerRuntimeEnvironment } from '@nomiclabs/buidler/types';
 import {
   TASK_START,
   TASK_START_NEW_DAO,
   TASK_START_NEW_APP_PROXY,
   TASK_START_UPDATE_PROXY_IMPLEMENTATION,
-  TASK_START_WATCH_CONTRACTS
-} from './task-names'
+  TASK_START_WATCH_CONTRACTS,
+  TASK_COMPILE
+} from './task-names';
+import filewatcher from 'filewatcher';
 
 // import {
 //   TASK_COMPILE
 // } from '@nomiclabs/buidler/src/builtin-tasks/task-names'
 
-import filewatcher from 'filewatcher'
+// Define internal tasks.
+internalTask(TASK_START_NEW_DAO, newDao);
+internalTask(TASK_START_NEW_APP_PROXY, newAppProxy);
+internalTask(TASK_START_UPDATE_PROXY_IMPLEMENTATION, updateProxyImplementation);
+internalTask(TASK_START_WATCH_CONTRACTS, watchContracts);
 
-const BASE_NAMESPACE = '0xf1f3eb40f5bc1ad1344716ced8b8a0431d840b5783aea1fd01786bc26f35ac0f';
+const BASE_NAMESPACE =
+  '0xf1f3eb40f5bc1ad1344716ced8b8a0431d840b5783aea1fd01786bc26f35ac0f';
 const APP_ID = '0xDEADBEEF';
 
-task(TASK_START, 'Starts Aragon app development')
-  .setAction(async ({}, { web3, run }) => {
+task(TASK_START, 'Starts Aragon app development').setAction(
+  async ({}, { web3, run }: BuidlerRuntimeEnvironment) => {
     console.log(`Starting...`);
 
-    // Define internal tasks.
-    internalTask(TASK_START_NEW_DAO, newDao);
-    internalTask(TASK_START_NEW_APP_PROXY, newAppProxy);
-    internalTask(TASK_START_UPDATE_PROXY_IMPLEMENTATION, updateProxyImplementation);
-    internalTask(TASK_START_WATCH_CONTRACTS, watchContracts)
-
     // Compile contracts.
-    await run('compile')
+    await run(TASK_COMPILE);
 
     // Retrieve active accounts.
-    const accounts = await web3.eth.getAccounts();
+    const accounts: string[] = await web3.eth.getAccounts();
     const root = accounts[0];
 
     const dao = await run(TASK_START_NEW_DAO, { root });
@@ -40,55 +43,76 @@ task(TASK_START, 'Starts Aragon app development')
     const proxy = await run(TASK_START_NEW_APP_PROXY, { root, dao });
     console.log(`New app proxy created at: ${proxy.address}`);
 
-    await run(TASK_START_WATCH_CONTRACTS, { root, dao })
-  });
+    await run(TASK_START_WATCH_CONTRACTS, { root, dao });
+  }
+);
 
-const watchContracts = async ({ root, dao }, { run }) => {
+async function watchContracts(
+  { root, dao },
+  { run }: BuidlerRuntimeEnvironment
+) {
   console.log(`Watching for changes in contracts...`);
+  const mainContractPath = getMainContractPath();
 
   // Start the file watcher.
   const watcher = filewatcher();
-  watcher.add('./contracts/Counter.sol');
+  watcher.add(mainContractPath);
   watcher.on('change', async (file, stat) => {
     console.log(`Contract changed: ${file}`);
 
-    await run('compile')
+    await run(TASK_COMPILE);
 
     await run(TASK_START_UPDATE_PROXY_IMPLEMENTATION, { root, dao });
-  })
+  });
 
   // Unresolving promise to keep task open.
-  return new Promise((resolve, reject) => {})
+  return new Promise((resolve, reject) => {});
 }
 
-const updateProxyImplementation = async ({ root, dao }, { artifacts }) => {
-  console.log(`Updating implementation...`)
+async function updateProxyImplementation(
+  { root, dao },
+  { artifacts }: BuidlerRuntimeEnvironment
+) {
+  console.log(`Updating implementation...`);
 
   // Deploy base implementation.
-  const App = artifacts.require('Counter');
+  const mainContractName = getMainContractName();
+  const App = artifacts.require(mainContractName);
   const implementation = await App.new();
-  console.log(`  New implementation: ${ implementation.address }`)
+  console.log(`  New implementation: ${implementation.address}`);
 
   // Set the new implementation in the Kernel.
-  await dao.setApp(BASE_NAMESPACE, APP_ID, implementation.address, { from: root })
+  await dao.setApp(BASE_NAMESPACE, APP_ID, implementation.address, {
+    from: root
+  });
 }
 
-const newAppProxy = async ({ root, dao }, { artifacts }) => {
+async function newAppProxy(
+  { root, dao },
+  { artifacts }: BuidlerRuntimeEnvironment
+) {
   // Deploy base implementation.
-  const App = artifacts.require('Counter');
+  const mainContractName = getMainContractName();
+  const App = artifacts.require(mainContractName);
   const implementation = await App.new();
-  console.log(`  First implementation: ${ implementation.address }`)
+  console.log(`  First implementation: ${implementation.address}`);
 
   // Create a new app proxy with base implementation.
-  const { logs } = await dao.newAppInstance(APP_ID, implementation.address, '0x', false, { from: root });
+  const { logs } = await dao.newAppInstance(
+    APP_ID,
+    implementation.address,
+    '0x',
+    false,
+    { from: root }
+  );
 
   // Retrieve proxy address and wrap around abi.
   const proxy = App.at(logs.find(l => l.event === 'NewAppProxy').args.proxy);
 
   return proxy;
-};
+}
 
-const newDao = async ({ root }, { artifacts }) => {
+async function newDao({ root }, { artifacts }: BuidlerRuntimeEnvironment) {
   // Create Kernel instance.
   const Kernel = artifacts.require('Kernel');
   const dao = await Kernel.new(false);
@@ -109,4 +133,41 @@ const newDao = async ({ root }, { artifacts }) => {
   );
 
   return dao;
-};
+}
+
+/**
+ * Returns main contract path
+ * @return "./contracts/Counter.sol"
+ */
+function getMainContractPath(): string {
+  const arappPath = 'arapp.json';
+  const contractsPath = './contracts';
+
+  if (fs.existsSync(arappPath)) {
+    const arapp: { path: string } = JSON.parse(
+      fs.readFileSync(arappPath, 'utf-8')
+    );
+    return arapp.path;
+  }
+
+  // Try to guess contract path
+  if (fs.existsSync(contractsPath)) {
+    const contracts = fs.readdirSync(contractsPath);
+    const mainContract = contracts.filter(
+      name => name.endsWith('.sol') || name !== 'Imports.sol'
+    );
+    if (mainContract.length === 1)
+      return path.join(contractsPath, mainContract[0]);
+  }
+
+  throw Error(`No arapp.json found in current folder`);
+}
+
+/**
+ * Returns main contract name
+ * @return "Counter"
+ */
+function getMainContractName(): string {
+  const mainContractPath = getMainContractPath();
+  return path.parse(mainContractPath).name;
+}
