@@ -76,27 +76,6 @@ test.serial('should fetch published versions to aragonPM', async t => {
   t.pass()
 })
 
-test.serial('should run an aragon app successfully on IPFS', async t => {
-  const publishDirPath = path.resolve(`${mockappPath}/${testSandbox}/ipfs`)
-
-  const { kill } = await startProcess({
-    cmd: 'node',
-    args: [cliPath, 'run', '--files', 'dist', '--publish-dir', publishDirPath],
-    execaOpts: {
-      cwd: mockappPath,
-      localDir: '.',
-      detached: true,
-    },
-    readyOutput: 'Open http://localhost:',
-    timeout: RUN_CMD_TIMEOUT,
-  })
-
-  // cleanup
-  await kill()
-
-  t.pass()
-})
-
 test.serial(
   'should run an aragon app successfully on IPFS using a Template',
   async t => {
