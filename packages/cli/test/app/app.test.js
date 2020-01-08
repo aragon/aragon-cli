@@ -64,7 +64,30 @@ test.serial('should run an aragon app successfully on IPFS', async t => {
 
   const { kill } = await startProcess({
     cmd: 'node',
-    args: [cliPath, 'run', '--files', 'dist', '--publish-dir', publishDirPath],
+    args: [
+      cliPath,
+      'run',
+      '--files',
+      'dist',
+      '--publish-dir',
+      publishDirPath,
+      // Template args
+      '--template',
+      'Template',
+      '--template-init',
+      '0x5d94e3e7aec542ab0f9129b9a7badeb5b3ca0f77',
+      '@ARAGON_ENS',
+      '0xd526b7aba39cccf76422835e7fd5327b98ad73c9',
+      '0xf1f8aac64036cdd399886b1c157b7e3b361093f3',
+      '--template-new-instance',
+      'newTokenAndInstance',
+      '--template-args',
+      'MyToken',
+      'TKN',
+      '["0xb4124cEB3451635DAcedd11767f004d8a28c6eE7"]',
+      '["1000000000000000000"]',
+      '["500000000000000000","150000000000000000","86400"]',
+    ],
     execaOpts: {
       cwd: mockappPath,
       localDir: '.',
