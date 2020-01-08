@@ -1,15 +1,10 @@
 import { getMainContractName } from './getMainContract';
-import deployImplementation from './deployImplementation';
 
 /**
  * Creates a new app proxy
  * @return proxy App TruffleContract
  */
-async function createProxy(appId, root, dao, artifacts) {
-  // Deploy base implementation.
-  const implementation = await deployImplementation(artifacts);
-  // console.log(`  First implementation: ${implementation.address}`);
-
+async function createProxy(implementation, appId, root, dao, artifacts) {
   // Create a new app proxy with base implementation.
   const { logs } = await dao.newAppInstance(
     appId,
