@@ -4,4 +4,5 @@ export { default as createProxy } from './createProxy';
 export { default as updateProxy } from './updateProxy';
 export { default as createRepo } from './createRepo';
 export { default as updateRepo } from './updateRepo';
+export { default as setPermissions } from './setPermissions';
 export { getMainContractName, getMainContractPath } from './getMainContract';

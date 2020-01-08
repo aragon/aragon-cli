@@ -15,9 +15,10 @@ import {
   updateProxy,
   createRepo,
   updateRepo,
+  setPermissions,
   getMainContractName,
   getMainContractPath
-} from './utils';
+} from './utils/backend';
 
 internalTask(TASK_START_WATCH_CONTRACTS, watchContracts);
 
@@ -30,7 +31,7 @@ task(TASK_START, 'Starts Aragon app development').setAction(
   async ({}, { web3, run, artifacts }: BuidlerRuntimeEnvironment) => {
     console.log(`Starting...`);
 
-    // await run(TASK_COMPILE);
+    await run(TASK_COMPILE);
 
     // Retrieve active accounts.
     const accounts: string[] = await web3.eth.getAccounts();
@@ -54,6 +55,10 @@ task(TASK_START, 'Starts Aragon app development').setAction(
     // Create a proxy for the app (also setting it's first implementation).
     const proxy = await createProxy(implementation, APP_ID, root, dao, artifacts);
     console.log(`New app proxy created at: ${proxy.address}`);
+
+    // Set the app's permissions.
+    // TODO: Must also be reset on contract updates.
+    await setPermissions(dao, proxy, root, artifacts);
 
     await run(TASK_START_WATCH_CONTRACTS, { root, dao, repo });
   }

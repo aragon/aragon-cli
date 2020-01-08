@@ -1,7 +1,7 @@
 async function updateRepo(repo, implementation) {
   // Calculate next valid semver.
   const semver = [
-    (await repo.getVersionsCount()).toNumber() + 1,
+    (await repo.getVersionsCount()).toNumber() + 1, // Updates to smart contracts require major bump.
     0,
     0
   ];

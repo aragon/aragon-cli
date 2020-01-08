@@ -25,7 +25,6 @@
     "filewatcher": "^3.0.1",
     "ts-node": "^8.5.4",
     "typescript": "^3.7.4",
-    "ethjs-ens": "^2.0.1",
     "web3": "^1.2.4"
   },
   "prettier": {

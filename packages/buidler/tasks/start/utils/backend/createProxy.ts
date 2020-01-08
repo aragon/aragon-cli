@@ -17,7 +17,7 @@ async function createProxy(implementation, appId, root, dao, artifacts) {
   // Retrieve proxy address and wrap around abi.
   const mainContractName = getMainContractName();
   const App = artifacts.require(mainContractName);
-  const proxy = App.at(logs.find(l => l.event === 'NewAppProxy').args.proxy);
+  const proxy = await App.at(logs.find(l => l.event === 'NewAppProxy').args.proxy);
 
   return proxy;
 }
