@@ -17,7 +17,7 @@ async function createRepo(root, artifacts) {
 
   // Retrieve repo address and wrap it with its abi.
   const Repo = artifacts.require('Repo');
-  const repo = Repo.at(logs.find(l => l.event === 'NewRepo').args.repo);
+  const repo = await Repo.at(logs.find(l => l.event === 'NewRepo').args.repo);
 
   return repo
 }
