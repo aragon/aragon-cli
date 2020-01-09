@@ -5,7 +5,7 @@ async function updateRepo(repo, implementation) {
     0,
     0
   ];
-  console.log(`Updating repo to version: ${semver.join('.')}`)
+  console.log(`Repo version: ${semver.join('.')}`)
 
   const contentURI = '0x123';
 
