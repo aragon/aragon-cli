@@ -3,23 +3,17 @@ import ENS from 'ethjs-ens'
 const ENS_REGISTRY_ADDRESS = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1';
 const APM_REGISTRY_ADDRESS = '0x32296d9f8fed89658668875dc73cacf87e8888b2';
 
-async function createOrRetrieveRepo(web3, appName, root, artifacts) {
+async function createOrRetrieveRepo(web3, appName, appId, root, artifacts) {
+  // Retrieve the Repo address from ens, create the Repo otherwise.
   let repoAddress;
-
-  repoAddress = await retrieveRepo(web3, appName, artifacts);
+  repoAddress = await ensResolve(web3, appId);
   if (!repoAddress) {
     repoAddress = await createRepo(appName, root, artifacts);
   }
 
+  // Wrap Repo address with abi.
   const Repo = artifacts.require('Repo');
   return await Repo.at(repoAddress);
-}
-
-function retrieveRepo(web3, appName, artifacts) {
-  const repoAddress = ensResolve(web3, appName)
-    .catch(() => null);
-
-  return repoAddress;
 }
 
 async function createRepo(appName, root, artifacts) {
@@ -38,7 +32,7 @@ async function createRepo(appName, root, artifacts) {
   return repoAddress;
 }
 
-async function ensResolve(web3, ensName) {
+async function ensResolve(web3, appId) {
   const opts = {
     provider: web3.currentProvider,
     registryAddress: ENS_REGISTRY_ADDRESS
@@ -49,7 +43,9 @@ async function ensResolve(web3, ensName) {
   }
 
   const ens = new ENS(opts);
-  return ens.lookup(ensName);
+  const address = await ens.resolveAddressForNode(appId);
+
+  return address;
 }
 
 export default createOrRetrieveRepo;
