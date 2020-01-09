@@ -12,7 +12,7 @@ async function createDao(root, artifacts) {
   const aclBase = await ACL.new();
   await dao.initialize(aclBase.address, root);
 
-  // Give first account the ability to manage apps.
+  // Give root the ability to manage apps.
   const acl = await ACL.at(await dao.acl());
   await acl.createPermission(
     root,
