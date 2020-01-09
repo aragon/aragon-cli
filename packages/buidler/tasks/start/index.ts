@@ -41,9 +41,9 @@ task(TASK_START, 'Starts Aragon app development').setAction(
     console.log(`DAO: ${dao.address}`);
 
     // Define app name and id.
-    const appName = 'counter.aragonpm.eth';
+    const appName = 'counter';
     console.log(`App name: ${appName}`)
-    const appId = namehash.hash(appName);
+    const appId = namehash.hash(`${appName}.aragonpm.eth`);
     console.log(`App id: ${appId}`)
 
     // Create an APM repo for the app.
