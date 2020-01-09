@@ -6,7 +6,7 @@ const APM_REGISTRY_ADDRESS = '0x32296d9f8fed89658668875dc73cacf87e8888b2';
 async function createOrRetrieveRepo(web3, appName, appId, root, artifacts) {
   // Retrieve the Repo address from ens, create the Repo otherwise.
   let repoAddress;
-  repoAddress = await ensResolve(web3, appId);
+  repoAddress = await ensResolve(web3, appId).catch(() => null);
   if (!repoAddress) {
     repoAddress = await createRepo(appName, root, artifacts);
   }
