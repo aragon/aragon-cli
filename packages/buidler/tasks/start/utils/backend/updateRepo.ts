@@ -7,8 +7,7 @@ async function updateRepo(repo, implementation) {
   ];
   console.log(`Repo version: ${semver.join('.')}`)
 
-  // const contentURI = 'http:localhost:8080';
-  const contentURI = '0x123';
+  const contentURI = `0x${Buffer.from('http:localhost:8080').toString('hex')}`;
 
   await repo.newVersion(semver, implementation.address, contentURI);
 }
