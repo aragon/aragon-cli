@@ -47,7 +47,7 @@ task(TASK_START, 'Starts Aragon app development').setAction(
     console.log(`App id: ${appId}`)
 
     // Create an APM repo for the app.
-    const repo = await createOrRetrieveRepo(web3, appName, root, artifacts);
+    const repo = await createOrRetrieveRepo(web3, appName, appId, root, artifacts);
     console.log(`APMRegistry: ${repo.address}`)
 
     // Retrieve the first implementation for the app.
