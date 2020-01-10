@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import fsExtra from 'fs-extra';
 import { TASK_FLATTEN_GET_FLATTENED_SOURCE } from '../../../task-names';
-import { execaPipe } from '../index';
+import { execaPipe } from './execaPipe';
 import { BuidlerRuntimeEnvironment } from '@nomiclabs/buidler/types';
 
 export const appDist = 'dist';

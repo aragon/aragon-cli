@@ -24,14 +24,12 @@ import {
 } from './utils/backend';
 import {
   prepareAragonClient,
-  startAragonClient
-} from './utils/frontend/aragonClient';
-import {
+  startAragonClient,
   buildAppFrontEnd,
   buildAppArtifacts,
   buildAppCode,
   appDist
-} from './utils/frontend/release';
+} from './utils/frontend';
 
 /**
  * Main, composite, task.
