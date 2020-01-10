@@ -432,6 +432,8 @@
     },
     "@aragon/toolkit": {
       "version": "0.0.3",
+      "resolved": "https://registry.npmjs.org/@aragon/toolkit/-/toolkit-0.0.3.tgz",
+      "integrity": "sha512-w4RG907rw/LzmTELzfiJ22SJ9d2y863KegFFwfYHAXoWE1rEHw+45HjcnIKv71xNs+X3Kf7o2Ko+6wW1PdimJg==",
       "requires": {
         "@aragon/abis": "^1.1.0",
         "@aragon/apm": "3.1.2-beta.3",
