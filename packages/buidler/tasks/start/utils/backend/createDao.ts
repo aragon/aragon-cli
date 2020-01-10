@@ -3,14 +3,23 @@
  * @return DAO's Kernel TruffleContract
  */
 async function createDao(root, artifacts) {
-  // Create Kernel instance.
+  // Deploy a DAOFactory.
   const Kernel = artifacts.require('Kernel');
-  const dao = await Kernel.new(false);
-
-  // Initialize Kernel instance.
+  const kernelBase = await Kernel.new(true /*petrifyImmediately*/);
   const ACL = artifacts.require('ACL');
   const aclBase = await ACL.new();
-  await dao.initialize(aclBase.address, root);
+  const EVMScriptRegistryFactory = artifacts.require('EVMScriptRegistryFactory');
+  const registryFactory = await EVMScriptRegistryFactory.new();
+  const DAOFactory = artifacts.require('DAOFactory');
+  const daoFactory = await DAOFactory.new(
+    kernelBase.address,
+    aclBase.address,
+    registryFactory.address
+  );
+
+  // Create a DAO instance using the factory.
+  const { logs } = await daoFactory.newDAO(root);
+  const dao = await Kernel.at(logs.find(l => l.event === 'DeployDAO').args.dao);
 
   // Give root the ability to manage apps.
   const acl = await ACL.at(await dao.acl());
