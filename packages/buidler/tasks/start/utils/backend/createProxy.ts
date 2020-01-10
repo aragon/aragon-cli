@@ -19,6 +19,9 @@ async function createProxy(implementation, appId, root, dao, artifacts) {
   const App = artifacts.require(mainContractName);
   const proxy = await App.at(logs.find(l => l.event === 'NewAppProxy').args.proxy);
 
+  // Initialize the app.
+  await proxy.initialize();
+
   return proxy;
 }
 
