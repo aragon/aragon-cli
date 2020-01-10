@@ -4,7 +4,7 @@ import fsExtra from 'fs-extra';
 import os from 'os';
 import open from 'open';
 import { createStaticWebserver } from './staticWebserver';
-import { execaPipe } from '../index';
+import { execaPipe } from './execaPipe';
 
 const defaultRepo = 'https://github.com/aragon/aragon';
 const defaultVersion = '775edd606333a111eb2693df53900039722a95dc';
