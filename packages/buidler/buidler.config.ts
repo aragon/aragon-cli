@@ -3,8 +3,7 @@ import { usePlugin, BuidlerConfig } from '@nomiclabs/buidler/config';
 usePlugin('@nomiclabs/buidler-truffle5');
 usePlugin('@nomiclabs/buidler-web3');
 
-import './tasks/start';
-import './tasks/start-frontend';
+import './tasks/start/start';
 
 const config: BuidlerConfig = {
   defaultNetwork: 'localhost',
