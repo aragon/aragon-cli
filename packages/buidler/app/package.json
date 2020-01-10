@@ -1,0 +1,9 @@
+{
+  "name": "counter-app",
+  "version": "0.1.0",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "build": "mkdir -p build && cp src/index.html build/index.html"
+  }
+}
