@@ -1,5 +1,4 @@
 import path from 'path';
-import filewatcher from 'filewatcher'; // TODO: remove
 import namehash from 'eth-ens-namehash';
 import liveServer from 'live-server';
 import chokidar from 'chokidar';
@@ -88,26 +87,26 @@ async function startBackend(env: BuidlerRuntimeEnvironment): Promise<{ daoAddres
   // TODO: Must also be reset on contract updates.
   await setPermissions(dao, proxy, root, artifacts);
 
-  // Watch for changes in contracts.
-  const mainContractPath = getMainContractPath();
-  console.log(`Watching for changes in contracts...`);
-  const watcher = filewatcher();
-  watcher.add(mainContractPath);
-  watcher.on('change', async (file, stat) => {
-    console.log(`<<<CHANGES DETECTED IN CONTRACTS>>> ${file}`);
+  // Watch back-end files. Debounce for performance
+  chokidar
+    .watch(getMainContractPath(), {
+      awaitWriteFinish: { stabilityThreshold: 1000 }
+    })
+    .on('all', async (event, path) => {
+      console.log(`Triggering backend build`);
 
-    await run(TASK_COMPILE);
+      await run(TASK_COMPILE);
 
-    // Retrieve the new implementation for the app.
-    const implementation = await deployImplementation(artifacts)
-    console.log(`App implementation: ${implementation.address}`)
+      // Retrieve the new implementation for the app.
+      const implementation = await deployImplementation(artifacts)
+      console.log(`App implementation: ${implementation.address}`)
 
-    // Update the APM's repo.
-    await updateRepo(repo, implementation);
+      // Update the APM's repo.
+      await updateRepo(repo, implementation);
 
-    // Update the proxy's implementation.
-    await updateProxy(implementation, appId, root, dao, artifacts);
-  });
+      // Update the proxy's implementation.
+      await updateProxy(implementation, appId, root, dao, artifacts);
+    });
 
   return { daoAddress: dao.address, appAddress: proxy.address };
 }
@@ -147,7 +146,7 @@ async function startFrontend(daoAddress, appAddress, env: BuidlerRuntimeEnvironm
       awaitWriteFinish: { stabilityThreshold: 1000 }
     })
     .on('all', async (event, path) => {
-      console.log(`Triggering build for ${path}`);
+      console.log(`Triggering frontend build for ${path}`);
       await buildAppFrontEndDebounced(frontEndSrc);
     });
 }
