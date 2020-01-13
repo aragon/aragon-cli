@@ -32,8 +32,7 @@ export const builder = yargs => {
       alias: 'i',
     })
     .option('hardfork', {
-      description:
-        'Allows to specify which hardfork should be used. Supported hardforks are byzantium, constantinople, petersburg, and istanbul (default).',
+      description: 'Allows to specify which hardfork should be used. Supported hardforks are byzantium, constantinople, and petersburg (default)',
     })
     .option('block-time', {
       description: 'Specify blockTime in seconds for automatic mining',
@@ -65,7 +64,7 @@ export const builder = yargs => {
 export const task = async function({
   port = 8545,
   networkId,
-  hardfork = 'istanbul',
+  hardfork = 'petersburg',
   blockTime,
   gasLimit = BLOCK_GAS_LIMIT,
   verbose = false,
