@@ -120,7 +120,7 @@ async function startFrontend(daoAddress, appAddress, env: BuidlerRuntimeEnvironm
   await buildAppArtifacts();
 
   // TODO: Is this necessary? I don't think so...
-  // await buildAppCode(env);
+  await buildAppCode(env);
 
   // Start a live-server for the Aragon App assets
   liveServer.start({
