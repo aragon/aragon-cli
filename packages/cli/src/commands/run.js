@@ -370,10 +370,15 @@ export const handler = async function({
       },
       {
         title: `Fetching template ${bold(template)}@latest`,
-        task: async () => {
-          ctx.template = await getApmRepo(ctx.web3, template, 'latest', apmOptions)
+        task: async ctx => {
+          ctx.template = await getApmRepo(
+            ctx.web3,
+            template,
+            'latest',
+            apmOptions
+          )
         },
-        enabled: (ctx) => !ctx.contractInstance,
+        enabled: ctx => !ctx.contractInstance,
       },
       {
         title: 'Create Organization from template',

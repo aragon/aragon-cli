@@ -11,6 +11,7 @@ import {
   getAppProxyAddressFromReceipt,
   getAppBase,
   defaultAPMName,
+  getApmRepo,
 } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
@@ -64,7 +65,7 @@ export const handler = async function({
 }) {
   const web3 = await ensureWeb3(network)
 
-  apmRepoName = defaultAPMName(apmRepo)
+  const apmRepoName = defaultAPMName(apmRepo)
   dao = await resolveAddressOrEnsDomain(
     dao,
     web3,
