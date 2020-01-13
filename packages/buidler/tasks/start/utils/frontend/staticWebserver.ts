@@ -58,6 +58,17 @@ export function createStaticWebserver(
               res.statusCode = 500;
               res.end(`Error getting the file: ${err}.`);
             } else {
+              // Enable CORS
+              res.setHeader('Access-Control-Allow-Origin', '*');
+              res.setHeader(
+                'Access-Control-Allow-Methods',
+                'GET, POST, OPTIONS, PUT, PATCH, DELETE'
+              );
+              res.setHeader(
+                'Access-Control-Allow-Headers',
+                'X-Requested-With,content-type'
+              );
+              res.setHeader('Access-Control-Allow-Credentials', 'true');
               // if the file is found, set Content-type and send data
               res.setHeader('Content-type', map[ext] || 'text/plain');
               res.end(data);
