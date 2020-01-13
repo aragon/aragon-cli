@@ -38,7 +38,7 @@ import {
   runSetupTask,
   runPrepareForPublishTask,
   runPublishTask,
-} from '../commands/apm_cmds/publish'
+} from './apm_cmds/publish'
 
 const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
