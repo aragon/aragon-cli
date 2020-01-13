@@ -4,6 +4,7 @@ export {
 } from './aragonClient';
 export {
   buildAppFrontEnd,
+  watchAppFrontEnd,
   buildAppArtifacts,
   buildAppCode,
   appDist

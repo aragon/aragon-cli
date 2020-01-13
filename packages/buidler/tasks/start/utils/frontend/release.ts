@@ -17,8 +17,11 @@ export const codePath = 'code.sol';
  * @param frontEndSrc "app/build" Where are the front-end built files after the build
  */
 export async function buildAppFrontEnd(frontEndSrc: string): Promise<void> {
-  // Build and copy front-end
   await execaPipe('npm', ['run', 'build'], { cwd: frontEndSrc });
+}
+
+export async function watchAppFrontEnd(frontEndSrc: string): Promise<void> {
+  await execaPipe('npm', ['run', 'watch'], { cwd: frontEndSrc });
 }
 
 /**

@@ -26,6 +26,7 @@ import {
   prepareAragonClient,
   startAragonClient,
   buildAppFrontEnd,
+  watchAppFrontEnd,
   buildAppArtifacts,
   buildAppCode,
   appDist
@@ -138,15 +139,17 @@ async function startFrontend(daoAddress, appAddress, env: BuidlerRuntimeEnvironm
  Local:  ${url}
 `);
 
+  await watchAppFrontEnd(frontEndSrc);
+
   // Watch front-end files. Debounce for performance
-  const buildAppFrontEndDebounced = debounce(buildAppFrontEnd, 500);
-  chokidar
-    .watch(frontEndSrc, {
-      ignored: /build/, // ignore dotfiles
-      awaitWriteFinish: { stabilityThreshold: 1000 }
-    })
-    .on('change', async (event, path) => {
-      console.log(`Triggering frontend build for ${path}`);
-      await buildAppFrontEndDebounced(frontEndSrc);
-    });
+  // const buildAppFrontEndDebounced = debounce(buildAppFrontEnd, 500);
+  // chokidar
+  //   .watch(frontEndSrc, {
+  //     ignored: /build/, // ignore dotfiles
+  //     awaitWriteFinish: { stabilityThreshold: 1000 }
+  //   })
+  //   .on('change', async (event, path) => {
+  //     console.log(`Triggering frontend build for ${path}`);
+  //     await buildAppFrontEndDebounced(frontEndSrc);
+  //   });
 }
