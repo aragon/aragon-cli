@@ -23,7 +23,6 @@
     "@types/mocha": "^5.2.7",
     "@types/node": "^13.1.4",
     "chokidar": "^3.3.1",
-    "debounce": "^1.2.0",
     "eth-ens-namehash": "^2.0.8",
     "ethjs-ens": "^2.0.1",
     "fs-extra": "^8.1.0",
