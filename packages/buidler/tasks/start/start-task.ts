@@ -2,7 +2,6 @@ import path from 'path';
 import namehash from 'eth-ens-namehash';
 import liveServer from 'live-server';
 import chokidar from 'chokidar';
-import debounce from 'debounce';
 
 import { task } from '@nomiclabs/buidler/config';
 import { BuidlerRuntimeEnvironment } from '@nomiclabs/buidler/types';
@@ -121,7 +120,7 @@ async function startFrontend(daoAddress, appAddress, env: BuidlerRuntimeEnvironm
   await buildAppArtifacts();
 
   // TODO: Is this necessary? I don't think so...
-  await buildAppCode(env);
+  // await buildAppCode(env);
 
   // Start a live-server for the Aragon App assets
   liveServer.start({
@@ -140,16 +139,4 @@ async function startFrontend(daoAddress, appAddress, env: BuidlerRuntimeEnvironm
 `);
 
   await watchAppFrontEnd(frontEndSrc);
-
-  // Watch front-end files. Debounce for performance
-  // const buildAppFrontEndDebounced = debounce(buildAppFrontEnd, 500);
-  // chokidar
-  //   .watch(frontEndSrc, {
-  //     ignored: /build/, // ignore dotfiles
-  //     awaitWriteFinish: { stabilityThreshold: 1000 }
-  //   })
-  //   .on('change', async (event, path) => {
-  //     console.log(`Triggering frontend build for ${path}`);
-  //     await buildAppFrontEndDebounced(frontEndSrc);
-  //   });
 }
