@@ -19,10 +19,6 @@ export const codePath = 'code.sol';
 export async function buildAppFrontEnd(frontEndSrc: string): Promise<void> {
   // Build and copy front-end
   await execaPipe('npm', ['run', 'build'], { cwd: frontEndSrc });
-  await fsExtra.copy(path.join(frontEndSrc, 'build'), appDist, {
-    overwrite: true,
-    preserveTimestamps: true
-  });
 }
 
 /**

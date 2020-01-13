@@ -124,11 +124,11 @@ async function startFrontend(daoAddress, appAddress, env: BuidlerRuntimeEnvironm
 
   // Start a live-server for the Aragon App assets
   liveServer.start({
-    port: 8181, // Set the server port. Defaults to 8080.
-    root: appDist, // Set root directory that's being served. Defaults to cwd.
-    open: false, // When false, it won't load your browser by default.
-    ignore: 'build', // comma-separated string for paths to ignore
-    wait: 1000 // Waits for all changes, before reloading. Defaults to 0 sec.
+    port: 8001,
+    root: appDist,
+    open: false,
+    wait: 1000,
+    cors: true
   });
 
   // Start Aragon client at the deployed address
@@ -145,7 +145,7 @@ async function startFrontend(daoAddress, appAddress, env: BuidlerRuntimeEnvironm
       ignored: /build/, // ignore dotfiles
       awaitWriteFinish: { stabilityThreshold: 1000 }
     })
-    .on('all', async (event, path) => {
+    .on('change', async (event, path) => {
       console.log(`Triggering frontend build for ${path}`);
       await buildAppFrontEndDebounced(frontEndSrc);
     });
