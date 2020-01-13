@@ -1,6 +1,5 @@
 import TaskList from 'listr'
 import { blue, green, bold } from 'chalk'
-import APM from '@aragon/apm'
 import {
   ANY_ENTITY,
   NO_MANAGER,
@@ -8,6 +7,7 @@ import {
   addressesEqual,
   resolveAddressOrEnsDomain,
   getAclAddress,
+  encodeInitPayload,
   getAppProxyAddressFromReceipt,
   getAppBase,
   defaultAPMName,
@@ -15,16 +15,21 @@ import {
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
 import listrOpts from '../../helpers/listr-options'
-import encodeInitPayload from '../../helpers/encodeInitPayload'
 import { task as execTask } from './utils/execHandler'
-import { task as getRepoTask, args } from './utils/getRepoTask'
 import daoArg from './utils/daoArg'
 
 export const command = 'install <dao> <apmRepo> [apmRepoVersion]'
 export const describe = 'Install an app into a DAO'
 
 export const builder = function(yargs) {
-  return args(daoArg(yargs))
+  return daoArg(yargs)
+    .option('apmRepo', {
+      describe: 'Name of the aragonPM repo',
+    })
+    .option('apmRepoVersion', {
+      describe: 'Version of the package upgrading to',
+      default: 'latest',
+    })
     .option('app-init', {
       description:
         'Name of the function that will be called to initialize an app. Set it to "none" to skip initialization',
@@ -58,9 +63,8 @@ export const handler = async function({
   debug,
 }) {
   const web3 = await ensureWeb3(network)
-  const apm = await APM(web3, apmOptions)
 
-  apmRepo = defaultAPMName(apmRepo)
+  apmRepoName = defaultAPMName(apmRepo)
   dao = await resolveAddressOrEnsDomain(
     dao,
     web3,
@@ -70,21 +74,39 @@ export const handler = async function({
   const tasks = new TaskList(
     [
       {
-        title: `Fetching ${bold(apmRepo)}@${apmRepoVersion}`,
-        task: async (ctx, task) =>
-          getRepoTask({ apm, apmRepo, apmRepoVersion }),
+        title: `Fetching ${bold(apmRepoName)}@${apmRepoVersion}`,
+        task: async ctx => {
+          const progressHandler = step => {
+            switch (step) {
+              case 1:
+                console.log(`Initialize aragonPM`)
+                break
+              case 2:
+                console.log(`Fetching...`)
+                break
+            }
+          }
+
+          ctx.repo = await getApmRepo(
+            web3,
+            apmRepoName,
+            apmRepoVersion,
+            apmOptions,
+            progressHandler
+          )
+        },
       },
       {
         title: `Checking installed version`,
         task: async (ctx, task) => {
           const currentBase = await getAppBase(dao, ctx.repo.appId, web3)
           if (currentBase === ZERO_ADDRESS) {
-            task.skip(`Installing the first instance of ${apmRepo} in DAO`)
+            task.skip(`Installing the first instance of ${apmRepoName} in DAO`)
             return
           }
           if (!addressesEqual(currentBase, ctx.repo.contractAddress)) {
             throw new Error(
-              `Cannot install app on a different version. Currently installed version for ${apmRepo} in the DAO is ${currentBase}\n Please upgrade using 'dao upgrade' first or install a different version.`
+              `Cannot install app on a different version. Currently installed version for ${apmRepoName} in the DAO is ${currentBase}\n Please upgrade using 'dao upgrade' first or install a different version.`
             )
           }
         },
@@ -191,7 +213,7 @@ export const handler = async function({
     reporter.newLine()
     if (ctx.appAddress) {
       reporter.success(
-        `Installed ${blue(apmRepo)} at: ${green(ctx.appAddress)}`
+        `Installed ${blue(apmRepoName)} at: ${green(ctx.appAddress)}`
       )
     } else {
       reporter.warning(
