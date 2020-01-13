@@ -377,7 +377,7 @@ export const handler = async function({
       },
       {
         title: 'Create Organization from template',
-        task: ctx => {
+        task: async ctx => {
           const roles = ctx.repo.roles || []
           const rolesBytes = roles.map(role => role.bytes)
 
