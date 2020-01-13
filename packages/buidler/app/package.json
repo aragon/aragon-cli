@@ -22,6 +22,7 @@
   },
   "scripts": {
     "build": "npm run sync-assets && npm run build:app && npm run build:script",
+    "watch": "parcel watch src/script.js --out-dir ../dist/ --no-hmr",
     "build:app": "parcel build index.html -d ../dist/ --public-url \".\" --no-cache",
     "build:script": "parcel build src/script.js --out-dir ../dist/ --no-cache",
     "sync-assets": "copy-aragon-ui-assets ../dist && copyfiles -u 1 './public/**/*' ../dist"

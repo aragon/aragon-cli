@@ -17,7 +17,8 @@ import styled from 'styled-components'
 
 function App() {
   const { api, appState, path, requestPath } = useAragonApi()
-  const { count, isSyncing } = appState
+  console.log(`appState`, appState)
+  const { count, version, isSyncing } = appState
 
   const pathParts = path.match(/^\/tab\/([0-9]+)/)
   const pageIndex = Array.isArray(pathParts)
@@ -73,6 +74,7 @@ function App() {
           />
         </Buttons>
       </Box>
+      Version: {version}
     </Main>
   )
 }
