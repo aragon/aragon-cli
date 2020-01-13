@@ -2,9 +2,7 @@ import TaskList from 'listr'
 import path from 'path'
 import fs from 'fs-extra'
 import url from 'url'
-// TODO: stop using web3
 import Web3 from 'web3'
-import APM from '@aragon/apm'
 import { blue, green, bold } from 'chalk'
 import {
   isPortTaken,
@@ -12,11 +10,13 @@ import {
   getBinaryPath,
   getDefaultRepoPath,
   isLocalDaemonRunning,
+  encodeInitPayload,
+  newDao,
+  getApmRepo,
+  defaultAPMName,
 } from '@aragon/toolkit'
 //
-import encodeInitPayload from '../helpers/encodeInitPayload'
 import listrOpts from '../helpers/listr-options'
-import { task as getRepoTask } from './dao_cmds/utils/getRepoTask'
 import pkg from '../../package.json'
 import {
   findProjectRoot,
@@ -35,20 +35,18 @@ import {
 import { task as startTask } from './start'
 import { arappContract, task as deployTask } from './deploy'
 import {
-  task as newDAOTask,
-  BARE_TEMPLATE,
-  BARE_INSTANCE_FUNCTION,
-  BARE_TEMPLATE_DEPLOY_EVENT,
-} from './dao_cmds/new'
-import {
   runSetupTask,
   runPrepareForPublishTask,
   runPublishTask,
-} from './apm_cmds/publish'
+} from '../commands/apm_cmds/publish'
 
 const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
+
+const BARE_TEMPLATE = defaultAPMName('bare-template')
+const BARE_INSTANCE_FUNCTION = 'newInstance'
+const BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
 
 export const command = 'run'
 export const describe = 'Run the current app locally'
@@ -328,12 +326,28 @@ export const handler = async function({
       },
       {
         title: 'Fetch published repo',
-        task: async ctx =>
-          getRepoTask({
-            apmRepo: module.appName,
-            apm: APM(ctx.web3, apmOptions),
-            artifactRequired: false,
-          }),
+        task: async ctx => {
+          const apmRepoName = module.name
+
+          const progressHandler = step => {
+            switch (step) {
+              case 1:
+                console.log(`Initialize aragonPM`)
+                break
+              case 2:
+                console.log(`Fetching ${bold(apmRepoName)}@latest`)
+                break
+            }
+          }
+
+          ctx.repo = await getApmRepo(
+            ctx.web3,
+            apmRepoName,
+            'latest',
+            apmOptions,
+            progressHandler
+          )
+        },
       },
       {
         title: 'Deploy Template',
@@ -355,7 +369,14 @@ export const handler = async function({
         },
       },
       {
-        title: 'Create Organization',
+        title: `Fetching template ${bold(template)}@latest`,
+        task: async () => {
+          ctx.template = await getApmRepo(ctx.web3, template, 'latest', apmOptions)
+        },
+        enabled: (ctx) => !ctx.contractInstance,
+      },
+      {
+        title: 'Create Organization from template',
         task: ctx => {
           const roles = ctx.repo.roles || []
           const rolesBytes = roles.map(role => role.bytes)
@@ -381,20 +402,15 @@ export const handler = async function({
             fnArgs = [ctx.repo.appId, rolesBytes, ctx.accounts[0], initPayload]
           }
 
-          const newDAOParams = {
-            template,
-            templateVersion: 'latest',
+          ctx.daoAddress = await newDao({
+            repo: ctx.template,
+            web3: ctx.web3,
             templateInstance: ctx.contractInstance,
-            fn: templateNewInstance,
-            fnArgs,
+            newInstanceMethod: templateNewInstance,
+            newInstanceArgs: fnArgs,
             deployEvent: templateDeployEvent,
             gasPrice,
-            web3: ctx.web3,
-            reporter,
-            apmOptions,
-          }
-
-          return newDAOTask(newDAOParams)
+          })
         },
       },
       {
