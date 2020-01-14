@@ -74,7 +74,7 @@ async function startBackend(buidlerRuntimeEnvironment: BuidlerRuntimeEnvironment
   console.log(`APMRegistry: ${repo.address}`)
 
   // Retrieve the first implementation for the app.
-  const implementation = await deployImplementation(artifacts)
+  const implementation: Truffle.Contract<any> = await deployImplementation(buidlerRuntimeEnvironment.artifacts)
   console.log(`App implementation: ${implementation.address}`)
 
   // Set the repo's first implementation.
