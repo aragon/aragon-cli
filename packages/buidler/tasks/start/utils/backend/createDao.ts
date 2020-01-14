@@ -12,7 +12,7 @@ import {
  * @return DAO's Kernel TruffleContract
  */
 async function createDao(
-  rootAddress: string,
+  rootAccount: string,
   artifacts: TruffleEnvironmentArtifacts
 ): Promise<KernelInstance> {
   // Retrieve contract artifacts.
@@ -32,7 +32,7 @@ async function createDao(
   );
 
   // Create a DAO instance using the factory.
-  const txResponse: Truffle.TransactionResponse = await daoFactory.newDAO(rootAddress);
+  const txResponse: Truffle.TransactionResponse = await daoFactory.newDAO(rootAccount);
 
   // Find the created DAO instance address from the transaction logs.
   const logs: Truffle.TransactionLog[] = txResponse.logs;
@@ -45,15 +45,15 @@ async function createDao(
   // Use the DAO address to construct a full KernelInstance object.
   const dao: KernelInstance = await Kernel.at(daoAddress);
 
-  // Give rootAddress the ability to manage apps.
+  // Give rootAccount the ability to manage apps.
   const aclAddress: string = await dao.acl();
   const acl: ACLInstance = await ACL.at(aclAddress);
   await acl.createPermission(
-    rootAddress,
+    rootAccount,
     dao.address,
     await dao.APP_MANAGER_ROLE(),
-    rootAddress,
-    { from: rootAddress }
+    rootAccount,
+    { from: rootAccount }
   );
 
   return dao;
