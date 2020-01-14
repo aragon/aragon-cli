@@ -6,8 +6,8 @@ import {
 } from '../../../../../typechain';
 
 /**
- * Deploys a new DAO
- * @return DAO's Kernel TruffleContract
+ * Deploys a new DAO with direct/pure interaction with aragonOS.
+ * @returns DAO's Kernel TruffleContract.
  */
 export async function createDao(): Promise<KernelInstance> {
   const rootAccount: string = (await web3.eth.getAccounts())[0];

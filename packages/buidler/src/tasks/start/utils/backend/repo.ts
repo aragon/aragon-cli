@@ -8,6 +8,11 @@ import {
 const ENS_REGISTRY_ADDRESS: string = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1';
 const APM_REGISTRY_ADDRESS: string = '0x32296d9f8fed89658668875dc73cacf87e8888b2';
 
+/**
+ * Attempts to retrieve an APM repository for the app, and if it can't
+ * find one, creates a new repository for the app.
+ * @returns Promise<RepoInstance> An APM repository for the app.
+ */
 export async function createRepo(appName: string, appId: string): Promise<RepoInstance> {
   // Retrieve the Repo address from ens, or create the Repo if nothing is retrieved.
   let repoAddress: string | null = await _ensResolve(appId).catch(() => null);
@@ -22,6 +27,9 @@ export async function createRepo(appName: string, appId: string): Promise<RepoIn
   return repo;
 }
 
+/**
+ * Updates an APM repository with a new version.
+ */
 export async function updateRepo(
   repo: RepoInstance,
   implementation: Truffle.Contract<any>,
@@ -41,6 +49,10 @@ export async function updateRepo(
   await repo.newVersion(semver, implementation.address, contentURI);
 }
 
+/**
+ * Creates a new APM repository.
+ * @returns Promise<RepoInstance> An APM repository for the app.
+ */
 async function _createRepo(appName: string): Promise<string> {
   const rootAccount: string = (await web3.eth.getAccounts())[0];
 
@@ -62,6 +74,11 @@ async function _createRepo(appName: string): Promise<string> {
   return repoAddress;
 }
 
+/**
+ * Resolves an ENS appId in hex form, to a contract address.
+ * @returns Promise<string> The resolved contract address. Will throw if
+ * no address is resolved.
+ */
 async function _ensResolve(appId: string): Promise<string> {
   // Define options used by ENS.
   const opts: {
