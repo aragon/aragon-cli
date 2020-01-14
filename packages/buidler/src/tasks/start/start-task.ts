@@ -23,7 +23,7 @@ task(TASK_START, 'Starts Aragon app development').setAction(
     console.log(`Starting...`);
 
     const { daoAddress, appAddress }  = await startBackend(bre);
-    await startFrontend(daoAddress, appAddress, bre);
+    await startFrontend(daoAddress, appAddress);
 
     // Unresolving promise to keep task open.
     return new Promise((resolve, reject) => {});
@@ -74,7 +74,6 @@ async function startBackend(bre: BuidlerRuntimeEnvironment): Promise<{ daoAddres
 async function startFrontend(
   daoAddress: string,
   appAddress: string,
-  env: BuidlerRuntimeEnvironment,
 ): Promise<void> {
   await installAragonClientIfNeeded();
 
