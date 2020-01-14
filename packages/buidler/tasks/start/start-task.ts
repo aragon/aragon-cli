@@ -81,12 +81,12 @@ async function startBackend(buidlerRuntimeEnvironment: BuidlerRuntimeEnvironment
   await updateRepo(repo, implementation);
 
   // Create a proxy for the app (also setting it's first implementation).
-  const proxy = await createProxy(implementation, appId, root, dao, artifacts);
+  const proxy: Truffle.Contract<any> = await createProxy(implementation, appId, root, dao, buidlerRuntimeEnvironment.artifacts);
   console.log(`App proxy: ${proxy.address}`);
 
   // Set the app's permissions.
   // TODO: Must also be reset on contract updates.
-  await setPermissions(dao, proxy, root, artifacts);
+  await setPermissions(dao, proxy, root, buidlerRuntimeEnvironment.artifacts);
 
   // Watch back-end files. Debounce for performance
   chokidar
@@ -99,14 +99,14 @@ async function startBackend(buidlerRuntimeEnvironment: BuidlerRuntimeEnvironment
       await buidlerRuntimeEnvironment.run(TASK_COMPILE);
 
       // Retrieve the new implementation for the app.
-      const implementation = await deployImplementation(artifacts)
+      const implementation = await deployImplementation(buidlerRuntimeEnvironment.artifacts)
       console.log(`App implementation: ${implementation.address}`)
 
       // Update the APM's repo.
       await updateRepo(repo, implementation);
 
       // Update the proxy's implementation.
-      await updateProxy(implementation, appId, root, dao, artifacts);
+      await updateProxy(implementation, appId, root, dao, buidlerRuntimeEnvironment.artifacts);
     });
 
   return { daoAddress: dao.address, appAddress: proxy.address };
