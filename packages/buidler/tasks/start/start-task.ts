@@ -23,7 +23,7 @@ import {
   getMainContractPath
 } from './utils/backend';
 import {
-  prepareAragonClient,
+  installAragonClientIfNeeded,
   startAragonClient,
   buildAppFrontEnd,
   watchAppFrontEnd,
@@ -51,16 +51,18 @@ task(TASK_START, 'Starts Aragon app development').setAction(
   }
 );
 
-async function startBackend(buidlerRuntimeEnvironment: BuidlerRuntimeEnvironment): Promise<{ daoAddress: string, appAddress: string }> {
+async function startBackend(
+  bre: BuidlerRuntimeEnvironment
+): Promise<{ daoAddress: string, appAddress: string }> {
   // Compile contracts.
-  await buidlerRuntimeEnvironment.run(TASK_COMPILE);
+  await bre.run(TASK_COMPILE);
 
   // Retrieve active accounts.
   const accounts: string[] = await web3.eth.getAccounts();
   const root: string = accounts[0];
 
   // Create a DAO.
-  const dao: KernelInstance = await createDao(root, buidlerRuntimeEnvironment.artifacts);
+  const dao: KernelInstance = await createDao(root, bre.artifacts);
   console.log(`DAO: ${dao.address}`);
 
   // Define app name and id.
@@ -70,23 +72,23 @@ async function startBackend(buidlerRuntimeEnvironment: BuidlerRuntimeEnvironment
   console.log(`App id: ${appId}`)
 
   // Create an APM repo for the app.
-  const repo: RepoInstance = await createOrRetrieveRepo(web3, appName, appId, root, buidlerRuntimeEnvironment.artifacts);
+  const repo: RepoInstance = await createOrRetrieveRepo(web3, appName, appId, root, bre.artifacts);
   console.log(`APMRegistry: ${repo.address}`)
 
   // Retrieve the first implementation for the app.
-  const implementation: Truffle.Contract<any> = await deployImplementation(buidlerRuntimeEnvironment.artifacts)
+  const implementation: Truffle.Contract<any> = await deployImplementation(bre.artifacts)
   console.log(`App implementation: ${implementation.address}`)
 
   // Set the repo's first implementation.
   await updateRepo(repo, implementation);
 
   // Create a proxy for the app (also setting it's first implementation).
-  const proxy: Truffle.Contract<any> = await createProxy(implementation, appId, root, dao, buidlerRuntimeEnvironment.artifacts);
+  const proxy: Truffle.Contract<any> = await createProxy(implementation, appId, root, dao, bre.artifacts);
   console.log(`App proxy: ${proxy.address}`);
 
   // Set the app's permissions.
   // TODO: Must also be reset on contract updates.
-  await setPermissions(dao, proxy, root, buidlerRuntimeEnvironment.artifacts);
+  await setPermissions(dao, proxy, root, bre.artifacts);
 
   // Watch back-end files. Debounce for performance
   chokidar
@@ -96,25 +98,29 @@ async function startBackend(buidlerRuntimeEnvironment: BuidlerRuntimeEnvironment
     .on('change', async (event, path) => {
       console.log(`<<< Triggering backend build >>>`);
 
-      await buidlerRuntimeEnvironment.run(TASK_COMPILE);
+      // Compile contracts.
+      await bre.run(TASK_COMPILE);
 
       // Retrieve the new implementation for the app.
-      const implementation = await deployImplementation(buidlerRuntimeEnvironment.artifacts)
+      const implementation: Truffle.Contract<any> = await deployImplementation(bre.artifacts)
       console.log(`App implementation: ${implementation.address}`)
 
       // Update the APM's repo.
       await updateRepo(repo, implementation);
 
       // Update the proxy's implementation.
-      await updateProxy(implementation, appId, root, dao, buidlerRuntimeEnvironment.artifacts);
+      await updateProxy(implementation, appId, root, dao, bre.artifacts);
     });
 
   return { daoAddress: dao.address, appAddress: proxy.address };
 }
 
-async function startFrontend(daoAddress, appAddress, env: BuidlerRuntimeEnvironment) {
-  // Make sure the client is ready before starting the servers
-  await prepareAragonClient({});
+async function startFrontend(
+  daoAddress: string,
+  appAddress: string,
+  env: BuidlerRuntimeEnvironment
+): Promise<void> {
+  await installAragonClientIfNeeded();
 
   const frontEndSrc = path.resolve('app');
 
@@ -133,7 +139,7 @@ async function startFrontend(daoAddress, appAddress, env: BuidlerRuntimeEnvironm
 
   // Start Aragon client at the deployed address
   const subPath = `${daoAddress}/${appAddress}`;
-  const url = await startAragonClient({ subPath });
+  const url = await startAragonClient(subPath);
   console.log(`You can now view the Aragon client in the browser.
  Local:  ${url}
 `);
