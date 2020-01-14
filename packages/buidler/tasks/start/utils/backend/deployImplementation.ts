@@ -1,14 +1,16 @@
 import { getMainContractName } from './getMainContract';
 
+import { TruffleEnvironmentArtifacts } from '@nomiclabs/buidler-truffle5/src/artifacts';
+
 /**
  * Deploys the app's current contract
  * @return App TruffleContract
  */
-async function deployImplementation(artifacts) {
-  const mainContractName = getMainContractName();
+async function deployImplementation(artifacts: TruffleEnvironmentArtifacts): Promise<Truffle.Contract<any>> {
+  const mainContractName: string = getMainContractName();
 
-  const App = artifacts.require(mainContractName);
-  const implementation = await App.new();
+  const App: Truffle.Contract<any> = artifacts.require(mainContractName);
+  const implementation: Truffle.Contract<any> = await App.new();
 
   return implementation;
 }
