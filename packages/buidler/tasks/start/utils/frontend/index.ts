@@ -1,5 +1,5 @@
 export {
-  prepareAragonClient,
+  installAragonClientIfNeeded,
   startAragonClient
 } from './aragonClient';
 export {
