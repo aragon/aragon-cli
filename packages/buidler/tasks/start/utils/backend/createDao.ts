@@ -1,5 +1,3 @@
-/// <reference types="truffle-typings" />
-
 import { TruffleEnvironmentArtifacts } from '@nomiclabs/buidler-truffle5/src/artifacts';
 
 import {
@@ -13,7 +11,10 @@ import {
  * Deploys a new DAO
  * @return DAO's Kernel TruffleContract
  */
-async function createDao(rootAddress: string, artifacts: TruffleEnvironmentArtifacts): Promise<KernelInstance> {
+async function createDao(
+  rootAddress: string,
+  artifacts: TruffleEnvironmentArtifacts
+): Promise<KernelInstance> {
   // Retrieve contract artifacts.
   const Kernel: KernelContract = artifacts.require('Kernel');
   const ACL: ACLContract = artifacts.require('ACL');
@@ -39,7 +40,7 @@ async function createDao(rootAddress: string, artifacts: TruffleEnvironmentArtif
   if (!log) {
     throw new Error('Error deploying new DAO. Unable to find DeployDAO log.');
   }
-  const daoAddress: string = log.args.dao;
+  const daoAddress: string = (<Truffle.TransactionLog>log).args.dao;
 
   // Use the DAO address to construct a full KernelInstance object.
   const dao: KernelInstance = await Kernel.at(daoAddress);
