@@ -122,13 +122,15 @@ async function startFrontend(
 ): Promise<void> {
   await installAragonClientIfNeeded();
 
-  const frontEndSrc = path.resolve('app');
-
-  // Initial release build
-  await buildAppFrontEnd(frontEndSrc);
+  // Initial build.
+  const appPath = path.resolve('app');
+  await buildAppFrontEnd(appPath);
   await buildAppArtifacts();
 
-  // Start a live-server for the Aragon App assets
+  // Watch for changes and rebuild app.
+  await watchAppFrontEnd(appPath);
+
+  // Serve app files.
   liveServer.start({
     port: 8001,
     root: appDist,
@@ -138,11 +140,8 @@ async function startFrontend(
   });
 
   // Start Aragon client at the deployed address
-  const subPath = `${daoAddress}/${appAddress}`;
-  const url = await startAragonClient(subPath);
+  const url: string = await startAragonClient(`${daoAddress}/${appAddress}`);
   console.log(`You can now view the Aragon client in the browser.
  Local:  ${url}
 `);
-
-  await watchAppFrontEnd(frontEndSrc);
 }

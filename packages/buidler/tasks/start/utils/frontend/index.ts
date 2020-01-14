@@ -7,4 +7,4 @@ export {
   watchAppFrontEnd,
   buildAppArtifacts,
   appDist
-} from './release';
+} from './buildApp';

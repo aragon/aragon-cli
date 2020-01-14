@@ -13,14 +13,14 @@ export const codePath = 'code.sol';
 
 /**
  * Builds the front-end with the customizable npm run script of the app
- * @param frontEndSrc "app/build" Where are the front-end built files after the build
+ * @param appPath "app/build" Where are the front-end built files after the build
  */
-export async function buildAppFrontEnd(frontEndSrc: string): Promise<void> {
-  await execaPipe('npm', ['run', 'build'], { cwd: frontEndSrc });
+export async function buildAppFrontEnd(appPath: string): Promise<void> {
+  await execaPipe('npm', ['run', 'build'], { cwd: appPath });
 }
 
-export async function watchAppFrontEnd(frontEndSrc: string): Promise<void> {
-  await execaPipe('npm', ['run', 'watch'], { cwd: frontEndSrc });
+export async function watchAppFrontEnd(appPath: string): Promise<void> {
+  await execaPipe('npm', ['run', 'watch'], { cwd: appPath });
 }
 
 /**
