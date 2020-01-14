@@ -1,5 +1,5 @@
 import { getMainContractName } from '../arapp';
-import { KernelInstance } from '../../../../typechain';
+import { KernelInstance } from '../../../../../typechain';
 
 interface InitializableApp extends Truffle.Contract<any> {
   initialize: () => void;
@@ -24,7 +24,7 @@ export async function createProxy(
     implementation.address,
     '0x',
     false,
-    { from: rootAccount }
+    { from: rootAccount },
   );
 
   // Retrieve proxy address and wrap around abi.
@@ -35,7 +35,7 @@ export async function createProxy(
   if (!log) {
     throw new Error('Cannot find proxy address. Unable to find NewAppProxy log.');
   }
-  const proxyAddress: string = (<Truffle.TransactionLog>log).args.proxy;
+  const proxyAddress: string = (log as Truffle.TransactionLog).args.proxy;
   const proxy: InitializableApp = await App.at(proxyAddress);
 
   // Initialize the app.
@@ -50,14 +50,12 @@ export async function createProxy(
 export async function updateProxy(
   implementation: Truffle.Contract<any>,
   appId: string,
-  dao: KernelInstance
+  dao: KernelInstance,
 ): Promise<void> {
   const rootAccount: string = (await web3.eth.getAccounts())[0];
 
   console.log(`Updating proxy implementation to: ${implementation.address}`);
 
   // Set the new implementation in the Kernel.
-  await dao.setApp(BASE_NAMESPACE, appId, implementation.address, {
-    from: rootAccount
-  });
+  await dao.setApp(BASE_NAMESPACE, appId, implementation.address, { from: rootAccount });
 }

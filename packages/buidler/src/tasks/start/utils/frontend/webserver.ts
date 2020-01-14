@@ -16,7 +16,7 @@ const map: { [ext: string]: string } = {
   '.mp3': 'audio/mpeg',
   '.svg': 'image/svg+xml',
   '.pdf': 'application/pdf',
-  '.doc': 'application/msword'
+  '.doc': 'application/msword',
 };
 
 /**
@@ -28,7 +28,7 @@ const map: { [ext: string]: string } = {
  */
 export function createStaticWebserver(
   port: number,
-  rootPath = '.'
+  rootPath = '.',
 ): Promise<void> {
   return new Promise(resolve => {
     http

@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "generate": "typechain --target truffle --outDir typechain 'artifacts/*.json'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "dependencies": {
     "@aragon/os": "4.0.1",
@@ -30,10 +30,11 @@
     "live-server": "^1.2.1",
     "lodash": "^4.17.15",
     "open": "^7.0.0",
+    "truffle-typings": "^1.0.8",
     "ts-node": "^8.5.4",
+    "tslint": "^5.20.1",
     "typechain": "^1.0.3",
     "typechain-target-truffle": "^1.0.2",
-    "truffle-typings": "^1.0.8",
     "typescript": "^3.7.4",
     "web3": "^1.2.4"
   },

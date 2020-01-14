@@ -2,8 +2,8 @@ import {
   KernelContract, KernelInstance,
   ACLContract, ACLInstance,
   DAOFactoryContract, DAOFactoryInstance,
-  EVMScriptRegistryFactoryContract, EVMScriptRegistryFactoryInstance
-} from '../../../../typechain';
+  EVMScriptRegistryFactoryContract, EVMScriptRegistryFactoryInstance,
+} from '../../../../../typechain';
 
 /**
  * Deploys a new DAO
@@ -25,7 +25,7 @@ export async function createDao(): Promise<KernelInstance> {
   const daoFactory: DAOFactoryInstance = await DAOFactory.new(
     kernelBase.address,
     aclBase.address,
-    registryFactory.address
+    registryFactory.address,
   );
 
   // Create a DAO instance using the factory.
@@ -37,7 +37,7 @@ export async function createDao(): Promise<KernelInstance> {
   if (!log) {
     throw new Error('Error deploying new DAO. Unable to find DeployDAO log.');
   }
-  const daoAddress: string = (<Truffle.TransactionLog>log).args.dao;
+  const daoAddress: string = (log as Truffle.TransactionLog).args.dao;
 
   // Use the DAO address to construct a full KernelInstance object.
   const dao: KernelInstance = await Kernel.at(daoAddress);
@@ -50,7 +50,7 @@ export async function createDao(): Promise<KernelInstance> {
     dao.address,
     await dao.APP_MANAGER_ROLE(),
     rootAccount,
-    { from: rootAccount }
+    { from: rootAccount },
   );
 
   return dao;
