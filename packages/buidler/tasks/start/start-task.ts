@@ -27,7 +27,6 @@ import {
   buildAppFrontEnd,
   watchAppFrontEnd,
   buildAppArtifacts,
-  buildAppCode,
   appDist
 } from './utils/frontend';
 
@@ -90,8 +89,8 @@ async function startBackend(env: BuidlerRuntimeEnvironment): Promise<{ daoAddres
     .watch(getMainContractPath(), {
       awaitWriteFinish: { stabilityThreshold: 1000 }
     })
-    .on('all', async (event, path) => {
-      console.log(`Triggering backend build`);
+    .on('change', async (event, path) => {
+      console.log(`<<< Triggering backend build >>>`);
 
       await run(TASK_COMPILE);
 
@@ -118,9 +117,6 @@ async function startFrontend(daoAddress, appAddress, env: BuidlerRuntimeEnvironm
   // Initial release build
   await buildAppFrontEnd(frontEndSrc);
   await buildAppArtifacts();
-
-  // TODO: Is this necessary? I don't think so...
-  // await buildAppCode(env);
 
   // Start a live-server for the Aragon App assets
   liveServer.start({

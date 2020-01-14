@@ -1,7 +1,6 @@
 import path from 'path';
 import fs from 'fs';
 import fsExtra from 'fs-extra';
-import { TASK_FLATTEN_GET_FLATTENED_SOURCE } from '../../../task-names';
 import { execaPipe } from './execaPipe';
 import { BuidlerRuntimeEnvironment } from '@nomiclabs/buidler/types';
 
@@ -33,14 +32,4 @@ export async function buildAppArtifacts(): Promise<void> {
   for (const filePath of [manifestPath, artifactPath]) {
     await fsExtra.copy(filePath, path.join(appDist, filePath));
   }
-}
-
-/**
- * Flattens the contract code and writes it to a file
- */
-export async function buildAppCode(
-  env: BuidlerRuntimeEnvironment
-): Promise<void> {
-  const contractSource = await env.run(TASK_FLATTEN_GET_FLATTENED_SOURCE);
-  fs.writeFileSync(path.join(appDist, codePath), contractSource);
 }
