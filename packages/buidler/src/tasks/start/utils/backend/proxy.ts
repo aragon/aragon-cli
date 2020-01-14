@@ -8,8 +8,9 @@ interface InitializableApp extends Truffle.Contract<any> {
 const BASE_NAMESPACE: string = '0xf1f3eb40f5bc1ad1344716ced8b8a0431d840b5783aea1fd01786bc26f35ac0f';
 
 /**
- * Creates a new app proxy
- * @return proxy App TruffleContract
+ * Creates a new app proxy using a Dao, and set's the specified implementation.
+ * @returns Promise<Truffle.Contract<any>> The TruffleContract instance of the
+ * deployed app contract, wrapped around an upgradeably proxy address.
  */
 export async function createProxy(
   implementation: Truffle.Contract<any>,
@@ -45,7 +46,7 @@ export async function createProxy(
 }
 
 /**
- * Updates the app proxy's implementation in the Kernel
+ * Updates the app proxy's implementation in the Kernel.
  */
 export async function updateProxy(
   implementation: Truffle.Contract<any>,

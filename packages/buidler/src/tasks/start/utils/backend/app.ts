@@ -1,8 +1,9 @@
 import { getMainContractName } from '../arapp';
 
 /**
- * Deploys the app's current contract
- * @return App TruffleContract
+ * Deploys the app's current contract.
+ * @returns Promise<Truffle.Contract<any>> The deployed TruffleContract instance
+ * for the app's main contract.
  */
 export async function deployImplementation(): Promise<Truffle.Contract<any>> {
   const mainContractName: string = getMainContractName();

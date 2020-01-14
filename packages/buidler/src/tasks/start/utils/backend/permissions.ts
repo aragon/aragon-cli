@@ -3,6 +3,9 @@ import { KernelInstance, ACLInstance } from '../../../../../typechain';
 
 const ANY_ADDRESS: string = '0xffffffffffffffffffffffffffffffffffffffff';
 
+/**
+ * Scans arapp.json, setting all permissions to ANY_ADDRESS.
+ */
 export async function setPermissions(
   dao: KernelInstance,
   app: any, // TODO: needs type
@@ -20,6 +23,9 @@ export async function setPermissions(
   await _setOpenPermission(acl, app, await app.DECREMENT_ROLE(), rootAccount);
 }
 
+/**
+ * Set's the specified permission to ANY_ADDRESS.
+ */
 async function _setOpenPermission(
   acl: ACLInstance,
   app: Truffle.Contract<any>,

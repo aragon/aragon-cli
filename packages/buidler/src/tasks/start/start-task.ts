@@ -16,7 +16,8 @@ import { buildAppFrontEnd, buildAppArtifacts, watchAppFrontEnd, buildOutputPath 
 import { KernelInstance, RepoInstance } from '../../../typechain';
 
 /**
- * Main, composite, task.
+ * Main, composite, task. Calls startBackend, then startFrontend,
+ * and then returns an unresolving promise to keep the task open.
  */
 task(TASK_START, 'Starts Aragon app development').setAction(
   async (params, bre: BuidlerRuntimeEnvironment) => {
@@ -30,6 +31,14 @@ task(TASK_START, 'Starts Aragon app development').setAction(
   },
 );
 
+/**
+ * Starts the task's backend sub-tasks. Logic is contained in ./tasks/start/utils/backend/.
+ * Creates a Dao and a Repo for the app in development and watches for changes in
+ * contracts. When contracts change, it compiles the contracts, deploys them and updates the
+ * proxy in the Dao.
+ * @returns Promise<{ daoAddress: string, appAddress: string }> Dao and app address that can
+ * be used with an Aragon client to view the app.
+ */
 async function startBackend(bre: BuidlerRuntimeEnvironment): Promise<{ daoAddress: string, appAddress: string }> {
   const appName: string = 'counter';
   const appId: string = namehash.hash(`${appName}.aragonpm.eth`);
@@ -71,6 +80,12 @@ async function startBackend(bre: BuidlerRuntimeEnvironment): Promise<{ daoAddres
   return { daoAddress: dao.address, appAddress: proxy.address };
 }
 
+/**
+ * Starts the task's frontend sub-tasks. Logic is contained in ./tasks/start/utils/frontend/.
+ * Retrieves the Aragon client using git, builds it, builds the app's frontend and serves the build.
+ * Starts the Aragon client pointed at a Dao and an app, and watches for changes on the app's sources.
+ * If changes are detected, the app's frontend is rebuilt.
+ */
 async function startFrontend(daoAddress: string, appAddress: string): Promise<void> {
   await installAragonClientIfNeeded();
 
