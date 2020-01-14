@@ -1,10 +1,10 @@
-import { getMainContractName } from './getMainContract';
+import { getMainContractName } from '../arapp';
 
 /**
  * Deploys the app's current contract
  * @return App TruffleContract
  */
-async function deployImplementation(): Promise<Truffle.Contract<any>> {
+export async function deployImplementation(): Promise<Truffle.Contract<any>> {
   const mainContractName: string = getMainContractName();
 
   // Deploy the main contract.
@@ -13,5 +13,3 @@ async function deployImplementation(): Promise<Truffle.Contract<any>> {
 
   return implementation;
 }
-
-export default deployImplementation;

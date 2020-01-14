@@ -1,11 +1,11 @@
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 
 /**
  * Returns main contract path
  * @return "./contracts/Counter.sol"
  */
-function getMainContractPath(): string {
+export function getMainContractPath(): string {
   const arappPath: string = 'arapp.json';
   const contractsPath: string = './contracts';
 
@@ -38,12 +38,7 @@ function getMainContractPath(): string {
  * Returns main contract name
  * @return "Counter"
  */
-function getMainContractName(): string {
+export function getMainContractName(): string {
   const mainContractPath: string = getMainContractPath();
   return path.parse(mainContractPath).name;
 }
-
-export {
-  getMainContractPath,
-  getMainContractName
-};

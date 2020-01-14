@@ -1,13 +1,9 @@
 import { BuidlerRuntimeEnvironment } from '@nomiclabs/buidler/types';
-
-import {
-  KernelInstance,
-  ACLInstance
-} from '../../../../typechain';
+import { KernelInstance, ACLInstance } from '../../../../typechain';
 
 const ANY_ADDRESS: string = '0xffffffffffffffffffffffffffffffffffffffff';
 
-async function setPermissions(
+export async function setPermissions(
   dao: KernelInstance,
   app: any // TODO: needs type
 ): Promise<void> {
@@ -20,11 +16,11 @@ async function setPermissions(
 
   // Set all permissions listed in arapp.json.
   // TODO: Must be set dynamically.
-  await setOpenPermission(acl, app, await app.INCREMENT_ROLE(), rootAccount);
-  await setOpenPermission(acl, app, await app.DECREMENT_ROLE(), rootAccount);
+  await _setOpenPermission(acl, app, await app.INCREMENT_ROLE(), rootAccount);
+  await _setOpenPermission(acl, app, await app.DECREMENT_ROLE(), rootAccount);
 }
 
-async function setOpenPermission(
+async function _setOpenPermission(
   acl: ACLInstance,
   app: Truffle.Contract<any>,
   permission: string,
@@ -42,5 +38,3 @@ async function setOpenPermission(
     { from: rootAccount }
   );
 }
-
-export default setPermissions;

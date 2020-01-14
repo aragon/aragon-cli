@@ -2,39 +2,18 @@ import path from 'path';
 import namehash from 'eth-ens-namehash';
 import liveServer from 'live-server';
 import chokidar from 'chokidar';
-
 import { task } from '@nomiclabs/buidler/config';
 import { BuidlerRuntimeEnvironment } from '@nomiclabs/buidler/types';
 import { TruffleEnvironmentArtifacts } from '@nomiclabs/buidler-truffle5/src/artifacts';
-import {
-  TASK_START,
-  TASK_COMPILE,
-} from '../task-names';
-
-import {
-  createDao,
-  deployImplementation,
-  createProxy,
-  updateProxy,
-  createOrRetrieveRepo,
-  updateRepo,
-  setPermissions,
-  getMainContractName,
-  getMainContractPath
-} from './utils/backend';
-import {
-  installAragonClientIfNeeded,
-  startAragonClient,
-  buildAppFrontEnd,
-  watchAppFrontEnd,
-  buildAppArtifacts,
-  buildOutputPath
-} from './utils/frontend';
-
-import {
-  KernelInstance,
-  RepoInstance
-} from '../../typechain';
+import { TASK_START, TASK_COMPILE } from '../task-names';
+import { createDao } from './utils/backend/dao';
+import { deployImplementation } from './utils/backend/app';
+import { createProxy, updateProxy } from './utils/backend/proxy';
+import { createRepo, updateRepo } from './utils/backend/repo';
+import { setPermissions } from './utils/backend/permissions';
+import { installAragonClientIfNeeded, startAragonClient } from './utils/frontend/client';
+import { buildAppFrontEnd, buildAppArtifacts, watchAppFrontEnd, buildOutputPath } from './utils/frontend/build';
+import { KernelInstance, RepoInstance } from '../../typechain';
 
 /**
  * Main, composite, task.
@@ -61,7 +40,7 @@ async function startBackend(
 
   // Prepare a DAO and a Repo to hold the app.
   const dao: KernelInstance = await createDao();
-  const repo: RepoInstance = await createOrRetrieveRepo(appName, appId);
+  const repo: RepoInstance = await createRepo(appName, appId);
 
   // Deploy first implementation and set it in the Repo and in a Proxy.
   const implementation: Truffle.Contract<any> = await deployImplementation()
@@ -72,7 +51,7 @@ async function startBackend(
 
   // Watch back-end files. Debounce for performance
   chokidar
-    .watch(getMainContractPath(), {
+    .watch('./contracts/', {
       awaitWriteFinish: { stabilityThreshold: 1000 }
     })
     .on('change', async (event, path) => {

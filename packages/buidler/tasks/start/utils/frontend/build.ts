@@ -1,10 +1,9 @@
 import path from 'path';
 import fs from 'fs';
 import fsExtra from 'fs-extra';
-import { execaPipe } from './execaPipe';
+import { execaPipe } from '../execa';
 
 export const buildOutputPath = 'dist';
-
 export const manifestPath = 'manifest.json';
 export const artifactPath = 'artifact.json';
 export const arappPath = 'arapp.json';
