@@ -5,6 +5,7 @@ import chokidar from 'chokidar';
 
 import { task } from '@nomiclabs/buidler/config';
 import { BuidlerRuntimeEnvironment } from '@nomiclabs/buidler/types';
+import { TruffleEnvironmentArtifacts } from '@nomiclabs/buidler-truffle5/src/artifacts';
 import {
   TASK_START,
   TASK_COMPILE,
@@ -30,6 +31,10 @@ import {
   appDist
 } from './utils/frontend';
 
+import {
+  KernelInstance,
+} from '../../typechain';
+
 /**
  * Main, composite, task.
  */
@@ -45,18 +50,16 @@ task(TASK_START, 'Starts Aragon app development').setAction(
   }
 );
 
-async function startBackend(env: BuidlerRuntimeEnvironment): Promise<{ daoAddress: string, appAddress: string }> {
-  const { run, web3, artifacts } = env;
-
+async function startBackend(buidlerRuntimeEnvironment: BuidlerRuntimeEnvironment): Promise<{ daoAddress: string, appAddress: string }> {
   // Compile contracts.
-  await run(TASK_COMPILE);
+  await buidlerRuntimeEnvironment.run(TASK_COMPILE);
 
   // Retrieve active accounts.
   const accounts: string[] = await web3.eth.getAccounts();
-  const root = accounts[0];
+  const root: string = accounts[0];
 
   // Create a DAO.
-  const dao = await createDao(root, artifacts);
+  const dao: KernelInstance = await createDao(root, buidlerRuntimeEnvironment.artifacts);
   console.log(`DAO: ${dao.address}`);
 
   // Define app name and id.
@@ -92,7 +95,7 @@ async function startBackend(env: BuidlerRuntimeEnvironment): Promise<{ daoAddres
     .on('change', async (event, path) => {
       console.log(`<<< Triggering backend build >>>`);
 
-      await run(TASK_COMPILE);
+      await buidlerRuntimeEnvironment.run(TASK_COMPILE);
 
       // Retrieve the new implementation for the app.
       const implementation = await deployImplementation(artifacts)
