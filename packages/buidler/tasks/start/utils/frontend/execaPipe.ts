@@ -13,8 +13,9 @@ export function execaPipe(
   args?: readonly string[],
   options?: execa.Options
 ): execa.ExecaChildProcess {
-  const subprocess = execa(file, args, options);
+  const subprocess: execa.ExecaChildProcess = execa(file, args, options);
   if (subprocess.stdout) subprocess.stdout.pipe(process.stdout);
   if (subprocess.stderr) subprocess.stderr.pipe(process.stderr);
+
   return subprocess;
 }
