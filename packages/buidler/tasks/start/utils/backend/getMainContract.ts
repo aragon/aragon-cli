@@ -6,27 +6,32 @@ import path from 'path';
  * @return "./contracts/Counter.sol"
  */
 function getMainContractPath(): string {
-  const arappPath = 'arapp.json';
-  const contractsPath = './contracts';
+  const arappPath: string = 'arapp.json';
+  const contractsPath: string = './contracts';
 
+  // Read the path from arapp.json.
   if (fs.existsSync(arappPath)) {
     const arapp: { path: string } = JSON.parse(
       fs.readFileSync(arappPath, 'utf-8')
     );
+
     return arapp.path;
   }
 
-  // Try to guess contract path
+  // Try to guess contract path.
   if (fs.existsSync(contractsPath)) {
-    const contracts = fs.readdirSync(contractsPath);
-    const mainContract = contracts.filter(
+    const contracts: string[] = fs.readdirSync(contractsPath);
+
+    const candidates: string[] = contracts.filter(
       name => name.endsWith('.sol') || name !== 'Imports.sol'
     );
-    if (mainContract.length === 1)
-      return path.join(contractsPath, mainContract[0]);
+
+    if (candidates.length === 1) {
+      return path.join(contractsPath, candidates[0]);
+    }
   }
 
-  throw Error(`No arapp.json found in current folder`);
+  throw Error(`Unable to find main contract path.`);
 }
 
 /**
@@ -34,7 +39,7 @@ function getMainContractPath(): string {
  * @return "Counter"
  */
 function getMainContractName(): string {
-  const mainContractPath = getMainContractPath();
+  const mainContractPath: string = getMainContractPath();
   return path.parse(mainContractPath).name;
 }
 
