@@ -15,13 +15,13 @@ async function createOrRetrieveRepo(
   web3: Web3,
   appName: string,
   appId: string,
-  rootAddress: string,
+  rootAccount: string,
   artifacts: TruffleEnvironmentArtifacts
 ): Promise<RepoInstance> {
-  // Retrieve the Repo address from ens, create the Repo otherwise.
+  // Retrieve the Repo address from ens, or create the Repo if nothing is retrieved.
   let repoAddress: string | null = await ensResolve(web3, appId).catch(() => null);
   if (!repoAddress) {
-    repoAddress = await createRepo(appName, rootAddress, artifacts);
+    repoAddress = await createRepo(appName, rootAccount, artifacts);
   }
 
   // Wrap Repo address with abi.
@@ -33,7 +33,7 @@ async function createOrRetrieveRepo(
 
 async function createRepo(
   appName: string,
-  rootAddress: string,
+  rootAccount: string,
   artifacts: TruffleEnvironmentArtifacts
 ):Promise<string> {
   // Retrieve APMRegistry.
@@ -41,7 +41,7 @@ async function createRepo(
   const apmRegistry: APMRegistryInstance = await APMRegistry.at(APM_REGISTRY_ADDRESS);
 
   // Create new repo.
-  const txResponse: Truffle.TransactionResponse = await apmRegistry.newRepo(appName, rootAddress);
+  const txResponse: Truffle.TransactionResponse = await apmRegistry.newRepo(appName, rootAccount);
 
   // Retrieve repo address from creation tx logs.
   const logs: Truffle.TransactionLog[] = txResponse.logs;
@@ -58,6 +58,7 @@ async function ensResolve(
   web3: Web3,
   appId: string
 ): Promise<string> {
+  // Define options used by ENS.
   const opts: {
     provider: provider,
     registryAddress: string
@@ -66,10 +67,12 @@ async function ensResolve(
     registryAddress: ENS_REGISTRY_ADDRESS
   };
 
+  // Avoids a bug on ENS.
   if (!opts.provider.sendAsync) {
     opts.provider.sendAsync = opts.provider.send
   }
 
+  // Set up ENS and resolve address.
   const ens: ENS = new ENS(opts);
   const address: string | null = await ens.resolveAddressForNode(appId);
 

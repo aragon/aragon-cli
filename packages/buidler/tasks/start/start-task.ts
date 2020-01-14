@@ -54,41 +54,23 @@ task(TASK_START, 'Starts Aragon app development').setAction(
 async function startBackend(
   bre: BuidlerRuntimeEnvironment
 ): Promise<{ daoAddress: string, appAddress: string }> {
-  // Compile contracts.
+  const appName: string = 'counter';
+  const appId: string = namehash.hash(`${appName}.aragonpm.eth`);
+
   await bre.run(TASK_COMPILE);
 
-  // Retrieve active accounts.
-  const accounts: string[] = await web3.eth.getAccounts();
-  const root: string = accounts[0];
+  const rootAccount: string = (await web3.eth.getAccounts())[0];
 
-  // Create a DAO.
-  const dao: KernelInstance = await createDao(root, bre.artifacts);
-  console.log(`DAO: ${dao.address}`);
+  // Prepare a DAO and a Repo to hold the app.
+  const dao: KernelInstance = await createDao(rootAccount, bre.artifacts);
+  const repo: RepoInstance = await createOrRetrieveRepo(web3, appName, appId, rootAccount, bre.artifacts);
 
-  // Define app name and id.
-  const appName: string = 'counter';
-  console.log(`App name: ${appName}`)
-  const appId: string = namehash.hash(`${appName}.aragonpm.eth`);
-  console.log(`App id: ${appId}`)
-
-  // Create an APM repo for the app.
-  const repo: RepoInstance = await createOrRetrieveRepo(web3, appName, appId, root, bre.artifacts);
-  console.log(`APMRegistry: ${repo.address}`)
-
-  // Retrieve the first implementation for the app.
+  // Deploy first implementation and set it in the Repo and in a Proxy.
   const implementation: Truffle.Contract<any> = await deployImplementation(bre.artifacts)
-  console.log(`App implementation: ${implementation.address}`)
-
-  // Set the repo's first implementation.
+  const proxy: Truffle.Contract<any> = await createProxy(implementation, appId, rootAccount, dao, bre.artifacts);
   await updateRepo(repo, implementation);
 
-  // Create a proxy for the app (also setting it's first implementation).
-  const proxy: Truffle.Contract<any> = await createProxy(implementation, appId, root, dao, bre.artifacts);
-  console.log(`App proxy: ${proxy.address}`);
-
-  // Set the app's permissions.
-  // TODO: Must also be reset on contract updates.
-  await setPermissions(dao, proxy, root, bre.artifacts);
+  await setPermissions(dao, proxy, rootAccount, bre.artifacts);
 
   // Watch back-end files. Debounce for performance
   chokidar
@@ -97,20 +79,19 @@ async function startBackend(
     })
     .on('change', async (event, path) => {
       console.log(`<<< Triggering backend build >>>`);
-
-      // Compile contracts.
       await bre.run(TASK_COMPILE);
 
-      // Retrieve the new implementation for the app.
+      // Update implementation and set it in Repo and Proxy.
       const implementation: Truffle.Contract<any> = await deployImplementation(bre.artifacts)
-      console.log(`App implementation: ${implementation.address}`)
-
-      // Update the APM's repo.
       await updateRepo(repo, implementation);
-
-      // Update the proxy's implementation.
-      await updateProxy(implementation, appId, root, dao, bre.artifacts);
+      await updateProxy(implementation, appId, rootAccount, dao, bre.artifacts);
     });
+
+  console.log(`App name: ${appName}`)
+  console.log(`App id: ${appId}`)
+  console.log(`DAO: ${dao.address}`);
+  console.log(`APMRegistry: ${repo.address}`)
+  console.log(`App proxy: ${proxy.address}`);
 
   return { daoAddress: dao.address, appAddress: proxy.address };
 }

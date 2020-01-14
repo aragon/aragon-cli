@@ -9,6 +9,7 @@ import { TruffleEnvironmentArtifacts } from '@nomiclabs/buidler-truffle5/src/art
 async function deployImplementation(artifacts: TruffleEnvironmentArtifacts): Promise<Truffle.Contract<any>> {
   const mainContractName: string = getMainContractName();
 
+  // Deploy the main contract.
   const App: Truffle.Contract<any> = artifacts.require(mainContractName);
   const implementation: Truffle.Contract<any> = await App.new();
 

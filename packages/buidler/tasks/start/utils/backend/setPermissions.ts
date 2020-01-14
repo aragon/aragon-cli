@@ -10,7 +10,7 @@ const ANY_ADDRESS: string = '0xffffffffffffffffffffffffffffffffffffffff';
 async function setPermissions(
   dao: KernelInstance,
   app: any, // TODO: needs type
-  rootAddress: string,
+  rootAccount: string,
   artifacts: TruffleEnvironmentArtifacts
 ): Promise<void> {
   // Retrieve ACL.
@@ -20,15 +20,15 @@ async function setPermissions(
 
   // Set all permissions listed in arapp.json.
   // TODO: Must be set dynamically.
-  await setOpenPermission(acl, app, await app.INCREMENT_ROLE(), rootAddress);
-  await setOpenPermission(acl, app, await app.DECREMENT_ROLE(), rootAddress);
+  await setOpenPermission(acl, app, await app.INCREMENT_ROLE(), rootAccount);
+  await setOpenPermission(acl, app, await app.DECREMENT_ROLE(), rootAccount);
 }
 
 async function setOpenPermission(
   acl: ACLInstance,
   app: Truffle.Contract<any>,
   permission: string,
-  rootAddress: string
+  rootAccount: string
 ) {
   console.log(`Setting permission: ${permission}`)
 
@@ -38,8 +38,8 @@ async function setOpenPermission(
     ANY_ADDRESS,
     app.address,
     permission,
-    rootAddress,
-    { from: rootAddress }
+    rootAccount,
+    { from: rootAccount }
   );
 }
 

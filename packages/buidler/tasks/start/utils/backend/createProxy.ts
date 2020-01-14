@@ -17,7 +17,7 @@ interface InitializableApp extends Truffle.Contract<any> {
 async function createProxy(
   implementation: Truffle.Contract<any>,
   appId: string,
-  rootAddress: string,
+  rootAccount: string,
   dao: KernelInstance,
   artifacts: TruffleEnvironmentArtifacts
 ): Promise<Truffle.Contract<any>> {
@@ -27,7 +27,7 @@ async function createProxy(
     implementation.address,
     '0x',
     false,
-    { from: rootAddress }
+    { from: rootAccount }
   );
 
   // Retrieve proxy address and wrap around abi.
