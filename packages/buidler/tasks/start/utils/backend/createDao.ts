@@ -1,5 +1,3 @@
-import { TruffleEnvironmentArtifacts } from '@nomiclabs/buidler-truffle5/src/artifacts';
-
 import {
   KernelContract, KernelInstance,
   ACLContract, ACLInstance,
@@ -11,10 +9,9 @@ import {
  * Deploys a new DAO
  * @return DAO's Kernel TruffleContract
  */
-async function createDao(
-  rootAccount: string,
-  artifacts: TruffleEnvironmentArtifacts
-): Promise<KernelInstance> {
+async function createDao(): Promise<KernelInstance> {
+  const rootAccount: string = (await web3.eth.getAccounts())[0];
+
   // Retrieve contract artifacts.
   const Kernel: KernelContract = artifacts.require('Kernel');
   const ACL: ACLContract = artifacts.require('ACL');

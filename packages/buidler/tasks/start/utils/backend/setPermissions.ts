@@ -1,4 +1,4 @@
-import { TruffleEnvironmentArtifacts } from '@nomiclabs/buidler-truffle5/src/artifacts';
+import { BuidlerRuntimeEnvironment } from '@nomiclabs/buidler/types';
 
 import {
   KernelInstance,
@@ -9,10 +9,10 @@ const ANY_ADDRESS: string = '0xffffffffffffffffffffffffffffffffffffffff';
 
 async function setPermissions(
   dao: KernelInstance,
-  app: any, // TODO: needs type
-  rootAccount: string,
-  artifacts: TruffleEnvironmentArtifacts
+  app: any // TODO: needs type
 ): Promise<void> {
+  const rootAccount: string = (await web3.eth.getAccounts())[0];
+
   // Retrieve ACL.
   const aclAddress = await dao.acl();
   const ACL = artifacts.require('ACL');

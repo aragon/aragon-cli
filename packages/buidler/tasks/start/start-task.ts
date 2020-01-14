@@ -28,7 +28,7 @@ import {
   buildAppFrontEnd,
   watchAppFrontEnd,
   buildAppArtifacts,
-  appDist
+  buildOutputPath
 } from './utils/frontend';
 
 import {
@@ -40,11 +40,11 @@ import {
  * Main, composite, task.
  */
 task(TASK_START, 'Starts Aragon app development').setAction(
-  async ({}, env: BuidlerRuntimeEnvironment) => {
+  async (params, bre: BuidlerRuntimeEnvironment) => {
     console.log(`Starting...`);
 
-    const { daoAddress, appAddress }  = await startBackend(env);
-    await startFrontend(daoAddress, appAddress, env);
+    const { daoAddress, appAddress }  = await startBackend(bre);
+    await startFrontend(daoAddress, appAddress, bre);
 
     // Unresolving promise to keep task open.
     return new Promise((resolve, reject) => {});
@@ -59,18 +59,16 @@ async function startBackend(
 
   await bre.run(TASK_COMPILE);
 
-  const rootAccount: string = (await web3.eth.getAccounts())[0];
-
   // Prepare a DAO and a Repo to hold the app.
-  const dao: KernelInstance = await createDao(rootAccount, bre.artifacts);
-  const repo: RepoInstance = await createOrRetrieveRepo(web3, appName, appId, rootAccount, bre.artifacts);
+  const dao: KernelInstance = await createDao();
+  const repo: RepoInstance = await createOrRetrieveRepo(appName, appId);
 
   // Deploy first implementation and set it in the Repo and in a Proxy.
-  const implementation: Truffle.Contract<any> = await deployImplementation(bre.artifacts)
-  const proxy: Truffle.Contract<any> = await createProxy(implementation, appId, rootAccount, dao, bre.artifacts);
+  const implementation: Truffle.Contract<any> = await deployImplementation()
+  const proxy: Truffle.Contract<any> = await createProxy(implementation, appId, dao);
   await updateRepo(repo, implementation);
 
-  await setPermissions(dao, proxy, rootAccount, bre.artifacts);
+  await setPermissions(dao, proxy);
 
   // Watch back-end files. Debounce for performance
   chokidar
@@ -82,9 +80,9 @@ async function startBackend(
       await bre.run(TASK_COMPILE);
 
       // Update implementation and set it in Repo and Proxy.
-      const implementation: Truffle.Contract<any> = await deployImplementation(bre.artifacts)
+      const implementation: Truffle.Contract<any> = await deployImplementation()
       await updateRepo(repo, implementation);
-      await updateProxy(implementation, appId, rootAccount, dao, bre.artifacts);
+      await updateProxy(implementation, appId, dao);
     });
 
   console.log(`App name: ${appName}`)
@@ -108,13 +106,10 @@ async function startFrontend(
   await buildAppFrontEnd(appPath);
   await buildAppArtifacts();
 
-  // Watch for changes and rebuild app.
-  await watchAppFrontEnd(appPath);
-
   // Serve app files.
   liveServer.start({
     port: 8001,
-    root: appDist,
+    root: buildOutputPath,
     open: false,
     wait: 1000,
     cors: true
@@ -125,4 +120,7 @@ async function startFrontend(
   console.log(`You can now view the Aragon client in the browser.
  Local:  ${url}
 `);
+
+  // Watch for changes and rebuild app.
+  await watchAppFrontEnd(appPath);
 }

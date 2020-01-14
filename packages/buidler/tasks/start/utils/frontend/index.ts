@@ -6,5 +6,5 @@ export {
   buildAppFrontEnd,
   watchAppFrontEnd,
   buildAppArtifacts,
-  appDist
+  buildOutputPath
 } from './buildApp';
