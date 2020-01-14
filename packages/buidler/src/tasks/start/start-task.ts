@@ -26,7 +26,7 @@ task(TASK_START, 'Starts Aragon app development').setAction(
     await startFrontend(daoAddress, appAddress);
 
     // Unresolving promise to keep task open.
-    return new Promise((resolve, reject) => {});
+    return new Promise(() => {});
   },
 );
 
@@ -71,10 +71,7 @@ async function startBackend(bre: BuidlerRuntimeEnvironment): Promise<{ daoAddres
   return { daoAddress: dao.address, appAddress: proxy.address };
 }
 
-async function startFrontend(
-  daoAddress: string,
-  appAddress: string,
-): Promise<void> {
+async function startFrontend(daoAddress: string, appAddress: string): Promise<void> {
   await installAragonClientIfNeeded();
 
   // Initial build.
