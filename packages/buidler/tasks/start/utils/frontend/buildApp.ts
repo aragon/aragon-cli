@@ -2,9 +2,8 @@ import path from 'path';
 import fs from 'fs';
 import fsExtra from 'fs-extra';
 import { execaPipe } from './execaPipe';
-import { BuidlerRuntimeEnvironment } from '@nomiclabs/buidler/types';
 
-export const appDist = 'dist';
+export const buildOutputPath = 'dist';
 
 export const manifestPath = 'manifest.json';
 export const artifactPath = 'artifact.json';
@@ -30,6 +29,6 @@ export async function watchAppFrontEnd(appPath: string): Promise<void> {
  */
 export async function buildAppArtifacts(): Promise<void> {
   for (const filePath of [manifestPath, artifactPath]) {
-    await fsExtra.copy(filePath, path.join(appDist, filePath));
+    await fsExtra.copy(filePath, path.join(buildOutputPath, filePath));
   }
 }

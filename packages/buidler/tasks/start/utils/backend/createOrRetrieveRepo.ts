@@ -1,6 +1,5 @@
 import ENS from 'ethjs-ens';
 
-import { TruffleEnvironmentArtifacts } from '@nomiclabs/buidler-truffle5/src/artifacts';
 import { provider } from 'web3-core';
 
 import {
@@ -11,17 +10,11 @@ import {
 const ENS_REGISTRY_ADDRESS: string = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1';
 const APM_REGISTRY_ADDRESS: string = '0x32296d9f8fed89658668875dc73cacf87e8888b2';
 
-async function createOrRetrieveRepo(
-  web3: Web3,
-  appName: string,
-  appId: string,
-  rootAccount: string,
-  artifacts: TruffleEnvironmentArtifacts
-): Promise<RepoInstance> {
+async function createOrRetrieveRepo(appName: string, appId: string): Promise<RepoInstance> {
   // Retrieve the Repo address from ens, or create the Repo if nothing is retrieved.
-  let repoAddress: string | null = await ensResolve(web3, appId).catch(() => null);
+  let repoAddress: string | null = await ensResolve(appId).catch(() => null);
   if (!repoAddress) {
-    repoAddress = await createRepo(appName, rootAccount, artifacts);
+    repoAddress = await createRepo(appName);
   }
 
   // Wrap Repo address with abi.
@@ -31,11 +24,9 @@ async function createOrRetrieveRepo(
   return repo;
 }
 
-async function createRepo(
-  appName: string,
-  rootAccount: string,
-  artifacts: TruffleEnvironmentArtifacts
-):Promise<string> {
+async function createRepo(appName: string):Promise<string> {
+  const rootAccount: string = (await web3.eth.getAccounts())[0];
+
   // Retrieve APMRegistry.
   const APMRegistry: APMRegistryContract = artifacts.require('APMRegistry');
   const apmRegistry: APMRegistryInstance = await APMRegistry.at(APM_REGISTRY_ADDRESS);
@@ -54,10 +45,7 @@ async function createRepo(
   return repoAddress;
 }
 
-async function ensResolve(
-  web3: Web3,
-  appId: string
-): Promise<string> {
+async function ensResolve(appId: string): Promise<string> {
   // Define options used by ENS.
   const opts: {
     provider: provider,
