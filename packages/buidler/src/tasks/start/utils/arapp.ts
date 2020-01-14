@@ -12,7 +12,7 @@ export function getMainContractPath(): string {
   // Read the path from arapp.json.
   if (fs.existsSync(arappPath)) {
     const arapp: { path: string } = JSON.parse(
-      fs.readFileSync(arappPath, 'utf-8')
+      fs.readFileSync(arappPath, 'utf-8'),
     );
 
     return arapp.path;
@@ -23,7 +23,7 @@ export function getMainContractPath(): string {
     const contracts: string[] = fs.readdirSync(contractsPath);
 
     const candidates: string[] = contracts.filter(
-      name => name.endsWith('.sol') || name !== 'Imports.sol'
+      name => name.endsWith('.sol') || name !== 'Imports.sol',
     );
 
     if (candidates.length === 1) {

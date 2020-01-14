@@ -13,7 +13,7 @@ const aragonBaseDir: string = path.join(os.homedir(), '.aragon');
 
 export async function installAragonClientIfNeeded(
   repo: string = defaultRepo,
-  version: string = defaultVersion
+  version: string = defaultVersion,
 ): Promise<string> {
   // Determine client path.
   const clientPath: string = _getClientPath(version);
@@ -43,7 +43,7 @@ export async function startAragonClient(
   repo: string = defaultRepo,
   version: string = defaultVersion,
   port: number = defaultPort,
-  autoOpen: boolean = true
+  autoOpen: boolean = true,
 ): Promise<string> {
   const clientPath: string = _getClientPath(version);
 

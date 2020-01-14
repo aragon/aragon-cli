@@ -2,8 +2,8 @@ import ENS from 'ethjs-ens';
 import { provider } from 'web3-core';
 import {
   RepoContract, RepoInstance,
-  APMRegistryContract, APMRegistryInstance
-} from '../../../../typechain';
+  APMRegistryContract, APMRegistryInstance,
+} from '../../../../../typechain';
 
 const ENS_REGISTRY_ADDRESS: string = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1';
 const APM_REGISTRY_ADDRESS: string = '0x32296d9f8fed89658668875dc73cacf87e8888b2';
@@ -24,15 +24,15 @@ export async function createRepo(appName: string, appId: string): Promise<RepoIn
 
 export async function updateRepo(
   repo: RepoInstance,
-  implementation: Truffle.Contract<any>
+  implementation: Truffle.Contract<any>,
 ): Promise<void> {
   // Calculate next valid semver.
   const semver: [number, number, number] = [
     (await repo.getVersionsCount()).toNumber() + 1, // Updates to smart contracts require major bump.
     0,
-    0
+    0,
   ];
-  console.log(`Repo version: ${semver.join('.')}`)
+  console.log(`Repo version: ${semver.join('.')}`);
 
   // URI where this plugin is serving the app's front end.
   const contentURI: string = `0x${Buffer.from('http://localhost:8001').toString('hex')}`;
@@ -41,7 +41,7 @@ export async function updateRepo(
   await repo.newVersion(semver, implementation.address, contentURI);
 }
 
-async function _createRepo(appName: string):Promise<string> {
+async function _createRepo(appName: string): Promise<string> {
   const rootAccount: string = (await web3.eth.getAccounts())[0];
 
   // Retrieve APMRegistry.
@@ -57,7 +57,7 @@ async function _createRepo(appName: string):Promise<string> {
   if (!log) {
     throw new Error('Error creating Repo. Unable to find NewRepo log.');
   }
-  const repoAddress = (<Truffle.TransactionLog>log).args.repo;
+  const repoAddress = (log as Truffle.TransactionLog).args.repo;
 
   return repoAddress;
 }
@@ -66,15 +66,15 @@ async function _ensResolve(appId: string): Promise<string> {
   // Define options used by ENS.
   const opts: {
     provider: provider,
-    registryAddress: string
+    registryAddress: string,
   } = {
     provider: web3.currentProvider,
-    registryAddress: ENS_REGISTRY_ADDRESS
+    registryAddress: ENS_REGISTRY_ADDRESS,
   };
 
   // Avoids a bug on ENS.
   if (!opts.provider.sendAsync) {
-    opts.provider.sendAsync = opts.provider.send
+    opts.provider.sendAsync = opts.provider.send;
   }
 
   // Set up ENS and resolve address.
@@ -82,8 +82,8 @@ async function _ensResolve(appId: string): Promise<string> {
   const address: string | null = await ens.resolveAddressForNode(appId);
 
   if (!address) {
-    throw new Error('Unable to resolve ENS addres.')
+    throw new Error('Unable to resolve ENS addres.');
   }
 
-  return <string>address;
+  return address as string;
 }

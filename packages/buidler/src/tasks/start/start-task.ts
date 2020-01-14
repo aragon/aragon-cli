@@ -13,7 +13,7 @@ import { createRepo, updateRepo } from './utils/backend/repo';
 import { setPermissions } from './utils/backend/permissions';
 import { installAragonClientIfNeeded, startAragonClient } from './utils/frontend/client';
 import { buildAppFrontEnd, buildAppArtifacts, watchAppFrontEnd, buildOutputPath } from './utils/frontend/build';
-import { KernelInstance, RepoInstance } from '../../typechain';
+import { KernelInstance, RepoInstance } from '../../../typechain';
 
 /**
  * Main, composite, task.
@@ -27,12 +27,10 @@ task(TASK_START, 'Starts Aragon app development').setAction(
 
     // Unresolving promise to keep task open.
     return new Promise((resolve, reject) => {});
-  }
+  },
 );
 
-async function startBackend(
-  bre: BuidlerRuntimeEnvironment
-): Promise<{ daoAddress: string, appAddress: string }> {
+async function startBackend(bre: BuidlerRuntimeEnvironment): Promise<{ daoAddress: string, appAddress: string }> {
   const appName: string = 'counter';
   const appId: string = namehash.hash(`${appName}.aragonpm.eth`);
 
@@ -43,7 +41,7 @@ async function startBackend(
   const repo: RepoInstance = await createRepo(appName, appId);
 
   // Deploy first implementation and set it in the Repo and in a Proxy.
-  const implementation: Truffle.Contract<any> = await deployImplementation()
+  const implementation: Truffle.Contract<any> = await deployImplementation();
   const proxy: Truffle.Contract<any> = await createProxy(implementation, appId, dao);
   await updateRepo(repo, implementation);
 
@@ -52,22 +50,22 @@ async function startBackend(
   // Watch back-end files. Debounce for performance
   chokidar
     .watch('./contracts/', {
-      awaitWriteFinish: { stabilityThreshold: 1000 }
+      awaitWriteFinish: { stabilityThreshold: 1000 },
     })
-    .on('change', async (event, path) => {
+    .on('change', async () => {
       console.log(`<<< Triggering backend build >>>`);
       await bre.run(TASK_COMPILE);
 
       // Update implementation and set it in Repo and Proxy.
-      const implementation: Truffle.Contract<any> = await deployImplementation()
-      await updateRepo(repo, implementation);
+      const newImplementation: Truffle.Contract<any> = await deployImplementation();
+      await updateRepo(repo, newImplementation);
       await updateProxy(implementation, appId, dao);
     });
 
-  console.log(`App name: ${appName}`)
-  console.log(`App id: ${appId}`)
+  console.log(`App name: ${appName}`);
+  console.log(`App id: ${appId}`);
   console.log(`DAO: ${dao.address}`);
-  console.log(`APMRegistry: ${repo.address}`)
+  console.log(`APMRegistry: ${repo.address}`);
   console.log(`App proxy: ${proxy.address}`);
 
   return { daoAddress: dao.address, appAddress: proxy.address };
@@ -76,7 +74,7 @@ async function startBackend(
 async function startFrontend(
   daoAddress: string,
   appAddress: string,
-  env: BuidlerRuntimeEnvironment
+  env: BuidlerRuntimeEnvironment,
 ): Promise<void> {
   await installAragonClientIfNeeded();
 
@@ -91,7 +89,7 @@ async function startFrontend(
     root: buildOutputPath,
     open: false,
     wait: 1000,
-    cors: true
+    cors: true,
   });
 
   // Start Aragon client at the deployed address

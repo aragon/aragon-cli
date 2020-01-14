@@ -1,11 +1,11 @@
 import { BuidlerRuntimeEnvironment } from '@nomiclabs/buidler/types';
-import { KernelInstance, ACLInstance } from '../../../../typechain';
+import { KernelInstance, ACLInstance } from '../../../../../typechain';
 
 const ANY_ADDRESS: string = '0xffffffffffffffffffffffffffffffffffffffff';
 
 export async function setPermissions(
   dao: KernelInstance,
-  app: any // TODO: needs type
+  app: any, // TODO: needs type
 ): Promise<void> {
   const rootAccount: string = (await web3.eth.getAccounts())[0];
 
@@ -24,9 +24,9 @@ async function _setOpenPermission(
   acl: ACLInstance,
   app: Truffle.Contract<any>,
   permission: string,
-  rootAccount: string
+  rootAccount: string,
 ) {
-  console.log(`Setting permission: ${permission}`)
+  console.log(`Setting permission: ${permission}`);
 
   // Set permission to ANY_ADDRESS (max uint256), which is interpreted by
   // the ACL as giving such permission to all addresses.
@@ -35,6 +35,6 @@ async function _setOpenPermission(
     app.address,
     permission,
     rootAccount,
-    { from: rootAccount }
+    { from: rootAccount },
   );
 }
