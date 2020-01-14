@@ -9,7 +9,7 @@ import {
  * Deploys a new DAO
  * @return DAO's Kernel TruffleContract
  */
-async function createDao(): Promise<KernelInstance> {
+export async function createDao(): Promise<KernelInstance> {
   const rootAccount: string = (await web3.eth.getAccounts())[0];
 
   // Retrieve contract artifacts.
@@ -55,5 +55,3 @@ async function createDao(): Promise<KernelInstance> {
 
   return dao;
 }
-
-export default createDao;

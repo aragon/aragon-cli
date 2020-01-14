@@ -1,7 +1,5 @@
 import ENS from 'ethjs-ens';
-
 import { provider } from 'web3-core';
-
 import {
   RepoContract, RepoInstance,
   APMRegistryContract, APMRegistryInstance
@@ -10,11 +8,11 @@ import {
 const ENS_REGISTRY_ADDRESS: string = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1';
 const APM_REGISTRY_ADDRESS: string = '0x32296d9f8fed89658668875dc73cacf87e8888b2';
 
-async function createOrRetrieveRepo(appName: string, appId: string): Promise<RepoInstance> {
+export async function createRepo(appName: string, appId: string): Promise<RepoInstance> {
   // Retrieve the Repo address from ens, or create the Repo if nothing is retrieved.
-  let repoAddress: string | null = await ensResolve(appId).catch(() => null);
+  let repoAddress: string | null = await _ensResolve(appId).catch(() => null);
   if (!repoAddress) {
-    repoAddress = await createRepo(appName);
+    repoAddress = await _createRepo(appName);
   }
 
   // Wrap Repo address with abi.
@@ -24,7 +22,26 @@ async function createOrRetrieveRepo(appName: string, appId: string): Promise<Rep
   return repo;
 }
 
-async function createRepo(appName: string):Promise<string> {
+export async function updateRepo(
+  repo: RepoInstance,
+  implementation: Truffle.Contract<any>
+): Promise<void> {
+  // Calculate next valid semver.
+  const semver: [number, number, number] = [
+    (await repo.getVersionsCount()).toNumber() + 1, // Updates to smart contracts require major bump.
+    0,
+    0
+  ];
+  console.log(`Repo version: ${semver.join('.')}`)
+
+  // URI where this plugin is serving the app's front end.
+  const contentURI: string = `0x${Buffer.from('http://localhost:8001').toString('hex')}`;
+
+  // Create a new version in the app's repo, with the new implementation.
+  await repo.newVersion(semver, implementation.address, contentURI);
+}
+
+async function _createRepo(appName: string):Promise<string> {
   const rootAccount: string = (await web3.eth.getAccounts())[0];
 
   // Retrieve APMRegistry.
@@ -45,7 +62,7 @@ async function createRepo(appName: string):Promise<string> {
   return repoAddress;
 }
 
-async function ensResolve(appId: string): Promise<string> {
+async function _ensResolve(appId: string): Promise<string> {
   // Define options used by ENS.
   const opts: {
     provider: provider,
@@ -70,5 +87,3 @@ async function ensResolve(appId: string): Promise<string> {
 
   return <string>address;
 }
-
-export default createOrRetrieveRepo;

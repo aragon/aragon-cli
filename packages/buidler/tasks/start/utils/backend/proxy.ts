@@ -1,18 +1,17 @@
-import { getMainContractName } from './getMainContract';
-
-import {
-  KernelInstance
-} from '../../../../typechain';
+import { getMainContractName } from '../arapp';
+import { KernelInstance } from '../../../../typechain';
 
 interface InitializableApp extends Truffle.Contract<any> {
   initialize: () => void;
 }
 
+const BASE_NAMESPACE: string = '0xf1f3eb40f5bc1ad1344716ced8b8a0431d840b5783aea1fd01786bc26f35ac0f';
+
 /**
  * Creates a new app proxy
  * @return proxy App TruffleContract
  */
-async function createProxy(
+export async function createProxy(
   implementation: Truffle.Contract<any>,
   appId: string,
   dao: KernelInstance,
@@ -45,4 +44,20 @@ async function createProxy(
   return proxy;
 }
 
-export default createProxy;
+/**
+ * Updates the app proxy's implementation in the Kernel
+ */
+export async function updateProxy(
+  implementation: Truffle.Contract<any>,
+  appId: string,
+  dao: KernelInstance
+): Promise<void> {
+  const rootAccount: string = (await web3.eth.getAccounts())[0];
+
+  console.log(`Updating proxy implementation to: ${implementation.address}`);
+
+  // Set the new implementation in the Kernel.
+  await dao.setApp(BASE_NAMESPACE, appId, implementation.address, {
+    from: rootAccount
+  });
+}

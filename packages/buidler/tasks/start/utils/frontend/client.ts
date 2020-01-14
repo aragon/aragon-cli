@@ -3,24 +3,20 @@ import fs from 'fs';
 import fsExtra from 'fs-extra';
 import os from 'os';
 import open from 'open';
-import { createStaticWebserver } from './staticWebserver';
-import { execaPipe } from './execaPipe';
+import { createStaticWebserver } from './webserver';
+import { execaPipe } from '../execa';
 
 const defaultRepo: string = 'https://github.com/aragon/aragon';
 const defaultVersion: string = '775edd606333a111eb2693df53900039722a95dc';
 const defaultPort: number = 3000;
 const aragonBaseDir: string = path.join(os.homedir(), '.aragon');
 
-function getClientPath(version: string): string {
-  return path.join(aragonBaseDir, `client-${version}`);
-}
-
 export async function installAragonClientIfNeeded(
   repo: string = defaultRepo,
   version: string = defaultVersion
 ): Promise<string> {
   // Determine client path.
-  const clientPath: string = getClientPath(version);
+  const clientPath: string = _getClientPath(version);
 
   // Verify installation or install if needed.
   if (fs.existsSync(path.resolve(clientPath))) {
@@ -49,7 +45,7 @@ export async function startAragonClient(
   port: number = defaultPort,
   autoOpen: boolean = true
 ): Promise<string> {
-  const clientPath: string = getClientPath(version);
+  const clientPath: string = _getClientPath(version);
 
   console.log(`Starting client server at port ${repo}`);
   await createStaticWebserver(port, path.join(clientPath, 'build'));
@@ -61,4 +57,8 @@ export async function startAragonClient(
   }
 
   return url;
+}
+
+function _getClientPath(version: string): string {
+  return path.join(aragonBaseDir, `client-${version}`);
 }
