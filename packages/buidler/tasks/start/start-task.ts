@@ -33,6 +33,7 @@ import {
 
 import {
   KernelInstance,
+  RepoInstance
 } from '../../typechain';
 
 /**
@@ -63,13 +64,13 @@ async function startBackend(buidlerRuntimeEnvironment: BuidlerRuntimeEnvironment
   console.log(`DAO: ${dao.address}`);
 
   // Define app name and id.
-  const appName = 'counter';
+  const appName: string = 'counter';
   console.log(`App name: ${appName}`)
-  const appId = namehash.hash(`${appName}.aragonpm.eth`);
+  const appId: string = namehash.hash(`${appName}.aragonpm.eth`);
   console.log(`App id: ${appId}`)
 
   // Create an APM repo for the app.
-  const repo = await createOrRetrieveRepo(web3, appName, appId, root, artifacts);
+  const repo: RepoInstance = await createOrRetrieveRepo(web3, appName, appId, root, buidlerRuntimeEnvironment.artifacts);
   console.log(`APMRegistry: ${repo.address}`)
 
   // Retrieve the first implementation for the app.
