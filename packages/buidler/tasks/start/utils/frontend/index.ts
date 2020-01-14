@@ -6,6 +6,5 @@ export {
   buildAppFrontEnd,
   watchAppFrontEnd,
   buildAppArtifacts,
-  buildAppCode,
   appDist
 } from './release';
