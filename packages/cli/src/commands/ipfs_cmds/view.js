@@ -4,6 +4,10 @@ import {
   getMerkleDAG,
   stringifyMerkleDAG,
   getHttpClient,
+  startLocalDaemon,
+  getBinaryPath,
+  getDefaultRepoPath,
+  isLocalDaemonRunning,
 } from '@aragon/toolkit'
 //
 import listrOpts from '../../helpers/listr-options'
@@ -22,6 +26,15 @@ export const builder = yargs =>
 const runViewTask = ({ cid, ipfsReader, silent, debug }) => {
   return new TaskList(
     [
+      {
+        title: 'Start IPFS',
+        skip: async () => isLocalDaemonRunning(),
+        task: async () => {
+          await startLocalDaemon(getBinaryPath(), getDefaultRepoPath(), {
+            detached: false,
+          })
+        },
+      },
       {
         title: 'Validate CID',
         task: () => {
