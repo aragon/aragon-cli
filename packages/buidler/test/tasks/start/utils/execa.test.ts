@@ -1,8 +1,8 @@
-import { execaPipe } from '../../../../src/tasks/start/utils/execa';
 import { assert } from 'chai';
+import { execaPipe } from '~src/tasks/start/utils/execa';
 import * as path from 'path';
 
-describe('execa', () => {
+describe('execa.ts', () => {
   describe('when calling pwd', () => {
     let res;
 

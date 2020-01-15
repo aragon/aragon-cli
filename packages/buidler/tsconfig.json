@@ -7,7 +7,12 @@
     "outDir": "dist",
     "resolveJsonModule": true,
     "noImplicitAny": false,
-    "allowJs": true
+    "allowJs": true,
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "~src/*": ["src/*"]
+    }
   },
   "include": ["./scripts", "./test"],
   "files": [
