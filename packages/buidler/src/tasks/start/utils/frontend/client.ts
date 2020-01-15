@@ -5,7 +5,7 @@ import os from 'os';
 import open from 'open';
 import { createStaticWebserver } from './webserver';
 import { execaPipe } from '../execa';
-import config from '~/buidler.config';
+import { getConfig } from '~/src/config';
 
 const defaultRepo: string = 'https://github.com/aragon/aragon';
 const defaultVersion: string = '775edd606333a111eb2693df53900039722a95dc';
@@ -44,7 +44,7 @@ export async function startAragonClient(
   version: string = defaultVersion,
   autoOpen: boolean = true,
 ): Promise<string> {
-  const port: number = config.aragon.clientServePort;
+  const port: number = getConfig().clientServePort;
   const clientPath: string = _getClientPath(version);
 
   console.log(`Starting client server at port ${repo}`);

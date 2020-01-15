@@ -1,5 +1,4 @@
 import path from 'path';
-import liveServer from 'live-server';
 import chokidar from 'chokidar';
 import { task } from '@nomiclabs/buidler/config';
 import { BuidlerRuntimeEnvironment } from '@nomiclabs/buidler/types';
@@ -11,10 +10,9 @@ import { createProxy, updateProxy } from './utils/backend/proxy';
 import { createRepo, updateRepo } from './utils/backend/repo';
 import { setAllPermissionsOpenly } from './utils/backend/permissions';
 import { installAragonClientIfNeeded, startAragonClient } from './utils/frontend/client';
-import { buildAppFrontEnd, buildAppArtifacts, watchAppFrontEnd } from './utils/frontend/build';
+import { buildAppFrontEnd, buildAppArtifacts, serveAppFrontEnd, watchAppFrontEnd } from './utils/frontend/build';
 import { KernelInstance, RepoInstance } from '~/typechain';
 import { getAppId } from './utils/id';
-import config from '~/buidler.config';
 
 /**
  * Main, composite, task. Calls startBackend, then startFrontend,
@@ -23,8 +21,6 @@ import config from '~/buidler.config';
 task(TASK_START, 'Starts Aragon app development').setAction(
   async (params, bre: BuidlerRuntimeEnvironment) => {
     console.log(`Starting...`);
-
-    console.log(`Config:`, JSON.stringify(config, null, 2))
 
     const { daoAddress, appAddress }  = await startBackend(bre);
     await startFrontend(daoAddress, appAddress);
@@ -97,20 +93,14 @@ async function startFrontend(daoAddress: string, appAddress: string): Promise<vo
   await buildAppArtifacts();
 
   // Serve app files.
-  liveServer.start({
-    port: config.aragon.appServePort,
-    root: config.aragon.appBuildOutputPath,
-    open: false,
-    wait: 1000,
-    cors: true,
-  });
+  serveAppFrontEnd();
 
-  // Start Aragon client at the deployed address
+  // Start Aragon client at the deployed address.
   const url: string = await startAragonClient(`${daoAddress}/${appAddress}`);
   console.log(`You can now view the Aragon client in the browser.
  Local:  ${url}
 `);
 
-  // Watch for changes and rebuild app.
+  // Watch for changes to rebuild app.
   await watchAppFrontEnd();
 }
