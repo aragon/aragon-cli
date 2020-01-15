@@ -28,6 +28,7 @@
     "chokidar": "^3.3.1",
     "eth-ens-namehash": "^2.0.8",
     "ethjs-ens": "^2.0.1",
+    "execa": "^4.0.0",
     "fs-extra": "^8.1.0",
     "live-server": "^1.2.1",
     "lodash": "^4.17.15",
