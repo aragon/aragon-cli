@@ -1,5 +1,4 @@
 import path from 'path';
-import namehash from 'eth-ens-namehash';
 import liveServer from 'live-server';
 import chokidar from 'chokidar';
 import { task } from '@nomiclabs/buidler/config';
@@ -10,10 +9,11 @@ import { createDao } from './utils/backend/dao';
 import { deployImplementation } from './utils/backend/app';
 import { createProxy, updateProxy } from './utils/backend/proxy';
 import { createRepo, updateRepo } from './utils/backend/repo';
-import { setPermissions } from './utils/backend/permissions';
+import { setAllPermissionsOpenly } from './utils/backend/permissions';
 import { installAragonClientIfNeeded, startAragonClient } from './utils/frontend/client';
 import { buildAppFrontEnd, buildAppArtifacts, watchAppFrontEnd, buildOutputPath } from './utils/frontend/build';
 import { KernelInstance, RepoInstance } from '~/typechain';
+import { getAppId } from './utils/id';
 
 /**
  * Main, composite, task. Calls startBackend, then startFrontend,
@@ -41,7 +41,7 @@ task(TASK_START, 'Starts Aragon app development').setAction(
  */
 async function startBackend(bre: BuidlerRuntimeEnvironment): Promise<{ daoAddress: string, appAddress: string }> {
   const appName: string = 'counter';
-  const appId: string = namehash.hash(`${appName}.aragonpm.eth`);
+  const appId: string = getAppId(appName);
 
   await bre.run(TASK_COMPILE);
 
@@ -50,11 +50,11 @@ async function startBackend(bre: BuidlerRuntimeEnvironment): Promise<{ daoAddres
   const repo: RepoInstance = await createRepo(appName, appId);
 
   // Deploy first implementation and set it in the Repo and in a Proxy.
-  const implementation: Truffle.Contract<any> = await deployImplementation();
-  const proxy: Truffle.Contract<any> = await createProxy(implementation, appId, dao);
+  const implementation: Truffle.ContractInstance = await deployImplementation();
+  const proxy: Truffle.ContractInstance = await createProxy(implementation, appId, dao);
   await updateRepo(repo, implementation);
 
-  await setPermissions(dao, proxy);
+  await setAllPermissionsOpenly(dao, proxy);
 
   // Watch back-end files. Debounce for performance
   chokidar
@@ -66,7 +66,7 @@ async function startBackend(bre: BuidlerRuntimeEnvironment): Promise<{ daoAddres
       await bre.run(TASK_COMPILE);
 
       // Update implementation and set it in Repo and Proxy.
-      const newImplementation: Truffle.Contract<any> = await deployImplementation();
+      const newImplementation: Truffle.ContractInstance = await deployImplementation();
       await updateRepo(repo, newImplementation);
       await updateProxy(implementation, appId, dao);
     });
