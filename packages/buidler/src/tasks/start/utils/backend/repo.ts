@@ -4,6 +4,7 @@ import {
   RepoContract, RepoInstance,
   APMRegistryContract, APMRegistryInstance,
 } from '~/typechain';
+import config from '~/buidler.config';
 
 const ENS_REGISTRY_ADDRESS: string = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1';
 const APM_REGISTRY_ADDRESS: string = '0x32296d9f8fed89658668875dc73cacf87e8888b2';
@@ -43,7 +44,7 @@ export async function updateRepo(
   console.log(`Repo version: ${semver.join('.')}`);
 
   // URI where this plugin is serving the app's front end.
-  const contentURI: string = `0x${Buffer.from('http://localhost:8001').toString('hex')}`;
+  const contentURI: string = `0x${Buffer.from(`http://localhost:${config.aragon.appServePort}`).toString('hex')}`;
 
   // Create a new version in the app's repo, with the new implementation.
   await repo.newVersion(semver, implementation.address, contentURI);
