@@ -13,7 +13,8 @@
   ],
   "scripts": {
     "generate": "typechain --target truffle --outDir typechain 'artifacts/*.json'",
-    "lint": "tslint -c tslint.json 'src/**/*.ts'"
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "test": "buidler test"
   },
   "dependencies": {
     "@aragon/os": "4.0.1",
@@ -23,6 +24,7 @@
     "@nomiclabs/buidler-web3": "^1.0.2",
     "@types/mocha": "^5.2.7",
     "@types/node": "^13.1.4",
+    "@types/chai": "^4.2.5",
     "chokidar": "^3.3.1",
     "eth-ens-namehash": "^2.0.8",
     "ethjs-ens": "^2.0.1",
