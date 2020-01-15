@@ -1,5 +1,5 @@
 import { BuidlerRuntimeEnvironment } from '@nomiclabs/buidler/types';
-import { KernelInstance, ACLInstance } from '~typechain';
+import { KernelInstance, ACLInstance } from '~/typechain';
 
 const ANY_ADDRESS: string = '0xffffffffffffffffffffffffffffffffffffffff';
 

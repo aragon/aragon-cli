@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { execaPipe } from '~src/tasks/start/utils/execa';
+import { execaPipe } from '~/src/tasks/start/utils/execa';
 import * as path from 'path';
 
 describe('execa.ts', () => {
