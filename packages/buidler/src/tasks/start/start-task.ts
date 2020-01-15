@@ -13,7 +13,7 @@ import { createRepo, updateRepo } from './utils/backend/repo';
 import { setPermissions } from './utils/backend/permissions';
 import { installAragonClientIfNeeded, startAragonClient } from './utils/frontend/client';
 import { buildAppFrontEnd, buildAppArtifacts, watchAppFrontEnd, buildOutputPath } from './utils/frontend/build';
-import { KernelInstance, RepoInstance } from '~typechain';
+import { KernelInstance, RepoInstance } from '~/typechain';
 
 /**
  * Main, composite, task. Calls startBackend, then startFrontend,

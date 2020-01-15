@@ -11,9 +11,7 @@
     "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
-      "~src/*": ["src/*"],
-      "~test/*": ["test/*"],
-      "~typechain": ["typechain"]
+      "~/*": ["./*"]
     }
   },
   "include": ["./scripts", "./test"],

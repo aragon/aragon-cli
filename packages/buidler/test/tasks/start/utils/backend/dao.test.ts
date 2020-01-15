@@ -1,10 +1,7 @@
 import { assert } from 'chai';
-import { createDao } from '~src/tasks/start/utils/backend/dao';
-import { isAddress } from '~test/test-utils/isAddress';
-
-import {
-  KernelInstance,
-} from '~typechain';
+import { createDao } from '~/src/tasks/start/utils/backend/dao';
+import { isAddress } from '~/test/test-utils/isAddress';
+import { KernelInstance } from '~/typechain';
 
 describe('dao.ts', () => {
   describe('when a dao is created', () => {

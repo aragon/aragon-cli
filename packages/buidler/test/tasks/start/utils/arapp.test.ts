@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { getMainContractName, getMainContractPath } from '~src/tasks/start/utils/arapp';
+import { getMainContractName, getMainContractPath } from '~/src/tasks/start/utils/arapp';
 
 describe('arapp.ts', () => {
   it('should retrieve the correct main contract path', () => {
