@@ -1,23 +1,19 @@
-// Needed to be able to use Typescript import paths.
-import 'tsconfig-paths/register';
-
+import 'tsconfig-paths/register'; // Needed to be able to use Typescript import paths.
 import { usePlugin, BuidlerConfig } from '@nomiclabs/buidler/config';
+import { AragonConfig } from './src/types';
+
+import './src/tasks/start/start-task';
 
 usePlugin('@nomiclabs/buidler-truffle5');
 usePlugin('@nomiclabs/buidler-web3');
 
-import './src/tasks/start/start-task';
-
-interface AragonBuidlerConfig extends BuidlerConfig {
-  aragon: {
-    appServePort: number,
-    clientServePort: number,
-    appSrcPath: string,
-    appBuildOutputPath: string
+declare module '@nomiclabs/buidler/types' {
+  interface BuidlerConfig {
+    aragon: AragonConfig;
   }
 }
 
-const config: AragonBuidlerConfig = {
+const config: BuidlerConfig = {
   defaultNetwork: 'localhost',
   networks: {
     localhost: {
@@ -35,8 +31,8 @@ const config: AragonBuidlerConfig = {
     appServePort: 8001,
     clientServePort: 3000,
     appSrcPath: 'app/',
-    appBuildOutputPath: 'dist/'
-  }
+    appBuildOutputPath: 'dist/',
+  },
 };
 
 export default config;
