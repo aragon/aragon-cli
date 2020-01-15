@@ -4,7 +4,7 @@ import * as path from 'path';
 
 describe('execa.ts', () => {
   describe('when calling pwd', () => {
-    let res;
+    let res: any;
 
     before('call pwd', async () => {
       res = await execaPipe('pwd', ['-L', '-P'], {});
@@ -16,7 +16,7 @@ describe('execa.ts', () => {
     });
 
     it('should have ended with exit code 0', async () => {
-      assert.equal(res.code, 0, 'Invalid exit code.');
+      assert.equal(res.exitCode, 0, 'Invalid exit code.');
     });
 
     it.skip('more tests needed', async () => {});

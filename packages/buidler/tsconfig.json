@@ -12,7 +12,8 @@
     "baseUrl": "./",
     "paths": {
       "~src/*": ["src/*"],
-      "~test/*": ["test/*"]
+      "~test/*": ["test/*"],
+      "~typechain": ["typechain"]
     }
   },
   "include": ["./scripts", "./test"],
