@@ -18,5 +18,7 @@ describe('execa.ts', () => {
     it('should have ended with exit code 0', async () => {
       assert.equal(res.code, 0, 'Invalid exit code.');
     });
+
+    it.skip('more tests needed', async () => {});
   });
 });
