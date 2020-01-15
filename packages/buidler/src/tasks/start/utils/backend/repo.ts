@@ -32,7 +32,7 @@ export async function createRepo(appName: string, appId: string): Promise<RepoIn
  */
 export async function updateRepo(
   repo: RepoInstance,
-  implementation: Truffle.Contract<any>,
+  implementation: Truffle.ContractInstance,
 ): Promise<void> {
   // Calculate next valid semver.
   const semver: [number, number, number] = [

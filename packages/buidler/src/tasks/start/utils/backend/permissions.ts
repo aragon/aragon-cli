@@ -1,12 +1,12 @@
 import { BuidlerRuntimeEnvironment } from '@nomiclabs/buidler/types';
 import { KernelInstance, ACLInstance } from '~/typechain';
 
-const ANY_ADDRESS: string = '0xffffffffffffffffffffffffffffffffffffffff';
+export const ANY_ADDRESS: string = '0xffffffffffffffffffffffffffffffffffffffff';
 
 /**
  * Scans arapp.json, setting all permissions to ANY_ADDRESS.
  */
-export async function setPermissions(
+export async function setAllPermissionsOpenly(
   dao: KernelInstance,
   app: any, // TODO: needs type
 ): Promise<void> {
@@ -19,21 +19,19 @@ export async function setPermissions(
 
   // Set all permissions listed in arapp.json.
   // TODO: Must be set dynamically.
-  await _setOpenPermission(acl, app, await app.INCREMENT_ROLE(), rootAccount);
-  await _setOpenPermission(acl, app, await app.DECREMENT_ROLE(), rootAccount);
+  await _setPermissionOpenly(acl, app, await app.INCREMENT_ROLE(), rootAccount);
+  await _setPermissionOpenly(acl, app, await app.DECREMENT_ROLE(), rootAccount);
 }
 
 /**
  * Set's the specified permission to ANY_ADDRESS.
  */
-async function _setOpenPermission(
+async function _setPermissionOpenly(
   acl: ACLInstance,
-  app: Truffle.Contract<any>,
+  app: any, // TODO: needs type
   permission: string,
   rootAccount: string,
 ) {
-  console.log(`Setting permission: ${permission}`);
-
   // Set permission to ANY_ADDRESS (max uint256), which is interpreted by
   // the ACL as giving such permission to all addresses.
   await acl.createPermission(
