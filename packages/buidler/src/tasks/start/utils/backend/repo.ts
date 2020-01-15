@@ -3,7 +3,7 @@ import { provider } from 'web3-core';
 import {
   RepoContract, RepoInstance,
   APMRegistryContract, APMRegistryInstance,
-} from '../../../../../typechain';
+} from '~typechain';
 
 const ENS_REGISTRY_ADDRESS: string = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1';
 const APM_REGISTRY_ADDRESS: string = '0x32296d9f8fed89658668875dc73cacf87e8888b2';

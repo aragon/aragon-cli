@@ -1,5 +1,5 @@
 import { getMainContractName } from '../arapp';
-import { KernelInstance } from '../../../../../typechain';
+import { KernelInstance } from '~typechain';
 
 interface InitializableApp extends Truffle.Contract<any> {
   initialize: () => void;

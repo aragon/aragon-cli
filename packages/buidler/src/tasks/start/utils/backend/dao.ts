@@ -3,7 +3,7 @@ import {
   ACLContract, ACLInstance,
   DAOFactoryContract, DAOFactoryInstance,
   EVMScriptRegistryFactoryContract, EVMScriptRegistryFactoryInstance,
-} from '../../../../../typechain';
+} from '~typechain';
 
 /**
  * Deploys a new DAO with direct/pure interaction with aragonOS.
