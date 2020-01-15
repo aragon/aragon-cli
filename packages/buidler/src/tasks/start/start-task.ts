@@ -11,9 +11,10 @@ import { createProxy, updateProxy } from './utils/backend/proxy';
 import { createRepo, updateRepo } from './utils/backend/repo';
 import { setAllPermissionsOpenly } from './utils/backend/permissions';
 import { installAragonClientIfNeeded, startAragonClient } from './utils/frontend/client';
-import { buildAppFrontEnd, buildAppArtifacts, watchAppFrontEnd, buildOutputPath } from './utils/frontend/build';
+import { buildAppFrontEnd, buildAppArtifacts, watchAppFrontEnd } from './utils/frontend/build';
 import { KernelInstance, RepoInstance } from '~/typechain';
 import { getAppId } from './utils/id';
+import config from '~/buidler.config';
 
 /**
  * Main, composite, task. Calls startBackend, then startFrontend,
@@ -22,6 +23,8 @@ import { getAppId } from './utils/id';
 task(TASK_START, 'Starts Aragon app development').setAction(
   async (params, bre: BuidlerRuntimeEnvironment) => {
     console.log(`Starting...`);
+
+    console.log(`Config:`, JSON.stringify(config, null, 2))
 
     const { daoAddress, appAddress }  = await startBackend(bre);
     await startFrontend(daoAddress, appAddress);
@@ -90,14 +93,13 @@ async function startFrontend(daoAddress: string, appAddress: string): Promise<vo
   await installAragonClientIfNeeded();
 
   // Initial build.
-  const appPath = path.resolve('app');
-  await buildAppFrontEnd(appPath);
+  await buildAppFrontEnd();
   await buildAppArtifacts();
 
   // Serve app files.
   liveServer.start({
-    port: 8001,
-    root: buildOutputPath,
+    port: config.aragon.appServePort,
+    root: config.aragon.appBuildOutputPath,
     open: false,
     wait: 1000,
     cors: true,
@@ -110,5 +112,5 @@ async function startFrontend(daoAddress: string, appAddress: string): Promise<vo
 `);
 
   // Watch for changes and rebuild app.
-  await watchAppFrontEnd(appPath);
+  await watchAppFrontEnd();
 }

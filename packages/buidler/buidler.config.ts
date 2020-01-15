@@ -8,7 +8,16 @@ usePlugin('@nomiclabs/buidler-web3');
 
 import './src/tasks/start/start-task';
 
-const config: BuidlerConfig = {
+interface AragonBuidlerConfig extends BuidlerConfig {
+  aragon: {
+    appServePort: number,
+    clientServePort: number,
+    appSrcPath: string,
+    appBuildOutputPath: string
+  }
+}
+
+const config: AragonBuidlerConfig = {
   defaultNetwork: 'localhost',
   networks: {
     localhost: {
@@ -22,6 +31,12 @@ const config: BuidlerConfig = {
   solc: {
     version: '0.4.24',
   },
+  aragon: {
+    appServePort: 8001,
+    clientServePort: 3000,
+    appSrcPath: 'app/',
+    appBuildOutputPath: 'dist/'
+  }
 };
 
 export default config;
