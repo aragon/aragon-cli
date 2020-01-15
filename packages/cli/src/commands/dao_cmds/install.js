@@ -11,6 +11,10 @@ import {
   getAppProxyAddressFromReceipt,
   getAppBase,
   defaultAPMName,
+  startLocalDaemon,
+  getBinaryPath,
+  getDefaultRepoPath,
+  isLocalDaemonRunning,
 } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
@@ -69,6 +73,15 @@ export const handler = async function({
 
   const tasks = new TaskList(
     [
+      {
+        title: 'Start IPFS',
+        skip: async () => isLocalDaemonRunning(),
+        task: async () => {
+          await startLocalDaemon(getBinaryPath(), getDefaultRepoPath(), {
+            detached: false,
+          })
+        },
+      },
       {
         title: `Fetching ${bold(apmRepo)}@${apmRepoVersion}`,
         task: async (ctx, task) =>
