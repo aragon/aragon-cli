@@ -1,6 +1,15 @@
 import TaskList from 'listr'
 import { green, bold } from 'chalk'
-import { getApmRepo, newDao, assignId, defaultAPMName } from '@aragon/toolkit'
+import {
+  getApmRepo,
+  newDao,
+  assignId,
+  defaultAPMName,
+  startLocalDaemon,
+  getBinaryPath,
+  getDefaultRepoPath,
+  isLocalDaemonRunning,
+} from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
 import listrOpts from '../../helpers/listr-options'
@@ -65,6 +74,15 @@ export const task = async ({
 
   const tasks = new TaskList(
     [
+      {
+        title: 'Start IPFS',
+        skip: async () => isLocalDaemonRunning(),
+        task: async () => {
+          await startLocalDaemon(getBinaryPath(), getDefaultRepoPath(), {
+            detached: false,
+          })
+        },
+      },
       {
         title: `Fetching template ${bold(template)}@${templateVersion}`,
         task: async () => {
