@@ -6,7 +6,7 @@ import {
   KernelInstance,
 } from '~typechain';
 
-describe.only('dao.ts', () => {
+describe('dao.ts', () => {
   describe('when a dao is created', () => {
     let dao: KernelInstance;
 
