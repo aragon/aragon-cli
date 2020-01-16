@@ -31,16 +31,16 @@ describe('permissions.ts', () => {
       assert.equal(await acl.hasPermission(
         ANY_ADDRESS,
         app.address,
-        await app.INCREMENT_ROLE()
-      ), true, 'Invalid permission.')
+        await app.INCREMENT_ROLE(),
+      ), true, 'Invalid permission.');
     });
 
     it('properly sets the DECREMENT_ROLE permission', async () => {
       assert.equal(await acl.hasPermission(
         ANY_ADDRESS,
         app.address,
-        await app.DECREMENT_ROLE()
-      ), true, 'Invalid permission.')
+        await app.DECREMENT_ROLE(),
+      ), true, 'Invalid permission.');
     });
   });
 });
