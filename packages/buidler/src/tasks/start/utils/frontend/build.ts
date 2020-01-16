@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import fsExtra from 'fs-extra';
 import liveServer from 'live-server';
+import { AragonConfig } from '~/src/types';
 import { execaPipe } from '../execa';
 import { getConfig } from '~/src/config';
 
@@ -24,7 +25,7 @@ export async function watchAppFrontEnd(): Promise<void> {
 }
 
 export function serveAppFrontEnd(): void {
-  const config = getConfig();
+  const config: AragonConfig = getConfig();
 
   liveServer.start({
     port: config.appServePort,
@@ -42,6 +43,6 @@ export function serveAppFrontEnd(): void {
  */
 export async function buildAppArtifacts(): Promise<void> {
   for (const filePath of [manifestPath, artifactPath]) {
-    await fsExtra.copy(filePath, path.join(getConfig().appBuildOutputPath, filePath));
+    await fsExtra.copy(filePath, path.join(getConfig().appBuildOutputPath as string, filePath));
   }
 }

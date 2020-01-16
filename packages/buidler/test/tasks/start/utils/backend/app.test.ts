@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { isAddress } from '~/test/test-utils/isAddress';
+import { isAddress } from '~/test/test-helpers/isAddress';
 import { deployImplementation } from '~/src/tasks/start/utils/backend/app';
 
 describe('app.ts', () => {

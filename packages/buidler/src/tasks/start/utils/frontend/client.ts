@@ -44,7 +44,7 @@ export async function startAragonClient(
   version: string = defaultVersion,
   autoOpen: boolean = true,
 ): Promise<string> {
-  const port: number = getConfig().clientServePort;
+  const port: number = getConfig().clientServePort as number;
   const clientPath: string = _getClientPath(version);
 
   console.log(`Starting client server at port ${repo}`);

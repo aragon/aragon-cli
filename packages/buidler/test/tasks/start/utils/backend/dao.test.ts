@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 import { createDao } from '~/src/tasks/start/utils/backend/dao';
-import { isAddress } from '~/test/test-utils/isAddress';
+import { isAddress } from '~/test/test-helpers/isAddress';
 import { KernelInstance } from '~/typechain';
 
 describe('dao.ts', () => {
