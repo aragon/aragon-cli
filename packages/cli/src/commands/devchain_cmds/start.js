@@ -32,7 +32,8 @@ export const builder = yargs => {
       alias: 'i',
     })
     .option('hardfork', {
-      description: 'Allows to specify which hardfork should be used. Supported hardforks are byzantium, constantinople, and petersburg (default)',
+      description:
+        'Allows to specify which hardfork should be used. Supported hardforks are byzantium, constantinople, and petersburg (default)',
     })
     .option('block-time', {
       description: 'Specify blockTime in seconds for automatic mining',
