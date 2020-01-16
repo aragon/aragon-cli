@@ -8,16 +8,23 @@ app.store(
   async (state, { event }) => {
     console.log(`script.js: state update`)
 
+    const version = await getVersion()
+    const newState = {
+      ...state,
+      version
+    }
+    console.log(`newState`, newState)
+
     try {
       switch (event) {
         case 'Increment':
-          return { ...state, count: await getValue() }
+          return { ...newState, count: await getValue() }
         case 'Decrement':
-          return { ...state, count: await getValue() }
+          return { ...newState, count: await getValue() }
         case events.SYNC_STATUS_SYNCING:
-          return { ...state, isSyncing: true }
+          return { ...newState, isSyncing: true }
         case events.SYNC_STATUS_SYNCED:
-          return { ...state, isSyncing: false }
+          return { ...newState, isSyncing: false }
         default:
           return state
       }
