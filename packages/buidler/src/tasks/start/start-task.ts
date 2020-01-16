@@ -67,7 +67,7 @@ async function startBackend(bre: BuidlerRuntimeEnvironment): Promise<{ daoAddres
       // Update implementation and set it in Repo and Proxy.
       const newImplementation: Truffle.ContractInstance = await deployImplementation();
       await updateRepo(repo, newImplementation);
-      await updateProxy(implementation, appId, dao);
+      await updateProxy(newImplementation, appId, dao);
     });
 
   console.log(`App name: ${appName}`);
