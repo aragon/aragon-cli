@@ -8,15 +8,18 @@
     "strict": true,
     "esModuleInterop": true,
     "noEmitOnError": true,
+    "outDir": "../dist",
+    "rootDirs": ["."],
+    "composite": true,
     "baseUrl": "./",
     "paths": {
       "~/*": ["./*"]
     }
   },
-  "include": ["./scripts", "./test"],
-  "files": [
-    "./buidler.config.ts",
-    "./node_modules/@nomiclabs/buidler-web3/src/type-extensions.d.ts",
-    "./node_modules/@nomiclabs/buidler-truffle5/src/type-extensions.d.ts"
-  ]
+  "include": [
+    "./**/*.ts",
+    "../node_modules/@nomiclabs/buidler-web3/src/type-extensions.d.ts",
+    "../node_modules/@nomiclabs/buidler-truffle5/src/type-extensions.d.ts"
+  ],
+  "exclude": []
 }

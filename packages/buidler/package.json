@@ -14,7 +14,9 @@
   "scripts": {
     "generate": "typechain --target truffle --outDir typechain 'artifacts/*.json'",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
-    "test": "buidler test"
+    "build": "tsc --build src",
+    "build-test": "tsc --build .",
+    "test": "mocha --exit"
   },
   "dependencies": {
     "@aragon/os": "4.0.1",
