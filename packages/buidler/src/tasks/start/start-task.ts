@@ -9,8 +9,11 @@ import { deployImplementation } from './utils/backend/app';
 import { createProxy, updateProxy } from './utils/backend/proxy';
 import { createRepo, updateRepo } from './utils/backend/repo';
 import { setAllPermissionsOpenly } from './utils/backend/permissions';
-import { installAragonClientIfNeeded, startAragonClient } from './utils/frontend/client';
-import { buildAppFrontEnd, buildAppArtifacts, serveAppFrontEnd, watchAppFrontEnd } from './utils/frontend/build';
+import {
+  installAragonClientIfNeeded,
+  startAragonClient
+} from './utils/frontend/client';
+import { buildAppArtifacts, watchAppFrontEnd } from './utils/frontend/build';
 import { KernelInstance, RepoInstance } from '~/typechain';
 import { getAppId } from './utils/id';
 import { logBack } from './utils/logger';
@@ -91,12 +94,7 @@ async function startBackend(bre: BuidlerRuntimeEnvironment): Promise<{ daoAddres
 async function startFrontend(daoAddress: string, appAddress: string): Promise<void> {
   await installAragonClientIfNeeded();
 
-  // Initial build.
-  await buildAppFrontEnd();
   await buildAppArtifacts();
-
-  // Serve app files.
-  serveAppFrontEnd();
 
   // Start Aragon client at the deployed address.
   const url: string = await startAragonClient(`${daoAddress}/${appAddress}`);
