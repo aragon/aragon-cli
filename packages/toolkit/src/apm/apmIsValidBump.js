@@ -1,13 +1,14 @@
 import aragonPM from '@aragon/apm'
 
 /**
+ * Validates a new version for an APM repository
  *
- * @param {*} web3 todo
- * @param {*} apmRepoName todo
- * @param {*} previousVersion todo
- * @param {*} version todo
- * @param {*} apmOptions todo
- * @returns {*} todo
+ * @param {Object} web3 Web3 object
+ * @param {string} apmRepoName APM repository id
+ * @param {string} previousVersion Previous version
+ * @param {string} version New version
+ * @param {Object} apmOptions APM options
+ * @returns {Promise<boolean>} A promise that resolves whether or not the version is valid
  */
 export default async (
   web3,
