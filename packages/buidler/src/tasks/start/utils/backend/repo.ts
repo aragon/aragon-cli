@@ -1,5 +1,5 @@
 import ENS from 'ethjs-ens';
-import { provider } from 'web3-core';
+import { Providers } from 'web3-core';
 import {
   RepoContract, RepoInstance,
   APMRegistryContract, APMRegistryInstance,
@@ -14,7 +14,10 @@ const APM_REGISTRY_ADDRESS: string = '0x32296d9f8fed89658668875dc73cacf87e8888b2
  * find one, creates a new repository for the app.
  * @returns Promise<RepoInstance> An APM repository for the app.
  */
-export async function createRepo(appName: string, appId: string): Promise<RepoInstance> {
+export async function createRepo(
+  appName: string,
+  appId: string
+): Promise<RepoInstance> {
   // Retrieve the Repo address from ens, or create the Repo if nothing is retrieved.
   let repoAddress: string | null = await _ensResolve(appId).catch(() => null);
   if (!repoAddress) {
@@ -83,7 +86,7 @@ async function _createRepo(appName: string): Promise<string> {
 async function _ensResolve(appId: string): Promise<string> {
   // Define options used by ENS.
   const opts: {
-    provider: provider,
+    provider: any;
     registryAddress: string,
   } = {
     provider: web3.currentProvider,

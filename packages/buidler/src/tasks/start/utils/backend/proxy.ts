@@ -1,5 +1,6 @@
 import { getMainContractName } from '../arapp';
 import { KernelInstance } from '~/typechain';
+import { logBack } from '../logger';
 
 interface InitializableApp extends Truffle.ContractInstance {
   initialize: () => void;
@@ -55,7 +56,7 @@ export async function updateProxy(
 ): Promise<void> {
   const rootAccount: string = (await web3.eth.getAccounts())[0];
 
-  console.log(`Updating proxy implementation to: ${implementation.address}`);
+  logBack(`Updating proxy implementation to: ${implementation.address}`);
 
   // Set the new implementation in the Kernel.
   await dao.setApp(BASE_NAMESPACE, appId, implementation.address, { from: rootAccount });

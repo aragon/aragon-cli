@@ -13,6 +13,7 @@ import { installAragonClientIfNeeded, startAragonClient } from './utils/frontend
 import { buildAppFrontEnd, buildAppArtifacts, serveAppFrontEnd, watchAppFrontEnd } from './utils/frontend/build';
 import { KernelInstance, RepoInstance } from '~/typechain';
 import { getAppId } from './utils/id';
+import { logBack } from './utils/logger';
 
 /**
  * Main, composite, task. Calls startBackend, then startFrontend,
@@ -70,11 +71,13 @@ async function startBackend(bre: BuidlerRuntimeEnvironment): Promise<{ daoAddres
       await updateProxy(newImplementation, appId, dao);
     });
 
-  console.log(`App name: ${appName}`);
-  console.log(`App id: ${appId}`);
-  console.log(`DAO: ${dao.address}`);
-  console.log(`APMRegistry: ${repo.address}`);
-  console.log(`App proxy: ${proxy.address}`);
+  logBack(`
+  App name: ${appName}
+  App id: ${appId}
+  DAO: ${dao.address}
+  APMRegistry: ${repo.address}
+  App proxy: ${proxy.address}
+`);
 
   return { daoAddress: dao.address, appAddress: proxy.address };
 }
