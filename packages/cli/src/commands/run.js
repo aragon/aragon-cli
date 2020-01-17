@@ -246,11 +246,19 @@ export const handler = async function({
       {
         title: 'Start a local Ethereum network',
         skip: async ctx => {
-          const hostURL = new url.URL(network.provider.connection._url)
+          let provider
+          if (port) {
+            provider = new Web3.providers.WebsocketProvider(
+              `ws://localhost:${port}`
+            )
+          } else {
+            provider = network.provider
+          }
+          const hostURL = new url.URL(provider.connection._url)
           if (!(await isPortTaken(hostURL.port))) {
             return false
           } else {
-            ctx.web3 = new Web3(network.provider)
+            ctx.web3 = new Web3(provider)
             ctx.accounts = await ctx.web3.eth.getAccounts()
             return 'Connected to the provided Ethereum network'
           }
