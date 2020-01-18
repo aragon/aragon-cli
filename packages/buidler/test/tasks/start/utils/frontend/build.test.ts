@@ -1,5 +1,5 @@
-import { assert } from 'chai';
+import { assert } from 'chai'
 
 describe('build.ts', () => {
-  it.skip('more tests needed', async () => {});
-});
+  it.skip('more tests needed', async () => {})
+})

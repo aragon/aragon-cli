@@ -1,0 +1,6 @@
+cache/
+dist/
+typechain/
+buidler.config.ts
+# Temp, CounterApp contents
+app/

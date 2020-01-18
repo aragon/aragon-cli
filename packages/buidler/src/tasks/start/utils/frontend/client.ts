@@ -1,40 +1,40 @@
-import path from 'path';
-import fs from 'fs';
-import fsExtra from 'fs-extra';
-import os from 'os';
-import open from 'open';
-import { createStaticWebserver } from './webserver';
-import { execaPipe, execaLogTo } from '../execa';
-import { logFront } from '../logger';
-import { getConfig } from '~/src/config';
+import path from 'path'
+import fs from 'fs'
+import fsExtra from 'fs-extra'
+import os from 'os'
+import open from 'open'
+import { createStaticWebserver } from './webserver'
+import { execaPipe, execaLogTo } from '../execa'
+import { logFront } from '../logger'
+import { getConfig } from '~/src/config'
 
-const defaultRepo: string = 'https://github.com/aragon/aragon';
-const defaultVersion: string = '775edd606333a111eb2693df53900039722a95dc';
-const aragonBaseDir: string = path.join(os.homedir(), '.aragon');
+const defaultRepo: string = 'https://github.com/aragon/aragon'
+const defaultVersion: string = '775edd606333a111eb2693df53900039722a95dc'
+const aragonBaseDir: string = path.join(os.homedir(), '.aragon')
 
-const execa = execaLogTo(logFront);
+const execa = execaLogTo(logFront)
 
 export async function installAragonClientIfNeeded(
   repo: string = defaultRepo,
-  version: string = defaultVersion,
+  version: string = defaultVersion
 ): Promise<string> {
   // Determine client path.
-  const clientPath: string = _getClientPath(version);
+  const clientPath: string = _getClientPath(version)
 
   // Verify installation or install if needed.
   if (fs.existsSync(path.resolve(clientPath))) {
-    logFront('Using cached client version');
+    logFront('Using cached client version')
   } else {
-    fsExtra.ensureDirSync(clientPath, { recursive: true });
-    logFront(`Installing client version ${version} locally`);
-    const opts = { cwd: clientPath };
-    await execa('git', ['clone', '--', repo, clientPath]);
-    await execa('git', ['checkout', version], opts);
-    await execa('npm', ['install'], opts);
-    await execa('npm', ['run', 'build:local'], opts);
+    fsExtra.ensureDirSync(clientPath, { recursive: true })
+    logFront(`Installing client version ${version} locally`)
+    const opts = { cwd: clientPath }
+    await execa('git', ['clone', '--', repo, clientPath])
+    await execa('git', ['checkout', version], opts)
+    await execa('npm', ['install'], opts)
+    await execa('npm', ['run', 'build:local'], opts)
   }
 
-  return clientPath;
+  return clientPath
 }
 
 /**
@@ -45,23 +45,23 @@ export async function startAragonClient(
   subPath?: string,
   repo: string = defaultRepo,
   version: string = defaultVersion,
-  autoOpen: boolean = true,
+  autoOpen: boolean = true
 ): Promise<string> {
-  const port: number = getConfig().clientServePort as number;
-  const clientPath: string = _getClientPath(version);
+  const port: number = getConfig().clientServePort as number
+  const clientPath: string = _getClientPath(version)
 
-  logFront(`Starting client server at port ${port}`);
-  await createStaticWebserver(port, path.join(clientPath, 'build'));
+  logFront(`Starting client server at port ${port}`)
+  await createStaticWebserver(port, path.join(clientPath, 'build'))
 
-  const url = `http://localhost:${port}/#/${subPath}`;
+  const url = `http://localhost:${port}/#/${subPath}`
 
   if (autoOpen) {
-    await open(url);
+    await open(url)
   }
 
-  return url;
+  return url
 }
 
 function _getClientPath(version: string): string {
-  return path.join(aragonBaseDir, `client-${version}`);
+  return path.join(aragonBaseDir, `client-${version}`)
 }

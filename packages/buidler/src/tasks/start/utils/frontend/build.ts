@@ -1,20 +1,20 @@
-import path from 'path';
-import fsExtra from 'fs-extra';
-import { execaLogTo } from '../execa';
-import { logFront } from '../logger';
-import { getConfig } from '~/src/config';
+import path from 'path'
+import fsExtra from 'fs-extra'
+import { execaLogTo } from '../execa'
+import { logFront } from '../logger'
+import { getConfig } from '~/src/config'
 
-export const manifestPath = 'manifest.json';
-export const artifactPath = 'artifact.json';
-export const arappPath = 'arapp.json';
+export const manifestPath = 'manifest.json'
+export const artifactPath = 'artifact.json'
+export const arappPath = 'arapp.json'
 
-const execa = execaLogTo(logFront);
+const execa = execaLogTo(logFront)
 
 /**
  * Watches the front-end with the customizable npm run script of the app
  */
 export async function watchAppFrontEnd(): Promise<void> {
-  await execa('npm', ['run', 'watch'], { cwd: getConfig().appSrcPath });
+  await execa('npm', ['run', 'watch'], { cwd: getConfig().appSrcPath })
 }
 
 /**
@@ -27,6 +27,6 @@ export async function buildAppArtifacts(): Promise<void> {
     await fsExtra.copy(
       filePath,
       path.join(getConfig().appBuildOutputPath as string, filePath)
-    );
+    )
   }
 }

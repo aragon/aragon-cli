@@ -14,6 +14,7 @@
   "scripts": {
     "generate": "typechain --target truffle --outDir typechain 'artifacts/*.json'",
     "lint": "tslint -c tslint.json --fix 'src/**/*.ts'",
+    "prettier": "prettier --write '**/*.{ts,js,css,html}'",
     "test": "buidler test"
   },
   "dependencies": {
@@ -43,8 +44,7 @@
     "typescript": "^3.7.4",
     "web3": "^1.2.4"
   },
-  "prettier": {
-    "singleQuote": true,
-    "bracketSpacing": true
+  "devDependencies": {
+    "tslint-config-prettier": "^1.18.0"
   }
 }

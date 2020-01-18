@@ -1,12 +1,12 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import { AragonAppJson } from '~/src/types';
+import * as fs from 'fs'
+import * as path from 'path'
+import { AragonAppJson } from '~/src/types'
 
-const arappPath: string = 'arapp.json';
-const contractsPath: string = './contracts';
+const arappPath: string = 'arapp.json'
+const contractsPath: string = './contracts'
 
 export function readArapp(): AragonAppJson {
-  return JSON.parse(fs.readFileSync(arappPath, 'utf-8'));
+  return JSON.parse(fs.readFileSync(arappPath, 'utf-8'))
 }
 
 /**
@@ -18,25 +18,25 @@ export function getMainContractPath(): string {
   if (fs.existsSync(arappPath)) {
     const arapp: { path: string } = JSON.parse(
       fs.readFileSync(arappPath, 'utf-8')
-    );
+    )
 
-    return arapp.path;
+    return arapp.path
   }
 
   // Try to guess contract path.
   if (fs.existsSync(contractsPath)) {
-    const contracts: string[] = fs.readdirSync(contractsPath);
+    const contracts: string[] = fs.readdirSync(contractsPath)
 
     const candidates: string[] = contracts.filter(
-      name => name.endsWith('.sol') || name !== 'Imports.sol',
-    );
+      name => name.endsWith('.sol') || name !== 'Imports.sol'
+    )
 
     if (candidates.length === 1) {
-      return path.join(contractsPath, candidates[0]);
+      return path.join(contractsPath, candidates[0])
     }
   }
 
-  throw Error(`Unable to find main contract path.`);
+  throw Error(`Unable to find main contract path.`)
 }
 
 /**
@@ -44,6 +44,6 @@ export function getMainContractPath(): string {
  * @return "Counter"
  */
 export function getMainContractName(): string {
-  const mainContractPath: string = getMainContractPath();
-  return path.parse(mainContractPath).name;
+  const mainContractPath: string = getMainContractPath()
+  return path.parse(mainContractPath).name
 }

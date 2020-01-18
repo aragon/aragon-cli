@@ -1,13 +1,17 @@
-import ENS from 'ethjs-ens';
-import { Providers } from 'web3-core';
+import ENS from 'ethjs-ens'
+import { Providers } from 'web3-core'
 import {
-  RepoContract, RepoInstance,
-  APMRegistryContract, APMRegistryInstance,
-} from '~/typechain';
-import { getConfig } from '~/src/config';
+  RepoContract,
+  RepoInstance,
+  APMRegistryContract,
+  APMRegistryInstance
+} from '~/typechain'
+import { getConfig } from '~/src/config'
 
-const ENS_REGISTRY_ADDRESS: string = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1';
-const APM_REGISTRY_ADDRESS: string = '0x32296d9f8fed89658668875dc73cacf87e8888b2';
+const ENS_REGISTRY_ADDRESS: string =
+  '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1'
+const APM_REGISTRY_ADDRESS: string =
+  '0x32296d9f8fed89658668875dc73cacf87e8888b2'
 
 /**
  * Attempts to retrieve an APM repository for the app, and if it can't
@@ -19,16 +23,16 @@ export async function createRepo(
   appId: string
 ): Promise<RepoInstance> {
   // Retrieve the Repo address from ens, or create the Repo if nothing is retrieved.
-  let repoAddress: string | null = await _ensResolve(appId).catch(() => null);
+  let repoAddress: string | null = await _ensResolve(appId).catch(() => null)
   if (!repoAddress) {
-    repoAddress = await _createRepo(appName);
+    repoAddress = await _createRepo(appName)
   }
 
   // Wrap Repo address with abi.
-  const Repo: RepoContract = artifacts.require('Repo');
-  const repo: RepoInstance = await Repo.at(repoAddress);
+  const Repo: RepoContract = artifacts.require('Repo')
+  const repo: RepoInstance = await Repo.at(repoAddress)
 
-  return repo;
+  return repo
 }
 
 /**
@@ -36,21 +40,23 @@ export async function createRepo(
  */
 export async function updateRepo(
   repo: RepoInstance,
-  implementation: Truffle.ContractInstance,
+  implementation: Truffle.ContractInstance
 ): Promise<void> {
   // Calculate next valid semver.
   const semver: [number, number, number] = [
     (await repo.getVersionsCount()).toNumber() + 1, // Updates to smart contracts require major bump.
     0,
-    0,
-  ];
-  console.log(`Repo version: ${semver.join('.')}`);
+    0
+  ]
+  console.log(`Repo version: ${semver.join('.')}`)
 
   // URI where this plugin is serving the app's front end.
-  const contentURI: string = `0x${Buffer.from(`http://localhost:${getConfig().appServePort}`).toString('hex')}`;
+  const contentURI: string = `0x${Buffer.from(
+    `http://localhost:${getConfig().appServePort}`
+  ).toString('hex')}`
 
   // Create a new version in the app's repo, with the new implementation.
-  await repo.newVersion(semver, implementation.address, contentURI);
+  await repo.newVersion(semver, implementation.address, contentURI)
 }
 
 /**
@@ -58,24 +64,31 @@ export async function updateRepo(
  * @returns Promise<RepoInstance> An APM repository for the app.
  */
 async function _createRepo(appName: string): Promise<string> {
-  const rootAccount: string = (await web3.eth.getAccounts())[0];
+  const rootAccount: string = (await web3.eth.getAccounts())[0]
 
   // Retrieve APMRegistry.
-  const APMRegistry: APMRegistryContract = artifacts.require('APMRegistry');
-  const apmRegistry: APMRegistryInstance = await APMRegistry.at(APM_REGISTRY_ADDRESS);
+  const APMRegistry: APMRegistryContract = artifacts.require('APMRegistry')
+  const apmRegistry: APMRegistryInstance = await APMRegistry.at(
+    APM_REGISTRY_ADDRESS
+  )
 
   // Create new repo.
-  const txResponse: Truffle.TransactionResponse = await apmRegistry.newRepo(appName, rootAccount);
+  const txResponse: Truffle.TransactionResponse = await apmRegistry.newRepo(
+    appName,
+    rootAccount
+  )
 
   // Retrieve repo address from creation tx logs.
-  const logs: Truffle.TransactionLog[] = txResponse.logs;
-  const log: Truffle.TransactionLog | undefined = logs.find(l => l.event === 'NewRepo');
+  const logs: Truffle.TransactionLog[] = txResponse.logs
+  const log: Truffle.TransactionLog | undefined = logs.find(
+    l => l.event === 'NewRepo'
+  )
   if (!log) {
-    throw new Error('Error creating Repo. Unable to find NewRepo log.');
+    throw new Error('Error creating Repo. Unable to find NewRepo log.')
   }
-  const repoAddress = (log as Truffle.TransactionLog).args.repo;
+  const repoAddress = (log as Truffle.TransactionLog).args.repo
 
-  return repoAddress;
+  return repoAddress
 }
 
 /**
@@ -86,25 +99,25 @@ async function _createRepo(appName: string): Promise<string> {
 async function _ensResolve(appId: string): Promise<string> {
   // Define options used by ENS.
   const opts: {
-    provider: any;
-    registryAddress: string,
+    provider: any
+    registryAddress: string
   } = {
     provider: web3.currentProvider,
-    registryAddress: ENS_REGISTRY_ADDRESS,
-  };
+    registryAddress: ENS_REGISTRY_ADDRESS
+  }
 
   // Avoids a bug on ENS.
   if (!opts.provider.sendAsync) {
-    opts.provider.sendAsync = opts.provider.send;
+    opts.provider.sendAsync = opts.provider.send
   }
 
   // Set up ENS and resolve address.
-  const ens: ENS = new ENS(opts);
-  const address: string | null = await ens.resolveAddressForNode(appId);
+  const ens: ENS = new ENS(opts)
+  const address: string | null = await ens.resolveAddressForNode(appId)
 
   if (!address) {
-    throw new Error('Unable to resolve ENS addres.');
+    throw new Error('Unable to resolve ENS addres.')
   }
 
-  return address as string;
+  return address as string
 }

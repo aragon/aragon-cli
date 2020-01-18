@@ -1,19 +1,19 @@
-import chalk from 'chalk';
+import chalk from 'chalk'
 
-const frontTag = chalk.yellow('front | ');
-const backTag = chalk.blue('back  | ');
+const frontTag = chalk.yellow('front | ')
+const backTag = chalk.blue('back  | ')
 
 function prependTag(lines: string, tag: string): string {
   return lines
     .split('\n')
     .map(line => tag + line)
-    .join('\n');
+    .join('\n')
 }
 
 export function logFront(data: string) {
-  console.log(prependTag(data, frontTag));
+  console.log(prependTag(data, frontTag))
 }
 
 export function logBack(data: string) {
-  console.log(prependTag(data, backTag));
+  console.log(prependTag(data, backTag))
 }

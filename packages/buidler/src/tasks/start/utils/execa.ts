@@ -1,6 +1,6 @@
-import execa from 'execa';
-import stream from 'stream';
-import util from 'util';
+import execa from 'execa'
+import stream from 'stream'
+import util from 'util'
 
 /*
  * Note: This file should be split up as it grows
@@ -16,16 +16,16 @@ export function execaPipe(
   args?: readonly string[],
   options?: execa.Options
 ): execa.ExecaChildProcess {
-  const subprocess: execa.ExecaChildProcess = execa(file, args, options);
+  const subprocess: execa.ExecaChildProcess = execa(file, args, options)
 
   if (subprocess.stdout) {
-    subprocess.stdout.pipe(process.stdout);
+    subprocess.stdout.pipe(process.stdout)
   }
   if (subprocess.stderr) {
-    subprocess.stderr.pipe(process.stderr);
+    subprocess.stderr.pipe(process.stderr)
   }
 
-  return subprocess;
+  return subprocess
 }
 
 /**
@@ -38,20 +38,20 @@ export function execaLogTo(logger: (data: string) => void) {
     args: readonly string[],
     options?: execa.Options
   ): execa.ExecaChildProcess => {
-    const subprocess: execa.ExecaChildProcess = execa(file, args, options);
+    const subprocess: execa.ExecaChildProcess = execa(file, args, options)
 
     function dataCallback(bytes: any): void {
-      const data = Buffer.from(bytes, 'utf-8').toString();
-      logger(data);
+      const data = Buffer.from(bytes, 'utf-8').toString()
+      logger(data)
     }
 
     if (subprocess.stdout) {
-      subprocess.stdout.on('data', dataCallback);
+      subprocess.stdout.on('data', dataCallback)
     }
     if (subprocess.stderr) {
-      subprocess.stderr.on('data', dataCallback);
+      subprocess.stderr.on('data', dataCallback)
     }
 
-    return subprocess;
-  };
+    return subprocess
+  }
 }
