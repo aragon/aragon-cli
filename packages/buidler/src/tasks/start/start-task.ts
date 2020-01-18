@@ -17,6 +17,7 @@ import { buildAppArtifacts, watchAppFrontEnd } from './utils/frontend/build';
 import { KernelInstance, RepoInstance } from '~/typechain';
 import { getAppId } from './utils/id';
 import { logBack } from './utils/logger';
+import { readArapp } from './utils/arapp';
 
 /**
  * Main, composite, task. Calls startBackend, then startFrontend,
@@ -48,6 +49,9 @@ async function startBackend(bre: BuidlerRuntimeEnvironment): Promise<{ daoAddres
 
   await bre.run(TASK_COMPILE);
 
+  // Read arapp.json
+  const arapp = readArapp();
+
   // Prepare a DAO and a Repo to hold the app.
   const dao: KernelInstance = await createDao();
   const repo: RepoInstance = await createRepo(appName, appId);
@@ -56,8 +60,7 @@ async function startBackend(bre: BuidlerRuntimeEnvironment): Promise<{ daoAddres
   const implementation: Truffle.ContractInstance = await deployImplementation();
   const proxy: Truffle.ContractInstance = await createProxy(implementation, appId, dao);
   await updateRepo(repo, implementation);
-
-  await setAllPermissionsOpenly(dao, proxy);
+  await setAllPermissionsOpenly(dao, proxy, arapp);
 
   // Watch back-end files. Debounce for performance
   chokidar
