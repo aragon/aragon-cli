@@ -10,10 +10,10 @@ function prependTag(lines: string, tag: string): string {
     .join('\n')
 }
 
-export function logFront(data: string) {
+export function logFront(data: string): void {
   console.log(prependTag(data, frontTag))
 }
 
-export function logBack(data: string) {
+export function logBack(data: string): void {
   console.log(prependTag(data, backTag))
 }

@@ -4,12 +4,12 @@ import fsExtra from 'fs-extra'
 import os from 'os'
 import open from 'open'
 import { createStaticWebserver } from './webserver'
-import { execaPipe, execaLogTo } from '../execa'
+import { execaLogTo } from '../execa'
 import { logFront } from '../logger'
 import { getConfig } from '~/src/config'
 
-const defaultRepo: string = 'https://github.com/aragon/aragon'
-const defaultVersion: string = '775edd606333a111eb2693df53900039722a95dc'
+const defaultRepo = 'https://github.com/aragon/aragon'
+const defaultVersion = '775edd606333a111eb2693df53900039722a95dc'
 const aragonBaseDir: string = path.join(os.homedir(), '.aragon')
 
 const execa = execaLogTo(logFront)
@@ -43,9 +43,8 @@ export async function installAragonClientIfNeeded(
  */
 export async function startAragonClient(
   subPath?: string,
-  repo: string = defaultRepo,
   version: string = defaultVersion,
-  autoOpen: boolean = true
+  autoOpen = true
 ): Promise<string> {
   const port: number = getConfig().clientServePort as number
   const clientPath: string = _getClientPath(version)

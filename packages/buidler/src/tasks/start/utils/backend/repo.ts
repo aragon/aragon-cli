@@ -1,5 +1,4 @@
 import ENS from 'ethjs-ens'
-import { Providers } from 'web3-core'
 import {
   RepoContract,
   RepoInstance,
@@ -8,10 +7,8 @@ import {
 } from '~/typechain'
 import { getConfig } from '~/src/config'
 
-const ENS_REGISTRY_ADDRESS: string =
-  '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1'
-const APM_REGISTRY_ADDRESS: string =
-  '0x32296d9f8fed89658668875dc73cacf87e8888b2'
+const ENS_REGISTRY_ADDRESS = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1'
+const APM_REGISTRY_ADDRESS = '0x32296d9f8fed89658668875dc73cacf87e8888b2'
 
 /**
  * Attempts to retrieve an APM repository for the app, and if it can't
@@ -51,7 +48,7 @@ export async function updateRepo(
   console.log(`Repo version: ${semver.join('.')}`)
 
   // URI where this plugin is serving the app's front end.
-  const contentURI: string = `0x${Buffer.from(
+  const contentURI = `0x${Buffer.from(
     `http://localhost:${getConfig().appServePort}`
   ).toString('hex')}`
 

@@ -2,8 +2,8 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { AragonAppJson } from '~/src/types'
 
-const arappPath: string = 'arapp.json'
-const contractsPath: string = './contracts'
+const arappPath = 'arapp.json'
+const contractsPath = './contracts'
 
 export function readArapp(): AragonAppJson {
   return JSON.parse(fs.readFileSync(arappPath, 'utf-8'))

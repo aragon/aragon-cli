@@ -1,8 +1,6 @@
-import path from 'path'
 import chokidar from 'chokidar'
 import { task } from '@nomiclabs/buidler/config'
 import { BuidlerRuntimeEnvironment } from '@nomiclabs/buidler/types'
-import { TruffleEnvironmentArtifacts } from '@nomiclabs/buidler-truffle5/src/artifacts'
 import { TASK_START, TASK_COMPILE } from '../task-names'
 import { createDao } from './utils/backend/dao'
 import { deployImplementation } from './utils/backend/app'
@@ -46,7 +44,7 @@ task(TASK_START, 'Starts Aragon app development').setAction(
 async function startBackend(
   bre: BuidlerRuntimeEnvironment
 ): Promise<{ daoAddress: string; appAddress: string }> {
-  const appName: string = 'counter'
+  const appName = 'counter'
   const appId: string = getAppId(appName)
 
   await bre.run(TASK_COMPILE)

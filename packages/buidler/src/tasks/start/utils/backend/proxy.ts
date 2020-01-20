@@ -6,7 +6,7 @@ interface InitializableApp extends Truffle.ContractInstance {
   initialize: () => void
 }
 
-const BASE_NAMESPACE: string =
+const BASE_NAMESPACE =
   '0xf1f3eb40f5bc1ad1344716ced8b8a0431d840b5783aea1fd01786bc26f35ac0f'
 
 /**

@@ -1,8 +1,7 @@
-import { BuidlerRuntimeEnvironment } from '@nomiclabs/buidler/types'
-import { KernelInstance, ACLInstance } from '~/typechain'
+import { KernelInstance } from '~/typechain'
 import { AragonAppJson } from '~/src/types'
 
-export const ANY_ADDRESS: string = '0xffffffffffffffffffffffffffffffffffffffff'
+export const ANY_ADDRESS = '0xffffffffffffffffffffffffffffffffffffffff'
 
 /**
  * Scans arapp.json, setting all permissions to ANY_ADDRESS.
