@@ -5,7 +5,6 @@ import {
   APMRegistryContract,
   APMRegistryInstance
 } from '~/typechain'
-import { getConfig } from '~/src/config'
 import Web3 from 'web3'
 
 const ENS_REGISTRY_ADDRESS = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1'

@@ -6,7 +6,6 @@ import open from 'open'
 import { createStaticWebserver } from './webserver'
 import { execaLogTo } from '../execa'
 import { logFront } from '../logger'
-import { getConfig } from '~/src/config'
 
 const defaultRepo = 'https://github.com/aragon/aragon'
 const defaultVersion = '775edd606333a111eb2693df53900039722a95dc'
@@ -42,11 +41,12 @@ export async function installAragonClientIfNeeded(
  * @return The URL at which the client is available
  */
 export async function startAragonClient(
+  clientServePort: number,
   subPath?: string,
   version: string = defaultVersion,
   autoOpen = true
 ): Promise<string> {
-  const port: number = getConfig().clientServePort as number
+  const port: number = clientServePort
   const clientPath: string = _getClientPath(version)
 
   logFront(`Starting client server at port ${port}`)
