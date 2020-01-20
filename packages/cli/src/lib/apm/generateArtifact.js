@@ -1,16 +1,12 @@
 import fs from 'fs'
 import path from 'path'
-import namehash from 'eth-ens-namehash'
 import { keccak256 } from 'web3-utils'
-import { encodeFunctionSignature } from 'web3-eth-abi'
 import { readJsonSync, writeJsonSync, pathExistsSync } from 'fs-extra'
 import {
   ARTIFACT_FILE,
   SOLIDITY_FILE,
   ARAPP_FILE,
   MANIFEST_FILE,
-  extractContractInfo,
-  getApmRepoVersions,
   getFile,
 } from '@aragon/toolkit'
 //
@@ -18,16 +14,6 @@ import { findProjectRoot } from '../../util'
 import flattenCode from '../../helpers/flattenCode'
 
 export class MissingFunctionsArtifacts extends Error {}
-
-/**
- * @typedef {Object} FunctionInfo
- * @property {string} sig "functionName(address,unit)"
- * @property {Object[]} roles
- * @property {string} notice Multiline notice text
- * @property {Object} [abi] Abi of the function
- */
-
-const getMajor = version => version.split('.')[0]
 
 const getRoles = roles =>
   roles.map(role => Object.assign(role, { bytes: keccak256(role.id) }))
@@ -106,150 +92,6 @@ export function changeManifestForHttpServedFrom(httpServedFrom) {
       start_url: path.basename(manifest.start_url),
       script: path.basename(manifest.script),
     })
-  }
-}
-
-/**
- * Appends the abi of a function to the functions array
- * @param {FunctionInfo[]} functions functions
- * @param {Object[]} abi ABI
- * @return {FunctionInfo[]} functions with appended ABI
- */
-function decorateFunctionsWithAbi(functions, abi) {
-  const abiFunctions = abi.filter(elem => elem.type === 'function')
-  return functions.map(f => ({
-    ...f,
-    abi: abiFunctions.find(
-      functionAbi =>
-        encodeFunctionSignature(functionAbi) === encodeFunctionSignature(f.sig)
-    ),
-  }))
-}
-
-/**
- * Compute which versions have missing artifact so the front-end
- * can alert the user that those will be ignored in the
- * next function getDeprecatedFunctions
- * @param {Object[]} prevVersions APM versions
- * @return {string[]} versionsWithMissingArtifact
- */
-function getVersionsWithMissingArtifact(prevVersions) {
-  // First, make sure that all artifacts are available
-  let lastMajor = -1
-  const versionsWithMissingArtifact = []
-  prevVersions.reverse().forEach(({ version, functions }) => {
-    // iterate on major versions
-    if (getMajor(version) !== lastMajor) {
-      lastMajor = getMajor(version)
-      if (!functions) versionsWithMissingArtifact.push(version)
-    }
-  })
-  return versionsWithMissingArtifact
-}
-
-/**
- * Computes the deprecated functions.
- * [NOTE] Silently ignores the versions with no artifacts.
- * To know which versions will be ignored, use getVersionsWithMissingArtifact
- * @param {Object} artifact artifact object
- * @param {Object[]} prevVersions APM versions
- * @return {Object[]} deprecated functions
- */
-function getDeprecatedFunctions(artifact, prevVersions) {
-  const deprecatedFunctions = {}
-  const deprecatedFunctionsSig = new Set()
-
-  let lastMajor = -1
-  prevVersions.reverse().forEach(version => {
-    let deprecatedOnVersion = []
-    // iterate on major versions
-    if (getMajor(version.version) !== lastMajor) {
-      lastMajor = getMajor(version.version)
-      if (version.functions) {
-        version.functions.forEach(f => {
-          if (
-            artifact.functions &&
-            !artifact.functions.some(obj => obj.sig === f.sig) &&
-            !deprecatedFunctionsSig.has(f.sig)
-          ) {
-            deprecatedOnVersion.push(f)
-            deprecatedFunctionsSig.add(f.sig)
-          }
-        })
-        if (deprecatedOnVersion.length) {
-          deprecatedFunctions[`${lastMajor}.0.0`] = deprecatedOnVersion
-          decorateFunctionsWithAbi(deprecatedOnVersion, version.abi)
-          deprecatedOnVersion = []
-        }
-      }
-    }
-  })
-
-  return deprecatedFunctions
-}
-
-/**
- * Construct artifact object
- *
- * @param {string} web3 web3
- * @param {string} cwd CWD
- * @param {any} deployArtifacts ??
- * @param {ArappConfigFile} arapp Arapp config file
- * @param {Object} apmOptions APM options
- * @return {Object} { artifact, missingArtifactVersions }
- */
-export async function generateApplicationArtifact(
-  web3,
-  cwd,
-  deployArtifacts,
-  arapp, // module
-  apmOptions
-) {
-  // Set appName, path & roles
-  const appId = namehash.hash(arapp.appName)
-  const environments = getEnvironments(cwd)
-  const abi = getContractAbi(cwd, arapp.path)
-
-  // Analyse contract functions and returns an array
-  // > [{ sig: 'transfer(address)', role: 'X_ROLE', notice: 'Transfers..'}]
-  const { functions, roles } = await extractContractInfo(
-    path.resolve(cwd, arapp.path)
-  )
-  // extract abi for each function
-  // > [{ sig: , role: , notice: , abi: }]
-  const functionsWithAbi = decorateFunctionsWithAbi(functions, abi)
-
-  const prevVersions = await getApmRepoVersions(
-    web3,
-    arapp.appName,
-    apmOptions
-  ).catch(e => {
-    // Catch ENS error on first version
-    return []
-  })
-
-  // Consult old (major) version's artifacts and return an array
-  // of deprecated functions per version
-  // > "deprecatedFunctions": { "1.0.0": [{}], "2.0.0": [{}] }
-  const deprecatedFunctions = getDeprecatedFunctions(arapp, prevVersions)
-  const missingArtifactVersions = getVersionsWithMissingArtifact(prevVersions)
-
-  const artifact = {
-    ...arapp,
-    appId,
-    environments,
-    abi,
-    functions: functionsWithAbi,
-    deprecatedFunctions,
-    deployment: deployArtifacts
-      ? { ...deployArtifacts, flattenedCode: `./${SOLIDITY_FILE}` }
-      : undefined,
-    roles,
-  }
-
-  return {
-    artifact,
-    missingArtifactVersions,
   }
 }
 

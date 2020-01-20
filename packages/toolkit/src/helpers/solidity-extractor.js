@@ -1,7 +1,4 @@
-import fs from 'fs'
-import { promisify } from 'util'
 import { keccak256 } from 'web3-utils'
-const readFile = promisify(fs.readFile)
 
 // See https://solidity.readthedocs.io/en/v0.4.24/abi-spec.html#types
 const SOLIDITY_SHORTHAND_TYPES_MAP = {
@@ -126,7 +123,7 @@ const extractRoles = async functionDescriptors => {
   }))
 }
 
-// Given the path to a Solidity file, parses it and returns an object with the form:
+// Given a Solidity file, parses it and returns an object with the form:
 /*
   roles: [
     {
@@ -146,9 +143,7 @@ const extractRoles = async functionDescriptors => {
     ...
   ]
 */
-export const extractContractInfo = async sourceCodePath => {
-  const sourceCode = await readFile(sourceCodePath, 'utf8')
-
+export const extractContractInfo = async sourceCode => {
   const functionDescriptors = await extractFunctions(sourceCode)
   const roleDescriptors = await extractRoles(functionDescriptors)
 

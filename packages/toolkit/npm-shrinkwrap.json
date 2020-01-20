@@ -4625,11 +4625,11 @@
 			"integrity": "sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc="
 		},
 		"eth-ens-namehash": {
-			"version": "1.0.2",
-			"resolved": "https://registry.npmjs.org/eth-ens-namehash/-/eth-ens-namehash-1.0.2.tgz",
-			"integrity": "sha1-Bezda6wtf9e8XKhKmTxrrZ2k7bk=",
+			"version": "2.0.8",
+			"resolved": "https://registry.npmjs.org/eth-ens-namehash/-/eth-ens-namehash-2.0.8.tgz",
+			"integrity": "sha1-IprEbsqG1S4MmR58sq74P/D2i88=",
 			"requires": {
-				"idna-uts46": "^1.0.1",
+				"idna-uts46-hx": "^2.3.1",
 				"js-sha3": "^0.5.7"
 			}
 		},
@@ -4859,6 +4859,17 @@
 				"ethereum-ens-network-map": "^1.0.0",
 				"ethjs-contract": "^0.1.7",
 				"ethjs-query": "^0.2.4"
+			},
+			"dependencies": {
+				"eth-ens-namehash": {
+					"version": "1.0.2",
+					"resolved": "https://registry.npmjs.org/eth-ens-namehash/-/eth-ens-namehash-1.0.2.tgz",
+					"integrity": "sha1-Bezda6wtf9e8XKhKmTxrrZ2k7bk=",
+					"requires": {
+						"idna-uts46": "^1.0.1",
+						"js-sha3": "^0.5.7"
+					}
+				}
 			}
 		},
 		"ethjs-filter": {

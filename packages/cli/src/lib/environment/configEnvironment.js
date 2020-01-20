@@ -111,7 +111,6 @@ export function configEnvironment({
   // (Todo): Are these mutations necessary?
   if (arapp) {
     arapp.appName = env.appName
-    arapp.env = env // TODO: Remove it's not used anymore
     arapp.environments = { [environment || 'default']: env } // only include the selected environment in the module
   }
 

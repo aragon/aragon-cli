@@ -38,7 +38,9 @@
     "aragon-cli-wrapper": "^5.0.0-rc.22",
     "babel-eslint": "^10.0.3",
     "byte-size": "^6.2.0",
+    "eth-ens-namehash": "^2.0.8",
     "ethereum-ens": "^0.7.8",
+    "execa": "^3.0.0",
     "fs-extra": "^8.1.0",
     "get-folder-size": "^2.0.1",
     "go-platform": "^1.0.0",
@@ -48,7 +50,6 @@
     "ps-tree": "^1.2.0",
     "rxjs": "^6.5.3",
     "stringify-tree": "^1.0.2",
-    "execa": "^3.0.0",
     "web3": "^1.2.4",
     "web3-eth-abi": "^1.2.4",
     "web3-utils": "^1.2.4"
