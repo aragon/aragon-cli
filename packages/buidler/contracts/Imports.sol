@@ -8,7 +8,6 @@ import "@aragon/os/contracts/apm/APMRegistry.sol";
 import "@aragon/os/contracts/apm/Repo.sol";
 
 
-// HACK to workaround truffle artifact loading on dependencies
 contract Imports {
     // solium-disable-previous-line no-empty-blocks
 }
