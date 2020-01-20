@@ -1,7 +1,9 @@
 import { assert } from 'chai'
 import { createDao } from '~/src/tasks/start/utils/backend/dao'
+import { readArapp } from '~/src/tasks/start/utils/arapp'
 import { deployImplementation } from '~/src/tasks/start/utils/backend/app'
 import { createProxy } from '~/src/tasks/start/utils/backend/proxy'
+import { AragonAppJson } from '~/src/types'
 import {
   setAllPermissionsOpenly,
   ANY_ADDRESS
@@ -18,6 +20,7 @@ describe('permissions.ts', () => {
   let dao: KernelInstance
   let acl: ACLInstance
   let app: CounterInstance
+  let arapp: AragonAppJson
 
   before('set up dao with app', async () => {
     dao = await createDao()
@@ -28,11 +31,13 @@ describe('permissions.ts', () => {
     const implementation = await deployImplementation()
     const appId = getAppId('counter')
     app = (await createProxy(implementation, appId, dao)) as CounterInstance
+
+    arapp = readArapp()
   })
 
   describe('when setAllPermissionsOpenly is called', () => {
     before('call setAllPermissionsOpenly', async () => {
-      await setAllPermissionsOpenly(dao, app)
+      await setAllPermissionsOpenly(dao, app, arapp)
     })
 
     it('properly sets the INCREMENT_ROLE permission', async () => {
