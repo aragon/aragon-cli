@@ -15,6 +15,7 @@ import {
   CounterInstance
 } from '~/typechain'
 import { getAppId } from '~/src/tasks/start/utils/id'
+import * as bre from '@nomiclabs/buidler'
 
 describe('permissions.ts', () => {
   let dao: KernelInstance
@@ -23,21 +24,26 @@ describe('permissions.ts', () => {
   let arapp: AragonAppJson
 
   before('set up dao with app', async () => {
-    dao = await createDao()
+    dao = await createDao(bre.web3)
 
     const ACL: ACLContract = artifacts.require('ACL')
     acl = await ACL.at(await dao.acl())
 
     const implementation = await deployImplementation()
     const appId = getAppId('counter')
-    app = (await createProxy(implementation, appId, dao)) as CounterInstance
+    app = (await createProxy(
+      implementation,
+      appId,
+      dao,
+      bre.web3
+    )) as CounterInstance
 
     arapp = readArapp()
   })
 
   describe('when setAllPermissionsOpenly is called', () => {
     before('call setAllPermissionsOpenly', async () => {
-      await setAllPermissionsOpenly(dao, app, arapp)
+      await setAllPermissionsOpenly(dao, app, arapp, bre.web3)
     })
 
     it('properly sets the INCREMENT_ROLE permission', async () => {

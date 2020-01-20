@@ -6,6 +6,7 @@ import {
   APMRegistryInstance
 } from '~/typechain'
 import { getConfig } from '~/src/config'
+import Web3 from 'web3'
 
 const ENS_REGISTRY_ADDRESS = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1'
 const APM_REGISTRY_ADDRESS = '0x32296d9f8fed89658668875dc73cacf87e8888b2'
@@ -17,12 +18,15 @@ const APM_REGISTRY_ADDRESS = '0x32296d9f8fed89658668875dc73cacf87e8888b2'
  */
 export async function createRepo(
   appName: string,
-  appId: string
+  appId: string,
+  web3: Web3
 ): Promise<RepoInstance> {
   // Retrieve the Repo address from ens, or create the Repo if nothing is retrieved.
-  let repoAddress: string | null = await _ensResolve(appId).catch(() => null)
+  let repoAddress: string | null = await _ensResolve(appId, web3).catch(
+    () => null
+  )
   if (!repoAddress) {
-    repoAddress = await _createRepo(appName)
+    repoAddress = await _createRepo(appName, web3)
   }
 
   // Wrap Repo address with abi.
@@ -60,7 +64,7 @@ export async function updateRepo(
  * Creates a new APM repository.
  * @returns Promise<RepoInstance> An APM repository for the app.
  */
-async function _createRepo(appName: string): Promise<string> {
+async function _createRepo(appName: string, web3: Web3): Promise<string> {
   const rootAccount: string = (await web3.eth.getAccounts())[0]
 
   // Retrieve APMRegistry.
@@ -93,7 +97,7 @@ async function _createRepo(appName: string): Promise<string> {
  * @returns Promise<string> The resolved contract address. Will throw if
  * no address is resolved.
  */
-async function _ensResolve(appId: string): Promise<string> {
+async function _ensResolve(appId: string, web3: Web3): Promise<string> {
   // Define options used by ENS.
   const opts: {
     provider: any

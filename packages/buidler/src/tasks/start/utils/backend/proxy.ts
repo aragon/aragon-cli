@@ -1,6 +1,7 @@
 import { getMainContractName } from '../arapp'
 import { KernelInstance } from '~/typechain'
 import { logBack } from '../logger'
+import Web3 from 'web3'
 
 interface InitializableApp extends Truffle.ContractInstance {
   initialize: () => void
@@ -17,7 +18,8 @@ const BASE_NAMESPACE =
 export async function createProxy(
   implementation: Truffle.ContractInstance,
   appId: string,
-  dao: KernelInstance
+  dao: KernelInstance,
+  web3: Web3
 ): Promise<Truffle.ContractInstance> {
   const rootAccount: string = (await web3.eth.getAccounts())[0]
 
@@ -57,7 +59,8 @@ export async function createProxy(
 export async function updateProxy(
   implementation: Truffle.ContractInstance,
   appId: string,
-  dao: KernelInstance
+  dao: KernelInstance,
+  web3: Web3
 ): Promise<void> {
   const rootAccount: string = (await web3.eth.getAccounts())[0]
 

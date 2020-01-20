@@ -1,5 +1,6 @@
 import { KernelInstance } from '~/typechain'
 import { AragonAppJson } from '~/src/types'
+import Web3 from 'web3'
 
 export const ANY_ADDRESS = '0xffffffffffffffffffffffffffffffffffffffff'
 
@@ -9,7 +10,8 @@ export const ANY_ADDRESS = '0xffffffffffffffffffffffffffffffffffffffff'
 export async function setAllPermissionsOpenly(
   dao: KernelInstance,
   app: any, // TODO: needs type
-  arapp: AragonAppJson
+  arapp: AragonAppJson,
+  web3: Web3
 ): Promise<void> {
   const rootAccount: string = (await web3.eth.getAccounts())[0]
 

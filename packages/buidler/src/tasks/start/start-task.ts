@@ -53,18 +53,19 @@ async function startBackend(
   const arapp = readArapp()
 
   // Prepare a DAO and a Repo to hold the app.
-  const dao: KernelInstance = await createDao()
-  const repo: RepoInstance = await createRepo(appName, appId)
+  const dao: KernelInstance = await createDao(bre.web3)
+  const repo: RepoInstance = await createRepo(appName, appId, bre.web3)
 
   // Deploy first implementation and set it in the Repo and in a Proxy.
   const implementation: Truffle.ContractInstance = await deployImplementation()
   const proxy: Truffle.ContractInstance = await createProxy(
     implementation,
     appId,
-    dao
+    dao,
+    bre.web3
   )
   await updateRepo(repo, implementation)
-  await setAllPermissionsOpenly(dao, proxy, arapp)
+  await setAllPermissionsOpenly(dao, proxy, arapp, bre.web3)
 
   // Watch back-end files. Debounce for performance
   chokidar
@@ -78,7 +79,7 @@ async function startBackend(
       // Update implementation and set it in Repo and Proxy.
       const newImplementation: Truffle.ContractInstance = await deployImplementation()
       await updateRepo(repo, newImplementation)
-      await updateProxy(newImplementation, appId, dao)
+      await updateProxy(newImplementation, appId, dao, bre.web3)
     })
 
   logBack(`

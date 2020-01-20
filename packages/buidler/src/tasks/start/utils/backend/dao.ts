@@ -8,12 +8,13 @@ import {
   EVMScriptRegistryFactoryContract,
   EVMScriptRegistryFactoryInstance
 } from '~/typechain'
+import Web3 from 'web3'
 
 /**
  * Deploys a new DAO with direct/pure interaction with aragonOS.
  * @returns DAO's Kernel TruffleContract.
  */
-export async function createDao(): Promise<KernelInstance> {
+export async function createDao(web3: Web3): Promise<KernelInstance> {
   const rootAccount: string = (await web3.eth.getAccounts())[0]
 
   // Retrieve contract artifacts.
