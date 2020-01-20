@@ -3,7 +3,7 @@ import chalk from 'chalk'
 const frontTag = chalk.yellow('front | ')
 const backTag = chalk.blue('back  | ')
 
-function prependTag(lines: string, tag: string): string {
+function _prependTag(lines: string, tag: string): string {
   return lines
     .split('\n')
     .map(line => tag + line)
@@ -11,9 +11,9 @@ function prependTag(lines: string, tag: string): string {
 }
 
 export function logFront(data: string): void {
-  console.log(prependTag(data, frontTag))
+  console.log(_prependTag(data, frontTag))
 }
 
 export function logBack(data: string): void {
-  console.log(prependTag(data, backTag))
+  console.log(_prependTag(data, backTag))
 }

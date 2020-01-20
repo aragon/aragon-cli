@@ -20,6 +20,7 @@ export async function setAllPermissionsOpenly(
 
   for (const role of arapp.roles) {
     const permission = await app[role.id]()
+
     // Set permission to ANY_ADDRESS (max uint256), which is interpreted by
     // the ACL as giving such permission to all addresses.
     await acl.createPermission(
