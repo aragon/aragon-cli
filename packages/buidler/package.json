@@ -15,7 +15,7 @@
     "generate": "typechain --target truffle --outDir typechain 'artifacts/*.json'",
     "lint": "eslint 'src/**/*.{js,ts}'",
     "prettier": "prettier --write '**/*.{ts,js,css,html}'",
-    "test": "TS_NODE_FILES=true TS_NODE_PROJECT=tsconfig.json mocha --exit",
+    "test": "mocha --exit",
     "build": "tsc --build ."
   },
   "dependencies": {
@@ -30,6 +30,7 @@
     "@types/web3": "^1.2.2",
     "chalk": "^3.0.0",
     "chokidar": "^3.3.1",
+    "dotenv": "^8.2.0",
     "eth-ens-namehash": "^2.0.8",
     "ethjs-ens": "^2.0.1",
     "execa": "^4.0.0",
