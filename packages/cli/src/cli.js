@@ -84,11 +84,9 @@ export function init(cb) {
   // Runs if command.handler is successful
 
   cli.onFinishCommand(() => {
-    return cb
-      ? cb()
-      : process.exit()
+    return cb ? cb() : process.exit()
   })
-  
+
   // Runs if command.handler throws
   cli.fail((...args) => {
     AragonReporter.errorHandler(...args)
@@ -96,4 +94,3 @@ export function init(cb) {
 
   return cli
 }
-
