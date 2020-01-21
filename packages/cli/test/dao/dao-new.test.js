@@ -1,6 +1,5 @@
 import test from 'ava'
 //
-import { runAragonCLI } from '../util'
 import parseCli from '../parseCli'
 
 const daoAddressRegex = /Created DAO: (.*)\n$/
@@ -17,13 +16,7 @@ test.serial('assigns an Aragon Id with the "--aragon-id" param', async t => {
   const date = new Date().getTime()
   const id = `newdao${date}`
 
-  const stdout = await parseCli([
-    'dao',
-    'new',
-    '--debug',
-    '--aragon-id',
-    id,
-  ])
+  const stdout = await parseCli(['dao', 'new', '--debug', '--aragon-id', id])
   const [, daoId, daoAddress] = stdout.match(daoIdAndAddressAddressRegex)
 
   t.assert(daoId === id, 'Invalid Aragon Id')
@@ -46,7 +39,7 @@ test.serial('creates a new DAO with a custom template', async t => {
     '["500000000000000000", "50000000000000000", "604800"]',
     '1296000',
     'true',
-    '--debug'
+    '--debug',
   ])
   const daoAddress = stdout.match(daoAddressRegex)[1]
 
