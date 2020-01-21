@@ -17,7 +17,8 @@ const mockappPath = path.resolve('./test/mock')
 
 const cliPath = '../../dist/index.js'
 
-test.serial('should publish an aragon app directory successfully', async t => {
+// eslint-disable-next-line ava/no-skip-test
+test.skip('should publish an aragon app directory successfully', async t => {
   // arrange
   const publishDirPath = path.resolve(`${mockappPath}/${testSandbox}`)
 
@@ -81,7 +82,8 @@ test.skip('should run an aragon app successfully on IPFS', async t => {
   t.pass()
 })
 
-test.serial('should fetch published versions to aragonPM', async t => {
+// eslint-disable-next-line ava/no-skip-test
+test.skip('should fetch published versions to aragonPM', async t => {
   // act
   await startProcess({
     cmd: 'node',
