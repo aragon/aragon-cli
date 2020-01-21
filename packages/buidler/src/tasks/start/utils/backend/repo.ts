@@ -7,6 +7,7 @@ import {
 } from '~/typechain'
 import Web3 from 'web3'
 import { TruffleEnvironmentArtifacts } from '@nomiclabs/buidler-truffle5/src/artifacts'
+import { logBack } from '../logger'
 
 const ENS_REGISTRY_ADDRESS = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1'
 const APM_REGISTRY_ADDRESS = '0x32296d9f8fed89658668875dc73cacf87e8888b2'
@@ -51,7 +52,7 @@ export async function updateRepo(
     0,
     0
   ]
-  console.log(`Repo version: ${semver.join('.')}`)
+  logBack(`Repo version: ${semver.join('.')}`)
 
   // URI where this plugin is serving the app's front end.
   const contentURI = `0x${Buffer.from(

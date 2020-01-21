@@ -14,7 +14,7 @@ import {
 import { buildAppArtifacts, watchAppFrontEnd } from './utils/frontend/build'
 import { KernelInstance, RepoInstance } from '~/typechain'
 import { getAppId } from './utils/id'
-import { logBack } from './utils/logger'
+import { logFront, logBack, logMain } from './utils/logger'
 import { readArapp } from './utils/arapp'
 import { AragonConfig } from '~/src/types'
 
@@ -24,7 +24,7 @@ import { AragonConfig } from '~/src/types'
  */
 task(TASK_START, 'Starts Aragon app development').setAction(
   async (params, env: BuidlerRuntimeEnvironment) => {
-    console.log(`Starting...`)
+    logMain(`Starting...`)
 
     const { daoAddress, appAddress } = await startBackend(env)
     await startFrontend(env, daoAddress, appAddress)
@@ -84,7 +84,7 @@ async function startBackend(
       awaitWriteFinish: { stabilityThreshold: 1000 }
     })
     .on('change', async () => {
-      console.log(`<<< Triggering backend build >>>`)
+      logBack(`<<< Triggering backend build >>>`)
       await env.run(TASK_COMPILE)
 
       // Update implementation and set it in Repo and Proxy.
@@ -128,7 +128,7 @@ async function startFrontend(
     config.clientServePort as number,
     `${daoAddress}/${appAddress}`
   )
-  console.log(`You can now view the Aragon client in the browser.
+  logFront(`You can now view the Aragon client in the browser.
  Local:  ${url}
 `)
 

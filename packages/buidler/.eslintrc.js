@@ -13,6 +13,7 @@ module.exports = {
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-explicit-any": "off",
+    "no-console": "error",
     /* More rule definitions in .prettierrc.js */
   }
 };
