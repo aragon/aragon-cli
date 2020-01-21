@@ -59,7 +59,7 @@ test.serial('should publish an aragon app directory successfully', async t => {
   t.snapshot(manifest)
 })
 
-test.serial('should run an aragon app successfully on IPFS', async t => {
+test.skip('should run an aragon app successfully on IPFS', async t => {
   const publishDirPath = path.resolve(`${mockappPath}/${testSandbox}/ipfs`)
 
   const { kill } = await startProcess({
@@ -97,7 +97,7 @@ test.serial('should fetch published versions to aragonPM', async t => {
   t.pass()
 })
 
-test.serial(
+test.skip(
   'should run an aragon app successfully on IPFS using a Template',
   async t => {
     const publishDirPath = path.resolve(
@@ -146,7 +146,7 @@ test.serial(
   }
 )
 
-test.serial('should run an aragon app successfully on HTTP', async t => {
+test.skip('should run an aragon app successfully on HTTP', async t => {
   const publishDirPath = path.resolve(`${mockappPath}/${testSandbox}/http`)
   const appPort = 8001
 
@@ -186,7 +186,7 @@ test.serial('should run an aragon app successfully on HTTP', async t => {
   t.pass()
 })
 
-test.serial(
+test.skip(
   'should run an aragon app successfully on HTTP using a Template',
   async t => {
     const publishDirPath = path.resolve(
