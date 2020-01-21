@@ -1,0 +1,28 @@
+{
+  "name": "buidler-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@aragon/os": "4.0.1",
+    "@nomiclabs/buidler": "^1.0.2",
+    "@nomiclabs/buidler-truffle5": "^1.0.2",
+    "@nomiclabs/buidler-web3": "^1.0.2",
+    "@types/chai": "^4.2.5",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^13.1.4",
+    "@types/web3": "^1.2.2",
+    "truffle-typings": "^1.0.8",
+    "ts-node": "^8.5.4",
+    "typechain": "^1.0.3",
+    "typechain-target-truffle": "^1.0.2",
+    "typescript": "^3.7.4",
+    "web3": "^1.2.4"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

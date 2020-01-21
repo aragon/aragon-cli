@@ -25,7 +25,6 @@ import { AragonConfig } from '~/src/types'
 task(TASK_START, 'Starts Aragon app development').setAction(
   async (params, bre: BuidlerRuntimeEnvironment) => {
     console.log(`Starting...`)
-    console.log(`bre`, bre)
 
     const { daoAddress, appAddress } = await startBackend(bre)
     await startFrontend(bre, daoAddress, appAddress)
@@ -49,7 +48,7 @@ async function startBackend(
   const appName = 'counter'
   const appId: string = getAppId(appName)
 
-  const config: AragonConfig = bre.config as AragonConfig
+  const config: AragonConfig = bre.config.aragon as AragonConfig
 
   await bre.run(TASK_COMPILE)
 
@@ -108,7 +107,7 @@ async function startFrontend(
   daoAddress: string,
   appAddress: string
 ): Promise<void> {
-  const config: AragonConfig = bre.config as AragonConfig
+  const config: AragonConfig = bre.config.aragon as AragonConfig
 
   await installAragonClientIfNeeded()
 

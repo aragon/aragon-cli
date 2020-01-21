@@ -1,3 +1,9 @@
+import { BuidlerConfig } from '@nomiclabs/buidler/types'
+
+export interface BuidlerAragonConfig extends BuidlerConfig {
+  aragon: AragonConfig
+}
+
 export interface AragonConfig {
   appServePort?: number
   clientServePort?: number
