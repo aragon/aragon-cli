@@ -15,7 +15,7 @@ const testSandbox = './.tmp/app'
 
 const mockappPath = path.resolve('./test/mock')
 
-const cliPath = '../../dist/cli.js'
+const cliPath = '../../dist/index.js'
 
 test.serial('should publish an aragon app directory successfully', async t => {
   // arrange

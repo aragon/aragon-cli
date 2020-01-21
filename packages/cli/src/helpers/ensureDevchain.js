@@ -9,7 +9,7 @@ export const ensureDevchain = async ({ port, logger = noop }) => {
     return
   }
 
-  const binPath = path.resolve(__dirname, '../cli.js')
+  const binPath = path.resolve(__dirname, '../index.js')
 
   logger(`Devchain starting on: ${port}`)
   try {

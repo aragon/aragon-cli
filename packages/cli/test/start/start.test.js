@@ -4,7 +4,7 @@ import { startProcess } from '@aragon/toolkit'
 const START_CMD_TIMEOUT = 40000 // 40s
 
 test('start', async t => {
-  const cliPath = 'dist/cli.js'
+  const cliPath = 'dist/index.js'
 
   // act
   const { kill } = await startProcess({
