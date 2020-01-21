@@ -17,8 +17,7 @@ import {
 import { getAppId } from '~/src/tasks/start/utils/id'
 import { useDefaultEnvironment } from '~/test/test-helpers/useEnvironment'
 
-// TODO: These tests need to be run in the context of a sample project.
-describe.skip('permissions.ts', function() {
+describe('permissions.ts', function() {
   useDefaultEnvironment()
 
   let dao: KernelInstance
@@ -29,7 +28,7 @@ describe.skip('permissions.ts', function() {
   before('set up dao with app', async function() {
     dao = await createDao(this.env.web3, this.env.artifacts)
 
-    const ACL: ACLContract = artifacts.require('ACL')
+    const ACL: ACLContract = this.env.artifacts.require('ACL')
     acl = await ACL.at(await dao.acl())
 
     const implementation = await deployImplementation(this.env.artifacts)

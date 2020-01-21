@@ -3,9 +3,11 @@ import {
   getMainContractName,
   getMainContractPath
 } from '~/src/tasks/start/utils/arapp'
+import { useDefaultEnvironment } from '~/test/test-helpers/useEnvironment'
 
-// TODO: These tests need to be run in the context of a sample project.
-describe.skip('arapp.ts', function() {
+describe('arapp.ts', function() {
+  useDefaultEnvironment()
+
   it('should retrieve the correct main contract path', function() {
     assert.equal(
       getMainContractPath(),
