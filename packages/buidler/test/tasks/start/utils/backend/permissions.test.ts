@@ -15,39 +15,48 @@ import {
   CounterInstance
 } from '~/typechain'
 import { getAppId } from '~/src/tasks/start/utils/id'
-import * as bre from '@nomiclabs/buidler'
+import { useDefaultEnvironment } from '~/test/test-helpers/useEnvironment'
 
 // TODO: These tests need to be run in the context of a sample project.
-describe.skip('permissions.ts', () => {
+describe.skip('permissions.ts', function() {
+  useDefaultEnvironment()
+
   let dao: KernelInstance
   let acl: ACLInstance
   let app: CounterInstance
   let arapp: AragonAppJson
 
-  before('set up dao with app', async () => {
-    dao = await createDao(bre.web3)
+  before('set up dao with app', async function() {
+    dao = await createDao(this.env.web3, this.env.artifacts)
 
     const ACL: ACLContract = artifacts.require('ACL')
     acl = await ACL.at(await dao.acl())
 
-    const implementation = await deployImplementation()
+    const implementation = await deployImplementation(this.env.artifacts)
     const appId = getAppId('counter')
     app = (await createProxy(
       implementation,
       appId,
       dao,
-      bre.web3
+      this.env.web3,
+      this.env.artifacts
     )) as CounterInstance
 
     arapp = readArapp()
   })
 
-  describe('when setAllPermissionsOpenly is called', () => {
-    before('call setAllPermissionsOpenly', async () => {
-      await setAllPermissionsOpenly(dao, app, arapp, bre.web3)
+  describe('when setAllPermissionsOpenly is called', function() {
+    before('call setAllPermissionsOpenly', async function() {
+      await setAllPermissionsOpenly(
+        dao,
+        app,
+        arapp,
+        this.env.web3,
+        this.env.artifacts
+      )
     })
 
-    it('properly sets the INCREMENT_ROLE permission', async () => {
+    it('properly sets the INCREMENT_ROLE permission', async function() {
       assert.equal(
         await acl.hasPermission(
           ANY_ADDRESS,
@@ -59,7 +68,7 @@ describe.skip('permissions.ts', () => {
       )
     })
 
-    it('properly sets the DECREMENT_ROLE permission', async () => {
+    it('properly sets the DECREMENT_ROLE permission', async function() {
       assert.equal(
         await acl.hasPermission(
           ANY_ADDRESS,

@@ -1,6 +1,7 @@
 import { KernelInstance } from '~/typechain'
 import { AragonAppJson } from '~/src/types'
 import Web3 from 'web3'
+import { TruffleEnvironmentArtifacts } from '@nomiclabs/buidler-truffle5/src/artifacts'
 
 export const ANY_ADDRESS = '0xffffffffffffffffffffffffffffffffffffffff'
 
@@ -11,7 +12,8 @@ export async function setAllPermissionsOpenly(
   dao: KernelInstance,
   app: any, // TODO: needs type
   arapp: AragonAppJson,
-  web3: Web3
+  web3: Web3,
+  artifacts: TruffleEnvironmentArtifacts
 ): Promise<void> {
   const rootAccount: string = (await web3.eth.getAccounts())[0]
 

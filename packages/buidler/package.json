@@ -15,8 +15,7 @@
     "generate": "typechain --target truffle --outDir typechain 'artifacts/*.json'",
     "lint": "eslint 'src/**/*.{js,ts}'",
     "prettier": "prettier --write '**/*.{ts,js,css,html}'",
-    "test": "buidler test",
-    "test:mocha": "TS_NODE_PROJECT=tsconfig.json mocha --exit",
+    "test": "TS_NODE_FILES=true TS_NODE_PROJECT=tsconfig.json mocha --exit",
     "build": "tsc --build ."
   },
   "dependencies": {

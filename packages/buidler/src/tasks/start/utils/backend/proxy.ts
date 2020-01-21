@@ -2,6 +2,7 @@ import { getMainContractName } from '../arapp'
 import { KernelInstance } from '~/typechain'
 import { logBack } from '../logger'
 import Web3 from 'web3'
+import { TruffleEnvironmentArtifacts } from '@nomiclabs/buidler-truffle5/src/artifacts'
 
 interface InitializableApp extends Truffle.ContractInstance {
   initialize: () => void
@@ -19,7 +20,8 @@ export async function createProxy(
   implementation: Truffle.ContractInstance,
   appId: string,
   dao: KernelInstance,
-  web3: Web3
+  web3: Web3,
+  artifacts: TruffleEnvironmentArtifacts
 ): Promise<Truffle.ContractInstance> {
   const rootAccount: string = (await web3.eth.getAccounts())[0]
 

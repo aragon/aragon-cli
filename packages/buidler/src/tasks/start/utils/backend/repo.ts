@@ -6,6 +6,7 @@ import {
   APMRegistryInstance
 } from '~/typechain'
 import Web3 from 'web3'
+import { TruffleEnvironmentArtifacts } from '@nomiclabs/buidler-truffle5/src/artifacts'
 
 const ENS_REGISTRY_ADDRESS = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1'
 const APM_REGISTRY_ADDRESS = '0x32296d9f8fed89658668875dc73cacf87e8888b2'
@@ -18,14 +19,15 @@ const APM_REGISTRY_ADDRESS = '0x32296d9f8fed89658668875dc73cacf87e8888b2'
 export async function createRepo(
   appName: string,
   appId: string,
-  web3: Web3
+  web3: Web3,
+  artifacts: TruffleEnvironmentArtifacts
 ): Promise<RepoInstance> {
   // Retrieve the Repo address from ens, or create the Repo if nothing is retrieved.
   let repoAddress: string | null = await _ensResolve(appId, web3).catch(
     () => null
   )
   if (!repoAddress) {
-    repoAddress = await _createRepo(appName, web3)
+    repoAddress = await _createRepo(appName, web3, artifacts)
   }
 
   // Wrap Repo address with abi.
@@ -64,7 +66,11 @@ export async function updateRepo(
  * Creates a new APM repository.
  * @returns Promise<RepoInstance> An APM repository for the app.
  */
-async function _createRepo(appName: string, web3: Web3): Promise<string> {
+async function _createRepo(
+  appName: string,
+  web3: Web3,
+  artifacts: TruffleEnvironmentArtifacts
+): Promise<string> {
   const rootAccount: string = (await web3.eth.getAccounts())[0]
 
   // Retrieve APMRegistry.

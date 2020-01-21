@@ -23,11 +23,11 @@ import { AragonConfig } from '~/src/types'
  * and then returns an unresolving promise to keep the task open.
  */
 task(TASK_START, 'Starts Aragon app development').setAction(
-  async (params, bre: BuidlerRuntimeEnvironment) => {
+  async (params, env: BuidlerRuntimeEnvironment) => {
     console.log(`Starting...`)
 
-    const { daoAddress, appAddress } = await startBackend(bre)
-    await startFrontend(bre, daoAddress, appAddress)
+    const { daoAddress, appAddress } = await startBackend(env)
+    await startFrontend(env, daoAddress, appAddress)
 
     // Unresolving promise to keep task open.
     return new Promise(() => {})
@@ -43,32 +43,40 @@ task(TASK_START, 'Starts Aragon app development').setAction(
  * be used with an Aragon client to view the app.
  */
 async function startBackend(
-  bre: BuidlerRuntimeEnvironment
+  env: BuidlerRuntimeEnvironment
 ): Promise<{ daoAddress: string; appAddress: string }> {
   const appName = 'counter'
   const appId: string = getAppId(appName)
 
-  const config: AragonConfig = bre.config.aragon as AragonConfig
+  const config: AragonConfig = env.config.aragon as AragonConfig
 
-  await bre.run(TASK_COMPILE)
+  await env.run(TASK_COMPILE)
 
   // Read arapp.json
   const arapp = readArapp()
 
   // Prepare a DAO and a Repo to hold the app.
-  const dao: KernelInstance = await createDao(bre.web3)
-  const repo: RepoInstance = await createRepo(appName, appId, bre.web3)
+  const dao: KernelInstance = await createDao(env.web3, env.artifacts)
+  const repo: RepoInstance = await createRepo(
+    appName,
+    appId,
+    env.web3,
+    env.artifacts
+  )
 
   // Deploy first implementation and set it in the Repo and in a Proxy.
-  const implementation: Truffle.ContractInstance = await deployImplementation()
+  const implementation: Truffle.ContractInstance = await deployImplementation(
+    env.artifacts
+  )
   const proxy: Truffle.ContractInstance = await createProxy(
     implementation,
     appId,
     dao,
-    bre.web3
+    env.web3,
+    env.artifacts
   )
   await updateRepo(repo, implementation, config.appServePort as number)
-  await setAllPermissionsOpenly(dao, proxy, arapp, bre.web3)
+  await setAllPermissionsOpenly(dao, proxy, arapp, env.web3, env.artifacts)
 
   // Watch back-end files. Debounce for performance
   chokidar
@@ -77,12 +85,14 @@ async function startBackend(
     })
     .on('change', async () => {
       console.log(`<<< Triggering backend build >>>`)
-      await bre.run(TASK_COMPILE)
+      await env.run(TASK_COMPILE)
 
       // Update implementation and set it in Repo and Proxy.
-      const newImplementation: Truffle.ContractInstance = await deployImplementation()
+      const newImplementation: Truffle.ContractInstance = await deployImplementation(
+        env.artifacts
+      )
       await updateRepo(repo, newImplementation, config.appServePort as number)
-      await updateProxy(newImplementation, appId, dao, bre.web3)
+      await updateProxy(newImplementation, appId, dao, env.web3)
     })
 
   logBack(`
@@ -103,11 +113,11 @@ async function startBackend(
  * If changes are detected, the app's frontend is rebuilt.
  */
 async function startFrontend(
-  bre: BuidlerRuntimeEnvironment,
+  env: BuidlerRuntimeEnvironment,
   daoAddress: string,
   appAddress: string
 ): Promise<void> {
-  const config: AragonConfig = bre.config.aragon as AragonConfig
+  const config: AragonConfig = env.config.aragon as AragonConfig
 
   await installAragonClientIfNeeded()
 

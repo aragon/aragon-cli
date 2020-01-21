@@ -8,13 +8,17 @@ import {
   EVMScriptRegistryFactoryContract,
   EVMScriptRegistryFactoryInstance
 } from '~/typechain'
+import { TruffleEnvironmentArtifacts } from '@nomiclabs/buidler-truffle5/src/artifacts'
 import Web3 from 'web3'
 
 /**
  * Deploys a new DAO with direct/pure interaction with aragonOS.
  * @returns DAO's Kernel TruffleContract.
  */
-export async function createDao(web3: Web3): Promise<KernelInstance> {
+export async function createDao(
+  web3: Web3,
+  artifacts: TruffleEnvironmentArtifacts
+): Promise<KernelInstance> {
   const rootAccount: string = (await web3.eth.getAccounts())[0]
 
   // Retrieve contract artifacts.
