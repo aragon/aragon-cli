@@ -40,7 +40,8 @@ export async function createRepo(
  */
 export async function updateRepo(
   repo: RepoInstance,
-  implementation: Truffle.ContractInstance
+  implementation: Truffle.ContractInstance,
+  appServePort: number
 ): Promise<void> {
   // Calculate next valid semver.
   const semver: [number, number, number] = [
@@ -52,7 +53,7 @@ export async function updateRepo(
 
   // URI where this plugin is serving the app's front end.
   const contentURI = `0x${Buffer.from(
-    `http://localhost:${getConfig().appServePort}`
+    `http://localhost:${appServePort}`
   ).toString('hex')}`
 
   // Create a new version in the app's repo, with the new implementation.

@@ -16,6 +16,7 @@ import { KernelInstance, RepoInstance } from '~/typechain'
 import { getAppId } from './utils/id'
 import { logBack } from './utils/logger'
 import { readArapp } from './utils/arapp'
+import { AragonConfig } from '~/src/types'
 
 /**
  * Main, composite, task. Calls startBackend, then startFrontend,
@@ -24,9 +25,10 @@ import { readArapp } from './utils/arapp'
 task(TASK_START, 'Starts Aragon app development').setAction(
   async (params, bre: BuidlerRuntimeEnvironment) => {
     console.log(`Starting...`)
+    console.log(`bre`, bre)
 
     const { daoAddress, appAddress } = await startBackend(bre)
-    await startFrontend(daoAddress, appAddress)
+    await startFrontend(bre, daoAddress, appAddress)
 
     // Unresolving promise to keep task open.
     return new Promise(() => {})
@@ -47,6 +49,8 @@ async function startBackend(
   const appName = 'counter'
   const appId: string = getAppId(appName)
 
+  const config: AragonConfig = bre.config as AragonConfig
+
   await bre.run(TASK_COMPILE)
 
   // Read arapp.json
@@ -64,7 +68,7 @@ async function startBackend(
     dao,
     bre.web3
   )
-  await updateRepo(repo, implementation)
+  await updateRepo(repo, implementation, config.appServePort as number)
   await setAllPermissionsOpenly(dao, proxy, arapp, bre.web3)
 
   // Watch back-end files. Debounce for performance
@@ -78,7 +82,7 @@ async function startBackend(
 
       // Update implementation and set it in Repo and Proxy.
       const newImplementation: Truffle.ContractInstance = await deployImplementation()
-      await updateRepo(repo, newImplementation)
+      await updateRepo(repo, newImplementation, config.appServePort as number)
       await updateProxy(newImplementation, appId, dao, bre.web3)
     })
 
@@ -100,19 +104,25 @@ async function startBackend(
  * If changes are detected, the app's frontend is rebuilt.
  */
 async function startFrontend(
+  bre: BuidlerRuntimeEnvironment,
   daoAddress: string,
   appAddress: string
 ): Promise<void> {
+  const config: AragonConfig = bre.config as AragonConfig
+
   await installAragonClientIfNeeded()
 
-  await buildAppArtifacts()
+  await buildAppArtifacts(config.appBuildOutputPath as string)
 
   // Start Aragon client at the deployed address.
-  const url: string = await startAragonClient(`${daoAddress}/${appAddress}`)
+  const url: string = await startAragonClient(
+    config.clientServePort as number,
+    `${daoAddress}/${appAddress}`
+  )
   console.log(`You can now view the Aragon client in the browser.
  Local:  ${url}
 `)
 
   // Watch for changes to rebuild app.
-  await watchAppFrontEnd()
+  await watchAppFrontEnd(config.appSrcPath as string)
 }
