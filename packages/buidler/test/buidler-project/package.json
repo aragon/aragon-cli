@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "generate": "typechain --target truffle --outDir typechain 'artifacts/*.json'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

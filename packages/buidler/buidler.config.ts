@@ -1,8 +1,8 @@
-import 'tsconfig-paths/register'; // Needed to be able to use Typescript import paths.
-import { usePlugin, BuidlerConfig } from '@nomiclabs/buidler/config';
+import 'tsconfig-paths/register' // Needed to be able to use Typescript import paths.
+import { usePlugin, BuidlerConfig } from '@nomiclabs/buidler/config'
 
-usePlugin('@nomiclabs/buidler-truffle5');
-usePlugin('@nomiclabs/buidler-web3');
+usePlugin('@nomiclabs/buidler-truffle5')
+usePlugin('@nomiclabs/buidler-web3')
 
 const config: BuidlerConfig = {
   defaultNetwork: 'localhost',
@@ -18,6 +18,6 @@ const config: BuidlerConfig = {
   solc: {
     version: '0.4.24'
   }
-};
+}
 
-export default config;
+export default config

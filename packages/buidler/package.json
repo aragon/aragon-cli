@@ -16,6 +16,7 @@
     "lint": "eslint 'src/**/*.{js,ts}'",
     "prettier": "prettier --write '**/*.{ts,js,css,html}'",
     "test": "buidler test",
+    "test:mocha": "TS_NODE_PROJECT=tsconfig.json mocha --exit",
     "build": "tsc --build ."
   },
   "dependencies": {
