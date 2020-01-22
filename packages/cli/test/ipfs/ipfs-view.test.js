@@ -1,7 +1,8 @@
 import test from 'ava'
 import parseCli from '../parseCli'
 
-test.serial('ipfs view readme directory', async t => {
+// eslint-disable-next-line ava/no-skip-test
+test.skip('ipfs view readme directory', async t => {
   const stdout = await parseCli([
     'ipfs',
     'view',
@@ -10,4 +11,6 @@ test.serial('ipfs view readme directory', async t => {
   ])
 
   t.assert(stdout.includes('about'), "Directory doesn't contain about file")
+  t.assert(stdout.includes('help'), "Directory doesn't contain help file")
+  t.assert(stdout.includes('contact'), "Directory doesn't contain contact file")
 })

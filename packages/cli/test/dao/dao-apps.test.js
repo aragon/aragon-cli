@@ -12,6 +12,7 @@ test.serial('lists apps from DAO', async t => {
   t.assert(stdout.includes('App'))
   t.assert(stdout.includes('Proxy address'))
   t.assert(stdout.includes('Content'))
+  t.assert(stdout.includes('kernel'))
 })
 
 test.serial('lists all apps from DAO', async t => {

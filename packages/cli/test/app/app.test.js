@@ -86,4 +86,11 @@ test.serial('fetches packages', async t => {
   t.assert(output.includes('finance'), 'Missing finance')
   t.assert(output.includes('token-manager'), 'Missing token-manager')
   t.assert(output.includes('vault'), 'Missing vault')
+  t.assert(output.includes('voting'), 'Missing voting')
+  t.assert(output.includes('bare-template'), 'Missing bare-template')
+  t.assert(output.includes('company-template'), 'Missing company-template')
+  t.assert(
+    output.includes('membership-template'),
+    'Missing membership-template'
+  )
 })

@@ -15,6 +15,7 @@ test.serial('acl view', async t => {
   t.assert(stdout.includes('Action'))
   t.assert(stdout.includes('Allowed entities'))
   t.assert(stdout.includes('Manager'))
+  t.assert(stdout.includes('CREATE_PERMISSIONS_ROLE'))
 })
 
 test.serial('acl grant', async t => {
