@@ -19,10 +19,8 @@ test.serial('fetches app versions with full ens name', async t => {
 })
 
 test.serial('publish fails if not in an aragon project directory', async t => {
-  t.plan(1)
-
-  try {
-    await parseCli([
+  await t.throwsAsync(() => {
+    return parseCli([
       'apm',
       'publish',
       'major',
@@ -32,9 +30,7 @@ test.serial('publish fails if not in an aragon project directory', async t => {
       '--no-propagate-content',
       '--debug',
     ])
-  } catch (err) {
-    t.assert(err.message.includes('This directory is not an Aragon project'))
-  }
+  })
 })
 
 test.serial('grant fails if not in an aragon project directory', async t => {
