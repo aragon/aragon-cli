@@ -28,9 +28,6 @@ task(TASK_START, 'Starts Aragon app development').setAction(
 
     const { daoAddress, appAddress } = await startBackend(env)
     await startFrontend(env, daoAddress, appAddress)
-
-    // Unresolving promise to keep task open.
-    return new Promise(() => {})
   }
 )
 
