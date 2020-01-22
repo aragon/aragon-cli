@@ -12,11 +12,13 @@
     "ethereum"
   ],
   "scripts": {
-    "generate": "typechain --target truffle --outDir typechain 'artifacts/*.json'",
+    "compile-contracts": "buidler compile",
+    "generate-contract-types": "typechain --target truffle --outDir typechain 'artifacts/*.json'",
     "lint": "eslint 'src/**/*.{js,ts}'",
     "prettier": "prettier --write '**/*.{ts,js,css,html}'",
     "test": "mocha --exit",
-    "build": "tsc --build ."
+    "build-typescript": "tsc --build .",
+    "build": "npm run compile-contracts && npm run generate-contract-types && npm run build-typescript"
   },
   "dependencies": {
     "@aragon/os": "4.0.1",

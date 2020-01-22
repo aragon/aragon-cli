@@ -8,12 +8,7 @@ import {
   setAllPermissionsOpenly,
   ANY_ADDRESS
 } from '~/src/tasks/start/utils/backend/permissions'
-import {
-  KernelInstance,
-  ACLContract,
-  ACLInstance,
-  CounterInstance
-} from '~/typechain'
+import { KernelInstance, ACLContract, ACLInstance } from '~/typechain'
 import { getAppId } from '~/src/tasks/start/utils/id'
 import { useDefaultEnvironment } from '~/test/test-helpers/useEnvironment'
 
@@ -22,8 +17,8 @@ describe('permissions.ts', function() {
 
   let dao: KernelInstance
   let acl: ACLInstance
-  let app: CounterInstance
   let arapp: AragonAppJson
+  let app: any
 
   before('set up dao with app', async function() {
     dao = await createDao(this.env.web3, this.env.artifacts)
@@ -33,13 +28,13 @@ describe('permissions.ts', function() {
 
     const implementation = await deployImplementation(this.env.artifacts)
     const appId = getAppId('counter')
-    app = (await createProxy(
+    app = await createProxy(
       implementation,
       appId,
       dao,
       this.env.web3,
       this.env.artifacts
-    )) as CounterInstance
+    )
 
     arapp = readArapp()
   })
