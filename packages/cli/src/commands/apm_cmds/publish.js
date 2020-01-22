@@ -164,7 +164,6 @@ export const handler = async function({
     initialVersion,
     version,
     contract: contractAddress,
-    deployArtifacts,
   } = await runSetupTask({
     reporter,
     gasPrice,
@@ -210,7 +209,6 @@ export const handler = async function({
     initialVersion,
     version,
     contractAddress,
-    deployArtifacts,
   })
 
   // Output publish info

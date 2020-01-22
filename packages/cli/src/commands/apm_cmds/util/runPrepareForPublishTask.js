@@ -1,6 +1,13 @@
 import tmp from 'tmp-promise'
 import TaskList from 'listr'
-import { APM_INITIAL_VERSIONS, apmPublishVersionIntent } from '@aragon/toolkit'
+import path from 'path'
+import fs from 'fs'
+import { readJsonSync } from 'fs-extra'
+import {
+  APM_INITIAL_VERSIONS,
+  apmPublishVersionIntent,
+  generateApplicationArtifact,
+} from '@aragon/toolkit'
 //
 import listrOpts from '../../../helpers/listr-options'
 
@@ -8,7 +15,6 @@ import askToConfirm from '../../../lib/publish/askToConfirm'
 import { prepareFilesForPublishing } from '../../../lib/publish/preprareFiles'
 import {
   changeManifestForHttpServedFrom,
-  generateApplicationArtifact,
   writeApplicationArtifact,
   flattenCodeFileExists,
   generateFlattenedCode,
@@ -16,6 +22,7 @@ import {
   checkIfNewArticatIsIdentical,
   copyCurrentApplicationArtifacts,
 } from '../../../lib/apm/generateArtifact'
+const readFile = fs.promises.readFile
 
 /**
  * ctx mandatory output
@@ -54,7 +61,6 @@ export default async function runPrepareForPublishTask({
   initialVersion,
   version,
   contractAddress,
-  deployArtifacts,
 }) {
   return new TaskList(
     [
@@ -113,25 +119,21 @@ export default async function runPrepareForPublishTask({
           }
 
           async function invokeArtifactGeneration() {
-            const {
-              artifact,
-              missingArtifactVersions,
-            } = await generateApplicationArtifact(
-              web3,
+            const contractInterfacePath = path.resolve(
               cwd,
-              deployArtifacts,
-              arapp,
-              apmOptions
+              'build/contracts',
+              path.basename(contractPath, '.sol') + '.json'
             )
-            if (missingArtifactVersions.length) {
-              const missingVersionsList = missingArtifactVersions.join(', ')
-              return askToConfirm(
-                `Cannot find artifacts for versions ${missingVersionsList} in aragonPM.\nPlease make sure the package was published and your IPFS or HTTP server are running.\nContinue?`,
-                () => performArtifcatGeneration(artifact)
-              )
-            } else {
-              return performArtifcatGeneration(artifact)
-            }
+
+            const contractInterface = readJsonSync(contractInterfacePath)
+            const sourceCode = await readFile(contractPath, 'utf8')
+
+            const artifact = await generateApplicationArtifact(
+              arapp,
+              contractInterface.abi,
+              sourceCode
+            )
+            performArtifcatGeneration(artifact)
           }
 
           // If an artifact file exist we check it to reuse
