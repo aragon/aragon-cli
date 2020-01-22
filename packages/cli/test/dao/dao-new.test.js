@@ -43,5 +43,12 @@ test.serial('creates a new DAO with a custom template', async t => {
   ])
   const daoAddress = stdout.match(daoAddressRegex)[1]
 
+  const appStdout = await parseCli(['dao', 'apps', daoAddress, '--debug'])
+
+  t.assert(appStdout.includes('voting'))
+  t.assert(appStdout.includes('token-manager'))
+  t.assert(appStdout.includes('finance'))
+  t.assert(appStdout.includes('agent'))
+
   t.assert(/0x[a-fA-F0-9]{40}/.test(daoAddress), 'Invalid DAO address')
 })
