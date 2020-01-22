@@ -1,4 +1,22 @@
 # Each line is a file pattern followed by one or more owners.
 
-# These owners will be the default owners for everything in the repo.
-*       @0x6431346e @0xGabi
+# Buidler pluggin owners
+*       packages/buidler @ajsantander
+
+# Aragon cli owners
+*       packages/cli @macor161 @0xGabi
+
+# Toolkit owners
+*       packages/toolkit @0xGabi
+
+# create-aragon-app owners
+*       packages/create-aragon-app @0xGabi @macor161
+
+
+# Subject experts owners
+
+# IPFS
+*       packages/cli/src/commands/ipfs_cmds @0x6431346e
+*       packages/cli/src/commands/ipfs.js @0x6431346e
+*       packages/toolkit/src/ipfs @0x6431346e
+*       packages/toolkit/test/ipfs @0x6431346e
