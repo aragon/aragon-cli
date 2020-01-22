@@ -41,7 +41,7 @@
   "dependencies": {
     "chalk": "^3.0.0",
     "engine-check": "^1.0.1",
-    "execa": "^3.0.0",
+    "execa": "^4.0.0",
     "figures": "^3.0.0",
     "fs-extra": "^8.0.1",
     "git-clone": "^0.1.0",

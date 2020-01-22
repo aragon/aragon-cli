@@ -41,7 +41,7 @@
     "byte-size": "^6.2.0",
     "eth-ens-namehash": "^2.0.8",
     "ethereum-ens": "^0.7.8",
-    "execa": "^3.0.0",
+    "execa": "^4.0.0",
     "fs-extra": "^8.1.0",
     "get-folder-size": "^2.0.1",
     "go-platform": "^1.0.0",
