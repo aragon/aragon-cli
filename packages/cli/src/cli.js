@@ -89,9 +89,7 @@ export function init(cb) {
 
   // Runs if command.handler throws
   cli.fail((...args) => {
-    return cb 
-      ? cb(args[1]) 
-      : AragonReporter.errorHandler(...args)
+    return cb ? cb(args[1]) : AragonReporter.errorHandler(...args)
   })
 
   return cli
