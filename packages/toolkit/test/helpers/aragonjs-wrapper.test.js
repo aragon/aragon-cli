@@ -81,8 +81,8 @@ async function createDAO() {
   const repo = await getApmRepo(
     web3,
     defaultAPMName('membership-template'),
-    'latest',
-    { ensRegistryAddress }
+    { ensRegistryAddress },
+    'latest'
   )
 
   const daoAddress = await newDao({
