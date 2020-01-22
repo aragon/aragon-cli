@@ -23,8 +23,8 @@ test('getAllApps returns the correct apps', async t => {
   const repo = await getApmRepo(
     web3,
     defaultAPMName('bare-template'),
-    'latest',
-    { ensRegistryAddress: ens }
+    { ensRegistryAddress: ens },
+    'latest'
   )
 
   const daoAddress = await newDao({

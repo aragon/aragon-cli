@@ -20,8 +20,8 @@ test('Deploys DAO with valid template', async t => {
   const repo = await getApmRepo(
     web3,
     defaultAPMName('bare-template'),
-    'latest',
-    { ensRegistryAddress: ens }
+    { ensRegistryAddress: ens },
+    'latest'
   )
 
   const daoAddress = await newDao({
@@ -41,8 +41,8 @@ test('Deploys DAO with template with custom newInstance method and args', async 
   const repo = await getApmRepo(
     web3,
     defaultAPMName('membership-template'),
-    'latest',
-    { ensRegistryAddress: ens }
+    { ensRegistryAddress: ens },
+    'latest'
   )
 
   const daoAddress = await newDao({
@@ -70,8 +70,8 @@ test('Throws with invalid newInstance', async t => {
   const repo = await getApmRepo(
     web3,
     defaultAPMName('bare-template'),
-    'latest',
-    { ensRegistryAddress: ens }
+    { ensRegistryAddress: ens },
+    'latest'
   )
 
   await t.throwsAsync(
@@ -91,8 +91,8 @@ test('Throws with invalid deploy event', async t => {
   const repo = await getApmRepo(
     web3,
     defaultAPMName('bare-template'),
-    'latest',
-    { ensRegistryAddress: ens }
+    { ensRegistryAddress: ens },
+    'latest'
   )
 
   await t.throwsAsync(
