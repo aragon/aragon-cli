@@ -35,9 +35,9 @@ import {
 import { task as startTask } from './start'
 import { arappContract, task as deployTask } from './deploy'
 import {
-  runSetupTask,
-  runPrepareForPublishTask,
-  runPublishTask,
+  setupTask,
+  prepareForPublishTask,
+  publishTask,
 } from './apm_cmds/publish'
 
 const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
@@ -290,13 +290,13 @@ export const handler = async function({
             httpServedFrom,
           }
 
-          return runSetupTask(ctx.publishParams)
+          return setupTask(ctx.publishParams)
         },
       },
       {
         title: 'Prepare for publish',
         task: async ctx =>
-          runPrepareForPublishTask({
+          prepareForPublishTask({
             ...ctx.publishParams,
             // context
             initialRepo: ctx.initialRepo,
@@ -311,7 +311,7 @@ export const handler = async function({
         task: async ctx => {
           const { dao, proxyAddress, methodName, params } = ctx.intent
 
-          return runPublishTask({
+          return publishTask({
             ...ctx.publishParams,
             // context
             version: ctx.version,
@@ -343,8 +343,8 @@ export const handler = async function({
           ctx.repo = await getApmRepo(
             ctx.web3,
             apmRepoName,
-            'latest',
             apmOptions,
+            'latest',
             progressHandler
           )
         },
@@ -374,8 +374,8 @@ export const handler = async function({
           ctx.template = await getApmRepo(
             ctx.web3,
             template,
-            'latest',
-            apmOptions
+            apmOptions,
+            'latest'
           )
         },
         enabled: ctx => !ctx.contractInstance,

@@ -68,8 +68,8 @@ export const handler = async function({
           ctx.repo = await getApmRepo(
             web3,
             apmRepoName,
-            apmRepoVersion,
             apmOptions,
+            apmRepoVersion,
             progressHandler
           )
         },
