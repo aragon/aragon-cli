@@ -2,9 +2,7 @@ import path from 'path'
 import fsExtra from 'fs-extra'
 import { execaLogTo } from '../execa'
 import { logFront } from '../logger'
-// TODO: Import using @aragon/toolkit
-/* import * as toolkit from '@aragon/artifacts' */
-import * as toolkit from '../../../../../node_modules/@aragon/toolkit/dist/helpers/generateArtifact.js'
+import * as toolkit from '@aragon/toolkit/dist/helpers/generateArtifact.js'
 import { readArapp, getMainContractName, getMainContractPath } from '../arapp'
 import { TruffleEnvironmentArtifacts } from '@nomiclabs/buidler-truffle5/src/artifacts'
 
