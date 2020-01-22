@@ -6,24 +6,33 @@ import { init } from '../src/cli'
  * Must be used with the '--debug' argument.
  *
  * @param {string[]} args Command arguments
+ * @param {number} timeout Command timeout time in ms
  */
-async function main(args) {
+async function parseCli(args, timeout) {
   return new Promise((resolve, reject) => {
     let output = ''
-    const cli = init(err => {
-      console.log = log
+    let completed = false
 
-      if (err) return reject(err)
+    const onComplete = err => {
+      if (!completed) {
+        console.log = log
+        completed = true
 
-      resolve(stripAnsi(output))
-    })
+        if (err) return reject(err)
+
+        resolve(stripAnsi(output))
+      }
+    }
+    const cli = init(onComplete)
 
     const log = console.log
     console.log = (...str) => (output = `${output}${str.join(' ')}\n`)
     cli.parse(args, err => {
       if (err) return reject(err)
     })
+
+    if (timeout) setTimeout(onComplete, timeout)
   })
 }
 
-export default main
+export default parseCli

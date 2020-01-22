@@ -37,6 +37,17 @@ test.serial('publish fails if not in an aragon project directory', async t => {
   }
 })
 
+test.serial('grant fails if not in an aragon project directory', async t => {
+  await t.throwsAsync(async () => {
+    return parseCli([
+      'apm',
+      'grant',
+      '0x8401Eb5ff34cc943f096A32EF3d5113FEbE8D4Eb',
+      '--debug',
+    ])
+  })
+})
+
 test.serial('fetches app info', async t => {
   const output = await parseCli(['apm', 'info', 'finance', '--debug'])
 
