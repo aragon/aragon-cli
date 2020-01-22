@@ -2,6 +2,11 @@ import path from 'path'
 import fsExtra from 'fs-extra'
 import { execaLogTo } from '../execa'
 import { logFront } from '../logger'
+// TODO: Import using @aragon/toolkit
+/* import * as toolkit from '@aragon/artifacts' */
+import * as toolkit from '../../../../../node_modules/@aragon/toolkit/dist/helpers/generateArtifact.js'
+import { readArapp, getMainContractName, getMainContractPath } from '../arapp'
+import { TruffleEnvironmentArtifacts } from '@nomiclabs/buidler-truffle5/src/artifacts'
 
 export const manifestPath = 'manifest.json'
 export const artifactPath = 'artifact.json'
@@ -22,12 +27,47 @@ export async function watchAppFrontEnd(appSrcPath: string): Promise<void> {
  * - artifact.json
  */
 export async function buildAppArtifacts(
-  appBuildOutputPath: string
+  appBuildOutputPath: string,
+  artifacts: TruffleEnvironmentArtifacts
 ): Promise<void> {
-  for (const filePath of [manifestPath, artifactPath]) {
-    await fsExtra.copy(
-      filePath,
-      path.join(appBuildOutputPath as string, filePath)
-    )
-  }
+  await _copyManifest(appBuildOutputPath)
+  await _generateUriArtifacts(appBuildOutputPath, artifacts)
+}
+
+async function _copyManifest(appBuildOutputPath: string): Promise<void> {
+  await fsExtra.copy(
+    manifestPath,
+    path.join(appBuildOutputPath as string, manifestPath)
+  )
+}
+
+async function _generateUriArtifacts(
+  appBuildOutputPath: string,
+  artifacts: TruffleEnvironmentArtifacts
+): Promise<void> {
+  // Retrieve main contract abi.
+  const mainContractName: string = getMainContractName()
+  const App: any = artifacts.require(mainContractName)
+  const abi = App.abi
+
+  // Retrieve contract source code.
+  const mainContractPath = getMainContractPath()
+  const source = await fsExtra.readFileSync(mainContractPath, 'utf8')
+
+  // Retrieve arapp file.
+  const arapp = readArapp()
+
+  // Generate artifacts file.
+  const appArtifacts = await toolkit.generateApplicationArtifact(
+    arapp,
+    abi,
+    source
+  )
+
+  // Write artifacts to file.
+  await fsExtra.writeJSON(
+    path.join(appBuildOutputPath as string, 'artifact.json'),
+    appArtifacts,
+    { spaces: 2 }
+  )
 }

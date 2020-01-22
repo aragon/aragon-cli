@@ -118,7 +118,7 @@ async function startFrontend(
 
   await installAragonClientIfNeeded()
 
-  await buildAppArtifacts(config.appBuildOutputPath as string)
+  await buildAppArtifacts(config.appBuildOutputPath as string, env.artifacts)
 
   // Start Aragon client at the deployed address.
   const url: string = await startAragonClient(
