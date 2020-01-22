@@ -2,7 +2,6 @@ import tmp from 'tmp-promise'
 import TaskList from 'listr'
 import path from 'path'
 import fs from 'fs'
-import { promisify } from 'util'
 import { readJsonSync } from 'fs-extra'
 import {
   APM_INITIAL_VERSIONS,
@@ -23,7 +22,7 @@ import {
   checkIfNewArticatIsIdentical,
   copyCurrentApplicationArtifacts,
 } from '../../../lib/apm/generateArtifact'
-const readFile = promisify(fs.readFile)
+const readFile = fs.promises.readFile
 
 /**
  * ctx mandatory output
@@ -120,19 +119,6 @@ export default async function runPrepareForPublishTask({
           }
 
           async function invokeArtifactGeneration() {
-            // const {
-            //   artifact,
-            //   missingArtifactVersions,
-            // } = await generateApplicationArtifact(arapp)
-            // if (missingArtifactVersions.length) {
-            //   const missingVersionsList = missingArtifactVersions.join(', ')
-            //   return askToConfirm(
-            //     `Cannot find artifacts for versions ${missingVersionsList} in aragonPM.\nPlease make sure the package was published and your IPFS or HTTP server are running.\nContinue?`,
-            //     () => performArtifcatGeneration(artifact)
-            //   )
-            // } else {
-            //   return performArtifcatGeneration(artifact)
-            // }
             const contractInterfacePath = path.resolve(
               cwd,
               'build/contracts',
