@@ -10,8 +10,11 @@ import { init } from '../src/cli'
 async function main(args) {
   return new Promise((resolve, reject) => {
     let output = ''
-    const cli = init(() => {
+    const cli = init(err => {
       console.log = log
+
+      if (err) return reject(err)
+
       resolve(stripAnsi(output))
     })
 
