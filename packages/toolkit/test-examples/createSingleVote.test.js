@@ -46,7 +46,6 @@ test.serial(
     const repo = await getApmRepo(
       web3,
       'membership-template.aragonpm.eth',
-      'latest',
       options.apm
     )
 
