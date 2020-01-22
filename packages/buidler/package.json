@@ -35,7 +35,6 @@
     "ethjs-ens": "^2.0.1",
     "execa": "^4.0.0",
     "fs-extra": "^8.1.0",
-    "lodash": "^4.17.15",
     "open": "^7.0.0",
     "truffle-typings": "^1.0.8",
     "ts-node": "^8.5.4",
