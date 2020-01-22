@@ -9,8 +9,14 @@ import {
   openClient,
 } from '../lib/start'
 
-import pkg from '../../package.json'
+import {
+  isLocalDaemonRunning,
+  startLocalDaemon,
+  getBinaryPath,
+  getDefaultRepoPath,
+} from '@aragon/toolkit'
 
+import pkg from '../../package.json'
 import { installDeps } from '../util'
 
 const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
@@ -85,6 +91,15 @@ export const task = async function({
         await buildClient(ctx, clientPath)
       },
       enabled: ctx => !ctx.clientAvailable,
+    },
+    {
+      title: 'Start IPFS',
+      skip: async () => isLocalDaemonRunning(),
+      task: async () => {
+        await startLocalDaemon(getBinaryPath(), getDefaultRepoPath(), {
+          detached: false,
+        })
+      },
     },
     {
       title: 'Starting Aragon client',

@@ -7,7 +7,7 @@ branches:
 notifications:
   email: false
 node_js:
-  # - '12'
+  - '12'
   - '11'
   - '10'
 before_script:
@@ -22,7 +22,7 @@ script:
   - npm run test:integration
   - npm run posttest
 after_success:
-  - test $TRAVIS_NODE_VERSION = "11" && npm run report-coverage
+  - test $TRAVIS_NODE_VERSION = "12" && npm run report-coverage
 before_deploy:
   - echo 'Preparing to deploy to NPM'
   - echo 'Cleaning any uncommitted changes'

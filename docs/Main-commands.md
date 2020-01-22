@@ -20,6 +20,7 @@ Available options to customize the `run` command:
 - `--reset`: If reset is present it will reset the devchain before running. The chain will then start from scratch and all published packages will need to be recreated.
 - `--port`: The port where the devchain will be started.
 - `--network-id`: Network id to connect with.
+- `--hardfork`: Allows to specify which hardfork should be used. Supported hardforks are byzantium, constantinople, petersburg, and istanbul (default).
 - `--block-time`: Specify blockTime in seconds for automatic mining.
 - `--accounts`: Number of accounts to print. Defaults to `2`.
 - `--files`: The path to the files that will be published. Defaults to the current directory.
@@ -96,6 +97,7 @@ Options:
 - `--reset`: Resets the devchain to the snapshot.
 - `--port`: The port number where the devchain will be started. Defaults to `8545`.
 - `--network-id`: Network id to connect with.
+- `--hardfork`: Allows to specify which hardfork should be used. Supported hardforks are byzantium, constantinople, petersburg, and istanbul (default).
 - `--block-time`: Specify blockTime in seconds for automatic mining.
 - `--gas-limit`: Block gas limit. Must be specified as a hex string.
 - `--accounts`: Number of accounts to print.

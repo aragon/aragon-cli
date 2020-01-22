@@ -29,10 +29,22 @@ _Note: [npx](https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner
 
 # Tests
 
+In the root of the repository, run:
+
+```sh
+npm run pretest
+```
+
+And then in packages/create-aragon-app, run:
+
+```sh
+npm test
+```
+
 To test only one file, try:
 
 ```sh
-npm test -- test/version/version.test.js
+npm test -- <path to test file>
 ```
 
 ## Local environment

@@ -12,3 +12,10 @@ export const DEFAULT_GAS_FUZZ_FACTOR = 1.5
 export const LAST_BLOCK_GAS_LIMIT_FACTOR = 0.95
 
 export const EXECUTE_FUNCTION_NAME = 'execute'
+
+export const APM_INITIAL_VERSIONS = ['0.0.1', '0.1.0', '1.0.0']
+
+export const MANIFEST_FILE = 'manifest.json'
+export const ARTIFACT_FILE = 'artifact.json'
+export const SOLIDITY_FILE = 'code.sol'
+export const ARAPP_FILE = 'arapp.json'
