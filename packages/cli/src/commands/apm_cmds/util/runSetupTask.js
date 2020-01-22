@@ -83,7 +83,7 @@ export default async function runSetupTask({
     contract = ZERO_ADDRESS
   }
 
-  const appName = module.appName
+  const appName = module && module.appName
   /**
    * Flag for the Deploy contract task
    * @type {boolean}
