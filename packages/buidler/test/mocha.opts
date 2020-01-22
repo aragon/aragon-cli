@@ -4,4 +4,4 @@
 --require source-map-support/register
 --recursive test/**/*.ts
 --exclude test/buidler-project/**/*.ts
---timeout 10000
+--timeout 60000
