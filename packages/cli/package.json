@@ -49,7 +49,6 @@
   },
   "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
-    "@aragon/apm": "^3.1.3",
     "@aragon/toolkit": "^0.0.3",
     "@aragon/truffle-config-v5": "^1.0.0",
     "ajv": "^6.6.2",
@@ -86,7 +85,7 @@
     "web3": "^1.2.4",
     "web3-utils": "^1.2.4",
     "which": "^2.0.1",
-    "yargs": "git://github.com/yargs/yargs.git#fe380cd356aa33aef0449facd59c22cab8930ac9"
+    "yargs": "^15.1.0"
   },
   "devDependencies": {
     "@aragon/apps-agent": "^2.0.0",
