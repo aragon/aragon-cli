@@ -42,8 +42,8 @@ export const handler = async function({
   const apmRepoObject = await getApmRepo(
     web3,
     apmRepoName,
-    apmRepoVersion,
     apmOptions,
+    apmRepoVersion,
     progressHandler
   )
   // TODO: Improve parsing of abi and env to display useful information
