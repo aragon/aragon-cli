@@ -78,7 +78,7 @@
     "ncp": "^2.0.0",
     "open": "^7.0.0",
     "public-ip": "^3.1.0",
-    "rimraf": "^2.6.2",
+    "rimraf": "^3.0.0",
     "semver": "^6.1.1",
     "source-map-support": "^0.5.11",
     "tmp-promise": "^2.0.1",
