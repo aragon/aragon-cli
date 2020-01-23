@@ -1,7 +1,15 @@
 const kernelAbi = require('@aragon/os/build/contracts/Kernel').abi
 const aclAbi = require('@aragon/os/build/contracts/ACL').abi
 
-export const userHasCreatePermissionRole = async (daoAddr, web3) => {
+/**
+ * Return a task list for viewing DAO ACL permissions
+ *
+ * @param  {string} dao DAO address or ENS name
+ * @param  {string} address IPFS config
+ * @param  {web3} web3 Web3
+ * @return {boolean} Address has create role permission
+ */
+export default async (daoAddr, address, web3) => {
   const dao = new web3.eth.Contract(kernelAbi, daoAddr)
   const aclAddr = await dao.methods.acl().call()
   const acl = new web3.eth.Contract(aclAbi, aclAddr)
@@ -10,14 +18,9 @@ export const userHasCreatePermissionRole = async (daoAddr, web3) => {
     .CREATE_PERMISSIONS_ROLE()
     .call()
 
-  const accounts = await web3.eth.getAccounts()
-  const userAddress = accounts[0]
-  if (!userAddress) throw Error(`Error getting accounts from web3`)
+  const hasPermission = await acl.methods
+    .hasPermission(address, aclAddr, createPermissionsRoleId)
+    .call()
 
-  const hasPermission = await acl.methods.hasPermission(
-    userAddress,
-    aclAddr,
-    createPermissionsRoleId
-  )
   return hasPermission
 }

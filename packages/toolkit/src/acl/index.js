@@ -1,4 +1,4 @@
 export * from './params'
 export * from './view'
 export * from './viewFormatter'
-export * from './userHasCreatePermissionRole'
+export { default as userHasCreatePermissionRole } from './userHasCreatePermissionRole'
