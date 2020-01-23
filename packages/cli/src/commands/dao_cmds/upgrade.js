@@ -4,6 +4,10 @@ import {
   getBasesNamespace,
   resolveAddressOrEnsDomain,
   defaultAPMName,
+  startLocalDaemon,
+  getBinaryPath,
+  getDefaultRepoPath,
+  isLocalDaemonRunning,
   getApmRepo,
 } from '@aragon/toolkit'
 //
@@ -50,6 +54,15 @@ export const handler = async function({
 
   const tasks = new TaskList(
     [
+      {
+        title: 'Start IPFS',
+        skip: async () => isLocalDaemonRunning(),
+        task: async () => {
+          await startLocalDaemon(getBinaryPath(), getDefaultRepoPath(), {
+            detached: false,
+          })
+        },
+      },
       {
         title: `Fetching ${bold(apmRepoName)}@${apmRepoVersion}`,
         skip: ctx => ctx.repo, // only run if repo isn't passed

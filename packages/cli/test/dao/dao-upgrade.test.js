@@ -10,5 +10,6 @@ test.serial('upgrades an app', async t => {
   await parseCli(['dao', 'install', id, 'vault', '--debug'])
   const stdout = await parseCli(['dao', 'upgrade', id, 'vault', '--debug'])
 
+  t.assert(stdout.includes('Start IPFS'))
   t.assert(stdout.includes('Successfully executed'), 'Unable to upgrade vault')
 })

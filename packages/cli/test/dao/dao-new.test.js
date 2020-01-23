@@ -9,6 +9,7 @@ test.serial('creates a new DAO', async t => {
   const stdout = await parseCli(['dao', 'new', '--debug'])
   const daoAddress = stdout.match(daoAddressRegex)[1]
 
+  t.assert(stdout.includes('Start IPFS'))
   t.assert(/0x[a-fA-F0-9]{40}/.test(daoAddress), 'Invalid DAO address')
 })
 
