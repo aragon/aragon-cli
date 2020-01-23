@@ -2,6 +2,8 @@ import test from 'ava'
 //
 import parseCli from '../parseCli'
 
+// TODO: Install app with account not allowed
+
 test.serial('installs a new app', async t => {
   const date = new Date().getTime()
   const id = `newdao${date}`
