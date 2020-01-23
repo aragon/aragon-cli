@@ -16,6 +16,7 @@ import {
   getDefaultRepoPath,
   isLocalDaemonRunning,
   getApmRepo,
+  userHasCreatePermissionRole,
 } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
@@ -75,6 +76,10 @@ export const handler = async function({
     web3,
     apmOptions.ensRegistryAddress
   )
+
+  // Verify that user has permissions to install
+  if (!(await userHasCreatePermissionRole(dao, web3)))
+    throw Error(`You don't have permission install an app`)
 
   const tasks = new TaskList(
     [
