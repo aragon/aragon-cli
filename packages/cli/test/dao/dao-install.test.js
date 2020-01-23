@@ -7,17 +7,11 @@ test.serial('installs a new app', async t => {
   const id = `newdao${date}`
 
   await parseCli(['dao', 'new', '--debug', '--aragon-id', id])
-  const installStdout = await parseCli([
-    'dao',
-    'install',
-    id,
-    'vault',
-    '--debug',
-  ])
+  const stdout = await parseCli(['dao', 'install', id, 'vault', '--debug'])
 
   t.assert(stdout.includes('Start IPFS'))
   t.assert(
-    installStdout.includes('Installed vault.aragonpm.eth'),
+    stdout.includes('Installed vault.aragonpm.eth'),
     'Unable to install vault'
   )
 })
