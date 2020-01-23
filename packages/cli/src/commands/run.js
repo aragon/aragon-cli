@@ -228,6 +228,9 @@ export const handler = async function({
     )
   }
 
+  // Set prepublish to true if --prepublish-script argument is used
+  if (process.argv.includes('--prepublish-script')) prepublish = true
+
   const showAccounts = accounts
 
   const tasks = new TaskList(
