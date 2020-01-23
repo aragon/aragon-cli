@@ -86,7 +86,7 @@ export const task = async ({
       {
         title: `Fetching template ${bold(template)}@${templateVersion}`,
         task: async () => {
-          repo = await getApmRepo(web3, template, templateVersion, apmOptions)
+          repo = await getApmRepo(web3, template, apmOptions, templateVersion)
         },
         enabled: () => !templateInstance,
       },

@@ -49,7 +49,6 @@
   },
   "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
-    "@aragon/apm": "3.1.2-beta.3",
     "@aragon/toolkit": "^0.0.3",
     "@aragon/truffle-config-v5": "^1.0.0",
     "ajv": "^6.6.2",
@@ -59,7 +58,7 @@
     "dev-null": "^0.1.1",
     "engine-check": "^1.0.1",
     "eth-ens-namehash": "^2.0.8",
-    "execa": "^3.0.0",
+    "execa": "^4.0.0",
     "figures": "^3.0.0",
     "find-process": "^1.4.2",
     "find-up": "^4.0.0",
@@ -69,6 +68,7 @@
     "ignore": "^4.0.6",
     "inquirer": "^7.0.0",
     "internal-ip": "^5.0.0",
+    "is-ipfs": "^0.6.3",
     "listr": "^0.14.3",
     "listr-input": "0.2.0",
     "listr-silent-renderer": "^1.1.1",
@@ -86,7 +86,7 @@
     "web3": "^1.2.4",
     "web3-utils": "^1.2.4",
     "which": "^2.0.1",
-    "yargs": "git://github.com/yargs/yargs.git#fe380cd356aa33aef0449facd59c22cab8930ac9"
+    "yargs": "^15.1.0"
   },
   "devDependencies": {
     "@aragon/apps-agent": "^2.0.0",
@@ -122,6 +122,7 @@
     "prettier": "^1.15.3",
     "proxyquire": "^2.1.0",
     "sinon": "^7.3.1",
+    "strip-ansi": "^6.0.0",
     "truffle": "^5.1.6"
   },
   "engines": {

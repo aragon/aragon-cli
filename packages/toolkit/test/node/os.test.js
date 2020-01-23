@@ -1,7 +1,7 @@
 import test from 'ava'
 import fs from 'fs-extra'
 //
-import { getLocalBinary } from '../../src/node'
+import { getLocalBinary, getBinary } from '../../src/node'
 
 const TMP_DIR = '.tmp/node/os'
 const LOCAL_PATH = `${TMP_DIR}/local`
@@ -47,6 +47,24 @@ test("getLocalBinary should find the binary path from the parent node_modules ev
   )
 
   t.is(normalizePath(binaryPath), `${PARENT_PATH}/node_modules/.bin/truffle`)
+})
+
+test('getBinary should find the binary path', t => {
+  const binaryPath = getBinary(
+    'truffle',
+    `${PARENT_PATH}/node_modules/@scope/package`
+  )
+
+  t.is(normalizePath(binaryPath), `${PARENT_PATH}/node_modules/.bin/truffle`)
+})
+
+test('getBinary should return null on invalid path', t => {
+  const binaryPath = getBinary(
+    'invalid-binary',
+    `${PARENT_PATH}/node_modules/@scope/package`
+  )
+
+  t.is(binaryPath, null)
 })
 
 function normalizePath(path) {

@@ -22,6 +22,7 @@ export function normalizeOutput(stdout) {
     .replace(/ℹ/g, 'i')
     // TODO: remove after https://github.com/aragon/aragon-cli/issues/367 is fixed
     .replace(/cli.js/g, 'aragon')
+    .replace(/index.js/g, 'aragon')
     // replace homedir in paths
     .replace(new RegExp(os.homedir(), 'g'), '~')
     // sometimes there's an extra LF
@@ -71,27 +72,34 @@ export const installDeps = (cwd, task) => {
   })
 }
 
-// TODO: Add a cwd paramter
-export const runScriptTask = async (task, scriptName) => {
+/**
+ * Run a npm script.
+ * @param {string} scriptName
+ * @return {Promise<string>} feeback, if the helper aborts early it may return
+ * a string with a reason message
+ */
+export const runScriptHelper = async (scriptName, logCallback) => {
   if (!fs.existsSync('package.json')) {
-    task.skip('No package.json found')
-    return
+    return 'No package.json found'
   }
 
-  const packageJson = await readJson('package.json')
-  const scripts = packageJson.scripts || {}
+  const { scripts = {} } = await readJson('package.json')
   if (!scripts[scriptName]) {
-    task.skip(`${scriptName} script not defined in package.json`)
-    return
+    return `${scriptName} script not defined in package.json`
   }
 
   const bin = getNodePackageManager()
+  const scriptProcess = execa(bin, ['run', scriptName])
+
+  scriptProcess.stdout.on('data', log => {
+    if (logCallback) logCallback(`npm run ${scriptName}: ${log}`)
+  })
+
   try {
-    await execa(bin, ['run', scriptName])
-    return 'Script completed'
+    await scriptProcess
   } catch (err) {
     throw new Error(
-      `${err.message}\n${err.stderr}\n\nFailed to build. See above output.`
+      `${err.message}\n${err.stderr}\n\nScript ${scriptName} failed. See above output.`
     )
   }
 }

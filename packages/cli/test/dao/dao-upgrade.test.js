@@ -1,22 +1,15 @@
 import test from 'ava'
 //
-import { runAragonCLI } from '../util'
+import parseCli from '../parseCli'
 
-const daoAddressRegex = /Created DAO: (.*)$/
+test.serial('upgrades an app', async t => {
+  const date = new Date().getTime()
+  const id = `newdao${date}`
 
-test('start IPFS', async t => {
-  const { stdout: daoNewStdout } = await runAragonCLI(['dao', 'new', '--debug'])
-  const daoAddress = daoNewStdout.match(daoAddressRegex)[1]
-
-  await runAragonCLI(['dao', 'install', daoAddress, 'vault', '--debug'])
-
-  const { stdout } = await runAragonCLI([
-    'dao',
-    'upgrade',
-    daoAddress,
-    'vault',
-    '--debug',
-  ])
+  await parseCli(['dao', 'new', '--debug', '--aragon-id', id])
+  await parseCli(['dao', 'install', id, 'vault', '--debug'])
+  const stdout = await parseCli(['dao', 'upgrade', id, 'vault', '--debug'])
 
   t.assert(stdout.includes('Start IPFS'))
+  t.assert(stdout.includes('Successfully executed'), 'Unable to upgrade vault')
 })

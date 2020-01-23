@@ -1,5 +1,4 @@
 import TaskList from 'listr'
-import APM from '@aragon/apm'
 import { bold, blue } from 'chalk'
 import {
   getBasesNamespace,
@@ -9,19 +8,26 @@ import {
   getBinaryPath,
   getDefaultRepoPath,
   isLocalDaemonRunning,
+  getApmRepo,
 } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
 import listrOpts from '../../helpers/listr-options'
 import daoArg from './utils/daoArg'
 import { task as execTask } from './utils/execHandler'
-import { task as getRepoTask, args } from './utils/getRepoTask'
 
 export const command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
 export const describe = 'Upgrade an app into a DAO'
 
 export const builder = function(yargs) {
-  return args(daoArg(yargs))
+  return daoArg(yargs)
+    .option('apmRepo', {
+      describe: 'Name of the aragonPM repo',
+    })
+    .option('apmRepoVersion', {
+      describe: 'Version of the package upgrading to',
+      default: 'latest',
+    })
 }
 
 export const handler = async function({
@@ -38,9 +44,8 @@ export const handler = async function({
 }) {
   const web3 = await ensureWeb3(network)
 
-  const apm = await APM(web3, apmOptions)
+  const apmRepoName = defaultAPMName(apmRepo)
 
-  apmRepo = defaultAPMName(apmRepo)
   dao = await resolveAddressOrEnsDomain(
     dao,
     web3,
@@ -59,10 +64,28 @@ export const handler = async function({
         },
       },
       {
-        title: `Fetching ${bold(apmRepo)}@${apmRepoVersion}`,
+        title: `Fetching ${bold(apmRepoName)}@${apmRepoVersion}`,
         skip: ctx => ctx.repo, // only run if repo isn't passed
-        task: async (ctx, task) =>
-          getRepoTask({ apm, apmRepo, apmRepoVersion }),
+        task: async ctx => {
+          const progressHandler = step => {
+            switch (step) {
+              case 1:
+                console.log(`Initialize aragonPM`)
+                break
+              case 2:
+                console.log(`Fetching...`)
+                break
+            }
+          }
+
+          ctx.repo = await getApmRepo(
+            web3,
+            apmRepoName,
+            apmOptions,
+            apmRepoVersion,
+            progressHandler
+          )
+        },
       },
       {
         title: 'Upgrading app',
