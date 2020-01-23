@@ -29,7 +29,7 @@ export const getLocalWeb3 = async () => {
  * @return {Promise<string>} stdout
  */
 export const runAragonCLI = async (args, verbose = false) => {
-  const subprocess = execa('node', ['dist/cli.js', ...args])
+  const subprocess = execa('node', ['dist/index.js', ...args])
   if (verbose) {
     console.log(`\n>>> ${args.join(' ')}`)
     subprocess.stdout.pipe(process.stdout)

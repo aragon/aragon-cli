@@ -15,8 +15,7 @@ test.after.always(async () => {
   await remove(projectPath)
 })
 
-// eslint-disable-next-line ava/no-skip-test
-test.skip('should create a new aragon app based on the react boilerplate', async t => {
+test('should create a new aragon app based on the react boilerplate', async t => {
   ensureDirSync(testSandbox)
   const repoPath = `${projectPath}/.git`
   const arappPath = `${projectPath}/arapp.json`

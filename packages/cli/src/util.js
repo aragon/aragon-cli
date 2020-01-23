@@ -22,6 +22,7 @@ export function normalizeOutput(stdout) {
     .replace(/ℹ/g, 'i')
     // TODO: remove after https://github.com/aragon/aragon-cli/issues/367 is fixed
     .replace(/cli.js/g, 'aragon')
+    .replace(/index.js/g, 'aragon')
     // replace homedir in paths
     .replace(new RegExp(os.homedir(), 'g'), '~')
     // sometimes there's an extra LF

@@ -1,3 +1,4 @@
 #!/usr/bin/env node
 require('engine-check')()
-require('./cli')
+const cli = require('./cli').init()
+cli.argv // eslint-disable-line no-unused-expressions

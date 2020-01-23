@@ -86,7 +86,8 @@ export default async function runSetupTask({
   // Set prepublish to true if --prepublish-script argument is used
   if (process.argv.includes('--prepublish-script')) prepublish = true
 
-  const appName = module.appName
+  const appName = module && module.appName
+
   /**
    * Flag for the Deploy contract task
    * @type {boolean}
