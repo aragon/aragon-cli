@@ -40,7 +40,7 @@ export async function getMerkleDAG(client, cid, options = {}) {
     // fetch the MerkleDAG of each link recursively
     for (const link of merkleDAG.links) {
       const object = await getMerkleDAG(client, link.cid, options)
-      return Object.assign(link, object)
+      Object.assign(link, object)
     }
   }
 
