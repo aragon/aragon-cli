@@ -17,3 +17,13 @@ test('Get IPFS readme merkle DAG and CIDs', async t => {
   t.snapshot(merkleDag, 'IPFS readme merkle DAG')
   t.snapshot(cids, 'IPFS readme CID list')
 })
+
+test('Get IPFS readme merkle DAG recursively', async t => {
+  const ipfsReader = await getHttpClient(ipfsGateway)
+
+  const merkleDag = await getMerkleDAG(ipfsReader, readmeDirCid, {
+    recursive: true,
+  })
+
+  t.snapshot(merkleDag, 'IPFS readme merkle DAG recursive')
+})
