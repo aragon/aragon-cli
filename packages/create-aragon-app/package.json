@@ -8,6 +8,8 @@
   "scripts": {
     "build": "babel src --out-dir dist --source-maps",
     "build:watch": "npm run build -- --watch",
+    "link-bin": "npm link",
+    "unlink-bin": "npm unlink",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
     "test": "ava --verbose",

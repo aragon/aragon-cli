@@ -12,6 +12,8 @@
     "extract-roles": "node scripts/extract-roles",
     "build": "npm run extract-roles && npm run compile-src",
     "build:watch": "npm run build -- -- --watch",
+    "link-bin": "npm link",
+    "unlink-bin": "npm unlink",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
     "test": "ava --verbose",
@@ -173,6 +175,7 @@
     }
   },
   "eslintConfig": {
+    "ignorePatterns": ["test/mock"],
     "env": {
       "es6": true,
       "node": true
