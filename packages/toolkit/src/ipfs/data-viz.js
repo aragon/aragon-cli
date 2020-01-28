@@ -13,7 +13,7 @@ export function stringifyMerkleDAG(merkleDAG) {
 export function stringifyMerkleDAGNode(merkleDAG) {
   const cid = merkleDAG.cid
   const name = merkleDAG.name || 'root'
-  const nameWithIcon = `${merkleDAG.isDir ? '📁 ' : '📃 '}${name}`
+  const nameWithIcon = `${merkleDAG.isDir ? '📁  ' : '📃  '}${name}`
   const parsedSize = byteSize(merkleDAG.size)
   const size = parsedSize.value + parsedSize.unit
   const delimiter = chalk.gray(' - ')
