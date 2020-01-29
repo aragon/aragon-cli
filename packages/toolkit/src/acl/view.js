@@ -1,5 +1,5 @@
 import '../../@types/acl/typedef'
-import { initAragonJS, getApps } from '../helpers/aragonjs-wrapper'
+import { initAragonJS } from '../helpers/aragonjs-wrapper'
 
 // TODO: Stop using wrapper
 
@@ -13,19 +13,11 @@ import { initAragonJS, getApps } from '../helpers/aragonjs-wrapper'
 /**
  * Return a task list for viewing DAO ACL permissions
  *
- * @param  {Object} args From Listr
  * @param  {string} args.dao DAO address or ENS name
- * @param  {WebsocketProvider} args.web3Provider Web3 config
- * @param  {Object} args.ipfsConf IPFS config
- * @param  {ApmConfig} args.apm APM config
+ * @param  {string} environment Envrionment
  * @return {Promise<ReturnData>} void
  */
-export const getDaoAddressPermissionsApps = ({
-  dao,
-  web3Provider,
-  ipfsConf,
-  apm,
-}) => {
+export const getDaoAddressPermissionsApps = (dao, environment) => {
   return new Promise((resolve, reject) => {
     /**
      * @type {AclPermissions}
@@ -46,9 +38,9 @@ export const getDaoAddressPermissionsApps = ({
       }
     }
 
-    initAragonJS(dao, apm.ensRegistryAddress, {
-      provider: web3Provider,
-      ipfsConf,
+    initAragonJS(dao, environment, {
+      // Permissions Object:
+      // { app -> role -> { manager, allowedEntities -> [ entities with permission ] } }
       onPermissions: _permissions => {
         permissions = _permissions
         resolveIfReady()
@@ -57,14 +49,13 @@ export const getDaoAddressPermissionsApps = ({
         daoAddress = addr
         resolveIfReady()
       },
-    })
-      .then(async wrapper => {
-        apps = await getApps(wrapper)
+      onApps: _apps => {
+        apps = _apps
         resolveIfReady()
-      })
-      .catch(err => {
-        err.message = `Error inspecting DAO ${err.message}`
-        reject(err)
-      })
+      },
+    }).catch(err => {
+      err.message = `Error inspecting DAO ${err.message}`
+      reject(err)
+    })
   })
 }

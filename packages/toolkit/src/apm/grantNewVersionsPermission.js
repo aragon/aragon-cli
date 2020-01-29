@@ -1,19 +1,21 @@
-import APM from '@aragon/apm'
-import ACL from './util/acl'
+import getApm from './apm'
+import ACL from '../acl/acl'
+import { configEnvironment } from '../helpers/configEnvironment'
 
 export default async (
-  web3,
-  apmRepoName,
-  apmOptions,
   grantees,
-  progressHandler = () => {},
-  { gasPrice }
+  apmRepoName,
+  environment,
+  progressHandler = () => {}
 ) => {
+  const { web3, gasPrice } = configEnvironment(environment)
+
   if (grantees.length === 0) {
     throw new Error('No grantee addresses provided')
   }
 
-  const apm = await APM(web3, apmOptions)
+  const apm = await getApm(environment)
+
   const acl = ACL(web3)
 
   progressHandler(1)

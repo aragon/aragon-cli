@@ -3,7 +3,7 @@ import { abi as aragonAppAbi } from '@aragon/abis/os/artifacts/AragonApp'
 import { abi as kernelAbi } from '@aragon/abis/os/artifacts/Kernel'
 import { abi as repoAbi } from '@aragon/abis/os/artifacts/Repo'
 //
-import { getRecommendedGasLimit } from '../../util'
+import { getRecommendedGasLimit } from '../util'
 
 export default web3 => {
   const getACL = async repoAddr => {

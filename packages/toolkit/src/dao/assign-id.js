@@ -2,25 +2,23 @@ import ENS from 'ethereum-ens'
 import { sha3, isAddress } from 'web3-utils'
 import { abi as ififsResolvingRegistrarAbi } from '@aragon/abis/id/artifacts/IFIFSResolvingRegistrar'
 //
-import { REGISTRAR_GAS_LIMIT, ARAGON_DOMAIN } from '../helpers/constants'
 import { convertDAOIdToSubdomain } from '../util'
+import { configEnvironment } from '../../helpers/configEnvironment'
+import { REGISTRAR_GAS_LIMIT, ARAGON_DOMAIN } from '../helpers/constants'
 
 /**
  * Assign an id to an existing DAO address.
  *
  * @param {string} daoAddress DAO proxy address
  * @param {string} daoId Id to assign
- * @param {Object} options Options
- * @param {Object} options.web3 Web3
- * @param {string} options.ensRegistry ENS registry address
- * @param {string} options.gasPrice Gas price
+ * @param {string} environment Environment
  * @returns {void}
  */
-export async function assignId(daoAddress, daoId, options) {
-  const { web3, ensRegistry, gasPrice } = options
+export async function assignId(daoAddress, daoId, environment) {
+  const { web3, apmOptions, gasPrice } = configEnvironment(environment)
 
   if (!isAddress(daoAddress)) throw new Error(`Invalid address: ${daoAddress}`)
-  const ens = new ENS(web3.currentProvider, ensRegistry)
+  const ens = new ENS(web3.currentProvider, apmOptions.ensRegistryAddress)
 
   const registrar = new web3.eth.Contract(
     ififsResolvingRegistrarAbi,
@@ -38,14 +36,14 @@ export async function assignId(daoAddress, daoId, options) {
  * Return true if `id` is assigned to an organization
  *
  * @param {string} daoId Aragon DAO id
- * @param {Object} options Options
- * @param {Object} options.web3 web3
- * @param {string} options.ensRegistry ENS registry address
+ * @param {string} environment Environment
  * @returns {Promise<boolean>} true if already assigned
  */
-export async function isIdAssigned(daoId, options) {
+export async function isIdAssigned(daoId, environment) {
+  const { web3, apmOptions } = configEnvironment(environment)
+
   const daoUrl = convertDAOIdToSubdomain(daoId)
-  const ens = new ENS(options.web3.currentProvider, options.ensRegistry)
+  const ens = new ENS(web3.currentProvider, apmOptions.ensRegistryAddress)
 
   // The only way to know if a domain is not registered is to call
   // `resolver().addr()` and check if it throws

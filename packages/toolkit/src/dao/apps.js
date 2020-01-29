@@ -1,40 +1,34 @@
 import { abi as kernelAbi } from '@aragon/abis/os/artifacts/Kernel'
 //
-import {
-  initAragonJS,
-  getApps,
-  resolveEnsDomain,
-} from '../helpers/aragonjs-wrapper'
+import { initAragonJS, resolveEnsDomain } from '../helpers/aragonjs-wrapper'
 
 /**
  * Return installed apps for a DAO
  *
  * @param {string} dao DAO address
- * @param {Object} options Options
- * @param {Object} options.provider ETH provider
- * @param {string} options.registryAddress ENS registry address
- * @param {Object} options.ipfs IPFS configuration
- * @param {Object[]} options.userApps User apps
+ * @param {string} environment Envrionment
+ * @returns {Promise<Object[]>} Installed apps
  */
-export async function getInstalledApps(dao, options) {
-  const wrapper = await initAragonJS(dao, options.registryAddress, {
-    ipfsConf: options.ipfs,
-    provider: options.provider,
-  })
-
-  return getApps(wrapper)
+export async function getInstalledApps(dao, environment) {
+  const wrapper = await initAragonJS(dao, environment)
+  return (
+    wrapper.apps
+      // If the app list contains a single app, wait for more
+      .pipe(takeWhile(apps => apps.length <= 1, true))
+      .toPromise()
+  )
 }
 
 /**
  * Return all apps in a DAO, including permissionless ones
  *
- * @param {string} DAO address
- * @param {Object} options Options
- * @param {Object} options.web3 Web3
- * @param {Object[]} options.userApps User apps
+ * @param {string} dao DAO address
+ * @param {string} environment Envrionment
+ * @returns {Promise<Object[]>} All apps
  */
-export async function getAllApps(dao, options) {
-  const { web3 } = options
+export async function getAllApps(dao, environment) {
+  const { web3 } = configEnvironment(environment)
+
   const kernel = new web3.eth.Contract(kernelAbi, dao)
 
   const events = await kernel.getPastEvents('NewAppProxy', {

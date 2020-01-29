@@ -1,10 +1,24 @@
 import path from 'path'
+import findUp from 'find-up'
 //
 import {
   ARAGON_DOMAIN,
   DEFAULT_GAS_FUZZ_FACTOR,
   LAST_BLOCK_GAS_LIMIT_FACTOR,
 } from './helpers/constants'
+
+let cachedProjectRoot
+
+export const findProjectRoot = () => {
+  if (!cachedProjectRoot) {
+    try {
+      cachedProjectRoot = path.dirname(findUp.sync('arapp.json'))
+    } catch (_) {
+      throw new Error('This directory is not an Aragon project')
+    }
+  }
+  return cachedProjectRoot
+}
 
 /**
  * Check eth address equality without checksums

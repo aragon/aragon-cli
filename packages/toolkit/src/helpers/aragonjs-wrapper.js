@@ -1,8 +1,8 @@
-import Aragon, { ensResolve } from '@aragon/wrapper'
-import { takeWhile, map, filter, first, defaultIfEmpty } from 'rxjs/operators'
+import Aragon from '@aragon/wrapper'
 //
-import { addressesEqual } from '../util'
 import { noop } from '../node'
+import { resolveAddressOrEnsDomain } from '../dao/utils/resolveAddressOrEnsDomain'
+import { configEnvironment } from './configEnvironment'
 
 // Subscribe to wrapper's observables
 const subscribe = (
@@ -12,8 +12,8 @@ const subscribe = (
   const { apps, forwarders, transactions, permissions } = wrapper
 
   const subscriptions = {
-    apps: apps.subscribe(onApps),
     connectedApp: null,
+    apps: apps.subscribe(onApps),
     forwarders: forwarders.subscribe(onForwarders),
     transactions: transactions.subscribe(onTransaction),
     permissions: permissions.subscribe(onPermissions),
@@ -23,34 +23,13 @@ const subscribe = (
 }
 
 /**
- * Resolve an ens domain
- *
- * @param {string} domain Domain
- * @param {*} opts Options
- * @returns {Promise<string>} Resolved ens domain
- */
-export async function resolveEnsDomain(domain, opts) {
-  try {
-    return await ensResolve(domain, opts)
-  } catch (err) {
-    if (err.message === 'ENS name not defined.') {
-      return ''
-    }
-    throw err
-  }
-}
-
-/**
  * Initialize the Aragon.js wrapper and subscribe to the `apps`,
  * `forwarders`, `transactions` and `permissions` observables.
  *
  * @param {string} dao DAO address
- * @param {string} ensRegistryAddress ENS Registry address
+ * @param {string} environment Environment
  * @param {Object} options Options
- * @param {Object} options.provider Eth provider
- * @param {string} options.gasPrice Gas price
  * @param {string} options.accounts Eth accounts
- * @param {Object} options.ipfsConf IPFS configuration
  * @param {function} options.onApps Apps callback
  * @param {function} options.onForwarders Forwarders callback
  * @param {function} options.onTransaction Transaction callback
@@ -60,12 +39,9 @@ export async function resolveEnsDomain(domain, opts) {
  */
 export async function initAragonJS(
   dao,
-  ensRegistryAddress,
+  environment,
   {
-    provider,
-    gasPrice,
     accounts = '',
-    ipfsConf = {},
     onApps = noop,
     onForwarders = noop,
     onTransaction = noop,
@@ -73,14 +49,11 @@ export async function initAragonJS(
     onPermissions = noop,
   } = {}
 ) {
-  const isDomain = dao => /[a-z0-9]+\.eth/.test(dao)
+  const { wsProvider, web3, apmOptions, gasPrice } = configEnvironment(
+    environment
+  )
 
-  const daoAddress = isDomain(dao)
-    ? await resolveEnsDomain(dao, {
-        provider,
-        registryAddress: ensRegistryAddress,
-      })
-    : dao
+  const daoAddress = await resolveAddressOrEnsDomain(dao, environment)
 
   if (!daoAddress) {
     throw new Error('The provided DAO address is invalid')
@@ -90,12 +63,9 @@ export async function initAragonJS(
 
   // TODO: don't reinitialize if cached
   const wrapper = new Aragon(daoAddress, {
-    provider,
+    provider: wsProvider || web3.currentProvider,
     defaultGasPriceFn: () => gasPrice,
-    apm: {
-      ipfs: ipfsConf,
-      ensRegistryAddress,
-    },
+    apm: apmOptions,
   })
 
   try {
@@ -107,11 +77,12 @@ export async function initAragonJS(
     throw err
   }
 
-  const subscriptions = subscribe(
-    wrapper,
-    { onApps, onForwarders, onTransaction, onPermissions },
-    { ipfsConf }
-  )
+  const subscriptions = subscribe(wrapper, {
+    onApps,
+    onForwarders,
+    onTransaction,
+    onPermissions,
+  })
 
   wrapper.cancel = () => {
     Object.values(subscriptions).forEach(subscription => {
@@ -122,53 +93,4 @@ export async function initAragonJS(
   }
 
   return wrapper
-}
-
-/**
- * Return a list of all installed apps.
- * @param {Aragon} wrapper Aragon wrapper
- * @returns {Promise<Object[]>} Installed apps
- */
-export async function getApps(wrapper) {
-  return (
-    wrapper.apps
-      // If the app list contains a single app, wait for more
-      .pipe(takeWhile(apps => apps.length <= 1, true))
-      .toPromise()
-  )
-}
-
-/**
- * Get transaction path on an Aragon app for `method` with `params`
- * as parameters. Wait for apps to load before calling
- * wrapper's `getTransactionPath`. If app is the ACL, call
- * `getACLTransactionPath`.
- *
- * @param {string} appAddress App address
- * @param {string} method Method name
- * @param {Array<*>} params Method params
- * @param {Aragon} wrapper Aragon wrapper
- * @returns {Promise<Object>} Transaction path
- */
-export async function getTransactionPath(appAddress, method, params, wrapper) {
-  // Wait for app info to load
-  const app = await wrapper.apps
-    .pipe(
-      // If the app list contains a single app, wait for more
-      takeWhile(apps => apps.length <= 1, true),
-      map(apps =>
-        apps.find(app => addressesEqual(appAddress, app.proxyAddress))
-      ),
-      filter(app => app),
-      defaultIfEmpty(null), // If app is not found, default to null
-      first()
-    )
-    .toPromise()
-
-  if (!app) throw new Error(`Can't find app ${appAddress}.`)
-
-  // If app is the ACL, call getACLTransactionPath
-  return appAddress === wrapper.aclProxy.address
-    ? wrapper.getACLTransactionPath(method, params)
-    : wrapper.getTransactionPath(appAddress, method, params)
 }

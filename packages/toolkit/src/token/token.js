@@ -1,5 +1,6 @@
 import { getContract, getRecommendedGasLimit } from '../util'
 import { ZERO_ADDRESS } from '../helpers/constants'
+import { configEnvironment } from '../helpers/configEnvironment'
 
 /**
  *
@@ -8,25 +9,22 @@ import { ZERO_ADDRESS } from '../helpers/constants'
  * (2, gas) - Estimated gas
  * (3) - Waiting for the tx to be mined
  *
- * @param {*} web3 todo
  * @param {*} senderAccount todo
- * @param {*} gasPrice todo
+ * @param  {string} environment Envrionment
  * @param {*} progressCallback todo
  * @returns {*} todo
  */
 export const deployMiniMeTokenFactory = async (
-  web3,
   senderAccount,
-  gasPrice,
+  environment,
   progressCallback
 ) => {
   return deployContract(
-    web3,
     senderAccount,
-    gasPrice,
     '@aragon/apps-shared-minime',
     'MiniMeTokenFactory',
     [],
+    environment,
     progressCallback
   )
 }
@@ -38,32 +36,28 @@ export const deployMiniMeTokenFactory = async (
  * (2, gas) - Estimated gas
  * (3) - Waiting for the tx to be mined
  *
- * @param {*} web3 todo
  * @param {*} senderAccount todo
- * @param {*} gasPrice todo
  * @param {*} tokenName todo
  * @param {*} decimalUnits todo
  * @param {*} symbol todo
  * @param {*} transferEnabled todo
  * @param {*} factoryAddress todo
+ * @param  {string} environment Envrionment
  * @param {*} progressCallback todo
  * @returns {*} todo
  */
 export const deployMiniMeToken = async (
-  web3,
   senderAccount,
-  gasPrice,
   tokenName,
   decimalUnits,
   symbol,
   transferEnabled,
   factoryAddress,
+  environment,
   progressCallback
 ) => {
   return deployContract(
-    web3,
     senderAccount,
-    gasPrice,
     '@aragon/apps-shared-minime',
     'MiniMeToken',
     [
@@ -75,19 +69,21 @@ export const deployMiniMeToken = async (
       symbol,
       transferEnabled,
     ],
+    environment,
     progressCallback
   )
 }
 
 export const deployContract = async (
-  web3,
   senderAccount,
-  gasPrice,
   artifactPackage,
   artifactName,
   contractArgs,
+  environment,
   progressCallback
 ) => {
+  const { web3, gasPrice } = configEnvironment(environment)
+
   const artifact = getContract(artifactPackage, artifactName)
   const contract = new web3.eth.Contract(artifact.abi)
 
@@ -131,11 +127,12 @@ export const deployContract = async (
  * @returns {Promise<Object>} Transaction receipt
  */
 export const changeController = async (
-  web3,
   tokenAddress,
   newController,
-  gasPrice
+  environment
 ) => {
+  const { web3, gasPrice } = configEnvironment(environment)
+
   const tokenAbi = getContract('@aragon/apps-shared-minime', 'MiniMeToken').abi
 
   const contract = new web3.eth.Contract(tokenAbi, tokenAddress)

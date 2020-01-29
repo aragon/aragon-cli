@@ -1,47 +1,60 @@
-import bareTemplateAbi from './utils/bare-template-abi'
 import { getRecommendedGasLimit } from '../util'
+import getApm from '../apm/apm'
+import bareTemplateAbi from './utils/bare-template-abi'
+import defaultAPMName from '../helpers/default-apm'
+import { configEnvironment } from '../helpers/configEnvironment'
+import { LATEST_VERSION, DEFAULT_IPFS_TIMEOUT } from '../helpers/constants'
 
 /**
  * Create a new DAO
  *
- * @param {Object} parmas Parameters
- * @param {Object} repo Template repository
- * @param {Object} web3 web3
- * @param {Object} templateInstance Template instance
+ * @param {string} templateName Template repo name
+ * @param {string} templateVersion Version of the template
  * @param {string} newInstanceMethod New instance method name
  * @param {string[]} newInstanceArgs New instance arguments
- * @param {string} gasPrice Gas price
+ * @param {string} deployEvent Template deploy event
+ * @param {string} environment Environment
+ * @param {Object} templateInstance Template instance
  */
-export default async function({
-  repo,
-  web3,
-  templateInstance,
-  newInstanceMethod,
-  newInstanceArgs,
-  deployEvent,
-  gasPrice,
-}) {
+export default async function(
+  environment,
+  templateName = defaultAPMName('bare-template'),
+  newInstanceArgs = [],
+  newInstanceMethod = 'newInstance',
+  deployEvent = 'DeployDao',
+  templateVersion = 'latest',
+  templateInstance
+) {
+  const { web3, gasPrice } = configEnvironment(environment)
+
   let template
 
   if (!templateInstance) {
+    const apm = await getApm(environment)
+
+    template =
+      templateVersion === LATEST_VERSION
+        ? await apm.getLatestVersion(templateName, DEFAULT_IPFS_TIMEOUT)
+        : await apm.getVersion(
+            templateName,
+            templateVersion.split('.'),
+            DEFAULT_IPFS_TIMEOUT
+          )
+
     // If not connected to IPFS, repo won't have an ABI
-    const repoAbi = repo.abi || bareTemplateAbi
-    template = new web3.eth.Contract(repoAbi, repo.contractAddress)
+    const templateAbi = template.abi || bareTemplateAbi
+    template = new web3.eth.Contract(templateAbi, template.contractAddress)
   } else {
     template = templateInstance
   }
 
-  const method = newInstanceMethod || 'newInstance'
-
-  if (!template.methods[method]) {
+  if (!template.methods[newInstanceMethod]) {
     throw new Error(
-      `Template abi does not contain the requested function: ${method}(...). This may be due to the template's abi not being retrieved from IPFS. Is IPFS running?`
+      `Template abi does not contain the requested function: ${newInstanceMethod}(...). This may be due to the template's abi not being retrieved from IPFS. Is IPFS running?`
     )
   }
 
-  const newInstanceTx = template.methods[newInstanceMethod || 'newInstance'](
-    ...newInstanceArgs
-  )
+  const newInstanceTx = template.methods[newInstanceMethod](...newInstanceArgs)
   const estimatedGas = await newInstanceTx.estimateGas()
   const { events } = await newInstanceTx.send({
     from: (await web3.eth.getAccounts())[0],

@@ -1,24 +1,19 @@
-import APM from '@aragon/apm'
+import getApm from './apm'
 
 /**
  * Return packages for a given APM registry.
- * `progressHandler` can be called with 2 values:
- * - 1: Fetching APM Registry
- * - 2: Gathering packages in registry
  *
- * @param {Object} web3 web3
  * @param {string} apmRegistryName APM registry name
- * @param {Object} apmOptions APM options
+ * @param  {string} environment Envrionment
  * @param {function(number)} progressHandler Progress handler
  * @returns {void}
  */
 export default async (
-  web3,
   apmRegistryName,
-  apmOptions,
+  environment,
   progressHandler = () => {}
 ) => {
-  const apm = await APM(web3, apmOptions)
+  const apm = await getApm(environment)
 
   progressHandler(1)
 
