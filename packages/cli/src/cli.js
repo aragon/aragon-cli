@@ -1,4 +1,5 @@
 import 'source-map-support/register'
+import { gray } from 'chalk'
 import yargs from 'yargs'
 import { toWei } from 'web3-utils'
 //
@@ -9,10 +10,13 @@ import { findProjectRoot } from './util'
 const DEFAULT_GAS_PRICE = require('../package.json').aragon.defaultGasPrice
 
 const debugMiddleware = argv => {
-  argv.reporter.debug(
-    `aragonCLI version: ${require('../package.json').version}`
-  )
-  argv.reporter.debug(`argv: ${JSON.stringify(process.argv)}`)
+  const versionLabel = gray('aragonCLI version:')
+  const version = require('../package.json').version
+  argv.reporter.debug(versionLabel, version)
+
+  const argvLabel = gray('argv: ')
+  argv.reporter.debug(argvLabel)
+  argv.reporter.debug(process.argv)
 }
 
 const MIDDLEWARES = [debugMiddleware, configCliMiddleware]

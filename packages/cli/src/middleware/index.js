@@ -1,4 +1,5 @@
 import { getTruffleConfig } from '../helpers/truffle-config'
+import { gray, yellow } from 'chalk'
 import {
   loadManifestFile,
   loadArappFile,
@@ -25,7 +26,9 @@ export function configCliMiddleware(argv) {
 
     if (!arapp)
       argv.reporter.debug(
-        `Could not find 'arapp.json'. Using the default configuration`
+        'arapp.json',
+        yellow('not found.'),
+        gray('Using the default environments.')
       )
 
     const ignoreNetCmd = new Set([''])
