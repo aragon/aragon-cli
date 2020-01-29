@@ -1,6 +1,6 @@
 import aragonPM from '@aragon/apm'
 //
-import { configEnvironment } from '../helpers/configEnvironment'
+import { useEnvironment } from '../helpers/useEnvironment'
 
 /**
  *
@@ -8,7 +8,7 @@ import { configEnvironment } from '../helpers/configEnvironment'
  * @returns {Object} aragonPM object
  */
 export default async environment => {
-  const { web3, apmOptions } = configEnvironment(environment)
+  const { web3, apmOptions } = useEnvironment(environment)
 
   return aragonPM(web3, apmOptions)
 }

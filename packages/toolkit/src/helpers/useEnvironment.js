@@ -1,10 +1,10 @@
 import Web3 from 'web3'
 import url from 'url'
 //
-// TODO: Evaluate move web3 and truffle logic in this file
 import { getTruffleConfig } from './truffle-config'
 import defaultEnvironments from '../../config/environments.default'
 import defaultNetworks from '../../config/truffle.default'
+import { loadArappFile } from './loadConfigFiles'
 import {
   DEFAULT_GAS_PRICE,
   FRAME_ENDPOINT,
@@ -16,13 +16,12 @@ import {
   IPFS_ARAGON_GATEWAY,
   DEVCHAIN_ENS,
 } from './constants'
-import { loadArappFile } from './loadConfigFiles'
 
-export class NoEnvironmentInArapp extends Error {}
-export class NoEnvironmentInDefaults extends Error {}
-export class NoNetworkInTruffleConfig extends Error {}
+export class NoEnvironmentInArapp extends Error { }
+export class NoEnvironmentInDefaults extends Error { }
+export class NoNetworkInTruffleConfig extends Error { }
 
-function getEnv(arapp, env) {
+function getEnv (arapp, env) {
   if (arapp) {
     if (!env) env = 'default'
     const environment = arapp.environments[env]
@@ -57,7 +56,7 @@ const configureApm = (ipfsRPC, gateway, ensRegistryAddress) => {
   }
 }
 
-function configureProvider(network, truffleNetwork, useFrame) {
+function configureProvider (network, truffleNetwork, useFrame) {
   if (useFrame) {
     return new Web3.providers.WebsocketProvider(
       FRAME_ENDPOINT,
@@ -88,11 +87,14 @@ function configureProvider(network, truffleNetwork, useFrame) {
 // TODO: Fetch api
 // const configureGasPrice = () => {}
 
-let previousEnvironment
+// let previousEnvironment
+// TODO: Add config environment function
 
-export function configEnvironment(env = previousEnvironment) {
-  // Context
-  previousEnvironment = env
+let web3
+let prevProvider = {}
+
+export function useEnvironment (env) {
+  // try {
 
   // Parse environment
   const useFrame = RegExp(/frame:(.*)/).test(env)
@@ -109,26 +111,32 @@ export function configEnvironment(env = previousEnvironment) {
 
   const { wsRPC, apm, network, registry, gasPrice } = environment
 
-  const wsProviderUrl = wsRPC
-    ? wsRPC
-    : network === 'rinkeby'
-    ? ARAGON_RINKEBY_ENDPOINT
-    : network === 'mainnet'
-    ? ARAGON_MAINNET_ENDPOINT
-    : null
+  const wsProviderUrl =
+    wsRPC ||
+    (network === 'rinkeby'
+      ? ARAGON_RINKEBY_ENDPOINT
+      : network === 'mainnet'
+        ? ARAGON_MAINNET_ENDPOINT
+        : null)
 
   const ipfsAragonGateway =
     apm && apm.ipfs.gateway // TODO: Refactor apm object
       ? apm.ipfs.gateway
       : network === 'rpc'
-      ? IPFS_LOCAL_GATEWAY
-      : IPFS_ARAGON_GATEWAY
+        ? IPFS_LOCAL_GATEWAY
+        : IPFS_ARAGON_GATEWAY
 
   const provider = configureProvider(
     network,
     truffleNetworks[network],
     useFrame
   )
+
+  // Context
+  if (provider !== prevProvider) {
+    prevProvider = provider
+    web3 = new Web3(provider)
+  }
 
   return {
     ...environment,
@@ -137,36 +145,33 @@ export function configEnvironment(env = previousEnvironment) {
       ipfsAragonGateway,
       registry || DEVCHAIN_ENS
     ),
-    web3: new Web3(provider),
+    web3,
     wsProvider: wsProviderUrl
       ? new Web3.providers.WebsocketProvider(wsProviderUrl)
       : null,
     gasPrice:
       gasPrice || truffleNetworks[network].gasPrice || DEFAULT_GAS_PRICE,
   }
+  // TODO: evaluate if we need a try catch
+  // } catch (e) {
+  //   const logger = message => {
+  //     console.log(message)
+  //     process.exit(1)
+  //   }
+  //   // Errors from useEnvironment
+  //   if (e instanceof NoEnvironmentInArapp)
+  //     return logger(
+  //       `environment '${e.message}' is not defined in your arapp.json.`
+  //     )
+  //   if (e instanceof NoEnvironmentInDefaults)
+  //     return logger(
+  //       `Default environment '${e.message}' not found. Try using aragon:local, aragon:rinkeby or aragon:mainnet.`
+  //     )
+  //   if (e instanceof NoNetworkInTruffleConfig)
+  //     return logger(
+  //       `aragon <command> requires a network '${e.message}' in your truffle.js. For an example, see http://truffleframework.com/docs/advanced/configuration`
+  //     )
+
+  //   throw e
+  // }
 }
-
-// TODO: Add try catch
-// } catch (e) {
-//   const prettyError = message => {
-//     argv.reporter.error(message)
-//     process.exit(1)
-//   }
-
-//   if (e instanceof InvalidArguments) return prettyError(e.message)
-//   // Errors from configEnvironment
-//   if (e instanceof NoEnvironmentInArapp)
-//     return prettyError(
-//       `environment '${e.message}' is not defined in your arapp.json.`
-//     )
-//   if (e instanceof NoEnvironmentInDefaults)
-//     return prettyError(
-//       `Default environment '${e.message}' not found. Try using aragon:local, aragon:rinkeby or aragon:mainnet.`
-//     )
-//   if (e instanceof NoNetworkInTruffleConfig)
-//     return prettyError(
-//       `aragon <command> requires a network '${e.message}' in your truffle.js. For an example, see http://truffleframework.com/docs/advanced/configuration`
-//     )
-
-//   throw e
-// }

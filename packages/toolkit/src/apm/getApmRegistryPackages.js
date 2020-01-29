@@ -4,14 +4,14 @@ import getApm from './apm'
  * Return packages for a given APM registry.
  *
  * @param {string} apmRegistryName APM registry name
- * @param  {string} environment Envrionment
  * @param {function(number)} progressHandler Progress handler
+ * @param  {string} environment Envrionment
  * @returns {void}
  */
 export default async (
   apmRegistryName,
+  progressHandler = () => { },
   environment,
-  progressHandler = () => {}
 ) => {
   const apm = await getApm(environment)
 

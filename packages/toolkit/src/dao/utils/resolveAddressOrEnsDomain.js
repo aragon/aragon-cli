@@ -1,7 +1,7 @@
 import web3Utils from 'web3-utils'
 import { ensResolve } from '@aragon/wrapper'
 //
-import { configEnvironment } from '../../helpers/configEnvironment'
+import { useEnvironment } from '../../helpers/useEnvironment'
 
 /**
  * Returns aclAddress for a DAO
@@ -10,7 +10,7 @@ import { configEnvironment } from '../../helpers/configEnvironment'
  * @param  {string} environment Envrionment
  * @return {Promise<string>} aclAddress
  */
-export async function resolveAddressOrEnsDomain(dao, environment) {
+export async function resolveAddressOrEnsDomain (dao, environment) {
   return web3Utils.isAddress(dao) ? dao : resolveEnsDomain(dao, environment)
 }
 
@@ -21,10 +21,10 @@ export async function resolveAddressOrEnsDomain(dao, environment) {
  * @param {string} environment Environment
  * @returns {Promise<string>} Resolved ens domain
  */
-export async function resolveEnsDomain(domain, environment) {
+export async function resolveEnsDomain (domain, environment) {
   // TODO: Move to use ethereum-ens and internally
   try {
-    const { web3, apmOptions } = configEnvironment(environment)
+    const { web3, apmOptions } = useEnvironment(environment)
 
     return await ensResolve(domain, {
       provider: web3.currentProvider,

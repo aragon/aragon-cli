@@ -1,14 +1,14 @@
 import getApm from './apm'
 import ACL from '../acl/acl'
-import { configEnvironment } from '../helpers/configEnvironment'
+import { useEnvironment } from '../helpers/useEnvironment'
 
 export default async (
   grantees,
   apmRepoName,
+  progressHandler = () => { },
   environment,
-  progressHandler = () => {}
 ) => {
-  const { web3, gasPrice } = configEnvironment(environment)
+  const { web3, gasPrice } = useEnvironment(environment)
 
   if (grantees.length === 0) {
     throw new Error('No grantee addresses provided')

@@ -2,7 +2,7 @@ import web3EthAbi from 'web3-eth-abi'
 import { abi as kernelAbi } from '@aragon/abis/os/artifacts/Kernel'
 //
 import { addressesEqual } from '../util'
-import { configEnvironment } from '../helpers/configEnvironment'
+import { useEnvironment } from '../helpers/useEnvironment'
 
 const newAppProxyLogName = 'NewAppProxy'
 const newAppProxyLogAbi = kernelAbi.find(
@@ -23,7 +23,7 @@ Kernel ABI does not include expected log '${newAppProxyLogName}'`)
  * @return {Promise<string>} aclAddress
  */
 export async function getAclAddress(dao, environment) {
-  const { web3 } = configEnvironment(environment)
+  const { web3 } = useEnvironment(environment)
 
   const daoInstance = new web3.eth.Contract(kernelAbi, dao)
   return daoInstance.methods.acl().call()
@@ -61,7 +61,7 @@ Kernel ABI log ${newAppProxyLogName} does not have expected argument 'log'`)
  * @return {Promise<string>} basesNamespace
  */
 export async function getBasesNamespace(dao, environment) {
-  const { web3 } = configEnvironment(environment)
+  const { web3 } = useEnvironment(environment)
 
   const kernel = new web3.eth.Contract(kernelAbi, dao)
   return kernel.methods.APP_BASES_NAMESPACE().call()
@@ -76,7 +76,7 @@ export async function getBasesNamespace(dao, environment) {
  * @return {Promise<string>} currentBaseAddress
  */
 export async function getAppBase(dao, appId, environment) {
-  const { web3 } = configEnvironment(environment)
+  const { web3 } = useEnvironment(environment)
 
   const kernel = new web3.eth.Contract(kernelAbi, dao)
   const basesNamespace = await getBasesNamespace(dao, web3)

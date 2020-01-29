@@ -1,5 +1,5 @@
 import '../../@types/acl/typedef'
-import { initAragonJS } from '../helpers/aragonjs-wrapper'
+import { initWrapper } from '../helpers/wrapper'
 
 // TODO: Stop using wrapper
 
@@ -38,7 +38,7 @@ export const getDaoAddressPermissionsApps = (dao, environment) => {
       }
     }
 
-    initAragonJS(dao, environment, {
+    initWrapper(dao, environment, {
       // Permissions Object:
       // { app -> role -> { manager, allowedEntities -> [ entities with permission ] } }
       onPermissions: _permissions => {

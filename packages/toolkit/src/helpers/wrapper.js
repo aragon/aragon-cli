@@ -2,7 +2,7 @@ import Aragon from '@aragon/wrapper'
 //
 import { noop } from '../node'
 import { resolveAddressOrEnsDomain } from '../dao/utils/resolveAddressOrEnsDomain'
-import { configEnvironment } from './configEnvironment'
+import { useEnvironment } from './useEnvironment'
 
 // Subscribe to wrapper's observables
 const subscribe = (
@@ -37,7 +37,7 @@ const subscribe = (
  * @param {function} options.onPermissions Permissions callback
  * @returns {Promise<Aragon>} Aragon wrapper with an added `cancel` function
  */
-export async function initAragonJS(
+export async function initWrapper (
   dao,
   environment,
   {
@@ -49,9 +49,11 @@ export async function initAragonJS(
     onPermissions = noop,
   } = {}
 ) {
-  const { wsProvider, web3, apmOptions, gasPrice } = configEnvironment(
+  const { wsProvider, web3, apmOptions, gasPrice } = useEnvironment(
     environment
   )
+
+  accounts = accounts || (await web3.eth.getAccounts())
 
   const daoAddress = await resolveAddressOrEnsDomain(dao, environment)
 

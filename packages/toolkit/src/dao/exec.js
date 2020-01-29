@@ -1,4 +1,5 @@
 import { getTransactionPath } from './permissions'
+import { useEnvironment } from '../helpers/useEnvironment'
 
 /**
  * Execute a method on a DAO's app.
@@ -19,6 +20,8 @@ export default async function(
   environment,
   progressHandler = () => {}
 ) {
+  const { web3 } = useEnvironment(environment)
+
   progressHandler(1)
 
   const transactionPath = (
