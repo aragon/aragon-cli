@@ -16,14 +16,14 @@ import { LATEST_VERSION, DEFAULT_IPFS_TIMEOUT } from '../helpers/constants'
  * @param {string} environment Environment
  * @param {Object} templateInstance Template instance
  */
-export default async function (
+export default async function(
   templateName = defaultAPMName('bare-template'),
   newInstanceArgs = [],
   newInstanceMethod = 'newInstance',
   deployEvent = 'DeployDao',
   templateVersion = 'latest',
   environment,
-  templateInstance,
+  templateInstance
 ) {
   const { web3, gasPrice } = useEnvironment(environment)
 
@@ -36,10 +36,10 @@ export default async function (
       templateVersion === LATEST_VERSION
         ? await apm.getLatestVersion(templateName, DEFAULT_IPFS_TIMEOUT)
         : await apm.getVersion(
-          templateName,
-          templateVersion.split('.'),
-          DEFAULT_IPFS_TIMEOUT
-        )
+            templateName,
+            templateVersion.split('.'),
+            DEFAULT_IPFS_TIMEOUT
+          )
 
     // If not connected to IPFS, repo won't have an ABI
     const templateAbi = template.abi || bareTemplateAbi

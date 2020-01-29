@@ -10,7 +10,7 @@ import { useEnvironment } from '../../helpers/useEnvironment'
  * @param  {string} environment Envrionment
  * @return {Promise<string>} aclAddress
  */
-export async function resolveAddressOrEnsDomain (dao, environment) {
+export async function resolveAddressOrEnsDomain(dao, environment) {
   return web3Utils.isAddress(dao) ? dao : resolveEnsDomain(dao, environment)
 }
 
@@ -21,7 +21,7 @@ export async function resolveAddressOrEnsDomain (dao, environment) {
  * @param {string} environment Environment
  * @returns {Promise<string>} Resolved ens domain
  */
-export async function resolveEnsDomain (domain, environment) {
+export async function resolveEnsDomain(domain, environment) {
   // TODO: Move to use ethereum-ens and internally
   try {
     const { web3, apmOptions } = useEnvironment(environment)

@@ -37,7 +37,7 @@ const subscribe = (
  * @param {function} options.onPermissions Permissions callback
  * @returns {Promise<Aragon>} Aragon wrapper with an added `cancel` function
  */
-export async function initWrapper (
+export async function initWrapper(
   dao,
   environment,
   {
@@ -49,9 +49,7 @@ export async function initWrapper (
     onPermissions = noop,
   } = {}
 ) {
-  const { wsProvider, web3, apmOptions, gasPrice } = useEnvironment(
-    environment
-  )
+  const { wsProvider, web3, apmOptions, gasPrice } = useEnvironment(environment)
 
   accounts = accounts || (await web3.eth.getAccounts())
 

@@ -14,7 +14,7 @@ import { REGISTRAR_GAS_LIMIT, ARAGON_DOMAIN } from '../helpers/constants'
  * @param {string} environment Environment
  * @returns {void}
  */
-export async function assignId (daoAddress, daoId, environment) {
+export async function assignId(daoAddress, daoId, environment) {
   const { web3, apmOptions, gasPrice } = useEnvironment(environment)
 
   if (!isAddress(daoAddress)) throw new Error(`Invalid address: ${daoAddress}`)
@@ -39,7 +39,7 @@ export async function assignId (daoAddress, daoId, environment) {
  * @param {string} environment Environment
  * @returns {Promise<boolean>} true if already assigned
  */
-export async function isIdAssigned (daoId, environment) {
+export async function isIdAssigned(daoId, environment) {
   const { web3, apmOptions } = useEnvironment(environment)
 
   const daoUrl = convertDAOIdToSubdomain(daoId)

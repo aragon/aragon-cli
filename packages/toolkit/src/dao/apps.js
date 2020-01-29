@@ -12,7 +12,7 @@ import { initWrapper } from '../helpers/wrapper'
  * @param {string} environment Envrionment
  * @returns {Promise<Object[]>} Installed apps
  */
-export async function getInstalledApps (dao, environment) {
+export async function getInstalledApps(dao, environment) {
   const wrapper = await initWrapper(dao, environment)
   return (
     wrapper.apps
@@ -29,7 +29,7 @@ export async function getInstalledApps (dao, environment) {
  * @param {string} environment Envrionment
  * @returns {Promise<Object[]>} All apps
  */
-export async function getAllApps (dao, environment) {
+export async function getAllApps(dao, environment) {
   const { web3 } = useEnvironment(environment)
 
   const kernel = new web3.eth.Contract(kernelAbi, dao)
@@ -53,6 +53,6 @@ export async function getAllApps (dao, environment) {
  * @param {Object} options.provider ETH provider
  * @param {string} options.registryAddress ENS registry address
  */
-export async function getDaoAddress (dao, options) {
+export async function getDaoAddress(dao, options) {
   return /[a-z0-9]+\.eth/.test(dao) ? resolveEnsDomain(dao, options) : dao
 }

@@ -16,7 +16,13 @@ import { addressesEqual } from '../util'
  * @param {string} environment Envrionment
  * @returns {Promise<Object>} Transaction path
  */
-export async function getTransactionPath (dao, appAddress, method, params, environment) {
+export async function getTransactionPath(
+  dao,
+  appAddress,
+  method,
+  params,
+  environment
+) {
   const wrapper = await initWrapper(dao, environment)
 
   // Wait for app info to load

@@ -16,8 +16,8 @@ import { useEnvironment } from '../helpers/useEnvironment'
  */
 export const deployMiniMeTokenFactory = async (
   senderAccount,
-  progressHandler = () => { },
-  environment,
+  progressHandler = () => {},
+  environment
 ) => {
   return deployContract(
     senderAccount,
@@ -25,7 +25,7 @@ export const deployMiniMeTokenFactory = async (
     'MiniMeTokenFactory',
     [],
     progressHandler,
-    environment,
+    environment
   )
 }
 
@@ -53,8 +53,8 @@ export const deployMiniMeToken = async (
   symbol,
   transferEnabled,
   factoryAddress,
-  progressHandler = () => { },
-  environment,
+  progressHandler = () => {},
+  environment
 ) => {
   return deployContract(
     senderAccount,
@@ -70,7 +70,7 @@ export const deployMiniMeToken = async (
       transferEnabled,
     ],
     progressHandler,
-    environment,
+    environment
   )
 }
 
@@ -79,8 +79,8 @@ export const deployContract = async (
   artifactPackage,
   artifactName,
   contractArgs,
-  progressHandler = () => { },
-  environment,
+  progressHandler = () => {},
+  environment
 ) => {
   const { web3, gasPrice } = useEnvironment(environment)
 

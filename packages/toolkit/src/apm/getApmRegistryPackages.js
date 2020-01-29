@@ -10,8 +10,8 @@ import getApm from './apm'
  */
 export default async (
   apmRegistryName,
-  progressHandler = () => { },
-  environment,
+  progressHandler = () => {},
+  environment
 ) => {
   const apm = await getApm(environment)
 
