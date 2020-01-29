@@ -1,7 +1,7 @@
 import Aragon from '@aragon/wrapper'
 //
 import { noop } from '../node'
-import { resolveAddressOrEnsDomain } from '../dao/utils/resolveAddressOrEnsDomain'
+import { resolveAddressOrEnsDomain } from './resolveAddressOrEnsDomain'
 import { useEnvironment } from './useEnvironment'
 
 // Subscribe to wrapper's observables
@@ -37,7 +37,7 @@ const subscribe = (
  * @param {function} options.onPermissions Permissions callback
  * @returns {Promise<Aragon>} Aragon wrapper with an added `cancel` function
  */
-export async function initWrapper(
+export async function initWrapper (
   dao,
   environment,
   {
