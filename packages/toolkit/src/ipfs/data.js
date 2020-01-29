@@ -1,3 +1,5 @@
+import { noop } from '../node'
+
 export function extractCIDsFromMerkleDAG(merkleDAG, options = {}) {
   const CIDs = []
   CIDs.push(merkleDAG.cid)
@@ -19,9 +21,10 @@ export function isDirectory(data) {
 
 // object.get returns an object of type DAGNode
 // https://github.com/ipld/js-ipld-dag-pb#dagnode-instance-methods-and-properties
-export function parseMerkleDAG(dagNode) {
+export function parseMerkleDAG(cid, dagNode) {
   const parsed = dagNode.toJSON()
   // add relevant data
+  parsed.cid = cid
   parsed.isDir = isDirectory(parsed.data)
   // remove irrelevant data
   delete parsed.data
@@ -33,10 +36,14 @@ export function parseMerkleDAG(dagNode) {
 }
 
 export async function getMerkleDAG(client, cid, options = {}) {
-  const merkleDAG = parseMerkleDAG(await client.object.get(cid))
-  merkleDAG.cid = cid
+  const { recursive, progressCallback = noop } = options
 
-  if (options.recursive && merkleDAG.isDir && merkleDAG.links) {
+  progressCallback(1, cid)
+  const ipfsObj = await client.object.get(cid)
+  progressCallback(2, cid)
+  const merkleDAG = parseMerkleDAG(cid, ipfsObj)
+
+  if (recursive && merkleDAG.isDir && merkleDAG.links) {
     // fetch the MerkleDAG of each link recursively
     for (const link of merkleDAG.links) {
       const object = await getMerkleDAG(client, link.cid, options)
