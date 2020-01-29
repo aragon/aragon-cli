@@ -1,21 +1,18 @@
 import test from 'ava'
 //
-import getApmRepoVersions from '../../src/apm/getApmRepoVersions'
-import { getLocalWeb3, getApmOptions } from '../test-helpers'
+import getApm from '../../src/apm/apm'
 
-let web3
-let apmOptions, apmRepoName
+let apmRepoName
 let versions
 
 /* Setup and cleanup */
 
 test.before('setup and make a successful call', async t => {
-  web3 = await getLocalWeb3()
+  const apm = await getApm()
 
-  apmOptions = getApmOptions()
   apmRepoName = 'voting.aragonpm.eth'
 
-  versions = await getApmRepoVersions(web3, apmRepoName, apmOptions)
+  versions = await apm.getAllVersions(apmRepoName)
 })
 
 test('retrieves the expected versions info', t => {

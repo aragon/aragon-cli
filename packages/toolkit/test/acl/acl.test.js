@@ -1,47 +1,40 @@
 import test from 'ava'
 //
-import { getDaoAddressPermissionsApps } from '../../src/acl/view'
-import { getLocalWeb3, getNewDaoAddress } from '../test-helpers'
+import ACL from '../../src/acl/acl'
+import { useEnvironment } from '../../src/helpers/useEnvironment'
+import { resolveEnsDomain } from '../../src/dao/utils/resolveAddressOrEnsDomain'
 
-const ipfsConf = {
-  rpc: {
-    protocol: 'http',
-    host: 'localhost',
-    port: 5001,
-    default: true,
-  },
-  gateway: 'http://localhost:8080/ipfs',
-}
-const apm = {
-  ensRegistryAddress: '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1',
-  ipfs: ipfsConf,
-}
+/**
+ * ############## TODO
+ * Refactor /lib/apm/util/acl
+ * Its functions could be made a pure function that will not require
+ * a complex integration test like this
+ */
 
 test.beforeEach(async t => {
+  const { web3 } = useEnvironment()
+
+  const accounts = await web3.eth.getAccounts()
+
   t.context = {
-    dao: await getNewDaoAddress(),
-    web3: await getLocalWeb3(),
+    web3,
+    accounts,
   }
 })
 
-test('Should get formated permissions for a new dao', async t => {
+test('Should prepare a TX to grant permissions to an account', async t => {
   // arrange
-  const { web3, dao } = t.context
+  const { web3, accounts } = t.context
+
+  const financeAppAddress = await resolveEnsDomain('finance.aragonpm.eth')
+
+  const repoAddress = financeAppAddress
+  const granteeAddress = accounts[1]
+
   // act
-  // eslint-disable-next-line
-  const { /* permissions, */ apps } = await getDaoAddressPermissionsApps({
-    dao,
-    web3Provider: web3.currentProvider,
-    ipfsConf,
-    apm,
-  })
+  const acl = ACL(web3)
+  const transaction = await acl.grant(repoAddress, granteeAddress)
+
   // assert
-  t.snapshot(
-    apps.map(app => app.appName),
-    'Should return the correct apps'
-  )
-  // t.snapshot(
-  //   permissions, // .map(permission => permission),
-  //   'Probably can snapshot anything about this result2'
-  // )
+  t.snapshot(transaction, 'the transaction data is correct')
 })
