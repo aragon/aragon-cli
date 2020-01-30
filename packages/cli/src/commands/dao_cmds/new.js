@@ -1,7 +1,6 @@
 import TaskList from 'listr'
-import { green, bold } from 'chalk'
+import { green } from 'chalk'
 import {
-  getApmRepo,
   newDao,
   assignId,
   defaultAPMName,
@@ -11,7 +10,6 @@ import {
   isLocalDaemonRunning,
 } from '@aragon/toolkit'
 //
-import { ensureWeb3 } from '../../helpers/web3-fallback'
 import listrOpts from '../../helpers/listr-options'
 import { parseArgumentStringIfPossible } from '../../util'
 
@@ -56,21 +54,19 @@ export const builder = yargs => {
 
 // Task will be moved to handler once `dao start` is refactored
 export const task = async ({
-  web3,
-  gasPrice,
-  apmOptions,
+  environment,
   template,
   templateVersion,
   fn,
   fnArgs,
   deployEvent,
   templateInstance,
+  aragonId,
   silent,
   debug,
-  aragonId,
 }) => {
   template = defaultAPMName(template)
-  let repo, daoAddress
+  let daoAddress
 
   const tasks = new TaskList(
     [
@@ -84,24 +80,17 @@ export const task = async ({
         },
       },
       {
-        title: `Fetching template ${bold(template)}@${templateVersion}`,
-        task: async () => {
-          repo = await getApmRepo(web3, template, apmOptions, templateVersion)
-        },
-        enabled: () => !templateInstance,
-      },
-      {
         title: 'Create new DAO from template',
         task: async ctx => {
-          daoAddress = await newDao({
-            repo,
-            web3,
-            templateInstance,
-            newInstanceMethod: fn,
-            newInstanceArgs: fnArgs,
+          daoAddress = await newDao(
+            template,
+            templateVersion,
+            fn,
+            fnArgs,
             deployEvent,
-            gasPrice,
-          })
+            environment,
+            templateInstance
+          )
           ctx.daoAddress = daoAddress
         },
       },
@@ -109,11 +98,7 @@ export const task = async ({
         title: 'Assigning Aragon Id',
         enabled: () => aragonId,
         task: async () => {
-          await assignId(daoAddress, aragonId, {
-            web3,
-            ensRegistry: apmOptions.ensRegistryAddress,
-            gasPrice,
-          })
+          await assignId(daoAddress, aragonId, environment)
         },
       },
     ],
@@ -125,24 +110,19 @@ export const task = async ({
 
 export const handler = async function({
   reporter,
-  network,
+  environment,
   template,
   templateVersion,
   fn,
   fnArgs,
   deployEvent,
-  apm: apmOptions,
   aragonId,
   silent,
   debug,
 }) {
-  const web3 = await ensureWeb3(network)
-
   const tasks = await task({
-    web3,
     reporter,
-    network,
-    apmOptions,
+    environment,
     template,
     templateVersion,
     fn,

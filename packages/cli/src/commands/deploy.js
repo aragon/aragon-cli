@@ -1,9 +1,9 @@
 import path from 'path'
 import TaskList from 'listr'
 import { blue, green } from 'chalk'
+import { loadArappFile } from '@aragon/toolkit'
 //
 import { compileContracts } from '../helpers/truffle-runner'
-import { ensureWeb3 } from '../helpers/web3-fallback'
 import deployArtifacts from '../helpers/truffle-deploy-artifacts'
 import listrOpts from '../helpers/listr-options'
 import { findProjectRoot } from '../util'
@@ -34,33 +34,21 @@ export const builder = yargs => {
 }
 
 export const task = async ({
-  module,
-  network,
-  gasPrice,
   cwd,
+  environment,
   contract,
   init = [],
-  web3,
-  apmOptions,
   silent,
   debug,
 }) => {
+  const { links } = loadArappFile()
+
   if (!contract) {
     contract = arappContract()
   }
 
-  if (!web3) {
-    web3 = await ensureWeb3(network)
-  }
-
-  // Mappings allow to pass certain init parameters that get replaced for their actual value
-  // const mappingMask = key => `@ARAGON_${key}`
-  const mappings = {
-    '@ARAGON_ENS': apmOptions.ensRegistryAddress, // <ens> to ens addr
-  }
-  const initArguments = init.map(value => mappings[value] || value)
-
   const contractName = contract
+
   const tasks = new TaskList(
     [
       {
@@ -83,7 +71,6 @@ export const task = async ({
           }
 
           const { bytecode, abi } = ctx.contractArtifacts || {}
-          const { links } = (module || {}).env || {}
 
           if (!bytecode || bytecode === '0x') {
             throw new Error(
@@ -93,13 +80,12 @@ export const task = async ({
 
           task.output = `Deploying '${contractName}' to network`
 
-          const { instance, address, transactionHash } = await deployContract({
-            bytecode: links ? linkLibraries(bytecode, links) : bytecode,
+          const { instance, address, transactionHash } = await deployContract(
+            links ? linkLibraries(bytecode, links) : bytecode,
             abi,
-            initArguments,
-            gasPrice: network.gasPrice || gasPrice,
-            web3,
-          })
+            init,
+            environment
+          )
 
           if (!address) {
             throw new Error('Contract deployment failed')
@@ -126,26 +112,20 @@ export const task = async ({
 }
 
 export const handler = async ({
-  module,
   reporter,
-  gasPrice,
-  network,
   cwd,
+  environment,
   contract,
   init,
-  apm: apmOptions,
   silent,
   debug,
 }) => {
   const tasks = await task({
-    module,
     reporter,
-    gasPrice,
-    network,
     cwd,
+    environment,
     contract,
     init,
-    apmOptions,
     silent,
     debug,
   })

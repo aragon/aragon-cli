@@ -9,7 +9,6 @@ const apmRepoVersion = '1.0.0'
 /* Setup and cleanup */
 
 test.before('setup and make a successful call', async t => {
-
   const apmRepoName = 'voting'
 
   info = await getApmRepo(apmRepoName, apmRepoVersion)

@@ -12,12 +12,12 @@ import { useEnvironment } from '../helpers/useEnvironment'
  * @param {string} environment Environment
  * @returns {Promise<{ transactionPath, receipt }>} Transaction path and receipt
  */
-export default async function (
+export default async function(
   dao,
   app,
   method,
   params,
-  progressHandler = () => { },
+  progressHandler = () => {},
   environment
 ) {
   const { web3 } = useEnvironment(environment)

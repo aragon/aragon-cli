@@ -1,6 +1,5 @@
 import { blue } from 'chalk'
 //
-import { ensureWeb3 } from '../../helpers/web3-fallback'
 
 import { task as execHandler } from './utils/execHandler'
 import daoArg from './utils/daoArg'
@@ -26,24 +25,19 @@ export const builder = function(yargs) {
 
 export const handler = async function({
   reporter,
+  environment,
   dao,
-  apm,
-  network,
   proxyAddress,
   fn,
   fnArgs,
-  wsProvider,
 }) {
   const task = await execHandler({
+    reporter,
+    environment,
     dao,
     app: proxyAddress,
     method: fn,
     params: fnArgs.map(parseArgumentStringIfPossible),
-    reporter,
-    apm,
-    network,
-    wsProvider,
-    web3: await ensureWeb3(network),
   })
   const { transactionPath } = await task.run()
 

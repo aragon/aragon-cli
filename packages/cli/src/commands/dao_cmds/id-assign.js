@@ -2,7 +2,6 @@ import TaskList from 'listr'
 import { green } from 'chalk'
 import { isIdAssigned, assignId } from '@aragon/toolkit'
 //
-import { ensureWeb3 } from '../../helpers/web3-fallback'
 import listrOpts from '../../helpers/listr-options'
 
 // dao id assign command
@@ -35,31 +34,26 @@ export const builder = yargs => {
 }
 
 export const handler = async function({
-  aragonId,
   reporter,
-  network,
-  apm: apmOptions,
+  environment,
+  aragonId,
   dao,
-  gasPrice,
   silent,
   debug,
 }) {
-  const web3 = await ensureWeb3(network)
-  const options = { web3, ensRegistry: apmOptions.ensRegistryAddress }
-
   const tasks = new TaskList(
     [
       {
         title: 'Validating Id',
         task: async () => {
-          if (await isIdAssigned(aragonId, options)) {
+          if (await isIdAssigned(aragonId, environment)) {
             throw Error(`${aragonId} is already assigned.`)
           }
         },
       },
       {
         title: 'Assigning Id',
-        task: async () => assignId(dao, aragonId, { ...options, gasPrice }),
+        task: async () => assignId(dao, aragonId, environment),
       },
     ],
     listrOpts(silent, debug)

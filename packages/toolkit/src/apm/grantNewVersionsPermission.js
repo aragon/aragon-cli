@@ -5,7 +5,7 @@ import { useEnvironment } from '../helpers/useEnvironment'
 export default async (
   grantees,
   apmRepoName,
-  progressHandler = () => { },
+  progressHandler = () => {},
   environment
 ) => {
   const { web3, gasPrice } = useEnvironment(environment)

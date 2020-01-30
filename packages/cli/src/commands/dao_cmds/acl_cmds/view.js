@@ -11,11 +11,11 @@ import {
   ZERO_ADDRESS,
   getDaoAddressPermissionsApps,
   formatAclPermissions,
+  loadArappFile,
 } from '@aragon/toolkit'
 //
 import daoArg from '../utils/daoArg'
 import { listApps } from '../utils/knownApps'
-import { ensureWeb3 } from '../../../helpers/web3-fallback'
 import listrOpts from '../../../helpers/listr-options'
 import defaultAppsRoles from '../../../knownRoles.json'
 
@@ -31,25 +31,12 @@ export const builder = function(yargs) {
  *
  * @param  {Object} args From Listr
  * @param  {string} args.dao DAO address or ENS name
- * @param  {NetworkConfig} args.network Network config
- * @param  {ApmConfig} args.apm APM config
- * @param  {WebsocketProvider} args.wsProvider Web3 config
- * @param  {ArappConfig} args.module arapp.json content
+ * @param  {EnvironmentConfig} args.environment Environment config
  * @param  {boolean} args.silent Silent flag
  * @param  {boolean} args.debug Debug flag
  * @return {Promise<TaskList>} void
  */
-export const handler = async function({
-  dao,
-  network,
-  apm,
-  wsProvider,
-  module,
-  silent,
-  debug,
-}) {
-  const web3 = await ensureWeb3(network)
-
+export const handler = async function({ dao, environment, silent, debug }) {
   // Type common context
   /**
    * @type {AclPermissions}
@@ -60,6 +47,8 @@ export const handler = async function({
    */
   let apps
 
+  const { appName } = environment
+
   const tasks = new TaskList(
     [
       {
@@ -67,12 +56,7 @@ export const handler = async function({
         task: async (_, task) => {
           task.output = `Fetching permissions for ${dao}...`
 
-          const daoData = await getDaoAddressPermissionsApps({
-            dao,
-            web3Provider: wsProvider || web3.currentProvider,
-            ipfsConf: apm.ipfs,
-            apm,
-          })
+          const daoData = await getDaoAddressPermissionsApps(dao, environment)
 
           permissions = daoData.permissions
           apps = daoData.apps
@@ -85,8 +69,10 @@ export const handler = async function({
   )
 
   return tasks.run().then(() => {
-    const knownApps = listApps(module ? [module.appName] : [])
-    const knownRoles = getKnownRoles(module)
+    const arapp = loadArappFile()
+
+    const knownApps = listApps(arapp ? [appName] : [])
+    const knownRoles = getKnownRoles(arapp)
 
     /**
      * @type {AclPermissionFormatted[]} Force type acknowledgment
@@ -170,11 +156,11 @@ const printNameOrAddress = ({ address, name }) =>
  * Returns this app roles and default known roles
  *
  * TODO: add support for user apps
- * @param {ArappConfig} module arapp.json contents
+ * @param {ArappConfig} arapp arapp.json contents
  * @return {Object.<string, RoleDefinition>} Unique known roles
  */
-const getKnownRoles = module => {
-  const currentAppRoles = module ? module.roles : []
+const getKnownRoles = arapp => {
+  const currentAppRoles = arapp ? arapp.roles : []
   const allRoles = defaultAppsRoles.concat(currentAppRoles)
 
   return keyBy(allRoles, role => keccak256(role.id))

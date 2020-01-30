@@ -2,7 +2,6 @@ import { getRecommendedGasLimit } from '../util'
 import getApmRepo from '../apm/getApmRepo'
 import bareTemplateAbi from './utils/bare-template-abi'
 import { useEnvironment } from '../helpers/useEnvironment'
-import getApmRepo from '../apm/getApmRepo'
 
 /**
  * Create a new DAO
@@ -15,21 +14,20 @@ import getApmRepo from '../apm/getApmRepo'
  * @param {string} environment Environment
  * @param {Object} templateInstance Template instance
  */
-export default async function (
+export default async function(
   templateName = 'bare-template',
   newInstanceArgs = [],
   newInstanceMethod = 'newInstance',
   deployEvent = 'DeployDao',
   templateVersion = 'latest',
   environment,
-  templateInstance  // TODO: optional object options
+  templateInstance // TODO: optional object options
 ) {
   const { web3, gasPrice } = useEnvironment(environment)
 
   let template
 
   if (!templateInstance) {
-
     template = await getApmRepo(templateName, templateVersion)
 
     // If not connected to IPFS, repo won't have an ABI

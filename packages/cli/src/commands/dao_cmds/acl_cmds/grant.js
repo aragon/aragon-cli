@@ -19,14 +19,11 @@ export const builder = function(yargs) {
 
 export const handler = async function({
   reporter,
+  environment,
   dao,
   app,
   role,
   entity,
-  network,
-  wsProvider,
-  apm,
-  gasPrice,
   params,
 }) {
   const method = params.length === 0 ? 'grantPermission' : 'grantPermissionP'
@@ -38,10 +35,7 @@ export const handler = async function({
 
   return aclExecHandler(dao, method, methodParams, {
     reporter,
-    gasPrice,
-    apm,
-    network,
-    wsProvider,
+    environment,
     role,
   })
 }
