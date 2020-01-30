@@ -1,42 +1,31 @@
-import { initAragonJS, getTransactionPath } from '../helpers/aragonjs-wrapper'
+import { getTransactionPath } from './permissions'
+import { useEnvironment } from '../helpers/useEnvironment'
 
 /**
  * Execute a method on a DAO's app.
  *
- * @param {Object} params Parameters
- * @param {string} params.dao DAO name or address
- * @param {string} params.app App address
- * @param {string} params.method Method name
- * @param {Array<*>} params.params Method parameters
- * @param {Object} params.apm APM config
- * @param {Object} params.web3 Web3 instance
- * @param {Object} params.wsProvider Ethereum provider
- * @param {string} params.gasPrice Gas price
- * @param {function} params.progressHandler Progress handler
+ * @param {string} dao DAO name or address
+ * @param {string} app App address
+ * @param {string} method Method name
+ * @param {Array<*>} params Method parameters
+ * @param {string} environment Environment
+ * @param {function} progressHandler Progress handler
  * @returns {Promise<{ transactionPath, receipt }>} Transaction path and receipt
  */
-export default async function({
+export default async function(
   dao,
   app,
   method,
   params,
-  apm,
-  web3,
-  wsProvider,
-  gasPrice,
-  progressHandler = () => {},
-}) {
-  const wrapper = await initAragonJS(dao, apm.ensRegistryAddress, {
-    ipfsConf: apm.ipfs,
-    gasPrice,
-    provider: wsProvider || web3.currentProvider,
-    accounts: await web3.eth.getAccounts(),
-  })
+  environment,
+  progressHandler = () => {}
+) {
+  const { web3 } = useEnvironment(environment)
 
   progressHandler(1)
 
   const transactionPath = (
-    await getTransactionPath(app, method, params, wrapper)
+    await getTransactionPath(dao, app, method, params, environment)
   )[0]
 
   if (!transactionPath)

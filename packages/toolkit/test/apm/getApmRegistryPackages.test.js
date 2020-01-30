@@ -2,33 +2,18 @@ import test from 'ava'
 import sinon from 'sinon'
 //
 import getApmRegistryPackages from '../../src/apm/getApmRegistryPackages'
-import {
-  getLocalWeb3,
-  getApmRegistryName,
-  getApmOptions,
-} from '../test-helpers'
 
-let web3
-let apmRegistryName, apmOptions
 let progressHandler
 let packages
+
+const apmRegistryName = 'aragonpm.eth'
 
 /* Setup and cleanup */
 
 test.before('setup and make a successful call', async t => {
-  web3 = await getLocalWeb3()
-
-  apmRegistryName = getApmRegistryName()
-  apmOptions = getApmOptions()
-
   progressHandler = sinon.spy()
 
-  packages = await getApmRegistryPackages(
-    web3,
-    apmRegistryName,
-    apmOptions,
-    progressHandler
-  )
+  packages = await getApmRegistryPackages(apmRegistryName, progressHandler)
 })
 
 /* Tests */

@@ -1,4 +1,8 @@
-export default (web3, abi, initFunctionName, initArgs) => {
+import { useEnvironment } from '../helpers/useEnvironment'
+
+export default (abi, initFunctionName, initArgs, environment) => {
+  const { web3 } = useEnvironment(environment)
+
   const methodABI = abi.find(method => method.name === initFunctionName)
 
   if (!methodABI) {
