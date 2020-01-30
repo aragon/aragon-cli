@@ -7,7 +7,6 @@ import { ensureRepoInitialized, setPorts, configureCors } from './config'
 import { pinArtifacts } from './aragon'
 import { startLocalDaemon, isLocalDaemonRunning } from './daemon'
 import { installGoIpfs } from './install'
-import { useEnvironment } from '../helpers/useEnvironment'
 
 export const ensureLocalDaemon = async ({
   projectPath,
@@ -68,11 +67,10 @@ export const ensureLocalDaemon = async ({
   }
 }
 
-export const getHttpClient = async environment => {
+export const getHttpClient = async address => {
   // try {
-  const { apmOptions } = useEnvironment(environment)
 
-  return connectOrThrow(apmOptions.ipfs.gateway)
+  return connectOrThrow(address)
   // } catch (err) {
   // if (!address.includes('localhost')) {
   //   throw err
@@ -88,7 +86,7 @@ export const getHttpClient = async environment => {
   // }
   // }
 }
-export async function connectOrThrow(address) {
+export async function connectOrThrow (address) {
   try {
     const httpClient = connectThroughHTTP(address)
     await httpClient.version()
@@ -100,7 +98,7 @@ export async function connectOrThrow(address) {
   }
 }
 
-export function connectThroughHTTP(address) {
+export function connectThroughHTTP (address) {
   if (typeof address === 'string') {
     return ipfsHttpClient(parseAddressAsURL(address))
   }
@@ -108,7 +106,7 @@ export function connectThroughHTTP(address) {
   return ipfsHttpClient(address)
 }
 
-export function parseAddressAsURL(address) {
+export function parseAddressAsURL (address) {
   const uri = new url.URL(address)
   return {
     protocol: uri.protocol.replace(':', ''),
