@@ -22,7 +22,7 @@ Kernel ABI does not include expected log '${newAppProxyLogName}'`)
  * @param  {string} environment Envrionment
  * @return {Promise<string>} aclAddress
  */
-export async function getAclAddress(dao, environment) {
+export async function getAclAddress (dao, environment) {
   const { web3 } = useEnvironment(environment)
 
   const daoInstance = new web3.eth.Contract(kernelAbi, dao)
@@ -36,7 +36,7 @@ export async function getAclAddress(dao, environment) {
  * @param {Object} receipt Web3 receipt object
  * @return {string|undefined} app proxy contract address
  */
-export function getAppProxyAddressFromReceipt(dao, receipt) {
+export function getAppProxyAddressFromReceipt (dao, receipt) {
   const logTopic = web3EthAbi.encodeEventSignature(newAppProxyLogAbi)
 
   const deployLog = receipt.logs.find(({ topics, address }) => {
@@ -60,7 +60,7 @@ Kernel ABI log ${newAppProxyLogName} does not have expected argument 'log'`)
  * @param  {string} environment Envrionment
  * @return {Promise<string>} basesNamespace
  */
-export async function getBasesNamespace(dao, environment) {
+export async function getBasesNamespace (dao, environment) {
   const { web3 } = useEnvironment(environment)
 
   const kernel = new web3.eth.Contract(kernelAbi, dao)
@@ -75,10 +75,10 @@ export async function getBasesNamespace(dao, environment) {
  * @param  {string} environment Envrionment
  * @return {Promise<string>} currentBaseAddress
  */
-export async function getAppBase(dao, appId, environment) {
+export async function getAppBase (dao, appId, environment) {
   const { web3 } = useEnvironment(environment)
 
   const kernel = new web3.eth.Contract(kernelAbi, dao)
-  const basesNamespace = await getBasesNamespace(dao, web3)
+  const basesNamespace = await getBasesNamespace(dao, environment)
   return kernel.methods.getApp(basesNamespace, appId).call()
 }

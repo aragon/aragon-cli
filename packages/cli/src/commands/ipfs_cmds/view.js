@@ -78,9 +78,9 @@ export const handler = async argv => {
     cid = await askForInput('Choose a content identifier')
   }
 
-  const { reporter, apm, debug, silent } = argv
+  const { reporter, environment, debug, silent } = argv
 
-  const ipfsReader = await getHttpClient(apm.ipfs.gateway)
+  const ipfsReader = await getHttpClient(environment)
 
   const ctx = await runViewTask({
     cid,
