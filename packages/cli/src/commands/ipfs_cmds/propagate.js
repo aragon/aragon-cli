@@ -1,5 +1,5 @@
 import TaskList from 'listr'
-import { blue, red, green } from 'chalk'
+import { blue, red, green, gray } from 'chalk'
 import {
   getHttpClient,
   getMerkleDAG,
@@ -46,21 +46,45 @@ export const runPropagateTask = ({ cid, ipfsReader, silent, debug }) => {
       },
       {
         title: 'Fetch the links',
-        task: async ctx => {
+        task: async (ctx, task) => {
+          const handleProgress = (step, data) => {
+            switch (step) {
+              case 1:
+                task.output = `Fetch DAG information for ${gray(data)}`
+                break
+              case 2:
+                task.output = `Parse DAG information for ${gray(data)}`
+                break
+            }
+          }
+
           ctx.data = await getMerkleDAG(ipfsReader, cid, {
             recursive: true,
+            progressCallback: handleProgress,
           })
         },
       },
       {
         title: 'Query gateways',
         task: async (ctx, task) => {
+          const handleProgress = (step, data) => {
+            switch (step) {
+              case 1: {
+                const cid = gray(data.cid)
+                const succeeded = green(data.succeeded)
+                const failed = red(data.failed)
+                task.output = `Queried ${cid} at ${succeeded} gateways successfully, ${failed} failed.`
+                break
+              }
+            }
+          }
+
           ctx.CIDs = extractCIDsFromMerkleDAG(ctx.data, {
             recursive: true,
           })
 
           ctx.result = await propagateFiles(ctx.CIDs, {
-            logger: text => (task.output = text),
+            progressCallback: handleProgress,
           })
         },
       },

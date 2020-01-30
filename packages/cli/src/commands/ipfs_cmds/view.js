@@ -1,4 +1,5 @@
 import TaskList from 'listr'
+import { gray } from 'chalk'
 import { cid as isValidCID } from 'is-ipfs'
 import {
   getMerkleDAG,
@@ -45,10 +46,20 @@ const runViewTask = ({ cid, ipfsReader, silent, debug }) => {
       },
       {
         title: 'Fetch the links',
-        task: async ctx => {
-          // rename to ctx.ipfsClient
+        task: async (ctx, task) => {
+          const handleProgress = (step, data) => {
+            switch (step) {
+              case 1:
+                task.output = `Fetch DAG information for ${gray(data)}`
+                break
+              case 2:
+                task.output = `Parse DAG information for ${gray(data)}`
+                break
+            }
+          }
           ctx.merkleDAG = await getMerkleDAG(ipfsReader, cid, {
             recursive: true,
+            progressCallback: handleProgress,
           })
         },
       },
