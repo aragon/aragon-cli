@@ -1,8 +1,6 @@
 import Table from 'cli-table'
 import TaskList from 'listr'
 import { getApmRegistryPackages } from '@aragon/toolkit'
-//
-import { ensureWeb3 } from '../../helpers/web3-fallback'
 
 export const command = 'packages [apmRegistry]'
 export const describe = 'List all packages in the registry'
@@ -15,12 +13,7 @@ export const builder = function(yargs) {
   })
 }
 
-export const handler = async function({
-  apmRegistry,
-  network,
-  apm: apmOptions,
-}) {
-  const web3 = await ensureWeb3(network)
+export const handler = async function({ apmRegistry, environment }) {
   let packages
 
   const tasks = new TaskList([
@@ -41,10 +34,9 @@ export const handler = async function({
         }
 
         packages = await getApmRegistryPackages(
-          web3,
           apmRegistry,
-          apmOptions,
-          progressHandler
+          progressHandler,
+          environment
         )
       },
     },

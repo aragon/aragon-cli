@@ -5,12 +5,13 @@ import fs from 'fs'
 import { readJsonSync } from 'fs-extra'
 import {
   APM_INITIAL_VERSIONS,
-  apmPublishVersionIntent,
   generateApplicationArtifact,
+  loadArappFile,
+  useApm,
+  useEnvironment,
 } from '@aragon/toolkit'
 //
 import listrOpts from '../../../helpers/listr-options'
-
 import askToConfirm from '../../../lib/publish/askToConfirm'
 import { prepareFilesForPublishing } from '../../../lib/publish/preprareFiles'
 import {
@@ -32,11 +33,7 @@ const readFile = fs.promises.readFile
 export default async function runPrepareForPublishTask({
   // Globals
   cwd,
-  web3,
-  module: arapp,
-  apm: apmOptions,
-  silent,
-  debug,
+  environment,
 
   // Arguments
 
@@ -61,7 +58,17 @@ export default async function runPrepareForPublishTask({
   initialVersion,
   version,
   contractAddress,
+  silent,
+  debug,
 }) {
+  const { web3, apmOptions, appName } = useEnvironment(environment)
+
+  const apm = await useApm(environment)
+
+  const arapp = loadArappFile()
+
+  const { path: contractPath, roles } = arapp
+
   return new TaskList(
     [
       {
@@ -95,12 +102,9 @@ export default async function runPrepareForPublishTask({
       },
       {
         title: 'Generate application artifact',
-        skip: () => onlyContent && !arapp.path,
+        skip: () => onlyContent && !contractPath,
         task: async (ctx, task) => {
           const outputPath = onlyArtifacts ? cwd : ctx.pathToPublish
-
-          const contractPath = arapp.path
-          const roles = arapp.roles
 
           /**
            * Define `performArtifcatGeneration` and `invokeArtifactGeneration`
@@ -196,15 +200,13 @@ export default async function runPrepareForPublishTask({
           ctx.contractInstance = null // clean up deploy sub-command artifacts
           const accounts = await web3.eth.getAccounts()
           const from = accounts[0]
-          ctx.intent = await apmPublishVersionIntent(
-            web3,
+          ctx.intent = await apm.publishVersionIntent(
             from,
-            arapp.appName,
+            appName,
             version,
             http ? 'http' : provider,
             http || ctx.pathToPublish,
-            contractAddress,
-            apmOptions
+            contractAddress
           )
         },
       },

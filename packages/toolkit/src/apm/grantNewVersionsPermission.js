@@ -1,4 +1,4 @@
-import getApm from './apm'
+import useApm from './useApm'
 import ACL from '../acl/acl'
 import { useEnvironment } from '../helpers/useEnvironment'
 
@@ -14,7 +14,7 @@ export default async (
     throw new Error('No grantee addresses provided')
   }
 
-  const apm = await getApm(environment)
+  const apm = await useApm(environment)
 
   const acl = ACL(web3)
 

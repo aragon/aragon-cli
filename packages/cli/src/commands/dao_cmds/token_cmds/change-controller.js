@@ -4,8 +4,6 @@ import { changeController } from '@aragon/toolkit'
 //
 import listrOpts from '../../../helpers/listr-options'
 
-import { ensureWeb3 } from '../../../helpers/web3-fallback'
-
 export const command = 'change-controller <token-address> <new-controller>'
 export const describe = 'Change the controller of a MiniMe token'
 
@@ -21,14 +19,12 @@ export const builder = yargs => {
 
 export const handler = async function({
   reporter,
-  gasPrice,
-  network,
+  environment,
   tokenAddress,
   newController,
   silent,
   debug,
 }) {
-  const web3 = await ensureWeb3(network)
   let txReceipt
 
   const tasks = new TaskList(
@@ -37,10 +33,9 @@ export const handler = async function({
         title: 'Changing the MiniMe token controller',
         task: async () => {
           txReceipt = await changeController(
-            web3,
             tokenAddress,
             newController,
-            gasPrice
+            environment
           )
         },
       },

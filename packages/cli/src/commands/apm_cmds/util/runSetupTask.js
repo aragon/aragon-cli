@@ -8,6 +8,7 @@ import {
   getBinaryPath,
   getDefaultRepoPath,
   getApmRepo,
+  useEnvironment,
 } from '@aragon/toolkit'
 
 // helpers
@@ -49,14 +50,8 @@ import { runScriptHelper } from '../../../util'
  */
 export default async function runSetupTask({
   // Globals
-  gasPrice,
   cwd,
-  web3,
-  network,
-  module,
-  apm: apmOptions,
-  silent,
-  debug,
+  environment,
 
   // Arguments
 
@@ -78,15 +73,17 @@ export default async function runSetupTask({
   onlyContent,
   onlyArtifacts,
   http,
+  silent,
+  debug,
 }) {
+  const { appName } = useEnvironment(environment)
+
   if (onlyContent) {
     contract = ZERO_ADDRESS
   }
 
   // Set prepublish to true if --prepublish-script argument is used
   if (process.argv.includes('--prepublish-script')) prepublish = true
-
-  const appName = module && module.appName
 
   /**
    * Flag for the Deploy contract task
@@ -126,12 +123,7 @@ export default async function runSetupTask({
               prevVersion,
               version,
               shouldDeployContract: _shouldDeployContract,
-            } = await getPrevAndNextVersion(
-              appName,
-              bumpOrVersion,
-              web3,
-              apmOptions
-            )
+            } = await getPrevAndNextVersion(bumpOrVersion, environment)
 
             // (TODO): For now MUST be exposed in the context because their are used around
             ctx.initialRepo = initialRepo
@@ -169,14 +161,10 @@ export default async function runSetupTask({
             (!contract && shouldDeployContract && !reuse)),
         task: async () => {
           return deployTask({
-            module,
+            cwd,
+            environment,
             contract,
             init,
-            gasPrice,
-            network,
-            cwd,
-            web3,
-            apmOptions,
           })
         },
       },
@@ -198,9 +186,9 @@ export default async function runSetupTask({
 
             try {
               const { contractAddress } = await getApmRepo(
-                web3,
                 appName,
-                apmOptions
+                'latest',
+                environment
               )
               ctx.contract = contractAddress
               return `Using ${contractAddress}`

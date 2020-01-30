@@ -7,7 +7,7 @@ import {
   SOLIDITY_FILE,
   ARAPP_FILE,
   MANIFEST_FILE,
-  getFile,
+  apmGetFile,
 } from '@aragon/toolkit'
 //
 import { findProjectRoot } from '../../util'
@@ -165,7 +165,7 @@ export async function copyCurrentApplicationArtifacts(
       try {
         return {
           filePath: path.resolve(outputPath, file),
-          fileContent: await getFile(web3, uri, file, apmOptions),
+          fileContent: await apmGetFile(web3, uri, file, apmOptions),
           fileName: file,
         }
       } catch (e) {

@@ -9,27 +9,21 @@ import listrOpts from '../../../helpers/listr-options'
  * DAO's app.
  *
  * @param {Object} params Parameters
+ * @param {Object} params.environment Environment config
  * @param {string} params.dao DAO name or address
  * @param {string} params.app App address
  * @param {string} params.method Method name
  * @param {Array<*>} params.params Method parameters
- * @param {Object} params.apm APM config
- * @param {Object} params.web3 Web3 instance
- * @param {Object} params.wsProvider Ethereum provider
- * @param {string} params.gasPrice Gas price
  * @param {boolean} params.silent Silent task
  * @param {boolean} params.debug Debug mode
  * @returns {Promise<TaskList>} Execution task list
  */
 export async function task({
+  environment,
   dao,
   app,
   method,
   params,
-  apm,
-  web3,
-  wsProvider,
-  gasPrice,
   silent,
   debug,
 }) {
@@ -51,17 +45,7 @@ export async function task({
 
           Object.assign(
             ctx,
-            await exec({
-              dao,
-              apm,
-              app,
-              method,
-              params,
-              web3,
-              wsProvider,
-              gasPrice,
-              progressHandler,
-            })
+            await exec(dao, app, method, params, progressHandler, environment)
           )
         },
       },
@@ -74,16 +58,12 @@ export async function task({
  * Execute a method on a DAO's app.
  *
  * @param {Object} args Parameters
+ * @param {Object} args.reporter Reporter
+ * @param {Object} params.environment Environment config
  * @param {string} args.dao DAO name or address
  * @param {string} args.app App address
  * @param {string} args.method Method name
  * @param {Array<*>} args.params Method parameters
- * @param {boolean} args.ipfsCheck Check if IPFS is running
- * @param {Object} args.reporter Reporter
- * @param {Object} args.apm APM config
- * @param {Object} args.web3 Web3 instance
- * @param {Object} args.wsProvider Ethereum provider
- * @param {string} args.gasPrice Gas price
  * @param {boolean} args.silent Silent task
  * @param {boolean} args.debug Debug mode
  * @returns {Promise} Execution promise

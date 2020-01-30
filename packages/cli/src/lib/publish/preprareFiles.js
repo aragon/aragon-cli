@@ -3,9 +3,7 @@ import ignore from 'ignore'
 import fs from 'fs'
 import { copy, pathExistsSync } from 'fs-extra'
 import { promisify } from 'util'
-import { MANIFEST_FILE, ARTIFACT_FILE } from '@aragon/toolkit'
-//
-import { findProjectRoot } from '../../util'
+import { MANIFEST_FILE, ARTIFACT_FILE, findProjectRoot } from '@aragon/toolkit'
 
 /**
  * Moves the specified files to a temporary directory and returns the path to

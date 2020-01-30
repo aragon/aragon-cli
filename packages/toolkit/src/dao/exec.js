@@ -8,8 +8,8 @@ import { useEnvironment } from '../helpers/useEnvironment'
  * @param {string} app App address
  * @param {string} method Method name
  * @param {Array<*>} params Method parameters
- * @param {string} environment Environment
  * @param {function} progressHandler Progress handler
+ * @param {string} environment Environment
  * @returns {Promise<{ transactionPath, receipt }>} Transaction path and receipt
  */
 export default async function(
@@ -17,8 +17,8 @@ export default async function(
   app,
   method,
   params,
-  environment,
-  progressHandler = () => {}
+  progressHandler = () => {},
+  environment
 ) {
   const { web3 } = useEnvironment(environment)
 

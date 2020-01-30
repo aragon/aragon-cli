@@ -2,7 +2,6 @@ import TaskList from 'listr'
 import path from 'path'
 import fs from 'fs-extra'
 import url from 'url'
-import Web3 from 'web3'
 import { blue, green, bold } from 'chalk'
 import {
   isPortTaken,
@@ -14,6 +13,7 @@ import {
   newDao,
   getApmRepo,
   defaultAPMName,
+  useEnvironment,
 } from '@aragon/toolkit'
 //
 import listrOpts from '../helpers/listr-options'
@@ -187,13 +187,9 @@ export const builder = function(yargs) {
 export const handler = async function({
   // Globals
   reporter,
-  gasPrice,
   cwd,
-  apm: apmOptions,
-  silent,
-  debug,
-  network,
-  module,
+  environment,
+  // Args
   client,
   files,
   port,
@@ -221,6 +217,8 @@ export const handler = async function({
   clientVersion,
   clientPort,
   clientPath,
+  silent,
+  debug,
 }) {
   if (http && !(await isHttpServerOpen(http))) {
     throw Error(
@@ -228,8 +226,12 @@ export const handler = async function({
     )
   }
 
+  const { web3, apmOptions, appName } = useEnvironment(environment)
+
   // Set prepublish to true if --prepublish-script argument is used
   if (process.argv.includes('--prepublish-script')) prepublish = true
+
+  let daoAddress
 
   const showAccounts = accounts
 
@@ -247,11 +249,11 @@ export const handler = async function({
       {
         title: 'Start a local Ethereum network',
         skip: async ctx => {
-          const hostURL = new url.URL(network.provider.connection._url)
+          const hostURL = new url.URL(web3.currentProvider.connection._url)
           if (!(await isPortTaken(hostURL.port))) {
             return false
           } else {
-            ctx.web3 = new Web3(network.provider)
+            ctx.web3 = web3
             ctx.accounts = await ctx.web3.eth.getAccounts()
             return 'Connected to the provided Ethereum network'
           }
@@ -270,27 +272,23 @@ export const handler = async function({
         title: 'Setup before publish',
         task: async ctx => {
           ctx.publishParams = {
+            reporter,
+            cwd,
+            environment,
             provider: 'ipfs',
             files,
             ignore: ['node_modules'],
-            reporter,
-            debug,
-            silent,
-            gasPrice,
-            cwd,
-            network,
-            module,
             buildScript,
             build,
             publishDir,
             prepublishScript,
             prepublish,
             contract: arappContract(),
-            web3: ctx.web3,
-            apm: apmOptions,
             bump,
             http,
             httpServedFrom,
+            debug,
+            silent,
           }
 
           return setupTask(ctx.publishParams)
@@ -328,65 +326,26 @@ export const handler = async function({
         },
       },
       {
-        title: 'Fetch published repo',
-        task: async ctx => {
-          const apmRepoName = module.name
-
-          const progressHandler = step => {
-            switch (step) {
-              case 1:
-                console.log(`Initialize aragonPM`)
-                break
-              case 2:
-                console.log(`Fetching ${bold(apmRepoName)}@latest`)
-                break
-            }
-          }
-
-          ctx.repo = await getApmRepo(
-            ctx.web3,
-            apmRepoName,
-            apmOptions,
-            'latest',
-            progressHandler
-          )
-        },
-      },
-      {
         title: 'Deploy Template',
         enabled: () => template !== BARE_TEMPLATE,
         task: ctx => {
           const deployParams = {
-            module,
+            reporter,
+            cwd,
+            environment,
             contract: template,
             init: templateInit,
-            reporter,
-            gasPrice,
-            network,
-            cwd,
-            web3: ctx.web3,
-            apmOptions,
           }
 
           return deployTask(deployParams)
         },
       },
       {
-        title: `Fetching template ${bold(template)}@latest`,
-        task: async ctx => {
-          ctx.template = await getApmRepo(
-            ctx.web3,
-            template,
-            apmOptions,
-            'latest'
-          )
-        },
-        enabled: ctx => !ctx.contractInstance,
-      },
-      {
         title: 'Create Organization from template',
         task: async ctx => {
-          const roles = ctx.repo.roles || []
+          const repo = await getApmRepo(appName, 'latest', environment)
+
+          const roles = repo.roles || []
           const rolesBytes = roles.map(role => role.bytes)
 
           let fnArgs
@@ -397,8 +356,7 @@ export const handler = async function({
           } else {
             // TODO: Report warning when app wasn't initialized
             const initPayload = encodeInitPayload(
-              ctx.web3,
-              ctx.repo.abi,
+              repo.abi,
               appInit,
               appInitArgs
             )
@@ -407,18 +365,20 @@ export const handler = async function({
               ctx.notInitialized = true
             }
 
-            fnArgs = [ctx.repo.appId, rolesBytes, ctx.accounts[0], initPayload]
+            fnArgs = [repo.appId, rolesBytes, ctx.accounts[0], initPayload]
           }
 
-          ctx.daoAddress = await newDao({
-            repo: ctx.template,
-            web3: ctx.web3,
-            templateInstance: ctx.contractInstance,
-            newInstanceMethod: templateNewInstance,
-            newInstanceArgs: fnArgs,
-            deployEvent: templateDeployEvent,
-            gasPrice,
-          })
+          const templateInstance = ctx.contractInstance
+
+          daoAddress = await newDao(
+            template,
+            fnArgs,
+            templateNewInstance,
+            templateDeployEvent,
+            'latest',
+            templateInstance,
+            environment
+          )
         },
       },
       {
@@ -437,7 +397,7 @@ export const handler = async function({
     manifest = fs.readJsonSync(manifestPath)
   }
 
-  return tasks.run({ ens: apmOptions.ensRegistryAddress }).then(async ctx => {
+  return tasks.run().then(async ctx => {
     if (ctx.portOpen) {
       reporter.warning(
         `Server already listening at port ${blue(
@@ -474,16 +434,16 @@ export const handler = async function({
 
     printResetNotice(reporter, reset)
 
-    const registry = module.appName
+    const registry = appName
       .split('.')
       .slice(1)
       .join('.')
 
     reporter.info(`This is the configuration for your development deployment:
-    ${'Ethereum Node'}: ${blue(network.provider.connection._url)}
-    ${'ENS registry'}: ${blue(ctx.ens)}
+    ${'Ethereum Node'}: ${blue(web3.currentProvider.connection._url)}
+    ${'ENS registry'}: ${blue(apmOptions.ensRegistryAddress)}
     ${`aragonPM registry`}: ${blue(registry)}
-    ${'Organization address'}: ${green(ctx.daoAddress)}`)
+    ${'Organization address'}: ${green(daoAddress)}`)
 
     reporter.newLine()
 
@@ -491,10 +451,10 @@ export const handler = async function({
       `${
         client !== false
           ? `Open ${bold(
-              `http://localhost:${clientPort}/#/${ctx.daoAddress}`
+              `http://localhost:${clientPort}/#/${daoAddress}`
             )} to view your DAO`
           : `Use ${bold(
-              `"aragon dao <command> ${ctx.daoAddress}"`
+              `"aragon dao <command> ${daoAddress}"`
             )} to interact with your Organization`
       }`
     )

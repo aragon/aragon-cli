@@ -79,6 +79,6 @@ export async function getAppBase(dao, appId, environment) {
   const { web3 } = useEnvironment(environment)
 
   const kernel = new web3.eth.Contract(kernelAbi, dao)
-  const basesNamespace = await getBasesNamespace(dao, web3)
+  const basesNamespace = await getBasesNamespace(dao, environment)
   return kernel.methods.getApp(basesNamespace, appId).call()
 }

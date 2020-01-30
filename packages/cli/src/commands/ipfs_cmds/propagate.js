@@ -1,5 +1,5 @@
 import TaskList from 'listr'
-import { blue, red, green } from 'chalk'
+import { blue, red, green, gray } from 'chalk'
 import {
   getHttpClient,
   getMerkleDAG,
@@ -10,6 +10,7 @@ import {
   getBinaryPath,
   getDefaultRepoPath,
   isLocalDaemonRunning,
+  useEnvironment,
 } from '@aragon/toolkit'
 //
 import listrOpts from '../../helpers/listr-options'
@@ -46,21 +47,45 @@ export const runPropagateTask = ({ cid, ipfsReader, silent, debug }) => {
       },
       {
         title: 'Fetch the links',
-        task: async ctx => {
+        task: async (ctx, task) => {
+          const handleProgress = (step, data) => {
+            switch (step) {
+              case 1:
+                task.output = `Fetch DAG information for ${gray(data)}`
+                break
+              case 2:
+                task.output = `Parse DAG information for ${gray(data)}`
+                break
+            }
+          }
+
           ctx.data = await getMerkleDAG(ipfsReader, cid, {
             recursive: true,
+            progressCallback: handleProgress,
           })
         },
       },
       {
         title: 'Query gateways',
         task: async (ctx, task) => {
+          const handleProgress = (step, data) => {
+            switch (step) {
+              case 1: {
+                const cid = gray(data.cid)
+                const succeeded = green(data.succeeded)
+                const failed = red(data.failed)
+                task.output = `Queried ${cid} at ${succeeded} gateways successfully, ${failed} failed.`
+                break
+              }
+            }
+          }
+
           ctx.CIDs = extractCIDsFromMerkleDAG(ctx.data, {
             recursive: true,
           })
 
           ctx.result = await propagateFiles(ctx.CIDs, {
-            logger: text => (task.output = text),
+            progressCallback: handleProgress,
           })
         },
       },
@@ -79,9 +104,11 @@ export const handler = async argv => {
     cid = await askForInput('Choose a content identifier')
   }
 
-  const { reporter, apm, debug, silent } = argv
+  const { reporter, environment, debug, silent } = argv
 
-  const ipfsReader = await getHttpClient(apm.ipfs.gateway)
+  const { apmOptions } = useEnvironment(environment)
+
+  const ipfsReader = await getHttpClient(apmOptions.ipfs.gateways)
 
   const ctx = await runPropagateTask({
     ipfsReader,

@@ -1,5 +1,3 @@
-import findUp from 'find-up'
-import path from 'path'
 import execa from 'execa'
 import fs from 'fs'
 import os from 'os'
@@ -7,8 +5,6 @@ import { readJson } from 'fs-extra'
 import { request } from 'http'
 import inquirer from 'inquirer'
 import { getNodePackageManager } from '@aragon/toolkit'
-
-let cachedProjectRoot
 
 /**
  * Some characters are rendered differently depending on the OS.
@@ -29,17 +25,6 @@ export function normalizeOutput(stdout) {
     .trim()
 
   return next
-}
-
-export const findProjectRoot = () => {
-  if (!cachedProjectRoot) {
-    try {
-      cachedProjectRoot = path.dirname(findUp.sync('arapp.json'))
-    } catch (_) {
-      throw new Error('This directory is not an Aragon project')
-    }
-  }
-  return cachedProjectRoot
 }
 
 /**
