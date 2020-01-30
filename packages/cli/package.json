@@ -121,7 +121,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "ganache-cli": "^6.7.0",
     "ganache-core": "^2.9.0",
-    "nyc": "^14.1.1",
+    "nyc": "^15.0.0",
     "prettier": "^1.15.3",
     "proxyquire": "^2.1.0",
     "sinon": "^7.3.1",
