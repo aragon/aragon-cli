@@ -14,7 +14,7 @@
     "build:watch": "npm run build -- -- --watch",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
-    "test": "ava --verbose",
+    "test": "ava --verbose --serial",
     "test:watch": "ava --watch",
     "test:clean": "rm -rf ./.tmp && npm run test:reset-cache",
     "test:reset-cache": "ava --reset-cache",
