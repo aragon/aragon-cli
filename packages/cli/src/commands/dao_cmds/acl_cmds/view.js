@@ -23,7 +23,7 @@ import defaultAppsRoles from '../../../knownRoles.json'
 export const command = 'view <dao>'
 export const describe = 'Inspect permissions in a DAO'
 
-export const builder = function (yargs) {
+export const builder = function(yargs) {
   return daoArg(yargs)
 }
 
@@ -37,7 +37,7 @@ export const builder = function (yargs) {
  * @param  {boolean} args.debug Debug flag
  * @return {Promise<TaskList>} void
  */
-export const handler = async function ({ dao, environment, silent, debug }) {
+export const handler = async function({ dao, environment, silent, debug }) {
   // Type common context
   /**
    * @type {AclPermissions}

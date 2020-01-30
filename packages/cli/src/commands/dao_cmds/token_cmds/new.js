@@ -1,7 +1,11 @@
 import TaskList from 'listr'
 import { green, blue } from 'chalk'
 import { isAddress } from 'web3-utils'
-import { deployMiniMeTokenFactory, deployMiniMeToken, useEnvironment } from '@aragon/toolkit'
+import {
+  deployMiniMeTokenFactory,
+  deployMiniMeToken,
+  useEnvironment,
+} from '@aragon/toolkit'
 //
 import listrOpts from '../../../helpers/listr-options'
 import { parseArgumentStringIfPossible } from '../../../util'
@@ -128,7 +132,7 @@ export const task = async ({
   )
 }
 
-export const handler = async function ({
+export const handler = async function({
   reporter,
   environment,
   tokenName,

@@ -6,7 +6,7 @@ import {
   useEnvironment,
 } from '@aragon/toolkit'
 
-export class InvalidBump extends Error { }
+export class InvalidBump extends Error {}
 
 /**
  * @typedef {Object} PrevAndNextVersionReturn
@@ -22,7 +22,7 @@ export class InvalidBump extends Error { }
  * @param {string} environment Environment
  * @return {PrevAndNextVersionReturn} Multiple values, check JSDoc
  */
-export async function getPrevAndNextVersion (bumpOrVersion, environment) {
+export async function getPrevAndNextVersion(bumpOrVersion, environment) {
   try {
     const { appName } = useEnvironment(environment)
 
@@ -64,7 +64,7 @@ export async function getPrevAndNextVersion (bumpOrVersion, environment) {
  * @param {string} prevVersion Version to bump from: "0.1.0"
  * @return {string} resulting sem version: "0.2.0"
  */
-function resolveBumpOrVersion (bumpOrVersion, prevVersion) {
+function resolveBumpOrVersion(bumpOrVersion, prevVersion) {
   return semver.valid(bumpOrVersion)
     ? semver.valid(bumpOrVersion)
     : semver.inc(prevVersion, bumpOrVersion)

@@ -31,11 +31,7 @@ test('should deploy a sample contract', async t => {
   // arrange
   const { web3 } = t.context
   // act
-  const result = await deployContract(
-    bytecode,
-    abi,
-    initArguments
-  )
+  const result = await deployContract(bytecode, abi, initArguments)
   // assert
   const tx = await web3.eth.getTransaction(result.transactionHash)
 

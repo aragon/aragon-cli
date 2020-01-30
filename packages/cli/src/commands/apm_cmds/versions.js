@@ -6,7 +6,7 @@ export const command = 'versions [apmRepo]'
 export const describe =
   'Shows all the previously published versions of a given repository'
 
-export const builder = function (yargs) {
+export const builder = function(yargs) {
   return yargs.option('apmRepo', {
     description: 'Name of the APM repository',
     type: 'string',
@@ -14,7 +14,7 @@ export const builder = function (yargs) {
   })
 }
 
-export const handler = async function ({ reporter, environment, apmRepo }) {
+export const handler = async function({ reporter, environment, apmRepo }) {
   let versions, apmRepoName
 
   const apm = await useApm(environment)
@@ -45,7 +45,7 @@ export const handler = async function ({ reporter, environment, apmRepo }) {
  * @param {Object} reporter Reporter
  * @returns {void}
  */
-function displayVersionNumbers (apmRepoName, versions, reporter) {
+function displayVersionNumbers(apmRepoName, versions, reporter) {
   reporter.info(
     `${blue(apmRepoName)} has ${green(versions.length)} published versions`
   )
@@ -57,12 +57,12 @@ function displayVersionNumbers (apmRepoName, versions, reporter) {
  * @param {Object} reporter Reporter
  * @returns {void}
  */
-function displayVersions (versions, reporter) {
+function displayVersions(versions, reporter) {
   versions.map(version => {
     if (version && version.content) {
       reporter.success(
         `${blue(version.version)}: ${version.contractAddress} ${
-        version.content.provider
+          version.content.provider
         }:${version.content.location}`
       )
     } else if (version && version.error) {
@@ -72,7 +72,7 @@ function displayVersions (versions, reporter) {
     } else {
       reporter.error(
         `${blue(version.version)}: ${
-        version.contractAddress
+          version.contractAddress
         } Version not found in provider`
       )
     }

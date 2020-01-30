@@ -1,10 +1,8 @@
-import {
-  loadArappFile,
-} from '@aragon/toolkit'
+import { loadArappFile } from '@aragon/toolkit'
 
-class InvalidArguments extends Error { }
+class InvalidArguments extends Error {}
 
-export function configEnvironmentMiddleware (argv) {
+export function configEnvironmentMiddleware(argv) {
   try {
     // Load arapp file
     const arapp = loadArappFile()

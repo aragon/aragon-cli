@@ -48,7 +48,7 @@ import { runScriptHelper } from '../../../util'
  * - version {string} To release version: "0.2.5"
  * @return {TaskList} Tasks
  */
-export default async function runSetupTask ({
+export default async function runSetupTask({
   // Globals
   cwd,
   environment,

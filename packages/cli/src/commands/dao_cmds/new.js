@@ -108,7 +108,7 @@ export const task = async ({
   return tasks
 }
 
-export const handler = async function ({
+export const handler = async function({
   reporter,
   environment,
   template,

@@ -5,7 +5,7 @@ export const command = 'grant [grantees..] [apmRepo]'
 export const describe =
   'Grant an address permission to create new versions in this package'
 
-export const builder = function (yargs) {
+export const builder = function(yargs) {
   return yargs
     .positional('grantees', {
       description:
@@ -20,7 +20,7 @@ export const builder = function (yargs) {
     })
 }
 
-export const handler = async function ({
+export const handler = async function({
   // Globals
   reporter,
   environment,
@@ -28,7 +28,6 @@ export const handler = async function ({
   grantees,
   apmRepo,
 }) {
-
   const { appName } = useEnvironment()
 
   // TODO: Stop using appName

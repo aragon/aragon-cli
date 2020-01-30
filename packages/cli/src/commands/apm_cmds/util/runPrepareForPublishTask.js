@@ -8,6 +8,7 @@ import {
   generateApplicationArtifact,
   loadArappFile,
   useApm,
+  useEnvironment,
 } from '@aragon/toolkit'
 //
 import listrOpts from '../../../helpers/listr-options'
@@ -29,7 +30,7 @@ const readFile = fs.promises.readFile
  * - pathToPublish {string}
  * @return {TaskList} Tasks
  */
-export default async function runPrepareForPublishTask ({
+export default async function runPrepareForPublishTask({
   // Globals
   cwd,
   environment,
@@ -115,13 +116,13 @@ export default async function runPrepareForPublishTask ({
            * TODO: (Gabi) Use inquier to handle confirmation
            */
 
-          async function performArtifcatGeneration (artifact) {
+          async function performArtifcatGeneration(artifact) {
             writeApplicationArtifact(artifact, outputPath)
             await generateFlattenedCode(outputPath, contractPath)
             return `Saved artifact in ${outputPath}`
           }
 
-          async function invokeArtifactGeneration () {
+          async function invokeArtifactGeneration() {
             const contractInterfacePath = path.resolve(
               cwd,
               'build/contracts',

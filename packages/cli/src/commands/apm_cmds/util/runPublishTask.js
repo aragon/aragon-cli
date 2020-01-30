@@ -4,7 +4,7 @@ import { useApm, useEnvironment } from '@aragon/toolkit'
 // import { task as execTask } from '../../commands/dao_cmds/utils/execHandler'
 import listrOpts from '../../../helpers/listr-options'
 
-export default async function runPublishTask ({
+export default async function runPublishTask({
   // Globals
   // reporter,
   environment,

@@ -19,7 +19,7 @@ let knownApps
 export const command = 'apps <dao>'
 export const describe = 'Get all the apps in a DAO'
 
-export const builder = function (yargs) {
+export const builder = function(yargs) {
   return daoArg(yargs).option('all', {
     description: 'Whether to include apps without permissions as well',
     boolean: true,
@@ -78,7 +78,7 @@ const printPermissionlessApps = apps => {
   }
 }
 
-export const handler = async function ({
+export const handler = async function({
   reporter,
   environment,
   dao,
