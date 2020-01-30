@@ -1,7 +1,7 @@
 import TaskList from 'listr'
 import { green, blue } from 'chalk'
 import { isAddress } from 'web3-utils'
-import { deployMiniMeTokenFactory, deployMiniMeToken } from '@aragon/toolkit'
+import { deployMiniMeTokenFactory, deployMiniMeToken, useEnvironment } from '@aragon/toolkit'
 //
 import listrOpts from '../../../helpers/listr-options'
 import { parseArgumentStringIfPossible } from '../../../util'
@@ -47,7 +47,7 @@ export const task = async ({
   silent,
   debug,
 }) => {
-  const { web3 } = environment
+  const { web3 } = useEnvironment(environment)
 
   // Decode sender  // TODO: Stop using web3 for this
   const accounts = await web3.eth.getAccounts()
@@ -128,7 +128,7 @@ export const task = async ({
   )
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   environment,
   tokenName,

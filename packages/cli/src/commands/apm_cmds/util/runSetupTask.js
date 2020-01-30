@@ -8,6 +8,7 @@ import {
   getBinaryPath,
   getDefaultRepoPath,
   getApmRepo,
+  useEnvironment,
 } from '@aragon/toolkit'
 
 // helpers
@@ -47,7 +48,7 @@ import { runScriptHelper } from '../../../util'
  * - version {string} To release version: "0.2.5"
  * @return {TaskList} Tasks
  */
-export default async function runSetupTask({
+export default async function runSetupTask ({
   // Globals
   cwd,
   environment,
@@ -75,7 +76,7 @@ export default async function runSetupTask({
   silent,
   debug,
 }) {
-  const { appName } = environment
+  const { appName } = useEnvironment(environment)
 
   if (onlyContent) {
     contract = ZERO_ADDRESS

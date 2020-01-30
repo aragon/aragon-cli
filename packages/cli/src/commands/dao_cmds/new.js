@@ -84,10 +84,10 @@ export const task = async ({
         task: async ctx => {
           daoAddress = await newDao(
             template,
-            templateVersion,
-            fn,
             fnArgs,
+            fn,
             deployEvent,
+            templateVersion,
             environment,
             templateInstance
           )
@@ -108,7 +108,7 @@ export const task = async ({
   return tasks
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   environment,
   template,

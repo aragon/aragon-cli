@@ -13,6 +13,7 @@ import {
   newDao,
   getApmRepo,
   defaultAPMName,
+  useEnvironment,
 } from '@aragon/toolkit'
 //
 import listrOpts from '../helpers/listr-options'
@@ -50,7 +51,7 @@ const BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
 export const command = 'run'
 export const describe = 'Run the current app locally'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return yargs
     .option('client', {
       description: 'Just run the smart contracts, without the Aragon client',
@@ -183,7 +184,7 @@ export const builder = function(yargs) {
     })
 }
 
-export const handler = async function({
+export const handler = async function ({
   // Globals
   reporter,
   cwd,
@@ -225,7 +226,7 @@ export const handler = async function({
     )
   }
 
-  const { web3, apmOptions, appName } = environment
+  const { web3, apmOptions, appName } = useEnvironment(environment)
 
   // Set prepublish to true if --prepublish-script argument is used
   if (process.argv.includes('--prepublish-script')) prepublish = true
@@ -371,10 +372,10 @@ export const handler = async function({
 
           daoAddress = await newDao(
             template,
-            'latest',
-            templateNewInstance,
             fnArgs,
+            templateNewInstance,
             templateDeployEvent,
+            'latest',
             templateInstance,
             environment
           )
@@ -448,13 +449,13 @@ export const handler = async function({
 
     reporter.info(
       `${
-        client !== false
-          ? `Open ${bold(
-              `http://localhost:${clientPort}/#/${daoAddress}`
-            )} to view your DAO`
-          : `Use ${bold(
-              `"aragon dao <command> ${daoAddress}"`
-            )} to interact with your Organization`
+      client !== false
+        ? `Open ${bold(
+          `http://localhost:${clientPort}/#/${daoAddress}`
+        )} to view your DAO`
+        : `Use ${bold(
+          `"aragon dao <command> ${daoAddress}"`
+        )} to interact with your Organization`
       }`
     )
 
@@ -465,6 +466,6 @@ export const handler = async function({
     }
 
     // Patch to prevent calling the onFinishCommand hook
-    await new Promise((resolve, reject) => {})
+    await new Promise((resolve, reject) => { })
   })
 }

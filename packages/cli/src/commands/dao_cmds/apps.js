@@ -6,6 +6,7 @@ import {
   getInstalledApps,
   getAllApps,
   addressesEqual,
+  useEnvironment,
 } from '@aragon/toolkit'
 //
 import listrOpts from '../../helpers/listr-options'
@@ -18,7 +19,7 @@ let knownApps
 export const command = 'apps <dao>'
 export const describe = 'Get all the apps in a DAO'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return daoArg(yargs).option('all', {
     description: 'Whether to include apps without permissions as well',
     boolean: true,
@@ -77,7 +78,7 @@ const printPermissionlessApps = apps => {
   }
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   environment,
   dao,
@@ -85,7 +86,9 @@ export const handler = async function({
   silent,
   debug,
 }) {
-  const { appName } = environment
+  const { appName } = useEnvironment(environment)
+
+  // TODO: stop using appName
 
   knownApps = listApps(appName ? [appName] : [])
 

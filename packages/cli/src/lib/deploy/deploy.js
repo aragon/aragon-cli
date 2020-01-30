@@ -1,4 +1,4 @@
-import { getRecommendedGasLimit, expandLink } from '@aragon/toolkit'
+import { getRecommendedGasLimit, expandLink, useEnvironment } from '@aragon/toolkit'
 
 /**
  * @typedef {Object} LibraryLink
@@ -38,7 +38,7 @@ export const linkLibraries = (bytecode, links) => {
  * @return {Promise<DeployContractReturnData>} Tx hash and deployed contract address
  */
 export const deployContract = async (bytecode, abi, init, environment) => {
-  const { web3, apmOptions, gasPrice } = environment
+  const { web3, apmOptions, gasPrice } = useEnvironment(environment)
 
   // Mappings allow to pass certain init parameters that get replaced for their actual value
   // const mappingMask = key => `@ARAGON_${key}`

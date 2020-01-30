@@ -1,7 +1,7 @@
 import path from 'path'
 import { blue, red, green, bold } from 'chalk'
 import { hexToAscii } from 'web3-utils'
-import { ZERO_ADDRESS, getHttpClient } from '@aragon/toolkit'
+import { ZERO_ADDRESS, getHttpClient, useEnvironment } from '@aragon/toolkit'
 
 // Tasks splitted into other files
 import runSetupTask from './util/runSetupTask'
@@ -19,7 +19,7 @@ export const command = 'publish <bump> [contract]'
 
 export const describe = 'Publish a new version of the application'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return deployBuilder(yargs) // inherit deploy options
     .positional('bump', {
       description: 'Type of bump (major, minor or patch) or version number',
@@ -120,7 +120,7 @@ export const setupTask = runSetupTask
 export const prepareForPublishTask = runPrepareForPublishTask
 export const publishTask = runPublishTask
 
-export const handler = async function({
+export const handler = async function ({
   // Globals
   reporter,
   cwd,
@@ -148,7 +148,7 @@ export const handler = async function({
   silent,
   debug,
 }) {
-  const { apmOptions, appName } = environment
+  const { apmOptions, appName } = useEnvironment(environment)
 
   const {
     initialRepo,

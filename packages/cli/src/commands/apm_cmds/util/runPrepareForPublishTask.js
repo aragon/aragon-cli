@@ -29,7 +29,7 @@ const readFile = fs.promises.readFile
  * - pathToPublish {string}
  * @return {TaskList} Tasks
  */
-export default async function runPrepareForPublishTask({
+export default async function runPrepareForPublishTask ({
   // Globals
   cwd,
   environment,
@@ -60,9 +60,9 @@ export default async function runPrepareForPublishTask({
   silent,
   debug,
 }) {
-  const { web3, apmOptions, appName, environmentName } = environment
+  const { web3, apmOptions, appName } = useEnvironment(environment)
 
-  const apm = await useApm(environmentName)
+  const apm = await useApm(environment)
 
   const arapp = loadArappFile()
 
@@ -115,13 +115,13 @@ export default async function runPrepareForPublishTask({
            * TODO: (Gabi) Use inquier to handle confirmation
            */
 
-          async function performArtifcatGeneration(artifact) {
+          async function performArtifcatGeneration (artifact) {
             writeApplicationArtifact(artifact, outputPath)
             await generateFlattenedCode(outputPath, contractPath)
             return `Saved artifact in ${outputPath}`
           }
 
-          async function invokeArtifactGeneration() {
+          async function invokeArtifactGeneration () {
             const contractInterfacePath = path.resolve(
               cwd,
               'build/contracts',
