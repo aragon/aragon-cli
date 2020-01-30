@@ -1,9 +1,7 @@
 import test from 'ava'
 //
-import defaultAPMName from '../../src/helpers/default-apm'
-import getApm from '../../src/apm/apm'
+import getApmRepo from '../../src/apm/getApmRepo'
 
-let apmRepoName
 let info
 
 const apmRepoVersion = '1.0.0'
@@ -11,11 +9,10 @@ const apmRepoVersion = '1.0.0'
 /* Setup and cleanup */
 
 test.before('setup and make a successful call', async t => {
-  const apm = await getApm()
 
-  apmRepoName = defaultAPMName('voting')
+  const apmRepoName = 'voting'
 
-  info = await apm.getVersion(apmRepoName, apmRepoVersion.split('.'))
+  info = await getApmRepo(apmRepoName, apmRepoVersion)
 })
 
 /* Tests */

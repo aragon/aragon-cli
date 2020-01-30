@@ -17,11 +17,11 @@ import {
   DEVCHAIN_ENS,
 } from './constants'
 
-export class NoEnvironmentInArapp extends Error {}
-export class NoEnvironmentInDefaults extends Error {}
-export class NoNetworkInTruffleConfig extends Error {}
+export class NoEnvironmentInArapp extends Error { }
+export class NoEnvironmentInDefaults extends Error { }
+export class NoNetworkInTruffleConfig extends Error { }
 
-function getEnv(arapp, env) {
+function getEnv (arapp, env) {
   if (arapp) {
     if (!env) env = 'default'
     const environment = arapp.environments[env]
@@ -56,7 +56,7 @@ const configureApm = (ipfsRPC, gateway, ensRegistryAddress) => {
   }
 }
 
-function configureProvider(network, truffleNetwork, useFrame) {
+function configureProvider (network, truffleNetwork, useFrame) {
   if (useFrame) {
     return new Web3.providers.WebsocketProvider(
       FRAME_ENDPOINT,
@@ -93,7 +93,7 @@ function configureProvider(network, truffleNetwork, useFrame) {
 let web3
 let prevProvider = {}
 
-export function useEnvironment(env) {
+export function useEnvironment (env) {
   // try {
 
   // Parse environment
@@ -116,15 +116,15 @@ export function useEnvironment(env) {
     (network === 'rinkeby'
       ? ARAGON_RINKEBY_ENDPOINT
       : network === 'mainnet'
-      ? ARAGON_MAINNET_ENDPOINT
-      : null)
+        ? ARAGON_MAINNET_ENDPOINT
+        : null)
 
   const ipfsAragonGateway =
     apm && apm.ipfs.gateway // TODO: Refactor apm object
       ? apm.ipfs.gateway
       : network === 'rpc'
-      ? IPFS_LOCAL_GATEWAY
-      : IPFS_ARAGON_GATEWAY
+        ? IPFS_LOCAL_GATEWAY
+        : IPFS_ARAGON_GATEWAY
 
   const provider = configureProvider(
     network,
