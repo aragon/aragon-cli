@@ -1,12 +1,9 @@
 import 'source-map-support/register'
 import yargs from 'yargs'
-import { toWei } from 'web3-utils'
 //
-import { configCliMiddleware } from './middleware'
+import { configEnvironmentMiddleware } from './middleware'
 import * as AragonReporter from './reporters/AragonReporter'
 import { findProjectRoot } from './util'
-
-const DEFAULT_GAS_PRICE = require('../package.json').aragon.defaultGasPrice
 
 const debugMiddleware = argv => {
   argv.reporter.debug(
@@ -15,7 +12,7 @@ const debugMiddleware = argv => {
   argv.reporter.debug(`argv: ${JSON.stringify(process.argv)}`)
 }
 
-const MIDDLEWARES = [debugMiddleware, configCliMiddleware]
+const MIDDLEWARES = [debugMiddleware, configEnvironmentMiddleware]
 
 // Set up commands
 export function init(cb) {
@@ -38,14 +35,6 @@ export function init(cb) {
     /**
      * OPTIONS
      */
-    .option('gas-price', {
-      // TODO: Use ethgasprice with inquier promt list
-      description: 'Gas price in Gwei',
-      default: DEFAULT_GAS_PRICE,
-      coerce: gasPrice => {
-        return toWei(gasPrice, 'gwei')
-      },
-    })
     .option('cwd', {
       // TODO: remove once move to power cli
       description: 'The project working directory',
@@ -65,18 +54,6 @@ export function init(cb) {
     .option('environment', {
       description: 'The environment in your arapp.json that you want to use',
     })
-    // APM
-    .option('ens-registry', {
-      description:
-        "Address of the ENS registry. This will be overwritten if the selected '--environment' from your arapp.json includes a `registry` property",
-    })
-    .option('ipfs-rpc', {
-      description: 'An URI to the IPFS node used to publish files',
-    })
-    .option('ipfs-gateway', {
-      description: 'An URI to the IPFS Gateway to read files from',
-    })
-    .group(['ipfs-rpc', 'ipfs-gateway', 'ens-registry'], 'APM:')
 
   AragonReporter.configure(cli)
   cli.middleware(MIDDLEWARES)

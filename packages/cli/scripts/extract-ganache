@@ -1,4 +1,0 @@
-#!/bin/bash
-
-mkdir -p ganache/build/
-cp -R node_modules/ganache-cli/build/. ganache/build/
