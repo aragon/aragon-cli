@@ -1,4 +1,4 @@
-const { killProcessOnPort } = require('../packages/toolkit')
+const { killProcessOnPort } = require('@aragon/toolkit')
 
 const IPFS_API_PORT = 5001
 const DEVCHAIN_PORT = 8545
