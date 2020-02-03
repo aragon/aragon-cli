@@ -12,6 +12,8 @@
     "extract-roles": "node scripts/extract-roles",
     "build": "npm run extract-roles && npm run compile-src",
     "build:watch": "npm run build -- -- --watch",
+    "link-bin": "npm link",
+    "unlink-bin": "npm unlink",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
     "test": "ava --verbose",
@@ -19,6 +21,7 @@
     "test:clean": "rm -rf ./.tmp && npm run test:reset-cache",
     "test:reset-cache": "ava --reset-cache",
     "test:update-snapshots": "npm run test:clean && npm run test -- --update-snapshots",
+    "test:coverage:html": "nyc --all --reporter html  npm run test",
     "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test"
   },
   "files": [
@@ -110,7 +113,7 @@
     "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
     "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-ava": "^9.0.0",
+    "eslint-plugin-ava": "^10.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-prettier": "^3.0.0",
@@ -173,6 +176,7 @@
     }
   },
   "eslintConfig": {
+    "ignorePatterns": ["test/mock"],
     "env": {
       "es6": true,
       "node": true
