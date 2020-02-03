@@ -10,17 +10,21 @@ const { installDeps, isValidAragonId } = require('../util')
 const { checkProjectExists, prepareTemplate } = require('../lib')
 
 const templateOptions = {
-  bare: {
-    repo: 'aragon/aragon-bare-boilerplate',
-    name: 'Aragon bare boilerplate',
-  },
   react: {
     repo: 'aragon/aragon-react-boilerplate',
     name: 'Aragon React boilerplate',
   },
+  buidler: {
+    repo: 'aragon/aragon-buidler-boilerplate',
+    name: 'Aragon Buidler boilerplate',
+  },
   tutorial: {
     repo: 'aragon/your-first-aragon-app',
     name: 'Your first Aragon app (tutorial)',
+  },
+  bare: {
+    repo: 'aragon/aragon-bare-boilerplate',
+    name: 'Aragon bare boilerplate (deprecated)',
   },
 }
 
@@ -85,6 +89,12 @@ exports.handler = async function({
     template = templateChoice
   } else if (silent) {
     template = 'react'
+  }
+
+  if (template === 'buidler') {
+    console.log(
+      `Warning: You are using the experimental "${template}" boilerplate.`
+    )
   }
 
   const repo = (templateOptions[template] || {}).repo
@@ -161,7 +171,7 @@ Start your Aragon app by typing:
 
   cd ${basename}
   npm start
-    
+
 Visit https://hack.aragon.org/docs/cli-main-commands for more information.
 
 `)
