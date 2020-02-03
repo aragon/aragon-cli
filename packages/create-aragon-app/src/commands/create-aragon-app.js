@@ -91,6 +91,12 @@ exports.handler = async function({
     template = 'react'
   }
 
+  if (template === 'buidler') {
+    console.log(
+      `Warning: You are using the experimental "${template}" boilerplate.`
+    )
+  }
+
   const repo = (templateOptions[template] || {}).repo
   if (!repo) throw new Error(`No template repo found for ${template}`)
 
