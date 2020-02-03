@@ -12,7 +12,7 @@ const { checkProjectExists, prepareTemplate } = require('../lib')
 const templateOptions = {
   bare: {
     repo: 'aragon/aragon-bare-boilerplate',
-    name: 'Aragon bare boilerplate',
+    name: 'Aragon bare boilerplate (deprecated)',
   },
   react: {
     repo: 'aragon/aragon-react-boilerplate',
