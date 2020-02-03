@@ -82,7 +82,7 @@
     "open": "^7.0.0",
     "public-ip": "^3.1.0",
     "rimraf": "^2.6.2",
-    "semver": "^6.1.1",
+    "semver": "^7.1.2",
     "source-map-support": "^0.5.11",
     "tmp-promise": "^2.0.1",
     "truffle-flattener": "^1.2.9",
