@@ -10,10 +10,6 @@ const { installDeps, isValidAragonId } = require('../util')
 const { checkProjectExists, prepareTemplate } = require('../lib')
 
 const templateOptions = {
-  bare: {
-    repo: 'aragon/aragon-bare-boilerplate',
-    name: 'Aragon bare boilerplate (deprecated)',
-  },
   react: {
     repo: 'aragon/aragon-react-boilerplate',
     name: 'Aragon React boilerplate',
@@ -25,6 +21,10 @@ const templateOptions = {
   tutorial: {
     repo: 'aragon/your-first-aragon-app',
     name: 'Your first Aragon app (tutorial)',
+  },
+  bare: {
+    repo: 'aragon/aragon-bare-boilerplate',
+    name: 'Aragon bare boilerplate (deprecated)',
   },
 }
 
