@@ -168,7 +168,7 @@ export const handler = async argv => {
   reporter.info(`Platform & architecture: ${blue(NODE_OS)}, ${blue(NODE_ARCH)}`)
   reporter.info(`IPFS tarball: ${blue(distName)}`)
   reporter.info(`IPFS distributions url: ${blue(distUrl)}`)
-  reporter.info(`NPM version: ${blue(distVersion)}`)
+  reporter.info(`IPFS version: ${blue(distVersion)}`)
   reporter.info(`Location: ${blue(location)}`)
 
   /**
