@@ -92,7 +92,10 @@ exports.handler = async function({
     template = 'react'
   }
 
+  let requiresIPFS = true
+
   if (template === 'buidler') {
+    requiresIPFS = false
     console.log(
       `Warning: You are using the experimental "${template}" boilerplate.`
     )
@@ -153,6 +156,7 @@ exports.handler = async function({
       },
       {
         title: 'Check IPFS',
+        enabled: () => requiresIPFS,
         task: async (ctx, task) => {
           try {
             ctx.ipfsMissing = false
@@ -164,7 +168,7 @@ exports.handler = async function({
       },
       {
         title: 'Installing IPFS',
-        enabled: ctx => ctx.ipfsMissing,
+        enabled: ctx => requiresIPFS && ctx.ipfsMissing,
         task: async (ctx, task) => {
           await execa(
             'npx',
@@ -178,7 +182,7 @@ exports.handler = async function({
   )
 
   return tasks.run().then(() => {
-    reporter.success(`Created new application ${name} in ${basename}
+    reporter.success(`Created new application ${name} in path ./${basename}/
 
 Start your Aragon app by typing:
 
