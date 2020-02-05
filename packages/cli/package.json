@@ -52,7 +52,7 @@
 	},
 	"homepage": "https://github.com/aragon/aragon-cli#readme",
 	"dependencies": {
-		"@aragon/toolkit": "git://github.com/aragon/toolkit.git#develop",
+		"@aragon/toolkit": "0.0.4-beta.1",
 		"@aragon/truffle-config-v5": "^1.0.0",
 		"ajv": "^6.6.2",
 		"bn.js": "^5.0.0",
@@ -71,7 +71,6 @@
 		"ignore": "^4.0.6",
 		"inquirer": "^7.0.0",
 		"internal-ip": "^5.0.0",
-		"is-ipfs": "^0.6.3",
 		"listr": "^0.14.3",
 		"listr-input": "0.2.0",
 		"listr-silent-renderer": "^1.1.1",

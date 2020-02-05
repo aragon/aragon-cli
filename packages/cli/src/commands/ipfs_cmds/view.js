@@ -1,6 +1,5 @@
 import TaskList from 'listr'
 import { gray } from 'chalk'
-import { cid as isValidCID } from 'is-ipfs'
 import {
   getMerkleDAG,
   stringifyMerkleDAG,
@@ -10,6 +9,7 @@ import {
   getDefaultRepoPath,
   isLocalDaemonRunning,
   useEnvironment,
+  isValidCID,
 } from '@aragon/toolkit'
 //
 import listrOpts from '../../helpers/listr-options'
