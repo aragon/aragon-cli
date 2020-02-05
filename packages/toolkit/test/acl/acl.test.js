@@ -35,6 +35,8 @@ test('Should prepare a TX to grant permissions to an account', async t => {
   const acl = ACL(web3)
   const transaction = await acl.grant(repoAddress, granteeAddress)
 
+  delete transaction.gas
+
   // assert
   t.snapshot(transaction, 'the transaction data is correct')
 })
