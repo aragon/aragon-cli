@@ -10,29 +10,16 @@ labels: bug
 
 ### Have you read the [Contributing Guidelines on issues](https://github.com/aragon/aragon-cli/blob/master/CONTRIBUTING.md#ways-to-contribute)?
 
-(Write your answer here.)
-
-## Context
-
-#### Mainnet or testnet?
-
-(Which network you are using the app with.)
-
-#### Organization
-
-(Enter the URL or ENS name of your organization.)
-
-#### Environment
-
-- OS and OS version: [e.g. Linux Mint 18.0]
-- Browser and browser version: [e.g. Firefox 64.0]
-- Add any other context about the problem here.
+- [ ] Yes
 
 ## To Reproduce
 
-(Write your steps here:)
+<!-- Write your steps here: -->
 
-1. 1. 1.
+1. Go to '...'
+2. Click on '....'
+3. Scroll down to '....'
+4. See error
 
 ## Expected behavior
 
@@ -54,6 +41,23 @@ labels: bug
 -->
 
 (Write what happened. Add screenshots, if applicable.)
+
+## Context
+
+#### Mainnet or testnet?
+
+(Which network you are using the app with.)
+
+#### Organization
+
+(Enter the URL or ENS name of your organization.)
+
+#### Environment
+
+- OS and OS version: [e.g. Linux Mint 18.0]
+- Browser and browser version: [e.g. Firefox 64.0]
+- Add any other context about the problem here.
+
 
 ## Reproducible Demo
 
