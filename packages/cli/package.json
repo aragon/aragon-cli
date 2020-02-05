@@ -52,7 +52,7 @@
   },
   "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
-    "@aragon/toolkit": "^0.0.3",
+    "@aragon/toolkit": "^0.0.5",
     "@aragon/truffle-config-v5": "^1.0.0",
     "ajv": "^6.6.2",
     "bn.js": "^5.0.0",
