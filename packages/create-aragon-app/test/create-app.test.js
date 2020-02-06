@@ -27,6 +27,7 @@ test('should create a new aragon app based on the react boilerplate', async t =>
     'react',
     '--path',
     './.tmp',
+    '--no-install',
   ])
 
   const packageJson = await readJson(packageJsonPath)
