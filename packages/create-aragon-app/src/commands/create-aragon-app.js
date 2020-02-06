@@ -1,4 +1,5 @@
 const TaskList = require('listr')
+const input = require('listr-input')
 const execa = require('execa')
 const inquirer = require('inquirer')
 const { promisify } = require('util')
@@ -138,8 +139,20 @@ exports.handler = async function({
         enabled: () => !templateUrl.includes('your-first-aragon-app'),
       },
       {
-        title: 'Installing package dependencies',
-        task: async (ctx, task) => installDeps(projectPath, task),
+        title: 'Install package dependencies?',
+        task: async (ctx, task) =>
+          input('Enter "yes" to run `npm install` now:', {
+            default: 'yes',
+            validate: wantsToInstallDeps =>
+              wantsToInstallDeps === 'yes' || wantsToInstallDeps === 'no',
+            done: async wantsToInstallDeps => {
+              if (wantsToInstallDeps === 'yes') {
+                task.output =
+                  'Installing package dependencies... (might take a couple of minutes)'
+                await installDeps(projectPath, task)
+              }
+            },
+          }),
       },
       {
         title: 'Check IPFS',
@@ -179,5 +192,6 @@ Start your Aragon app by typing:
 Visit https://hack.aragon.org/docs/cli-main-commands for more information.
 
 `)
+    process.exit()
   })
 }

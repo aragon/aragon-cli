@@ -9,9 +9,10 @@ const getNodePackageManager = () => {
 const installDeps = (cwd, task) => {
   const bin = getNodePackageManager()
   const installTask = execa(bin, ['install'], { cwd })
-  installTask.stdout.on('data', log => {
-    if (!log) return
-    task.output = log
+
+  installTask.stdout.on('data', bytes => {
+    const str = Buffer.from(bytes, 'utf-8').toString()
+    task.output = str
   })
 
   return installTask.catch(err => {
