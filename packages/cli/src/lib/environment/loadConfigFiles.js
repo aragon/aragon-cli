@@ -33,8 +33,8 @@ function loadJsonFileIfFound(fileName) {
  */
 function checkMainnetEnsMigration(environments) {
   const { mainnet } = environments
-  if (mainnet.registry && mainnet.registry === OLD_ENS_REGISTRY) {
-    environments['mainnet'].registry = NEW_ENS_REGISTRY
+  if (mainnet && mainnet.registry && mainnet.registry === OLD_ENS_REGISTRY) {
+    environments.mainnet.registry = NEW_ENS_REGISTRY
     console.log(
       `\n
       The ENS registry on mainnet migrate to ${NEW_ENS_REGISTRY}
