@@ -1,9 +1,8 @@
+/* eslint-disable ava/no-ignored-test-files */
 import test from 'ava'
-import Web3 from 'web3'
 import { encodeCallScript } from '@aragon/test-helpers/evmScript'
 import {
   newDao,
-  getApmRepo,
   getInstalledApps,
   encodeActCall,
   exec,

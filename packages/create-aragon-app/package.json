@@ -1,11 +1,11 @@
 {
-	"name": "create-aragon-app",
-	"version": "2.6.1",
-	"description": "Aragon command-line tool to create aragon apps",
-	"bin": {
-		"create-aragon-app": "./dist/index.js"
-	},
-	"scripts": {
+  "name": "create-aragon-app",
+  "version": "2.6.2",
+  "description": "Aragon command-line tool to create aragon apps",
+  "bin": {
+    "create-aragon-app": "./dist/index.js"
+  },
+  "scripts": {
     "build": "babel src --out-dir dist --source-maps",
     "build:watch": "npm run build -- --watch",
     "link-bin": "npm link",
@@ -20,120 +20,121 @@
     "test:coverage:html": "nyc --all --reporter html  npm run test",
     "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly npm run test"
   },
-	"files": [
-		"dist"
-	],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/aragon/aragon-cli/tree/master/packages/create-aragon-app"
-	},
-	"keywords": [
-		"create-aragon-app",
-		"aragon",
-		"ethereum"
-	],
-	"author": "Aragon Association <legal@aragon.org>",
-	"contributors": [
-		"Gabriel Garcia <gabrielpk.18@gmail.com>"
-	],
-	"license": "GPL-3.0-or-later",
-	"bugs": {
-		"url": "https://github.com/aragon/aragon-cli/issues"
-	},
-	"homepage": "https://github.com/aragon/aragon-cli#readme",
-	"dependencies": {
-		"chalk": "^3.0.0",
-		"engine-check": "^1.0.1",
-		"execa": "^4.0.0",
-		"figures": "^3.0.0",
-		"fs-extra": "^8.0.1",
-		"git-clone": "^0.1.0",
-		"inquirer": "^7.0.4",
-		"listr": "^0.14.3",
-		"listr-silent-renderer": "^1.1.1",
-		"listr-update-renderer": "^0.5.0",
-		"listr-verbose-renderer": "^0.6.0",
-		"replace": "^1.1.0",
-		"source-map-support": "^0.5.11",
-		"yargs": "^15.1.0"
-	},
-	"devDependencies": {
-		"@babel/cli": "^7.1.2",
-		"@babel/core": "^7.1.2",
-		"@babel/preset-env": "^7.1.0",
-		"@babel/register": "^7.0.0",
-		"ava": "^2.0.0",
-		"babel-eslint": "^10.0.1",
-		"babel-plugin-istanbul": "^5.2.0",
-		"core-js": "^3.1.4",
-		"eslint": "^6.0.1",
-		"eslint-config-prettier": "^6.0.0",
-		"eslint-config-standard": "^14.1.0",
-		"eslint-plugin-ava": "^10.0.0",
-		"eslint-plugin-import": "^2.14.0",
-		"eslint-plugin-node": "^10.0.0",
-		"eslint-plugin-prettier": "^3.0.0",
-		"eslint-plugin-promise": "^4.0.1",
-		"eslint-plugin-standard": "^4.0.0",
-		"node-fetch": "^2.3.0",
-		"nyc": "^14.1.1",
-		"prettier": "^1.15.3"
-	},
-	"engines": {
-		"node": ">=10.0.0"
-	},
-	"ava": {
-		"require": [
-			"@babel/register"
-		],
-		"files": [
-			"test/**/*.test.js"
-		]
-	},
-	"nyc": {
-		"include": [
-			"src/**/*.js"
-		],
-		"sourceMap": false,
-		"instrument": true
-	},
-	"babel": {
-		"presets": [
-			[
-				"@babel/preset-env",
-				{
-					"useBuiltIns": "usage",
-					"corejs": "3",
-					"targets": {
-						"node": true
-					}
-				}
-			]
-		],
-		"env": {
-			"test": {
-				"plugins": [
-					"istanbul"
-				]
-			}
-		}
-	},
-	"eslintConfig": {
-		"env": {
-			"es6": true,
-			"node": true
-		},
-		"extends": [
-			"standard",
-			"plugin:ava/recommended",
-			"plugin:prettier/recommended"
-		],
-		"parser": "babel-eslint"
-	},
-	"prettier": {
-		"singleQuote": true,
-		"semi": false,
-		"trailingComma": "es5",
-		"bracketSpacing": true
-	}
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aragon/aragon-cli/tree/master/packages/create-aragon-app"
+  },
+  "keywords": [
+    "create-aragon-app",
+    "aragon",
+    "ethereum"
+  ],
+  "author": "Aragon Association <legal@aragon.org>",
+  "contributors": [
+    "Gabriel Garcia <gabrielpk.18@gmail.com>"
+  ],
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/aragon/aragon-cli/issues"
+  },
+  "homepage": "https://github.com/aragon/aragon-cli#readme",
+  "dependencies": {
+    "chalk": "^3.0.0",
+    "engine-check": "^1.0.1",
+    "execa": "^4.0.0",
+    "figures": "^3.0.0",
+    "fs-extra": "^8.0.1",
+    "git-clone": "^0.1.0",
+    "inquirer": "^7.0.4",
+    "listr": "^0.14.3",
+    "listr-input": "^0.2.0",
+    "listr-silent-renderer": "^1.1.1",
+    "listr-update-renderer": "^0.5.0",
+    "listr-verbose-renderer": "^0.6.0",
+    "replace": "^1.1.0",
+    "source-map-support": "^0.5.11",
+    "yargs": "^15.1.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/register": "^7.0.0",
+    "ava": "^2.0.0",
+    "babel-eslint": "^10.0.1",
+    "babel-plugin-istanbul": "^5.2.0",
+    "core-js": "^3.1.4",
+    "eslint": "^6.0.1",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-ava": "^10.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "node-fetch": "^2.3.0",
+    "nyc": "^14.1.1",
+    "prettier": "^1.15.3"
+  },
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "ava": {
+    "require": [
+      "@babel/register"
+    ],
+    "files": [
+      "test/**/*.test.js"
+    ]
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "sourceMap": false,
+    "instrument": true
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "useBuiltIns": "usage",
+          "corejs": "3",
+          "targets": {
+            "node": true
+          }
+        }
+      ]
+    ],
+    "env": {
+      "test": {
+        "plugins": [
+          "istanbul"
+        ]
+      }
+    }
+  },
+  "eslintConfig": {
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "extends": [
+      "standard",
+      "plugin:ava/recommended",
+      "plugin:prettier/recommended"
+    ],
+    "parser": "babel-eslint"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": false,
+    "trailingComma": "es5",
+    "bracketSpacing": true
+  }
 }
