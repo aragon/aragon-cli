@@ -1,6 +1,6 @@
 {
   "name": "create-aragon-app",
-  "version": "2.6.1",
+  "version": "2.6.2",
   "description": "Aragon command-line tool to create aragon apps",
   "bin": {
     "create-aragon-app": "./dist/index.js"
