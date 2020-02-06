@@ -5,26 +5,26 @@ on:
     branches:
       - develop
       - master
-    
+
 jobs:
   build:
-    name: Build & test with "Node.js v${{ matrix.node-version }}" on "${{ matrix.os }}"  
+    name: Build & test with "Node.js v${{ matrix.node-version }}" on "${{ matrix.os }}"
 
     strategy:
-      fail-fast: false # don't cancel all jobs if some of them failed 
+      fail-fast: false # don't cancel all jobs if some of them failed
       matrix:
         node-version: [
           # 13,
           # 12,
           11,
-          10
+          # 10
         ]
         os: [
           ubuntu-latest,
           # windows-latest,
-          macOS-latest
+          # macOS-latest
         ]
-    
+
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
