@@ -1,4 +1,5 @@
 const TaskList = require('listr')
+const input = require('listr-input')
 const execa = require('execa')
 const inquirer = require('inquirer')
 const { promisify } = require('util')
@@ -10,17 +11,21 @@ const { installDeps, isValidAragonId } = require('../util')
 const { checkProjectExists, prepareTemplate } = require('../lib')
 
 const templateOptions = {
-  bare: {
-    repo: 'aragon/aragon-bare-boilerplate',
-    name: 'Aragon bare boilerplate',
-  },
   react: {
     repo: 'aragon/aragon-react-boilerplate',
     name: 'Aragon React boilerplate',
   },
+  buidler: {
+    repo: 'aragon/aragon-buidler-boilerplate',
+    name: 'Aragon Buidler boilerplate',
+  },
   tutorial: {
     repo: 'aragon/your-first-aragon-app',
     name: 'Your first Aragon app (tutorial)',
+  },
+  bare: {
+    repo: 'aragon/aragon-bare-boilerplate',
+    name: 'Aragon bare boilerplate (deprecated)',
   },
 }
 
@@ -56,6 +61,11 @@ exports.builder = yargs => {
         return tmpl
       },
     })
+    .option('install', {
+      description: 'Whether or not to install dependencies',
+      default: true,
+      boolean: true,
+    })
 }
 
 exports.handler = async function({
@@ -63,6 +73,7 @@ exports.handler = async function({
   name,
   template,
   path: dirPath,
+  install,
   silent,
   debug,
 }) {
@@ -85,6 +96,15 @@ exports.handler = async function({
     template = templateChoice
   } else if (silent) {
     template = 'react'
+  }
+
+  let requiresIPFS = true
+
+  if (template === 'buidler') {
+    requiresIPFS = false
+    console.log(
+      `Warning: You are using the experimental "${template}" boilerplate.`
+    )
   }
 
   const repo = (templateOptions[template] || {}).repo
@@ -125,11 +145,25 @@ exports.handler = async function({
         enabled: () => !templateUrl.includes('your-first-aragon-app'),
       },
       {
-        title: 'Installing package dependencies',
-        task: async (ctx, task) => installDeps(projectPath, task),
+        title: 'Install package dependencies?',
+        enabled: () => install,
+        task: async (ctx, task) =>
+          input('Enter "yes" to run `npm install` now:', {
+            default: 'yes',
+            validate: wantsToInstallDeps =>
+              wantsToInstallDeps === 'yes' || wantsToInstallDeps === 'no',
+            done: async wantsToInstallDeps => {
+              if (wantsToInstallDeps === 'yes') {
+                task.output =
+                  'Installing package dependencies... (might take a couple of minutes)'
+                await installDeps(projectPath, task)
+              }
+            },
+          }),
       },
       {
         title: 'Check IPFS',
+        enabled: () => requiresIPFS,
         task: async (ctx, task) => {
           try {
             ctx.ipfsMissing = false
@@ -141,7 +175,7 @@ exports.handler = async function({
       },
       {
         title: 'Installing IPFS',
-        enabled: ctx => ctx.ipfsMissing,
+        enabled: ctx => requiresIPFS && ctx.ipfsMissing,
         task: async (ctx, task) => {
           await execa(
             'npx',
@@ -155,15 +189,16 @@ exports.handler = async function({
   )
 
   return tasks.run().then(() => {
-    reporter.success(`Created new application ${name} in ${basename}
+    reporter.success(`Created new application ${name} in path ./${basename}/
 
 Start your Aragon app by typing:
 
   cd ${basename}
   npm start
-    
+
 Visit https://hack.aragon.org/docs/cli-main-commands for more information.
 
 `)
+    process.exit()
   })
 }
