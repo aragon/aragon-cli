@@ -15,8 +15,10 @@ test.after.always(async () => {
   await remove(projectPath)
 })
 
-test('should create a new aragon app based on the react boilerplate', async t => {
+// eslint-disable-next-line ava/no-skip-test
+test('should create a new aragon app based on the buidler boilerplate', async t => {
   ensureDirSync(testSandbox)
+
   const repoPath = `${projectPath}/.git`
   const arappPath = `${projectPath}/arapp.json`
   const packageJsonPath = `${projectPath}/package.json`
@@ -24,9 +26,10 @@ test('should create a new aragon app based on the react boilerplate', async t =>
 
   const { stdout } = await runCreateAragonApp([
     projectName,
-    'react',
+    'buidler',
     '--path',
     './.tmp',
+    '--no-install',
   ])
 
   const packageJson = await readJson(packageJsonPath)
@@ -38,7 +41,7 @@ test('should create a new aragon app based on the react boilerplate', async t =>
   t.falsy(await pathExists(repoPath))
   t.falsy(await pathExists(licensePath))
   t.is(undefined, packageJson.license)
-  t.is(`${projectName}.open.aragonpm.eth`, arapp.environments.default.appName)
+  t.is(`${projectName}.aragonpm.eth`, arapp.environments.default.appName)
   t.is(`${projectName}.open.aragonpm.eth`, arapp.environments.rinkeby.appName)
   t.is(`${projectName}.open.aragonpm.eth`, arapp.environments.mainnet.appName)
 })

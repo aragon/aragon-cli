@@ -1,8 +1,7 @@
 import test from 'ava'
 import parseCli from '../parseCli'
 
-// eslint-disable-next-line ava/no-skip-test
-test.serial('ipfs view readme directory', async t => {
+test('ipfs view readme directory', async t => {
   const stdout = await parseCli([
     'ipfs',
     'view',

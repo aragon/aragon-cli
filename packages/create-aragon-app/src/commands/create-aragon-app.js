@@ -61,6 +61,11 @@ exports.builder = yargs => {
         return tmpl
       },
     })
+    .option('install', {
+      description: 'Whether or not to install dependencies',
+      default: true,
+      boolean: true,
+    })
 }
 
 exports.handler = async function({
@@ -68,6 +73,7 @@ exports.handler = async function({
   name,
   template,
   path: dirPath,
+  install,
   silent,
   debug,
 }) {
@@ -140,6 +146,7 @@ exports.handler = async function({
       },
       {
         title: 'Install package dependencies?',
+        enabled: () => install,
         task: async (ctx, task) =>
           input('Enter "yes" to run `npm install` now:', {
             default: 'yes',

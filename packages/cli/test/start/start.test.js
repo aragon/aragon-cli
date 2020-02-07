@@ -17,6 +17,6 @@ test.skip('start runs', async t => {
 
 test.serial('run fails if not in an aragon project directory', async t => {
   await t.throwsAsync(async () => {
-    return parseCli(['run', '--debug'])
+    return parseCli(['run'])
   })
 })

@@ -1,8 +1,6 @@
 name: CI
 
-on:
-  push:
-
+on: push
 jobs:
   build:
     name: Build & test with "Node.js v${{ matrix.node-version }}" on "${{ matrix.os }}"
