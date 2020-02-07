@@ -7,7 +7,8 @@ import {
   NO_INSTALLATION_MSG,
 } from './constants'
 
-export const getBinaryPath = () => getBinary('ipfs', getPackageRoot(__dirname))
+export const getBinaryPath = () =>
+  getBinary('ipfs', getPackageRoot(process.cwd()))
 
 export const startLocalDaemon = (binPath, repoPath, options = {}) => {
   if (!binPath) {
