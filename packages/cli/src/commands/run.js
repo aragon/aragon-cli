@@ -2,15 +2,21 @@ import TaskList from 'listr'
 import path from 'path'
 import fs from 'fs-extra'
 import url from 'url'
-// TODO: stop using web3
 import Web3 from 'web3'
-import APM from '@aragon/apm'
 import { blue, green, bold } from 'chalk'
-import { isPortTaken } from '@aragon/toolkit'
+import {
+  isPortTaken,
+  startLocalDaemon,
+  getBinaryPath,
+  getDefaultRepoPath,
+  isLocalDaemonRunning,
+  encodeInitPayload,
+  newDao,
+  getApmRepo,
+  defaultAPMName,
+} from '@aragon/toolkit'
 //
-import encodeInitPayload from '../helpers/encodeInitPayload'
 import listrOpts from '../helpers/listr-options'
-import { task as getRepoTask } from './dao_cmds/utils/getRepoTask'
 import pkg from '../../package.json'
 import {
   findProjectRoot,
@@ -29,20 +35,18 @@ import {
 import { task as startTask } from './start'
 import { arappContract, task as deployTask } from './deploy'
 import {
-  task as newDAOTask,
-  BARE_TEMPLATE,
-  BARE_INSTANCE_FUNCTION,
-  BARE_TEMPLATE_DEPLOY_EVENT,
-} from './dao_cmds/new'
-import {
-  runSetupTask,
-  runPrepareForPublishTask,
-  runPublishTask,
+  setupTask,
+  prepareForPublishTask,
+  publishTask,
 } from './apm_cmds/publish'
 
 const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
+
+const BARE_TEMPLATE = defaultAPMName('bare-template')
+const BARE_INSTANCE_FUNCTION = 'newInstance'
+const BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
 
 export const command = 'run'
 export const describe = 'Run the current app locally'
@@ -66,6 +70,10 @@ export const builder = function(yargs) {
     })
     .option('network-id', {
       description: 'Network id to connect with',
+    })
+    .option('hardfork', {
+      description:
+        'Allows to specify which hardfork should be used. Supported hardforks are byzantium, constantinople, petersburg, and istanbul (default).',
     })
     .option('block-time', {
       description: 'Specify blockTime in seconds for automatic mining',
@@ -190,6 +198,7 @@ export const handler = async function({
   files,
   port,
   networkId,
+  hardfork,
   blockTime,
   accounts,
   reset,
@@ -219,10 +228,22 @@ export const handler = async function({
     )
   }
 
+  // Set prepublish to true if --prepublish-script argument is used
+  if (process.argv.includes('--prepublish-script')) prepublish = true
+
   const showAccounts = accounts
 
   const tasks = new TaskList(
     [
+      {
+        title: 'Start IPFS',
+        skip: async () => isLocalDaemonRunning(),
+        task: async () => {
+          await startLocalDaemon(getBinaryPath(), getDefaultRepoPath(), {
+            detached: false,
+          })
+        },
+      },
       {
         title: 'Start a local Ethereum network',
         skip: async ctx => {
@@ -236,7 +257,14 @@ export const handler = async function({
           }
         },
         task: async (ctx, task) =>
-          devchainTask({ port, networkId, blockTime, reset, showAccounts }),
+          devchainTask({
+            port,
+            networkId,
+            hardfork,
+            blockTime,
+            reset,
+            showAccounts,
+          }),
       },
       {
         title: 'Setup before publish',
@@ -265,13 +293,13 @@ export const handler = async function({
             httpServedFrom,
           }
 
-          return runSetupTask(ctx.publishParams)
+          return setupTask(ctx.publishParams)
         },
       },
       {
         title: 'Prepare for publish',
         task: async ctx =>
-          runPrepareForPublishTask({
+          prepareForPublishTask({
             ...ctx.publishParams,
             // context
             initialRepo: ctx.initialRepo,
@@ -286,9 +314,12 @@ export const handler = async function({
         task: async ctx => {
           const { dao, proxyAddress, methodName, params } = ctx.intent
 
-          return runPublishTask({
+          return publishTask({
             ...ctx.publishParams,
             // context
+            version: ctx.version,
+            contractAddress: ctx.contract,
+            pathToPublish: ctx.pathToPublish,
             dao,
             proxyAddress,
             methodName,
@@ -298,12 +329,28 @@ export const handler = async function({
       },
       {
         title: 'Fetch published repo',
-        task: async ctx =>
-          getRepoTask({
-            apmRepo: module.appName,
-            apm: APM(ctx.web3, apmOptions),
-            artifactRequired: false,
-          }),
+        task: async ctx => {
+          const apmRepoName = module.name
+
+          const progressHandler = step => {
+            switch (step) {
+              case 1:
+                console.log(`Initialize aragonPM`)
+                break
+              case 2:
+                console.log(`Fetching ${bold(apmRepoName)}@latest`)
+                break
+            }
+          }
+
+          ctx.repo = await getApmRepo(
+            ctx.web3,
+            apmRepoName,
+            apmOptions,
+            'latest',
+            progressHandler
+          )
+        },
       },
       {
         title: 'Deploy Template',
@@ -325,8 +372,20 @@ export const handler = async function({
         },
       },
       {
-        title: 'Create Organization',
-        task: ctx => {
+        title: `Fetching template ${bold(template)}@latest`,
+        task: async ctx => {
+          ctx.template = await getApmRepo(
+            ctx.web3,
+            template,
+            apmOptions,
+            'latest'
+          )
+        },
+        enabled: ctx => !ctx.contractInstance,
+      },
+      {
+        title: 'Create Organization from template',
+        task: async ctx => {
           const roles = ctx.repo.roles || []
           const rolesBytes = roles.map(role => role.bytes)
 
@@ -351,20 +410,15 @@ export const handler = async function({
             fnArgs = [ctx.repo.appId, rolesBytes, ctx.accounts[0], initPayload]
           }
 
-          const newDAOParams = {
-            template,
-            templateVersion: 'latest',
+          ctx.daoAddress = await newDao({
+            repo: ctx.template,
+            web3: ctx.web3,
             templateInstance: ctx.contractInstance,
-            fn: templateNewInstance,
-            fnArgs,
+            newInstanceMethod: templateNewInstance,
+            newInstanceArgs: fnArgs,
             deployEvent: templateDeployEvent,
             gasPrice,
-            web3: ctx.web3,
-            reporter,
-            apmOptions,
-          }
-
-          return newDAOTask(newDAOParams)
+          })
         },
       },
       {

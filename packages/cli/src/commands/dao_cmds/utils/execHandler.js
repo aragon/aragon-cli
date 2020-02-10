@@ -15,6 +15,7 @@ import listrOpts from '../../../helpers/listr-options'
  * @param {Array<*>} params.params Method parameters
  * @param {Object} params.apm APM config
  * @param {Object} params.web3 Web3 instance
+ * @param {Object} params.wsProvider Ethereum provider
  * @param {string} params.gasPrice Gas price
  * @param {boolean} params.silent Silent task
  * @param {boolean} params.debug Debug mode
@@ -27,6 +28,7 @@ export async function task({
   params,
   apm,
   web3,
+  wsProvider,
   gasPrice,
   silent,
   debug,
@@ -56,6 +58,7 @@ export async function task({
               method,
               params,
               web3,
+              wsProvider,
               gasPrice,
               progressHandler,
             })

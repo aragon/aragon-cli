@@ -10,6 +10,7 @@ import { initAragonJS, getTransactionPath } from '../helpers/aragonjs-wrapper'
  * @param {Array<*>} params.params Method parameters
  * @param {Object} params.apm APM config
  * @param {Object} params.web3 Web3 instance
+ * @param {Object} params.wsProvider Ethereum provider
  * @param {string} params.gasPrice Gas price
  * @param {function} params.progressHandler Progress handler
  * @returns {Promise<{ transactionPath, receipt }>} Transaction path and receipt
@@ -21,13 +22,14 @@ export default async function({
   params,
   apm,
   web3,
+  wsProvider,
   gasPrice,
   progressHandler = () => {},
 }) {
   const wrapper = await initAragonJS(dao, apm.ensRegistryAddress, {
     ipfsConf: apm.ipfs,
     gasPrice,
-    provider: web3.currentProvider,
+    provider: wsProvider || web3.currentProvider,
     accounts: await web3.eth.getAccounts(),
   })
 

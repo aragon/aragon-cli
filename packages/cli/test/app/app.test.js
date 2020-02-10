@@ -1,248 +1,96 @@
 import test from 'ava'
-import execa from 'execa'
-import fs from 'fs-extra'
-import path from 'path'
-import { startProcess, getBinary, getPackageRoot } from '@aragon/toolkit'
+import parseCli from '../parseCli'
 
-const ARTIFACT_FILE = 'artifact.json'
-const MANIFEST_FILE = 'manifest.json'
+test.serial('fetches app versions', async t => {
+  const output = await parseCli(['apm', 'versions', 'voting', '--debug'])
 
-const PUBLISH_CMD_TIMEOUT = 120000 // 2min
-const VERSIONS_CMD_TIMEOUT = 50000 // 50s
-const RUN_CMD_TIMEOUT = 1800000 // 3min
+  t.assert(output.includes('voting.aragonpm.eth'))
+})
 
-const testSandbox = './.tmp/app'
+test.serial('fetches app versions with full ens name', async t => {
+  const output = await parseCli([
+    'apm',
+    'versions',
+    'finance.aragonpm.eth',
+    '--debug',
+  ])
 
-const mockappPath = path.resolve('./test/mock')
+  t.assert(output.includes('finance.aragonpm.eth'))
+})
 
-const cliPath = '../../dist/cli.js'
-
-test.serial('should publish an aragon app directory successfully', async t => {
-  // arrange
-  const publishDirPath = path.resolve(`${mockappPath}/${testSandbox}`)
-
-  // act
-  await startProcess({
-    cmd: 'node',
-    args: [
-      cliPath,
+test.serial('publish fails if not in an aragon project directory', async t => {
+  await t.throwsAsync(() => {
+    return parseCli([
       'apm',
       'publish',
       'major',
       '--files',
       'app',
-      '--publish-dir',
-      publishDirPath,
       '--skip-confirmation',
       '--no-propagate-content',
-    ],
-    execaOpts: {
-      cwd: mockappPath,
-      localDir: '.',
-    },
-    readyOutput: 'Successfully published',
-    timeout: PUBLISH_CMD_TIMEOUT,
+      '--debug',
+    ])
   })
-
-  // check the generated artifact
-  const artifactPath = path.resolve(publishDirPath, ARTIFACT_FILE)
-  const artifact = JSON.parse(fs.readFileSync(artifactPath))
-  // delete non-deterministic values
-  delete artifact.deployment
-
-  // check the generated manifest
-  const manifestPath = path.resolve(publishDirPath, MANIFEST_FILE)
-  const manifest = JSON.parse(fs.readFileSync(manifestPath))
-
-  // assert
-  t.snapshot(artifact)
-  t.snapshot(manifest)
 })
 
-test.serial('should fetch published versions to aragonPM', async t => {
-  // act
-  await startProcess({
-    cmd: 'node',
-    args: [cliPath, 'apm', 'versions'],
-    execaOpts: {
-      cwd: mockappPath,
-      localDir: '.',
-    },
-    readyOutput: 'mock-app.open.aragonpm.eth has',
-    timeout: VERSIONS_CMD_TIMEOUT,
+test.serial('grant fails if not in an aragon project directory', async t => {
+  await t.throwsAsync(async () => {
+    return parseCli([
+      'apm',
+      'grant',
+      '0x8401Eb5ff34cc943f096A32EF3d5113FEbE8D4Eb',
+      '--debug',
+    ])
   })
-
-  // assert
-  t.pass()
 })
 
-test.serial('should run an aragon app successfully on IPFS', async t => {
-  const publishDirPath = path.resolve(`${mockappPath}/${testSandbox}/ipfs`)
+test.serial('fetches app info', async t => {
+  const output = await parseCli(['apm', 'info', 'finance', '--debug'])
 
-  const { kill } = await startProcess({
-    cmd: 'node',
-    args: [cliPath, 'run', '--files', 'dist', '--publish-dir', publishDirPath],
-    execaOpts: {
-      cwd: mockappPath,
-      localDir: '.',
-      detached: true,
-    },
-    readyOutput: 'Open http://localhost:',
-    timeout: RUN_CMD_TIMEOUT,
-  })
-
-  // cleanup
-  await kill()
-
-  t.pass()
+  t.assert(
+    output.includes('"name": "Finance"'),
+    "App info doesn't contain name"
+  )
+  t.assert(
+    output.includes('"author": "Aragon Association",'),
+    "App info doesn't contain author"
+  )
+  t.assert(
+    output.includes(
+      '"description": "Manage an organization\'s financial assets"'
+    ),
+    "App info doesn't contain description"
+  )
+  t.assert(
+    output.includes(
+      '"changelog_url": "https://github.com/aragon/aragon-apps/releases"'
+    ),
+    "App info doesn't contain changelog url"
+  )
+  t.assert(
+    output.includes(
+      '"source_url": "https://github.com/aragon/aragon-apps/blob/master/apps/finance"'
+    ),
+    "App info doesn't contain source url"
+  )
 })
 
-test.serial(
-  'should run an aragon app successfully on IPFS using a Template',
-  async t => {
-    const publishDirPath = path.resolve(
-      `${mockappPath}/${testSandbox}/ipfs-template`
-    )
+test.serial('fetches packages', async t => {
+  const output = await parseCli(['apm', 'packages', '--debug'])
 
-    const { kill } = await startProcess({
-      cmd: 'node',
-      args: [
-        cliPath,
-        'run',
-        '--files',
-        'dist',
-        '--publish-dir',
-        publishDirPath,
-        // Template args
-        '--template',
-        'Template',
-        '--template-init',
-        '0x5d94e3e7aec542ab0f9129b9a7badeb5b3ca0f77',
-        '@ARAGON_ENS',
-        '0xd526b7aba39cccf76422835e7fd5327b98ad73c9',
-        '0xf1f8aac64036cdd399886b1c157b7e3b361093f3',
-        '--template-new-instance',
-        'newTokenAndInstance',
-        '--template-args',
-        'MyToken',
-        'TKN',
-        '["0xb4124cEB3451635DAcedd11767f004d8a28c6eE7"]',
-        '["1000000000000000000"]',
-        '["500000000000000000","150000000000000000","86400"]',
-      ],
-      execaOpts: {
-        cwd: mockappPath,
-        localDir: '.',
-        detached: true,
-      },
-      readyOutput: 'Open http://localhost:',
-      timeout: RUN_CMD_TIMEOUT,
-    })
-
-    // cleanup
-    await kill()
-
-    t.pass()
-  }
-)
-
-test.serial('should run an aragon app successfully on HTTP', async t => {
-  const publishDirPath = path.resolve(`${mockappPath}/${testSandbox}/http`)
-  const appPort = 8001
-
-  // start app server
-  const packageRoot = getPackageRoot(__dirname)
-  const bin = getBinary('http-server', packageRoot)
-  execa(bin, ['dist', '-p', appPort], {
-    cwd: mockappPath,
-  }).catch(err => {
-    throw new Error(err)
-  })
-
-  const { kill } = await startProcess({
-    cmd: 'node',
-    args: [
-      cliPath,
-      'run',
-      '--http',
-      `localhost:${appPort}`,
-      '--http-served-from',
-      './dist',
-      '--publish-dir',
-      publishDirPath,
-    ],
-    execaOpts: {
-      cwd: mockappPath,
-      localDir: '.',
-      detached: true,
-    },
-    readyOutput: 'Open http://localhost:',
-    timeout: RUN_CMD_TIMEOUT,
-  })
-
-  // cleanup
-  await kill()
-
-  t.pass()
+  t.assert(output.includes('apm-registry'), 'Missing apm-registry')
+  t.assert(output.includes('apm-enssub'), 'Missing apm-enssub')
+  t.assert(output.includes('apm-repo'), 'Missing apm-repo')
+  t.assert(output.includes('aragon'), 'Missing aragon')
+  t.assert(output.includes('agent'), 'Missing agent')
+  t.assert(output.includes('finance'), 'Missing finance')
+  t.assert(output.includes('token-manager'), 'Missing token-manager')
+  t.assert(output.includes('vault'), 'Missing vault')
+  t.assert(output.includes('voting'), 'Missing voting')
+  t.assert(output.includes('bare-template'), 'Missing bare-template')
+  t.assert(output.includes('company-template'), 'Missing company-template')
+  t.assert(
+    output.includes('membership-template'),
+    'Missing membership-template'
+  )
 })
-
-test.serial(
-  'should run an aragon app successfully on HTTP using a Template',
-  async t => {
-    const publishDirPath = path.resolve(
-      `${mockappPath}/${testSandbox}/http-template`
-    )
-    const appPort = 8002
-
-    // start app server
-    const packageRoot = getPackageRoot(__dirname)
-    const bin = getBinary('http-server', packageRoot)
-    execa(bin, ['dist', '-p', appPort], {
-      cwd: mockappPath,
-    }).catch(err => {
-      throw new Error(err)
-    })
-
-    const { kill } = await startProcess({
-      cmd: 'node',
-      args: [
-        cliPath,
-        'run',
-        '--http',
-        `localhost:${appPort}`,
-        '--http-served-from',
-        './dist',
-        '--publish-dir',
-        publishDirPath,
-        // Template args
-        '--template',
-        'Template',
-        '--template-init',
-        '0x5d94e3e7aec542ab0f9129b9a7badeb5b3ca0f77',
-        '@ARAGON_ENS',
-        '0xd526b7aba39cccf76422835e7fd5327b98ad73c9',
-        '0xf1f8aac64036cdd399886b1c157b7e3b361093f3',
-        '--template-new-instance',
-        'newTokenAndInstance',
-        '--template-args',
-        'MyToken',
-        'TKN',
-        '["0xb4124cEB3451635DAcedd11767f004d8a28c6eE7"]',
-        '["1000000000000000000"]',
-        '["500000000000000000","150000000000000000","86400"]',
-      ],
-      execaOpts: {
-        cwd: mockappPath,
-        localDir: '.',
-        detached: true,
-      },
-      readyOutput: 'Open http://localhost:',
-      timeout: RUN_CMD_TIMEOUT,
-    })
-
-    // cleanup
-    await kill()
-
-    t.pass()
-  }
-)

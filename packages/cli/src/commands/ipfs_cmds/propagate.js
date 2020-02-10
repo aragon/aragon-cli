@@ -1,11 +1,15 @@
 import TaskList from 'listr'
-import { blue, red, green } from 'chalk'
+import { blue, red, green, gray } from 'chalk'
 import {
   getHttpClient,
   getMerkleDAG,
   extractCIDsFromMerkleDAG,
   propagateFiles,
   isValidCID,
+  startLocalDaemon,
+  getBinaryPath,
+  getDefaultRepoPath,
+  isLocalDaemonRunning,
 } from '@aragon/toolkit'
 //
 import listrOpts from '../../helpers/listr-options'
@@ -20,9 +24,18 @@ export const builder = yargs =>
     description: 'A self-describing content-addressed identifier',
   })
 
-const runPropagateTask = ({ cid, ipfsReader, silent, debug }) => {
+export const runPropagateTask = ({ cid, ipfsReader, silent, debug }) => {
   return new TaskList(
     [
+      {
+        title: 'Start IPFS',
+        skip: async () => isLocalDaemonRunning(),
+        task: async () => {
+          await startLocalDaemon(getBinaryPath(), getDefaultRepoPath(), {
+            detached: false,
+          })
+        },
+      },
       {
         title: 'Validate CID',
         task: () => {
@@ -33,21 +46,45 @@ const runPropagateTask = ({ cid, ipfsReader, silent, debug }) => {
       },
       {
         title: 'Fetch the links',
-        task: async ctx => {
+        task: async (ctx, task) => {
+          const handleProgress = (step, data) => {
+            switch (step) {
+              case 1:
+                task.output = `Fetch DAG information for ${gray(data)}`
+                break
+              case 2:
+                task.output = `Parse DAG information for ${gray(data)}`
+                break
+            }
+          }
+
           ctx.data = await getMerkleDAG(ipfsReader, cid, {
             recursive: true,
+            progressCallback: handleProgress,
           })
         },
       },
       {
         title: 'Query gateways',
         task: async (ctx, task) => {
+          const handleProgress = (step, data) => {
+            switch (step) {
+              case 1: {
+                const cid = gray(data.cid)
+                const succeeded = green(data.succeeded)
+                const failed = red(data.failed)
+                task.output = `Queried ${cid} at ${succeeded} gateways successfully, ${failed} failed.`
+                break
+              }
+            }
+          }
+
           ctx.CIDs = extractCIDsFromMerkleDAG(ctx.data, {
             recursive: true,
           })
 
           ctx.result = await propagateFiles(ctx.CIDs, {
-            logger: text => (task.output = text),
+            progressCallback: handleProgress,
           })
         },
       },
@@ -90,8 +127,11 @@ export const handler = async argv => {
   )
 
   reporter.debug(`Gateways: ${ctx.result.gateways.join(', ')}`)
-  reporter.debug(
-    `Errors: \n${ctx.result.errors.map(JSON.stringify).join('\n')}`
-  )
+
+  if (ctx.result.errors && ctx.result.errors.length) {
+    reporter.debug(
+      `Errors: \n${ctx.result.errors.map(JSON.stringify).join('\n')}`
+    )
+  }
   // TODO add your own gateways
 }

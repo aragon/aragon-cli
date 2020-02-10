@@ -3,7 +3,7 @@
   "private": true,
   "devDependencies": {
     "codecov": "^3.6.1",
-    "husky": "^3.0.9",
+    "husky": "^4.2.1",
     "lerna": "^3.14.1"
   },
   "scripts": {
@@ -11,8 +11,8 @@
     "prepare": "lerna bootstrap",
     "delete-shrinkwraps": "lerna exec -- rm npm-shrinkwrap.json",
     "create-shrinkwraps": "lerna exec -- npm shrinkwrap",
-    "link": "lerna exec -- npm link",
-    "unlink": "lerna exec -- npm unlink",
+    "link-bin": "lerna run --parallel link-bin",
+    "unlink-bin": "lerna run --parallel unlink-bin",
     "build": "lerna run --parallel build",
     "build:watch": "lerna run --parallel build:watch",
     "lint": "lerna run --parallel lint",
@@ -21,6 +21,7 @@
     "posttest": "node scripts/teardown-integration-tests.js",
     "test": "lerna run --parallel test",
     "test:coverage": "lerna run --parallel test:coverage",
+    "test:integration": "lerna run --parallel test:integration",
     "report-coverage": "codecov",
     "release": "lerna version",
     "publish:nightly": "lerna publish from-package --dist-tag nightly --yes"

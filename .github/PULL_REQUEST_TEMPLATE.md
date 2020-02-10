@@ -1,6 +1,10 @@
-# 🦅 Pull Request
+# 🦅 Pull Request Description
 
-<!-- Please let us know why do you wish to include this change. 👇 -->
+<!-- Pull request description and links to related issues -->
+
+## Rational
+
+<!-- Please explain the reasoning behind your changed -->
 
 ## 🚨 Test instructions
 

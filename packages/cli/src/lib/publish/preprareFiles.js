@@ -3,12 +3,9 @@ import ignore from 'ignore'
 import fs from 'fs'
 import { copy, pathExistsSync } from 'fs-extra'
 import { promisify } from 'util'
-
+import { MANIFEST_FILE, ARTIFACT_FILE } from '@aragon/toolkit'
 //
-import { findProjectRoot } from '../../../util'
-
-export const MANIFEST_FILE = 'manifest.json'
-export const ARTIFACT_FILE = 'artifact.json'
+import { findProjectRoot } from '../../util'
 
 /**
  * Moves the specified files to a temporary directory and returns the path to
@@ -16,7 +13,7 @@ export const ARTIFACT_FILE = 'artifact.json'
  * @param {string} tmpDir Temporary directory
  * @param {Array<string>} files An array of file paths to include
  * @param {string} ignorePatterns An array of glob-like pattern of files to ignore
- * @return {string} The path to the temporary directory
+ * @return {Promise<string>} The path to the temporary directory
  */
 export async function prepareFilesForPublishing(
   tmpDir,

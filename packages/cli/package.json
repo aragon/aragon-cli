@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "7.0.1",
+  "version": "7.0.4",
   "description": "Aragon command-line tools",
   "main": "./dist/toolkit.js",
   "bin": {
@@ -12,6 +12,8 @@
     "extract-roles": "node scripts/extract-roles",
     "build": "npm run extract-roles && npm run compile-src",
     "build:watch": "npm run build -- -- --watch",
+    "link-bin": "npm link",
+    "unlink-bin": "npm unlink",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
     "test": "ava --verbose",
@@ -19,11 +21,13 @@
     "test:clean": "rm -rf ./.tmp && npm run test:reset-cache",
     "test:reset-cache": "ava --reset-cache",
     "test:update-snapshots": "npm run test:clean && npm run test -- --update-snapshots",
+    "test:coverage:html": "nyc --all --reporter html  npm run test",
     "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test"
   },
   "files": [
     "aliases",
     "config",
+    "ganache",
     "dist",
     "schemas"
   ],
@@ -48,8 +52,7 @@
   },
   "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
-    "@aragon/apm": "^3.1.2-beta.2",
-    "@aragon/toolkit": "^0.0.1",
+    "@aragon/toolkit": "^0.0.5",
     "@aragon/truffle-config-v5": "^1.0.0",
     "ajv": "^6.6.2",
     "bn.js": "^5.0.0",
@@ -58,17 +61,17 @@
     "dev-null": "^0.1.1",
     "engine-check": "^1.0.1",
     "eth-ens-namehash": "^2.0.8",
-    "execa": "^3.0.0",
+    "execa": "^4.0.0",
     "figures": "^3.0.0",
     "find-process": "^1.4.2",
     "find-up": "^4.0.0",
     "fs-extra": "^8.0.1",
-    "ganache-core": "^2.8.0",
     "git-clone": "^0.1.0",
     "http-server": "^0.12.0",
     "ignore": "^4.0.6",
     "inquirer": "^7.0.0",
     "internal-ip": "^5.0.0",
+    "is-ipfs": "^0.6.3",
     "listr": "^0.14.3",
     "listr-input": "0.2.0",
     "listr-silent-renderer": "^1.1.1",
@@ -82,12 +85,11 @@
     "semver": "^6.1.1",
     "source-map-support": "^0.5.11",
     "tmp-promise": "^2.0.1",
-    "truffle": "5.1.4",
     "truffle-flattener": "^1.2.9",
     "web3": "^1.2.4",
     "web3-utils": "^1.2.4",
     "which": "^2.0.1",
-    "yargs": "git://github.com/yargs/yargs.git#fe380cd356aa33aef0449facd59c22cab8930ac9"
+    "yargs": "^15.1.0"
   },
   "devDependencies": {
     "@aragon/apps-agent": "^2.0.0",
@@ -111,16 +113,20 @@
     "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
     "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-ava": "^9.0.0",
+    "eslint-plugin-ava": "^10.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
+    "ganache-cli": "^6.7.0",
+    "ganache-core": "^2.9.0",
     "nyc": "^14.1.1",
     "prettier": "^1.15.3",
     "proxyquire": "^2.1.0",
-    "sinon": "^7.3.1"
+    "sinon": "^7.3.1",
+    "strip-ansi": "^6.0.0",
+    "truffle": "^5.1.6"
   },
   "engines": {
     "node": ">=10.0.0"
@@ -170,6 +176,7 @@
     }
   },
   "eslintConfig": {
+    "ignorePatterns": ["test/mock"],
     "env": {
       "es6": true,
       "node": true

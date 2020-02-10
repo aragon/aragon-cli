@@ -96,9 +96,9 @@ Options that change the behaviour of the command:
 - `--environment`: The environment in your `arapp.json` that you want to use. Defaults to `aragon:local`. Check the other [default environments](/docs/cli-global-confg.html#example). You can also use it with the `--env` alias.
 - `--gas-price`: Gas price in Gwei. Defaults to `2`.
 - `--use-frame`: Use Frame as a signing provider and web3 provider.
-- `--apm.ens-registry`: Address of the ENS registry. This will be overwritten if the selected environment from your arapp.json includes a `registry` property.
-- `--apm.ipfs.gateway`: An URI to the IPFS Gateway to read files from. Defaults to `http://localhost:8080/ipfs`.
-- `--apm.ipfs.rpc`: An URI to the IPFS node used to publish files. Defaults to `http://localhost:5001#default`.
+- `--ens-registry`: Address of the ENS registry. This will be overwritten if the selected environment from your arapp.json includes a `registry` property.
+- `--pfs-gateway`: An URI to the IPFS Gateway to read files from. Defaults to `http://localhost:8080/ipfs`.
+- `--ipfs-rpc`: An URI to the IPFS node used to publish files. Defaults to `http://localhost:5001#default`.
 - `--cwd`: Project working directory.
 - `--debug`: Show more output to terminal.
 - `--silent`: Silence output to terminal.

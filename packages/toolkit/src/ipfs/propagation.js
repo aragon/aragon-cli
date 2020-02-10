@@ -31,7 +31,7 @@ async function queryCidAtGateway(gateway, cid) {
 }
 
 export async function propagateFile(cid, options = {}) {
-  const { logger = noop, gateways = DEFAULT_GATEWAYS } = options
+  const { progressCallback = noop, gateways = DEFAULT_GATEWAYS } = options
 
   const results = await Promise.all(
     gateways.map(gateway => queryCidAtGateway(gateway, cid))
@@ -40,9 +40,7 @@ export async function propagateFile(cid, options = {}) {
   const succeeded = results.filter(status => status.success).length
   const failed = gateways.length - succeeded
 
-  logger(
-    `Queried ${cid} at ${succeeded} gateways successfully, ${failed} failed.`
-  )
+  progressCallback(1, { cid, succeeded, failed })
 
   const errors = results
     .filter(result => result.error)

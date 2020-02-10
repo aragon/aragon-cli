@@ -25,8 +25,8 @@ test.before('setup and make a successful call', async t => {
   info = await getApmRepo(
     web3,
     apmRepoName,
-    apmRepoVersion,
     apmOptions,
+    apmRepoVersion,
     progressHandler
   )
 })
