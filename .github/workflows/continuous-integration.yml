@@ -12,7 +12,7 @@ jobs:
           # 13,
           # 12,
           11,
-          # 10
+          10
         ]
         os: [
           ubuntu-latest,
