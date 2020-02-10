@@ -9,8 +9,8 @@ jobs:
       fail-fast: false # don't cancel all jobs if some of them failed
       matrix:
         node-version: [
-          # 13,
-          # 12,
+          13,
+          12,
           11,
           10
         ]
