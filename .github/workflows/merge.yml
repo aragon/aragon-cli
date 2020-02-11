@@ -1,7 +1,8 @@
 name: Merge on master and develop
 
-on: push
-  branches:
+on:
+  push:
+    branches:
     - master
     - develop
 jobs:

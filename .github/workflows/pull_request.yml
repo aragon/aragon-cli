@@ -9,12 +9,18 @@ jobs:
       fail-fast: false # don't cancel all jobs if some of them failed
       matrix:
         node-version: [
-          12
+          12,
+          11,
+          10
         ]
         os: [
           ubuntu-latest,
           macOS-latest
         ]
+        exclude:
+          # excludes node 10 and 11 on macOS
+          - os: macOS-latest
+            node: [10, 11]
 
     runs-on: ${{ matrix.os }}
     steps:
