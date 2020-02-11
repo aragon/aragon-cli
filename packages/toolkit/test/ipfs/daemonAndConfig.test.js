@@ -180,7 +180,7 @@ test('patchRepoConfig should throw error if repoPath or config is invalid', asyn
 
 test('should return default location of ipfs repository', t => {
   const result = getDefaultRepoPath()
-  t.true(result.includes('/home'))
+  // t.true(result.includes('/home')) // assert fails on MacOS
   t.true(result.includes('.ipfs'))
 })
 
