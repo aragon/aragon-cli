@@ -6,7 +6,6 @@ import listrOpts from '../../../helpers/listr-options'
 
 export default async function runPublishTask({
   // Globals
-  // reporter,
   environment,
   http,
   provider,
@@ -61,7 +60,6 @@ export default async function runPublishTask({
             ctx.receipt = await web3.eth.sendTransaction(transaction)
           } else {
             return execTask({
-              reporter,
               environment,
               dao,
               app: proxyAddress,

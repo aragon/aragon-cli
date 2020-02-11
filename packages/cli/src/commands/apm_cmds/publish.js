@@ -244,7 +244,6 @@ export const handler = async function({
   }
 
   const { receipt, transactionPath } = await runPublishTask({
-    reporter,
     environment,
     http,
     provider,
