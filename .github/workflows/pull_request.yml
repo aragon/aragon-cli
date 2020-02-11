@@ -1,6 +1,6 @@
-name: CI
+name: Pull requests
 
-on: push
+on: pull_request
 jobs:
   build:
     name: Build & test with "Node.js v${{ matrix.node-version }}" on "${{ matrix.os }}"
@@ -9,16 +9,20 @@ jobs:
       fail-fast: false # don't cancel all jobs if some of them failed
       matrix:
         node-version: [
-          # 13,
-          # 12,
+          12,
           11,
-          # 10
+          10
         ]
         os: [
           ubuntu-latest,
-          # windows-latest,
-          # macOS-latest
+          macOS-latest
         ]
+        exclude:
+          # excludes node 10 and 11 on macOS
+          - os: macOS-latest
+            node-version: 10
+          - os: macOS-latest
+            node-version: 11
 
     runs-on: ${{ matrix.os }}
     steps:
