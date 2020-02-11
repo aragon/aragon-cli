@@ -24,7 +24,8 @@
     "test:integration": "lerna run --parallel test:integration",
     "report-coverage": "codecov",
     "release": "lerna version",
-    "publish:nightly": "lerna publish from-package --dist-tag nightly --yes"
+    "publish:nightly": "lerna publish from-package --dist-tag nightly --yes",
+    "git:clean": "git --no-pager diff && git stash"
   },
   "husky": {
     "hooks": {
