@@ -1,5 +1,9 @@
 import semver from 'semver'
-import { APM_INITIAL_VERSIONS, getApmRepo, isValidBump } from '@aragon/toolkit'
+import {
+  APM_INITIAL_VERSIONS,
+  getApmRepo,
+  apmIsValidBump,
+} from '@aragon/toolkit'
 
 export class InvalidBump extends Error {}
 
@@ -29,7 +33,7 @@ export async function getPrevAndNextVersion(
     const initialRepo = await getApmRepo(web3, appName, apmOptions)
     const prevVersion = initialRepo.version
     const version = resolveBumpOrVersion(bumpOrVersion, prevVersion)
-    const isValid = await isValidBump(
+    const isValid = await apmIsValidBump(
       web3,
       appName,
       prevVersion,

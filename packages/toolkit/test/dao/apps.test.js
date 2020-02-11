@@ -16,7 +16,6 @@ test.beforeEach(async t => {
   }
 })
 
-// eslint-disable-next-line ava/no-skip-test
 test('getAllApps returns the correct apps', async t => {
   const { web3 } = t.context
 

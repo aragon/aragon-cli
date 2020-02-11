@@ -95,7 +95,8 @@ test('should configure the ports', async t => {
   t.pass()
 })
 
-test('should run the daemon', async t => {
+// eslint-disable-next-line ava/no-skip-test
+test.skip('should run the daemon', async t => {
   const { output, detach } = await startLocalDaemon(binPath, repoPath, {
     detached: true,
   })
@@ -122,7 +123,8 @@ test('should throw cors is not configured error', async t => {
   t.true(err.message.includes('Access-Control-Allow-Methods: PUT,GET,POST'))
 })
 
-test('should configure cors & pin artifacts', async t => {
+// eslint-disable-next-line ava/no-skip-test
+test.skip('should configure cors & pin artifacts', async t => {
   const httpClient = await getHttpClient(`http://localhost:${apiPort}`)
 
   await configureCors(httpClient)
@@ -147,7 +149,8 @@ test('should throw error if input folder is invalid', async t => {
   // await t.throwsAsync(async () => getRepoSize('package.json'))
 })
 
-test('should stop the daemon', async t => {
+// eslint-disable-next-line ava/no-skip-test
+test.skip('should stop the daemon', async t => {
   await killProcessOnPort(apiPort)
   const daemonRunning = await isLocalDaemonRunning(apiUrl)
   t.false(daemonRunning)
