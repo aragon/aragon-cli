@@ -51,7 +51,7 @@ test('should install go-ipfs in a new project', async t => {
   t.snapshot(result.command, 'should use the correct command')
 })
 
-test('should get the ipfs binary', async t => {
+test('should get the ipfs binary', t => {
   const rootDir = process.cwd()
   process.chdir(projectPath) // change cwd to project directory
   const result = getBinaryPath()
@@ -140,7 +140,7 @@ test('should get folder correct object with size', async t => {
   t.true('value' in result)
   t.true('unit' in result)
   t.true('long' in result)
-  t.true(parseFloat(result.value) !== NaN)
+  t.true(!isNaN(parseFloat(result.value)))
 })
 
 test('should throw error if input folder is invalid', async t => {
@@ -157,7 +157,7 @@ test.skip('should stop the daemon', async t => {
 })
 
 test('should return false if port is not taken', async t => {
-  let portTaken = await isLocalDaemonRunning(apiUrl)
+  const portTaken = await isLocalDaemonRunning(apiUrl)
   t.false(portTaken)
 })
 
@@ -169,8 +169,8 @@ test('patchRepoConfig should add/update new key in ipfs config file', async t =>
   const nextConfig = await patchRepoConfig(repoPath, patch)
   t.true('testPatchKey1' in nextConfig)
   t.true('testPatchKey2' in nextConfig)
-  t.true(nextConfig['testPatchKey1'] == 'testPatchValue1')
-  t.true(nextConfig['testPatchKey2'] == 'testPatchValue2')
+  t.true(nextConfig.testPatchKey1 === 'testPatchValue1')
+  t.true(nextConfig.testPatchKey2 === 'testPatchValue2')
 })
 
 test('patchRepoConfig should throw error if repoPath or config is invalid', async t => {
@@ -181,7 +181,7 @@ test('patchRepoConfig should throw error if repoPath or config is invalid', asyn
   await t.throwsAsync(async () => patchRepoConfig(repoPath, {}))
 })
 
-test('should return default location of ipfs repository', async t => {
+test('should return default location of ipfs repository', t => {
   const result = getDefaultRepoPath()
   t.true(result.includes('/home'))
   t.true(result.includes('.ipfs'))
