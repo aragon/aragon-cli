@@ -243,7 +243,7 @@ export const handler = async function({
     if (!reply) return console.log()
   }
 
-  const { receipt /*, transactionPath */ } = await runPublishTask({
+  const { receipt, transactionPath } = await runPublishTask({
     reporter,
     environment,
     http,
@@ -268,21 +268,21 @@ export const handler = async function({
     reporter.error(`\nPublish transaction reverted:\n`)
   } else {
     // If the version is still the same, the publish intent was forwarded but not immediately executed (p.e. Voting)
-    // if (initialVersion === version) {
-    //   console.log(
-    //     '\n',
-    //     `Successfully executed: "${green(transactionPath[0].description)}"`,
-    //     '\n'
-    //   )
-    // } else {
-    const logVersion = 'v' + version
+    if (initialVersion === version) {
+      console.log(
+        '\n',
+        `Successfully executed: "${green(transactionPath[0].description)}"`,
+        '\n'
+      )
+    } else {
+      const logVersion = 'v' + version
 
-    console.log(
-      '\n',
-      `Successfully published ${appName} ${green(logVersion)} :`,
-      '\n'
-    )
-    // }
+      console.log(
+        '\n',
+        `Successfully published ${appName} ${green(logVersion)} :`,
+        '\n'
+      )
+    }
   }
 
   console.log(`Transaction hash: ${blue(transactionHash)}`, '\n')
