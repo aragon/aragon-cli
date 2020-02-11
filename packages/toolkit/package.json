@@ -8,17 +8,19 @@
     "url": "https://github.com/aragon/aragon-cli/tree/master/packages/toolkit"
   },
   "scripts": {
-    "build": "babel src --out-dir dist --source-maps",
+    "build": "babel src --out-dir dist --source-maps --extensions '.js,.ts'",
     "build:watch": "npm run build -- --watch",
-    "lint": "eslint src test",
+    "build:docs": "typedoc --out docs --allowJs --readme none --theme minimal --mode file",
+    "lint": "npm run check-types && eslint src test --ext '.js,.ts'",
     "lint:fix": "npm run lint -- --fix",
+    "check-types": "tsc",
     "test": "ava --verbose",
     "test:watch": "ava --watch",
     "test:clean": "rm -rf ./.tmp && npm run test:reset-cache",
     "test:reset-cache": "ava --reset-cache",
     "test:update-snapshots": "npm run test:clean && npm run test -- --update-snapshots",
-    "test:coverage:html": "nyc --all --reporter html  npm run test",
-    "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test",
+    "test:coverage:html": "nyc --reporter html  npm run test",
+    "test:coverage": "nyc --reporter text --reporter text-summary --reporter lcovonly  npm run test",
     "test:integration": "ava --verbose ./test-examples/*.test.js"
   },
   "keywords": [
@@ -61,7 +63,10 @@
     "@babel/cli": "^7.7.4",
     "@babel/core": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
+    "@babel/preset-typescript": "^7.7.4",
     "@babel/register": "^7.7.4",
+    "@typescript-eslint/eslint-plugin": "^2.11.0",
+    "@typescript-eslint/parser": "^2.11.0",
     "ava": "^2.4.0",
     "babel-plugin-istanbul": "^5.2.0",
     "bn.js": "^5.0.0",
@@ -78,29 +83,38 @@
     "nyc": "^14.1.1",
     "prettier": "^1.19.1",
     "proxyquire": "^2.1.3",
-    "sinon": "^7.5.0"
+    "sinon": "^7.5.0",
+    "typedoc": "^0.15.4",
+    "typescript": "^3.7.3"
   },
   "engines": {
     "node": ">=10.0.0"
   },
   "ava": {
     "require": [
-      "@babel/register"
+      "./test/register.js"
     ],
     "files": [
-      "test/**/*.test.js"
-    ]
+      "test/**/*.test.{js,ts}"
+    ],
+    "extensions": [
+      "ts"
+		]
   },
   "nyc": {
+    "all": true,
+    "extension": [
+      ".ts"
+    ],
     "include": [
-      "src/**/*.js",
-      "scripts/**/*.js"
+      "src/**/*.{js,ts}"
     ],
     "sourceMap": false,
     "instrument": true
   },
   "babel": {
     "presets": [
+      "@babel/preset-typescript",
       [
         "@babel/preset-env",
         {
@@ -125,12 +139,23 @@
       "es6": true,
       "node": true
     },
+    "plugins": [
+      "@typescript-eslint"
+    ],
     "extends": [
+      "plugin:@typescript-eslint/recommended",
       "standard",
       "plugin:ava/recommended",
-      "plugin:prettier/recommended"
+      "plugin:prettier/recommended",
+      "prettier/@typescript-eslint"
     ],
-    "parser": "babel-eslint"
+    "parser": "@typescript-eslint/parser",
+    "rules": {
+      "@typescript-eslint/no-use-before-define": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/no-empty-function": "off"
+    }
   },
   "prettier": {
     "singleQuote": true,
