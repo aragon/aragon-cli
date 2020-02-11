@@ -35,6 +35,8 @@ test('deployMiniMeTokenFactory: should deploy the contract with the right args',
 
   const tx = await web3.eth.getTransaction(result.txHash)
   t.snapshot(tx.input, 'the MiniMeTokenFactory bytecode is correct')
+  t.snapshot(tx.gasPrice, 'the transaction gas price is correct')	
+  t.snapshot(tx.gas, 'the transaction gas is correct')
 })
 
 test('changeControler: should set the correct controller', async t => {
