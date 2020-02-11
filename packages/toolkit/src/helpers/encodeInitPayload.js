@@ -10,7 +10,7 @@ export default (abi, initFunctionName, initArgs, environment) => {
   } else {
     try {
       // parse array parameters from string inputs
-      for (var i in methodABI.inputs) {
+      for (const i in methodABI.inputs) {
         if (methodABI.inputs[i].type.includes('[')) {
           initArgs[i] = JSON.parse(
             initArgs[i].replace(new RegExp("'", 'g'), '"')

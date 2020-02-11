@@ -96,6 +96,7 @@ export const getRecommendedGasLimit = async (
 }
 
 export const getContract = (pkg, contract) => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const artifact = require(`${pkg}/build/contracts/${contract}.json`)
   return artifact
 }

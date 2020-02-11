@@ -11,6 +11,9 @@ ipfs.cmd
 dist
 build
 
+# Generated docs
+packages/toolkit/docs
+
 # Tests and coverage
 .tmp
 coverage
