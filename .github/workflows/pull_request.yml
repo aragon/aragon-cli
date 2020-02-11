@@ -20,7 +20,9 @@ jobs:
         exclude:
           # excludes node 10 and 11 on macOS
           - os: macOS-latest
-            node: [10, 11]
+            node: 10
+          - os: macOS-latest
+            node: 11
 
     runs-on: ${{ matrix.os }}
     steps:
