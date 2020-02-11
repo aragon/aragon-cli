@@ -24,7 +24,6 @@ test('should deploy a sample contract', async t => {
   ]
   const sampleUint = 11
   const initArguments = [sampleUint]
-  const gasPrice = 1e9
   const constructorArgumentsEncoded = web3EthAbi
     .encodeParameter('uint256', String(sampleUint))
     .replace('0x', '')
@@ -32,13 +31,7 @@ test('should deploy a sample contract', async t => {
   // arrange
   const { web3 } = t.context
   // act
-  const result = await deployContract({
-    bytecode,
-    abi,
-    initArguments,
-    gasPrice,
-    web3,
-  })
+  const result = await deployContract(bytecode, abi, initArguments)
   // assert
   const tx = await web3.eth.getTransaction(result.transactionHash)
 

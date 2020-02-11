@@ -146,6 +146,7 @@ export const task = async function({
             })
           await listen()
 
+          // TODO: remove web3 logic
           ctx.web3 = new Web3(
             new Web3.providers.WebsocketProvider(`ws://localhost:${port}`)
           )

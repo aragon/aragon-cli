@@ -18,7 +18,6 @@ import {
   getApmRepo,
 } from '@aragon/toolkit'
 //
-import { ensureWeb3 } from '../../helpers/web3-fallback'
 import listrOpts from '../../helpers/listr-options'
 import { task as execTask } from './utils/execHandler'
 import daoArg from './utils/daoArg'
@@ -54,27 +53,19 @@ export const builder = function(yargs) {
 
 export const handler = async function({
   reporter,
+  environment,
   dao,
-  gasPrice,
-  network,
-  apm: apmOptions,
   apmRepo,
   apmRepoVersion,
   appInit,
   appInitArgs,
   setPermissions,
-  wsProvider,
   silent,
   debug,
 }) {
-  const web3 = await ensureWeb3(network)
-
   const apmRepoName = defaultAPMName(apmRepo)
-  dao = await resolveAddressOrEnsDomain(
-    dao,
-    web3,
-    apmOptions.ensRegistryAddress
-  )
+
+  dao = await resolveAddressOrEnsDomain(dao, environment)
 
   const tasks = new TaskList(
     [
@@ -90,30 +81,13 @@ export const handler = async function({
       {
         title: `Fetching ${bold(apmRepoName)}@${apmRepoVersion}`,
         task: async ctx => {
-          const progressHandler = step => {
-            switch (step) {
-              case 1:
-                console.log(`Initialize aragonPM`)
-                break
-              case 2:
-                console.log(`Fetching...`)
-                break
-            }
-          }
-
-          ctx.repo = await getApmRepo(
-            web3,
-            apmRepoName,
-            apmOptions,
-            apmRepoVersion,
-            progressHandler
-          )
+          ctx.repo = await getApmRepo(apmRepoName, apmRepoVersion, environment)
         },
       },
       {
         title: `Checking installed version`,
         task: async (ctx, task) => {
-          const currentBase = await getAppBase(dao, ctx.repo.appId, web3)
+          const currentBase = await getAppBase(dao, ctx.repo.appId, environment)
           if (currentBase === ZERO_ADDRESS) {
             task.skip(`Installing the first instance of ${apmRepoName} in DAO`)
             return
@@ -129,10 +103,10 @@ export const handler = async function({
         title: 'Deploying app instance',
         task: async ctx => {
           const initPayload = encodeInitPayload(
-            web3,
             ctx.repo.abi,
             appInit,
-            appInitArgs
+            appInitArgs,
+            environment
           )
 
           if (initPayload === '0x') {
@@ -147,15 +121,12 @@ export const handler = async function({
           ]
 
           return execTask({
+            reporter,
+            environment,
             dao,
             app: dao,
             method: 'newAppInstance(bytes32,address,bytes,bool)', // Use signature, method is overloaded
             params: fnArgs,
-            reporter,
-            gasPrice,
-            apm: apmOptions,
-            web3,
-            wsProvider,
             silent,
             debug,
           })
@@ -186,25 +157,18 @@ export const handler = async function({
             NO_MANAGER,
           ])
 
-          if (!ctx.accounts) {
-            ctx.accounts = await web3.eth.getAccounts()
-          }
-
-          const aclAddress = await getAclAddress(dao, web3)
+          const aclAddress = await getAclAddress(dao, environment)
 
           return Promise.all(
             permissions.map(params => {
               return (
                 execTask({
+                  reporter,
+                  environment,
                   dao,
                   app: aclAddress,
                   method: 'createPermission',
                   params,
-                  reporter,
-                  gasPrice,
-                  apm: apmOptions,
-                  web3,
-                  wsProvider,
                   silent,
                   debug,
                 })

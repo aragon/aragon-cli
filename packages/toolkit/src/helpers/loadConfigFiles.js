@@ -2,9 +2,8 @@ import path from 'path'
 import fs from 'fs-extra'
 import Ajv from 'ajv'
 //
-import { findProjectRoot } from '../../util'
-
-import arappSchema from '../../../schemas/arapp.schema'
+import { findProjectRoot } from '../util'
+import arappSchema from '../../schemas/arapp.schema'
 
 const ajv = new Ajv({ allErrors: true })
 

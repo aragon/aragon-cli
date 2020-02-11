@@ -1,40 +1,13 @@
 import test from 'ava'
-import { ens } from '@aragon/aragen'
 //
 import { assignId } from '../../src//dao/assign-id'
 import { getAllApps, getDaoAddress } from '../../src/dao/apps'
 import newDao from '../../src/dao/new'
-import getApmRepo from '../../src/apm/getApmRepo'
-import defaultAPMName from '../../src/helpers/default-apm'
-import { getLocalWeb3 } from '../test-helpers'
-
-test.beforeEach(async t => {
-  const web3 = await getLocalWeb3()
-
-  t.context = {
-    web3,
-  }
-})
 
 test('getAllApps returns the correct apps', async t => {
-  const { web3 } = t.context
+  const daoAddress = await newDao()
 
-  const repo = await getApmRepo(
-    web3,
-    defaultAPMName('bare-template'),
-    { ensRegistryAddress: ens },
-    'latest'
-  )
-
-  const daoAddress = await newDao({
-    repo,
-    web3,
-    newInstanceMethod: 'newInstance',
-    newInstanceArgs: [],
-    deployEvent: 'DeployDao',
-  })
-
-  const intalledApps = await getAllApps(daoAddress, { web3 })
+  const intalledApps = await getAllApps(daoAddress)
 
   t.is(intalledApps.length, 2)
   t.is(
@@ -52,14 +25,10 @@ test('getAllApps returns the correct apps', async t => {
 test('getDaoAddress returns the correct DAO address', async t => {
   const daoAddress = '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'
   const daoName = 'mydaoname' + Math.floor(Math.random() * 1000000)
-  const { web3 } = t.context
 
-  await assignId(daoAddress, daoName, { web3, ensRegistry: ens })
+  await assignId(daoAddress, daoName)
 
-  const result = await getDaoAddress(daoName, {
-    provider: web3.currentProvider,
-    registryAddress: ens,
-  })
+  const result = await getDaoAddress(daoName)
 
   t.is(result, daoName)
 })

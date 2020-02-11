@@ -15,8 +15,6 @@
 		// Import non-ES modules as default imports.
 		// "esModuleInterop": true
 	},
-	"include": [
-		"src",
-		"test"
-	]
+	"exclude": ["**/__tests/*", "**/testing/*"],
+  "include": ["./src"],
 }

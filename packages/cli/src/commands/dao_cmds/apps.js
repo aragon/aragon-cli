@@ -6,9 +6,9 @@ import {
   getInstalledApps,
   getAllApps,
   addressesEqual,
+  useEnvironment,
 } from '@aragon/toolkit'
 //
-import { ensureWeb3 } from '../../helpers/web3-fallback'
 import listrOpts from '../../helpers/listr-options'
 
 import daoArg from './utils/daoArg'
@@ -80,17 +80,18 @@ const printPermissionlessApps = apps => {
 
 export const handler = async function({
   reporter,
+  environment,
   dao,
   all,
-  network,
-  apm: apmOptions,
-  wsProvider,
-  module,
   silent,
   debug,
 }) {
-  knownApps = listApps(module ? [module.appName] : [])
-  const web3 = await ensureWeb3(network)
+  const { appName } = useEnvironment(environment)
+
+  // TODO: stop using appName
+
+  knownApps = listApps(appName ? [appName] : [])
+
   let apps, daoAddress, appsWithoutPermissions
 
   const tasks = new TaskList(
@@ -99,14 +100,10 @@ export const handler = async function({
         title: 'Inspecting DAO',
         task: async (ctx, task) => {
           task.output = `Fetching apps for ${dao}...`
-          const { ensRegistryAddress, ipfs } = apmOptions
-          const options = {
-            registryAddress: ensRegistryAddress,
-            ipfs,
-            provider: wsProvider || web3.currentProvider,
-          }
-          apps = await getInstalledApps(dao, options)
-          daoAddress = await getDaoAddress(dao, options)
+
+          apps = await getInstalledApps(dao, environment)
+
+          daoAddress = await getDaoAddress(dao, environment)
         },
       },
       {
@@ -114,9 +111,7 @@ export const handler = async function({
         enabled: () => all,
         task: async (ctx, task) => {
           appsWithoutPermissions = (
-            await getAllApps(daoAddress, {
-              web3,
-            })
+            await getAllApps(daoAddress, environment)
           ).filter(
             ({ proxyAddress }) =>
               !apps.find(app => addressesEqual(app.proxyAddress, proxyAddress))

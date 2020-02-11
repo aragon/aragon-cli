@@ -1,59 +1,54 @@
 import test from 'ava'
 import sinon from 'sinon'
+import { isAddress } from 'web3-utils'
 //
-import { getLocalWeb3 } from '../test-helpers'
 import { getContract } from '../../src/util'
+import { useEnvironment } from '../../src/helpers/useEnvironment'
 import {
   deployMiniMeTokenFactory,
   deployMiniMeToken,
 } from '../../src/token/token'
 
 test('deployMiniMeTokenFactory: should deploy the contract', async t => {
-  const web3 = await getLocalWeb3()
-  const progressCallback = sinon.stub()
+  const progressHandler = sinon.stub()
 
   const receipt = await deployMiniMeTokenFactory(
-    web3,
     '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7',
-    21,
-    progressCallback
+    progressHandler
   )
 
   t.true(receipt.txHash !== undefined)
-  t.true(web3.utils.isAddress(receipt.address))
-  t.is(progressCallback.callCount, 3)
+  t.true(isAddress(receipt.address))
+  t.is(progressHandler.callCount, 3)
 })
 
 test('deployMiniMeToken: should deploy the contract', async t => {
+  const { web3 } = useEnvironment()
+
   const tokenName = 'Token name test'
   const tokenSymbol = 'TKN'
   const decimalUnits = '12'
 
-  const web3 = await getLocalWeb3()
-  const progressCallback = sinon.stub()
+  const progressHandler = sinon.stub()
 
   const factory = await deployMiniMeTokenFactory(
-    web3,
     '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7',
-    21,
-    () => {}
+    progressHandler
   )
 
   const receipt = await deployMiniMeToken(
-    web3,
     '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7',
-    0,
     tokenName,
     decimalUnits,
     tokenSymbol,
     true,
     factory.address,
-    progressCallback
+    progressHandler
   )
 
   t.true(receipt.txHash !== undefined)
-  t.true(web3.utils.isAddress(receipt.address))
-  t.is(progressCallback.callCount, 3)
+  t.true(isAddress(receipt.address))
+  t.is(progressHandler.callCount, 6)
 
   const tokenJson = await getContract(
     '@aragon/apps-shared-minime',

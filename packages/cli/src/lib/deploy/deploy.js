@@ -1,4 +1,8 @@
-import { getRecommendedGasLimit, expandLink } from '@aragon/toolkit'
+import {
+  getRecommendedGasLimit,
+  expandLink,
+  useEnvironment,
+} from '@aragon/toolkit'
 
 /**
  * @typedef {Object} LibraryLink
@@ -31,21 +35,22 @@ export const linkLibraries = (bytecode, links) => {
 
 /**
  * Deploy contract wrapper
- * @param  {Object} param .
  * @param  {string} param.bytecode Deploy bytecode with libraries substituted
  * @param  {any[]}  param.abi Contract ABI
- * @param  {any[]}  param.initArguments Arguments for the initialize function
- * @param  {number} param.gasPrice Gas price
- * @param  {Object} param.web3 Web3 initialized object
+ * @param  {any[]}  param.init Arguments for the initialize function
+ * @param  {string} environment Envrionment
  * @return {Promise<DeployContractReturnData>} Tx hash and deployed contract address
  */
-export const deployContract = async ({
-  bytecode,
-  abi,
-  initArguments,
-  gasPrice,
-  web3,
-}) => {
+export const deployContract = async (bytecode, abi, init, environment) => {
+  const { web3, apmOptions, gasPrice } = useEnvironment(environment)
+
+  // Mappings allow to pass certain init parameters that get replaced for their actual value
+  // const mappingMask = key => `@ARAGON_${key}`
+  const mappings = {
+    '@ARAGON_ENS': apmOptions.ensRegistryAddress, // <ens> to ens addr
+  }
+  const initArguments = init.map(value => mappings[value] || value)
+
   const accounts = await web3.eth.getAccounts()
 
   const contract = new web3.eth.Contract(abi, { data: bytecode })

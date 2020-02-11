@@ -69,6 +69,7 @@ export const ensureLocalDaemon = async ({
 
 export const getHttpClient = async address => {
   // try {
+
   return connectOrThrow(address)
   // } catch (err) {
   // if (!address.includes('localhost')) {

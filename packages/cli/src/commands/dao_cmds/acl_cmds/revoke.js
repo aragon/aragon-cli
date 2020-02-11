@@ -13,23 +13,17 @@ export const builder = function(yargs) {
 
 export const handler = async function({
   reporter,
+  environment,
   dao,
   app,
   role,
   entity,
-  network,
-  wsProvider,
-  apm,
-  gasPrice,
 }) {
   const method = 'revokePermission'
   const params = [entity, app, role]
   return aclExecHandler(dao, method, params, {
     reporter,
-    gasPrice,
-    apm,
-    network,
-    wsProvider,
+    environment,
     role,
   })
 }
