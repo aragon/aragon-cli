@@ -4,7 +4,6 @@ import { assignId } from '../../src//dao/assign-id'
 import { getAllApps, getDaoAddress } from '../../src/dao/apps'
 import newDao from '../../src/dao/new'
 
-// eslint-disable-next-line ava/no-skip-test
 test('getAllApps returns the correct apps', async t => {
   const daoAddress = await newDao()
 
