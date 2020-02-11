@@ -1,5 +1,4 @@
 const TaskList = require('listr')
-const input = require('listr-input')
 const execa = require('execa')
 const inquirer = require('inquirer')
 const { promisify } = require('util')
@@ -145,21 +144,13 @@ exports.handler = async function({
         enabled: () => !templateUrl.includes('your-first-aragon-app'),
       },
       {
-        title: 'Install package dependencies?',
+        title: 'Installing package dependencies',
         enabled: () => install,
-        task: async (ctx, task) =>
-          input('Enter "yes" to run `npm install` now:', {
-            default: 'yes',
-            validate: wantsToInstallDeps =>
-              wantsToInstallDeps === 'yes' || wantsToInstallDeps === 'no',
-            done: async wantsToInstallDeps => {
-              if (wantsToInstallDeps === 'yes') {
-                task.output =
-                  'Installing package dependencies... (might take a couple of minutes)'
-                await installDeps(projectPath, task)
-              }
-            },
-          }),
+        task: async (ctx, task) => {
+          task.output =
+            'Installing package dependencies... (might take a couple of minutes)'
+          await installDeps(projectPath, task)
+        },
       },
       {
         title: 'Check IPFS',
