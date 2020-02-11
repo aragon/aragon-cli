@@ -88,7 +88,8 @@ test.skip('should configure cors & pin artifacts', async t => {
   t.snapshot(hashes)
 })
 
-test('should stop the daemon', async t => {
+// eslint-disable-next-line ava/no-skip-test
+test.skip('should stop the daemon', async t => {
   await killProcessOnPort(apiPort)
   const daemonRunning = await isLocalDaemonRunning(apiUrl)
 
