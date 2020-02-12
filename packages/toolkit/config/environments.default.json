@@ -1,8 +1,10 @@
 {
   "local": {
-    "network": "rpc"
+    "network": "rpc",
+    "gasPrice": "20000000000"
   },
   "rinkeby": {
+    "gasPrice": "15000000001",
     "apm": {
       "ipfs": {
         "gateway": "https://ipfs.eth.aragon.network/ipfs"
@@ -13,6 +15,7 @@
     "network": "rinkeby"
   },
   "staging": {
+    "gasPrice": "15000000001",
     "apm": {
       "ipfs": {
         "gateway": "https://ipfs.eth.aragon.network/ipfs"
@@ -23,6 +26,7 @@
     "network": "rinkeby"
   },
   "mainnet": {
+    "gasPrice": "1500000000",
     "apm": {
       "ipfs": {
         "gateway": "https://ipfs.eth.aragon.network/ipfs"
