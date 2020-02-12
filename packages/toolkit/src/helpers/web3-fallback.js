@@ -1,12 +1,6 @@
-import Web3 from 'web3'
-
-export const ensureWeb3 = async network => {
-  let web3
-
+export const ensureWeb3 = async web3 => {
   try {
-    web3 = new Web3(network.provider)
-    const connected = await web3.eth.net.isListening()
-    if (connected) return web3
+    return await web3.eth.net.isListening()
   } catch (err) {
     throw new Error(`Web3 cannot connect using the network provider.
 Make sure 'aragon devchain' or Frame are running, and your provider settings are correct.

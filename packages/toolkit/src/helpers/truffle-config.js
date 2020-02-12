@@ -5,12 +5,14 @@ import { findProjectRoot } from '../util'
 export const getTruffleConfig = () => {
   try {
     if (fs.existsSync(`${findProjectRoot()}/truffle.js`)) {
-      const truffleConfig = require(`${findProjectRoot()}/truffle`)
+      const truffleConfig = fs.readFile(`${findProjectRoot()}/truffle`)
       return truffleConfig
     }
 
     if (fs.existsSync(`${findProjectRoot()}/truffle-config.js`)) {
-      const truffleConfig = require(`${findProjectRoot()}/truffle-config.js`)
+      const truffleConfig = fs.readFile(
+        `${findProjectRoot()}/truffle-config.js`
+      )
       return truffleConfig
     }
   } catch (err) {

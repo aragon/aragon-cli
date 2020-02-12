@@ -2,7 +2,7 @@ import test from 'ava'
 import sinon from 'sinon'
 //
 import grantNewVersionsPermission from '../../src/apm/grantNewVersionsPermission'
-import { getLocalWeb3, getApmOptions } from '../test-helpers'
+import { useEnvironment } from '../../src/helpers/useEnvironment'
 
 import { abi as aclAbi } from '@aragon/abis/os/artifacts/ACL'
 import { abi as aragonAppAbi } from '@aragon/abis/os/artifacts/AragonApp'
@@ -10,9 +10,8 @@ import { abi as kernelAbi } from '@aragon/abis/os/artifacts/Kernel'
 import { abi as repoAbi } from '@aragon/abis/os/artifacts/Repo'
 
 /* Default values */
-
 let web3
-let apmOptions, apmRepoName
+let apmRepoName
 let progressHandler
 let accounts
 let grantees
@@ -20,8 +19,6 @@ let receipts
 let acl, role
 
 const repoAddress = '0x9cB775993A91Fc6A3b185337EfDB349A282Af77e'
-const gasPrice = 1
-const txOptions = { gasPrice }
 
 /* Utils, similar to ACL.js */
 
@@ -42,12 +39,12 @@ const getRoleId = async repoAddr => {
 /* Setup and cleanup */
 
 test.before('setup and make a successful call', async t => {
-  web3 = await getLocalWeb3()
+  const env = useEnvironment()
+  web3 = env.web3
 
   accounts = await web3.eth.getAccounts()
   grantees = [accounts[1]]
 
-  apmOptions = getApmOptions()
   apmRepoName = 'voting.aragonpm.eth'
 
   progressHandler = sinon.spy()
@@ -56,12 +53,9 @@ test.before('setup and make a successful call', async t => {
   role = await getRoleId(repoAddress)
 
   receipts = await grantNewVersionsPermission(
-    web3,
-    apmRepoName,
-    apmOptions,
     grantees,
-    progressHandler,
-    txOptions
+    apmRepoName,
+    progressHandler
   )
 })
 
@@ -98,13 +92,6 @@ test('properly calls the progressHandler', t => {
 
 test('Should throw when no grantees are provided', async t => {
   await t.throwsAsync(
-    grantNewVersionsPermission(
-      web3,
-      apmRepoName,
-      apmOptions,
-      [],
-      null,
-      txOptions
-    )
+    grantNewVersionsPermission([], apmRepoName, progressHandler)
   )
 })

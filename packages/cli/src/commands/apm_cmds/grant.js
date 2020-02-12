@@ -1,32 +1,38 @@
 import { blue } from 'chalk'
-import { grantNewVersionsPermission } from '@aragon/toolkit'
-//
-import { ensureWeb3 } from '../../helpers/web3-fallback'
+import { grantNewVersionsPermission, useEnvironment } from '@aragon/toolkit'
 
-export const command = 'grant [grantees..]'
+export const command = 'grant [grantees..] [apmRepo]'
 export const describe =
   'Grant an address permission to create new versions in this package'
 
 export const builder = function(yargs) {
-  return yargs.positional('grantees', {
-    description:
-      'The address being granted the permission to publish to the repo',
-    array: true,
-    default: [],
-  })
+  return yargs
+    .positional('grantees', {
+      description:
+        'The address being granted the permission to publish to the repo',
+      array: true,
+      default: [],
+    })
+    .option('apmRepo', {
+      description: 'Name of the APM repository',
+      type: 'string',
+      default: null,
+    })
 }
 
 export const handler = async function({
   // Globals
   reporter,
-  gasPrice,
-  network,
-  module,
-  apm: apmOptions,
+  environment,
   // Arguments
   grantees,
+  apmRepo,
 }) {
-  const web3 = await ensureWeb3(network)
+  const { appName } = useEnvironment()
+
+  // TODO: Stop using appName
+
+  const appRepoName = apmRepo || appName
 
   const progressHandler = (step, data) => {
     switch (step) {
@@ -38,7 +44,7 @@ export const handler = async function({
         const address = data
         reporter.info(
           `Granting permission to publish on ${blue(
-            module.appName
+            appRepoName
           )} for ${address}`
         )
         break
@@ -51,11 +57,9 @@ export const handler = async function({
   }
 
   await grantNewVersionsPermission(
-    web3,
-    module.appName,
-    apmOptions,
     grantees,
+    appRepoName,
     progressHandler,
-    { gasPrice: gasPrice || network.gasPrice }
+    environment
   )
 }

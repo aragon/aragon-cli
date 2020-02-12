@@ -1,9 +1,12 @@
 import TaskList from 'listr'
 import { green, blue } from 'chalk'
-import web3Utils from 'web3-utils'
-import { deployMiniMeTokenFactory, deployMiniMeToken } from '@aragon/toolkit'
+import { isAddress } from 'web3-utils'
+import {
+  deployMiniMeTokenFactory,
+  deployMiniMeToken,
+  useEnvironment,
+} from '@aragon/toolkit'
 //
-import { ensureWeb3 } from '../../../helpers/web3-fallback'
 import listrOpts from '../../../helpers/listr-options'
 import { parseArgumentStringIfPossible } from '../../../util'
 
@@ -39,8 +42,7 @@ export const builder = yargs => {
 }
 
 export const task = async ({
-  web3,
-  gasPrice,
+  environment,
   tokenName,
   symbol,
   transferEnabled,
@@ -49,7 +51,9 @@ export const task = async ({
   silent,
   debug,
 }) => {
-  // Decode sender
+  const { web3 } = useEnvironment(environment)
+
+  // Decode sender  // TODO: Stop using web3 for this
   const accounts = await web3.eth.getAccounts()
   const from = accounts[0]
 
@@ -68,7 +72,7 @@ export const task = async ({
     [
       {
         title: 'Deploy the MiniMeTokenFactory contract',
-        enabled: () => !web3Utils.isAddress(tokenFactoryAddress),
+        enabled: () => !isAddress(tokenFactoryAddress),
         task: async (ctx, task) => {
           const handleProgress = (step, data) => {
             switch (step) {
@@ -84,10 +88,9 @@ export const task = async ({
             }
           }
           const { address, txHash } = await deployMiniMeTokenFactory(
-            web3,
             from,
-            gasPrice,
-            handleProgress
+            handleProgress,
+            environment
           )
           ctx.factoryAddress = address
           ctx.factoryTxHash = txHash
@@ -111,15 +114,14 @@ export const task = async ({
           }
 
           const { address, txHash } = await deployMiniMeToken(
-            web3,
             from,
-            gasPrice,
             tokenName,
             decimalUnits,
             symbol,
             transferEnabled,
             ctx.factoryAddress || tokenFactoryAddress,
-            handleProgress
+            handleProgress,
+            environment
           )
           ctx.tokenAddress = address
           ctx.tokenTxHash = txHash
@@ -132,8 +134,7 @@ export const task = async ({
 
 export const handler = async function({
   reporter,
-  network,
-  gasPrice,
+  environment,
   tokenName,
   symbol,
   transferEnabled,
@@ -142,11 +143,8 @@ export const handler = async function({
   silent,
   debug,
 }) {
-  const web3 = await ensureWeb3(network)
-
   const tasks = await task({
-    web3,
-    gasPrice,
+    environment,
     tokenName,
     symbol,
     transferEnabled,

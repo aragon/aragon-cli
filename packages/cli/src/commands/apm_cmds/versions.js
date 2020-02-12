@@ -1,8 +1,6 @@
 import { green, blue, bold } from 'chalk'
 import TaskList from 'listr'
-import { getApmRepoVersions, defaultAPMName } from '@aragon/toolkit'
-//
-import { ensureWeb3 } from '../../helpers/web3-fallback'
+import { useApm, defaultAPMName } from '@aragon/toolkit'
 
 export const command = 'versions [apmRepo]'
 export const describe =
@@ -16,25 +14,20 @@ export const builder = function(yargs) {
   })
 }
 
-export const handler = async function({
-  reporter,
-  apmRepo,
-  module,
-  network,
-  apm: apmOptions,
-}) {
+export const handler = async function({ reporter, environment, apmRepo }) {
   let versions, apmRepoName
+
+  const apm = await useApm(environment)
 
   const tasks = new TaskList([
     {
       title: 'Fetching published versions',
       task: async (ctx, task) => {
-        const web3 = await ensureWeb3(network)
-        apmRepoName = apmRepo ? defaultAPMName(apmRepo) : module.appName
+        apmRepoName = apmRepo ? defaultAPMName(apmRepo) : null
 
-        task.title = `Fetching ${bold(apmRepoName)} published versions`
+        reporter.info(`Fetching ${bold(apmRepoName)} published versions`)
 
-        versions = await getApmRepoVersions(web3, apmRepoName, apmOptions)
+        versions = await apm.getAllVersions(apmRepoName)
       },
     },
   ])

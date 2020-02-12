@@ -1,47 +1,49 @@
-import bareTemplateAbi from './utils/bare-template-abi'
 import { getRecommendedGasLimit } from '../util'
+import getApmRepo from '../apm/getApmRepo'
+import bareTemplateAbi from './utils/bare-template-abi'
+import { useEnvironment } from '../helpers/useEnvironment'
 
 /**
  * Create a new DAO
  *
- * @param {Object} parmas Parameters
- * @param {Object} repo Template repository
- * @param {Object} web3 web3
- * @param {Object} templateInstance Template instance
+ * @param {string} templateName Template repo name
+ * @param {string} templateVersion Version of the template
  * @param {string} newInstanceMethod New instance method name
  * @param {string[]} newInstanceArgs New instance arguments
- * @param {string} gasPrice Gas price
+ * @param {string} deployEvent Template deploy event
+ * @param {string} environment Environment
+ * @param {Object} templateInstance Template instance
  */
-export default async function({
-  repo,
-  web3,
-  templateInstance,
-  newInstanceMethod,
-  newInstanceArgs,
-  deployEvent,
-  gasPrice,
-}) {
+export default async function(
+  templateName = 'bare-template',
+  newInstanceArgs = [],
+  newInstanceMethod = 'newInstance',
+  deployEvent = 'DeployDao',
+  templateVersion = 'latest',
+  environment,
+  templateInstance // TODO: optional object options
+) {
+  const { web3, gasPrice } = useEnvironment(environment)
+
   let template
 
   if (!templateInstance) {
+    template = await getApmRepo(templateName, templateVersion)
+
     // If not connected to IPFS, repo won't have an ABI
-    const repoAbi = repo.abi || bareTemplateAbi
-    template = new web3.eth.Contract(repoAbi, repo.contractAddress)
+    const templateAbi = template.abi || bareTemplateAbi
+    template = new web3.eth.Contract(templateAbi, template.contractAddress)
   } else {
     template = templateInstance
   }
 
-  const method = newInstanceMethod || 'newInstance'
-
-  if (!template.methods[method]) {
+  if (!template.methods[newInstanceMethod]) {
     throw new Error(
-      `Template abi does not contain the requested function: ${method}(...). This may be due to the template's abi not being retrieved from IPFS. Is IPFS running?`
+      `Template abi does not contain the requested function: ${newInstanceMethod}(...). This may be due to the template's abi not being retrieved from IPFS. Is IPFS running?`
     )
   }
 
-  const newInstanceTx = template.methods[newInstanceMethod || 'newInstance'](
-    ...newInstanceArgs
-  )
+  const newInstanceTx = template.methods[newInstanceMethod](...newInstanceArgs)
   const estimatedGas = await newInstanceTx.estimateGas()
   const { events } = await newInstanceTx.send({
     from: (await web3.eth.getAccounts())[0],

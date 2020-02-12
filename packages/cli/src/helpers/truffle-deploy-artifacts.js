@@ -1,5 +1,6 @@
+import { getTruffleConfig } from '@aragon/toolkit'
+//
 import flattenCode from '../helpers/flattenCode'
-import { getTruffleConfig } from './truffle-config'
 
 export default async contractArtifacts => {
   const {

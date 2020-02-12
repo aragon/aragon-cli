@@ -1,14 +1,12 @@
 import path from 'path'
 import { blue, red, green, bold } from 'chalk'
-import { ZERO_ADDRESS, getHttpClient } from '@aragon/toolkit'
+import { hexToAscii } from 'web3-utils'
+import { ZERO_ADDRESS, getHttpClient, useEnvironment } from '@aragon/toolkit'
 
 // Tasks splitted into other files
 import runSetupTask from './util/runSetupTask'
 import runPrepareForPublishTask from './util/runPrepareForPublishTask'
 import runPublishTask from './util/runPublishTask'
-
-// helpers
-import { ensureWeb3 } from '../../helpers/web3-fallback'
 
 // util
 import { askForConfirmation } from '../../util'
@@ -123,21 +121,12 @@ export const prepareForPublishTask = runPrepareForPublishTask
 export const publishTask = runPublishTask
 
 export const handler = async function({
-  reporter,
-
   // Globals
-  gasPrice,
+  reporter,
   cwd,
-  web3,
-  network,
-  wsProvider,
-  module,
-  apm: apmOptions,
-  silent,
-  debug,
+  environment,
 
   // Arguments
-
   bump,
   contract,
   onlyArtifacts,
@@ -156,8 +145,10 @@ export const handler = async function({
   httpServedFrom,
   propagateContent,
   skipConfirmation,
+  silent,
+  debug,
 }) {
-  web3 = web3 || (await ensureWeb3(network))
+  const { apmOptions, appName } = useEnvironment(environment)
 
   const {
     initialRepo,
@@ -166,14 +157,8 @@ export const handler = async function({
     contract: contractAddress,
   } = await runSetupTask({
     reporter,
-    gasPrice,
     cwd,
-    web3,
-    network,
-    module,
-    apm: apmOptions,
-    silent,
-    debug,
+    environment,
     prepublish,
     prepublishScript,
     build,
@@ -185,17 +170,14 @@ export const handler = async function({
     onlyContent,
     onlyArtifacts,
     http,
+    silent,
+    debug,
   })
 
   const { pathToPublish, intent } = await runPrepareForPublishTask({
     reporter,
     cwd,
-    web3,
-    network,
-    module,
-    apm: apmOptions,
-    silent,
-    debug,
+    environment,
     publishDir,
     files,
     ignore,
@@ -209,14 +191,14 @@ export const handler = async function({
     initialVersion,
     version,
     contractAddress,
+    silent,
+    debug,
   })
 
   // Output publish info
-
-  const { appName } = module
   const { dao, proxyAddress, methodName, params } = intent
 
-  const contentURI = web3.utils.hexToAscii(params[params.length - 1])
+  const contentURI = hexToAscii(params[params.length - 1])
   const [contentProvier, contentLocation] = contentURI.split(/:(.+)/)
 
   if (files.length === 1 && path.normalize(files[0]) === '.') {
@@ -262,17 +244,9 @@ export const handler = async function({
   }
 
   const { receipt, transactionPath } = await runPublishTask({
-    reporter,
-    gasPrice,
-    web3,
-    wsProvider,
-    module,
-    network,
+    environment,
     http,
     provider,
-    apm: apmOptions,
-    silent,
-    debug,
     onlyArtifacts,
     onlyContent,
     // context
@@ -283,6 +257,8 @@ export const handler = async function({
     proxyAddress,
     methodName,
     params,
+    silent,
+    debug,
   })
 
   const { transactionHash, status } = receipt

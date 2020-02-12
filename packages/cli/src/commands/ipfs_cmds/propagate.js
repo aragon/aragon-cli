@@ -10,6 +10,7 @@ import {
   getBinaryPath,
   getDefaultRepoPath,
   isLocalDaemonRunning,
+  useEnvironment,
 } from '@aragon/toolkit'
 //
 import listrOpts from '../../helpers/listr-options'
@@ -103,9 +104,11 @@ export const handler = async argv => {
     cid = await askForInput('Choose a content identifier')
   }
 
-  const { reporter, apm, debug, silent } = argv
+  const { reporter, environment, debug, silent } = argv
 
-  const ipfsReader = await getHttpClient(apm.ipfs.gateway)
+  const { apmOptions } = useEnvironment(environment)
+
+  const ipfsReader = await getHttpClient(apmOptions.ipfs.gateways)
 
   const ctx = await runPropagateTask({
     ipfsReader,

@@ -1,6 +1,6 @@
 # Aragon Toolkit
 
-Toolkit for accessing aragonCLI utilities programmatically.
+Toolkit for accessing Aragon utilities programmatically.
 
 ## Install (local)
 

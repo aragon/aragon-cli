@@ -1,8 +1,8 @@
 {
-  "aragon:local": {
+  "local": {
     "network": "rpc"
   },
-  "aragon:rinkeby": {
+  "rinkeby": {
     "apm": {
       "ipfs": {
         "gateway": "https://ipfs.eth.aragon.network/ipfs"
@@ -12,7 +12,7 @@
     "wsRPC": "wss://rinkeby.eth.aragon.network/ws",
     "network": "rinkeby"
   },
-  "aragon:staging": {
+  "staging": {
     "apm": {
       "ipfs": {
         "gateway": "https://ipfs.eth.aragon.network/ipfs"
@@ -22,7 +22,7 @@
     "wsRPC": "wss://rinkeby.eth.aragon.network/ws",
     "network": "rinkeby"
   },
-  "aragon:mainnet": {
+  "mainnet": {
     "apm": {
       "ipfs": {
         "gateway": "https://ipfs.eth.aragon.network/ipfs"

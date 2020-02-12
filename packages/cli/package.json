@@ -1,13 +1,13 @@
 {
-  "name": "@aragon/cli",
-  "version": "7.0.4",
-  "description": "Aragon command-line tools",
-  "main": "./dist/toolkit.js",
-  "bin": {
-    "aragon": "./dist/index.js",
-    "dao": "./aliases/dao"
-  },
-  "scripts": {
+	"name": "@aragon/cli",
+	"version": "7.0.4",
+	"description": "Aragon command-line tools",
+	"main": "./dist/toolkit.js",
+	"bin": {
+		"aragon": "./dist/index.js",
+		"dao": "./aliases/dao"
+	},
+	"scripts": {
     "compile-src": "babel src --out-dir dist --source-maps --copy-files",
     "extract-roles": "node scripts/extract-roles",
     "build": "npm run extract-roles && npm run compile-src",
@@ -26,10 +26,7 @@
   },
   "files": [
     "aliases",
-    "config",
-    "ganache",
-    "dist",
-    "schemas"
+    "dist"
   ],
   "repository": {
     "type": "git",

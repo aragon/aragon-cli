@@ -1,12 +1,11 @@
 import { blue } from 'chalk'
+import { toWei } from 'web3-utils'
 import {
   EXECUTE_FUNCTION_NAME,
   getAppKernel,
   encodeActCall,
 } from '@aragon/toolkit'
 //
-import { ensureWeb3 } from '../../helpers/web3-fallback'
-
 import { task as execHandler } from './utils/execHandler'
 import { parseArgumentStringIfPossible } from '../../util'
 
@@ -47,18 +46,15 @@ export const builder = function(yargs) {
 
 export const handler = async function({
   reporter,
-  apm,
-  network,
+  environment,
   agentAddress,
   target,
   signature,
   callArgs,
   callData,
   ethValue,
-  wsProvider,
 }) {
-  const web3 = await ensureWeb3(network)
-  const dao = await getAppKernel(web3, agentAddress)
+  const dao = await getAppKernel(agentAddress, environment)
 
   const encodedCallData = signature
     ? encodeActCall(signature, callArgs.map(parseArgumentStringIfPossible))
@@ -67,15 +63,12 @@ export const handler = async function({
   reporter.debug('Encoded call data: ', encodedCallData)
 
   const task = await execHandler({
+    reporter,
+    environment,
     dao,
     app: agentAddress,
     method: EXECUTE_FUNCTION_NAME,
-    params: [target, web3.utils.toWei(ethValue), encodedCallData],
-    reporter,
-    apm,
-    network,
-    wsProvider,
-    web3,
+    params: [target, toWei(ethValue), encodedCallData],
   })
 
   const { transactionPath } = await task.run()
