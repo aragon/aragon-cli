@@ -33,7 +33,7 @@ test('should create a new aragon app based on the buidler boilerplate', async t 
   ])
 
   const packageJson = await readJson(packageJsonPath)
-  const arapp = await readJson(arappPath)
+  const arapp = (await readJson(arappPath))
 
   t.true(normalizeOutput(stdout).includes('Created new application'))
   t.true(await pathExists(projectPath))
@@ -42,6 +42,4 @@ test('should create a new aragon app based on the buidler boilerplate', async t 
   t.falsy(await pathExists(licensePath))
   t.is(undefined, packageJson.license)
   t.is(`${projectName}.aragonpm.eth`, arapp.environments.default.appName)
-  t.is(`${projectName}.open.aragonpm.eth`, arapp.environments.rinkeby.appName)
-  t.is(`${projectName}.open.aragonpm.eth`, arapp.environments.mainnet.appName)
 })
