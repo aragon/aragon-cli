@@ -4,8 +4,8 @@ import { startProcess } from '../../src/node/process'
 
 test('startProcess should enable detach', async t => {
   const { detach } = await startProcess({
-    cmd: 'aragon',
-    args: ['--version'],
+    cmd: 'ls',
+    args: ['-l'],
     readyOutput: '.',
     execaOpts: {
       detached: true,
@@ -19,8 +19,8 @@ test('startProcess should enable detach', async t => {
 
 test('startProcess should enable kill', async t => {
   const { kill } = await startProcess({
-    cmd: 'aragon',
-    args: ['--version'],
+    cmd: 'ls',
+    args: ['-l'],
     readyOutput: '.',
     execaOpts: {
       detached: true,
@@ -34,9 +34,9 @@ test('startProcess should enable kill', async t => {
 
 test('startProcess should support attach', async t => {
   const { attach } = await startProcess({
-    cmd: 'aragon',
-    args: ['--help'],
-    readyOutput: 'Usage',
+    cmd: 'ls',
+    args: ['-a'],
+    readyOutput: '.',
     execaOpts: {
       detached: true,
     },
