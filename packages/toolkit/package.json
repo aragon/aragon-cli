@@ -59,6 +59,7 @@
     "pkg-dir": "^4.2.0",
     "ps-tree": "^1.2.0",
     "rxjs": "^6.5.3",
+    "solidity-parser-antlr": "^0.4.11",
     "stringify-tree": "^1.0.2",
     "web3": "^1.2.4",
     "web3-eth-abi": "^1.2.4",
