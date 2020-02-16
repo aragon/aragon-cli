@@ -2,5 +2,7 @@ import test from 'ava'
 import { noop } from '../../src'
 
 test('noop() returns undefined', t => {
-  t.is(noop(), undefined)
+  /* eslint-disable-next-line @typescript-eslint/no-inferrable-types */
+  const undefinedVar: undefined = undefined
+  t.is(noop(), undefinedVar)
 })
