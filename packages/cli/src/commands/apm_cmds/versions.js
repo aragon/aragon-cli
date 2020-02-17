@@ -1,6 +1,6 @@
 import { green, blue, bold } from 'chalk'
 import TaskList from 'listr'
-import { useApm, defaultAPMName } from '@aragon/toolkit'
+import { getApm, defaultAPMName } from '@aragon/toolkit'
 
 export const command = 'versions [apmRepo]'
 export const describe =
@@ -17,7 +17,7 @@ export const builder = function(yargs) {
 export const handler = async function({ reporter, environment, apmRepo }) {
   let versions, apmRepoName
 
-  const apm = await useApm(environment)
+  const apm = await getApm(environment)
 
   const tasks = new TaskList([
     {
