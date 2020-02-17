@@ -1,4 +1,4 @@
-export default [
+const bareTemplateAbi = [
   {
     inputs: [
       {
@@ -111,3 +111,5 @@ export default [
     type: 'function',
   },
 ]
+
+export default bareTemplateAbi

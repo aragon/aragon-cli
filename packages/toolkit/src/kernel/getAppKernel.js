@@ -10,7 +10,7 @@ import { useEnvironment } from '../helpers/useEnvironment'
  * @param  {string} environment Envrionment
  * @returns {Promise<string>} Kernel address
  */
-export default async (appAddress, environment) => {
+export default async function getAppKernel(appAddress, environment) {
   const { web3 } = useEnvironment(environment)
 
   const app = new web3.eth.Contract(aragonAppAbi, appAddress)

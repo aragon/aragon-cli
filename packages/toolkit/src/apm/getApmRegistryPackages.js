@@ -8,11 +8,11 @@ import useApm from './useApm'
  * @param  {string} environment Envrionment
  * @returns {void}
  */
-export default async (
+export default async function getApmRegistryPackages(
   apmRegistryName,
   progressHandler = () => {},
   environment
-) => {
+) {
   const apm = await useApm(environment)
 
   progressHandler(1)

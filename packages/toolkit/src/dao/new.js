@@ -14,7 +14,7 @@ import { useEnvironment } from '../helpers/useEnvironment'
  * @param {string} environment Environment
  * @param {Object} templateInstance Template instance
  */
-export default async function(
+export default async function newDao(
   templateName = 'bare-template',
   newInstanceArgs = [],
   newInstanceMethod = 'newInstance',

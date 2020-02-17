@@ -12,7 +12,7 @@ import { useEnvironment } from '../helpers/useEnvironment'
  * @param {string} environment Environment
  * @returns {Promise<{ transactionPath, receipt }>} Transaction path and receipt
  */
-export default async function(
+export default async function daoExec(
   dao,
   app,
   method,

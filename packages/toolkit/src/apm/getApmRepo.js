@@ -11,11 +11,11 @@ import { DEFAULT_IPFS_TIMEOUT, LATEST_VERSION } from '../helpers/constants'
  * @param  {string} environment Envrionment
  * @returns {Object} Repo
  */
-export default async (
+export default async function getApmRepo(
   apmRepoName,
   apmRepoVersion = LATEST_VERSION,
   environment
-) => {
+) {
   const apm = await useApm(environment)
 
   apmRepoName = defaultAPMName(apmRepoName)
