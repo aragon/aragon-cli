@@ -2,12 +2,12 @@ import useApm from './useApm'
 import ACL from '../acl/acl'
 import { useEnvironment } from '../helpers/useEnvironment'
 
-export default async (
+export default async function grantNewVersionsPermission(
   grantees,
   apmRepoName,
   progressHandler = () => {},
   environment
-) => {
+) {
   const { web3, gasPrice } = useEnvironment(environment)
 
   if (grantees.length === 0) {

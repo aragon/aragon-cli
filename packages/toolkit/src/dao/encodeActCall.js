@@ -5,7 +5,7 @@ import abi from 'web3-eth-abi'
  * @param {string} signature Function signature
  * @param {any[]} params
  */
-export default (signature, params = []) => {
+export default function encodeActCall(signature, params = []) {
   const sigBytes = abi.encodeFunctionSignature(signature)
 
   const types = signature.replace(')', '').split('(')[1]

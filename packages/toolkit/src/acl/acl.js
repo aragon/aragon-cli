@@ -5,7 +5,7 @@ import { abi as repoAbi } from '@aragon/abis/os/artifacts/Repo'
 //
 import { getRecommendedGasLimit } from '../util'
 
-export default web3 => {
+export default function acl(web3) {
   const getACL = async repoAddr => {
     const repo = new web3.eth.Contract(aragonAppAbi, repoAddr)
     const daoAddr = await repo.methods.kernel().call()
