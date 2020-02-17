@@ -2,8 +2,8 @@ import namehash from 'eth-ens-namehash'
 import { keccak256 } from 'web3-utils'
 import { encodeFunctionSignature } from 'web3-eth-abi'
 //
-import { SOLIDITY_FILE } from './constants'
-import { extractContractInfo } from './solidity-extractor'
+import { SOLIDITY_FILE } from '../helpers/constants'
+import { extractContractInfo } from '../helpers/solidity-extractor'
 
 /**
  * @typedef {Object} FunctionInfo

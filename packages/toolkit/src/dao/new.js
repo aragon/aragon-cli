@@ -23,12 +23,13 @@ export default async function newDao(
   environment,
   templateInstance // TODO: optional object options
 ) {
+  console.log('>>environment:', environment)
   const { web3, gasPrice } = useEnvironment(environment)
 
   let template
 
   if (!templateInstance) {
-    template = await getApmRepo(templateName, templateVersion)
+    template = await getApmRepo(templateName, templateVersion, environment)
 
     // If not connected to IPFS, repo won't have an ABI
     const templateAbi = template.abi || bareTemplateAbi
@@ -37,6 +38,8 @@ export default async function newDao(
     template = templateInstance
   }
 
+  console.log('>>template:', template)
+
   if (!template.methods[newInstanceMethod]) {
     throw new Error(
       `Template abi does not contain the requested function: ${newInstanceMethod}(...). This may be due to the template's abi not being retrieved from IPFS. Is IPFS running?`
@@ -44,7 +47,11 @@ export default async function newDao(
   }
 
   const newInstanceTx = template.methods[newInstanceMethod](...newInstanceArgs)
-  const estimatedGas = await newInstanceTx.estimateGas()
+
+  console.log('>>newInstanceTx:', newInstanceTx)
+
+  const estimatedGas = 7543829 // await newInstanceTx.estimateGas()
+  console.log('>>estimateGas:', estimatedGas)
   const { events } = await newInstanceTx.send({
     from: (await web3.eth.getAccounts())[0],
     gas: await getRecommendedGasLimit(web3, estimatedGas),

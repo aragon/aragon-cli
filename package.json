@@ -3,7 +3,7 @@
   "private": true,
   "devDependencies": {
     "codecov": "^3.6.1",
-    "husky": "^4.2.1",
+    "husky": "^4.2.2",
     "lerna": "^3.14.1"
   },
   "scripts": {

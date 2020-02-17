@@ -1,8 +1,8 @@
 import web3EthAbi from 'web3-eth-abi'
 import { abi as kernelAbi } from '@aragon/abis/os/artifacts/Kernel'
 //
-import { addressesEqual } from '../util'
-import { useEnvironment } from '../helpers/useEnvironment'
+import { addressesEqual } from '../../util'
+import { useEnvironment } from '../../helpers/useEnvironment'
 
 const newAppProxyLogName = 'NewAppProxy'
 const newAppProxyLogAbi = kernelAbi.find(
@@ -56,7 +56,6 @@ Kernel ABI log ${newAppProxyLogName} does not have expected argument 'log'`)
  * Returns the current app base address for an appId
  *
  * @param {string} dao DAO address
- * @param {string} appId APP id to get the base of
  * @param  {string} environment Envrionment
  * @return {Promise<string>} basesNamespace
  */

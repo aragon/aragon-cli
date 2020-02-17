@@ -1,9 +1,9 @@
 import { takeWhile } from 'rxjs/operators'
 import { abi as kernelAbi } from '@aragon/abis/os/artifacts/Kernel'
 //
-import { resolveEnsDomain } from '../helpers/resolveAddressOrEnsDomain'
-import { useEnvironment } from '../helpers/useEnvironment'
-import { initWrapper } from '../helpers/wrapper'
+import { resolveEnsDomain } from '../../helpers/resolveAddressOrEnsDomain'
+import { useEnvironment } from '../../helpers/useEnvironment'
+import { initWrapper } from '../../helpers/wrapper'
 
 /**
  * Return installed apps for a DAO

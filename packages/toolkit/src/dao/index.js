@@ -1,6 +1,5 @@
-export * from './apps'
+export * from './kernel'
+export * from './acl'
 export * from './assign-id'
-export * from './permissions'
 export { default as exec } from './exec'
 export { default as newDao } from './new'
-export { default as encodeActCall } from './encodeActCall'

@@ -1,7 +1,7 @@
 import { abi as aragonAppAbi } from '@aragon/abis/os/artifacts/AragonApp'
 //
-import { ZERO_ADDRESS } from '../helpers/constants'
-import { useEnvironment } from '../helpers/useEnvironment'
+import { ZERO_ADDRESS } from '../../helpers/constants'
+import { useEnvironment } from '../../helpers/useEnvironment'
 
 /**
  * Return kernel address for an Aragon app

@@ -1,5 +1,5 @@
 import { isString } from 'lodash'
-import BN from 'bn.js'
+import { BN } from 'bn.js'
 
 /**
  * @typedef {Object} AclParam ACL parameter

@@ -1,6 +1,6 @@
-import useApm from './useApm'
-import ACL from '../acl/acl'
-import { useEnvironment } from '../helpers/useEnvironment'
+import getApm from '../../apm/apm'
+import ACL from './acl'
+import { useEnvironment } from '../../helpers/useEnvironment'
 
 export default async function grantNewVersionsPermission(
   grantees,
@@ -14,7 +14,7 @@ export default async function grantNewVersionsPermission(
     throw new Error('No grantee addresses provided')
   }
 
-  const apm = await useApm(environment)
+  const apm = await getApm(environment)
 
   const acl = ACL(web3)
 
