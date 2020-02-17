@@ -8,7 +8,7 @@ import {
 // test config
 const runProcessPath = './test/node/runProcess'
 const readyOutput = 'process initialized'
-const processTimeout = 2000 // wait 1 second for spawned process to print readyOutput
+const processTimeout = 10000 // wait 10 second for spawned process to print readyOutput
 
 test('startProcess should enable detach', async t => {
   const { detach } = await startProcess({
