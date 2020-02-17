@@ -1,7 +1,7 @@
 import Aragon from '@aragon/wrapper'
 //
 import { noop } from './node'
-import { resolveAddressOrEnsDomain } from './resolveAddressOrEnsDomain'
+import { resolveAddressOrEnsDomain } from '../utils/resolvers'
 import { useEnvironment } from './useEnvironment'
 
 // Subscribe to wrapper's observables

@@ -49,6 +49,7 @@
     "core-js": "^3.6.4",
     "eth-ens-namehash": "^2.0.8",
     "ethereum-ens": "^0.8.0",
+    "ethjs-ens": "^2.0.1",
     "execa": "^4.0.0",
     "find-up": "^4.0.0",
     "fs-extra": "^8.1.0",

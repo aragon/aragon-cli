@@ -1,7 +1,7 @@
 import { takeWhile } from 'rxjs/operators'
 import { abi as kernelAbi } from '@aragon/abis/os/artifacts/Kernel'
 //
-import { resolveEnsDomain } from '../../helpers/resolveAddressOrEnsDomain'
+import { resolveEnsDomain } from '../../utils/resolvers'
 import { useEnvironment } from '../../helpers/useEnvironment'
 import { initWrapper } from '../../helpers/wrapper'
 

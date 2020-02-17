@@ -1,14 +1,11 @@
-import { useEnvironment } from '../helpers/useEnvironment'
+import abi from 'web3-eth-abi'
 
 export default function encodeInitPayload(
-  abi,
+  contractAbi,
   initFunctionName,
-  initArgs,
-  environment
+  initArgs
 ) {
-  const { web3 } = useEnvironment(environment)
-
-  const methodABI = abi.find(method => method.name === initFunctionName)
+  const methodABI = contractAbi.find(method => method.name === initFunctionName)
 
   if (!methodABI) {
     return '0x'
@@ -22,7 +19,7 @@ export default function encodeInitPayload(
           )
         }
       }
-      return web3.eth.abi.encodeFunctionCall(methodABI, initArgs)
+      return abi.encodeFunctionCall(methodABI, initArgs)
     } catch (e) {
       throw new Error(
         'Invalid initialization params for app. Check the arguments passed with the --app-init-args flag\n' +
