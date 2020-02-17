@@ -1,6 +1,6 @@
 import test from 'ava'
 //
-import { getAppProxyAddressFromReceipt } from '../../src/kernel/kernel'
+import { getAppProxyAddressFromReceipt } from '../../../src/dao/kernel/kernel'
 
 test('getAppProxyAddressFromReceipt', t => {
   /**

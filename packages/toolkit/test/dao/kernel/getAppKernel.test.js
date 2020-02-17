@@ -1,8 +1,8 @@
 import test from 'ava'
 //
-import newDao from '../../src/dao/new'
-import { getAllApps } from '../../src/dao/apps'
-import getAppKernel from '../../src/kernel/getAppKernel'
+import newDao from '../../../src/dao/new'
+import { getAllApps } from '../../../src/dao/kernel/apps'
+import getAppKernel from '../../../src/dao/kernel/getAppKernel'
 
 let daoAddress
 let apps

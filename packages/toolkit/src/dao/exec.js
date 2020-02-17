@@ -1,4 +1,4 @@
-import { getTransactionPath } from './permissions'
+import { getTransactionPath } from '../dao/acl/getTransactionPath'
 import { useEnvironment } from '../helpers/useEnvironment'
 
 /**

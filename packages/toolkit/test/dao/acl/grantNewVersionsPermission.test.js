@@ -1,8 +1,8 @@
 import test from 'ava'
 import sinon from 'sinon'
 //
-import grantNewVersionsPermission from '../../src/apm/grantNewVersionsPermission'
-import { useEnvironment } from '../../src/helpers/useEnvironment'
+import grantNewVersionsPermission from '../../../src/dao/acl/grantNewVersionsPermission'
+import { useEnvironment } from '../../../src/helpers/useEnvironment'
 
 import { abi as aclAbi } from '@aragon/abis/os/artifacts/ACL'
 import { abi as aragonAppAbi } from '@aragon/abis/os/artifacts/AragonApp'

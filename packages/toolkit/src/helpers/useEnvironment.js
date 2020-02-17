@@ -152,26 +152,4 @@ export function useEnvironment(env) {
     gasPrice:
       gasPrice || truffleNetworks[network].gasPrice || DEFAULT_GAS_PRICE,
   }
-  // TODO: evaluate if we need a try catch
-  // } catch (e) {
-  //   const logger = message => {
-  //     console.log(message)
-  //     process.exit(1)
-  //   }
-  //   // Errors from useEnvironment
-  //   if (e instanceof NoEnvironmentInArapp)
-  //     return logger(
-  //       `environment '${e.message}' is not defined in your arapp.json.`
-  //     )
-  //   if (e instanceof NoEnvironmentInDefaults)
-  //     return logger(
-  //       `Default environment '${e.message}' not found. Try using aragon:local, aragon:rinkeby or aragon:mainnet.`
-  //     )
-  //   if (e instanceof NoNetworkInTruffleConfig)
-  //     return logger(
-  //       `aragon <command> requires a network '${e.message}' in your truffle.js. For an example, see http://truffleframework.com/docs/advanced/configuration`
-  //     )
-
-  //   throw e
-  // }
 }

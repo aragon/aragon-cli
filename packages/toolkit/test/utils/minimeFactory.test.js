@@ -7,7 +7,7 @@ import { useEnvironment } from '../../src/helpers/useEnvironment'
 import {
   deployMiniMeTokenFactory,
   deployMiniMeToken,
-} from '../../src/token/token'
+} from '../../src/utils/token'
 
 test('deployMiniMeTokenFactory: should deploy the contract', async t => {
   const progressHandler = sinon.stub()

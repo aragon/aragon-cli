@@ -3,7 +3,7 @@ import stripAnsi from 'strip-ansi'
 import {
   stringifyMerkleDAG,
   stringifyMerkleDAGNode,
-} from '../../src/ipfs/data-viz'
+} from '../../../src/helpers/ipfs/data-viz'
 
 const merkleDagNode = {
   cid: 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG',

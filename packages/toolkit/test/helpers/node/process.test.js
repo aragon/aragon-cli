@@ -1,6 +1,6 @@
 import test from 'ava'
 //
-import { startProcess } from '../../src/node/process'
+import { startProcess } from '../../../src/helpers/node/process'
 
 test('startProcess should enable detach', async t => {
   const { detach } = await startProcess({

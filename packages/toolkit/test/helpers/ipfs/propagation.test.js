@@ -1,5 +1,5 @@
 import test from 'ava'
-import { propagateFiles } from '../../src/ipfs'
+import { propagateFiles } from '../../../src/helpers/ipfs'
 
 // eslint-disable-next-line ava/no-skip-test
 test.skip('Get IPFS readme merkle DAG and CIDs', async t => {

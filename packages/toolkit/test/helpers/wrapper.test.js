@@ -1,9 +1,9 @@
 import test from 'ava'
 //
 import newDao from '../../src/dao/new'
-import { getInstalledApps } from '../../src/dao/apps'
+import { getInstalledApps } from '../../src/dao/kernel/apps'
 import defaultAPMName from '../../src/helpers/default-apm'
-import { getTransactionPath } from '../../src/dao/permissions'
+import { getTransactionPath } from '../../src/dao/acl/getTransactionPath'
 
 let dao
 let apps

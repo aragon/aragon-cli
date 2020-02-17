@@ -1,7 +1,7 @@
 import { takeWhile, map, filter, first, defaultIfEmpty } from 'rxjs/operators'
 //
-import { initWrapper } from '../helpers/wrapper'
-import { addressesEqual } from '../util'
+import { initWrapper } from '../../helpers/wrapper'
+import { addressesEqual } from '../../util'
 
 /**
  * Get transaction path on an Aragon app for `method` with `params`

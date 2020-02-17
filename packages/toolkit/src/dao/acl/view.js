@@ -1,5 +1,5 @@
-import '../../@types/acl/typedef'
-import { initWrapper } from '../helpers/wrapper'
+import '../../../@types/acl/typedef'
+import { initWrapper } from '../../helpers/wrapper'
 
 // TODO: Stop using wrapper
 

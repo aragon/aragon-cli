@@ -3,7 +3,7 @@ import {
   getHttpClient,
   getMerkleDAG,
   extractCIDsFromMerkleDAG,
-} from '../../src/ipfs'
+} from '../../../src/helpers/ipfs'
 
 const ipfsGateway = 'http://localhost:8080'
 const readmeDirCid = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'

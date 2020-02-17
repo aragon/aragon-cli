@@ -2,9 +2,9 @@ import test from 'ava'
 import sinon from 'sinon'
 import { isAddress } from 'web3-utils'
 import miniMeArtifact from '@aragon/apps-shared-minime/build/contracts/MiniMeToken'
-import { isValidTxHash } from '@aragon/contract-helpers-tests/isValidTxHash'
+import isValidTxHash from '@aragon/contract-helpers-test/isValidTxHash'
 //
-import * as tokenLib from '../../src/token/token'
+import * as tokenLib from '../../src/utils/token'
 import { useEnvironment } from '../../src/helpers/useEnvironment'
 
 test.beforeEach(async t => {

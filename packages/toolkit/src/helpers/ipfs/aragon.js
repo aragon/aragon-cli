@@ -1,4 +1,4 @@
-import { getIpfsCacheFiles } from '../util'
+import { getIpfsCacheFiles } from '../../util'
 
 export const pinArtifacts = async httpClient => {
   const files = getIpfsCacheFiles()

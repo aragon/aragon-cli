@@ -1,6 +1,6 @@
 import test from 'ava'
 //
-import { convertStringToParam, encodeParam, Op } from '../../src/acl/params'
+import { convertStringToParam, encodeParam, Op } from '../../src/utils/params'
 
 test('simple parameter', t => {
   const param = convertStringToParam('0, GT, 42')

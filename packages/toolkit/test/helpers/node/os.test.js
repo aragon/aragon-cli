@@ -1,7 +1,7 @@
 import test from 'ava'
 import fs from 'fs-extra'
 //
-import { getLocalBinary, getBinary } from '../../src/node'
+import { getLocalBinary, getBinary } from '../../../src/helpers/node'
 
 const TMP_DIR = '.tmp/node/os'
 const LOCAL_PATH = `${TMP_DIR}/local`

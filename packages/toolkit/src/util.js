@@ -92,7 +92,6 @@ export const getRecommendedGasLimit = async (
   const bufferedGasLimit = Math.round(estimatedGas * gasFuzzFactor)
 
   if (bufferedGasLimit < upperGasLimit) return bufferedGasLimit
-  console.log('>>gasLimit:', upperGasLimit)
   return upperGasLimit
 }
 
