@@ -90,7 +90,7 @@ test('startProcess should start a process and reslove after readyOutput is print
   t.true(subprocess.output.includes(`ppid: ${process.pid}`))
 })
 
-test('getProcessTree should return process tree', async t => {
+test('getProcessTree should return process tree with correct PID hierarchy', async t => {
   const processSetup = {
     cmd: 'node',
     args: [runProcessPath, '--childs=3'], // will spawn another 3 processes
@@ -99,14 +99,9 @@ test('getProcessTree should return process tree', async t => {
   }
   const subprocess = await startProcess(processSetup) // this will spawn a process which will spawn 3 childs
 
-  // extract the all childs PID from 'runProcess.js' script output
-  const childsPid = Array.from(
-    subprocess.output.matchAll(/ pid: (\d+) /g),
-    item => item[1]
-  )
-
+  // extract the child PID from 'runProcess.js' script output
+  const childPid = String(subprocess.output.match(/ pid: (\d+) /)[1])
   const parentPid = String(process.pid)
-  const childPid = String(childsPid[0]) // first direct child, following are grandchilds
 
   // Get the process tree
   const tree = await getProcessTree({ pid: process.pid })
@@ -132,13 +127,8 @@ test('killProcessTree should kill all the childs of a process', async t => {
   // spawn a subprocess which will spawn another 3 processes
   const subprocess = await startProcess(processSetup)
 
-  // extract the all childs PID from 'runProcess.js' script output
-  const childsPid = Array.from(
-    subprocess.output.matchAll(/ pid: (\d+) /g),
-    item => item[1]
-  )
-
-  const childPid = String(childsPid[0])
+  // extract the child PID from 'runProcess.js' script output
+  const childPid = String(subprocess.output.match(/ pid: (\d+) /)[1])
 
   // Get the process tree
   let tree = await getProcessTree({ pid: process.pid })
