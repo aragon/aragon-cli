@@ -1,13 +1,13 @@
 {
-	"name": "@aragon/cli",
-	"version": "7.0.4",
-	"description": "Aragon command-line tools",
-	"main": "./dist/toolkit.js",
-	"bin": {
-		"aragon": "./dist/index.js",
-		"dao": "./aliases/dao"
-	},
-	"scripts": {
+  "name": "@aragon/cli",
+  "version": "7.0.4",
+  "description": "Aragon command-line tools",
+  "main": "./dist/toolkit.js",
+  "bin": {
+    "aragon": "./dist/index.js",
+    "dao": "./aliases/dao"
+  },
+  "scripts": {
     "compile-src": "babel src --out-dir dist --source-maps --copy-files",
     "extract-roles": "node scripts/extract-roles",
     "build": "npm run extract-roles && npm run compile-src",
@@ -63,6 +63,7 @@
     "find-process": "^1.4.2",
     "find-up": "^4.0.0",
     "fs-extra": "^8.0.1",
+    "ganache-core": "^2.10.2",
     "git-clone": "^0.1.0",
     "http-server": "^0.12.0",
     "ignore": "^4.0.6",
@@ -169,7 +170,9 @@
     }
   },
   "eslintConfig": {
-    "ignorePatterns": ["test/mock"],
+    "ignorePatterns": [
+      "test/mock"
+    ],
     "env": {
       "es6": true,
       "node": true
