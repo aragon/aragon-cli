@@ -1,6 +1,14 @@
 import test from 'ava'
-//
-import { startProcess } from '../../src/node/process'
+import {
+  startProcess,
+  getProcessTree,
+  killProcessTree,
+} from '../../src/node/process'
+
+// test config
+const runProcessPath = './test/node/runProcess'
+const readyOutput = 'process initialized'
+const processTimeout = 2000 // wait 1 second for spawned process to print readyOutput
 
 test('startProcess should enable detach', async t => {
   const { detach } = await startProcess({
@@ -45,4 +53,110 @@ test('startProcess should support attach', async t => {
 
   attach()
   t.pass()
+})
+
+test('startProcess should throw timeout exception', async t => {
+  const processSetup = {
+    cmd: 'node',
+    args: [runProcessPath],
+    timeout: 0, // expect timeout error is thrown
+    readyOutput,
+  }
+  const error = await t.throwsAsync(async () => startProcess(processSetup))
+  t.true(error.message.includes('process timed out'))
+})
+
+test('startProcess should throw error if subprocess writes on stderr', async t => {
+  const processSetup = {
+    cmd: 'node',
+    args: [runProcessPath, '--errorFlag'], // the process will write to stderr
+    timeout: processTimeout,
+    readyOutput,
+  }
+  await t.throwsAsync(async () => startProcess(processSetup))
+})
+
+test('startProcess should start a process and reslove after readyOutput is printed', async t => {
+  const processSetup = {
+    cmd: 'node',
+    args: [runProcessPath],
+    timeout: processTimeout,
+    readyOutput,
+  }
+  const subprocess = await startProcess(processSetup)
+  // ready output must be printed
+  t.true(subprocess.output.includes(readyOutput))
+  // Process ppid shoud be pid of current process
+  t.true(subprocess.output.includes(`ppid: ${process.pid}`))
+})
+
+test('getProcessTree should return process tree', async t => {
+  const processSetup = {
+    cmd: 'node',
+    args: [runProcessPath, '--childs=3'], // will spawn another 3 processes
+    timeout: processTimeout,
+    readyOutput,
+  }
+  const subprocess = await startProcess(processSetup) // this will spawn a process which will spawn 3 childs
+
+  // extract the all childs PID from 'runProcess.js' script output
+  const childsPid = Array.from(
+    subprocess.output.matchAll(/ pid: (\d+) /g),
+    item => item[1]
+  )
+
+  const parentPid = String(process.pid)
+  const childPid = String(childsPid[0]) // first direct child, following are grandchilds
+
+  // Get the process tree
+  const tree = await getProcessTree({ pid: process.pid })
+
+  // Current process should have a direct child with pid = childPid
+  t.true(
+    tree.filter(node => node.PPID === parentPid && node.PID === childPid)
+      .length === 1
+  )
+
+  // child process should have also 3 childs
+  t.true(tree.filter(node => node.PPID === childPid).length === 3)
+})
+
+test('killProcessTree should kill all the childs of a process', async t => {
+  const processSetup = {
+    cmd: 'node',
+    args: [runProcessPath, '--childs=3'], // will spawn another 3 processes
+    timeout: processTimeout,
+    readyOutput,
+  }
+
+  // spawn a subprocess which will spawn another 3 processes
+  const subprocess = await startProcess(processSetup)
+
+  // extract the all childs PID from 'runProcess.js' script output
+  const childsPid = Array.from(
+    subprocess.output.matchAll(/ pid: (\d+) /g),
+    item => item[1]
+  )
+
+  const childPid = String(childsPid[0])
+
+  // Get the process tree
+  let tree = await getProcessTree({ pid: process.pid })
+  t.true(tree.filter(node => node.PID === childPid).length === 1) // check that subprocess is created
+  t.true(tree.filter(node => node.PPID === childPid).length === 3) // subprocess has 3 childs
+
+  // kill the subprocess
+  await killProcessTree({ pid: childPid })
+
+  // Get again the process tree
+  tree = await getProcessTree({ pid: process.pid })
+
+  // TODO: check if the subprocess should also be killed?
+  // t.true(tree.filter(node => node.PID === childPid).length === 0)
+
+  // the childs of the subprocess should be killed
+  t.true(tree.filter(node => node.PPID === childPid).length === 0)
+
+  // kill again should do nothing
+  await killProcessTree({ pid: childPid })
 })
