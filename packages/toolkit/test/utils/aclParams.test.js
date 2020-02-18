@@ -1,14 +1,10 @@
 import test from 'ava'
 //
-<<<<<<< HEAD:packages/toolkit/test/utils/aclParams.test.js
 import {
   convertStringToParam,
   encodeParam,
   Op,
 } from '../../src/utils/aclParams'
-=======
-import { convertStringToParam, encodeParam, Op } from '../../src/utils/params'
->>>>>>> origin/develop:packages/toolkit/test/utils/params.test.js
 
 test('simple parameter', t => {
   const param = convertStringToParam('0, GT, 42')
