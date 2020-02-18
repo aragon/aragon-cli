@@ -1,0 +1,20 @@
+{
+  "daoAddress": "0x592B213bf0176c1f3b2a6F5EfE632eAC4b5453EE",
+  "votingAddress": "0x790d73e8690042f37df0194c6e5835bf4d340638",
+  "financeAddress": "0x3ceec51601e17ac69f6acb10a214c9bb7a86ac24",
+  "environment": "mainnet",
+  "payments": [
+    {
+      "tokenAddress": "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
+      "receiverAddress": "0x7c343AbB2b180732583a3134E4A9f6e138D320D2",
+      "amount": "450000000000000000000",
+      "receipt": "Milestone 3 - @paulo"
+    },
+    {
+      "tokenAddress": "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
+      "receiverAddress": "0xDc2aDfA800a1ffA16078Ef8C1F251D50DcDa1065",
+      "amount": "450000000000000000000",
+      "receipt": "Milestone 3 - @sem"
+    }
+  ]
+}
