@@ -4,8 +4,8 @@ import { isAddress } from 'web3-utils'
 import miniMeArtifact from '@aragon/apps-shared-minime/build/contracts/MiniMeToken'
 import isValidTxHash from '@aragon/contract-helpers-test/isValidTxHash'
 //
-import * as tokenLib from '../src/token'
-import { useEnvironment } from '../src/helpers/useEnvironment'
+import * as tokenLib from '../../src/token'
+import { useEnvironment } from '../../src/helpers/useEnvironment'
 
 test.beforeEach(async t => {
   const { web3 } = useEnvironment()
