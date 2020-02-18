@@ -15,7 +15,6 @@ test.after.always(async () => {
   await remove(projectPath)
 })
 
-// eslint-disable-next-line ava/no-skip-test
 test('should create a new aragon app based on the buidler boilerplate', async t => {
   ensureDirSync(testSandbox)
 
@@ -42,6 +41,4 @@ test('should create a new aragon app based on the buidler boilerplate', async t 
   t.falsy(await pathExists(licensePath))
   t.is(undefined, packageJson.license)
   t.is(`${projectName}.aragonpm.eth`, arapp.environments.default.appName)
-  t.is(`${projectName}.open.aragonpm.eth`, arapp.environments.rinkeby.appName)
-  t.is(`${projectName}.open.aragonpm.eth`, arapp.environments.mainnet.appName)
 })
