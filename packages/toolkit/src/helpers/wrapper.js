@@ -1,6 +1,6 @@
 import Aragon from '@aragon/wrapper'
 //
-import { noop } from '../node'
+import { noop } from './node'
 import { resolveAddressOrEnsDomain } from './resolveAddressOrEnsDomain'
 import { useEnvironment } from './useEnvironment'
 

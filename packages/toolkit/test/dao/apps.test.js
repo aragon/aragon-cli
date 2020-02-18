@@ -1,7 +1,7 @@
 import test from 'ava'
 //
-import { assignId } from '../../src//dao/assign-id'
-import { getAllApps, getDaoAddress } from '../../src/dao/apps'
+import { assignId } from '../../src/dao/assign-id'
+import { getAllApps, getDaoAddress } from '../../src/dao/kernel/apps'
 import newDao from '../../src/dao/new'
 
 test('getAllApps returns the correct apps', async t => {

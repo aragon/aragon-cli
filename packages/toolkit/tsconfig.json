@@ -16,5 +16,5 @@
 		// "esModuleInterop": true
 	},
 	"exclude": ["**/__tests/*", "**/testing/*"],
-  "include": ["./src"],
+  "include": ["./src","./node_modules/bn.js-typings/index.d.ts"],
 }

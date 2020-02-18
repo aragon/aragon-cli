@@ -1,5 +1,5 @@
 import TaskList from 'listr'
-import { useApm, useEnvironment } from '@aragon/toolkit'
+import { getApm, useEnvironment } from '@aragon/toolkit'
 //
 import { task as execTask } from '../../../commands/dao_cmds/utils/execHandler'
 import listrOpts from '../../../helpers/listr-options'
@@ -28,7 +28,7 @@ export default async function runPublishTask({
   const { web3, gasPrice, appName } = useEnvironment(environment)
   // TODO: Move web3 logic inside toolkit
 
-  const apm = await useApm(environment)
+  const apm = await getApm(environment)
 
   return new TaskList(
     [

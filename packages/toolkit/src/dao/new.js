@@ -28,7 +28,7 @@ export default async function newDao(
   let template
 
   if (!templateInstance) {
-    template = await getApmRepo(templateName, templateVersion)
+    template = await getApmRepo(templateName, templateVersion, environment)
 
     // If not connected to IPFS, repo won't have an ABI
     const templateAbi = template.abi || bareTemplateAbi
@@ -44,7 +44,8 @@ export default async function newDao(
   }
 
   const newInstanceTx = template.methods[newInstanceMethod](...newInstanceArgs)
-  const estimatedGas = await newInstanceTx.estimateGas()
+
+  const estimatedGas = 7543829 // await newInstanceTx.estimateGas()
   const { events } = await newInstanceTx.send({
     from: (await web3.eth.getAccounts())[0],
     gas: await getRecommendedGasLimit(web3, estimatedGas),
