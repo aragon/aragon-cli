@@ -16,6 +16,7 @@ import {
   getDefaultRepoPath,
 } from '@aragon/toolkit'
 
+import listrOpts from '../helpers/listr-options'
 import pkg from '../../package.json'
 import { installDeps } from '../util'
 
@@ -59,6 +60,8 @@ export const task = async function({
   clientPort,
   clientPath,
   autoOpen,
+  silent,
+  debug
 }) {
   const tasks = new TaskList([
     {
@@ -117,7 +120,8 @@ export const task = async function({
         }
       },
     },
-  ])
+  ],
+  listrOpts(silent, debug))
   return tasks
 }
 
@@ -128,6 +132,8 @@ export const handler = async ({
   clientPort,
   clientPath,
   autoOpen,
+  silent,
+  debug
 }) => {
   const tasks = await task({
     clientRepo,
@@ -135,6 +141,8 @@ export const handler = async ({
     clientPort,
     clientPath,
     autoOpen,
+    silent,
+    debug
   })
 
   await tasks.run()
