@@ -12613,24 +12613,6 @@
 						"keccak": "^2.0.0",
 						"rlp": "^2.2.3",
 						"secp256k1": "^3.0.1"
-					},
-					"dependencies": {
-						"keccak": {
-							"version": "2.1.0",
-							"resolved": "https://registry.npmjs.org/keccak/-/keccak-2.1.0.tgz",
-							"integrity": "sha512-m1wbJRTo+gWbctZWay9i26v5fFnYkOn7D5PCxJ3fZUGUEb49dE1Pm4BREUYCt/aoO6di7jeoGmhvqN9Nzylm3Q==",
-							"requires": {
-								"bindings": "^1.5.0",
-								"inherits": "^2.0.4",
-								"nan": "^2.14.0",
-								"safe-buffer": "^5.2.0"
-							}
-						},
-						"nan": {
-							"version": "2.14.0",
-							"resolved": "https://registry.npmjs.org/nan/-/nan-2.14.0.tgz",
-							"integrity": "sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg=="
-						}
 					}
 				},
 				"ethereumjs-vm": {

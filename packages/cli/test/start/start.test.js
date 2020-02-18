@@ -2,17 +2,20 @@ import test from 'ava'
 
 import parseCli from '../parseCli'
 
-const START_CMD_TIMEOUT = 40000 // 40s
+const START_CMD_TIMEOUT = 20000 // 20s
 
-// TODO: Unskip, test don't finish
-// eslint-disable-next-line ava/no-skip-test
-test.skip('start runs', async t => {
-  const output = await parseCli(
-    ['start', '--auto-open', 'false', '--debug'],
-    START_CMD_TIMEOUT
-  )
+test.serial('start command opens the client by default', async t => {
+  const stdout = await parseCli(['start', '--debug'], START_CMD_TIMEOUT)
 
-  t.assert(output.includes('started on port'))
+  t.assert(stdout.includes('Opening client'))
+})
+
+
+test.serial('start command should start', async t => {
+  const stdout = await parseCli(['start', '--auto-open', 'false', '--debug'], START_CMD_TIMEOUT)
+
+  t.assert(stdout.includes('Aragon client'))
+  t.assert(stdout.includes('started on port'))
 })
 
 test.serial('run fails if not in an aragon project directory', async t => {
