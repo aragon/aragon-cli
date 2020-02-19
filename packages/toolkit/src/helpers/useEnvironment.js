@@ -1,10 +1,9 @@
 import Web3 from 'web3'
 import url from 'url'
 //
-import { getTruffleConfig } from './truffle-config'
 import defaultEnvironments from '../../config/environments.default'
 import defaultNetworks from '../../config/truffle.default'
-import { loadArappFile } from './loadConfigFiles'
+import { loadArappFile, getTruffleConfig } from './loadConfigFiles'
 import {
   DEFAULT_GAS_PRICE,
   FRAME_ENDPOINT,
