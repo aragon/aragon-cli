@@ -1,4 +1,5 @@
 import test from 'ava'
+import path from 'path'
 
 import parseCli from '../parseCli'
 
@@ -20,6 +21,8 @@ test.serial('start command should start', async t => {
 
 test.serial('run fails if not in an aragon project directory', async t => {
   await t.throwsAsync(async () => {
-    return parseCli(['run'])
+    const cwd = process.cwd()
+    process.cwd = () => path.join(cwd, 'test/mock/')
+    return parseCli(['run', '--debug'])
   })
 })

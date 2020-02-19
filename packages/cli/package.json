@@ -144,6 +144,9 @@
     "include": [
       "src/**/*.js"
     ],
+    "exclude": [
+      "src/commands/run.js"
+    ],
     "sourceMap": false,
     "instrument": true
   },

@@ -2,6 +2,7 @@ import path from 'path'
 import { blue } from 'chalk'
 import TaskList from 'listr'
 import { extractContractInfoToFile } from '@aragon/toolkit' // TODO: Move away from toolkit?
+import listrOpts from '../helpers/listr-options'
 
 export const command = 'extract-functions [contract]'
 export const describe = 'Extract function information from a Solidity file'
@@ -20,7 +21,7 @@ export const builder = function(yargs) {
     })
 }
 
-export const handler = async function({ cwd, reporter, contract, output }) {
+export const handler = async function({ cwd, reporter, contract, output, debug, silent }) {
   let outputPath
 
   const tasks = new TaskList([
@@ -33,7 +34,8 @@ export const handler = async function({ cwd, reporter, contract, output }) {
         await extractContractInfoToFile(contractPath, outputPath)
       },
     },
-  ])
+  ],
+  listrOpts(silent, debug))
 
   await tasks.run()
   reporter.success(`Saved to ${blue(outputPath)}`)
