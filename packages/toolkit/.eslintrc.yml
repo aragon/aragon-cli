@@ -25,3 +25,12 @@ rules:
   'import/no-anonymous-default-export': 'error'
   # 'import/no-dynamic-require': 'error'
   # 'import/no-default-export': 'error'
+
+overrides: [
+  {
+    files: ['*.ts', '*.tsx'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': [2, { args: 'none' }]
+    }
+  }
+]

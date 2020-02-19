@@ -7,7 +7,7 @@
 		// Don't emit; allow Babel to transform files.
 		"noEmit": true,
 		// Process & infer types from .js files.
-		// "allowJs": false,
+		"allowJs": false,
 		// Enable strictest settings like strictNullChecks & noImplicitAny.
 		// "strict": true,
 		// Disallow features that require cross-file information for emit.
@@ -21,5 +21,5 @@
     }
 	},
 	"exclude": ["**/__tests/*", "**/testing/*"],
-  "include": ["./src","./node_modules/bn.js-typings/index.d.ts"],
+	"include": ["./src","./node_modules/bn.js-typings/index.d.ts"]
 }
