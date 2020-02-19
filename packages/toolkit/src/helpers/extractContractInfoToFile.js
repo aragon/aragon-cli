@@ -4,8 +4,6 @@ import { writeJson } from 'fs-extra'
 import { extractContractInfo } from '../utils/solidityExtractor'
 const readFile = fs.promises.readFile
 
-// TODO: Move away from Toolkit
-
 export default async function extractContractInfoToFile(
   contractPath,
   outputPath
