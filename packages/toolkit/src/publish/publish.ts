@@ -1,12 +1,13 @@
 import path from 'path'
 import fs from 'fs'
+//
 import { AragonManifest, AragonAppJson, AragonArtifact } from './types'
 import findMissingManifestFiles from './findMissingManifestFiles'
 import getAragonArtifact from './getAragonArtifact'
 import uploadReleaseToIpfs from './uploadDistToIpfs'
 import matchContractRoles from './matchContractRoles'
-import parseContractFunctions from '../solidityParsers/parseContractFunctions'
-import flattenSolidity from './flattenSolidity'
+import parseContractFunctions from '../utils/parseContractFunctions'
+import flattenSolidity from '../utils/flattenSolidity'
 import readArtifacts from './readArtifacts'
 import {
   MANIFEST_FILE,

@@ -1,5 +1,5 @@
 import { flatten, uniqBy } from 'lodash'
-import { AragonContractFunction } from '../solidityParsers/parseContractFunctions'
+import { AragonContractFunction } from '../utils/parseContractFunctions'
 import { Role } from './types'
 
 interface RoleMatchError {

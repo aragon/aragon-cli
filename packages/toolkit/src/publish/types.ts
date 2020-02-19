@@ -25,17 +25,9 @@ export interface AragonArtifact extends AragonAppJson {
     notice: string
     abi: AbiItem
   }[]
-
+  environments: AragonEnvironments
   abi: AbiItem[]
-  // ### TODO: Review if are necessary
   path: string // 'contracts/Finance.sol'
-  appName: string // 'finance.aragonpm.eth'
-  env: {
-    registry: string // '0x314159265dd8dbb310642f98f50c066173c1259b'
-    appName: string // 'finance.aragonpm.eth'
-    network: string // 'mainnet'
-  }
-  appId: string // '0xbf8491150dafc5dcaee5b861414dca922de09ccffa344964ae167212e8c673ae'
   // Additional metadata for accountability
   flattenedCode: string
 }

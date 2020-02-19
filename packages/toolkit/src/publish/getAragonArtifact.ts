@@ -2,15 +2,13 @@ import { mapValues } from 'lodash'
 import { AragonAppJson, AragonArtifact } from './types'
 import { keccak256, AbiItem } from 'web3-utils'
 import namehash from 'eth-ens-namehash'
-import { AragonContractFunction } from '../solidityParsers/parseContractFunctions'
+import { AragonContractFunction } from '../utils/parseContractFunctions'
 
 export default function getAragonArtifact(
   arapp: AragonAppJson,
   functions: AragonContractFunction[],
   abi: AbiItem[]
 ): AragonArtifact {
-  const mainEnv = arapp.environments.mainnet
-
   return {
     ...arapp,
 
@@ -42,9 +40,5 @@ export default function getAragonArtifact(
     abi,
     // Additional metadata
     flattenedCode: `./code.sol`,
-    // ### Todo: Why add the main ENV here separately?
-    appName: mainEnv.appName, // 'finance.aragonpm.eth',
-    appId: namehash.hash(mainEnv),
-    env: mainEnv,
   }
 }

@@ -1,6 +1,6 @@
 import test from 'ava'
 //
-import useApm from '../../src/apm/useApm'
+import getApm from '../../src/apm/apm'
 
 let apmRepoName
 let versions
@@ -8,7 +8,7 @@ let versions
 /* Setup and cleanup */
 
 test.before('setup and make a successful call', async t => {
-  const apm = await useApm()
+  const apm = await getApm()
 
   apmRepoName = 'voting.aragonpm.eth'
 

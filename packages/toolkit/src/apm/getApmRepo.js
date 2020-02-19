@@ -1,6 +1,8 @@
-import useApm from './useApm'
-import defaultAPMName from '../helpers/default-apm'
-import { DEFAULT_IPFS_TIMEOUT, LATEST_VERSION } from '../helpers/constants'
+import getApm from './apm'
+import getDefaultApmName from '../utils/defaultApm'
+
+const DEFAULT_IPFS_TIMEOUT = 300000
+const LATEST_VERSION = 'latest'
 
 /**
  *
@@ -11,14 +13,14 @@ import { DEFAULT_IPFS_TIMEOUT, LATEST_VERSION } from '../helpers/constants'
  * @param  {string} environment Envrionment
  * @returns {Object} Repo
  */
-export default async (
+export default async function getApmRepo(
   apmRepoName,
   apmRepoVersion = LATEST_VERSION,
   environment
-) => {
-  const apm = await useApm(environment)
+) {
+  const apm = await getApm(environment)
 
-  apmRepoName = defaultAPMName(apmRepoName)
+  apmRepoName = getDefaultApmName(apmRepoName)
 
   return apmRepoVersion === LATEST_VERSION
     ? apm.getLatestVersion(apmRepoName, DEFAULT_IPFS_TIMEOUT)
