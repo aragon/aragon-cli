@@ -1,3 +1,5 @@
-export * from './kernel'
-export * from './apps'
-export { default as getAppKernel } from './getAppKernel'
+export * from './appBase'
+export * from './appProxy'
+export * from './getApps'
+export { default as getAclAddress } from './getAclAddress'
+export { default as getKernelAddress } from './getKernelAddress'

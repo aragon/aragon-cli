@@ -1,9 +1,8 @@
 import { takeWhile } from 'rxjs/operators'
 import { abi as kernelAbi } from '@aragon/abis/os/artifacts/Kernel'
 //
-import { resolveEnsDomain } from '../../utils/resolvers'
 import { useEnvironment } from '../../helpers/useEnvironment'
-import { initWrapper } from '../../helpers/wrapper'
+import { initWrapper } from '../utils/wrapper'
 
 /**
  * Return installed apps for a DAO
@@ -43,16 +42,4 @@ export async function getAllApps(dao, environment) {
     proxyAddress: event.returnValues.proxy,
     appId: event.returnValues.appId,
   }))
-}
-
-/**
- * Return a DAO address from its subdomain
- *
- * @param {string} dao DAO subdomain
- * @param {Object} options Options
- * @param {Object} options.provider ETH provider
- * @param {string} options.registryAddress ENS registry address
- */
-export async function getDaoAddress(dao, options) {
-  return /[a-z0-9]+\.eth/.test(dao) ? resolveEnsDomain(dao, options) : dao
 }

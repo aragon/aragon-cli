@@ -1,7 +1,8 @@
 import { abi as aragonAppAbi } from '@aragon/abis/os/artifacts/AragonApp'
 //
-import { ZERO_ADDRESS } from '../../helpers/constants'
 import { useEnvironment } from '../../helpers/useEnvironment'
+
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 /**
  * Return kernel address for an Aragon app
@@ -10,7 +11,7 @@ import { useEnvironment } from '../../helpers/useEnvironment'
  * @param  {string} environment Envrionment
  * @returns {Promise<string>} Kernel address
  */
-export default async function getAppKernel(appAddress, environment) {
+export default async function getKernelAddress(appAddress, environment) {
   const { web3 } = useEnvironment(environment)
 
   const app = new web3.eth.Contract(aragonAppAbi, appAddress)
