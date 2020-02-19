@@ -1,8 +1,8 @@
 import test from 'ava'
 //
-import newDao from '../../src/dao/new'
-import { getInstalledApps } from '../../src/dao/kernel/apps'
-import defaultAPMName from '../../src/helpers/default-apm'
+import newDao from '../../src/dao/newDao'
+import { getInstalledApps } from '../../src/dao/kernel/getApps'
+import getDefaultApmName from '../../src/utils/defaultApm'
 import { getTransactionPath } from '../../src/dao/acl/getTransactionPath'
 
 let dao
@@ -48,7 +48,7 @@ test('getTransactionPath provides an expected path', async t => {
 
 async function createDAO() {
   return newDao(
-    defaultAPMName('membership-template'),
+    getDefaultApmName('membership-template'),
     [
       'Token name',
       'TKN',

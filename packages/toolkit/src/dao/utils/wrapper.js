@@ -1,8 +1,16 @@
 import Aragon from '@aragon/wrapper'
 //
-import { noop } from './node'
-import { resolveAddressOrEnsDomain } from './resolveAddressOrEnsDomain'
-import { useEnvironment } from './useEnvironment'
+import { resolveDaoAddressOrEnsDomain } from '../../utils/resolvers'
+import { useEnvironment } from '../../helpers/useEnvironment'
+
+/**
+ * No operation.
+ *
+ * This function does nothing.
+ *
+ * Useful to assign as a default value for callbacks.
+ */
+const noop = () => {} // eslint-disable-line @typescript-eslint/no-empty-function
 
 // Subscribe to wrapper's observables
 const subscribe = (
@@ -53,7 +61,7 @@ export async function initWrapper(
 
   accounts = accounts || (await web3.eth.getAccounts())
 
-  const daoAddress = await resolveAddressOrEnsDomain(dao, environment)
+  const daoAddress = await resolveDaoAddressOrEnsDomain(dao, environment)
 
   if (!daoAddress) {
     throw new Error('The provided DAO address is invalid')

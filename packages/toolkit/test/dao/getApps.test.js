@@ -1,8 +1,9 @@
 import test from 'ava'
 //
-import { assignId } from '../../src/dao/assign-id'
-import { getAllApps, getDaoAddress } from '../../src/dao/kernel/apps'
-import newDao from '../../src/dao/new'
+import { assignDaoId } from '../../src/dao/daoId'
+import { getAllApps } from '../../src/dao/kernel/getApps'
+import newDao from '../../src/dao/newDao'
+import { resolveDaoAddressOrEnsDomain } from '../../src/utils/resolvers'
 
 test('getAllApps returns the correct apps', async t => {
   const daoAddress = await newDao()
@@ -26,9 +27,9 @@ test('getDaoAddress returns the correct DAO address', async t => {
   const daoAddress = '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'
   const daoName = 'mydaoname' + Math.floor(Math.random() * 1000000)
 
-  await assignId(daoAddress, daoName)
+  await assignDaoId(daoAddress, daoName)
 
-  const result = await getDaoAddress(daoName)
+  const result = await resolveDaoAddressOrEnsDomain(daoName)
 
-  t.is(result, daoName)
+  t.is(result, daoAddress)
 })

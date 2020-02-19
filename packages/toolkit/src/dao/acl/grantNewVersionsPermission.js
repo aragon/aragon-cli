@@ -14,6 +14,7 @@ export default async function grantNewVersionsPermission(
     throw new Error('No grantee addresses provided')
   }
 
+  // TODO: Review how to decouple acl and apm here
   const apm = await getApm(environment)
 
   const acl = ACL(web3)

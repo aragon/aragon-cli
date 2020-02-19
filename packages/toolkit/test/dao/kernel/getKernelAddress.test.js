@@ -1,8 +1,8 @@
 import test from 'ava'
 //
-import newDao from '../../../src/dao/new'
-import { getAllApps } from '../../../src/dao/kernel/apps'
-import getAppKernel from '../../../src/dao/kernel/getAppKernel'
+import newDao from '../../../src/dao/newDao'
+import { getAllApps } from '../../../src/dao/kernel/getApps'
+import getKernelAddress from '../../../src/dao/kernel/getKernelAddress'
 
 let daoAddress
 let apps
@@ -19,5 +19,5 @@ test.before('setup', async t => {
 test('Returns the correct address', async t => {
   const appAddress = apps[0].proxyAddress
 
-  t.is(await getAppKernel(appAddress), daoAddress)
+  t.is(await getKernelAddress(appAddress), daoAddress)
 })

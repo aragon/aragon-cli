@@ -1,5 +1,5 @@
-import '../../../@types/acl/typedef'
-import { initWrapper } from '../../helpers/wrapper'
+import './@types/typedef'
+import { initWrapper } from '../utils/wrapper'
 
 // TODO: Stop using wrapper
 
@@ -17,7 +17,7 @@ import { initWrapper } from '../../helpers/wrapper'
  * @param  {string} environment Envrionment
  * @return {Promise<ReturnData>} void
  */
-export const getDaoAddressPermissionsApps = (dao, environment) => {
+export const getAppPermissions = (dao, environment) => {
   return new Promise((resolve, reject) => {
     /**
      * @type {AclPermissions}

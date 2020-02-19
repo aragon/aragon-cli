@@ -2,12 +2,12 @@ import test from 'ava'
 import sinon from 'sinon'
 import { isAddress } from 'web3-utils'
 //
-import { getContract } from '../../src/util'
-import { useEnvironment } from '../../src/helpers/useEnvironment'
+import { getContract } from '../../../src/util'
+import { useEnvironment } from '../../../src/helpers/useEnvironment'
 import {
   deployMiniMeTokenFactory,
   deployMiniMeToken,
-} from '../../src/utils/token'
+} from '../../../src/dao/utils/minimeToken'
 
 test('deployMiniMeTokenFactory: should deploy the contract', async t => {
   const progressHandler = sinon.stub()

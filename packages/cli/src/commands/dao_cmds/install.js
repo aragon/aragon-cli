@@ -5,12 +5,12 @@ import {
   NO_MANAGER,
   ZERO_ADDRESS,
   addressesEqual,
-  resolveAddressOrEnsDomain,
+  resolveDaoAddressOrEnsDomain,
   getAclAddress,
   encodeInitPayload,
   getAppProxyAddressFromReceipt,
   getAppBase,
-  defaultAPMName,
+  getDefaultApmName,
   startLocalDaemon,
   getBinaryPath,
   getDefaultRepoPath,
@@ -63,9 +63,9 @@ export const handler = async function({
   silent,
   debug,
 }) {
-  const apmRepoName = defaultAPMName(apmRepo)
+  const apmRepoName = getDefaultApmName(apmRepo)
 
-  dao = await resolveAddressOrEnsDomain(dao, environment)
+  dao = await resolveDaoAddressOrEnsDomain(dao, environment)
 
   const tasks = new TaskList(
     [

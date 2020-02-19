@@ -71,3 +71,17 @@ ${ajv.errorsText(validate.errors, { dataVar: 'arapp', separator: '\n' })}`
 export function loadManifestFile() {
   return loadJsonFileIfFound('manifest.json')
 }
+
+/**
+ * Loads the truffle config file. If it's non existent, it returns null
+ * @return {Object|undefined}
+ */
+export const getTruffleConfig = () => {
+  let truffleConfig = loadJsonFileIfFound('truffle.js')
+  if (!truffleConfig) {
+    truffleConfig = loadJsonFileIfFound('truffle-config.js')
+  }
+  if (truffleConfig) return truffleConfig
+
+  throw new Error(`Didn't find any truffle.js file`)
+}

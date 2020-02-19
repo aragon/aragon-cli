@@ -12,7 +12,7 @@ import {
   encodeInitPayload,
   newDao,
   getApmRepo,
-  defaultAPMName,
+  getDefaultApmName,
   useEnvironment,
 } from '@aragon/toolkit'
 //
@@ -44,7 +44,7 @@ const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
 const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 
-const BARE_TEMPLATE = defaultAPMName('bare-template')
+const BARE_TEMPLATE = getDefaultApmName('bare-template')
 const BARE_INSTANCE_FUNCTION = 'newInstance'
 const BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
 

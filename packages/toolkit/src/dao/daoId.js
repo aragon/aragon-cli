@@ -2,7 +2,7 @@ import ENS from 'ethereum-ens'
 import { sha3, isAddress } from 'web3-utils'
 import { abi as ififsResolvingRegistrarAbi } from '@aragon/abis/id/artifacts/IFIFSResolvingRegistrar'
 //
-import { convertDAOIdToSubdomain } from '../util'
+import { convertDAOIdToSubdomain } from '../utils/aragonId'
 import { useEnvironment } from '../helpers/useEnvironment'
 import { REGISTRAR_GAS_LIMIT, ARAGON_DOMAIN } from '../helpers/constants'
 
@@ -14,7 +14,7 @@ import { REGISTRAR_GAS_LIMIT, ARAGON_DOMAIN } from '../helpers/constants'
  * @param {string} environment Environment
  * @returns {void}
  */
-export async function assignId(daoAddress, daoId, environment) {
+export async function assignDaoId(daoAddress, daoId, environment) {
   const { web3, apmOptions, gasPrice } = useEnvironment(environment)
 
   if (!isAddress(daoAddress)) throw new Error(`Invalid address: ${daoAddress}`)
@@ -39,7 +39,7 @@ export async function assignId(daoAddress, daoId, environment) {
  * @param {string} environment Environment
  * @returns {Promise<boolean>} true if already assigned
  */
-export async function isIdAssigned(daoId, environment) {
+export async function isDaoIdAssigned(daoId, environment) {
   const { web3, apmOptions } = useEnvironment(environment)
 
   const daoUrl = convertDAOIdToSubdomain(daoId)

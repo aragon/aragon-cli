@@ -1,4 +1,4 @@
-import '../../../@types/acl/typedef'
+import '../@types/typedef'
 
 /**
  * Flattens all ACL permissions from an acl object into a single array

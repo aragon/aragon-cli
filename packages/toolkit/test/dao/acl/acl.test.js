@@ -2,7 +2,7 @@ import test from 'ava'
 //
 import ACL from '../../../src/dao/acl/acl'
 import { useEnvironment } from '../../../src/helpers/useEnvironment'
-import { resolveEnsDomain } from '../../../src/helpers/resolveAddressOrEnsDomain'
+import { resolveEnsDomain } from '../../../src/utils/resolvers'
 
 /**
  * ############## TODO

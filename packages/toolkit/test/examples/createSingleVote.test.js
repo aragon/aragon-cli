@@ -5,7 +5,7 @@ import {
   newDao,
   getInstalledApps,
   encodeActCall,
-  exec,
+  execAppMethod,
   useEnvironment,
 } from '../../dist/index'
 
@@ -67,7 +67,7 @@ test.serial(
 
     // Create a single vote with all the other votes encoded in the script.
     console.log(`Creating bundled vote with EVM script...`)
-    const tx = await exec(daoAddress, votingAddress, 'newVote', [
+    const tx = await execAppMethod(daoAddress, votingAddress, 'newVote', [
       script,
       'Execute multiple votes',
     ])

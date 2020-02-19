@@ -1,4 +1,4 @@
-import { getTransactionPath } from '../dao/acl/getTransactionPath'
+import { getTransactionPath } from './acl/getTransactionPath'
 import { useEnvironment } from '../helpers/useEnvironment'
 
 /**
@@ -12,7 +12,7 @@ import { useEnvironment } from '../helpers/useEnvironment'
  * @param {string} environment Environment
  * @returns {Promise<{ transactionPath, receipt }>} Transaction path and receipt
  */
-export default async function daoExec(
+export default async function execAppMethod(
   dao,
   app,
   method,

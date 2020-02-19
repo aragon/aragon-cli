@@ -3,13 +3,11 @@ import TaskList from 'listr'
 import { keyBy } from 'lodash'
 import Table from 'cli-table'
 import { keccak256 } from 'web3-utils'
-import '@aragon/toolkit/@types/acl/typedef' // Load JSDoc types ACL specific
-import '@aragon/toolkit/@types/typedef' // Load JSDoc generic types
 import {
   ANY_ENTITY,
   NO_MANAGER,
   ZERO_ADDRESS,
-  getDaoAddressPermissionsApps,
+  getAppPermissions,
   formatAclPermissions,
   loadArappFile,
   useEnvironment,
@@ -38,14 +36,8 @@ export const builder = function(yargs) {
  * @return {Promise<TaskList>} void
  */
 export const handler = async function({ dao, environment, silent, debug }) {
-  // Type common context
-  /**
-   * @type {AclPermissions}
-   */
   let permissions
-  /**
-   * @type {App[]}
-   */
+
   let apps
 
   const { appName } = useEnvironment(environment)
@@ -59,7 +51,7 @@ export const handler = async function({ dao, environment, silent, debug }) {
         task: async (_, task) => {
           task.output = `Fetching permissions for ${dao}...`
 
-          const daoData = await getDaoAddressPermissionsApps(dao, environment)
+          const daoData = await getAppPermissions(dao, environment)
 
           permissions = daoData.permissions
           apps = daoData.apps
@@ -77,9 +69,6 @@ export const handler = async function({ dao, environment, silent, debug }) {
     const knownApps = listApps(arapp ? [appName] : [])
     const knownRoles = getKnownRoles(arapp)
 
-    /**
-     * @type {AclPermissionFormatted[]} Force type acknowledgment
-     */
     const formatedAclPermissions = formatAclPermissions(
       permissions,
       apps,

@@ -3,7 +3,7 @@ import test from 'ava'
 import {
   flattenAclPermissions,
   formatAclPermissions,
-} from '../../../src/dao/acl/viewFormatter'
+} from '../../../src/dao/acl/utils/permissionsFormatter'
 
 test('viewFormatter > flattenAclPermissions', t => {
   const toAppAddress1 = '0xbc4d08eb94caf68faf73be40780b68b1de369d15'
