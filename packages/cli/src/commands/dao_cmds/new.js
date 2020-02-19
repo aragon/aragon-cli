@@ -2,7 +2,7 @@ import TaskList from 'listr'
 import { green } from 'chalk'
 import {
   newDao,
-  assignId,
+  assignDaoId,
   getDefaultApmName,
   startLocalDaemon,
   getBinaryPath,
@@ -98,7 +98,7 @@ export const task = async ({
         title: 'Assigning Aragon Id',
         enabled: () => aragonId,
         task: async () => {
-          await assignId(daoAddress, aragonId, environment)
+          await assignDaoId(daoAddress, aragonId, environment)
         },
       },
     ],

@@ -1,6 +1,6 @@
-import { getRecommendedGasLimit } from '../util'
+import { getRecommendedGasLimit } from './utils/getRecommendedGasLimit'
 import getApmRepo from '../apm/getApmRepo'
-import bareTemplateAbi from './utils/bare-template-abi'
+import bareTemplateAbi from './utils/bareTemplateAbi'
 import { useEnvironment } from '../helpers/useEnvironment'
 
 /**

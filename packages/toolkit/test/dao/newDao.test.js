@@ -1,8 +1,8 @@
 import test from 'ava'
 import { isAddress } from 'web3-utils'
 //
-import newDao from '../../src/dao/new'
-import defaultAPMName from '../../src/helpers/default-apm'
+import newDao from '../../src/dao/newDao'
+import getDefaultApmName from '../../src/utils/defaultApm'
 
 test('Deploys DAO with valid template', async t => {
   const daoAddress = await newDao()
@@ -12,7 +12,7 @@ test('Deploys DAO with valid template', async t => {
 
 test('Deploys DAO with template with custom newInstance method and args', async t => {
   const daoAddress = await newDao(
-    defaultAPMName('membership-template'),
+    getDefaultApmName('membership-template'),
     [
       'Token name',
       'TKN',
@@ -34,6 +34,6 @@ test('Throws with invalid newInstance', async t => {
 
 test('Throws with invalid deploy event', async t => {
   await t.throwsAsync(
-    newDao(defaultAPMName('bare-template'), [], 'newInstance', 'invalid')
+    newDao(getDefaultApmName('bare-template'), [], 'newInstance', 'invalid')
   )
 })

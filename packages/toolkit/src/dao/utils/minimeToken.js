@@ -1,6 +1,8 @@
-import { getContract, getRecommendedGasLimit } from './util'
-import { ZERO_ADDRESS } from './helpers/constants'
-import { useEnvironment } from './helpers/useEnvironment'
+import { getContract } from '../../util'
+import { getRecommendedGasLimit } from './getRecommendedGasLimit'
+import { useEnvironment } from '../../helpers/useEnvironment'
+
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 /**
  *
