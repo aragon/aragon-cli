@@ -1,6 +1,6 @@
 {
   "name": "@aragon/cli",
-  "version": "7.1.0",
+  "version": "7.1.1",
   "description": "Aragon command-line tools",
   "main": "./dist/toolkit.js",
   "bin": {
@@ -176,7 +176,9 @@
     }
   },
   "eslintConfig": {
-    "ignorePatterns": ["test/mock"],
+    "ignorePatterns": [
+      "test/mock"
+    ],
     "env": {
       "es6": true,
       "node": true
