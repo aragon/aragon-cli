@@ -1,7 +1,7 @@
 import test from 'ava'
 //
-import { getDaoAddressPermissionsApps } from '../../../src/dao/acl/view'
-import newDao from '../../../src/dao/new'
+import { getAppPermissions } from '../../../src/dao/acl/getAppPermissions'
+import newDao from '../../../src/dao/newDao'
 
 test.beforeEach(async t => {
   t.context = {
@@ -17,7 +17,7 @@ test.skip('Should get permissions and apps for a new dao using the wrapper', asy
 
   // act
 
-  const { permissions, apps } = await getDaoAddressPermissionsApps(dao)
+  const { permissions, apps } = await getAppPermissions(dao)
 
   const roles = Object.values(permissions)
 
