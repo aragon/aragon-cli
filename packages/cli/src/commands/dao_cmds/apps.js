@@ -2,7 +2,7 @@ import TaskList from 'listr'
 import Table from 'cli-table'
 import { blue, green, white } from 'chalk'
 import {
-  getDaoAddress,
+  resolveDaoAddressOrEnsDomain,
   getInstalledApps,
   getAllApps,
   addressesEqual,
@@ -103,7 +103,7 @@ export const handler = async function({
 
           apps = await getInstalledApps(dao, environment)
 
-          daoAddress = await getDaoAddress(dao, environment)
+          daoAddress = await resolveDaoAddressOrEnsDomain(dao, environment)
         },
       },
       {

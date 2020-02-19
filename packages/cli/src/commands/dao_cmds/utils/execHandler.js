@@ -1,6 +1,6 @@
 import TaskList from 'listr'
 import { blue } from 'chalk'
-import { exec } from '@aragon/toolkit'
+import { execAppMethod } from '@aragon/toolkit'
 //
 import listrOpts from '../../../helpers/listr-options'
 
@@ -45,7 +45,14 @@ export async function task({
 
           Object.assign(
             ctx,
-            await exec(dao, app, method, params, progressHandler, environment)
+            await execAppMethod(
+              dao,
+              app,
+              method,
+              params,
+              progressHandler,
+              environment
+            )
           )
         },
       },

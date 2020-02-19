@@ -1,5 +1,5 @@
 import { keccak256 } from 'web3-utils'
-import { getAclAddress, resolveAddressOrEnsDomain } from '@aragon/toolkit'
+import { getAclAddress, resolveDaoAddressOrEnsDomain } from '@aragon/toolkit'
 //
 import { handler as execHandler } from '../../utils/execHandler'
 
@@ -10,7 +10,7 @@ export default async function(
   { reporter, environment, role, silent, debug }
 ) {
   const aclAddress = await getAclAddress(
-    await resolveAddressOrEnsDomain(dao, environment),
+    await resolveDaoAddressOrEnsDomain(dao, environment),
     environment
   )
 

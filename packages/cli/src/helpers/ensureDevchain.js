@@ -1,5 +1,9 @@
 import path from 'path'
-import { startProcess, noop, isPortTaken } from '@aragon/toolkit/dist/node'
+import {
+  startProcess,
+  noop,
+  isPortTaken,
+} from '@aragon/toolkit/dist/helpers/node'
 //
 import { DEVCHAIN_START_TIMEOUT } from '../commands/devchain_cmds/utils/constants'
 
