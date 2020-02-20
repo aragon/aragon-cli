@@ -1,3 +1,5 @@
+/* eslint @typescript-eslint/no-var-requires: "off" */
+
 import path from 'path'
 import fs from 'fs-extra'
 import Ajv from 'ajv'
@@ -77,11 +79,15 @@ export function loadManifestFile() {
  * @return {Object|undefined}
  */
 export const getTruffleConfig = () => {
-  let truffleConfig = loadJsonFileIfFound('truffle.js')
-  if (!truffleConfig) {
-    truffleConfig = loadJsonFileIfFound('truffle-config.js')
+  if (fs.existsSync(`${findProjectRoot()}/truffle.js`)) {
+    const truffleConfig = require(`${findProjectRoot()}/truffle.js`)
+    return truffleConfig
   }
-  if (truffleConfig) return truffleConfig
+
+  if (fs.existsSync(`${findProjectRoot()}/truffle-config.js`)) {
+    const truffleConfig = require(`${findProjectRoot()}/truffle-config.js`)
+    return truffleConfig
+  }
 
   throw new Error(`Didn't find any truffle.js file`)
 }
