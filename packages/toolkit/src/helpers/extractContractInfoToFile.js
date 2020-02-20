@@ -1,8 +1,6 @@
-import fs from 'fs'
-import { writeJson } from 'fs-extra'
+import { writeJson, readFile } from 'fs-extra'
 //
 import { extractContractInfo } from '../utils/solidityExtractor'
-const readFile = fs.promises.readFile
 
 // TODO: Move away from Toolkit
 
