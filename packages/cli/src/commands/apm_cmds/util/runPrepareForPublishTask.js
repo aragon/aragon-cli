@@ -1,8 +1,7 @@
 import tmp from 'tmp-promise'
 import TaskList from 'listr'
 import path from 'path'
-import fs from 'fs'
-import { readJsonSync } from 'fs-extra'
+import { readJsonSync, readFile } from 'fs-extra'
 import {
   APM_INITIAL_VERSIONS,
   apmPublishVersionIntent,
@@ -22,7 +21,6 @@ import {
   checkIfNewArticatIsIdentical,
   copyCurrentApplicationArtifacts,
 } from '../../../lib/apm/generateArtifact'
-const readFile = fs.promises.readFile
 
 /**
  * ctx mandatory output
