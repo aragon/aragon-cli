@@ -8,10 +8,10 @@ export const defaultKillSignal = 'SIGINT'
 
 export const getProcessTree = subprocess => promisify(psTree)(subprocess.pid)
 
-export const killProcessTree = async (subprocess, { logger = noop }) => {
-  const { children } = await getProcessTree(subprocess)
+export const killProcessTree = async (subprocess, { logger = noop } = {}) => {
+  const children = await getProcessTree(subprocess)
 
-  if (!children) {
+  if (!children.length) {
     return
   }
 
