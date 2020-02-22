@@ -1,4 +1,6 @@
-import goplatform from 'go-platform'
+// @types/go-platform does not exist, require must be used for untyped libraries
+/* eslint-disable @typescript-eslint/no-var-requires */
+const goplatform = require('go-platform')
 
 /**
  * Enhance a promise with a predefined timeout, which, if reached, will throw the passed `error`.
@@ -8,10 +10,10 @@ export const withTimeout = async <T>(
   timeout: number,
   error: Error
 ): Promise<T> => {
-  let timeoutObject
+  let timeoutId: NodeJS.Timeout | undefined = undefined
 
   const timeoutPromise = new Promise((resolve, reject) => {
-    timeoutObject = setTimeout(() => {
+    timeoutId = setTimeout(() => {
       reject(error)
     }, timeout)
   })
@@ -22,11 +24,11 @@ export const withTimeout = async <T>(
      * If we don't use `clearTimeout` the process will stay alive
      * until the timeout has been processed: <https://nodejs.org/api/timers.html#timers_class_timeout>
      */
-    clearTimeout(timeoutObject)
+    if (typeof timeoutId !== 'undefined') clearTimeout(timeoutId)
     // return the initial promise object
     return promise
   } catch (err) {
-    clearTimeout(timeoutObject)
+    if (typeof timeoutId !== 'undefined') clearTimeout(timeoutId)
     throw err
   }
 }
