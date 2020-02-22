@@ -15,14 +15,14 @@ import { bareTemplateAbi } from '../contractAbis'
  * @param templateInstance Template instance
  */
 export default async function newDao(
-  templateName: string = 'bare-template',
+  templateName = 'bare-template',
   newInstanceArgs: string[] = [],
-  newInstanceMethod: string = 'newInstance',
-  deployEvent: string = 'DeployDao',
-  templateVersion: string = 'latest',
+  newInstanceMethod = 'newInstance',
+  deployEvent = 'DeployDao',
+  templateVersion = 'latest',
   environment: string,
   templateInstance: any // TODO: optional object options
-) {
+): Promise<string> {
   const { web3, gasPrice } = useEnvironment(environment)
 
   let template

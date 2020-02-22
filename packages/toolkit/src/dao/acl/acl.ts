@@ -1,8 +1,19 @@
 import { getRecommendedGasLimit } from '../utils/getRecommendedGasLimit'
-import Web3 from 'web3'
 import { kernelAbi, repoAbi, aclAbi } from '../../contractAbis'
+import Web3 from 'web3'
 
-export default function acl(web3: Web3) {
+export default function acl(
+  web3: Web3
+): {
+  grant: (
+    repoAddr: string,
+    granteeAddress: string
+  ) => Promise<{
+    to: string
+    data: string
+    gas: number
+  }>
+} {
   async function getGrantCreateVersionRoleTx(
     repoAddr: string,
     granteeAddress: string

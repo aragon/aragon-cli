@@ -1,9 +1,9 @@
-// Note: Must use require because '@aragon/wrapper' is an untyped library
-// without type definitions or @types/@aragon/wrapper
-const Aragon = require('@aragon/wrapper')
-//
 import { resolveDaoAddressOrEnsDomain } from '../../utils/resolvers'
 import { useEnvironment } from '../../helpers/useEnvironment'
+// Note: Must use require because '@aragon/wrapper' is an untyped library
+// without type definitions or @types/@aragon/wrapper
+/* eslint-disable @typescript-eslint/no-var-requires */
+const Aragon = require('@aragon/wrapper')
 
 /**
  * Initialize the Aragon.js wrapper and subscribe to the `apps`,
@@ -50,7 +50,7 @@ export async function initWrapper(
   // TODO: don't reinitialize if cached
   const wrapper = new Aragon(daoAddress, {
     provider: wsProvider || web3.currentProvider,
-    defaultGasPriceFn: () => gasPrice,
+    defaultGasPriceFn: (): string => gasPrice,
     apm: apmOptions,
   })
 
@@ -69,7 +69,7 @@ export async function initWrapper(
   if (onTransaction) subs.push(wrapper.transactions.subscribe(onTransaction))
   if (onPermissions) subs.push(wrapper.permissions.subscribe(onPermissions))
 
-  wrapper.cancel = () => {
+  wrapper.cancel = (): void => {
     for (const subscription of subs)
       if (subscription) subscription.unsubscribe()
   }

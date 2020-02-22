@@ -27,6 +27,6 @@ export function getNodePackageManager(): string {
 /**
  * Usage: `const path = getPackageRoot(__dirname)`
  */
-export function getPackageRoot(cwd: string) {
+export function getPackageRoot(cwd: string): string | undefined {
   return pkgDir.sync(cwd)
 }

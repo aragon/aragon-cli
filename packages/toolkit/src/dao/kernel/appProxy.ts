@@ -11,14 +11,14 @@ const web3EthAbi: AbiCoder = web3EthAbiUntyped as any
 /**
  * Returns new app proxy contract address
  *
- * @param {string} dao DAO address
- * @param {Object} receipt Web3 receipt object
- * @return {string|undefined} app proxy contract address
+ * @param dao DAO address
+ * @param receipt Web3 receipt object
+ * @return app proxy contract address
  */
 export function getAppProxyAddressFromReceipt(
   dao: string,
   receipt: TransactionReceipt
-) {
+): string | undefined {
   const newAppProxyLogName = 'NewAppProxy'
   const newAppProxyLogAbi = kernelAbi.find(
     ({ type, name }: AbiItem) => type === 'event' && name === newAppProxyLogName

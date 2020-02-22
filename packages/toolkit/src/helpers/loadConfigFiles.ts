@@ -6,7 +6,7 @@ import Ajv from 'ajv'
 //
 import { findProjectRoot } from '../util'
 import { arappSchema } from '../schemas'
-import { AragonAppJson, AragonEnvironments } from '../types'
+import { AragonAppJson, AragonEnvironments, AragonManifest } from '../types'
 
 const ajv = new Ajv({ allErrors: true })
 
@@ -73,7 +73,7 @@ ${ajv.errorsText(validate.errors, { dataVar: 'arapp', separator: '\n' })}`
   }
 }
 
-export function loadManifestFile() {
+export function loadManifestFile(): AragonManifest | undefined {
   return loadJsonFileIfFound('manifest.json')
 }
 
@@ -81,7 +81,7 @@ export function loadManifestFile() {
  * Loads the truffle config file. If it's non existent, it returns null
  * @return {Object|undefined}
  */
-export const getTruffleConfig = () => {
+export function getTruffleConfig(): any {
   if (fs.existsSync(`${findProjectRoot()}/truffle.js`)) {
     const truffleConfig = require(`${findProjectRoot()}/truffle.js`)
     return truffleConfig

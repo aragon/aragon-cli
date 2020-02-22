@@ -7,22 +7,6 @@ import { convertDAOIdToSubdomain } from './aragonId'
 const ENS = require('ethereum-ens')
 
 /**
- * Return a DAO address from its subdomain
- *
- * @param dao DAO address or ENS domain
- * @param environment Envrionment
- * @return aclAddress
- */
-export async function resolveDaoAddressOrEnsDomain(
-  dao: string,
-  environment: string
-): Promise<string> {
-  return isAddress(dao)
-    ? dao
-    : await resolveEnsDomain(convertDAOIdToSubdomain(dao), environment)
-}
-
-/**
  * Resolve an ens domain
  *
  * @param domain ENS domain
@@ -38,11 +22,27 @@ export async function resolveEnsDomain(
 
     const ens = new ENS(web3.currentProvider, apmOptions.ensRegistryAddress)
 
-    return await ens.resolver(domain).addr()
+    return ens.resolver(domain).addr()
   } catch (err) {
     if (err.message === 'ENS name not defined.') {
       return ''
     }
     throw err
   }
+}
+
+/**
+ * Return a DAO address from its subdomain
+ *
+ * @param dao DAO address or ENS domain
+ * @param environment Envrionment
+ * @return aclAddress
+ */
+export async function resolveDaoAddressOrEnsDomain(
+  dao: string,
+  environment: string
+): Promise<string> {
+  return isAddress(dao)
+    ? dao
+    : resolveEnsDomain(convertDAOIdToSubdomain(dao), environment)
 }

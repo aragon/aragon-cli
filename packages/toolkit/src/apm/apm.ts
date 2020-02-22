@@ -9,7 +9,7 @@ const aragonPM = require('@aragon/apm')
  * @param environment Envrionment
  * @returns {Object} aragonPM object
  */
-export default async function getApm(environment: string) {
+export default async function getApm(environment: string): Promise<any> {
   const { web3, apmOptions } = useEnvironment(environment)
 
   return aragonPM(web3, apmOptions)

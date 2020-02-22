@@ -9,78 +9,6 @@ type ProgressHandlerDeployContract = (
   estimatedGas?: number
 ) => void
 
-/**
- *
- * Progress callback will be invoked with the following integers:
- * (1) - Estimating gas
- * (2, gas) - Estimated gas
- * (3) - Waiting for the tx to be mined
- *
- * @param {*} senderAccount todo
- * @param {*} progressHandler todo
- * @param  {string} environment Envrionment
- * @returns {*} todo
- */
-export async function deployMiniMeTokenFactory(
-  senderAccount: string,
-  progressHandler: ProgressHandlerDeployContract | undefined,
-  environment: string
-) {
-  return deployContract(
-    senderAccount,
-    '@aragon/apps-shared-minime',
-    'MiniMeTokenFactory',
-    [],
-    progressHandler,
-    environment
-  )
-}
-
-/**
- *
- * Progress callback will be invoked with the following integers:
- * (1) - Estimating gas
- * (2, gas) - Estimated gas
- * (3) - Waiting for the tx to be mined
- *
- * @param senderAccount
- * @param tokenName
- * @param decimalUnits
- * @param symbol
- * @param transferEnabled
- * @param factoryAddress
- * @param progressHandler
- * @param environment Envrionment
- * @returns
- */
-export async function deployMiniMeToken(
-  senderAccount: string,
-  tokenName: string,
-  decimalUnits: number,
-  symbol: string,
-  transferEnabled: any,
-  factoryAddress: string,
-  progressHandler: ProgressHandlerDeployContract | undefined,
-  environment: string
-) {
-  return await deployContract(
-    senderAccount,
-    '@aragon/apps-shared-minime',
-    'MiniMeToken',
-    [
-      factoryAddress,
-      ZERO_ADDRESS,
-      0,
-      tokenName,
-      decimalUnits,
-      symbol,
-      transferEnabled,
-    ],
-    progressHandler,
-    environment
-  )
-}
-
 export async function deployContract(
   senderAccount: string,
   artifactPackage: string,
@@ -88,7 +16,7 @@ export async function deployContract(
   contractArgs: any[],
   progressHandler: ProgressHandlerDeployContract | undefined,
   environment: string
-) {
+): Promise<{ address?: string; txHash?: string }> {
   const { web3, gasPrice } = useEnvironment(environment)
 
   const artifact = getContract(artifactPackage, artifactName)
@@ -125,6 +53,78 @@ export async function deployContract(
 }
 
 /**
+ *
+ * Progress callback will be invoked with the following integers:
+ * (1) - Estimating gas
+ * (2, gas) - Estimated gas
+ * (3) - Waiting for the tx to be mined
+ *
+ * @param {*} senderAccount todo
+ * @param {*} progressHandler todo
+ * @param  {string} environment Envrionment
+ * @returns {*} todo
+ */
+export async function deployMiniMeTokenFactory(
+  senderAccount: string,
+  progressHandler: ProgressHandlerDeployContract | undefined,
+  environment: string
+): Promise<{ address?: string; txHash?: string }> {
+  return deployContract(
+    senderAccount,
+    '@aragon/apps-shared-minime',
+    'MiniMeTokenFactory',
+    [],
+    progressHandler,
+    environment
+  )
+}
+
+/**
+ *
+ * Progress callback will be invoked with the following integers:
+ * (1) - Estimating gas
+ * (2, gas) - Estimated gas
+ * (3) - Waiting for the tx to be mined
+ *
+ * @param senderAccount
+ * @param tokenName
+ * @param decimalUnits
+ * @param symbol
+ * @param transferEnabled
+ * @param factoryAddress
+ * @param progressHandler
+ * @param environment Envrionment
+ * @returns
+ */
+export async function deployMiniMeToken(
+  senderAccount: string,
+  tokenName: string,
+  decimalUnits: number,
+  symbol: string,
+  transferEnabled: any,
+  factoryAddress: string,
+  progressHandler: ProgressHandlerDeployContract | undefined,
+  environment: string
+): Promise<{ address?: string; txHash?: string }> {
+  return deployContract(
+    senderAccount,
+    '@aragon/apps-shared-minime',
+    'MiniMeToken',
+    [
+      factoryAddress,
+      ZERO_ADDRESS,
+      0,
+      tokenName,
+      decimalUnits,
+      symbol,
+      transferEnabled,
+    ],
+    progressHandler,
+    environment
+  )
+}
+
+/**
  * Change the controller of a MiniMe token
  *
  * @param tokenAddress MiniMe token address
@@ -135,7 +135,7 @@ export async function changeController(
   tokenAddress: string,
   newController: string,
   environment: string
-) {
+): Promise<any> {
   const { web3, gasPrice } = useEnvironment(environment)
 
   const tokenAbi = getContract('@aragon/apps-shared-minime', 'MiniMeToken').abi

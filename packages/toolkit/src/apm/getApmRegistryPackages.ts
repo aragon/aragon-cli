@@ -10,20 +10,19 @@ import getApm from './apm'
  */
 export default async function getApmRegistryPackages(
   apmRegistryName: string,
-  progressHandler: (progressId: number) => void = () => {},
+  progressHandler: (progressId: number) => void | undefined,
   environment: string
-) {
+): Promise<any> {
   const apm = await getApm(environment)
 
-  progressHandler(1)
+  if (progressHandler) progressHandler(1)
 
   const registry = await apm.getRepoRegistry(`vault.${apmRegistryName}`)
-
   const newRepoEvents = await registry.getPastEvents('NewRepo', {
     fromBlock: 0,
   })
 
-  progressHandler(2)
+  if (progressHandler) progressHandler(2)
 
   const packages = await Promise.all(
     newRepoEvents.map(async (event: any) => {

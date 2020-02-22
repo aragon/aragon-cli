@@ -11,13 +11,13 @@ const LATEST_VERSION = 'latest'
  * @param apmRepoName APM repo name
  * @param apmRepoVersion APM repo version
  * @param  environment Envrionment
- * @returns {Object} Repo
+ * @returns  Repo
  */
 export default async function getApmRepo(
   apmRepoName: string,
   apmRepoVersion: string = LATEST_VERSION,
   environment: string
-) {
+): Promise<any> {
   const apm = await getApm(environment)
 
   apmRepoName = getDefaultApmName(apmRepoName)

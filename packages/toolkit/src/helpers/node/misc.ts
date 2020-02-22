@@ -10,7 +10,7 @@ export const withTimeout = async <T>(
   timeout: number,
   error: Error
 ): Promise<T> => {
-  let timeoutId: NodeJS.Timeout | undefined = undefined
+  let timeoutId: NodeJS.Timeout | undefined
 
   const timeoutPromise = new Promise((resolve, reject) => {
     timeoutId = setTimeout(() => {

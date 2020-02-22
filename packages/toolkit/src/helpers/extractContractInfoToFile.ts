@@ -7,7 +7,7 @@ import { extractContractInfo } from '../utils/solidityExtractor'
 export default async function extractContractInfoToFile(
   contractPath: string,
   outputPath: string
-) {
+): Promise<void> {
   const sourceCode = await readFile(contractPath, 'utf8')
   const contractInfo = await extractContractInfo(sourceCode)
 

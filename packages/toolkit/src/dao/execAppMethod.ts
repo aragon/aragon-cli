@@ -19,7 +19,7 @@ export default async function execAppMethod(
   app: string,
   method: string,
   params: any[],
-  progressHandler: (progressId: number) => void = () => {},
+  progressHandler: (progressId: number) => void | undefined,
   environment: string
 ): Promise<{
   transactionPath: string
@@ -27,7 +27,7 @@ export default async function execAppMethod(
 }> {
   const { web3 } = useEnvironment(environment)
 
-  progressHandler(1)
+  if (progressHandler) progressHandler(1)
 
   const transactionPath = (
     await getTransactionPath(dao, app, method, params, environment)
@@ -36,7 +36,7 @@ export default async function execAppMethod(
   if (!transactionPath)
     throw new Error('Cannot find transaction path for executing action')
 
-  progressHandler(2)
+  if (progressHandler) progressHandler(2)
 
   return {
     transactionPath,

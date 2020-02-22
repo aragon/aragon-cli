@@ -17,11 +17,11 @@ export function getAppPermissions(
   daoAddress: string
 }> {
   return new Promise((resolve, reject) => {
-    let permissions: AclPermissions[] | undefined = undefined
-    let apps: AragonApp[] | undefined = undefined
-    let daoAddress: string | undefined = undefined
+    let permissions: AclPermissions[] | undefined
+    let apps: AragonApp[] | undefined
+    let daoAddress: string | undefined
 
-    const resolveIfReady = () => {
+    const resolveIfReady = (): void => {
       if (permissions && apps && daoAddress) {
         resolve({ permissions, apps, daoAddress })
       }

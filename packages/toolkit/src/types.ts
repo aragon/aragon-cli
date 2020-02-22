@@ -1,5 +1,7 @@
 import { AbiItem } from 'web3-utils'
 
+// The aragon manifest requires the use of camelcase for some names
+/* eslint-disable camelcase */
 export interface AragonManifest {
   name: string // 'Counter'
   author: string // 'Aragon Association'
@@ -17,6 +19,7 @@ export interface AragonManifest {
   script: string // '/script.js'
   start_url: string // '/index.html'
 }
+/* eslint-enable camelcase */
 
 export interface AragonArtifact extends AragonAppJson {
   roles: RoleWithBytes[]
