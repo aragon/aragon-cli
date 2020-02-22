@@ -3,7 +3,7 @@ import {
   startProcess,
   getProcessTree,
   killProcessTree,
-} from '../../../src/helpers/node/process' 
+} from '../../../src/helpers/node/process'
 
 // test config
 const runProcessPath = './test/node/runProcess'
