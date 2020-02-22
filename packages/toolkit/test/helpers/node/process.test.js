@@ -3,14 +3,12 @@ import {
   startProcess,
   getProcessTree,
   killProcessTree,
-} from '../../src/node/process'
+} from '../../../src/helpers/node/process' 
 
 // test config
 const runProcessPath = './test/node/runProcess'
 const readyOutput = 'process initialized'
-const processTimeout = 10000 // wait 10 second for spawned process to print readyOutput
-//
-import { startProcess } from '../../../src/helpers/node/process'
+const processTimeout = 10000
 
 test('startProcess should enable detach', async t => {
   const { detach } = await startProcess({
