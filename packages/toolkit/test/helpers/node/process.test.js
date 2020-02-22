@@ -1,9 +1,5 @@
 import test from 'ava'
-import {
-  startProcess,
-  getProcessTree,
-  killProcessTree,
-} from '../../../src/helpers/node/process'
+import { startProcess, getProcessTree } from '../../../src/helpers/node/process'
 
 // test config
 const runProcessPath = './test/node/runProcess'
@@ -114,39 +110,4 @@ test('getProcessTree should return process tree with correct PID hierarchy', asy
 
   // child process should have also 3 childs
   t.true(tree.filter(node => node.PPID === childPid).length === 3)
-})
-
-test('killProcessTree should kill all the childs of a process', async t => {
-  const processSetup = {
-    cmd: 'node',
-    args: [runProcessPath, '--childs=3'], // will spawn another 3 processes
-    timeout: processTimeout,
-    readyOutput,
-  }
-
-  // spawn a subprocess which will spawn another 3 processes
-  const subprocess = await startProcess(processSetup)
-
-  // extract the child PID from 'runProcess.js' script output
-  const childPid = String(subprocess.output.match(/ pid: (\d+) /)[1])
-
-  // Get the process tree
-  let tree = await getProcessTree({ pid: process.pid })
-  t.true(tree.filter(node => node.PID === childPid).length === 1) // check that subprocess is created
-  t.true(tree.filter(node => node.PPID === childPid).length === 3) // subprocess has 3 childs
-
-  // kill the subprocess
-  await killProcessTree({ pid: childPid })
-
-  // Get again the process tree
-  tree = await getProcessTree({ pid: process.pid })
-
-  // TODO: check if the subprocess should also be killed?
-  // t.true(tree.filter(node => node.PID === childPid).length === 0)
-
-  // the childs of the subprocess should be killed
-  t.true(tree.filter(node => node.PPID === childPid).length === 0)
-
-  // kill again should do nothing
-  await killProcessTree({ pid: childPid })
 })
