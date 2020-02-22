@@ -2,8 +2,8 @@ import TaskList from 'listr'
 import { bold, blue } from 'chalk'
 import {
   getBasesNamespace,
-  resolveAddressOrEnsDomain,
-  defaultAPMName,
+  resolveDaoAddressOrEnsDomain,
+  getDefaultApmName,
   startLocalDaemon,
   getBinaryPath,
   getDefaultRepoPath,
@@ -38,9 +38,9 @@ export const handler = async function({
   silent,
   debug,
 }) {
-  const apmRepoName = defaultAPMName(apmRepo)
+  const apmRepoName = getDefaultApmName(apmRepo)
 
-  dao = await resolveAddressOrEnsDomain(dao, environment)
+  dao = await resolveDaoAddressOrEnsDomain(dao, environment)
 
   const tasks = new TaskList(
     [

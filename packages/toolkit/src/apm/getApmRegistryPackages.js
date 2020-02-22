@@ -1,4 +1,4 @@
-import useApm from './useApm'
+import getApm from './apm'
 
 /**
  * Return packages for a given APM registry.
@@ -13,7 +13,7 @@ export default async function getApmRegistryPackages(
   progressHandler = () => {},
   environment
 ) {
-  const apm = await useApm(environment)
+  const apm = await getApm(environment)
 
   progressHandler(1)
 

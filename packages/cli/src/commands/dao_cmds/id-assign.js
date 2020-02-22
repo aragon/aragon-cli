@@ -1,6 +1,6 @@
 import TaskList from 'listr'
 import { green } from 'chalk'
-import { isIdAssigned, assignId } from '@aragon/toolkit'
+import { isDaoIdAssigned, assignDaoId } from '@aragon/toolkit'
 //
 import listrOpts from '../../helpers/listr-options'
 
@@ -46,14 +46,14 @@ export const handler = async function({
       {
         title: 'Validating Id',
         task: async () => {
-          if (await isIdAssigned(aragonId, environment)) {
+          if (await isDaoIdAssigned(aragonId, environment)) {
             throw Error(`${aragonId} is already assigned.`)
           }
         },
       },
       {
         title: 'Assigning Id',
-        task: async () => assignId(dao, aragonId, environment),
+        task: async () => assignDaoId(dao, aragonId, environment),
       },
     ],
     listrOpts(silent, debug)

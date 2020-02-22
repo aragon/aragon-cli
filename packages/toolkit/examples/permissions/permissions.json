@@ -1,0 +1,18 @@
+{
+  "daoAddress": "0x12b013C23F1918EaC4b5342117f0B202E048566C",
+  "aclAddress": "0xe60942b6809cbe8dc206ca91fd87c2e853c4cec5",
+  "votingAddress": "0x709e31ba29fb84000f20045590ec664bfc3cdc1d",
+  "environment": "rinkeby",
+  "create": [
+  ],
+  "grant": [
+    ["0xc893a50f947bdacb4ed66c895cdf545dedb93a9f", "0xa22e672d489a96c7f5f50ade609ea8ae54e281a5", "ADD_ENTRY_ROLE"],
+    ["0xc893a50f947bdacb4ed66c895cdf545dedb93a9f", "0xa22e672d489a96c7f5f50ade609ea8ae54e281a5", "REMOVE_ENTRY_ROLE"],
+    ["0xc893a50f947bdacb4ed66c895cdf545dedb93a9f", "0xa22e672d489a96c7f5f50ade609ea8ae54e281a5", "UPDATE_ENTRY_ROLE"]
+  ],
+  "revoke": [
+    ["0xDc2aDfA800a1ffA16078Ef8C1F251D50DcDa1065", "0xa22e672d489a96c7f5f50ade609ea8ae54e281a5", "ADD_ENTRY_ROLE"],
+    ["0xDc2aDfA800a1ffA16078Ef8C1F251D50DcDa1065", "0xa22e672d489a96c7f5f50ade609ea8ae54e281a5", "REMOVE_ENTRY_ROLE"],
+    ["0xDc2aDfA800a1ffA16078Ef8C1F251D50DcDa1065", "0xa22e672d489a96c7f5f50ade609ea8ae54e281a5", "UPDATE_ENTRY_ROLE"]
+  ]
+}

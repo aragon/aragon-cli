@@ -2,7 +2,7 @@ import { blue } from 'chalk'
 import { toWei } from 'web3-utils'
 import {
   EXECUTE_FUNCTION_NAME,
-  getAppKernel,
+  getKernelAddress,
   encodeActCall,
 } from '@aragon/toolkit'
 //
@@ -54,7 +54,7 @@ export const handler = async function({
   callData,
   ethValue,
 }) {
-  const dao = await getAppKernel(agentAddress, environment)
+  const dao = await getKernelAddress(agentAddress, environment)
 
   const encodedCallData = signature
     ? encodeActCall(signature, callArgs.map(parseArgumentStringIfPossible))

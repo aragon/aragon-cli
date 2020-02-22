@@ -7,7 +7,7 @@ import {
   APM_INITIAL_VERSIONS,
   generateApplicationArtifact,
   loadArappFile,
-  useApm,
+  getApm,
   useEnvironment,
 } from '@aragon/toolkit'
 //
@@ -63,7 +63,7 @@ export default async function runPrepareForPublishTask({
 }) {
   const { web3, apmOptions, appName } = useEnvironment(environment)
 
-  const apm = await useApm(environment)
+  const apm = await getApm(environment)
 
   const arapp = loadArappFile()
 
