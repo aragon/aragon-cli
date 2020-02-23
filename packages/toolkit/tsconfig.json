@@ -6,6 +6,7 @@
     // Don't emit; allow Babel to transform files.
     "noEmit": true,
     "lib": ["es6"],
+    "allowSyntheticDefaultImports": true,
     "module": "commonjs",
     "esModuleInterop": true,
     "resolveJsonModule": true,
