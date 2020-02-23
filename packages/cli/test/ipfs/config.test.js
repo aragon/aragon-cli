@@ -1,11 +1,7 @@
 import test from 'ava'
 import fs from 'fs-extra'
 //
-import {
-  getPorts,
-  getPeerIDConfig,
-  getRepoVersion,
-} from '../../../src/helpers/ipfs'
+import { getPorts, getPeerIDConfig, getRepoVersion } from '../../src/lib/ipfs'
 
 const IPFS_PATH = './.tmp/ipfs-tests/config'
 const IPFS_VERSION = 3

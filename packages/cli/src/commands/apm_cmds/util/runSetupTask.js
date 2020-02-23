@@ -3,13 +3,16 @@ import { isAddress } from 'web3-utils'
 import {
   ZERO_ADDRESS,
   APM_INITIAL_VERSIONS,
+  getApmRepo,
+  useEnvironment,
+} from '@aragon/toolkit'
+//
+import {
   isLocalDaemonRunning,
   startLocalDaemon,
   getBinaryPath,
   getDefaultRepoPath,
-  getApmRepo,
-  useEnvironment,
-} from '@aragon/toolkit'
+} from '../../../lib/ipfs'
 
 // helpers
 import { compileContracts } from '../../../helpers/truffle-runner'

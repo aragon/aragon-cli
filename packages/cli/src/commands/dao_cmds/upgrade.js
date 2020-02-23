@@ -4,13 +4,15 @@ import {
   getBasesNamespace,
   resolveDaoAddressOrEnsDomain,
   getDefaultApmName,
+  getApmRepo,
+} from '@aragon/toolkit'
+//
+import {
   startLocalDaemon,
   getBinaryPath,
   getDefaultRepoPath,
   isLocalDaemonRunning,
-  getApmRepo,
-} from '@aragon/toolkit'
-//
+} from '../../lib/ipfs'
 import listrOpts from '../../helpers/listr-options'
 import daoArg from './utils/daoArg'
 import { task as execTask } from './utils/execHandler'

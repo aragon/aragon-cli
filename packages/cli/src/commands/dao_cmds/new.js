@@ -1,15 +1,13 @@
 import TaskList from 'listr'
 import { green } from 'chalk'
+import { newDao, assignDaoId, getDefaultApmName } from '@aragon/toolkit'
+//
 import {
-  newDao,
-  assignDaoId,
-  getDefaultApmName,
   startLocalDaemon,
   getBinaryPath,
   getDefaultRepoPath,
   isLocalDaemonRunning,
-} from '@aragon/toolkit'
-//
+} from '../../lib/ipfs'
 import listrOpts from '../../helpers/listr-options'
 import { parseArgumentStringIfPossible } from '../../util'
 

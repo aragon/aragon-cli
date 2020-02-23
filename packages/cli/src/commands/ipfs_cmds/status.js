@@ -13,10 +13,10 @@ import {
   isLocalDaemonRunning,
   getRepoSize,
   isCorsConfigured,
-  getGlobalBinary,
-  getLocalBinary,
 } from '../../lib/ipfs'
+
 import { getGlobalBinary, getLocalBinary } from '../../lib/node'
+
 import listrOpts from '../../helpers/listr-options'
 
 export const command = 'status'

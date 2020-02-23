@@ -1,5 +1,5 @@
 import test from 'ava'
-import { startProcess, getProcessTree } from '../../../src/helpers/node/process'
+import { startProcess, getProcessTree } from '../../src/lib/node/process'
 
 // test config
 const runProcessPath = './test/node/runProcess'

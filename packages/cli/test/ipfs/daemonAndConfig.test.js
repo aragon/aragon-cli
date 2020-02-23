@@ -11,11 +11,8 @@ import {
   pinArtifacts,
   configureCors,
   installGoIpfs,
-} from '../../../src/helpers/ipfs'
-import {
-  initPackage,
-  killProcessOnPort,
-} from '../../../toolkit/src/helpers/node'
+} from '../../src/lib/ipfs'
+import { initPackage, killProcessOnPort } from '../../src/lib/node'
 
 const apiPort = 8010
 const gatewayPort = 8011

@@ -1,7 +1,9 @@
 import path from 'path'
 import { blue, red, green, bold } from 'chalk'
 import { hexToAscii } from 'web3-utils'
-import { ZERO_ADDRESS, getHttpClient, useEnvironment } from '@aragon/toolkit'
+import { ZERO_ADDRESS, useEnvironment } from '@aragon/toolkit'
+//
+import { getHttpClient } from '../../lib/ipfs'
 
 // Tasks splitted into other files
 import runSetupTask from './util/runSetupTask'

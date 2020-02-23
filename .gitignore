@@ -4,6 +4,7 @@
 # Dependencies
 node_modules
 ganache
+
 # this is created by windows when installing go-ipfs
 ipfs.cmd
 
@@ -21,6 +22,7 @@ coverage
 
 # Tools
 lerna-debug.log
+typechain
 
 # Extra
 packages/cli/src/knownRoles.json
