@@ -10,13 +10,7 @@ import { debugLogger } from './misc'
  * @param packageRoot "." | "some/other/dir"
  * @param options
  */
-export function getLocalBinary(
-  binaryName: string,
-  packageRoot: string,
-  options?: {
-    logger: (log: string) => void
-  }
-): string | null {
+export function getLocalBinary(binaryName, packageRoot, options = {}) {
   const { logger = debugLogger } = options || {}
 
   // check local node_modules
@@ -51,12 +45,7 @@ export function getLocalBinary(
  * @param binaryName "npm"
  * @param options
  */
-export function getGlobalBinary(
-  binaryName: string,
-  options?: {
-    logger: (log: string) => void
-  }
-): string | null {
+export function getGlobalBinary(binaryName, options = {}) {
   const { logger = debugLogger } = options || {}
 
   logger(`Searching binary ${binaryName} in the global PATH variable.`)
@@ -75,13 +64,7 @@ export function getGlobalBinary(
  * @param options
  * @returns the path to the binary, `null` if unsuccessful
  */
-export function getBinary(
-  binaryName: string,
-  packageRoot: string,
-  options?: {
-    logger: (log: string) => void
-  }
-): string | null {
+export function getBinary(binaryName, packageRoot, options = {}) {
   const { logger = debugLogger } = options || {}
 
   let binaryPath = getLocalBinary(binaryName, packageRoot, options)

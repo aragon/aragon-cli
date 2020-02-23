@@ -12,7 +12,10 @@ import {
   configureCors,
   installGoIpfs,
 } from '../../../src/helpers/ipfs'
-import { initPackage, killProcessOnPort } from '../../../src/helpers/node'
+import {
+  initPackage,
+  killProcessOnPort,
+} from '../../../toolkit/src/helpers/node'
 
 const apiPort = 8010
 const gatewayPort = 8011

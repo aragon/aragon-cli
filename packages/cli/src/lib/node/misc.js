@@ -1,16 +1,10 @@
-// @types/go-platform does not exist, require must be used for untyped libraries
-/* eslint-disable @typescript-eslint/no-var-requires */
-const goplatform = require('go-platform')
+import goplatform from 'go-platform'
 
 /**
  * Enhance a promise with a predefined timeout, which, if reached, will throw the passed `error`.
  */
-export const withTimeout = async <T>(
-  promise: Promise<T>,
-  timeout: number,
-  error: Error
-): Promise<T> => {
-  let timeoutId: NodeJS.Timeout | undefined
+export const withTimeout = async (promise, timeout, error) => {
+  let timeoutId
 
   const timeoutPromise = new Promise((resolve, reject) => {
     timeoutId = setTimeout(() => {
@@ -40,7 +34,7 @@ export const withTimeout = async <T>(
  *
  * Useful to assign as a default value for callbacks.
  */
-export const noop = (): void => {} // eslint-disable-line @typescript-eslint/no-empty-function
+export const noop = () => {} // eslint-disable-line @typescript-eslint/no-empty-function
 
 /**
  * A logger function that uses `console.log` if the `DEBUG` environment variable is truthy,
@@ -48,7 +42,7 @@ export const noop = (): void => {} // eslint-disable-line @typescript-eslint/no-
  */
 export const debugLogger = process.env.DEBUG ? console.log : noop
 
-export const getPlatform = (): NodeJS.Platform => process.platform
-export const getArch = (): string => process.arch
-export const getPlatformForGO = (): string => goplatform.GOOS
-export const getArchForGO = (): string => goplatform.GOARCH
+export const getPlatform = () => process.platform
+export const getArch = () => process.arch
+export const getPlatformForGO = () => goplatform.GOOS
+export const getArchForGO = () => goplatform.GOARCH

@@ -3,11 +3,11 @@ import execa from 'execa'
 import { ensureDir } from 'fs-extra'
 import pkgDir from 'pkg-dir'
 
-export function isPackage(dir: string): string {
+export function isPackage(dir) {
   return path.join(dir, 'package.json')
 }
 
-export async function initPackage(packagePath: string): Promise<string> {
+export async function initPackage(packagePath) {
   await ensureDir(packagePath)
   const { stdout } = await execa('npm', ['init', '--yes'], {
     cwd: packagePath,
@@ -15,18 +15,18 @@ export async function initPackage(packagePath: string): Promise<string> {
   return stdout
 }
 
-export async function getGlobalPackagesLocation(): Promise<string> {
+export async function getGlobalPackagesLocation() {
   const { stdout } = await execa('npm', ['prefix', '--global'])
   return stdout
 }
 
-export function getNodePackageManager(): string {
+export function getNodePackageManager() {
   return 'npm'
 }
 
 /**
  * Usage: `const path = getPackageRoot(__dirname)`
  */
-export function getPackageRoot(cwd: string): string | undefined {
+export function getPackageRoot(cwd) {
   return pkgDir.sync(cwd)
 }

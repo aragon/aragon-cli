@@ -1,17 +1,17 @@
 import TaskList from 'listr'
 import { gray } from 'chalk'
+import { useEnvironment } from '@aragon/toolkit'
+//
 import {
   getMerkleDAG,
   stringifyMerkleDAG,
   getHttpClient,
   startLocalDaemon,
+  isLocalDaemonRunning,
+  isValidCID,
   getBinaryPath,
   getDefaultRepoPath,
-  isLocalDaemonRunning,
-  useEnvironment,
-  isValidCID,
-} from '@aragon/toolkit'
-//
+} from '../../lib/ipfs'
 import listrOpts from '../../helpers/listr-options'
 import { askForInput } from '../../util'
 
