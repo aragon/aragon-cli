@@ -34,7 +34,7 @@ export const withTimeout = async (promise, timeout, error) => {
  *
  * Useful to assign as a default value for callbacks.
  */
-export const noop = () => {} // eslint-disable-line @typescript-eslint/no-empty-function
+export const noop = () => {}
 
 /**
  * A logger function that uses `console.log` if the `DEBUG` environment variable is truthy,
