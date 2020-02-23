@@ -8,9 +8,27 @@ import { getTransactionPath } from '../../src/dao/acl/getTransactionPath'
 let dao
 let apps
 
+/* Utils */
+
+async function createDAO() {
+  return newDao(
+    getDefaultApmName('membership-template'),
+    [
+      'Token name',
+      'TKN',
+      'daoname' + Math.floor(Math.random() * 1000000),
+      ['0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'],
+      ['500000000000000000', '50000000000000000', '604800'],
+      '1296000',
+      true,
+    ],
+    'newTokenAndInstance'
+  )
+}
+
 /* Setup */
 
-test.before('setup', async t => {
+test.before('setup', async () => {
   dao = await createDAO()
 
   apps = await getInstalledApps(dao)
@@ -43,21 +61,3 @@ test('getTransactionPath provides an expected path', async t => {
     )
   )
 })
-
-/* Utils */
-
-async function createDAO() {
-  return newDao(
-    getDefaultApmName('membership-template'),
-    [
-      'Token name',
-      'TKN',
-      'daoname' + Math.floor(Math.random() * 1000000),
-      ['0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'],
-      ['500000000000000000', '50000000000000000', '604800'],
-      '1296000',
-      true,
-    ],
-    'newTokenAndInstance'
-  )
-}

@@ -3,7 +3,7 @@ import { useEnvironment } from '../../helpers/useEnvironment'
 // Note: Must use require because '@aragon/wrapper' is an untyped library
 // without type definitions or @types/@aragon/wrapper
 /* eslint-disable @typescript-eslint/no-var-requires */
-const Aragon = require('@aragon/wrapper')
+const AragonWrapper = require('@aragon/wrapper').default
 
 /**
  * Initialize the Aragon.js wrapper and subscribe to the `apps`,
@@ -48,7 +48,7 @@ export async function initWrapper(
   if (onDaoAddress) onDaoAddress(daoAddress)
 
   // TODO: don't reinitialize if cached
-  const wrapper = new Aragon(daoAddress, {
+  const wrapper = new AragonWrapper(daoAddress, {
     provider: wsProvider || web3.currentProvider,
     defaultGasPriceFn: (): string => gasPrice,
     apm: apmOptions,

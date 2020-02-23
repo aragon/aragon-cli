@@ -9,7 +9,7 @@ let apps
 
 /* Setup */
 
-test.before('setup', async t => {
+test.before('setup', async () => {
   daoAddress = await newDao()
 
   apps = await getAllApps(daoAddress)

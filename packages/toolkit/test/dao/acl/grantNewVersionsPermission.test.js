@@ -38,7 +38,7 @@ const getRoleId = async repoAddr => {
 
 /* Setup and cleanup */
 
-test.before('setup and make a successful call', async t => {
+test.before('setup and make a successful call', async () => {
   const env = useEnvironment()
   web3 = env.web3
 

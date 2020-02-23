@@ -67,9 +67,8 @@ export interface AragonEnvironments {
 
 export interface AragonEnvironment {
   network: string
-  appName: string
-  registry: string
-  // ### Todo: Are wsRPC and appId necessary
+  registry?: string
+  appName?: string
   gasPrice?: string
   wsRPC?: string
   appId?: string
