@@ -27,9 +27,9 @@
 			"integrity": "sha512-HqvnjU4sF2swvOK3616cvuSs2sofegWd7qqT5iF0YTf9v0w/cAWoj7ZZK3TMVdsQv07HNvQjqucTGa3/qMzblA=="
 		},
 		"@aragon/aragen-snapshot": {
-			"version": "0.0.1",
-			"resolved": "https://registry.npmjs.org/@aragon/aragen-snapshot/-/aragen-snapshot-0.0.1.tgz",
-			"integrity": "sha512-PCq1N6lBCBB2AOzd7GgRaJ4YARUxE/a5UsgH3vYzdZBvbu84lZWwJalJRSLp1uzWuK7wbL3qaHoHhFfyQywNjw=="
+			"version": "0.0.2",
+			"resolved": "https://registry.npmjs.org/@aragon/aragen-snapshot/-/aragen-snapshot-0.0.2.tgz",
+			"integrity": "sha512-PXfZp69B7fz3C3wsJKrYAY5PMYwgwD1HmCk/oj12TTokszrxipfnnlobfM7xse2jnrKxq/XPnaRuB2k2MgA3Aw=="
 		},
 		"@aragon/contract-helpers-test": {
 			"version": "0.0.2",
@@ -3601,8 +3601,7 @@
 		"bignumber.js": {
 			"version": "9.0.0",
 			"resolved": "https://registry.npmjs.org/bignumber.js/-/bignumber.js-9.0.0.tgz",
-			"integrity": "sha512-t/OYhhJ2SD+YGBQcjY8GzzDHEk9f3nerxjtfa6tlMXfe7frs/WozhvCNoGvpM0P3bNf3Gq5ZRMlGr5f3r4/N8A==",
-			"dev": true
+			"integrity": "sha512-t/OYhhJ2SD+YGBQcjY8GzzDHEk9f3nerxjtfa6tlMXfe7frs/WozhvCNoGvpM0P3bNf3Gq5ZRMlGr5f3r4/N8A=="
 		},
 		"binary-extensions": {
 			"version": "1.13.1",
@@ -3716,13 +3715,6 @@
 				"ieee754": "^1.1.8",
 				"iso-url": "~0.4.4",
 				"json-text-sequence": "~0.1.0"
-			},
-			"dependencies": {
-				"bignumber.js": {
-					"version": "9.0.0",
-					"resolved": "https://registry.npmjs.org/bignumber.js/-/bignumber.js-9.0.0.tgz",
-					"integrity": "sha512-t/OYhhJ2SD+YGBQcjY8GzzDHEk9f3nerxjtfa6tlMXfe7frs/WozhvCNoGvpM0P3bNf3Gq5ZRMlGr5f3r4/N8A=="
-				}
 			}
 		},
 		"boxen": {
@@ -4202,9 +4194,9 @@
 			}
 		},
 		"caniuse-lite": {
-			"version": "1.0.30001028",
-			"resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001028.tgz",
-			"integrity": "sha512-Vnrq+XMSHpT7E+LWoIYhs3Sne8h9lx9YJV3acH3THNCwU/9zV93/ta4xVfzTtnqd3rvnuVpVjE3DFqf56tr3aQ=="
+			"version": "1.0.30001030",
+			"resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001030.tgz",
+			"integrity": "sha512-QGK0W4Ft/Ac+zTjEiRJfwDNATvS3fodDczBXrH42784kcfqcDKpEPfN08N0HQjrAp8He/Jw8QiSS9QRn7XAbUw=="
 		},
 		"caseless": {
 			"version": "0.12.0",
@@ -5407,9 +5399,9 @@
 			"integrity": "sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0="
 		},
 		"electron-to-chromium": {
-			"version": "1.3.359",
-			"resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.359.tgz",
-			"integrity": "sha512-ewZp4BQftbLclBwmFYoTrlyiLMXQTiYeqh1hn24sWao9bGhUHzQtpytymN8JsenWlQ9SbBWynTPvfghb0Ipn1Q=="
+			"version": "1.3.360",
+			"resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.360.tgz",
+			"integrity": "sha512-RE1pv2sjQiDRRN1nI0fJ0eQHZ9le4oobu16OArnwEUV5ycAU5SNjFyvzjZ1gPUAqBa2Ud1XagtW8j3ZXfHuQHA=="
 		},
 		"elliptic": {
 			"version": "6.5.2",
@@ -6311,41 +6303,6 @@
 				"ethereumjs-util": "^5.1.1"
 			},
 			"dependencies": {
-				"ethereumjs-abi": {
-					"version": "git+https://github.com/ethereumjs/ethereumjs-abi.git#1cfbb13862f90f0b391d8a699544d5fe4dfb8c7b",
-					"from": "git+https://github.com/ethereumjs/ethereumjs-abi.git",
-					"requires": {
-						"bn.js": "^4.11.8",
-						"ethereumjs-util": "^6.0.0"
-					},
-					"dependencies": {
-						"ethereumjs-util": {
-							"version": "6.2.0",
-							"resolved": "https://registry.npmjs.org/ethereumjs-util/-/ethereumjs-util-6.2.0.tgz",
-							"integrity": "sha512-vb0XN9J2QGdZGIEKG2vXM+kUdEivUfU6Wmi5y0cg+LRhDYKnXIZ/Lz7XjFbHRR9VIKq2lVGLzGBkA++y2nOdOQ==",
-							"requires": {
-								"@types/bn.js": "^4.11.3",
-								"bn.js": "^4.11.0",
-								"create-hash": "^1.1.2",
-								"ethjs-util": "0.1.6",
-								"keccak": "^2.0.0",
-								"rlp": "^2.2.3",
-								"secp256k1": "^3.0.1"
-							}
-						},
-						"keccak": {
-							"version": "2.1.0",
-							"resolved": "https://registry.npmjs.org/keccak/-/keccak-2.1.0.tgz",
-							"integrity": "sha512-m1wbJRTo+gWbctZWay9i26v5fFnYkOn7D5PCxJ3fZUGUEb49dE1Pm4BREUYCt/aoO6di7jeoGmhvqN9Nzylm3Q==",
-							"requires": {
-								"bindings": "^1.5.0",
-								"inherits": "^2.0.4",
-								"nan": "^2.14.0",
-								"safe-buffer": "^5.2.0"
-							}
-						}
-					}
-				},
 				"ethereumjs-util": {
 					"version": "5.2.0",
 					"resolved": "https://registry.npmjs.org/ethereumjs-util/-/ethereumjs-util-5.2.0.tgz",
@@ -6463,7 +6420,6 @@
 		"ethereumjs-abi": {
 			"version": "0.6.8",
 			"resolved": "git+https://github.com/ethereumjs/ethereumjs-abi.git#1cfbb13862f90f0b391d8a699544d5fe4dfb8c7b",
-			"dev": true,
 			"requires": {
 				"bn.js": "^4.11.8",
 				"ethereumjs-util": "^6.0.0"
@@ -8963,9 +8919,9 @@
 			"integrity": "sha1-+ni/XS5pE8kRzp+BnuUUa7bYROk="
 		},
 		"ipaddr.js": {
-			"version": "1.9.0",
-			"resolved": "https://registry.npmjs.org/ipaddr.js/-/ipaddr.js-1.9.0.tgz",
-			"integrity": "sha512-M4Sjn6N/+O6/IXSJseKqHoFc+5FdGJ22sXqnjTpdZweHK64MzEPAyQZyEU3R/KRv2GLoa7nNtg/C2Ev6m7z+eA=="
+			"version": "1.9.1",
+			"resolved": "https://registry.npmjs.org/ipaddr.js/-/ipaddr.js-1.9.1.tgz",
+			"integrity": "sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g=="
 		},
 		"ipfs-api": {
 			"version": "26.1.2",
@@ -12424,12 +12380,12 @@
 			}
 		},
 		"proxy-addr": {
-			"version": "2.0.5",
-			"resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.5.tgz",
-			"integrity": "sha512-t/7RxHXPH6cJtP0pRG6smSr9QJidhB+3kXu0KgXnbGYMgzEnUxRQ4/LDdfOwZEMyIh3/xHb8PX3t+lfL9z+YVQ==",
+			"version": "2.0.6",
+			"resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.6.tgz",
+			"integrity": "sha512-dh/frvCBVmSsDYzw6n926jv974gddhkFPfiN8hPOi30Wax25QZyZEGveluCgliBnqmuM+UJmBErbAUFIoDbjOw==",
 			"requires": {
 				"forwarded": "~0.1.2",
-				"ipaddr.js": "1.9.0"
+				"ipaddr.js": "1.9.1"
 			}
 		},
 		"prr": {
@@ -14519,6 +14475,10 @@
 				"web3-provider-engine": "^8.4.0"
 			},
 			"dependencies": {
+				"bignumber.js": {
+					"version": "git+https://github.com/debris/bignumber.js.git#94d7146671b9719e00a09c29b01a691bc85048c2",
+					"from": "git+https://github.com/debris/bignumber.js.git#94d7146671b9719e00a09c29b01a691bc85048c2"
+				},
 				"utf8": {
 					"version": "2.1.2",
 					"resolved": "https://registry.npmjs.org/utf8/-/utf8-2.1.2.tgz",
@@ -14534,12 +14494,6 @@
 						"utf8": "^2.1.1",
 						"xhr2": "*",
 						"xmlhttprequest": "*"
-					},
-					"dependencies": {
-						"bignumber.js": {
-							"version": "git+https://github.com/debris/bignumber.js.git#94d7146671b9719e00a09c29b01a691bc85048c2",
-							"from": "git+https://github.com/debris/bignumber.js.git#94d7146671b9719e00a09c29b01a691bc85048c2"
-						}
 					}
 				}
 			}
