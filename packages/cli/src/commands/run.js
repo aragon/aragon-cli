@@ -23,6 +23,7 @@ import {
   isHttpServerOpen,
   parseArgumentStringIfPossible,
 } from '../util'
+import runPrepareForPublishTask from './apm_cmds/util/runPrepareForPublishTask'
 
 // cmds
 import {
@@ -39,6 +40,7 @@ import {
   prepareForPublishTask,
   publishTask,
 } from './apm_cmds/publish'
+import runPublishTask from './apm_cmds/util/runPublishTask'
 
 const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
@@ -299,22 +301,23 @@ export const handler = async function({
       {
         title: 'Prepare for publish',
         task: async ctx =>
-          prepareForPublishTask({
+          runPrepareForPublishTask({
             ...ctx.publishParams,
+            module,
             // context
             initialRepo: ctx.initialRepo,
             initialVersion: ctx.initialVersion,
             version: ctx.version,
             contractAddress: ctx.contract,
             deployArtifacts: ctx.deployArtifacts,
-          }),
+          })
       },
       {
         title: 'Publish app to aragonPM',
         task: async ctx => {
           const { dao, proxyAddress, methodName, params } = ctx.intent
 
-          return publishTask({
+          return runPublishTask({
             ...ctx.publishParams,
             // context
             version: ctx.version,
