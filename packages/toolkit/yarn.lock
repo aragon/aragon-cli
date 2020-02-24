@@ -88,9 +88,9 @@
     "@truffle/hdwallet-provider" "^1.0.0"
 
 "@aragon/wrapper@^5.0.0-rc.23":
-  version "5.0.0-rc.23"
-  resolved "https://registry.yarnpkg.com/@aragon/wrapper/-/wrapper-5.0.0-rc.23.tgz#a54379cca2cc4f5da6d59387775e3c6bab93476d"
-  integrity sha512-xnhc7d41iTZzZubLAweg+Q5DkiLBy/ZphDbCuRgtO2iX43e31nuvv/BkouqXvRV5wNPAT7J7xy7uAIj9POyzgw==
+  version "5.0.0-rc.25"
+  resolved "https://registry.yarnpkg.com/@aragon/wrapper/-/wrapper-5.0.0-rc.25.tgz#309eb2674fe3e54ff39e6623f91ad740e4ea8dfb"
+  integrity sha512-A2PSV24tqVEW0Jlq30YaNNr/KwGy43ji7COwAk1Vo4p2iShN9OIqTkjk7vaeD3juTVFVZzVOKauxaNnKDyBoNA==
   dependencies:
     "@aragon/os" "^4.2.1"
     "@aragon/rpc-messenger" "^2.0.0"
@@ -99,7 +99,6 @@
     dot-prop "^4.2.0"
     eth-ens-namehash "^2.0.8"
     ethjs-ens "^2.0.1"
-    js-sha3 "^0.8.0"
     localforage "^1.7.3"
     localforage-memoryStorageDriver "^0.9.2"
     radspec "^1.5.0"
