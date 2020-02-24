@@ -19,7 +19,6 @@ test('retrieves the expected versions info', t => {
   t.is(versions.length, 1)
 
   const version = versions[0]
-  t.is(version.name, 'Voting')
   t.is(version.version, '1.0.0')
 
   t.pass()
