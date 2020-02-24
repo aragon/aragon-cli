@@ -1,6 +1,6 @@
 import { green, blue, bold } from 'chalk'
 import TaskList from 'listr'
-import { getApm, getDefaultApmName } from '@aragon/toolkit'
+import { getAllVersions } from '@aragon/toolkit'
 
 export const command = 'versions [apmRepo]'
 export const describe =
@@ -15,26 +15,22 @@ export const builder = function(yargs) {
 }
 
 export const handler = async function({ reporter, environment, apmRepo }) {
-  let versions, apmRepoName
-
-  const apm = await getApm(environment)
+  let versions
 
   const tasks = new TaskList([
     {
       title: 'Fetching published versions',
       task: async (ctx, task) => {
-        apmRepoName = apmRepo ? getDefaultApmName(apmRepo) : null
+        reporter.info(`Fetching ${bold(apmRepo)} published versions`)
 
-        reporter.info(`Fetching ${bold(apmRepoName)} published versions`)
-
-        versions = await apm.getAllVersions(apmRepoName)
+        versions = await getAllVersions(apmRepo, environment)
       },
     },
   ])
   await tasks.run()
 
   reporter.newLine()
-  displayVersionNumbers(apmRepoName, versions, reporter)
+  displayVersionNumbers(apmRepo, versions, reporter)
   displayVersions(versions, reporter)
 }
 
@@ -59,11 +55,11 @@ function displayVersionNumbers(apmRepoName, versions, reporter) {
  */
 function displayVersions(versions, reporter) {
   versions.map(version => {
-    if (version && version.content) {
+    if (version && (version.contractAddress || version.contentUri)) {
       reporter.success(
         `${blue(version.version)}: ${version.contractAddress} ${
-          version.content.provider
-        }:${version.content.location}`
+          version.contentUri
+        }`
       )
     } else if (version && version.error) {
       reporter.warning(
