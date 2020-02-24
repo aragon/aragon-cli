@@ -11,13 +11,15 @@ import {
   getAppProxyAddressFromReceipt,
   getAppBase,
   getDefaultApmName,
+  getApmRepo,
+} from '@aragon/toolkit'
+//
+import {
   startLocalDaemon,
   getBinaryPath,
   getDefaultRepoPath,
   isLocalDaemonRunning,
-  getApmRepo,
-} from '@aragon/toolkit'
-//
+} from '../../lib/ipfs'
 import listrOpts from '../../helpers/listr-options'
 import { task as execTask } from './utils/execHandler'
 import daoArg from './utils/daoArg'

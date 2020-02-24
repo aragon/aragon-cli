@@ -2,12 +2,12 @@ import TaskList from 'listr'
 import execa from 'execa'
 import inquirer from 'inquirer'
 import { blue, red } from 'chalk'
+//
 import {
   getGlobalBinary,
   getLocalBinary,
   getNodePackageManager,
-} from '@aragon/toolkit'
-//
+} from '../../lib/node'
 import listrOpts from '../../helpers/listr-options'
 
 export const command = 'uninstall'

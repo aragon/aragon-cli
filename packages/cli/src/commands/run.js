@@ -4,11 +4,6 @@ import fs from 'fs-extra'
 import url from 'url'
 import { blue, green, bold } from 'chalk'
 import {
-  isPortTaken,
-  startLocalDaemon,
-  getBinaryPath,
-  getDefaultRepoPath,
-  isLocalDaemonRunning,
   encodeInitPayload,
   newDao,
   getApmRepo,
@@ -16,6 +11,13 @@ import {
   useEnvironment,
 } from '@aragon/toolkit'
 //
+import {
+  startLocalDaemon,
+  getBinaryPath,
+  getDefaultRepoPath,
+  isLocalDaemonRunning,
+} from '../lib/ipfs'
+import { isPortTaken } from '../lib/node'
 import listrOpts from '../helpers/listr-options'
 import pkg from '../../package.json'
 import {

@@ -10,7 +10,7 @@ const apmRegistryName = 'aragonpm.eth'
 
 /* Setup and cleanup */
 
-test.before('setup and make a successful call', async t => {
+test.before('setup and make a successful call', async () => {
   progressHandler = sinon.spy()
 
   packages = await getApmRegistryPackages(apmRegistryName, progressHandler)

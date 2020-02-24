@@ -7,7 +7,7 @@ let versions
 
 /* Setup and cleanup */
 
-test.before('setup and make a successful call', async t => {
+test.before('setup and make a successful call', async () => {
   const apm = await getApm()
 
   apmRepoName = 'voting.aragonpm.eth'
@@ -19,7 +19,6 @@ test('retrieves the expected versions info', t => {
   t.is(versions.length, 1)
 
   const version = versions[0]
-  t.is(version.name, 'Voting')
   t.is(version.version, '1.0.0')
 
   t.pass()

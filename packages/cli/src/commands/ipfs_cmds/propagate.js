@@ -1,5 +1,7 @@
 import TaskList from 'listr'
 import { blue, red, green, gray } from 'chalk'
+import { useEnvironment } from '@aragon/toolkit'
+//
 import {
   getHttpClient,
   getMerkleDAG,
@@ -10,9 +12,7 @@ import {
   getBinaryPath,
   getDefaultRepoPath,
   isLocalDaemonRunning,
-  useEnvironment,
-} from '@aragon/toolkit'
-//
+} from '../../lib/ipfs'
 import listrOpts from '../../helpers/listr-options'
 import { askForInput } from '../../util'
 

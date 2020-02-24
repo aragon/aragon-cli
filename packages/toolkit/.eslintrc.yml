@@ -5,6 +5,8 @@ env:
 plugins:
   - '@typescript-eslint'
 extends:
+  - 'eslint:recommended'
+  - 'plugin:@typescript-eslint/eslint-recommended'
   - 'plugin:@typescript-eslint/recommended'
   - 'standard'
   - 'plugin:ava/recommended'
@@ -15,10 +17,6 @@ parser: '@typescript-eslint/parser'
 
 rules:
   # Disable strict Typescript rules until the code is fully migrated
-  '@typescript-eslint/no-use-before-define': 'off'
-  '@typescript-eslint/no-unused-vars': 'off'
-  '@typescript-eslint/explicit-function-return-type': 'off'
-  '@typescript-eslint/no-empty-function': 'off'
 
   # import helps make sure that ES6 export good practices are used
   # Enforce self-descriptive export standards

@@ -6,7 +6,7 @@ let daoAddress, daoId
 
 /* Setup and cleanup */
 
-test.before('setup and successful call', async t => {
+test.before('setup and successful call', async () => {
   daoAddress = '0x8401Eb5ff34cc943f096A32EF3d5113FEbE8D4Eb'
 
   daoId = `thedao${new Date().getTime()}`
