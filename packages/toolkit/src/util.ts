@@ -33,9 +33,15 @@ export function getContract(
 }
 
 export function getIpfsCacheFiles(): any {
-  return path.resolve(require.resolve('@aragon/aragen-snapshot'), '../ipfs-cache')
+  return path.resolve(
+    require.resolve('@aragon/aragen-snapshot'),
+    '../ipfs-cache'
+  )
 }
 
 export function getAragonGanacheFiles(): any {
-  return path.resolve(require.resolve('@aragon/aragen-snapshot'), '../aragon-ganache')
+  return path.resolve(
+    require.resolve('@aragon/aragen-snapshot'),
+    '../aragon-ganache'
+  )
 }
