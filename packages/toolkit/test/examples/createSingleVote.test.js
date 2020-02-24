@@ -7,7 +7,7 @@ import {
   encodeActCall,
   execAppMethod,
   useEnvironment,
-} from '../../dist/index'
+} from '../../src'
 
 test.serial(
   'Create a single vote with multiple votes encoded in an EVM script',
