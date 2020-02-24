@@ -18,32 +18,6 @@ test.serial('fetches app versions with full ens name', async t => {
   t.assert(output.includes('finance.aragonpm.eth'))
 })
 
-test.serial('publish fails if not in an aragon project directory', async t => {
-  await t.throwsAsync(() => {
-    return parseCli([
-      'apm',
-      'publish',
-      'major',
-      '--files',
-      'app',
-      '--skip-confirmation',
-      '--no-propagate-content',
-      '--debug',
-    ])
-  })
-})
-
-test.serial('grant fails if not in an aragon project directory', async t => {
-  await t.throwsAsync(async () => {
-    return parseCli([
-      'apm',
-      'grant',
-      '0x8401Eb5ff34cc943f096A32EF3d5113FEbE8D4Eb',
-      '--debug',
-    ])
-  })
-})
-
 test.serial('fetches app info', async t => {
   const output = await parseCli(['apm', 'info', 'finance', '--debug'])
 
