@@ -1,5 +1,6 @@
 import Web3 from 'web3'
 import url from 'url'
+import { ethers } from 'ethers'
 //
 import { defaultEnvironments, defaultNetworks } from '../config'
 import { loadArappFile, getTruffleConfig } from './loadConfigFiles'
@@ -40,11 +41,7 @@ function getEnvironment(
   }
 }
 
-function configureApm(
-  ipfsRpcUrl: string,
-  gatewayUrl: string,
-  ensRegistryAddress: string
-): {
+interface ApmOptions {
   ensRegistryAddress: string
   ipfs: {
     rpc: {
@@ -55,7 +52,13 @@ function configureApm(
     }
     gateway: string
   }
-} {
+}
+
+function configureApm(
+  ipfsRpcUrl: string,
+  gatewayUrl: string,
+  ensRegistryAddress: string
+): ApmOptions {
   if (ipfsRpcUrl) {
     const uri = new url.URL(ipfsRpcUrl)
     return {
@@ -124,10 +127,11 @@ function configureProvider(
 // TODO: Add config environment function
 
 interface UseEnvironment extends AragonEnvironment {
-  apmOptions: any
+  apmOptions: ApmOptions
   web3: Web3
   wsProvider?: WebsocketProvider
   gasPrice: string
+  provider: ethers.utils.types.MinimalProvider
 }
 
 export function useEnvironment(env: string): UseEnvironment {
@@ -180,6 +184,7 @@ export function useEnvironment(env: string): UseEnvironment {
       registry || DEVCHAIN_ENS
     ),
     web3: new Web3(provider),
+    provider: new ethers.providers.Web3Provider(provider),
     wsProvider: wsProviderUrl
       ? new Web3.providers.WebsocketProvider(wsProviderUrl)
       : undefined,

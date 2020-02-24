@@ -1,4 +1,3 @@
-import getApm from '../../apm/apm'
 import ACL from './acl'
 import { useEnvironment } from '../../helpers/useEnvironment'
 import { TransactionReceipt } from 'web3-core'
@@ -15,24 +14,19 @@ export default async function grantNewVersionsPermission(
   progressHandler: ProgressHandlerGrantNewVersionsPermission | undefined,
   environment: string
 ): Promise<(TransactionReceipt | TransactionRevertInstructionError)[]> {
-  const { web3, gasPrice } = useEnvironment(environment)
+  const { web3, provider, gasPrice } = useEnvironment(environment)
 
   if (granteeAddresses.length === 0) {
     throw new Error('No grantee addresses provided')
   }
 
-  // TODO: Review how to decouple acl and apm here
-  const apm = await getApm(environment)
-
   const acl = ACL(web3)
 
   if (progressHandler) progressHandler(1)
 
-  const repo = await apm.getRepository(apmRepoName)
-  if (repo === null) {
-    throw new Error(
-      `Repository ${apmRepoName} does not exist and it's registry does not exist`
-    )
+  const repoAddress = await provider.resolveName(apmRepoName)
+  if (!repoAddress) {
+    throw new Error(`Repository ${apmRepoName} does not exist`)
   }
 
   const receipts: (
@@ -49,7 +43,7 @@ export default async function grantNewVersionsPermission(
     const from = accounts[0]
 
     // Build transaction
-    const transaction = await acl.grant(repo.options.address, granteeAddress)
+    const transaction = await acl.grant(repoAddress, granteeAddress)
 
     const receipt = await web3.eth.sendTransaction({
       ...transaction,
