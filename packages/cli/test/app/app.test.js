@@ -4,7 +4,7 @@ import parseCli from '../parseCli'
 test.serial('fetches app versions', async t => {
   const output = await parseCli(['apm', 'versions', 'voting', '--debug'])
 
-  t.assert(output.includes('voting.aragonpm.eth'))
+  t.assert(output.includes('voting'))
 })
 
 test.serial('fetches app versions with full ens name', async t => {
