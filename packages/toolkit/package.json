@@ -47,6 +47,7 @@
     "chalk": "^3.0.0",
     "eth-ens-namehash": "^2.0.8",
     "ethereum-ens": "^0.8.0",
+    "ethers": "^4.0.44",
     "find-up": "^4.0.0",
     "fs-extra": "^8.1.0",
     "node-fetch": "^2.6.0",

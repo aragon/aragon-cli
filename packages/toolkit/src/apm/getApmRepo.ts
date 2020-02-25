@@ -42,7 +42,7 @@ async function _getApmRepoVersion(
 export async function getApmRepoVersion(
   appId: string,
   version: string | number,
-  provider: ethers.utils.types.MinimalProvider
+  provider: ethers.providers.Provider
 ): Promise<ApmVersion> {
   const repo = new ethers.Contract(appId, repoAbi, provider) as ApmRepoInstance
   return _getApmRepoVersion(repo, version)
@@ -55,7 +55,7 @@ export async function getApmRepoVersion(
  */
 export async function getApmRepoAllVersions(
   appId: string,
-  provider: ethers.utils.types.MinimalProvider
+  provider: ethers.providers.Provider
 ): Promise<ApmVersion[]> {
   const repo = new ethers.Contract(appId, repoAbi, provider) as ApmRepoInstance
   const versionCount: number = await repo.getVersionsCount().then(parseFloat)
@@ -74,7 +74,7 @@ export async function getApmRepoAllVersions(
 export async function getApmRepo(
   appId: string,
   version: 'latest' | string | number,
-  provider: ethers.utils.types.MinimalProvider,
+  provider: ethers.providers.Provider,
   options?: { ipfsGateway: string }
 ): Promise<AragonApmRepoData> {
   const versionInfo = await getApmRepoVersion(appId, version, provider)

@@ -35,10 +35,10 @@ interface NewRepoEvent {
  */
 export async function getNewReposFromRegistry(
   apmRegistryName: string,
-  provider: ethers.utils.types.MinimalProvider,
+  provider: ethers.providers.Provider,
   fromBlock?: number
 ): Promise<NewRepoEvent[]> {
-  const newRepoEvent = new ethers.Interface([registryNewRepoEventAbi])
+  const newRepoEvent = new ethers.utils.Interface([registryNewRepoEventAbi])
 
   const newRepoEventTopic =
     newRepoEvent.events[registryNewRepoEventAbi.name].topic
@@ -71,7 +71,7 @@ export async function getNewReposFromRegistry(
  */
 export async function getApmRegistryPackages(
   apmRegistryName: string,
-  provider: ethers.utils.types.MinimalProvider
+  provider: ethers.providers.Provider
 ): Promise<{ name: string; version: string }[]> {
   const newRepoEvents = await getNewReposFromRegistry(apmRegistryName, provider)
 

@@ -26,18 +26,10 @@ export async function initWrapper(
     onPermissions?: (permissions: any) => void
   }
 ): Promise<any> {
-  const {
-    accounts: defaultAccounts,
-    onApps,
-    onForwarders,
-    onTransaction,
-    onDaoAddress,
-    onPermissions,
-  } = options || {}
-
   const { wsProvider, web3, apmOptions, gasPrice } = useEnvironment(environment)
 
-  const accounts = defaultAccounts || (await web3.eth.getAccounts())
+  const accounts =
+    (options && options.accounts) || (await web3.eth.getAccounts())
 
   const daoAddress = await resolveDaoAddressOrEnsDomain(dao, environment)
 
@@ -45,7 +37,10 @@ export async function initWrapper(
     throw new Error('The provided DAO address is invalid')
   }
 
-  if (onDaoAddress) onDaoAddress(daoAddress)
+  if (options) {
+    const { onDaoAddress } = options
+    if (onDaoAddress) onDaoAddress(daoAddress)
+  }
 
   // TODO: don't reinitialize if cached
   const wrapper = new AragonWrapper(daoAddress, {
@@ -64,10 +59,13 @@ export async function initWrapper(
   }
 
   const subs: { unsubscribe: () => void }[] = []
-  if (onApps) subs.push(wrapper.apps.subscribe(onApps))
-  if (onForwarders) subs.push(wrapper.forwarders.subscribe(onForwarders))
-  if (onTransaction) subs.push(wrapper.transactions.subscribe(onTransaction))
-  if (onPermissions) subs.push(wrapper.permissions.subscribe(onPermissions))
+  if (options) {
+    const { onApps, onForwarders, onTransaction, onPermissions } = options
+    if (onApps) subs.push(wrapper.apps.subscribe(onApps))
+    if (onForwarders) subs.push(wrapper.forwarders.subscribe(onForwarders))
+    if (onTransaction) subs.push(wrapper.transactions.subscribe(onTransaction))
+    if (onPermissions) subs.push(wrapper.permissions.subscribe(onPermissions))
+  }
 
   wrapper.cancel = (): void => {
     for (const subscription of subs)

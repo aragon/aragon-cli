@@ -22,6 +22,8 @@ export class NoEnvironmentInArapp extends Error {}
 export class NoEnvironmentInDefaults extends Error {}
 export class NoNetworkInTruffleConfig extends Error {}
 
+const frameHeaders: { [key: string]: string } = { origin: FRAME_ORIGIN }
+
 function getEnvironment(
   envName: string,
   arapp?: AragonAppJson
@@ -120,6 +122,31 @@ function configureProvider(
   }
 }
 
+function configureEthersProvider({
+  host,
+  port,
+  useFrame,
+  ensAddress,
+}: {
+  host: string
+  port: number
+  useFrame: boolean
+  ensAddress?: string
+}): ethers.providers.Provider {
+  const connectionOptions = {
+    url: useFrame
+      ? FRAME_ENDPOINT
+      : host && port
+      ? `http://${host}:${port}`
+      : 'http://localhost:8545',
+    headers: useFrame ? frameHeaders : undefined,
+  }
+  const networkOptions = ensAddress
+    ? { name: '', chainId: 0, ensAddress }
+    : undefined
+  return new ethers.providers.JsonRpcProvider(connectionOptions, networkOptions)
+}
+
 // TODO: Fetch api
 // const configureGasPrice = () => {}
 
@@ -131,7 +158,7 @@ interface UseEnvironment extends AragonEnvironment {
   web3: Web3
   wsProvider?: WebsocketProvider
   gasPrice: string
-  provider: ethers.utils.types.MinimalProvider
+  provider: ethers.providers.Provider
 }
 
 export function useEnvironment(env: string): UseEnvironment {
@@ -169,22 +196,28 @@ export function useEnvironment(env: string): UseEnvironment {
   //     : IPFS_ARAGON_GATEWAY
   const ipfsAragonGateway =
     network === 'rpc' ? IPFS_LOCAL_GATEWAY : IPFS_ARAGON_GATEWAY
+  const ensAddress = registry || DEVCHAIN_ENS
 
-  const provider = configureProvider(
-    network,
-    truffleNetworks[network],
-    useFrame
-  )
+  const truffleNetwork = truffleNetworks[network]
+  if (!useFrame && !truffleNetwork) {
+    throw new NoNetworkInTruffleConfig(network)
+  }
 
   return {
     ...environment,
     apmOptions: configureApm(
       IPFS_RPC, // TODO: Check if we need to use Aragon node to publish (ipfs-rpc is An URI to the IPFS node used to publish files)
       ipfsAragonGateway,
-      registry || DEVCHAIN_ENS
+      ensAddress
     ),
-    web3: new Web3(provider),
-    provider: new ethers.providers.Web3Provider(provider),
+    // Todo: Consolidate provider initialization
+    web3: new Web3(configureProvider(network, truffleNetwork, useFrame)),
+    provider: configureEthersProvider({
+      host: truffleNetwork.host,
+      port: truffleNetwork.port,
+      useFrame,
+      ensAddress,
+    }),
     wsProvider: wsProviderUrl
       ? new Web3.providers.WebsocketProvider(wsProviderUrl)
       : undefined,

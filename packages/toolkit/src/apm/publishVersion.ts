@@ -17,7 +17,7 @@ interface PublishVersionTxData {
  */
 function getKernel(
   appId: string,
-  provider: ethers.utils.types.MinimalProvider
+  provider: ethers.providers.Provider
 ): Promise<string> {
   const app = new ethers.Contract(appId, aragonAppAbi, provider)
   return app.kernel()
@@ -36,7 +36,7 @@ function getKernel(
 export async function publishVersion(
   appId: string,
   versionInfo: ApmVersion,
-  provider: ethers.utils.types.MinimalProvider,
+  provider: ethers.providers.Provider,
   options?: { managerAddress: string }
 ): Promise<PublishVersionTxData> {
   const { version, contentUri, contractAddress } = versionInfo
@@ -83,7 +83,7 @@ export async function publishVersion(
 export async function publishVersionIntent(
   appId: string,
   versionInfo: ApmVersion,
-  provider: ethers.utils.types.MinimalProvider,
+  provider: ethers.providers.Provider,
   options?: { managerAddress: string }
 ): Promise<AragonJsIntent> {
   const txData = await publishVersion(appId, versionInfo, provider, options)

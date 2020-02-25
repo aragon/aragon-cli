@@ -6,13 +6,32 @@ import { ApmVersion, ApmVersionReturn } from './types'
 const DEFAULT_APM_REGISTRY = 'aragonpm.eth'
 
 /**
+ * Clean an IPFS hash of prefixes and suffixes commonly found
+ * in both gateway URLs and content URLs
+ * @param ipfsDirtyHash
+ */
+function stipIpfsPrefix(ipfsDirtyHash: string): string {
+  return (
+    ipfsDirtyHash
+      // Trim ending /ipfs/ tag
+      // "site.io:8080//ipfs//" => "site.io:8080"
+      .replace(/\/*ipfs\/*$/, '')
+      // Trim starting /ipfs/, ipfs: tag
+      // "/ipfs/Qm" => "Qm"
+      .replace(/^\/*ipfs[/:]*/, '')
+  )
+}
+
+/**
  * Parse a raw version response from an APM repo
  */
 export function parseApmVersionReturn(res: ApmVersionReturn): ApmVersion {
   return {
     version: res.semanticVersion.join('.'),
     contractAddress: res.contractAddress,
-    contentUri: ethers.utils.toUtf8String(res.contentURI),
+    // toUtf8String(, true) to ignore UTF8 errors parsing and let downstream
+    // components identify faulty content URIs
+    contentUri: ethers.utils.toUtf8String(res.contentURI, true),
   }
 }
 
@@ -56,7 +75,11 @@ export function getFetchUrlFromContentUri(
     case 'ipfs':
       if (!options || !options.ipfsGateway)
         throw Error(`Must provide an ipfsGateway for protocol 'ipfs'`)
-      return `${options.ipfsGateway}/ipfs/${location}`
+      return [
+        stipIpfsPrefix(options.ipfsGateway),
+        'ipfs',
+        stipIpfsPrefix(location),
+      ].join('/')
     default:
       throw Error(`Protocol '${protocol}' not supported`)
   }
