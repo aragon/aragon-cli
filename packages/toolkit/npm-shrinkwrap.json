@@ -2209,6 +2209,12 @@
       "integrity": "sha1-+cjBN1fMHde8N5rHeyxipcKGjEA=",
       "dev": true
     },
+    "arg": {
+      "version": "4.1.3",
+      "resolved": "https://registry.npmjs.org/arg/-/arg-4.1.3.tgz",
+      "integrity": "sha512-58S9QDqG0Xx27YwPSt9fJxivjYl432YCwfDMfZ+71RAqUrZef7LrKQZ3LHLOwCS4FLNBplP533Zx895SeOCHvA==",
+      "dev": true
+    },
     "argparse": {
       "version": "1.0.10",
       "resolved": "https://registry.npmjs.org/argparse/-/argparse-1.0.10.tgz",
@@ -8964,6 +8970,11 @@
       "resolved": "https://registry.npmjs.org/invert-kv/-/invert-kv-1.0.0.tgz",
       "integrity": "sha1-EEqOSqym09jNFXqO+L+rLXo//bY="
     },
+    "ipaddr.js": {
+      "version": "1.9.1",
+      "resolved": "https://registry.npmjs.org/ipaddr.js/-/ipaddr.js-1.9.1.tgz",
+      "integrity": "sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g=="
+    },
     "irregular-plurals": {
       "version": "2.0.0",
       "resolved": "https://registry.npmjs.org/irregular-plurals/-/irregular-plurals-2.0.0.tgz",
@@ -10044,6 +10055,12 @@
           "integrity": "sha1-5aSs0sEB/fPZpNB/DbxNtJ3SgXY="
         }
       }
+    },
+    "make-error": {
+      "version": "1.3.6",
+      "resolved": "https://registry.npmjs.org/make-error/-/make-error-1.3.6.tgz",
+      "integrity": "sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==",
+      "dev": true
     },
     "map-cache": {
       "version": "0.2.2",
@@ -11771,7 +11788,8 @@
       "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.6.tgz",
       "integrity": "sha512-dh/frvCBVmSsDYzw6n926jv974gddhkFPfiN8hPOi30Wax25QZyZEGveluCgliBnqmuM+UJmBErbAUFIoDbjOw==",
       "requires": {
-        "forwarded": "~0.1.2"
+        "forwarded": "~0.1.2",
+        "ipaddr.js": "1.9.1"
       }
     },
     "prr": {
@@ -12360,6 +12378,15 @@
       "resolved": "https://registry.npmjs.org/safer-buffer/-/safer-buffer-2.1.2.tgz",
       "integrity": "sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg=="
     },
+    "scrypt": {
+      "version": "6.0.3",
+      "resolved": "https://registry.npmjs.org/scrypt/-/scrypt-6.0.3.tgz",
+      "integrity": "sha1-BOAUpWgrU/pQwtXM4WfXGcBthw0=",
+      "optional": true,
+      "requires": {
+        "nan": "^2.0.8"
+      }
+    },
     "scrypt-js": {
       "version": "2.0.3",
       "resolved": "https://registry.npmjs.org/scrypt-js/-/scrypt-js-2.0.3.tgz",
@@ -12370,6 +12397,7 @@
       "resolved": "https://registry.npmjs.org/scrypt.js/-/scrypt.js-0.3.0.tgz",
       "integrity": "sha512-42LTc1nyFsyv/o0gcHtDztrn+aqpkaCNt5Qh7ATBZfhEZU7IC/0oT/qbBH+uRNoAPvs2fwiOId68FDEoSRA8/A==",
       "requires": {
+        "scrypt": "^6.0.2",
         "scryptsy": "^1.2.1"
       }
     },
@@ -13925,6 +13953,43 @@
           "dev": true,
           "requires": {
             "has-flag": "^3.0.0"
+          }
+        }
+      }
+    },
+    "ts-node": {
+      "version": "8.6.2",
+      "resolved": "https://registry.npmjs.org/ts-node/-/ts-node-8.6.2.tgz",
+      "integrity": "sha512-4mZEbofxGqLL2RImpe3zMJukvEvcO1XP8bj8ozBPySdCUXEcU5cIRwR0aM3R+VoZq7iXc8N86NC0FspGRqP4gg==",
+      "dev": true,
+      "requires": {
+        "arg": "^4.1.0",
+        "diff": "^4.0.1",
+        "make-error": "^1.1.1",
+        "source-map-support": "^0.5.6",
+        "yn": "3.1.1"
+      },
+      "dependencies": {
+        "diff": {
+          "version": "4.0.2",
+          "resolved": "https://registry.npmjs.org/diff/-/diff-4.0.2.tgz",
+          "integrity": "sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==",
+          "dev": true
+        },
+        "source-map": {
+          "version": "0.6.1",
+          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.6.1.tgz",
+          "integrity": "sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==",
+          "dev": true
+        },
+        "source-map-support": {
+          "version": "0.5.16",
+          "resolved": "https://registry.npmjs.org/source-map-support/-/source-map-support-0.5.16.tgz",
+          "integrity": "sha512-efyLRJDr68D9hBBNIPWFjhpFzURh+KJykQwvMyW5UiZzYwoF6l4YMMDIJJEyFWxWCqfyxLzz6tSfUFR+kXXsVQ==",
+          "dev": true,
+          "requires": {
+            "buffer-from": "^1.0.0",
+            "source-map": "^0.6.0"
           }
         }
       }
@@ -16200,6 +16265,12 @@
         "buffer-crc32": "~0.2.3",
         "fd-slicer": "~1.1.0"
       }
+    },
+    "yn": {
+      "version": "3.1.1",
+      "resolved": "https://registry.npmjs.org/yn/-/yn-3.1.1.tgz",
+      "integrity": "sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==",
+      "dev": true
     }
   }
 }
