@@ -1,21 +1,12 @@
 import test from 'ava'
 //
-import getApm from '../../src/apm/apm'
+import { getAllVersions } from '../../src/apm'
 
-let apmRepoName
-let versions
+test('retrieves the expected versions info', async t => {
+  const apmRepoName = 'voting.aragonpm.eth'
 
-/* Setup and cleanup */
+  const versions = await getAllVersions(apmRepoName, '')
 
-test.before('setup and make a successful call', async () => {
-  const apm = await getApm()
-
-  apmRepoName = 'voting.aragonpm.eth'
-
-  versions = await apm.getAllVersions(apmRepoName)
-})
-
-test('retrieves the expected versions info', t => {
   t.is(versions.length, 1)
 
   const version = versions[0]

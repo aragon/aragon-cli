@@ -1,5 +1,5 @@
 import { getRecommendedGasLimit } from './utils/getRecommendedGasLimit'
-import getApmRepo from '../apm/getApmRepo'
+import { getApmRepo } from '../apm'
 import { useEnvironment } from '../helpers/useEnvironment'
 import { bareTemplateAbi } from '../contractAbis'
 

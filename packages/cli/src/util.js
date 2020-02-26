@@ -4,7 +4,7 @@ import os from 'os'
 import { readJson } from 'fs-extra'
 import { request } from 'http'
 import inquirer from 'inquirer'
-import { getNodePackageManager } from '@aragon/toolkit'
+import { getNodePackageManager } from './lib/node'
 
 /**
  * Some characters are rendered differently depending on the OS.

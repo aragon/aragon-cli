@@ -50,7 +50,6 @@
   "homepage": "https://github.com/aragon/aragon-cli#readme",
   "dependencies": {
     "@aragon/toolkit": "^0.0.5",
-    "@aragon/truffle-config-v5": "^1.0.0",
     "ajv": "^6.6.2",
     "bn.js": "^5.0.0",
     "byte-size": "^6.2.0",
@@ -111,6 +110,7 @@
     "@aragon/apps-voting": "^2.0.0",
     "@aragon/os": "^4.3.0",
     "@aragon/templates-shared": "^1.0.1",
+    "@aragon/truffle-config-v5": "^1.0.0",
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",

@@ -9,8 +9,7 @@ test.beforeEach(async t => {
   }
 })
 
-// eslint-disable-next-line ava/no-skip-test
-test.skip('Should get permissions and apps for a new dao using the wrapper', async t => {
+test('Should get permissions and apps for a new dao using the wrapper', async t => {
   // TODO: This tests is not fetching the apps array right
   // arrange
   const { dao } = t.context

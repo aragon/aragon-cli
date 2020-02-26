@@ -1,7 +1,7 @@
 import test from 'ava'
 import sinon from 'sinon'
 //
-import getApmRegistryPackages from '../../src/apm/getApmRegistryPackages'
+import { getApmRegistryPackages } from '../../src/apm'
 
 let progressHandler
 let packages
