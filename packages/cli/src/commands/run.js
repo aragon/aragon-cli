@@ -24,9 +24,6 @@ import {
   isHttpServerOpen,
   parseArgumentStringIfPossible,
 } from '../util'
-import {
-  task as newDAOTask,
-} from './dao_cmds/new'
 import { task as getRepoTask } from './apm_cmds/util/getRepoTask'
 import runPrepareForPublishTask from './apm_cmds/util/runPrepareForPublishTask'
 
@@ -40,11 +37,7 @@ import {
 
 import { task as startTask } from './start'
 import { arappContract, task as deployTask } from './deploy'
-import {
-  setupTask,
-  prepareForPublishTask,
-  publishTask,
-} from './apm_cmds/publish'
+import { setupTask } from './apm_cmds/publish'
 import runPublishTask from './apm_cmds/util/runPublishTask'
 
 const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
@@ -315,7 +308,7 @@ export const handler = async function({
             version: ctx.version,
             contractAddress: ctx.contract,
             deployArtifacts: ctx.deployArtifacts,
-          })
+          }),
       },
       {
         title: 'Publish app to aragonPM',
@@ -337,12 +330,12 @@ export const handler = async function({
       },
       {
         title: 'Fetch published repo',
-        task: async ctx => 
+        task: async ctx =>
           getRepoTask({
             apmRepo: module.appName,
             apm: APM(ctx.web3, apmOptions),
             artifactRequired: false,
-          })
+          }),
       },
       {
         title: 'Deploy Template',
@@ -399,9 +392,13 @@ export const handler = async function({
               ctx.notInitialized = true
             }
 
-            fnArgs = [ctx.repo.appId || ctx.repo.environments.default.appId, rolesBytes, ctx.accounts[0], initPayload]
+            fnArgs = [
+              ctx.repo.appId || ctx.repo.environments.default.appId,
+              rolesBytes,
+              ctx.accounts[0],
+              initPayload,
+            ]
           }
-
 
           ctx.daoAddress = await newDao({
             repo: ctx.template,

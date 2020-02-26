@@ -1,17 +1,8 @@
 import TaskList from 'listr'
 import { isAddress } from 'web3-utils'
-import {
-  ZERO_ADDRESS,
-  APM_INITIAL_VERSIONS,
-  isLocalDaemonRunning,
-  startLocalDaemon,
-  getBinaryPath,
-  getDefaultRepoPath,
-  getApmRepo,
-} from '@aragon/toolkit'
+import { ZERO_ADDRESS } from '@aragon/toolkit'
 
 import { runScriptHelper } from '../../../util'
-
 
 // helpers
 import { compileContracts } from '../../../helpers/truffle-runner'
@@ -157,7 +148,7 @@ export default async function runSetupTask({
             task.output = log
           })
           if (abortReason) task.skip(abortReason)
-        }
+        },
       },
       {
         title: 'Compile contracts',

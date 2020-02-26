@@ -69,7 +69,7 @@ export const task = async function({
         task.output = 'Fetching client...'
         await fetchClient(ctx, task, DEFAULT_CLIENT_VERSION)
       },
-      //enabled: () => clientVersion === DEFAULT_CLIENT_VERSION,
+      // enabled: () => clientVersion === DEFAULT_CLIENT_VERSION,
     },
     {
       title: 'Downloading client',
