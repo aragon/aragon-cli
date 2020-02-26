@@ -97,7 +97,7 @@
     "tmp": "^0.1.0",
     "typechain": "^1.0.5",
     "typechain-target-web3-v1": "^1.0.4",
-    "typedoc": "^0.15.4",
+    "typedoc": "^0.16.10",
     "typescript": "^3.7.3"
   },
   "engines": {
