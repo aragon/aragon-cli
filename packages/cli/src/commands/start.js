@@ -63,12 +63,13 @@ export const task = async function({
   const tasks = new TaskList([
     {
       title: 'Fetching client from aragen',
-      skip: () => !!clientPath,
+      // Skipped due to https://github.com/aragon/aragen/issues/101
+      skip: () => true,
       task: async (ctx, task) => {
         task.output = 'Fetching client...'
         await fetchClient(ctx, task, DEFAULT_CLIENT_VERSION)
       },
-      enabled: () => clientVersion === DEFAULT_CLIENT_VERSION,
+      //enabled: () => clientVersion === DEFAULT_CLIENT_VERSION,
     },
     {
       title: 'Downloading client',
