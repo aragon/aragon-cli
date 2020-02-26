@@ -4,6 +4,7 @@ import fs from 'fs-extra'
 import url from 'url'
 import Web3 from 'web3'
 import { blue, green, bold } from 'chalk'
+import APM from '@aragon/apm'
 import {
   isPortTaken,
   startLocalDaemon,
@@ -23,6 +24,10 @@ import {
   isHttpServerOpen,
   parseArgumentStringIfPossible,
 } from '../util'
+import {
+  task as newDAOTask,
+} from './dao_cmds/new'
+import { task as getRepoTask } from './apm_cmds/util/getRepoTask'
 import runPrepareForPublishTask from './apm_cmds/util/runPrepareForPublishTask'
 
 // cmds
@@ -332,28 +337,12 @@ export const handler = async function({
       },
       {
         title: 'Fetch published repo',
-        task: async ctx => {
-          const apmRepoName = module.name
-
-          const progressHandler = step => {
-            switch (step) {
-              case 1:
-                console.log(`Initialize aragonPM`)
-                break
-              case 2:
-                console.log(`Fetching ${bold(apmRepoName)}@latest`)
-                break
-            }
-          }
-
-          ctx.repo = await getApmRepo(
-            ctx.web3,
-            apmRepoName,
-            apmOptions,
-            'latest',
-            progressHandler
-          )
-        },
+        task: async ctx => 
+          getRepoTask({
+            apmRepo: module.appName,
+            apm: APM(ctx.web3, apmOptions),
+            artifactRequired: false,
+          })
       },
       {
         title: 'Deploy Template',
@@ -410,8 +399,9 @@ export const handler = async function({
               ctx.notInitialized = true
             }
 
-            fnArgs = [ctx.repo.appId, rolesBytes, ctx.accounts[0], initPayload]
+            fnArgs = [ctx.repo.appId || ctx.repo.environments.default.appId, rolesBytes, ctx.accounts[0], initPayload]
           }
+
 
           ctx.daoAddress = await newDao({
             repo: ctx.template,

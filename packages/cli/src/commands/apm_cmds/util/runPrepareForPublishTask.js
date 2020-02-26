@@ -119,6 +119,7 @@ export default function runPrepareForPublishTask({
           }
 
           async function invokeArtifactGeneration() {
+            
             const contractInterfacePath = path.resolve(
               cwd,
               'build/contracts',
@@ -133,6 +134,7 @@ export default function runPrepareForPublishTask({
               contractInterface.abi,
               sourceCode
             )
+
             performArtifcatGeneration(artifact)
           }
 
