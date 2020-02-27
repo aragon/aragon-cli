@@ -8,10 +8,14 @@ const namehash = require('eth-ens-namehash')
 
 export default function getAragonArtifact(
   arapp: AragonAppJson,
-  sourceCode: string,
   functions: AragonContractFunction[],
   abi: AbiItem[]
 ): AragonArtifact {
+  const mainnetEnvName = 'mainnet'
+  const mainnetEnvironment = arapp.environments[mainnetEnvName]
+  const mainnetAppName = (mainnetEnvironment || {}).appName || ''
+  const mainnetAppId = mainnetAppName ? namehash.hash(mainnetAppName) : ''
+
   return {
     ...arapp,
 
@@ -44,5 +48,10 @@ export default function getAragonArtifact(
     abi,
     // Additional metadata
     flattenedCode: `./code.sol`,
+
+    // Curent environment, TODO: is this necessary?
+    env: mainnetEnvironment,
+    appName: mainnetAppName,
+    appId: mainnetAppId,
   }
 }
