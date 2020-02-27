@@ -72,7 +72,7 @@ function parseParamTypeFromNode(node: parser.VariableDeclaration): string {
       ) {
         return `${baseTypeName.name}[${length.number}]`
       } else {
-        return null
+        return ''
       }
     case 'UserDefinedTypeName':
       return 'address'
@@ -108,6 +108,7 @@ export default function parseContractFunctions(
   parser.visit(ast, {
     FunctionDefinition: node => {
       if (
+        node.name &&
         node.visibility === 'internal' &&
         node.stateMutability === 'pure' &&
         node.returnParameters &&
@@ -150,7 +151,7 @@ export default function parseContractFunctions(
       ) {
         // Check the modifiers
         functions.push({
-          name: subNode.name,
+          name: subNode.name || '',
           notice: '',
           // Parse parameters for signature, some functions may be overloaded
           paramTypes: subNode.parameters.map(parseParamTypeFromNode),
