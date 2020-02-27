@@ -41,22 +41,22 @@ test('getAragonArtifact', t => {
     },
   ]
 
-  const abi: AbiItem[] = [
-    {
-      constant: false,
-      inputs: [
-        { name: '_token', type: 'address' },
-        { name: '_receiver', type: 'address' },
-        { name: '_amount', type: 'uint256' },
-        { name: '_reference', type: 'string' },
-      ],
-      name: 'newImmediatePayment',
-      outputs: [],
-      payable: false,
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-  ]
+  const newImmediatePaymentAbi: AbiItem = {
+    constant: false,
+    inputs: [
+      { name: '_token', type: 'address' },
+      { name: '_receiver', type: 'address' },
+      { name: '_amount', type: 'uint256' },
+      { name: '_reference', type: 'string' },
+    ],
+    name: 'newImmediatePayment',
+    outputs: [],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
+  }
+
+  const abi: AbiItem[] = [newImmediatePaymentAbi]
 
   const artifact = getAragonArtifact(arapp, functions, abi)
 
@@ -88,15 +88,22 @@ test('getAragonArtifact', t => {
           '0x5de467a460382d13defdc02aacddc9c7d6605d6d4e0b8bd2f70732cae8ea17bc',
       },
     ],
-    functions: [],
+    functions: [
+      {
+        roles: ['CREATE_PAYMENTS_ROLE'],
+        notice: '',
+        abi: newImmediatePaymentAbi,
+      },
+    ],
     path: 'contracts/Finance.sol',
     abi,
-    appName: 'finance.aragonpm.eth',
+    // Current environment
     env: {
-      registry: '0x314159265dd8dbb310642f98f50c066173c1259b',
+      registry: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
       appName: 'finance.aragonpm.eth',
       network: 'mainnet',
     },
+    appName: 'finance.aragonpm.eth',
     appId: '0xbf8491150dafc5dcaee5b861414dca922de09ccffa344964ae167212e8c673ae',
     // Additional metadata for accountability
     flattenedCode: './code.sol',

@@ -33,6 +33,10 @@ export interface AragonArtifact extends AragonAppJson {
   path: string // 'contracts/Finance.sol'
   // Additional metadata for accountability
   flattenedCode: string
+  // Current environment
+  appName: string
+  env: AragonEnvironment
+  appId: string
 }
 
 export interface AragonAppJson {
