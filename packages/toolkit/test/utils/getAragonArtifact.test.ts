@@ -97,14 +97,6 @@ test('getAragonArtifact', t => {
     ],
     path: 'contracts/Finance.sol',
     abi,
-    // Current environment
-    env: {
-      registry: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-      appName: 'finance.aragonpm.eth',
-      network: 'mainnet',
-    },
-    appName: 'finance.aragonpm.eth',
-    appId: '0xbf8491150dafc5dcaee5b861414dca922de09ccffa344964ae167212e8c673ae',
     // Additional metadata for accountability
     flattenedCode: './code.sol',
   })
