@@ -15,6 +15,6 @@
     "types": ["node"],
     "sourceMap": true
   },
-  "include": ["./src", "./node_modules/bn.js-typings/index.d.ts", "../../../buidler-aragon/publish-aragon-app/publish/flattenSolidity.ts"],
+  "include": ["./src", "./node_modules/bn.js-typings/index.d.ts"],
   "exclude": []
 }
