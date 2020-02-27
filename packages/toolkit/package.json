@@ -9,12 +9,11 @@
   },
   "scripts": {
     "generate": "typechain --target web3-v1 --outDir typechain './node_modules/@aragon/abis/os/artifacts/*.json'",
-    "build": "babel src --out-dir dist --source-maps --copy-files --extensions '.js,.ts'",
+    "build": "tsc",
     "build:watch": "npm run build -- --watch",
     "build:docs": "typedoc --out docs --allowJs --readme none --theme minimal --mode file",
-    "lint": "npm run check-types && eslint src test --ext '.js,.ts'",
+    "lint": "eslint src test --ext '.js,.ts'",
     "lint:fix": "npm run lint -- --fix",
-    "check-types": "tsc",
     "test": "ava --verbose",
     "test:watch": "ava --watch",
     "test:clean": "rm -rf ./.tmp && npm run test:reset-cache",
@@ -77,8 +76,6 @@
     "@typescript-eslint/eslint-plugin": "^2.11.0",
     "@typescript-eslint/parser": "^2.11.0",
     "ava": "^2.4.0",
-    "babel-eslint": "^10.0.3",
-    "babel-plugin-istanbul": "^5.2.0",
     "bignumber.js": "^9.0.0",
     "bn.js": "^4.11.8",
     "core-js": "^3.6.4",
@@ -124,28 +121,6 @@
     ],
     "sourceMap": false,
     "instrument": true
-  },
-  "babel": {
-    "presets": [
-      "@babel/preset-typescript",
-      [
-        "@babel/preset-env",
-        {
-          "useBuiltIns": "usage",
-          "corejs": "3",
-          "targets": {
-            "node": true
-          }
-        }
-      ]
-    ],
-    "env": {
-      "test": {
-        "plugins": [
-          "istanbul"
-        ]
-      }
-    }
   },
   "prettier": {
     "singleQuote": true,

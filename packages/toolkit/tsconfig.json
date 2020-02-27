@@ -4,7 +4,6 @@
     // Search under node_modules for non-relative imports.
     "moduleResolution": "node",
     // Don't emit; allow Babel to transform files.
-    "noEmit": true,
     "lib": ["es6"],
     "allowSyntheticDefaultImports": true,
     "module": "commonjs",
@@ -13,6 +12,7 @@
     "allowJs": true,
     "strict": true,
     "types": ["node"],
+    "outDir": "dist",
     "sourceMap": true
   },
   "include": ["./src", "./node_modules/bn.js-typings/index.d.ts"],
