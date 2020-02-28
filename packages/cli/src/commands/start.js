@@ -109,8 +109,12 @@ export const task = async function({
       {
         title: 'Starting Aragon client',
         task: async (ctx, task) => {
-          task.output = 'Starting Aragon client...'
-          await startClient(ctx, clientPort, clientPath)
+          try {
+            task.output = 'Starting Aragon client...'
+            await startClient(ctx, clientPort, clientPath)
+          } catch (err) {
+            console.log('Error starting server: ', err)
+          }
         },
       },
       {
@@ -138,28 +142,24 @@ export const handler = async ({
   silent,
   debug,
 }) => {
-  try {
-    const tasks = await task({
-      clientRepo,
-      clientVersion,
-      clientPort,
-      clientPath,
-      autoOpen,
-      silent,
-      debug,
-    })
+  const tasks = await task({
+    clientRepo,
+    clientVersion,
+    clientPort,
+    clientPath,
+    autoOpen,
+    silent,
+    debug,
+  })
 
-    await tasks.run()
+  await tasks.run()
 
-    reporter.info(
-      `Aragon client from ${blue(clientRepo)} version ${blue(
-        clientVersion
-      )} started on port ${blue(clientPort)}`
-    )
+  reporter.info(
+    `Aragon client from ${blue(clientRepo)} version ${blue(
+      clientVersion
+    )} started on port ${blue(clientPort)}`
+  )
 
-    // Patch to prevent calling the onFinishCommand hook
-    await new Promise((resolve, reject) => {})
-  } catch (err) {
-    console.log('Error starting server: ', err)
-  }
+  // Patch to prevent calling the onFinishCommand hook
+  await new Promise((resolve, reject) => {})
 }
