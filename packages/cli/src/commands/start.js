@@ -18,6 +18,7 @@ import {
 
 import pkg from '../../package.json'
 import { installDeps } from '../util'
+import listrOpts from '../helpers/listr-options'
 
 const DEFAULT_CLIENT_REPO = pkg.aragon.clientRepo
 const DEFAULT_CLIENT_VERSION = pkg.aragon.clientVersion
@@ -59,66 +60,71 @@ export const task = async function({
   clientPort,
   clientPath,
   autoOpen,
+  silent,
+  debug,
 }) {
-  const tasks = new TaskList([
-    {
-      title: 'Fetching client from aragen',
-      // Skipped due to https://github.com/aragon/aragen/issues/101
-      skip: () => true,
-      task: async (ctx, task) => {
-        task.output = 'Fetching client...'
-        await fetchClient(ctx, task, DEFAULT_CLIENT_VERSION)
+  const tasks = new TaskList(
+    [
+      {
+        title: 'Fetching client from aragen',
+        // Skipped due to https://github.com/aragon/aragen/issues/101
+        skip: () => true,
+        task: async (ctx, task) => {
+          task.output = 'Fetching client...'
+          await fetchClient(ctx, task, DEFAULT_CLIENT_VERSION)
+        },
+        // enabled: () => clientVersion === DEFAULT_CLIENT_VERSION,
       },
-      // enabled: () => clientVersion === DEFAULT_CLIENT_VERSION,
-    },
-    {
-      title: 'Downloading client',
-      skip: ctx => !!clientPath,
-      task: async (ctx, task) => {
-        task.output = 'Downloading client...'
-        await downloadClient({ ctx, task, clientRepo, clientVersion })
+      {
+        title: 'Downloading client',
+        skip: ctx => !!clientPath,
+        task: async (ctx, task) => {
+          task.output = 'Downloading client...'
+          await downloadClient({ ctx, task, clientRepo, clientVersion })
+        },
+        enabled: ctx => !ctx.clientFetch,
       },
-      enabled: ctx => !ctx.clientFetch,
-    },
-    {
-      title: 'Installing client dependencies',
-      task: async (ctx, task) => installDeps(ctx.clientPath, task),
-      enabled: ctx => !ctx.clientAvailable && !clientPath,
-    },
-    {
-      title: 'Building Aragon client',
-      task: async (ctx, task) => {
-        task.output = 'Building Aragon client...'
-        await buildClient(ctx, clientPath)
+      {
+        title: 'Installing client dependencies',
+        task: async (ctx, task) => installDeps(ctx.clientPath, task),
+        enabled: ctx => !ctx.clientAvailable && !clientPath,
       },
-      enabled: ctx => !ctx.clientAvailable,
-    },
-    {
-      title: 'Start IPFS',
-      skip: async () => isLocalDaemonRunning(),
-      task: async () => {
-        await startLocalDaemon(getBinaryPath(), getDefaultRepoPath(), {
-          detached: false,
-        })
+      {
+        title: 'Building Aragon client',
+        task: async (ctx, task) => {
+          task.output = 'Building Aragon client...'
+          await buildClient(ctx, clientPath)
+        },
+        enabled: ctx => !ctx.clientAvailable,
       },
-    },
-    {
-      title: 'Starting Aragon client',
-      task: async (ctx, task) => {
-        task.output = 'Starting Aragon client...'
-        await startClient(ctx, clientPort, clientPath)
+      {
+        title: 'Start IPFS',
+        skip: async () => isLocalDaemonRunning(),
+        task: async () => {
+          await startLocalDaemon(getBinaryPath(), getDefaultRepoPath(), {
+            detached: false,
+          })
+        },
       },
-    },
-    {
-      title: 'Opening client',
-      task: async (ctx, task) => {
-        if (autoOpen === true) {
-          task.output = 'Opening client'
-          await openClient(ctx, clientPort)
-        }
+      {
+        title: 'Starting Aragon client',
+        task: async (ctx, task) => {
+          task.output = 'Starting Aragon client...'
+          await startClient(ctx, clientPort, clientPath)
+        },
       },
-    },
-  ])
+      {
+        title: 'Opening client',
+        task: async (ctx, task) => {
+          if (autoOpen === true) {
+            task.output = 'Opening client'
+            await openClient(ctx, clientPort)
+          }
+        },
+      },
+    ],
+    listrOpts(silent, debug)
+  )
   return tasks
 }
 
@@ -129,6 +135,8 @@ export const handler = async ({
   clientPort,
   clientPath,
   autoOpen,
+  silent,
+  debug,
 }) => {
   const tasks = await task({
     clientRepo,
@@ -136,6 +144,8 @@ export const handler = async ({
     clientPort,
     clientPath,
     autoOpen,
+    silent,
+    debug,
   })
 
   await tasks.run()
