@@ -60,8 +60,6 @@ test('getAragonArtifact', t => {
 
   const artifact = getAragonArtifact(arapp, functions, abi)
 
-  console.log(JSON.stringify(artifact, null, 2))
-
   t.deepEqual(artifact, {
     environments: {
       mainnet: {
