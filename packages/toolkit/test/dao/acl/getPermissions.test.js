@@ -24,10 +24,5 @@ test('Should get permissions and apps for a new dao using the wrapper', async t 
 
   const roles = Object.values(permissions)
 
-  t.snapshot(
-    apps.map(app => app.appName),
-    'Should return the correct apps'
-  )
-
   t.snapshot(roles, 'Should return the correct roles')
 })
