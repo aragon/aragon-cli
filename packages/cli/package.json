@@ -115,7 +115,7 @@
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
     "@babel/register": "^7.0.0",
-    "ava": "^2.1.0",
+    "ava": "^3.4.0",
     "babel-eslint": "^10.0.1",
     "babel-plugin-istanbul": "^5.2.0",
     "core-js": "^3.1.4",
