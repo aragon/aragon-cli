@@ -34,6 +34,26 @@ async function _getApmRepoVersion(
 }
 
 /**
+ * Check if bump is valid
+ * @param appId 'finance.aragonpm.eth'
+ * @param fromVersion Current semver version
+ * @param toVersion New semver version
+ * @param provider Initialized ethers provider
+ */
+export async function isValidBump(
+  appId: string,
+  fromVersion: string,
+  toVersion: string,
+  provider: ethers.providers.Provider
+): Promise<boolean> {
+  const repo = new ethers.Contract(appId, repoAbi, provider) as ApmRepoInstance
+  return repo.isValidBump(
+    toApmVersionArray(fromVersion),
+    toApmVersionArray(toVersion)
+  )
+}
+
+/**
  * Fetch a single version of an APM Repo
  * @param appId 'finance.aragonpm.eth'
  * @param version Version to fetch: 'latest', '0.2.0', 14

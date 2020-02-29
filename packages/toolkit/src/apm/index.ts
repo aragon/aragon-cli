@@ -1,17 +1,80 @@
-import { AragonApmRepoData, ApmVersion } from './types'
+import { AragonApmRepoData, ApmVersion, AragonJsIntent } from './types'
 import { useEnvironment } from '../helpers'
 import { getDefaultApmName } from './utils'
 import {
   getApmRepo as getApmRepoNew,
   getApmRepoAllVersions as getAllVersionsNew,
+  isValidBump as isValidBumpNew,
 } from './getApmRepo'
 import { getApmRegistryPackages as getApmRegistryPackagesNew } from './getApmRegistryPackages'
 
-export * from './publishVersion'
+import {
+  publishVersion as publishVersionNew,
+  publishVersionIntent as publishVersionIntentNew,
+  PublishVersionTxData,
+} from './publishVersion'
 
 // ### Note:
 // This file is a temporary wrapper to the new apm methods API
 // with the previous API, which used the `environment` string
+
+/**
+ * Check if bump is valid
+ * @param appId 'finance.aragonpm.eth'
+ * @param fromVersion Current semver version
+ * @param toVersion New semver version
+ * @param environment Envrionment
+ */
+export async function isValidBump(
+  appId: string,
+  fromVersion: string,
+  toVersion: string,
+  environment: string
+): Promise<boolean> {
+  const { provider } = useEnvironment(environment)
+
+  return isValidBumpNew(appId, fromVersion, toVersion, provider)
+}
+
+/**
+ * Return tx data to publish a new version of an APM repo
+ * If the repo does not exist yet, it will return a tx to create
+ * a new repo and publish first version to its registry
+ * @param appId 'finance.aragonpm.eth'
+ * @param versionInfo Object with required version info
+ * @param  environment Envrionment
+ * @param options Additional options
+ *  - managerAddress: Must be provided to deploy a new repo
+ */
+export async function publishVersion(
+  appId: string,
+  versionInfo: ApmVersion,
+  environment: string,
+  options?: { managerAddress: string }
+): Promise<PublishVersionTxData> {
+  const { provider } = useEnvironment(environment)
+
+  return publishVersionNew(appId, versionInfo, provider, options)
+}
+
+/**
+ * Wrapps publishVersion to return the tx data formated as an aragon.js intent
+ * @param appId 'finance.aragonpm.eth'
+ * @param versionInfo Object with required version info
+ * @param  environment Envrionment
+ * @param options Additional options
+ *  - managerAddress: Must be provided to deploy a new repo
+ */
+export async function publishVersionIntent(
+  appId: string,
+  versionInfo: ApmVersion,
+  environment: string,
+  options?: { managerAddress: string }
+): Promise<AragonJsIntent> {
+  const { provider } = useEnvironment(environment)
+
+  return publishVersionIntentNew(appId, versionInfo, provider, options)
+}
 
 /**
  * Return a Repo object from aragonPM
