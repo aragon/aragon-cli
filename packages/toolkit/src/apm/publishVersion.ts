@@ -4,7 +4,7 @@ import { ApmVersion, AragonJsIntent } from './types'
 import { toApmVersionArray } from './utils'
 import { aragonAppAbi } from '../contractAbis'
 
-interface PublishVersionTxData {
+export interface PublishVersionTxData {
   to: string
   methodName: string
   params: any[]
