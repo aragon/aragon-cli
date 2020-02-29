@@ -4,7 +4,6 @@ import { getDefaultApmName } from './utils'
 import {
   getApmRepo as getApmRepoNew,
   getApmRepoAllVersions as getAllVersionsNew,
-  isValidBump as isValidBumpNew,
 } from './getApmRepo'
 import { getApmRegistryPackages as getApmRegistryPackagesNew } from './getApmRegistryPackages'
 
@@ -17,24 +16,6 @@ import {
 // ### Note:
 // This file is a temporary wrapper to the new apm methods API
 // with the previous API, which used the `environment` string
-
-/**
- * Check if bump is valid
- * @param appId 'finance.aragonpm.eth'
- * @param fromVersion Current semver version
- * @param toVersion New semver version
- * @param environment Envrionment
- */
-export async function isValidBump(
-  appId: string,
-  fromVersion: string,
-  toVersion: string,
-  environment: string
-): Promise<boolean> {
-  const { provider } = useEnvironment(environment)
-
-  return isValidBumpNew(appId, fromVersion, toVersion, provider)
-}
 
 /**
  * Return tx data to publish a new version of an APM repo
