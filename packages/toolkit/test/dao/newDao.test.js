@@ -37,3 +37,15 @@ test('Throws with invalid deploy event', async t => {
     newDao(getDefaultApmName('bare-template'), [], 'newInstance', 'invalid')
   )
 })
+
+test('newDao throws if newInstanceMethod does not exist in abi', async t => {
+  const error = await t.throwsAsync(() =>
+    newDao('bare-template', [], 'undefined_newInstanceMethod')
+  )
+
+  t.true(
+    error.message.includes(
+      'Template abi does not contain the requested function'
+    )
+  )
+})

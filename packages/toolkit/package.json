@@ -49,6 +49,7 @@
     "ethers": "^4.0.44",
     "find-up": "^4.0.0",
     "fs-extra": "^8.1.0",
+    "lodash": "^4.17.15",
     "node-fetch": "^2.6.0",
     "rxjs": "^6.5.3",
     "semver": "^7.1.3",
@@ -59,6 +60,7 @@
     "web3-eth-abi": "^1.2.6",
     "web3-utils": "^1.2.6"
   },
+  "peerDependencies": {},
   "devDependencies": {
     "@aragon/contract-helpers-test": "^0.0.2",
     "@babel/cli": "^7.7.4",
@@ -67,6 +69,7 @@
     "@babel/preset-typescript": "^7.7.4",
     "@babel/register": "^7.7.4",
     "@types/fs-extra": "^8.1.0",
+    "@types/lodash": "^4.14.149",
     "@types/lodash.flatten": "^4.4.6",
     "@types/node": "^12.12.24",
     "@types/node-fetch": "^2.5.4",
@@ -88,10 +91,11 @@
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "nyc": "^14.1.1",
+    "nyc": "^15.0.0",
     "prettier": "^1.19.1",
     "sinon": "^7.5.0",
     "tmp": "^0.1.0",
+    "ts-node": "^8.6.2",
     "typechain": "^1.0.5",
     "typechain-target-web3-v1": "^1.0.4",
     "typedoc": "^0.15.4",
@@ -101,8 +105,9 @@
     "node": ">=10.0.0"
   },
   "ava": {
+    "compileEnhancements": false,
     "require": [
-      "./test/register.js"
+      "ts-node/register"
     ],
     "files": [
       "test/**/*.test.{js,ts}"
