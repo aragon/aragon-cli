@@ -1,8 +1,7 @@
 import test from 'ava'
 import parseCli from '../parseCli'
 
-// Timeout increased 600s temporarily due to https://github.com/aragon/aragen/issues/101
-const START_CMD_TIMEOUT = 600000
+const START_CMD_TIMEOUT = 40000
 
 test.serial('start opens a web server', async t => {
   const output = await parseCli(

@@ -67,13 +67,12 @@ export const task = async function({
     [
       {
         title: 'Fetching client from aragen',
-        // Skipped due to https://github.com/aragon/aragen/issues/101
-        skip: () => true,
+        skip: () => !!clientPath,
         task: async (ctx, task) => {
           task.output = 'Fetching client...'
           await fetchClient(ctx, task, DEFAULT_CLIENT_VERSION)
         },
-        // enabled: () => clientVersion === DEFAULT_CLIENT_VERSION,
+        enabled: () => clientVersion === DEFAULT_CLIENT_VERSION,
       },
       {
         title: 'Downloading client',
@@ -109,12 +108,12 @@ export const task = async function({
       {
         title: 'Starting Aragon client',
         task: async (ctx, task) => {
-          try {
+          //try {
             task.output = 'Starting Aragon client...'
             await startClient(ctx, clientPort, clientPath)
-          } catch (err) {
-            console.log('Error starting server: ', err)
-          }
+          //} catch (err) {
+          //  console.log('Error starting server: ', err)
+          //}
         },
       },
       {
