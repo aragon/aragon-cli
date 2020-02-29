@@ -53286,9 +53286,9 @@
 			}
 		},
 		"listr-input": {
-			"version": "0.2.0",
-			"resolved": "https://registry.npmjs.org/listr-input/-/listr-input-0.2.0.tgz",
-			"integrity": "sha512-k5cKZllYKKFyTe/B6H4m9NWm/Px49OVvZXT28khQ9xrZQMYADh4zqMk7507/0Jdbg0tPjS0xTbvfrX9Yn6b7Yw==",
+			"version": "0.2.1",
+			"resolved": "https://registry.npmjs.org/listr-input/-/listr-input-0.2.1.tgz",
+			"integrity": "sha512-oa8iVG870qJq+OuuMK3DjGqFcwsK1SDu+kULp9kEq09TY231aideIZenr3lFOQdASpAr6asuyJBbX62/a3IIhg==",
 			"requires": {
 				"inquirer": "^7.0.0",
 				"inquirer-autosubmit-prompt": "^0.2.0",
