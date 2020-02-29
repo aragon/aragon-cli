@@ -26,7 +26,7 @@ export interface AragonArtifact extends AragonAppJson {
   functions: {
     roles: string[]
     notice: string
-    abi: AbiItem
+    abi: AbiItem | undefined
   }[]
   environments: AragonEnvironments
   abi: AbiItem[]
