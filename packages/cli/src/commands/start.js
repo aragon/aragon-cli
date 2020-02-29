@@ -108,12 +108,8 @@ export const task = async function({
       {
         title: 'Starting Aragon client',
         task: async (ctx, task) => {
-          //try {
-            task.output = 'Starting Aragon client...'
-            await startClient(ctx, clientPort, clientPath)
-          //} catch (err) {
-          //  console.log('Error starting server: ', err)
-          //}
+          task.output = 'Starting Aragon client...'
+          await startClient(ctx, clientPort, clientPath)
         },
       },
       {

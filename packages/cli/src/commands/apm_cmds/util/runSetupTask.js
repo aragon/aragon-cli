@@ -1,9 +1,12 @@
 import TaskList from 'listr'
 import { isAddress } from 'web3-utils'
-import { ZERO_ADDRESS,  isLocalDaemonRunning,	
-  startLocalDaemon,	
-  getBinaryPath,	
-  getDefaultRepoPath, } from '@aragon/toolkit'
+import {
+  ZERO_ADDRESS,
+  isLocalDaemonRunning,
+  startLocalDaemon,
+  getBinaryPath,
+  getDefaultRepoPath,
+} from '@aragon/toolkit'
 
 import { runScriptHelper } from '../../../util'
 
@@ -80,14 +83,14 @@ export default async function runSetupTask({
 
   return new TaskList(
     [
-      {	
-        title: 'Start IPFS',	
-        skip: async () => isLocalDaemonRunning(),	
-        task: async () => {	
-          await startLocalDaemon(getBinaryPath(), getDefaultRepoPath(), {	
-            detached: false,	
-          })	
-        },	
+      {
+        title: 'Start IPFS',
+        skip: async () => isLocalDaemonRunning(),
+        task: async () => {
+          await startLocalDaemon(getBinaryPath(), getDefaultRepoPath(), {
+            detached: false,
+          })
+        },
       },
       {
         // TODO: During test decide which prepublish script choose here and for building
