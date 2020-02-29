@@ -1,11 +1,10 @@
 import TaskList from 'listr'
 import inquirer from 'inquirer'
 import { blue, red, yellow, green } from 'chalk'
+//
 import {
   cleanVersion,
   getDistName,
-  getGlobalBinary,
-  getLocalBinary,
   installGoIpfs,
   GO_IMPL_DIST_VERSION,
   GO_IMPL_DIST_URL,
@@ -15,8 +14,8 @@ import {
   getArch,
   getPlatformForGO,
   getArchForGO,
-} from '@aragon/toolkit'
-//
+} from '../../lib/ipfs'
+import { getGlobalBinary, getLocalBinary } from '../../lib/node'
 import listrOpts from '../../helpers/listr-options'
 
 export const command = 'install'

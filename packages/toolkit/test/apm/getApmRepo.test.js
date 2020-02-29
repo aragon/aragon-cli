@@ -1,22 +1,12 @@
 import test from 'ava'
 //
-import getApmRepo from '../../src/apm/getApmRepo'
+import { getApmRepo } from '../../src/apm'
 
-let info
-
-const apmRepoVersion = '1.0.0'
-
-/* Setup and cleanup */
-
-test.before('setup and make a successful call', async t => {
+test('Fetches info of an APM repo', async t => {
   const apmRepoName = 'voting'
+  const apmRepoVersion = '1.0.0'
 
-  info = await getApmRepo(apmRepoName, apmRepoVersion)
-})
-
-/* Tests */
-
-test('produces extected info', t => {
+  const info = await getApmRepo(apmRepoName, apmRepoVersion, '')
   t.is(info.contractAddress, '0xb31E9e3446767AaDe9E48C4B1B6D13Cc6eDce172')
   t.is(info.version, apmRepoVersion)
 })

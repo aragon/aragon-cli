@@ -10,11 +10,11 @@ import {
 } from '../lib/start'
 
 import {
-  isLocalDaemonRunning,
   startLocalDaemon,
   getBinaryPath,
   getDefaultRepoPath,
-} from '@aragon/toolkit'
+  isLocalDaemonRunning,
+} from '../lib/ipfs'
 
 import pkg from '../../package.json'
 import { installDeps } from '../util'

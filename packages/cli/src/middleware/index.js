@@ -1,4 +1,6 @@
 import { loadArappFile } from '@aragon/toolkit'
+//
+// import { ensureWeb3 } from '../helpers/web3-fallback'
 
 class InvalidArguments extends Error {}
 
@@ -17,6 +19,9 @@ export function configEnvironmentMiddleware(argv) {
     // Transform environment
     environment = useFrame ? `frame:${environment}` : environment
 
+    // TODO: Initialize toolkit once and pass on args
+    // await ensureWeb3(web3)
+
     return {
       environment,
     }
@@ -27,6 +32,19 @@ export function configEnvironmentMiddleware(argv) {
     }
 
     if (e instanceof InvalidArguments) return prettyError(e.message)
+    // TODO: Errors from useEnvironment
+    // if (e instanceof NoEnvironmentInArapp)
+    // return prettyError(
+    // `environment '${e.message}' is not defined in your arapp.json.`
+    // )
+    // if (e instanceof NoEnvironmentInDefaults)
+    // return prettyError(
+    // `Default environment '${e.message}' not found. Try using aragon:local, aragon:rinkeby or aragon:mainnet.`
+    // )
+    // if (e instanceof NoNetworkInTruffleConfig)
+    // return prettyError(
+    // `aragon <command> requires a network '${e.message}' in your truffle.js. For an example, see http://truffleframework.com/docs/advanced/configuration`
+    // )
 
     throw e
   }

@@ -19,7 +19,7 @@ const readOutput = async () => {
   })
 }
 
-test.before('create a temp directory and resolve paths', t => {
+test.before('create a temp directory and resolve paths', () => {
   contractPath = path.resolve('test/helpers/contracts/ParseMe.sol')
 
   tempDir = tmp.dirSync({ unsafeCleanup: true, keep: false })
@@ -27,7 +27,7 @@ test.before('create a temp directory and resolve paths', t => {
   outputPath = path.resolve(tempDir.name, filename)
 })
 
-test.before('call extractContractInfoToFile function', async t => {
+test.before('call extractContractInfoToFile function', async () => {
   await extractContractInfoToFile(contractPath, outputPath)
 })
 

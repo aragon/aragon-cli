@@ -5,19 +5,21 @@ import {
   NO_MANAGER,
   ZERO_ADDRESS,
   addressesEqual,
-  resolveAddressOrEnsDomain,
+  resolveDaoAddressOrEnsDomain,
   getAclAddress,
   encodeInitPayload,
   getAppProxyAddressFromReceipt,
   getAppBase,
-  defaultAPMName,
+  getDefaultApmName,
+  getApmRepo,
+} from '@aragon/toolkit'
+//
+import {
   startLocalDaemon,
   getBinaryPath,
   getDefaultRepoPath,
   isLocalDaemonRunning,
-  getApmRepo,
-} from '@aragon/toolkit'
-//
+} from '../../lib/ipfs'
 import listrOpts from '../../helpers/listr-options'
 import { task as execTask } from './utils/execHandler'
 import daoArg from './utils/daoArg'
@@ -63,9 +65,9 @@ export const handler = async function({
   silent,
   debug,
 }) {
-  const apmRepoName = defaultAPMName(apmRepo)
+  const apmRepoName = getDefaultApmName(apmRepo)
 
-  dao = await resolveAddressOrEnsDomain(dao, environment)
+  dao = await resolveDaoAddressOrEnsDomain(dao, environment)
 
   const tasks = new TaskList(
     [

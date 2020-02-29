@@ -14,9 +14,3 @@ test.skip('start runs', async t => {
 
   t.assert(output.includes('started on port'))
 })
-
-test.serial('run fails if not in an aragon project directory', async t => {
-  await t.throwsAsync(async () => {
-    return parseCli(['run'])
-  })
-})

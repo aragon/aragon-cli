@@ -1,0 +1,25 @@
+env:
+  es6: true
+  node: true
+
+plugins:
+  - '@typescript-eslint'
+extends:
+  - 'eslint:recommended'
+  - 'plugin:@typescript-eslint/eslint-recommended'
+  - 'plugin:@typescript-eslint/recommended'
+  - 'standard'
+  - 'plugin:ava/recommended'
+  - 'plugin:prettier/recommended'
+  - 'prettier/@typescript-eslint'
+
+parser: '@typescript-eslint/parser'
+
+rules:
+  # Disable strict Typescript rules until the code is fully migrated
+
+  # import helps make sure that ES6 export good practices are used
+  # Enforce self-descriptive export standards
+  'import/no-anonymous-default-export': 'error'
+  # 'import/no-dynamic-require': 'error'
+  # 'import/no-default-export': 'error'

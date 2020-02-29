@@ -1,12 +1,12 @@
 import TaskList from 'listr'
+//
 import {
   getDefaultRepoPath,
   getPorts,
   getRepoConfig,
   getHttpClient,
   killProcessOnPort,
-} from '@aragon/toolkit'
-//
+} from '../../lib/ipfs'
 import listrOpts from '../../helpers/listr-options'
 
 export const command = 'stop'

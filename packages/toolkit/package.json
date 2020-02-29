@@ -8,7 +8,8 @@
     "url": "https://github.com/aragon/aragon-cli/tree/master/packages/toolkit"
   },
   "scripts": {
-    "build": "babel src --out-dir dist --source-maps --extensions '.js,.ts'",
+    "generate": "typechain --target web3-v1 --outDir typechain './node_modules/@aragon/abis/os/artifacts/*.json'",
+    "build": "babel src --out-dir dist --source-maps --copy-files --extensions '.js,.ts'",
     "build:watch": "npm run build -- --watch",
     "build:docs": "typedoc --out docs --allowJs --readme none --theme minimal --mode file",
     "lint": "npm run check-types && eslint src test --ext '.js,.ts'",
@@ -38,58 +39,68 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@aragon/abis": "^1.1.0",
-    "@aragon/apm": "3.1.3",
     "@aragon/apps-shared-minime": "^1.0.2",
-    "@aragon/aragen": "^5.4.3",
+    "@aragon/aragen-snapshot": "^0.0.3",
     "@aragon/truffle-config-v5": "^1.0.0",
     "@aragon/wrapper": "^5.0.0-rc.23",
-    "babel-eslint": "^10.0.3",
-    "byte-size": "^6.2.0",
-    "core-js": "^3.6.4",
+    "ajv": "^6.11.0",
+    "chalk": "^3.0.0",
     "eth-ens-namehash": "^2.0.8",
     "ethereum-ens": "^0.8.0",
-    "execa": "^4.0.0",
+    "ethers": "^4.0.44",
     "find-up": "^4.0.0",
     "fs-extra": "^8.1.0",
-    "get-folder-size": "^2.0.1",
-    "go-platform": "^1.0.0",
-    "ipfs-http-client": "^40.1.0",
-    "is-ipfs": "^0.6.3",
-    "kill-port": "^1.6.0",
-    "pkg-dir": "^4.2.0",
-    "ps-tree": "^1.2.0",
+    "lodash": "^4.17.15",
+    "node-fetch": "^2.6.0",
     "rxjs": "^6.5.3",
-    "stringify-tree": "^1.0.2",
-    "web3": "^1.2.4",
-    "web3-eth-abi": "^1.2.4",
-    "web3-utils": "^1.2.4"
+    "semver": "^7.1.3",
+    "solidity-parser-antlr": "^0.4.11",
+    "web3": "^1.2.6",
+    "web3-core": "^1.2.6",
+    "web3-core-helpers": "^1.2.6",
+    "web3-eth-abi": "^1.2.6",
+    "web3-utils": "^1.2.6"
   },
+  "peerDependencies": {},
   "devDependencies": {
-    "@aragon/test-helpers": "^2.1.0",
+    "@aragon/contract-helpers-test": "^0.0.2",
     "@babel/cli": "^7.7.4",
     "@babel/core": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
     "@babel/preset-typescript": "^7.7.4",
     "@babel/register": "^7.7.4",
+    "@types/fs-extra": "^8.1.0",
+    "@types/lodash": "^4.14.149",
+    "@types/lodash.flatten": "^4.4.6",
+    "@types/node": "^12.12.24",
+    "@types/node-fetch": "^2.5.4",
+    "@types/rx": "^4.1.1",
+    "@types/semver": "^7.1.0",
+    "@types/which": "^1.3.2",
     "@typescript-eslint/eslint-plugin": "^2.11.0",
     "@typescript-eslint/parser": "^2.11.0",
     "ava": "^2.4.0",
+    "babel-eslint": "^10.0.3",
     "babel-plugin-istanbul": "^5.2.0",
-    "bn.js": "^5.0.0",
+    "bignumber.js": "^9.0.0",
+    "bn.js": "^4.11.8",
+    "core-js": "^3.6.4",
     "eslint": "^6.7.2",
     "eslint-config-prettier": "^6.7.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-ava": "^10.0.0",
-    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "ethereumjs-abi": "^0.6.8",
-    "nyc": "^14.1.1",
+    "nyc": "^15.0.0",
     "prettier": "^1.19.1",
-    "proxyquire": "^2.1.3",
     "sinon": "^7.5.0",
+    "tmp": "^0.1.0",
+    "ts-node": "^8.6.2",
+    "typechain": "^1.0.5",
+    "typechain-target-web3-v1": "^1.0.4",
     "typedoc": "^0.15.4",
     "typescript": "^3.7.3"
   },
@@ -97,8 +108,9 @@
     "node": ">=10.0.0"
   },
   "ava": {
+    "compileEnhancements": false,
     "require": [
-      "./test/register.js"
+      "ts-node/register"
     ],
     "files": [
       "test/**/*.test.{js,ts}"
@@ -138,29 +150,6 @@
           "istanbul"
         ]
       }
-    }
-  },
-  "eslintConfig": {
-    "env": {
-      "es6": true,
-      "node": true
-    },
-    "plugins": [
-      "@typescript-eslint"
-    ],
-    "extends": [
-      "plugin:@typescript-eslint/recommended",
-      "standard",
-      "plugin:ava/recommended",
-      "plugin:prettier/recommended",
-      "prettier/@typescript-eslint"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "rules": {
-      "@typescript-eslint/no-use-before-define": "off",
-      "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/no-empty-function": "off"
     }
   },
   "prettier": {

@@ -1,19 +1,17 @@
 import TaskList from 'listr'
 import { green } from 'chalk'
+import { newDao, assignDaoId, getDefaultApmName } from '@aragon/toolkit'
+//
 import {
-  newDao,
-  assignId,
-  defaultAPMName,
   startLocalDaemon,
   getBinaryPath,
   getDefaultRepoPath,
   isLocalDaemonRunning,
-} from '@aragon/toolkit'
-//
+} from '../../lib/ipfs'
 import listrOpts from '../../helpers/listr-options'
 import { parseArgumentStringIfPossible } from '../../util'
 
-export const BARE_TEMPLATE = defaultAPMName('bare-template')
+export const BARE_TEMPLATE = getDefaultApmName('bare-template')
 export const BARE_INSTANCE_FUNCTION = 'newInstance'
 export const BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
 export const command = 'new [template] [template-version]'
@@ -65,7 +63,7 @@ export const task = async ({
   silent,
   debug,
 }) => {
-  template = defaultAPMName(template)
+  template = getDefaultApmName(template)
   let daoAddress
 
   const tasks = new TaskList(
@@ -98,7 +96,7 @@ export const task = async ({
         title: 'Assigning Aragon Id',
         enabled: () => aragonId,
         task: async () => {
-          await assignId(daoAddress, aragonId, environment)
+          await assignDaoId(daoAddress, aragonId, environment)
         },
       },
     ],
