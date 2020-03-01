@@ -5,8 +5,8 @@ import {
   getPorts,
   getRepoConfig,
   getHttpClient,
-  killProcessOnPort,
 } from '../../lib/ipfs'
+import { killProcessOnPort } from '../../lib/node'
 import listrOpts from '../../helpers/listr-options'
 
 export const command = 'stop'

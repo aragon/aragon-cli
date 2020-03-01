@@ -1,7 +1,9 @@
 import test from 'ava'
 import { remove } from 'fs-extra'
 import parseCli from '../parseCli'
-import { initPackage, installGoIpfs, killProcessOnPort } from '@aragon/toolkit'
+import { initPackage, killProcessOnPort } from '../../src/lib/node'
+import { installGoIpfs } from '../../src/lib/ipfs'
+
 
 // sandbox project with local ipfs
 const projectPath = './.tmp/test_cli_ipfs/project'

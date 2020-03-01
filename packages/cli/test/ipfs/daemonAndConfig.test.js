@@ -19,8 +19,8 @@ import {
   patchRepoConfig,
   getDefaultRepoPath,
   ensureLocalDaemon,
-} from '../../src/ipfs'
-import { initPackage, killProcessOnPort } from '../../src/node'
+} from '../../src/lib/ipfs'
+import { initPackage, killProcessOnPort } from '../../src/lib/node'
 
 const apiPort = 8910
 const gatewayPort = 8911

@@ -8,14 +8,17 @@ import {
   installGoIpfs,
   GO_IMPL_DIST_VERSION,
   GO_IMPL_DIST_URL,
-  isPackage,
+} from '../../lib/ipfs'
+import {
   getGlobalPackagesLocation,
+  getGlobalBinary,
+  getLocalBinary,
   getPlatform,
   getArch,
   getPlatformForGO,
   getArchForGO,
-} from '../../lib/ipfs'
-import { getGlobalBinary, getLocalBinary } from '../../lib/node'
+  isPackage,
+} from '../../lib/node'
 import listrOpts from '../../helpers/listr-options'
 
 export const command = 'install'

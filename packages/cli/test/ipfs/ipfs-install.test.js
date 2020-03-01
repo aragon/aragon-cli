@@ -3,7 +3,7 @@ import path from 'path'
 import execa from 'execa'
 import parseCli from '../parseCli'
 import { remove } from 'fs-extra'
-import { initPackage } from '@aragon/toolkit'
+import { initPackage } from '../../src/lib/node'
 
 // config
 const projectPath = path.join(process.cwd(), './.tmp/test_cli_ipfs_install/')
