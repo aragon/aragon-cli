@@ -4,7 +4,6 @@ import parseCli from '../parseCli'
 import { initPackage, killProcessOnPort } from '../../src/lib/node'
 import { installGoIpfs } from '../../src/lib/ipfs'
 
-
 // sandbox project with local ipfs
 const projectPath = './.tmp/test_cli_ipfs/project'
 const repoPath = './.tmp/test_cli_ipfs/repo/'
