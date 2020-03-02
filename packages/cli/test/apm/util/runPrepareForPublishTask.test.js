@@ -85,8 +85,13 @@ const mockInput = {
     debug: '',
 }
 
+const logSpy = sinon.spy(console, 'log')
+
+test.after('cleanup', t => {
+	logSpy.restore()
+})
+
 test('should generate artifacts and warn of collisions', async t => {
-    const logSpy = sinon.spy(console, 'log')
     await runPrepareForPublishTask(mockInput)
     t.assert(logSpy.calledWithMatch('WARNING'))
 })
