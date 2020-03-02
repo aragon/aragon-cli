@@ -22,6 +22,8 @@ import {
   checkIfNewArticatIsIdentical,
   copyCurrentApplicationArtifacts,
 } from '../../../lib/apm/generateArtifact'
+import abiAragonAppProxy from '@aragon/os/abi/AppProxyBase'
+import abiUtils from 'web3-eth-abi'
 
 /**
  * ctx mandatory output
@@ -130,6 +132,8 @@ export default async function runPrepareForPublishTask({
             const contractInterface = readJsonSync(contractInterfacePath)
             const sourceCode = await readFile(contractPath, 'utf8')
 
+            checkSignatureCollisionsWithProxy(contractInterface.abi)
+
             const artifact = await generateApplicationArtifact(
               arapp,
               contractInterface.abi,
@@ -211,4 +215,40 @@ export default async function runPrepareForPublishTask({
     ],
     listrOpts(silent, debug)
   ).run()
+}
+
+function checkSignatureCollisionsWithProxy(abi) {
+  const appProxyAbi = abiAragonAppProxy.abi.filter(({ type }) => type === 'function')
+  const collisions = findFunctionSignatureCollisions(abi, appProxyAbi)
+  if (collisions.length > 0) {
+    console.log(
+      `WARNING: Collisions detected between the proxy and app contract ABI's.
+                This is a potential security risk.
+                Affected functions:`, JSON.stringify(collisions.map(entry => entry.name))
+    )
+  }
+}
+
+function findFunctionSignatureCollisions(abi1, abi2) {
+  const getFunctionSignatures = (abi) => {
+    let signatures = []
+    for (let entity of abi) {
+      if (!(entity.type === 'function')) continue
+      signatures.push({
+        name: entity.name,
+        signature: abiUtils.encodeFunctionSignature(entity)
+      })
+    }
+    return signatures
+  }
+
+  const signatures1 = getFunctionSignatures(abi1)
+  const signatures2 = getFunctionSignatures(abi2)
+
+  const collisions = signatures1.filter(item1 => {
+    if (signatures2.some(item2 => item2.signature === item1.signature)) return true
+    return false
+  })
+
+  return collisions
 }
