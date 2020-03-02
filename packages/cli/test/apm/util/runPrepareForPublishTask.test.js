@@ -4,7 +4,7 @@ import sinon from 'sinon'
 const proxyquire = require('proxyquire').noCallThru()
 
 const runPrepareForPublishTask = proxyquire(
-    '../../src/commands/apm_cmds/util/runPrepareForPublishTask',
+    '../../../src/commands/apm_cmds/util/runPrepareForPublishTask',
     {
         '@aragon/toolkit': {
             loadArappFile: () => ({
