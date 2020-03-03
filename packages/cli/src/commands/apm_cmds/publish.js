@@ -164,52 +164,56 @@ export const handler = async function({
     initialVersion,
     version,
     contract: contractAddress,
-  } = await runSetupTask({
-    reporter,
-    gasPrice,
-    cwd,
-    web3,
-    network,
-    module,
-    apm: apmOptions,
-    silent,
-    debug,
-    prepublish,
-    prepublishScript,
-    build,
-    buildScript,
-    bump,
-    contract,
-    init,
-    reuse,
-    onlyContent,
-    onlyArtifacts,
-    http,
-  })
+  } = await (
+    await runSetupTask({
+      reporter,
+      gasPrice,
+      cwd,
+      web3,
+      network,
+      module,
+      apm: apmOptions,
+      silent,
+      debug,
+      prepublish,
+      prepublishScript,
+      build,
+      buildScript,
+      bump,
+      contract,
+      init,
+      reuse,
+      onlyContent,
+      onlyArtifacts,
+      http,
+    })
+  ).run()
 
-  const { pathToPublish, intent } = await runPrepareForPublishTask({
-    reporter,
-    cwd,
-    web3,
-    network,
-    module,
-    apm: apmOptions,
-    silent,
-    debug,
-    publishDir,
-    files,
-    ignore,
-    httpServedFrom,
-    provider,
-    onlyArtifacts,
-    onlyContent,
-    http,
-    // context
-    initialRepo,
-    initialVersion,
-    version,
-    contractAddress,
-  })
+  const { pathToPublish, intent } = await (
+    await runPrepareForPublishTask({
+      reporter,
+      cwd,
+      web3,
+      network,
+      module,
+      apm: apmOptions,
+      silent,
+      debug,
+      publishDir,
+      files,
+      ignore,
+      httpServedFrom,
+      provider,
+      onlyArtifacts,
+      onlyContent,
+      http,
+      // context
+      initialRepo,
+      initialVersion,
+      version,
+      contractAddress,
+    })
+  ).run()
 
   // Output publish info
 
@@ -261,29 +265,31 @@ export const handler = async function({
     if (!reply) return console.log()
   }
 
-  const { receipt, transactionPath } = await runPublishTask({
-    reporter,
-    gasPrice,
-    web3,
-    wsProvider,
-    module,
-    network,
-    http,
-    provider,
-    apm: apmOptions,
-    silent,
-    debug,
-    onlyArtifacts,
-    onlyContent,
-    // context
-    version,
-    pathToPublish,
-    contractAddress,
-    dao,
-    proxyAddress,
-    methodName,
-    params,
-  })
+  const { receipt, transactionPath } = await (
+    await runPublishTask({
+      reporter,
+      gasPrice,
+      web3,
+      wsProvider,
+      module,
+      network,
+      http,
+      provider,
+      apm: apmOptions,
+      silent,
+      debug,
+      onlyArtifacts,
+      onlyContent,
+      // context
+      version,
+      pathToPublish,
+      contractAddress,
+      dao,
+      proxyAddress,
+      methodName,
+      params,
+    })
+  ).run()
 
   const { transactionHash, status } = receipt
 
