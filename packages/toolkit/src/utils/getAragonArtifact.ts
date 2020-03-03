@@ -2,6 +2,7 @@ import { mapValues } from 'lodash'
 import { AragonAppJson, AragonArtifact } from '../types'
 import { keccak256, AbiItem } from 'web3-utils'
 import { AragonContractFunction } from '../utils/parseContractFunctions'
+import { checkSignatureCollisionsWithProxy } from './abiCollisionCheck'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const namehash = require('eth-ens-namehash')
@@ -11,6 +12,7 @@ export default function getAragonArtifact(
   functions: AragonContractFunction[],
   abi: AbiItem[]
 ): AragonArtifact {
+  checkSignatureCollisionsWithProxy(abi)
   return {
     ...arapp,
 
