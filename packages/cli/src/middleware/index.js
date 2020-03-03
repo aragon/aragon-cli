@@ -52,7 +52,7 @@ export function configCliMiddleware(argv) {
 
     if (wsProvider?.connection?.url?.includes('eth.aragon.network')) {
       reporter.warning(
-        `You are currently using the Aragon Ethereum node (${wsProvider.connection.url}). Consider switching to Infura (https://infura.io) for better performances. See the "wsRPC" field of https://hack.aragon.org/docs/cli-global-confg for more information.`
+        `You are currently using the Aragon Ethereum node (${wsProvider.connection.url}) the request could take a while. Consider switching to Infura (https://infura.io) for better performances. See the "wsRPC" field of https://hack.aragon.org/docs/cli-global-confg for more information.`
       )
     }
 
