@@ -187,6 +187,8 @@ export function configEnvironment({
     ? ARAGON_MAINNET_ENDPOINT
     : null
 
+
+
   return {
     apm: {
       'ens-registry': env.registry,

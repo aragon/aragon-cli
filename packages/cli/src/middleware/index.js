@@ -14,6 +14,7 @@ class InvalidArguments extends Error {}
 
 export function configCliMiddleware(argv) {
   const [cmd, subcmd] = argv._
+  const { reporter } = argv
 
   try {
     // Load config files
@@ -24,7 +25,7 @@ export function configCliMiddleware(argv) {
     // Configure environment
 
     if (!arapp)
-      argv.reporter.debug(
+      reporter.debug(
         `Could not find 'arapp.json'. Using the default configuration`
       )
 
@@ -49,6 +50,12 @@ export function configCliMiddleware(argv) {
       truffleConfig: arapp && getTruffleConfig(),
     })
 
+    if (wsProvider?.connection?.url?.includes('eth.aragon.network')) {
+      reporter.warning(
+        `You are currently using the Aragon Ethereum node (${wsProvider.connection.url}) the request could take a while. Consider switching to Infura (https://infura.io) for better performances. See the "wsRPC" field of https://hack.aragon.org/docs/cli-global-confg for more information.`
+      )
+    }
+
     return {
       manifest,
       module: arappMutated,
@@ -58,7 +65,7 @@ export function configCliMiddleware(argv) {
     }
   } catch (e) {
     const prettyError = message => {
-      argv.reporter.error(message)
+      reporter.error(message)
       process.exit(1)
     }
 
