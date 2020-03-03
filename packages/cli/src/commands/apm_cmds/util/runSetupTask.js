@@ -2,27 +2,24 @@ import TaskList from 'listr'
 import { isAddress } from 'web3-utils'
 import {
   ZERO_ADDRESS,
-  APM_INITIAL_VERSIONS,
   isLocalDaemonRunning,
   startLocalDaemon,
   getBinaryPath,
   getDefaultRepoPath,
-  getApmRepo,
 } from '@aragon/toolkit'
+
+import { runScriptHelper } from '../../../util'
 
 // helpers
 import { compileContracts } from '../../../helpers/truffle-runner'
 import listrOpts from '../../../helpers/listr-options'
+import semver from 'semver'
+import APM from '@aragon/apm'
 
 // cmds
-import {
-  getPrevAndNextVersion,
-  InvalidBump,
-} from '../../../lib/apm/getPrevAndNextVersion'
 import { task as deployTask } from '../../deploy'
 
-// util
-import { runScriptHelper } from '../../../util'
+const getMajor = version => version.split('.')[0]
 
 /**
  * @typedef {Object} VersionAppInfo
@@ -67,7 +64,7 @@ export default async function runSetupTask({
   buildScript,
 
   /// Version
-  bump: bumpOrVersion,
+  bump,
 
   /// Contract
   contract,
@@ -82,17 +79,7 @@ export default async function runSetupTask({
   if (onlyContent) {
     contract = ZERO_ADDRESS
   }
-
-  // Set prepublish to true if --prepublish-script argument is used
-  if (process.argv.includes('--prepublish-script')) prepublish = true
-
-  const appName = module && module.appName
-
-  /**
-   * Flag for the Deploy contract task
-   * @type {boolean}
-   */
-  let shouldDeployContract
+  const apm = APM(web3, apmOptions)
 
   return new TaskList(
     [
@@ -117,32 +104,52 @@ export default async function runSetupTask({
         },
       },
       {
-        title: `Applying version bump (${bumpOrVersion})`,
+        title: `Applying version bump (${bump})`,
         task: async (ctx, task) => {
-          task.output = 'Fetching latest version from aragonPM...'
+          let isValid = true
           try {
-            const {
-              initialRepo,
-              prevVersion,
-              version,
-              shouldDeployContract: _shouldDeployContract,
-            } = await getPrevAndNextVersion(
-              appName,
-              bumpOrVersion,
-              web3,
-              apmOptions
+            const ipfsTimeout = 1000 * 60 * 5 // 5min
+
+            task.output = 'Fetching latest version from aragonPM...'
+
+            ctx.initialRepo = await apm.getLatestVersion(
+              module.appName,
+              ipfsTimeout
             )
 
-            // (TODO): For now MUST be exposed in the context because their are used around
-            ctx.initialRepo = initialRepo
-            ctx.initialVersion = prevVersion
-            ctx.version = version
-            shouldDeployContract = _shouldDeployContract
-          } catch (e) {
-            if (e instanceof InvalidBump)
-              throw Error(
-                "Version bump is not valid, you have to respect APM's versioning policy.\nCheck the version upgrade rules in the documentation:\n  https://hack.aragon.org/docs/apm-ref.html#version-upgrade-rules"
+            ctx.initialVersion = ctx.initialRepo.version
+
+            ctx.version = semver.valid(bump)
+              ? semver.valid(bump)
+              : semver.inc(ctx.initialVersion, bump)
+
+            isValid = await apm.isValidBump(
+              module.appName,
+              ctx.initialVersion,
+              ctx.version
+            )
+            if (!isValid) {
+              throw new Error(
+                "Version bump is not valid, you have to respect APM's versioning policy. Check the version upgrade rules in the documentation: https://hack.aragon.org/docs/apm-ref.html#version-upgrade-rules"
               )
+            }
+
+            ctx.shouldDeployContract =
+              getMajor(ctx.initialVersion) !== getMajor(ctx.version)
+          } catch (e) {
+            if (e.message.indexOf('Invalid content URI') === 0) {
+              return
+            }
+            // Repo doesn't exist yet, deploy the first version
+            ctx.version = semver.valid(bump)
+              ? semver.valid(bump)
+              : semver.inc('0.0.0', bump) // All valid initial versions are a version bump from 0.0.0
+            if (apm.validInitialVersions.indexOf(ctx.version) === -1) {
+              throw new Error(
+                `Invalid initial version  (${ctx.version}). It can only be 0.0.1, 0.1.0 or 1.0.0.`
+              )
+            }
+            ctx.shouldDeployContract = true // assume first version should deploy a contract
           }
         },
       },
@@ -163,12 +170,12 @@ export default async function runSetupTask({
       },
       {
         title: 'Deploy contract',
-        enabled: () =>
+        enabled: ctx =>
           !onlyContent &&
           ((contract && !isAddress(contract)) ||
-            (!contract && shouldDeployContract && !reuse)),
-        task: async () => {
-          return deployTask({
+            (!contract && ctx.shouldDeployContract && !reuse)),
+        task: async ctx => {
+          const deployTaskParams = {
             module,
             contract,
             init,
@@ -177,33 +184,33 @@ export default async function runSetupTask({
             cwd,
             web3,
             apmOptions,
-          })
+          }
+          return deployTask(deployTaskParams)
         },
       },
       {
         title: 'Determine contract address for version',
         enabled: () => !onlyArtifacts,
         task: async (ctx, task) => {
-          if (isAddress(contract)) {
-            ctx.contract = contract
-            return `Using ${contract}`
-          }
-
           // Get address of deployed contract
           ctx.contract = ctx.contractAddress
+          if (isAddress(contract)) {
+            ctx.contract = contract
+          }
 
-          if (!ctx.contract && !APM_INITIAL_VERSIONS.includes(ctx.version)) {
-            // Check if we can fall back to a previous contract address
+          // Check if we can fall back to a previous contract address
+          if (
+            !ctx.contract &&
+            apm.validInitialVersions.indexOf(ctx.version) === -1
+          ) {
             task.output = 'No contract address provided, using previous one'
 
             try {
-              const { contractAddress } = await getApmRepo(
-                web3,
-                appName,
-                apmOptions
+              const { contractAddress } = await apm.getLatestVersion(
+                module.appName
               )
               ctx.contract = contractAddress
-              return `Using ${contractAddress}`
+              return `Using ${ctx.contract}`
             } catch (err) {
               throw new Error('Could not determine previous contract')
             }
@@ -214,10 +221,10 @@ export default async function runSetupTask({
             throw new Error('No contract address supplied for initial version')
           }
 
-          return `Using ${ctx.contractAddress}`
+          return `Using ${ctx.contract}`
         },
       },
     ],
     listrOpts(silent, debug)
-  ).run()
+  )
 }

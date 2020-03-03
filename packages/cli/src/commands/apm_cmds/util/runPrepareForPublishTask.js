@@ -4,9 +4,9 @@ import path from 'path'
 import { readJsonSync, readFile } from 'fs-extra'
 import {
   APM_INITIAL_VERSIONS,
-  apmPublishVersionIntent,
   generateApplicationArtifact,
 } from '@aragon/toolkit'
+import APM from '@aragon/apm'
 //
 import listrOpts from '../../../helpers/listr-options'
 
@@ -27,7 +27,7 @@ import {
  * - pathToPublish {string}
  * @return {TaskList} Tasks
  */
-export default async function runPrepareForPublishTask({
+export default function runPrepareForPublishTask({
   // Globals
   cwd,
   web3,
@@ -60,6 +60,8 @@ export default async function runPrepareForPublishTask({
   version,
   contractAddress,
 }) {
+  const apm = APM(web3, apmOptions)
+
   return new TaskList(
     [
       {
@@ -131,6 +133,7 @@ export default async function runPrepareForPublishTask({
               contractInterface.abi,
               sourceCode
             )
+
             performArtifcatGeneration(artifact)
           }
 
@@ -194,19 +197,18 @@ export default async function runPrepareForPublishTask({
           ctx.contractInstance = null // clean up deploy sub-command artifacts
           const accounts = await web3.eth.getAccounts()
           const from = accounts[0]
-          ctx.intent = await apmPublishVersionIntent(
-            web3,
+
+          ctx.intent = await apm.publishVersionIntent(
             from,
             arapp.appName,
             version,
             http ? 'http' : provider,
             http || ctx.pathToPublish,
-            contractAddress,
-            apmOptions
+            contractAddress
           )
         },
       },
     ],
     listrOpts(silent, debug)
-  ).run()
+  )
 }

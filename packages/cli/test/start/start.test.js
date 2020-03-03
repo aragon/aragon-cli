@@ -1,10 +1,9 @@
 import test from 'ava'
-
 import parseCli from '../parseCli'
 
-const START_CMD_TIMEOUT = 40000 // 40s
+const START_CMD_TIMEOUT = 40000
 
-test.serial('start runs', async t => {
+test.serial('start opens a web server', async t => {
   const output = await parseCli(
     ['start', '--auto-open', 'false', '--debug'],
     START_CMD_TIMEOUT

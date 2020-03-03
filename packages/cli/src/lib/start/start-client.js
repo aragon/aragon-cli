@@ -1,5 +1,6 @@
 import execa from 'execa'
 import path from 'path'
+import fs from 'fs-extra'
 import { isPortTaken, getBinary, getPackageRoot } from '@aragon/toolkit'
 
 export async function startClient(ctx, clientPort, clientPath) {
@@ -14,7 +15,9 @@ export async function startClient(ctx, clientPort, clientPath) {
   const rootPath = clientPath || ctx.clientPath
 
   const startArguments = {
-    cwd: path.join(rootPath, 'build'),
+    cwd: (await fs.pathExists(path.join(rootPath, 'build')))
+      ? path.join(rootPath, 'build')
+      : path.join(rootPath, 'public'),
   }
 
   // TODO: Use -o option to open url. Will remove open dependency

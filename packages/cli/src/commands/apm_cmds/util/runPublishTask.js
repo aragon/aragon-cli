@@ -80,5 +80,5 @@ export default async function runPublishTask({
       },
     ],
     listrOpts(silent, debug)
-  ).run()
+  )
 }
