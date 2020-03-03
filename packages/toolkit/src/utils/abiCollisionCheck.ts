@@ -1,6 +1,9 @@
 import { AbiItem } from 'web3-utils'
-import web3EthAbi from 'web3-eth-abi'
+import web3EthAbiUntyped, { AbiCoder } from 'web3-eth-abi'
 import * as abiAragonAppProxy from '@aragon/abis/os/abi/AppProxyBase.json'
+
+// Fix necessary due to wrong type exports in web3-eth-abi
+const web3EthAbi: AbiCoder = web3EthAbiUntyped as any
 
 function findFunctionSignatureCollisions(abi1: AbiItem[], abi2: AbiItem[]) {
   const getFunctionSignatures = (abi: AbiItem[]) => {
@@ -9,7 +12,7 @@ function findFunctionSignatureCollisions(abi1: AbiItem[], abi2: AbiItem[]) {
       if (!(entity.type === 'function')) continue
       signatures.push({
         name: entity.name,
-        signature: (web3EthAbi as any).encodeFunctionSignature(entity),
+        signature: (web3EthAbi as AbiCoder).encodeFunctionSignature(entity),
       })
     }
     return signatures
