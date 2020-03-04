@@ -1,4 +1,4 @@
-import { AragonApmRepoData, ApmVersion } from './types'
+import { AragonApmRepoData, ApmVersion, AragonJsIntent } from './types'
 import { useEnvironment } from '../helpers'
 import { getDefaultApmName } from './utils'
 import {
@@ -7,11 +7,55 @@ import {
 } from './getApmRepo'
 import { getApmRegistryPackages as getApmRegistryPackagesNew } from './getApmRegistryPackages'
 
-export * from './publishVersion'
+import {
+  publishVersion as publishVersionNew,
+  publishVersionIntent as publishVersionIntentNew,
+  PublishVersionTxData,
+} from './publishVersion'
 
 // ### Note:
 // This file is a temporary wrapper to the new apm methods API
 // with the previous API, which used the `environment` string
+
+/**
+ * Return tx data to publish a new version of an APM repo
+ * If the repo does not exist yet, it will return a tx to create
+ * a new repo and publish first version to its registry
+ * @param appId 'finance.aragonpm.eth'
+ * @param versionInfo Object with required version info
+ * @param  environment Envrionment
+ * @param options Additional options
+ *  - managerAddress: Must be provided to deploy a new repo
+ */
+export async function publishVersion(
+  appId: string,
+  versionInfo: ApmVersion,
+  environment: string,
+  options?: { managerAddress: string }
+): Promise<PublishVersionTxData> {
+  const { provider } = useEnvironment(environment)
+
+  return publishVersionNew(appId, versionInfo, provider, options)
+}
+
+/**
+ * Wrapps publishVersion to return the tx data formated as an aragon.js intent
+ * @param appId 'finance.aragonpm.eth'
+ * @param versionInfo Object with required version info
+ * @param  environment Envrionment
+ * @param options Additional options
+ *  - managerAddress: Must be provided to deploy a new repo
+ */
+export async function publishVersionIntent(
+  appId: string,
+  versionInfo: ApmVersion,
+  environment: string,
+  options?: { managerAddress: string }
+): Promise<AragonJsIntent> {
+  const { provider } = useEnvironment(environment)
+
+  return publishVersionIntentNew(appId, versionInfo, provider, options)
+}
 
 /**
  * Return a Repo object from aragonPM
