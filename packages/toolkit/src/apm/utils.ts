@@ -65,7 +65,7 @@ export function linspace(from: number, to: number, step = 1): number[] {
  */
 export function getFetchUrlFromContentUri(
   contentUri: string,
-  options?: { ipfsGateway: string }
+  options?: { ipfsGateway?: string }
 ): string {
   const [protocol, location] = contentUri.split(/:(.+)/)
   switch (protocol) {

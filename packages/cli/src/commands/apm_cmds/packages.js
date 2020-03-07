@@ -1,6 +1,6 @@
 import Table from 'cli-table'
 import TaskList from 'listr'
-import { getApmRegistryPackages } from '@aragon/toolkit'
+import { Toolkit } from '@aragon/toolkit'
 
 export const command = 'packages [apmRegistry]'
 export const describe = 'List all packages in the registry'
@@ -33,11 +33,8 @@ export const handler = async function({ apmRegistry, environment }) {
           }
         }
 
-        packages = await getApmRegistryPackages(
-          apmRegistry,
-          progressHandler,
-          environment
-        )
+        const toolkit = Toolkit(environment)
+        packages = await toolkit.apm.getRegistryPackages(apmRegistry)
       },
     },
   ])

@@ -1,5 +1,5 @@
 import { getRecommendedGasLimit } from './utils/getRecommendedGasLimit'
-import { getApmRepo } from '../apm'
+import { Apm } from '../'
 import { useEnvironment } from '../helpers/useEnvironment'
 import { bareTemplateAbi } from '../contractAbis'
 
@@ -24,11 +24,12 @@ export default async function newDao(
   templateInstance: any // TODO: optional object options
 ): Promise<string> {
   const { web3, gasPrice } = useEnvironment(environment)
+  const apm = Apm(environment)
 
   let template
 
   if (!templateInstance) {
-    template = await getApmRepo(templateName, templateVersion, environment)
+    template = await apm.getVersionContent(templateName, templateVersion)
 
     // If not connected to IPFS, repo won't have an ABI
     const templateAbi = template.abi || bareTemplateAbi

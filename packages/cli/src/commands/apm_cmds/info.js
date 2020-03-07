@@ -1,5 +1,5 @@
 import { bold } from 'chalk'
-import { getApmRepo } from '@aragon/toolkit'
+import { Toolkit } from '@aragon/toolkit'
 
 export const command = 'info <apmRepo> [apmRepoVersion]'
 export const describe = 'Get information about a package'
@@ -23,7 +23,8 @@ export const handler = async function({
   apmRepo,
   apmRepoVersion,
 }) {
-  const repo = await getApmRepo(apmRepo, apmRepoVersion, environment)
+  const toolkit = Toolkit(environment)
+  const repo = await toolkit.apm.getVersionContent(apmRepo, apmRepoVersion)
 
   reporter.info(`Fetching ${bold(apmRepo)}@${apmRepoVersion}`)
 
