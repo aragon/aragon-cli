@@ -1,19 +1,18 @@
 {
   "compilerOptions": {
     "target": "es6",
+    "outDir": "dist",
     // Search under node_modules for non-relative imports.
     "moduleResolution": "node",
-    // Don't emit; allow Babel to transform files.
-    "noEmit": true,
     "lib": ["es6"],
     "allowSyntheticDefaultImports": true,
     "module": "commonjs",
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "allowJs": true,
     "strict": true,
     "types": ["node"],
-    "sourceMap": true
+    "sourceMap": true,
+    "declaration": true
   },
   "include": ["./src", "./node_modules/bn.js-typings/index.d.ts"],
   "exclude": []
