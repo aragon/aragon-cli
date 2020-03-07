@@ -1,6 +1,6 @@
 import { green, blue, bold } from 'chalk'
 import TaskList from 'listr'
-import { getAllVersions, getDefaultApmName } from '@aragon/toolkit'
+import { Toolkit, getDefaultApmName } from '@aragon/toolkit'
 
 export const command = 'versions [apmRepo]'
 export const describe =
@@ -25,7 +25,8 @@ export const handler = async function({ reporter, environment, apmRepo }) {
       task: async (ctx, task) => {
         reporter.info(`Fetching ${bold(apmRepoName)} published versions`)
 
-        versions = await getAllVersions(apmRepoName, environment)
+        const toolkit = Toolkit(environment)
+        versions = await toolkit.apm.getAllVersions(apmRepoName)
       },
     },
   ])

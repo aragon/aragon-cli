@@ -11,7 +11,7 @@ import {
   getAppProxyAddressFromReceipt,
   getAppBase,
   getDefaultApmName,
-  getApmRepo,
+  Toolkit,
 } from '@aragon/toolkit'
 //
 import {
@@ -67,6 +67,7 @@ export const handler = async function({
 }) {
   const apmRepoName = getDefaultApmName(apmRepo)
 
+  const toolkit = Toolkit(environment)
   dao = await resolveDaoAddressOrEnsDomain(dao, environment)
 
   const tasks = new TaskList(
@@ -83,7 +84,10 @@ export const handler = async function({
       {
         title: `Fetching ${bold(apmRepoName)}@${apmRepoVersion}`,
         task: async ctx => {
-          ctx.repo = await getApmRepo(apmRepoName, apmRepoVersion, environment)
+          ctx.repo = await toolkit.apm.getVersionContent(
+            apmRepoName,
+            apmRepoVersion
+          )
         },
       },
       {
