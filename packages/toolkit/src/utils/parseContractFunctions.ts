@@ -187,7 +187,7 @@ export default function parseContractFunctions(
   parseContract(
     (targetContractName &&
       contracts.find(node => node.name === targetContractName)) ||
-    contracts[contracts.length - 1]
+      contracts[contracts.length - 1]
   )
 
   return functions
@@ -198,13 +198,11 @@ export default function parseContractFunctions(
  *
  * @param sourceCode Source code of the contract.
  */
-export function parseGlobalVariableAssignments(
-  sourceCode: string
-): string[] {
+export function parseGlobalVariableAssignments(sourceCode: string): string[] {
   const ast = parser.parse(sourceCode, {})
   const variables: string[] = []
   parser.visit(ast, {
-    StateVariableDeclaration: function (node) {
+    StateVariableDeclaration: function(node) {
       const variable = node.variables[0]
       if (
         variable.isStateVar &&
@@ -216,40 +214,6 @@ export function parseGlobalVariableAssignments(
     },
   })
   return variables
-}
-
-/**
- * Parses the constructor body of a contract, and finds
- * assignments to global variables.
- *
- * @param sourceCode Source code of the contract.
- */
-export function parseConstructorAssignments(
-  sourceCode: string
-): string[] {
-  const ast = parser.parse(sourceCode, {})
-  let constructorBody: parser.Block | undefined
-  const assignments: string[] = []
-  let parameters: parser.VariableDeclaration[] = []
-
-  parser.visit(ast, {
-    FunctionDefinition: function (node) {
-      if (!(node.isConstructor && node.body)) return
-      parameters = node.parameters
-      constructorBody = node.body
-    },
-  })
-
-  if (!constructorBody) return []
-
-  for (const statement of constructorBody.statements) {
-    const variableName = isGlobalAssignment(statement, parameters)
-    if (variableName) {
-      assignments.push(variableName)
-    }
-  }
-
-  return assignments
 }
 
 /**
@@ -313,5 +277,36 @@ function isGlobalAssignment(
     if (!variableName || isParameter(variableName)) return
     return variableName
   }
-  return
+}
+
+/**
+ * Parses the constructor body of a contract, and finds
+ * assignments to global variables.
+ *
+ * @param sourceCode Source code of the contract.
+ */
+export function parseConstructorAssignments(sourceCode: string): string[] {
+  const ast = parser.parse(sourceCode, {})
+  let constructorBody: parser.Block | undefined
+  const assignments: string[] = []
+  let parameters: parser.VariableDeclaration[] = []
+
+  parser.visit(ast, {
+    FunctionDefinition: function(node) {
+      if (!(node.isConstructor && node.body)) return
+      parameters = node.parameters
+      constructorBody = node.body
+    },
+  })
+
+  if (!constructorBody) return []
+
+  for (const statement of constructorBody.statements) {
+    const variableName = isGlobalAssignment(statement, parameters)
+    if (variableName) {
+      assignments.push(variableName)
+    }
+  }
+
+  return assignments
 }

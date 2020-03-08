@@ -109,8 +109,7 @@ test('Parse AST of Finance.sol', t => {
 })
 
 test('should find global variable assignments defined in contract', t => {
-  const sourceCode =
-  `
+  const sourceCode = `
     pragma solidity 0.4.24;
     
     contract Test {
@@ -126,8 +125,7 @@ test('should find global variable assignments defined in contract', t => {
 })
 
 test('should find global variable assignments in constructor', t => {
-  const sourceCode =
-  `
+  const sourceCode = `
     pragma solidity 0.4.24;
 
     contract Test {

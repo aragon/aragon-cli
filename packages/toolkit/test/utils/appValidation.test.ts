@@ -4,7 +4,9 @@ import { AbiItem } from 'web3-utils'
 import proxyquire from 'proxyquire'
 const { validateApp } = proxyquire('../../src/utils/appValidation', {
   fs: {
-    readFileSync: () => {},
+    readFileSync: () => {
+      return undefined
+    },
   },
   './parseContractFunctions': {
     parseGlobalVariableAssignments: () => ['test'],

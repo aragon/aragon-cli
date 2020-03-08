@@ -9,40 +9,6 @@ import {
 // Fix necessary due to wrong type exports in web3-eth-abi
 const web3EthAbi: AbiCoder = web3EthAbiUntyped as any
 
-export function validateApp(abi: AbiItem[], sourceCode: string) {
-  checkSignatureCollisionsWithProxy(abi)
-  checkAssignedGlobalVariables(sourceCode)
-}
-
-function checkSignatureCollisionsWithProxy(abi: AbiItem[]) {
-  const appProxyAbi = (abiAragonAppProxy.abi as AbiItem[]).filter(
-    ({ type }) => type === 'function'
-  )
-  const collisions = findFunctionSignatureCollisions(abi, appProxyAbi)
-  if (collisions.length > 0) {
-    console.log(
-      `WARNING: Collisions detected between the proxy and app contract ABI's.
-        This is a potential security risk.
-        Affected functions:`,
-      JSON.stringify(collisions.map(entry => entry.name))
-    )
-  }
-}
-
-function checkAssignedGlobalVariables(sourceCode: string) {
-  const assignments = parseGlobalVariableAssignments(sourceCode)
-  const assignments2 = parseConstructorAssignments(sourceCode)
-  if (assignments.length > 0 || assignments2.length > 0) {
-    console.log(
-      `WARNING: Global state variables found to be initialized with values
-        during contract creation. This will probably lead to unintended results.
-        App contracts should use the initialize() function to initialize global
-        variables. Affected variables:`,
-      JSON.stringify(assignments.concat(assignments2))
-    )
-  }
-}
-
 function findFunctionSignatureCollisions(abi1: AbiItem[], abi2: AbiItem[]) {
   const getFunctionSignatures = (abi: AbiItem[]) => {
     const signatures = []
@@ -66,4 +32,38 @@ function findFunctionSignatureCollisions(abi1: AbiItem[], abi2: AbiItem[]) {
   })
 
   return collisions
+}
+
+function checkAssignedGlobalVariables(sourceCode: string) {
+  const assignments = parseGlobalVariableAssignments(sourceCode)
+  const assignments2 = parseConstructorAssignments(sourceCode)
+  if (assignments.length > 0 || assignments2.length > 0) {
+    console.log(
+      `WARNING: Global state variables found to be initialized with values
+        during contract creation. This will probably lead to unintended results.
+        App contracts should use the initialize() function to initialize global
+        variables. Affected variables:`,
+      JSON.stringify(assignments.concat(assignments2))
+    )
+  }
+}
+
+function checkSignatureCollisionsWithProxy(abi: AbiItem[]) {
+  const appProxyAbi = (abiAragonAppProxy.abi as AbiItem[]).filter(
+    ({ type }) => type === 'function'
+  )
+  const collisions = findFunctionSignatureCollisions(abi, appProxyAbi)
+  if (collisions.length > 0) {
+    console.log(
+      `WARNING: Collisions detected between the proxy and app contract ABI's.
+        This is a potential security risk.
+        Affected functions:`,
+      JSON.stringify(collisions.map(entry => entry.name))
+    )
+  }
+}
+
+export function validateApp(abi: AbiItem[], sourceCode: string) {
+  checkSignatureCollisionsWithProxy(abi)
+  checkAssignedGlobalVariables(sourceCode)
 }
