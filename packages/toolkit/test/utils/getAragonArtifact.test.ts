@@ -2,8 +2,13 @@ import test from 'ava'
 import { AragonAppJson } from '../../src/types'
 import { AragonContractFunction } from '../../src/utils/parseContractFunctions'
 import { AbiItem } from 'web3-utils'
+import proxyquire from 'proxyquire'
 //
-import getAragonArtifact from '../../src/utils/getAragonArtifact'
+const { default: getAragonArtifact } = proxyquire('../../src/utils/getAragonArtifact', {
+  './appValidation': {
+    validateApp: () => {}
+  }
+})
 
 /* Tests */
 test('getAragonArtifact', t => {
