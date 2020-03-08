@@ -4,4 +4,6 @@
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-export const arappSchema = require('./arapp.schema.json')
+import arappSchema from './arapp.schema.json'
+
+export { arappSchema }

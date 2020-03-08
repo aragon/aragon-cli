@@ -1,5 +1,7 @@
 import { AbiItem } from 'web3-utils'
 
+import bareTemplateAbiSrc from './bareTemplateAbi.json'
+
 // JSON files are imported in this unique file until Typescript x JSON import issues are fixed
 // Afterwards, keep this file since contract abi files may change and then it will only
 // require modifying the imports in a single file
@@ -19,4 +21,4 @@ export const ififsResolvingRegistrarAbi: AbiItem[] = require('@aragon/abis/id/ar
   .abi
 
 // From local JSON
-export const bareTemplateAbi: AbiItem[] = require('./bareTemplateAbi.json')
+export const bareTemplateAbi: AbiItem[] = bareTemplateAbiSrc as AbiItem[]
