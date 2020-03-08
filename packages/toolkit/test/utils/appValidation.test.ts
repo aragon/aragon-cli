@@ -1,7 +1,16 @@
 import test from 'ava'
-import { checkSignatureCollisionsWithProxy } from '../../src/utils/abiCollisionCheck'
 import sinon from 'sinon'
 import { AbiItem } from 'web3-utils'
+import proxyquire from 'proxyquire'
+const { validateApp } = proxyquire('../../src/utils/appValidation', {
+  fs: {
+    readFileSync: () => {},
+  },
+  './parseContractFunctions': {
+    parseGlobalVariableAssignments: () => ['test'],
+    parseConstructorAssignments: () => ['test2'],
+  },
+})
 
 const mockAbi: AbiItem[] = [
   {
@@ -27,6 +36,11 @@ test.after('cleanup', t => {
 })
 
 test('should generate artifact and warn of collisions', async t => {
-  await checkSignatureCollisionsWithProxy(mockAbi)
+  await validateApp(mockAbi, '')
   t.assert(logSpy.calledWithMatch('WARNING: Collisions'))
+})
+
+test('should warn of global variable assignments', async t => {
+  await validateApp(mockAbi, '')
+  t.assert(logSpy.calledWithMatch('WARNING: Global state'))
 })
