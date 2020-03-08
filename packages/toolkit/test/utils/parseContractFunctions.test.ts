@@ -2,7 +2,10 @@ import test from 'ava'
 import fs from 'fs'
 import path from 'path'
 //
-import parseContractFunctions from '../../src/utils/parseContractFunctions'
+import parseContractFunctions, {
+  parseGlobalVariableAssignments,
+  parseConstructorAssignments,
+} from '../../src/utils/parseContractFunctions'
 
 /* Tests */
 test('Parse AST of Finance.sol', t => {
@@ -103,4 +106,51 @@ test('Parse AST of Finance.sol', t => {
       roles: [],
     },
   ])
+})
+
+test('should find global variable assignments defined in contract', t => {
+  const sourceCode =
+  `
+    pragma solidity 0.4.24;
+    
+    contract Test {
+      string testInitString = 'test';
+      string testString;
+      int private constant testPrivateConstInt = 1;
+      int private testPrivateInt;
+    }
+  `
+
+  const variables = parseGlobalVariableAssignments(sourceCode)
+  t.is(variables.length, 1)
+})
+
+test('should find global variable assignments in constructor', t => {
+  const sourceCode =
+  `
+    pragma solidity 0.4.24;
+
+    contract Test {
+      string testString;
+
+      struct testStruct {
+        int a;
+      }
+
+      int[] testArray;
+
+      mapping(address => uint) public testMapping;
+
+      constructor() {
+        testString = 'test';
+        testStruct.a += 1;
+        int i = 2;
+        testArray[i] = 1;
+        testMapping[msg.sender] = 3;
+      }
+    }
+  `
+
+  const assignments = parseConstructorAssignments(sourceCode)
+  t.is(assignments.length, 4)
 })
