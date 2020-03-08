@@ -187,8 +187,131 @@ export default function parseContractFunctions(
   parseContract(
     (targetContractName &&
       contracts.find(node => node.name === targetContractName)) ||
-      contracts[contracts.length - 1]
+    contracts[contracts.length - 1]
   )
 
   return functions
+}
+
+/**
+ * Finds global storage variable declarations with initialized values, e.g 'int a = 1'.
+ *
+ * @param sourceCode Source code of the contract.
+ */
+export function parseGlobalVariableAssignments(
+  sourceCode: string
+): string[] {
+  const ast = parser.parse(sourceCode, {})
+  const variables: string[] = []
+  parser.visit(ast, {
+    StateVariableDeclaration: function (node) {
+      const variable = node.variables[0]
+      if (
+        variable.isStateVar &&
+        !variable.isDeclaredConst &&
+        variable.expression
+      ) {
+        variables.push(variable.name)
+      }
+    },
+  })
+  return variables
+}
+
+/**
+ * Parses the constructor body of a contract, and finds
+ * assignments to global variables.
+ *
+ * @param sourceCode Source code of the contract.
+ */
+export function parseConstructorAssignments(
+  sourceCode: string
+): string[] {
+  const ast = parser.parse(sourceCode, {})
+  let constructorBody: parser.Block | undefined
+  const assignments: string[] = []
+  let parameters: parser.VariableDeclaration[] = []
+
+  parser.visit(ast, {
+    FunctionDefinition: function (node) {
+      if (!(node.isConstructor && node.body)) return
+      parameters = node.parameters
+      constructorBody = node.body
+    },
+  })
+
+  if (!constructorBody) return []
+
+  for (const statement of constructorBody.statements) {
+    const variableName = isGlobalAssignment(statement, parameters)
+    if (variableName) {
+      assignments.push(variableName)
+    }
+  }
+
+  return assignments
+}
+
+/**
+ * Checks if a statement is an assignment to a global variable. If so, returns the
+ * name of the variable, otherwise returns undefined.
+ */
+function isGlobalAssignment(
+  statement: parser.Statement,
+  parameters: parser.VariableDeclaration[]
+): string | undefined {
+  const assignmentOperators = [
+    '=',
+    '|=',
+    '^=',
+    '&=',
+    '<<=',
+    '>>=',
+    '+=',
+    '-=',
+    '*=',
+    '/=',
+    '%=',
+  ]
+
+  function isAssignment(
+    statement: parser.Statement
+  ): statement is parser.ExpressionStatement {
+    return (
+      statement.type === 'ExpressionStatement' &&
+      statement.expression.type === 'BinaryOperation' &&
+      assignmentOperators.includes(statement.expression.operator)
+    )
+  }
+
+  function getVariableName(
+    expression: parser.BinaryOperation
+  ): string | undefined {
+    switch (expression.left.type) {
+      case 'Identifier':
+        return expression.left.name
+      case 'IndexAccess':
+        if (expression.left.base.type !== 'Identifier') return
+        return expression.left.base.name
+      case 'MemberAccess':
+        if (expression.left.expression.type !== 'Identifier') return
+        return expression.left.expression.name
+    }
+  }
+
+  function isParameter(varName: string): boolean {
+    for (const parameter of parameters) {
+      if (parameter.name === varName) return true
+    }
+    return false
+  }
+
+  if (isAssignment(statement)) {
+    const variableName = getVariableName(
+      statement.expression as parser.BinaryOperation
+    )
+    if (!variableName || isParameter(variableName)) return
+    return variableName
+  }
+  return
 }
