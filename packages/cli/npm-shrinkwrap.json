@@ -219,16 +219,15 @@
 			}
 		},
 		"@aragon/os": {
-			"version": "4.3.0",
-			"resolved": "https://registry.npmjs.org/@aragon/os/-/os-4.3.0.tgz",
-			"integrity": "sha512-/2vW6Efi/jP+gUHBTz7LCTjsVNdkbNKI3TSXBxxY3Dfb/bnrbcBz3AA0lb2Iz5jLCL88LqeGKH+1jmC4azLBgg==",
+			"version": "4.4.0",
+			"resolved": "https://registry.npmjs.org/@aragon/os/-/os-4.4.0.tgz",
+			"integrity": "sha512-EYyMj5pX0Qxu7axHAPe4hqwwDINDn+6ZZ4DqJP0tAKYKDmTxHcW8m/7DDctIM3uRqXr8HlYrNOGd6zE/hhHetQ==",
 			"dev": true,
 			"requires": {
+				"@aragon/truffle-config-v4": "^1.0.1",
 				"homedir": "^0.6.0",
 				"mkdirp": "^0.5.1",
-				"truffle-flattener": "^1.2.9",
-				"truffle-hdwallet-provider": "0.0.3",
-				"truffle-hdwallet-provider-privkey": "0.3.0"
+				"truffle-flattener": "^1.2.9"
 			}
 		},
 		"@aragon/ppf-contracts": {
@@ -258,6 +257,19 @@
 				"yargs": "^13.2.4"
 			},
 			"dependencies": {
+				"@aragon/os": {
+					"version": "4.3.0",
+					"resolved": "https://registry.npmjs.org/@aragon/os/-/os-4.3.0.tgz",
+					"integrity": "sha512-/2vW6Efi/jP+gUHBTz7LCTjsVNdkbNKI3TSXBxxY3Dfb/bnrbcBz3AA0lb2Iz5jLCL88LqeGKH+1jmC4azLBgg==",
+					"dev": true,
+					"requires": {
+						"homedir": "^0.6.0",
+						"mkdirp": "^0.5.1",
+						"truffle-flattener": "^1.2.9",
+						"truffle-hdwallet-provider": "0.0.3",
+						"truffle-hdwallet-provider-privkey": "0.3.0"
+					}
+				},
 				"ansi-regex": {
 					"version": "4.1.0",
 					"resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-4.1.0.tgz",
@@ -28865,6 +28877,15 @@
 						"fd-slicer": "~1.1.0"
 					}
 				}
+			}
+		},
+		"@aragon/truffle-config-v4": {
+			"version": "1.0.1",
+			"resolved": "https://registry.npmjs.org/@aragon/truffle-config-v4/-/truffle-config-v4-1.0.1.tgz",
+			"integrity": "sha512-JaFfsrAcuMVb0t0Aw4iCLguFlU4qv5e3X8PHqWhgfBPpazFqPB0glvEhaUXKXdZjFayUpioEcPe3K8MJjFDdzw==",
+			"dev": true,
+			"requires": {
+				"@truffle/hdwallet-provider": "^1.0.0"
 			}
 		},
 		"@aragon/truffle-config-v5": {
