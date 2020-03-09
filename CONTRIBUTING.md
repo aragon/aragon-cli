@@ -76,7 +76,7 @@ Unsure where to begin contributing? You can start by looking through these `good
 
 ## Getting help
 
-If you need help, please reach out to Aragon core contributors and community members in the [#dev-help channel](https://aragon.chat/channel/dev-help) on the Aragon Chat. We'd love to hear from you and know what you're working on!
+If you need help, please reach out to Aragon core contributors and community members in the [Aragon Spectrum Community](https://spectrum.chat/aragon). We'd love to hear from you and know what you're working on!
 
 ## Style Guide
 

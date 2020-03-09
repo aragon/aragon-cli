@@ -36,7 +36,11 @@
       Contributing
     </a>
     <span> | </span>
-    <a href="https://aragon.chat">
+    <a href="https://spectrum.chat/aragon">
+      Support
+    </a>
+    <span> | </span>
+    <a href="https://discordapp.com/channels/672466989217873929/684472917542830092">
       Chat
     </a>
   </h4>
