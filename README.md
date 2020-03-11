@@ -37,11 +37,7 @@
     </a>
     <span> | </span>
     <a href="https://spectrum.chat/aragon">
-      Support
-    </a>
-    <span> | </span>
-    <a href="https://discordapp.com/channels/672466989217873929/684472917542830092">
-      Chat
+      Support &amp; Chat
     </a>
   </h4>
 </div>
