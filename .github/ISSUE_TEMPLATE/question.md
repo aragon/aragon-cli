@@ -1,6 +1,6 @@
 ---
 name: ❓ Questions/Help
-about: If you have questions, please check Aragon Hack, Aragon Forum or Aragon Chat
+about: If you have questions, please check the Aragon Spectrum Community, Aragon Hack or Aragon Forum.
 ---
 
 ## ❓ Questions and Help
@@ -9,6 +9,6 @@ about: If you have questions, please check Aragon Hack, Aragon Forum or Aragon C
 
 Please contact us instead. We have a few channels:
 
+- [Aragon Spectrum Community](https://spectrum.chat/aragon)
 - [Aragon Hack](https://hack.aragon.org/docs/cli-intro.html)
 - [Aragon Forum](https://forum.aragon.org)
-- [Aragon Chat](https://aragon.chat)

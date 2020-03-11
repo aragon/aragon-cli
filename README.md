@@ -36,8 +36,8 @@
       Contributing
     </a>
     <span> | </span>
-    <a href="https://aragon.chat">
-      Chat
+    <a href="https://spectrum.chat/aragon">
+      Support &amp; Chat
     </a>
   </h4>
 </div>
