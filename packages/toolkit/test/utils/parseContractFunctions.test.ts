@@ -4,7 +4,7 @@ import path from 'path'
 //
 import parseContractFunctions, {
   parseGlobalVariableAssignments,
-  parseConstructorAssignments,
+  hasConstructor,
 } from '../../src/utils/parseContractFunctions'
 
 /* Tests */
@@ -124,31 +124,19 @@ test('should find global variable assignments defined in contract', t => {
   t.is(variables.length, 1)
 })
 
-test('should find global variable assignments in constructor', t => {
+test('should find constructor', t => {
   const sourceCode = `
     pragma solidity 0.4.24;
 
     contract Test {
       string testString;
 
-      struct testStruct {
-        int a;
-      }
-
-      int[] testArray;
-
-      mapping(address => uint) public testMapping;
-
       constructor() {
         testString = 'test';
-        testStruct.a += 1;
-        int i = 2;
-        testArray[i] = 1;
-        testMapping[msg.sender] = 3;
       }
     }
   `
 
-  const assignments = parseConstructorAssignments(sourceCode)
-  t.is(assignments.length, 4)
+  const found = hasConstructor(sourceCode)
+  t.is(found, true)
 })
