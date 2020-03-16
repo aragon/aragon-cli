@@ -3,7 +3,7 @@ import web3EthAbiUntyped, { AbiCoder } from 'web3-eth-abi'
 import * as abiAragonAppProxy from '@aragon/abis/os/abi/AppProxyBase.json'
 import {
   parseGlobalVariableAssignments,
-  parseConstructorAssignments,
+  hasConstructor,
 } from './parseContractFunctions'
 
 // Fix necessary due to wrong type exports in web3-eth-abi
@@ -36,16 +36,22 @@ function findFunctionSignatureCollisions(abi1: AbiItem[], abi2: AbiItem[]) {
 
 function checkAssignedGlobalVariables(sourceCode: string) {
   const assignments = parseGlobalVariableAssignments(sourceCode)
-  const assignments2 = parseConstructorAssignments(sourceCode)
-  if (assignments.length > 0 || assignments2.length > 0) {
-    console.log(
-      `WARNING: Global state variables found to be initialized with values
+  if (assignments.length > 0) {
+    throw new Error(`
+      Global state variables found to be initialized with values
         during contract creation. This will probably lead to unintended results.
         App contracts should use the initialize() function to initialize global
-        variables. Affected variables:`,
-      JSON.stringify(assignments.concat(assignments2))
-    )
+        variables. Affected variables: ${JSON.stringify(assignments)}
+    `)
   }
+}
+
+function checkConstructor(sourceCode: string) {
+  if (hasConstructor(sourceCode))
+    throw new Error(`
+    Constructor found in app contract. If you need an init function,
+    define one using the onlyInit modifier instead.
+  `)
 }
 
 function checkSignatureCollisionsWithProxy(abi: AbiItem[]) {
@@ -54,16 +60,16 @@ function checkSignatureCollisionsWithProxy(abi: AbiItem[]) {
   )
   const collisions = findFunctionSignatureCollisions(abi, appProxyAbi)
   if (collisions.length > 0) {
-    console.log(
-      `WARNING: Collisions detected between the proxy and app contract ABI's.
-        This is a potential security risk.
-        Affected functions:`,
-      JSON.stringify(collisions.map(entry => entry.name))
-    )
+    throw new Error(`
+      Collisions detected between the proxy and app contract ABI's.
+      This is a potential security risk.
+      Affected functions: ${JSON.stringify(collisions.map(entry => entry.name))}
+    `)
   }
 }
 
 export function validateApp(abi: AbiItem[], sourceCode: string) {
   checkSignatureCollisionsWithProxy(abi)
+  checkConstructor(sourceCode)
   checkAssignedGlobalVariables(sourceCode)
 }

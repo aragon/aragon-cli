@@ -1,5 +1,4 @@
 import test from 'ava'
-import sinon from 'sinon'
 import { AbiItem } from 'web3-utils'
 import proxyquire from 'proxyquire'
 const { validateApp } = proxyquire('../../src/utils/appValidation', {
@@ -10,11 +9,11 @@ const { validateApp } = proxyquire('../../src/utils/appValidation', {
   },
   './parseContractFunctions': {
     parseGlobalVariableAssignments: () => ['test'],
-    parseConstructorAssignments: () => ['test2'],
+    hasConstructor: () => true,
   },
 })
 
-const mockAbi: AbiItem[] = [
+const invalidAbi: AbiItem[] = [
   {
     constant: false,
     inputs: [],
@@ -31,18 +30,10 @@ const mockAbi: AbiItem[] = [
   },
 ]
 
-const logSpy = sinon.spy(console, 'log')
-
-test.after('cleanup', t => {
-  logSpy.restore()
-})
-
-test('should generate artifact and warn of collisions', async t => {
-  await validateApp(mockAbi, '')
-  t.assert(logSpy.calledWithMatch('WARNING: Collisions'))
-})
-
-test('should warn of global variable assignments', async t => {
-  await validateApp(mockAbi, '')
-  t.assert(logSpy.calledWithMatch('WARNING: Global state'))
+test('should find collisions and throw error', async t => {
+  try {
+    await validateApp(invalidAbi, '')
+  } catch (e) {
+    t.assert(e.message.match('Collisions'))
+  }
 })
