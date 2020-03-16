@@ -187,7 +187,7 @@ export default function parseContractFunctions(
   parseContract(
     (targetContractName &&
       contracts.find(node => node.name === targetContractName)) ||
-    contracts[contracts.length - 1]
+      contracts[contracts.length - 1]
   )
 
   return functions
@@ -202,7 +202,7 @@ export function parseGlobalVariableAssignments(sourceCode: string): string[] {
   const ast = parser.parse(sourceCode, {})
   const variables: string[] = []
   parser.visit(ast, {
-    StateVariableDeclaration: function (node) {
+    StateVariableDeclaration: function(node) {
       const variable = node.variables[0]
       if (
         variable.isStateVar &&
@@ -226,7 +226,7 @@ export function hasConstructor(sourceCode: string): boolean {
   let foundConstructor = false
 
   parser.visit(ast, {
-    FunctionDefinition: function (node) {
+    FunctionDefinition: function(node) {
       if (!node.isConstructor) return
       foundConstructor = true
     },
