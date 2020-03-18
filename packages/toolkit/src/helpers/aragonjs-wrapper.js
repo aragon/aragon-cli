@@ -1,5 +1,5 @@
 import Aragon, { ensResolve } from '@aragon/wrapper'
-import { takeWhile, map, filter, first, defaultIfEmpty } from 'rxjs/operators'
+import { takeWhile, filter, first } from 'rxjs/operators'
 //
 import { addressesEqual } from '../util'
 import { noop } from '../node'
@@ -152,20 +152,17 @@ export async function getApps(wrapper) {
  */
 export async function getTransactionPath(appAddress, method, params, wrapper) {
   // Wait for app info to load
-  const app = await wrapper.apps
+  const apps = await wrapper.apps
     .pipe(
       // If the app list contains a single app, wait for more
-      takeWhile(apps => apps.length <= 1, true),
-      map(apps =>
-        apps.find(app => addressesEqual(appAddress, app.proxyAddress))
-      ),
-      filter(app => app),
-      defaultIfEmpty(null), // If app is not found, default to null
+      filter(apps => apps.length > 1),
       first()
     )
     .toPromise()
 
-  if (!app) throw new Error(`Can't find app ${appAddress}.`)
+  if (!apps.some(app => addressesEqual(appAddress, app.proxyAddress))) {
+    throw new Error(`Can't find app ${appAddress}.`)
+  }
 
   // If app is the ACL, call getACLTransactionPath
   return appAddress === wrapper.aclProxy.address
