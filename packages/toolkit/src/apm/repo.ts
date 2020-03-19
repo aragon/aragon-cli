@@ -16,6 +16,7 @@ import {
 } from './types'
 import { AragonManifest, AragonArtifact } from '../types'
 import { defaultIpfsGateway } from '../params'
+import { isAddress } from 'web3-utils'
 
 /**
  * Internal logic shared with single and all version fetchers
@@ -39,6 +40,22 @@ export function Repo(
   provider: ethers.providers.Provider,
   optionsGlobal?: { ipfsGateway?: string }
 ) {
+  /**
+   * Returns ApmRepoInstance ethers contract instance
+   * Make sure appId is a full ENS domain
+   * @param appId
+   */
+  function _getApmRepoInstance(appId: string): ApmRepoInstance {
+    const addressOrFullEnsName = isAddress(appId)
+      ? appId
+      : getDefaultApmName(appId)
+    return new ethers.Contract(
+      addressOrFullEnsName,
+      repoAbi,
+      provider
+    ) as ApmRepoInstance
+  }
+
   return {
     /**
      * Fetch a single version of an APM Repo
@@ -48,13 +65,9 @@ export function Repo(
      */
     getVersion: async function(
       appId: string,
-      version: string | number
+      version: 'latest' | string | number = 'latest'
     ): Promise<ApmVersion> {
-      const repo = new ethers.Contract(
-        appId,
-        repoAbi,
-        provider
-      ) as ApmRepoInstance
+      const repo = _getApmRepoInstance(appId)
       return _getRepoVersion(repo, version)
     },
 
@@ -63,11 +76,7 @@ export function Repo(
      * @param appId 'finance.aragonpm.eth'
      */
     getAllVersions: async function(appId: string): Promise<ApmVersion[]> {
-      const repo = new ethers.Contract(
-        appId,
-        repoAbi,
-        provider
-      ) as ApmRepoInstance
+      const repo = _getApmRepoInstance(appId)
       const versionCount: number = await repo
         .getVersionsCount()
         .then(parseFloat)
@@ -84,7 +93,7 @@ export function Repo(
      */
     getVersionContent: async function(
       appId: string,
-      version: 'latest' | string | number,
+      version: 'latest' | string | number = 'latest',
       options?: { ipfsGateway?: string }
     ): Promise<AragonApmRepoData> {
       const versionInfo = await this.getVersion(appId, version)

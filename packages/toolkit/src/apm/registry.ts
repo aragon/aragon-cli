@@ -82,14 +82,19 @@ export function Registry(provider: ethers.providers.Provider) {
         newRepoEvents.map(async event => {
           const { name } = event.returnValues
           try {
-            const versionInfo = await Repo(provider).getVersion(
-              `${name}.${apmRegistryName}`,
-              'latest'
-            )
+            const repoName = `${name}.${apmRegistryName}`
+
+            // If the app name cannot be resolved return early before fetching
+            const repoAddress = await provider.resolveName(repoName)
+            if (!repoAddress) return { name, version: '' }
+
+            const versionInfo = await Repo(provider).getVersion(repoAddress)
             return { name, version: versionInfo.version }
           } catch (e) {
             // A new repo that has 0 versions will revert when calling getLatest()
             if (e.message.includes('REPO_INEXISTENT_VERSION')) {
+              return { name, version: '' }
+            } else if (e.message.includes('ENS name not configured')) {
               return { name, version: '' }
             } else {
               throw e
