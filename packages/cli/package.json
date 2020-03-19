@@ -135,7 +135,7 @@
     "strip-ansi": "^6.0.0"
   },
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=10.0.0 <13.0.0"
   },
   "aragon": {
     "clientRepo": "https://github.com/aragon/aragon",
