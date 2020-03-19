@@ -1,6 +1,6 @@
 import Table from 'cli-table'
 import TaskList from 'listr'
-import { Toolkit } from '@aragon/toolkit'
+import { getApmRegistryPackages } from '@aragon/toolkit'
 
 export const command = 'packages [apmRegistry]'
 export const describe = 'List all packages in the registry'
@@ -22,8 +22,22 @@ export const handler = async function({ apmRegistry, environment }) {
       task: async (ctx, task) => {
         task.output = `Initializing APM`
 
-        const toolkit = Toolkit(environment)
-        packages = await toolkit.apm.getRegistryPackages(apmRegistry)
+        const progressHandler = step => {
+          switch (step) {
+            case 1:
+              task.output = `Fetching APM Registry`
+              break
+            case 2:
+              task.output = `Gathering packages in registry`
+              break
+          }
+        }
+
+        packages = await getApmRegistryPackages(
+          apmRegistry,
+          progressHandler,
+          environment
+        )
       },
     },
   ])
