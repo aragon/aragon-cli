@@ -9,7 +9,7 @@
   },
   "scripts": {
     "generate": "typechain --target web3-v1 --outDir typechain './node_modules/@aragon/abis/os/artifacts/*.json'",
-    "build": "tsc",
+    "build": "babel src --out-dir dist --source-maps --copy-files --extensions '.js,.ts'",
     "build:watch": "npm run build -- --watch",
     "build:docs": "typedoc --out docs --allowJs --readme none --theme minimal --mode file",
     "lint": "npm run check-types && eslint src test --ext '.js,.ts'",
