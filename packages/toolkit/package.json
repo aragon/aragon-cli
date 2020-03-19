@@ -1,6 +1,6 @@
 {
   "name": "@aragon/toolkit",
-  "version": "0.0.5",
+  "version": "0.0.6-beta.4",
   "description": "Programmatic interface for interacting with Aragon",
   "main": "./dist/index.js",
   "repository": {
@@ -32,7 +32,8 @@
     "@types",
     "config",
     "schemas",
-    "dist"
+    "dist",
+    "src"
   ],
   "author": "Aragon Association <legal@aragon.org>",
   "license": "GPL-3.0-or-later",
