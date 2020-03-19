@@ -8,7 +8,7 @@ import { kernelAbi } from '../../contractAbis'
  * @param environment Envrionment
  * @return aclAddress
  */
-export default async function getAclAddress(
+export async function getAclAddress(
   dao: string,
   environment: string
 ): Promise<string> {

@@ -1,4 +1,5 @@
 export * from './apm'
+export * from './config'
 export * from './dao'
 export * from './helpers'
 export * from './utils'

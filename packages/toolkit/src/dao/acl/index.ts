@@ -1,5 +1,7 @@
-export { default as acl } from './acl'
-export * from './getAppPermissions'
+// utils
 export * from './utils/permissionsFormatter'
+// .
+export * from './acl'
+export * from './getAppPermissions'
 export * from './getTransactionPath'
-export { default as grantNewVersionsPermission } from './grantNewVersionsPermission'
+export * from './grantNewVersionsPermission'

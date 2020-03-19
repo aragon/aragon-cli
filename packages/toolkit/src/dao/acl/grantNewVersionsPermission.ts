@@ -1,4 +1,4 @@
-import ACL from './acl'
+import { acl } from './acl'
 import { useEnvironment } from '../../helpers/useEnvironment'
 import { TransactionReceipt } from 'web3-core'
 import { TransactionRevertInstructionError } from 'web3-core-helpers'
@@ -8,7 +8,7 @@ type ProgressHandlerGrantNewVersionsPermission = (
   granteeAddressOrTransactionHash?: string
 ) => void
 
-export default async function grantNewVersionsPermission(
+export async function grantNewVersionsPermission(
   granteeAddresses: string[],
   apmRepoName: string,
   progressHandler: ProgressHandlerGrantNewVersionsPermission | undefined,
@@ -19,8 +19,6 @@ export default async function grantNewVersionsPermission(
   if (granteeAddresses.length === 0) {
     throw new Error('No grantee addresses provided')
   }
-
-  const acl = ACL(web3)
 
   if (progressHandler) progressHandler(1)
 
@@ -43,7 +41,7 @@ export default async function grantNewVersionsPermission(
     const from = accounts[0]
 
     // Build transaction
-    const transaction = await acl.grant(repoAddress, granteeAddress)
+    const transaction = await acl(web3).grant(repoAddress, granteeAddress)
 
     const receipt = await web3.eth.sendTransaction({
       ...transaction,

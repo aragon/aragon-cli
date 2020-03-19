@@ -4,7 +4,7 @@ import { extractContractInfo } from '../utils/solidityExtractor'
 
 // TODO: Move away from Toolkit
 
-export default async function extractContractInfoToFile(
+export async function extractContractInfoToFile(
   contractPath: string,
   outputPath: string
 ): Promise<void> {

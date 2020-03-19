@@ -4,7 +4,7 @@ import { AbiItem } from 'web3-utils'
 // Fix necessary due to wrong type exports in web3-eth-abi
 const web3EthAbi: AbiCoder = web3EthAbiUntyped as any
 
-export default function encodeInitPayload(
+export function encodeInitPayload(
   contractAbi: AbiItem[],
   initFunctionName: string,
   initArgs: any[]

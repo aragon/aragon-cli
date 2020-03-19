@@ -14,7 +14,7 @@ import { bareTemplateAbi } from '../contractAbis'
  * @param environment Environment
  * @param templateInstance Template instance
  */
-export default async function newDao(
+export async function newDao(
   templateName = 'bare-template',
   newInstanceArgs: string[] = [],
   newInstanceMethod = 'newInstance',

@@ -1,4 +1,4 @@
 export * from './constants'
-export * from './useEnvironment'
+export * from './extractContractInfoToFile'
 export * from './loadConfigFiles'
-export { default as extractContractInfoToFile } from './extractContractInfoToFile'
+export * from './useEnvironment'

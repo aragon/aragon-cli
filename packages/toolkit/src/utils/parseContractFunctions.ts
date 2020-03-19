@@ -93,7 +93,7 @@ function parseParamTypeFromNode(node: parser.VariableDeclaration): string {
  * @param sourceCode Solidity flatten source code
  * @param targetContract "Counter" | "contract/Counter.sol"
  */
-export default function parseContractFunctions(
+export function parseContractFunctions(
   sourceCode: string,
   targetContract: string
 ): AragonContractFunction[] {

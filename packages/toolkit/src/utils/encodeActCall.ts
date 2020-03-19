@@ -8,10 +8,7 @@ const web3EthAbi: AbiCoder = web3EthAbiUntyped as any
  * @param signature Function signature
  * @param params
  */
-export default function encodeActCall(
-  signature: string,
-  params: any[] = []
-): string {
+export function encodeActCall(signature: string, params: any[] = []): string {
   const sigBytes = web3EthAbi.encodeFunctionSignature(signature)
 
   const types = signature.replace(')', '').split('(')[1]
