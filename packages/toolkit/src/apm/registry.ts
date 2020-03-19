@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { getApmRepoVersion } from './getApmRepo'
+import { Repo } from './repo'
 
 const registryNewRepoEventAbi = {
   anonymous: false,
@@ -33,9 +33,9 @@ interface NewRepoEvent {
  * @param provider Initialized ethers provider
  * @param fromBlock Optional to speed up fetching on non-cached nodes: 9011233
  */
-export async function getNewReposFromRegistry(
-  apmRegistryName: string,
+async function _getNewReposFromRegistry(
   provider: ethers.providers.Provider,
+  apmRegistryName: string,
   fromBlock?: number
 ): Promise<NewRepoEvent[]> {
   const newRepoEvent = new ethers.utils.Interface([registryNewRepoEventAbi])
@@ -64,35 +64,44 @@ export async function getNewReposFromRegistry(
   })
 }
 
-/**
- * Return package info for a given APM registry.
- * @param apmRegistryName APM registry name
- * @param provider Initialized ethers provider
- */
-export async function getApmRegistryPackages(
-  apmRegistryName: string,
-  provider: ethers.providers.Provider
-): Promise<{ name: string; version: string }[]> {
-  const newRepoEvents = await getNewReposFromRegistry(apmRegistryName, provider)
+export function Registry(provider: ethers.providers.Provider) {
+  return {
+    /**
+     * Return package info for a given APM registry.
+     * @param apmRegistryName APM registry name
+     */
+    getRegistryPackages: async function(
+      apmRegistryName: string
+    ): Promise<{ name: string; version: string }[]> {
+      const newRepoEvents = await _getNewReposFromRegistry(
+        provider,
+        apmRegistryName
+      )
 
-  return Promise.all(
-    newRepoEvents.map(async event => {
-      const { name } = event.returnValues
-      try {
-        const versionInfo = await getApmRepoVersion(
-          `${name}.${apmRegistryName}`,
-          'latest',
-          provider
-        )
-        return { name, version: versionInfo.version }
-      } catch (e) {
-        // A new repo that has 0 versions will revert when calling getLatest()
-        if (e.message.includes('REPO_INEXISTENT_VERSION')) {
-          return { name, version: '' }
-        } else {
-          throw e
-        }
-      }
-    })
-  )
+      return Promise.all(
+        newRepoEvents.map(async event => {
+          const { name } = event.returnValues
+          try {
+            const repoName = `${name}.${apmRegistryName}`
+
+            // If the app name cannot be resolved return early before fetching
+            const repoAddress = await provider.resolveName(repoName)
+            if (!repoAddress) return { name, version: '' }
+
+            const versionInfo = await Repo(provider).getVersion(repoAddress)
+            return { name, version: versionInfo.version }
+          } catch (e) {
+            // A new repo that has 0 versions will revert when calling getLatest()
+            if (e.message.includes('REPO_INEXISTENT_VERSION')) {
+              return { name, version: '' }
+            } else if (e.message.includes('ENS name not configured')) {
+              return { name, version: '' }
+            } else {
+              throw e
+            }
+          }
+        })
+      )
+    },
+  }
 }

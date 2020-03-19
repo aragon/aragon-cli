@@ -1,17 +1,21 @@
 import { AragonApmRepoData, ApmVersion, AragonJsIntent } from './types'
 import { useEnvironment } from '../helpers'
-import { getDefaultApmName } from './utils'
-import {
-  getApmRepo as getApmRepoNew,
-  getApmRepoAllVersions as getAllVersionsNew,
-} from './getApmRepo'
-import { getApmRegistryPackages as getApmRegistryPackagesNew } from './getApmRegistryPackages'
+import { ethers } from 'ethers'
+import { Publish, PublishVersionTxData } from './publish'
+import { Repo } from './repo'
+import { Registry } from './registry'
 
-import {
-  publishVersion as publishVersionNew,
-  publishVersionIntent as publishVersionIntentNew,
-  PublishVersionTxData,
-} from './publishVersion'
+// Single initializer
+export function Apm(
+  provider: ethers.providers.Provider,
+  options?: { ipfsGateway?: string }
+) {
+  return {
+    ...Repo(provider, options),
+    ...Publish(provider),
+    ...Registry(provider),
+  }
+}
 
 // ### Note:
 // This file is a temporary wrapper to the new apm methods API
@@ -35,7 +39,8 @@ export async function publishVersion(
 ): Promise<PublishVersionTxData> {
   const { provider } = useEnvironment(environment)
 
-  return publishVersionNew(appId, versionInfo, provider, options)
+  const publish = Publish(provider)
+  return publish.publishVersion(appId, versionInfo, options)
 }
 
 /**
@@ -54,7 +59,8 @@ export async function publishVersionIntent(
 ): Promise<AragonJsIntent> {
   const { provider } = useEnvironment(environment)
 
-  return publishVersionIntentNew(appId, versionInfo, provider, options)
+  const publish = Publish(provider)
+  return publish.publishVersionIntent(appId, versionInfo, options)
 }
 
 /**
@@ -71,12 +77,10 @@ export async function getApmRepo(
 ): Promise<AragonApmRepoData> {
   const { apmOptions, provider } = useEnvironment(environment)
 
-  return getApmRepoNew(
-    getDefaultApmName(apmRepoName),
-    apmRepoVersion,
-    provider,
-    { ipfsGateway: apmOptions.ipfs.gateway }
-  )
+  const repo = Repo(provider)
+  return repo.getVersionContent(apmRepoName, apmRepoVersion, {
+    ipfsGateway: apmOptions.ipfs.gateway,
+  })
 }
 
 /**
@@ -91,7 +95,8 @@ export async function getAllVersions(
 ): Promise<ApmVersion[]> {
   const { provider } = useEnvironment(environment)
 
-  return getAllVersionsNew(getDefaultApmName(apmRepoName), provider)
+  const repo = Repo(provider)
+  return repo.getAllVersions(apmRepoName)
 }
 
 /**
@@ -111,5 +116,6 @@ export async function getApmRegistryPackages(
   if (progressHandler) progressHandler(1)
   if (progressHandler) progressHandler(2)
 
-  return getApmRegistryPackagesNew(apmRegistryName, provider)
+  const registry = Registry(provider)
+  return registry.getRegistryPackages(apmRegistryName)
 }

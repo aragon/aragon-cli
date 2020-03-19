@@ -65,7 +65,7 @@ export function linspace(from: number, to: number, step = 1): number[] {
  */
 export function getFetchUrlFromContentUri(
   contentUri: string,
-  options?: { ipfsGateway: string }
+  options?: { ipfsGateway?: string }
 ): string {
   const [protocol, location] = contentUri.split(/:(.+)/)
   switch (protocol) {
@@ -100,4 +100,17 @@ export async function fetchJson<T>(url: string): Promise<T> {
  */
 export function getDefaultApmName(name: string): string {
   return name.includes('.') ? name : `${name}.${DEFAULT_APM_REGISTRY}`
+}
+
+/**
+ * Returns true if is an address
+ * @param address
+ */
+export function isAddress(address: string): boolean {
+  try {
+    ethers.utils.getAddress(address)
+  } catch (e) {
+    return false
+  }
+  return true
 }
