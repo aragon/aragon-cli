@@ -4,16 +4,13 @@ import { AragonContractFunction } from '../../src/utils/parseContractFunctions'
 import { AbiItem } from 'web3-utils'
 import proxyquire from 'proxyquire'
 //
-const { default: getAragonArtifact } = proxyquire(
-  '../../src/utils/getAragonArtifact',
-  {
-    './appValidation': {
-      validateApp: () => {
-        return undefined
-      },
+const { getAragonArtifact } = proxyquire('../../src/utils/getAragonArtifact', {
+  './appValidation': {
+    validateApp: () => {
+      return undefined
     },
-  }
-)
+  },
+})
 
 /* Tests */
 test('getAragonArtifact', t => {

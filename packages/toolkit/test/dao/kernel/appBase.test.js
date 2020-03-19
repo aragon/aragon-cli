@@ -1,6 +1,6 @@
 import test from 'ava'
 //
-import newDao from '../../../src/dao/newDao'
+import { newDao } from '../../../src/dao/newDao'
 import { getAllApps } from '../../../src/dao/kernel/getApps'
 import { getBasesNamespace, getAppBase } from '../../../src/dao/kernel/appBase'
 
