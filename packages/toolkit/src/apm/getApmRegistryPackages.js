@@ -35,7 +35,7 @@ export default async (
       const args = event.returnValues
       return {
         name: args.name,
-        version: (await apm.getLatestVersion(args.id)).version,
+        repo: args.repo,
       }
     })
   )
