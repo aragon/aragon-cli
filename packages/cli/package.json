@@ -87,7 +87,7 @@
     "ncp": "^2.0.0",
     "open": "^7.0.0",
     "public-ip": "^3.1.0",
-    "rimraf": "^2.6.2",
+    "rimraf": "^3.0.2",
     "semver": "^6.1.1",
     "stringify-tree": "^1.0.2",
     "strip-ansi": "^6.0.0",
@@ -131,7 +131,7 @@
     "nyc": "^14.1.1",
     "prettier": "^1.15.3",
     "proxyquire": "^2.1.0",
-    "sinon": "^7.3.1",
+    "sinon": "^9.0.0",
     "strip-ansi": "^6.0.0"
   },
   "engines": {
