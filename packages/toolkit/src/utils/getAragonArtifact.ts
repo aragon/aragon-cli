@@ -7,7 +7,7 @@ import { validateApp } from './appValidation'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const namehash = require('eth-ens-namehash')
 
-export default function getAragonArtifact(
+export function getAragonArtifact(
   arapp: AragonAppJson,
   functions: AragonContractFunction[],
   abi: AbiItem[],

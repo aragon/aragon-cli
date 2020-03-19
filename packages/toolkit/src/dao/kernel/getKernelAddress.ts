@@ -10,7 +10,7 @@ const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
  * @param environment Envrionment
  * @returns Kernel address
  */
-export default async function getKernelAddress(
+export async function getKernelAddress(
   appAddress: string,
   environment: string
 ): Promise<string> {

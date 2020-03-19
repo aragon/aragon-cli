@@ -2,7 +2,8 @@ import test from 'ava'
 import fs from 'fs'
 import path from 'path'
 //
-import parseContractFunctions, {
+import {
+  parseContractFunctions,
   parseGlobalVariableAssignments,
   hasConstructor,
 } from '../../src/utils/parseContractFunctions'

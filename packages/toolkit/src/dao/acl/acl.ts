@@ -2,7 +2,7 @@ import { getRecommendedGasLimit } from '../utils/getRecommendedGasLimit'
 import { kernelAbi, repoAbi, aclAbi } from '../../contractAbis'
 import Web3 from 'web3'
 
-export default function acl(
+export function acl(
   web3: Web3
 ): {
   grant: (

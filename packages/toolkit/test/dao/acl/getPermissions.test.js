@@ -1,7 +1,7 @@
 import test from 'ava'
 //
 import { getAppPermissions } from '../../../src/dao/acl/getAppPermissions'
-import newDao from '../../../src/dao/newDao'
+import { newDao } from '../../../src/dao/newDao'
 
 test.beforeEach(async t => {
   t.context = {

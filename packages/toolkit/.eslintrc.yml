@@ -17,9 +17,11 @@ parser: '@typescript-eslint/parser'
 
 rules:
   # Disable strict Typescript rules until the code is fully migrated
+  '@typescript-eslint/no-explicit-any': 'off'
+  '@typescript-eslint/explicit-function-return-type': 'off'
 
   # import helps make sure that ES6 export good practices are used
   # Enforce self-descriptive export standards
   'import/no-anonymous-default-export': 'error'
   # 'import/no-dynamic-require': 'error'
-  # 'import/no-default-export': 'error'
+  'import/no-default-export': 'error'

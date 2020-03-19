@@ -1,6 +1,6 @@
 import test from 'ava'
 //
-import ACL from '../../../src/dao/acl/acl'
+import { acl } from '../../../src/dao/acl/acl'
 import { useEnvironment } from '../../../src/helpers/useEnvironment'
 import { resolveEnsDomain } from '../../../src/utils/resolvers'
 
@@ -32,8 +32,7 @@ test('Should prepare a TX to grant permissions to an account', async t => {
   const granteeAddress = accounts[1]
 
   // act
-  const acl = ACL(web3)
-  const transaction = await acl.grant(repoAddress, granteeAddress)
+  const transaction = await acl(web3).grant(repoAddress, granteeAddress)
 
   delete transaction.gas
 

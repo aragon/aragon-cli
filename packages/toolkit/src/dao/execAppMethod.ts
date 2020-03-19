@@ -14,7 +14,7 @@ import { TransactionRevertInstructionError } from 'web3-core-helpers'
  * @param environment Environment
  * @returns Transaction path and receipt
  */
-export default async function execAppMethod(
+export async function execAppMethod(
   dao: string,
   app: string,
   method: string,

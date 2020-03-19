@@ -1,8 +1,12 @@
-export * from './kernel'
+// acl
 export * from './acl'
-export * from './daoId'
-export { default as newDao } from './newDao'
-export { default as execAppMethod } from './execAppMethod'
-export * from '../utils/aragonId'
-export * from './utils/minimeToken'
+// kernel
+export * from './kernel'
+// utils
 export * from './utils/getRecommendedGasLimit'
+export * from './utils/minimeToken'
+export * from './utils/wrapper'
+// .
+export * from './daoId'
+export * from './execAppMethod'
+export * from './newDao'
