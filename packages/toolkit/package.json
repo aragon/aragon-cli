@@ -21,7 +21,7 @@
     "test:update-snapshots": "npm run test:clean && npm run test -- --update-snapshots",
     "test:coverage:html": "nyc --reporter html  npm run test",
     "test:coverage": "nyc --reporter text --reporter text-summary --reporter lcovonly  npm run test",
-    "test:integration": "ava --verbose ./test-examples/*.test.js"
+    "test:integration": "ava --verbose ./test/examples/*.test.js"
   },
   "keywords": [
     "aragon",
