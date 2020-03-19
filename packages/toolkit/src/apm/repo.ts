@@ -6,6 +6,7 @@ import {
   linspace,
   getFetchUrlFromContentUri,
   fetchJson,
+  getDefaultApmName,
 } from './utils'
 import {
   ApmVersion,
@@ -14,6 +15,7 @@ import {
   AragonApmRepoData,
 } from './types'
 import { AragonManifest, AragonArtifact } from '../types'
+import { defaultIpfsGateway } from '../params'
 
 /**
  * Internal logic shared with single and all version fetchers
@@ -89,7 +91,9 @@ export function Repo(
 
       const { contentUri } = versionInfo
       const ipfsGateway =
-        (options || {}).ipfsGateway || (optionsGlobal || {}).ipfsGateway
+        (options || {}).ipfsGateway ||
+        (optionsGlobal || {}).ipfsGateway ||
+        defaultIpfsGateway
       const url = getFetchUrlFromContentUri(contentUri, { ipfsGateway })
 
       const [manifest, artifact] = await Promise.all([

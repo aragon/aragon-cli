@@ -84,7 +84,7 @@ const aragonNetworkTags: AragonNetworkTag[] = [
  * - timeout: Custom timeout for JSON RPC providers
  */
 export function parseProviderArgument(
-  providerArg: ProviderArgument,
+  providerArg?: ProviderArgument,
   options?: ProviderOptions
 ): ethers.providers.Provider {
   const { ensAddress, headers, timeout, infuraProjectId, etherscanApiToken } =
