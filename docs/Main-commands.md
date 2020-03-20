@@ -2,6 +2,9 @@ These are general purpose commands that will help you to set up and interact wit
 
 ## aragon run
 
+> **Note**<br>
+> This command is deprecated and will be removed in a future release. Please see the [Aragon Buidler plugin](https://github.com/aragon/buidler-aragon) for an improved development experience.
+
 The `run` command takes care of completely setting up the environment needed for running your Aragon app.
 
 ```sh
@@ -120,6 +123,9 @@ Options:
 
 ## aragon deploy
 
+> **Note**<br>
+> This command is deprecated and will be removed in a future release. Please see the [Aragon Buidler plugin](https://github.com/aragon/buidler-aragon) for an improved development experience.
+
 The `deploy` command can be used for deploying an Ethereum contract to the devchain.
 
 ```sh
@@ -134,12 +140,3 @@ Options:
 
 - `--init`: Arguments to be passed to contract constructor on deploy. Need to be separated by a space. The `@ARAGON_ENS` alias can be used and it will be replaced by the address of the ENS registry in the devchain.
 
-## aragon contracts
-
-The `aragon contracts` command can be used to execute commands using the same [truffle](https://github.com/trufflesuite/truffle) version that aragonCLI uses behind the scenes to assist in compiling your app's contracts.
-
-```sh
-aragon contracts <command>
-```
-
-It is equivalent to executing `npx truffle <command>`

@@ -23,6 +23,9 @@ aragon apm info <apmRepo> [apmRepoVersion]
 
 ## aragon apm publish
 
+> **Note**<br>
+> This command is deprecated and will be removed in a future release. Please see the [Aragon Buidler plugin](https://github.com/aragon/buidler-aragon) for an improved development experience.
+
 The `aragon apm publish` command publishes a new version to the aragonPM repo. Check the [Publish to aragonPM guide](https://hack.aragon.org/docs/guides-publish) to learn more about the publish workflow.
 
 ```sh
@@ -64,20 +67,6 @@ The command has the following parameters:
 - `--reuse`: Whether to reuse the previous version contract and skip deployment on non-major versions. Defaults to `false`.
 - `--propagate-content`: Whether to propagate the content once published. Defaults to `true`.
 - `--skip-confirmation`: Whether to skip the confirmation step. Defaults to `false`.
-
-## aragon apm extract-functions
-
-Extract function information from a Solidity file.
-
-```sh
-aragon apm extract-functions [contract]
-```
-
-- `contract`: Path to the Solidity file to extract functions from.
-
-Options:
-
-- `--output`: Path of the directory where the output file will be saved to.
 
 ## aragon apm versions
 
