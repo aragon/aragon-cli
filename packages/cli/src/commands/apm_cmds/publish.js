@@ -157,6 +157,10 @@ export const handler = async function({
   propagateContent,
   skipConfirmation,
 }) {
+  reporter.warning(
+    'This command is deprecated and will be removed in a future release. Please see the Aragon Buidler plugin for an improved development experience: https://github.com/aragon/buidler-aragon'
+  )
+
   web3 = web3 || (await ensureWeb3(network))
 
   const {

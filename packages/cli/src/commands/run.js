@@ -222,6 +222,10 @@ export const handler = async function({
   clientPort,
   clientPath,
 }) {
+  reporter.warning(
+    'This command is deprecated and will be removed in a future release. Please see the Aragon Buidler plugin for an improved development experience: https://github.com/aragon/buidler-aragon'
+  )
+
   if (http && !(await isHttpServerOpen(http))) {
     throw Error(
       `Can't connect to ${http}, make sure the http server is running.`
