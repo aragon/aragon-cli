@@ -63,11 +63,11 @@ export const handler = async function({
  */
 function displayPackages(packages) {
   const table = new Table({
-    head: ['App', 'Latest Version'],
+    head: ['App', 'Repo Address'],
   })
 
   packages.forEach(aPackage => {
-    const row = [aPackage.name, aPackage.version]
+    const row = [aPackage.name, aPackage.repo]
     table.push(row)
   })
 
