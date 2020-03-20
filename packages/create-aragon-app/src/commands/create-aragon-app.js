@@ -1,12 +1,12 @@
 const TaskList = require('listr')
 const execa = require('execa')
-const inquirer = require('inquirer')
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
 //
 const defaultAPMName = require('../helpers/default-apm')
+const isValidAragonId = require('../helpers/is-valid-aragonid')
 const listrOpts = require('../helpers/listr-options')
-const { installDeps, isValidAragonId } = require('../util')
+const { installDeps } = require('../util')
 const { checkProjectExists, prepareTemplate } = require('../lib')
 
 const templateOptions = {
@@ -14,17 +14,13 @@ const templateOptions = {
     repo: 'aragon/aragon-react-boilerplate',
     name: 'Aragon React boilerplate',
   },
-  buidler: {
-    repo: 'aragon/aragon-buidler-boilerplate',
-    name: 'Aragon Buidler boilerplate',
-  },
   tutorial: {
     repo: 'aragon/your-first-aragon-app',
     name: 'Your first Aragon app (tutorial)',
   },
-  bare: {
-    repo: 'aragon/aragon-bare-boilerplate',
-    name: 'Aragon bare boilerplate (deprecated)',
+  reactWithCli: {
+    repo: 'aragon/aragon-react-boilerplate',
+    name: 'Aragon react boilerplate with aragonCLI (deprecated)',
   },
 }
 
@@ -47,18 +43,12 @@ exports.builder = yargs => {
         templateOptions
       ).join(', ')})`,
       coerce: function resolveTemplateName(tmpl) {
-        if (tmpl && !tmpl.includes('/')) {
-          if (tmpl === 'react-kit') {
-            throw new Error(
-              `The 'react-kit' boilerplate has been deprecated and merged with 'react' boilerplate.`
-            )
-          } else if (!templateOptions[tmpl]) {
-            throw new Error(`No template named ${tmpl} exists`)
-          }
+        if (!templateOptions[tmpl]) {
+          throw new Error(`No template named ${tmpl} exists`)
         }
-
         return tmpl
       },
+      default: 'react',
     })
     .option('install', {
       description: 'Whether or not to install dependencies',
@@ -80,34 +70,18 @@ exports.handler = async function({
   const basename = name.split('.')[0]
   const projectPath = `${dirPath}/${basename}`
 
-  if (!template && !silent) {
-    const { templateChoice } = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'templateChoice',
-        message: 'Chose a template to scaffold from',
-        choices: Object.entries(templateOptions).map(([id, { name }]) => ({
-          name,
-          value: id,
-        })),
-      },
-    ])
-    template = templateChoice
-  } else if (silent) {
-    template = 'react'
-  }
+  const oldTemplate = template === 'reactWithCli'
 
-  let requiresIPFS = true
-
-  if (template === 'buidler') {
-    requiresIPFS = false
-    console.log(
-      `Warning: You are using the experimental "${template}" boilerplate.`
+  if (template === 'reactWithCli') {
+    reporter.warning(
+      `You are using a deprecated boilerplate that use the aragonCLI for development. We encourage the use of the Aragon buidler plugin instead.
+      `
     )
   }
 
   const repo = (templateOptions[template] || {}).repo
-  if (!repo) throw new Error(`No template repo found for ${template}`)
+
+  const checkout = oldTemplate ? 'tags/react-with-cli' : ''
 
   const templateUrl = `https://github.com/${repo}`
 
@@ -132,7 +106,7 @@ exports.handler = async function({
         title: 'Cloning app template',
         task: async (ctx, task) => {
           task.output = `Cloning ${templateUrl} into ${projectPath}...`
-          await clone(templateUrl, projectPath, { shallow: true })
+          await clone(templateUrl, projectPath, { checkout })
         },
       },
       {
@@ -154,7 +128,7 @@ exports.handler = async function({
       },
       {
         title: 'Check IPFS',
-        enabled: () => requiresIPFS,
+        enabled: () => oldTemplate && install,
         task: async (ctx, task) => {
           try {
             ctx.ipfsMissing = false
@@ -166,7 +140,7 @@ exports.handler = async function({
       },
       {
         title: 'Installing IPFS',
-        enabled: ctx => requiresIPFS && ctx.ipfsMissing,
+        enabled: ctx => oldTemplate && install && ctx.ipfsMissing,
         task: async (ctx, task) => {
           await execa(
             'npx',
@@ -180,16 +154,18 @@ exports.handler = async function({
   )
 
   return tasks.run().then(() => {
-    reporter.success(`Created new application ${name} in path ./${basename}/
+    reporter.success(`Created new application ${name} in path ./${basename}/\n`)
 
-Start your Aragon app by typing:
+    if (template === 'react')
+      reporter.info(`Start your Aragon app by typing:
 
-  cd ${basename}
-  npm start
+    cd ${basename}
+    npm start
+  
+  Visit https://hack.aragon.org/docs for more information.
+  
+  `)
 
-Visit https://hack.aragon.org/docs/cli-main-commands for more information.
-
-`)
     process.exit()
   })
 }

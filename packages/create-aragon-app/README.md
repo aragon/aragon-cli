@@ -10,10 +10,9 @@ create-aragon-app <app-name> [boilerplate]
 
 - `app-name`: The name or ENS domain name for your app in an aragonPM Registry (e.g. `myapp` or `myapp.aragonpm.eth`). If only the name is provided it will create your app on the default `aragonpm.eth` registry.
 
-- `boilerplate`: the Github repo name or alias for a boilerplate to set up your app. The currently available boilerplates are:
-  - `react`: this boilerplate contains a very basic Counter app and a webapp for interacting with it. It showcases the end-to-end interaction with an Aragon app, from the contracts to the webapp.
-  - `buidler`: (experimental) this boilerplates is similar to `react` using the [buidler](https://buidler.dev/) task runner with a custom plugin for developing Aragon apps.
-  - `bare`: (deprecated) this boilerplate will just set up your app directory structure but contains no functional code.
+- `boilerplate`: the Github repo name or alias for a boilerplate to set up your app. It default to `react`. The currently available boilerplates are:
+  - `react`: this boilerplate contains a very basic Counter app and a webapp for interacting with it. It showcases the end-to-end interaction using the [buidler](https://buidler.dev/) task runner with a custom plugin for developing Aragon apps from the contracts to the webapp.
+  - `reactWithCli`: (deprecated) this is similar to the `react` boilerplate but use aragonCLI as development tool.
 
 ## Example
 
@@ -32,37 +31,5 @@ _Note: [npx](https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner
 In the root of the repository, run:
 
 ```sh
-npm run pretest
-```
-
-And then in packages/create-aragon-app, run:
-
-```sh
 npm test
 ```
-
-To test only one file, try:
-
-```sh
-npm test -- <path to test file>
-```
-
-## Local environment
-
-Some commands like `aragon run` depend on a local dev environment (ipfs, ganache).
-
-We set up this up during the `pretest` hook & tear it down during the `posttest` hook.
-
-Pretest:
-
-- Start IPFS
-- Start Ganache
-- Create a test app
-
-Posttest:
-
-- Stop IPFS
-- Stop Ganache
-- Delete the test app
-
-**Tip**: Did a test fail and the local environment was cleaned up? Try `npm run test:clean`.
