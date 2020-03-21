@@ -42,7 +42,7 @@ Available options to customize the `run` command:
 - `--app-init`: Name of the function that will be called to initialize an app. Defaults to `initialize`.
 - `--app-init-args`: Arguments for calling the app init function. To use arrays use the following format `["'0xB24b...73a7', '0xB24b...73a7'"]`.
 
-### Running your app from a development HTTP server
+##### Running your app from a development HTTP server
 
 `aragon run` by default will replicate Aragon's production environment and publish your app using IPFS. However, when developing the webapp part of your Aragon app, using IPFS would require you to repeat the entire publishing process every time you make a change and want to try it out.
 
