@@ -28,22 +28,6 @@ To check outdated dependencies:
 npm outdated
 ```
 
-### truffle
-
-We cannot use `truffle@v5` nor `truffle@v4.1.15`, because the `aragonOS` contracts need to be
-compiled with `solidity@v0.4.24`.
-
-- Version `5.x.x` is bundling `solidity@v0.5`.
-- Version `4.1.15` is bundling `solidity@v0.4.25`.
-
-A better solution is to upgrade to `v5` and allow compilers configs: <https://github.com/aragon/aragon-cli/issues/498>
-
-### ignore
-
-Version 5 breaks our tool: [travis-log][ignore-fail-log]
-
-Migration guide: [4x to 5x][ignore-migration-guide]
-
 ## Tips
 
 - To pin a dependency:
@@ -69,6 +53,3 @@ a new package, because the automatic updates prove very unreliable.
 
 [dependabot-home]: https://dependabot.com/
 [shrinkwrap-home]: https://docs.npmjs.com/cli/shrinkwrap.html
-[shrinkwrap-issue]: https://github.com/aragon/aragon-cli/issues/477
-[ignore-fail-log]: https://travis-ci.org/aragon/aragon-cli/jobs/536290327#L945
-[ignore-migration-guide]: https://travis-ci.org/aragon/aragon-cli/jobs/536290327#L945

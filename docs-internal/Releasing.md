@@ -11,11 +11,7 @@ major, minor or patch. (see [semver docs](https://semver.org/))
 
 ## Nightly
 
-Before releasing let's make sure we are including the latest changes by updating the local branch:
-
-1. `git checkout master`
-2. `git pull`
-3. `git checkout release/***` (where *** is the next next tag of the `@aragon/cli` package, e.g.: `v6.0.0`)
+TODO: Add GtiHub Action release process.
 
 Prepare the release notes:
 
@@ -23,26 +19,7 @@ Prepare the release notes:
    (these are created by [release-drafter](https://github.com/apps/release-drafter))
 2. Double check that it correctly summarizes the changes since the last release: <https://github.com/aragon/aragon-cli/commits/master>
 
-Notes:
-
-- If you updated the README file, make sure to update /packages/aragon-cli/README.md as well.
-
-### Release all packages that have been updated
-
-1. Push the branch `git push -u origin release/***` so that `lerna` does not error.
-2. Run `npm run release` and bump the versions according to the release summary.
-3. On GitHub Releases, choose the project-wide tag (`@aragon/cli`'s version) and publish.
-4. Wait for the CD agent to finish the automatic deployment. (see [`Continuous-deployment.md`](/docs-internal/Continuous-deployment.md))
-5. Make some noise on the `#dev` channel.
-
-## Stable
-
-Notes:
-
-- Remember to update the README files section regarding stable versions
-- Deploy the docs to aragon/hack
-
-## Distribution tags
+## Distribution tags and stabel version
 
 The tags we use are: `latest`, `stable`, `nightly`.
 
