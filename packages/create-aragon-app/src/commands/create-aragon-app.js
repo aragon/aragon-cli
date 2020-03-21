@@ -72,7 +72,7 @@ exports.handler = async function({
 
   const oldTemplate = template === 'reactWithCli'
 
-  if (template === 'reactWithCli') {
+  if (oldTemplate) {
     reporter.warning(
       `You are using a deprecated boilerplate that use the aragonCLI for development. We encourage the use of the Aragon buidler plugin instead.
       `
