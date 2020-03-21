@@ -2,7 +2,7 @@ import test from 'ava'
 import fs from 'fs-extra'
 
 import { checkProjectExists, prepareTemplate } from '../src/lib'
-import { isValidAragonId } from '../src/util'
+import isValidAragonId from '../src/helpers/is-valid-aragonid'
 
 import defaultAPMName from '../src/helpers/default-apm'
 

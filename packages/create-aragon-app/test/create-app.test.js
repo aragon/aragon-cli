@@ -25,7 +25,7 @@ test('should create a new aragon app based on the buidler boilerplate', async t 
 
   const { stdout } = await runCreateAragonApp([
     projectName,
-    'buidler',
+    'react',
     '--path',
     './.tmp',
     '--no-install',
