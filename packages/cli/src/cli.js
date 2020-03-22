@@ -65,6 +65,9 @@ export function init(cb) {
     .option('environment', {
       description: 'The environment in your arapp.json that you want to use',
     })
+    .option('ws-rpc', {
+      description: 'The JSON-RPC over WebSockets URL to use',
+    })
     // APM
     .option('ens-registry', {
       description:

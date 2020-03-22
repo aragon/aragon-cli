@@ -32,7 +32,14 @@ export function configCliMiddleware(argv) {
     const ignoreNetCmd = new Set([''])
     const ignoreNetSubCmd = new Set(['devchain', 'ipfs'])
     const ignoreNetwork = ignoreNetSubCmd.has(subcmd) || ignoreNetCmd.has(cmd)
-    const { useFrame, environment, ensRegistry, ipfsRpc, ipfsGateway } = argv
+    const {
+      useFrame,
+      environment,
+      wsRpc,
+      ensRegistry,
+      ipfsRpc,
+      ipfsGateway,
+    } = argv
 
     const {
       arapp: arappMutated,
@@ -43,6 +50,7 @@ export function configCliMiddleware(argv) {
       ignoreNetwork,
       useFrame,
       environment,
+      wsRpc,
       ensRegistry,
       ipfsRpc,
       ipfsGateway,
@@ -51,8 +59,16 @@ export function configCliMiddleware(argv) {
     })
 
     if (wsProvider?.connection?.url?.includes('eth.aragon.network')) {
+      reporter.newLine()
       reporter.warning(
-        `You are currently using the Aragon Ethereum node (${wsProvider.connection.url}) the request could take a while. Consider switching to Infura (https://infura.io) for better performances. See the "wsRPC" field of https://hack.aragon.org/docs/cli-global-confg for more information.`
+        `You are connecting to the default node (${wsProvider.connection.url}) the request could take a while. Consider switching to Infura for better performance.`,
+        '\n'
+      )
+      reporter.info(
+        `You have the following options: 
+      1. Use the global option "--ws-rpc" with wss://mainnet.infura.io/ws/v3/<INFURA_KEY>
+      2. Set the "wsRPC" field on mainnet environment of the arapp.json with wss://mainnet.infura.io/ws/v3/<INFURA_KEY>`,
+        '\n'
       )
     }
 
