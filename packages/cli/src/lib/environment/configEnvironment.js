@@ -97,6 +97,7 @@ export function configEnvironment({
   ignoreNetwork,
   useFrame,
   environment,
+  wsRpc,
   ensRegistry,
   ipfsRpc,
   ipfsGateway,
@@ -130,7 +131,7 @@ export function configEnvironment({
     ),
     network: configureNetwork(env.network, truffleConfig, networkOptions),
     wsProvider: wsProviderUrl
-      ? new Web3.providers.WebsocketProvider(wsProviderUrl)
+      ? new Web3.providers.WebsocketProvider(wsRpc || wsProviderUrl)
       : null,
     arapp,
   }
