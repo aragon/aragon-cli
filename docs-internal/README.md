@@ -1,7 +1,5 @@
 # Internal documents regarding the project development & maintenance
 
-Current state of things:
-
 - [CI](/docs-internal/Continuous-integration.md) - The Continuous-integration approach
 - [CD](/docs-internal/Continuous-deployment.md) - The Continuous-deployment approach
 - [Releasing](/docs-internal/Releasing.md) - Releasing guidelines
