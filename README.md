@@ -44,6 +44,8 @@
 
 # aragonCLI
 
+![Merge on master and develop](https://github.com/aragon/aragon-cli/workflows/Merge%20on%20master%20and%20develop/badge.svg)
+
 The aragonCLI (Command Line Interface) is used to create and develop Aragon Apps, as well as to
 interact with DAOs (create, install apps, inspect permissions, etc.).
 
@@ -77,7 +79,6 @@ npm install --global @aragon/cli@5.6.2
 [![Docs][nightly-docs-badge]][nightly-docs-link]
 [![API stability][stability-experimental-badge]][stability-docs-link]
 [![codecov](https://codecov.io/gh/aragon/aragon-cli/branch/develop/graph/badge.svg)](https://codecov.io/gh/aragon/aragon-cli)
-[![Build status][nightly-build-badge]]
 
 Nightly builds may contain features in their early stages, expect things to break!
 
@@ -93,7 +94,6 @@ npm install --global @aragon/cli@nightly
 [nightly-docs-link]: https://hack.aragon.org/docs/cli-intro.html
 [nightly-coverage-badge]: https://img.shields.io/coveralls/aragon/aragon-cli.svg?style=flat-square
 [nightly-coverage-link]: https://coveralls.io/github/aragon/aragon-cli
-[nightly-build-badge]: https://github.com/aragon/aragon-cli/workflows/pull_request/badge.svg
 [npm-link]: https://npmjs.org/package/@aragon/cli
 [stability-stable-badge]: https://img.shields.io/badge/stability-stable-brightgreen.svg?style=flat-square
 [stability-experimental-badge]: https://img.shields.io/badge/stability-experimental-orange.svg?style=flat-square
