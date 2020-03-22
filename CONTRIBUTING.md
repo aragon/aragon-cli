@@ -6,35 +6,16 @@ Feel welcome and read the following sections in order to know how to ask questio
 
 All members of our community are expected to follow our [Code of Conduct](https://wiki.aragon.org/documentation/Code_of_Conduct/). Please make sure you are welcoming and friendly in all of our spaces.
 
-## Get Rewarded
-
-We are starting to experiment with bounties using the very same tools we are building in Aragon. In particular the [Projects app](https://www.autark.xyz/projects-app) of The Planning Suite made by Autark team. 
-
-Look for the [💰funded](https://github.com/aragon/aragon-cli/issues?q=is%3Aissue+is%3Aopen+label%3A%22💰+funded%22) label on issues and ask the mantainers to guide you through the bounty workflow. 
-
-You will apply to the boutnies on our own DAO, [follow the link to explore it.](https://rinkeby.aragon.org/#/meshteam/0x2b2290c2370cbc59e7c77bd36072f801d5e996c8)
-
-We will create a guide shortly with a walkthrough the whole process. Stay tuned 🙌
-
 ## Get Involved
 
 There are many ways to contribute to Aragon, and many of them do not involve writing any code. Here's a few ideas to get started:
 
-- Does everything work as expected? If not, we're always looking for improvements. Let us know by [opening an issue](#reporting-new-issues).
+- Does everything work as expected? If not, we're always looking for improvements. Let us know by [opening an issue](#reporting-new-issues). Do your best to include as many details as needed in order for someone else to fix the problem and resolve the issue.
 - Look through the [open issues](https://github.com/aragon/aragon-cli/issues). Provide workarounds, ask for clarification, or suggest labels.
-- If you find an issue you would like to fix, [open a pull request](#your-first-code-contribution). Issues tagged as [_Good first issue_](https://github.com/aragon/aragon-cli/issues?q=is%3Aissue+is%3Aopen+label%3A%22%3Apray%3A+good+first+issue%22) are a good place to get started.
+- If you find an issue you would like to fix, [open a pull request](#your-first-code-contribution).
 - Read through [Aragon documentation](https://hack.aragon.org/docs/cli-intro.html). If you find anything that is confusing or can be improved, you can make edits by clicking "Edit" at the top of most docs.
-- Take a look at the [features requested](https://github.com/aragon/aragon-cli/issues?q=is%3Aissue+is%3Aopen+label%3A%22🚀+new+feature%22) by others in the community and consider opening a pull request if you see something you want to work on.
 
 Contributions are very welcome.
-
-## Ways to Contribute
-
-We use [GitHub Issues](https://github.com/aragon/aragon-cli/issues) for our public bugs. If you would like to report a problem, take a look around and see if someone already opened an issue about it. If you a are certain this is a new, unreported bug, you can submit a [bug report](#reporting-new-issues).
-
-You can also file issues as [feature requests or enhancements](https://github.com/aragon/aragon-cli/issues?q=is%3Aissue+is%3Aopen+label%3A%22🚀+new+feature%22). If you see anything you'd like to be implemented, create an issue with [feature template](https://raw.githubusercontent.com/aragon/aragon-cli/master/.github/ISSUE_TEMPLATE/feature.md).
-
-Do your best to include as many details as needed in order for someone else to fix the problem and resolve the issue.
 
 ### Reporting new issues
 
@@ -43,9 +24,15 @@ When [opening a new issue](https://github.com/aragon/aragon-cli/issues/new/choos
 - **One issue, one bug:** Please report a single bug per issue.
 - **Provide reproduction steps:** List all the steps necessary to reproduce the issue. The person reading your bug report should be able to follow these steps to reproduce your issue with minimal effort.
 
-### Fix an issue
+### Your First Code Contribution
 
-You can browse our [issue tracker](https://github.com/aragon/aragon-cli/issues) and choose an issue to fix. The development process follows one typical of open source contributions. Here's a quick rundown:
+So you have decided to contribute code back to upstream by opening a pull request. You've invested a good chunk of time, and we appreciate it. We will do our best to work with you and get the PR looked at.
+
+Working on your first Pull Request? You can learn how from this free video series:
+
+[**How to Contribute to an Open Source Project on GitHub**](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github)
+
+Then you can browse our [issue tracker](https://github.com/aragon/aragon-cli/issues) and choose an issue to fix. The development process follows one typical of open source contributions. Here's a quick rundown:
 
 1. [Find an issue](https://github.com/aragon/aragon-cli/issues) that you are interested in addressing or a feature that you would like to add.
 2. Fork the repository to your local GitHub organization. This means that you will have a copy of the repository under `your-GitHub-username/hack`.
@@ -62,21 +49,9 @@ You can browse our [issue tracker](https://github.com/aragon/aragon-cli/issues) 
 13. Make changes to the pull request if the maintainer recommends them.
 14. Celebrate your success after your pull request is merged by making some noise in the #dev channel! :tada:
 
-## Your First Code Contribution
-
-So you have decided to contribute code back to upstream by opening a pull request. You've invested a good chunk of time, and we appreciate it. We will do our best to work with you and get the PR looked at.
-
-Working on your first Pull Request? You can learn how from this free video series:
-
-[**How to Contribute to an Open Source Project on GitHub**](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github)
-
-Unsure where to begin contributing? You can start by looking through these `good first issue` issues:
-
-- [Good first issue](https://github.com/aragon/aragon-cli/labels/%3Apray%3A%20good%20first%20issue) - issues which should only require a few lines of code, and a test or two.
-
 ## Getting help
 
-If you need help, please reach out to Aragon core contributors and community members in the [#dev-help channel](https://aragon.chat/channel/dev-help) on the Aragon Chat. We'd love to hear from you and know what you're working on!
+If you need help, please reach out to Aragon core contributors and community members on [Spectrum Chat](https://spectrum.chat/aragon/?tab=posts). We'd love to hear from you and know what you're working on!
 
 ## Style Guide
 
@@ -103,7 +78,7 @@ feat: allow overriding of webpack config
 
 The various types of commits:
 
-- `feat`: (new feature for the user, not a new feature for build script)
+- `feature`: (new feature for the user, not a new feature for build script)
 - `fix`: (bug fix for the user, not a fix to a build script)
 - `docs`: (changes to the documentation)
 - `style`: (formatting, missing semi colons, etc; no production code change)

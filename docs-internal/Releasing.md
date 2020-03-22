@@ -4,22 +4,6 @@ Terminology for this context:
 
 - Releasing: marking (tagging) a new software version
 - Publishing: uploading a new build to the package manager
-- Deploying: same as publishing
-
-The act of making a new release is a manual step, as we need to assess whether we should bump a new
-major, minor or patch. (see [semver docs](https://semver.org/))
-
-## Nightly
-
-TODO: Add GtiHub Action release process.
-
-Prepare the release notes:
-
-1. Edit the new release draft on GitHub: <https://github.com/aragon/aragon-cli/releases>
-   (these are created by [release-drafter](https://github.com/apps/release-drafter))
-2. Double check that it correctly summarizes the changes since the last release: <https://github.com/aragon/aragon-cli/commits/master>
-
-## Distribution tags and stabel version
 
 The tags we use are: `latest`, `stable`, `nightly`.
 
@@ -27,12 +11,17 @@ The tags we use are: `latest`, `stable`, `nightly`.
 >
 > By default, other than `latest`, no tag has any special significance to `npm` itself.
 
-To mark a `nightly` build as latest stable:
+## Nightly
 
-```sh
-npm dist-tag add @aragon/cli@6.0.0 stable
-npm dist-tag add @aragon/cli@6.0.0 latest
-```
+TODO: Add release process.
+
+## Stable
+
+Prepare the release notes:
+
+1. Edit the new release draft on GitHub: <https://github.com/aragon/aragon-cli/releases>
+   (these are created by [release-drafter](https://github.com/apps/release-drafter))
+2. Double check that it correctly summarizes the changes since the last release: <https://github.com/aragon/aragon-cli/commits/master>
 
 ## Something went wrong
 
