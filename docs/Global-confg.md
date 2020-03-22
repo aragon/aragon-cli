@@ -39,7 +39,8 @@ This is the arapp.json of the app build in the [tutorial](tutorial.md) configure
   ],
   "environments": {
     "aragon:local": {
-      "network": "localhost"
+      "network": "localhost",
+      "appName": "foo.aragonpm.eth"
     },
     "aragon:rinkeby": {
       "apm": {
@@ -48,6 +49,7 @@ This is the arapp.json of the app build in the [tutorial](tutorial.md) configure
         }
       },
       "registry": "0x98df287b6c145399aaa709692c8d308357bc085d",
+      "appName": "foo.open.aragonpm.eth",
       "wsRPC": "wss://rinkeby.eth.aragon.network/ws",
       "network": "rinkeby"
     },
@@ -58,6 +60,7 @@ This is the arapp.json of the app build in the [tutorial](tutorial.md) configure
         }
       },
       "registry": "0xfe03625ea880a8cba336f9b5ad6e15b0a3b5a939",
+      "appName": "foo.open.aragonpm.eth",
       "wsRPC": "wss://rinkeby.eth.aragon.network/ws",
       "network": "rinkeby"
     },
@@ -68,6 +71,7 @@ This is the arapp.json of the app build in the [tutorial](tutorial.md) configure
         }
       },
       "registry": "0x314159265dd8dbb310642f98f50c066173c1259b",
+      "appName": "foo.aragonpm.eth",
       "wsRPC": "wss://mainnet.eth.aragon.network/ws",
       "network": "mainnet"
     }
