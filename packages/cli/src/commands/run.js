@@ -434,15 +434,15 @@ export const handler = async function({
   return tasks.run({ ens: apmOptions.ensRegistryAddress }).then(async ctx => {
     if (ctx.portOpen) {
       reporter.warning(
-        `Server already listening at port ${blue(
+        `The server already listening at port ${blue(
           clientPort
-        )}, skipped starting Aragon`
+        )}, skipped starting Aragon.`
       )
     }
 
     if (ctx.notInitialized) {
       reporter.warning(
-        'App could not be initialized, check the --app-init flag. Functions protected behind the ACL will not work until the app is initialized'
+        'The app could not be initialized, check the --app-init flag. Functions protected behind the ACL will not work until the app is initialized.'
       )
     }
 

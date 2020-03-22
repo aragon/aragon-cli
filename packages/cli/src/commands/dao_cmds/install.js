@@ -231,14 +231,14 @@ export const handler = async function({
       )
     } else {
       reporter.warning(
-        'After the app instance is created, you will need to assign permissions to it for it appear as an app in the DAO'
+        'After the app instance is created, you will need to assign permissions to it for it appear as an app in the DAO.'
       )
     }
 
     if (ctx.notInitialized) {
       reporter.newLine()
       reporter.warning(
-        'App could not be initialized, check the --app-init flag. Functions protected behind the ACL will not work until the app is initialized'
+        'The app could not be initialized, check the --app-init flag. Functions protected behind the ACL will not work until the app is initialized.'
       )
     }
   })
