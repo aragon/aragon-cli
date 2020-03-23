@@ -116,7 +116,7 @@ export const handler = async function({
         task: async (ctx, task) => {
           appsWithoutPermissions = (
             await getAllApps(daoAddress, {
-              web3: new Web3(wsProvider || web3.currentProvider)
+              web3: new Web3(wsProvider || web3.currentProvider),
             })
           ).filter(
             ({ proxyAddress }) =>
