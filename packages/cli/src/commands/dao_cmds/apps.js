@@ -1,6 +1,7 @@
 import TaskList from 'listr'
 import Table from 'cli-table'
 import { blue, green, white } from 'chalk'
+import Web3 from 'web3'
 import {
   getDaoAddress,
   getInstalledApps,
@@ -115,7 +116,7 @@ export const handler = async function({
         task: async (ctx, task) => {
           appsWithoutPermissions = (
             await getAllApps(daoAddress, {
-              web3,
+              web3: new Web3(wsProvider || web3.currentProvider),
             })
           ).filter(
             ({ proxyAddress }) =>
