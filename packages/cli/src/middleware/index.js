@@ -66,7 +66,7 @@ export function configCliMiddleware(argv) {
       )
       reporter.info(
         `You have the following options: 
-      1. Use the global option "--ws-rpc"
+      1. Use the global option "--ws-rpc" (e.g. with wss://mainnet.infura.io/ws/v3/<INFURA_KEY> for Infura)
       2. Set the "wsRPC" field on mainnet environment of the arapp.json`,
         '\n'
       )
