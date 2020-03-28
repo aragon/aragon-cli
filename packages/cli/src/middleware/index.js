@@ -61,7 +61,7 @@ export function configCliMiddleware(argv) {
     if (wsProvider?.connection?.url?.includes('eth.aragon.network')) {
       reporter.newLine()
       reporter.warning(
-        `The request may take a while because you are connecting to the default node (${wsProvider.connection.url}). For better performance, consider switching to your own ethereum node or Infura.`,
+        `The request may take a while because you are connecting to the default node (${wsProvider.connection.url}). For better performance, consider switching to your own Ethereum node or Infura.`,
         '\n'
       )
       reporter.info(
