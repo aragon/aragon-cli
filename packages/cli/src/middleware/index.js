@@ -61,13 +61,13 @@ export function configCliMiddleware(argv) {
     if (wsProvider?.connection?.url?.includes('eth.aragon.network')) {
       reporter.newLine()
       reporter.warning(
-        `You are connecting to the default node (${wsProvider.connection.url}) the request could take a while. Consider switching to Infura for better performance.`,
+        `You are connecting to the default node (${wsProvider.connection.url}) the request could take a while. Consider switching to your own ethereum node or Infura for better performance.`,
         '\n'
       )
       reporter.info(
         `You have the following options: 
-      1. Use the global option "--ws-rpc" with wss://mainnet.infura.io/ws/v3/<INFURA_KEY>
-      2. Set the "wsRPC" field on mainnet environment of the arapp.json with wss://mainnet.infura.io/ws/v3/<INFURA_KEY>`,
+      1. Use the global option "--ws-rpc"
+      2. Set the "wsRPC" field on mainnet environment of the arapp.json`,
         '\n'
       )
     }
