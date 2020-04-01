@@ -3,6 +3,7 @@ import TaskList from 'listr'
 import { getApmRegistryPackages } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
+import Web3 from 'web3'
 
 export const command = 'packages [apmRegistry]'
 export const describe = 'List all packages in the registry'
@@ -19,8 +20,10 @@ export const handler = async function({
   apmRegistry,
   network,
   apm: apmOptions,
+  wsProvider,
 }) {
-  const web3 = await ensureWeb3(network)
+  const web3 = wsProvider ? new Web3(wsProvider) : await ensureWeb3(network)
+
   let packages
 
   const tasks = new TaskList([
