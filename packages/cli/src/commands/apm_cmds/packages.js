@@ -20,11 +20,9 @@ export const handler = async function({
   apmRegistry,
   network,
   apm: apmOptions,
-  wsProvider
+  wsProvider,
 }) {
-  const web3 = wsProvider
-    ? new Web3(wsProvider)
-    : await ensureWeb3(network)
+  const web3 = wsProvider ? new Web3(wsProvider) : await ensureWeb3(network)
 
   let packages
 
