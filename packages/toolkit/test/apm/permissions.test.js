@@ -2,6 +2,8 @@ import test from 'ava'
 import sinon from 'sinon'
 //
 import grantNewVersionsPermission from '../../src/apm/grantNewVersionsPermission'
+import revokePermission from '../../src/apm/revokePermission'
+import apmSetPermissionManager from '../../src/apm/apmSetPermissionManager'
 import { getLocalWeb3, getApmOptions } from '../test-helpers'
 
 import { abi as aclAbi } from '@aragon/abis/os/artifacts/ACL'
@@ -67,7 +69,7 @@ test.before('setup and make a successful call', async t => {
 
 /* Tests */
 
-test('permissions are not set for any accounts', async t => {
+test.serial('permissions are not set for any accounts', async t => {
   const anyone = accounts[2]
 
   const hasPermission = await acl.methods
@@ -77,7 +79,7 @@ test('permissions are not set for any accounts', async t => {
   t.false(hasPermission)
 })
 
-test('properly sets permissions for grantees', async t => {
+test.serial('properly sets permissions for grantees', async t => {
   const grantee = grantees[0]
 
   const hasPermission = await acl.methods
@@ -87,7 +89,7 @@ test('properly sets permissions for grantees', async t => {
   t.true(hasPermission)
 })
 
-test('properly calls the progressHandler', t => {
+test.serial('properly calls the progressHandler', t => {
   const receipt = receipts[0]
 
   t.is(progressHandler.callCount, 3)
@@ -96,7 +98,7 @@ test('properly calls the progressHandler', t => {
   t.true(progressHandler.getCall(2).calledWith(3, receipt.transactionHash))
 })
 
-test('Should throw when no grantees are provided', async t => {
+test.serial('Should throw when no grantees are provided', async t => {
   await t.throwsAsync(
     grantNewVersionsPermission(
       web3,
@@ -107,4 +109,42 @@ test('Should throw when no grantees are provided', async t => {
       txOptions
     )
   )
+})
+
+test.serial('revokePermission properly revokes permission for entity', async t => {
+  const entity = grantees[0]
+
+  await revokePermission(
+    web3,     
+    apmRepoName,
+    apmOptions,
+    entity,
+    () => {},
+    txOptions)
+
+  const hasPermission = await acl.methods
+    .hasPermission(entity, repoAddress, role)
+    .call()
+
+  t.false(hasPermission)
+})
+
+test.serial('apmSetPermissionManager properly sets the permission manager', async t => {
+  const entity = grantees[0]
+
+  await apmSetPermissionManager(
+    web3,     
+    apmRepoName,
+    apmOptions,
+    entity,
+    () => {},
+    txOptions)
+
+  const permissionManager = await acl.methods
+    .getPermissionManager(repoAddress, role)
+    .call()
+
+  console.log(permissionManager)
+
+  t.is(entity, permissionManager)
 })
