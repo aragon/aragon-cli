@@ -87,3 +87,23 @@ aragon apm grant [addr1 ... addrN]
 ```
 
 - `addresses`: The addresses being granted the permission to publish to the repo.
+
+## aragon apm revoke
+
+Revoke an address the permission to create new versions in your package (defined in `arapp.json`), by interacting directly with the ACL, without performing transaction pathing.
+
+```sh
+aragon apm revoke <entity>
+```
+
+- `entity`: The entity address being revoked the permission to publish to the repo.
+
+## aragon apm manager
+
+Set an address to be the permission manager of your package (defined in `arapp.json`), by interacting directly with the ACL, without performing transaction pathing.
+
+```sh
+aragon apm manager <entity>
+```
+
+- `entity`: The entity address being set as permission manager.

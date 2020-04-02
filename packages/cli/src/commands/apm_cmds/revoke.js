@@ -32,18 +32,14 @@ export const handler = async function({
         reporter.info(`Fetching repository`)
         break
       case 2:
-        // eslint-disable-next-line no-case-declarations
-        const address = data
         reporter.info(
           `Revoking permission to publish on ${blue(
             module.appName
-          )} for ${address}`
+          )} for ${data}`
         )
         break
       case 3:
-        // eslint-disable-next-line no-case-declarations
-        const txHash = data
-        reporter.success(`Successful transaction (${blue(txHash)})`)
+        reporter.success(`Successful transaction (${blue(data)})`)
         break
     }
   }
