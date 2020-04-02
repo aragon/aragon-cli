@@ -1,5 +1,5 @@
 import { blue } from 'chalk'
-import { revokePermission } from '@aragon/toolkit'
+import { apmRevokePermission } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
 
@@ -48,7 +48,7 @@ export const handler = async function({
     }
   }
 
-  await revokePermission(
+  await apmRevokePermission(
     web3,
     module.appName,
     apmOptions,

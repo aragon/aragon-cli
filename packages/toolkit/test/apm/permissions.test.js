@@ -2,7 +2,7 @@ import test from 'ava'
 import sinon from 'sinon'
 //
 import grantNewVersionsPermission from '../../src/apm/grantNewVersionsPermission'
-import revokePermission from '../../src/apm/revokePermission'
+import apmRevokePermission from '../../src/apm/apmRevokePermission'
 import apmSetPermissionManager from '../../src/apm/apmSetPermissionManager'
 import { getLocalWeb3, getApmOptions } from '../test-helpers'
 
@@ -67,6 +67,7 @@ test.before('setup and make a successful call', async t => {
   )
 })
 
+
 /* Tests */
 
 test.serial('permissions are not set for any accounts', async t => {
@@ -112,11 +113,11 @@ test.serial('Should throw when no grantees are provided', async t => {
 })
 
 test.serial(
-  'revokePermission properly revokes permission for entity',
+  'apmRevokePermission properly revokes permission for entity',
   async t => {
     const entity = grantees[0]
 
-    await revokePermission(
+    await apmRevokePermission(
       web3,
       apmRepoName,
       apmOptions,
@@ -150,8 +151,6 @@ test.serial(
     const permissionManager = await acl.methods
       .getPermissionManager(repoAddress, role)
       .call()
-
-    console.log(permissionManager)
 
     t.is(entity, permissionManager)
   }
