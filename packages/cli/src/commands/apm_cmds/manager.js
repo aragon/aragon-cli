@@ -1,16 +1,16 @@
 import { blue } from 'chalk'
-import { revokePermission } from '@aragon/toolkit'
+import { apmSetPermissionManager } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
 
-export const command = 'revoke entity'
+export const command = 'manager <entity>'
 export const describe =
-  'Revoke an entity the permission to create new versions in this package'
+  'Set an entity as the permission manager of this package'
 
 export const builder = function(yargs) {
   return yargs.positional('entity', {
     description:
-      'The address being revoked the permission to publish to the repo',
+      'The address to be the new permission manager ofthe repo',
   })
 }
 
@@ -35,7 +35,7 @@ export const handler = async function({
         // eslint-disable-next-line no-case-declarations
         const address = data
         reporter.info(
-          `Revoking permission to publish on ${blue(
+          `Setting permission manager for ${blue(
             module.appName
           )} for ${address}`
         )
@@ -48,7 +48,7 @@ export const handler = async function({
     }
   }
 
-  await revokePermission(
+  await apmSetPermissionManager(
     web3,
     module.appName,
     apmOptions,

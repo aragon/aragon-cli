@@ -48,5 +48,19 @@ export default web3 => {
         gas: await getRecommendedGasLimit(web3, estimatedGas),
       }
     },
+
+    setPermissionManager: async (entity, repoAddr, from) => {
+      const acl = await getACL(repoAddr)
+
+      const roleId = await getRoleId(repoAddr)
+      const call = acl.methods.setPermissionManager(entity, repoAddr, roleId)
+      const estimatedGas = call.estimateGas({ from })
+
+      return {
+        to: acl.options.address,
+        data: call.encodeABI(),
+        gas: await getRecommendedGasLimit(web3, estimatedGas),
+      }
+    },
   }
 }
