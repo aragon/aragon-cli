@@ -36,7 +36,7 @@ export default async (
     const from = accounts[0]
 
     // Build transaction
-    const transaction = await acl.grant(repo.options.address, address)
+    const transaction = await acl.grant(repo.options.address, address, from)
 
     transaction.from = from
     transaction.gasPrice = gasPrice

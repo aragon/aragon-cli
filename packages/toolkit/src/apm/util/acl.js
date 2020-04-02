@@ -21,13 +21,12 @@ export default web3 => {
   }
 
   return {
-    grant: async (repoAddr, grantee) => {
+    grant: async (repoAddr, grantee, from) => {
       const acl = await getACL(repoAddr)
 
       const roleId = await getRoleId(repoAddr)
-
       const call = acl.methods.grantPermission(grantee, repoAddr, roleId)
-      const estimatedGas = call.estimateGas()
+      const estimatedGas = call.estimateGas({ from })
 
       return {
         to: acl.options.address,
