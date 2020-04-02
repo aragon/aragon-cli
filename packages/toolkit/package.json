@@ -72,7 +72,7 @@
     "@types/fs-extra": "^8.1.0",
     "@types/lodash": "^4.14.149",
     "@types/lodash.flatten": "^4.4.6",
-    "@types/node": "^12.12.24",
+    "@types/node": "^13.9.8",
     "@types/node-fetch": "^2.5.4",
     "@types/rx": "^4.1.1",
     "@types/semver": "^7.1.0",
