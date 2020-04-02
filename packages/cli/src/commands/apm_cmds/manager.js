@@ -32,9 +32,7 @@ export const handler = async function({
         break
       case 2:
         reporter.info(
-          `Setting permission manager for ${blue(
-            module.appName
-          )} for ${data}`
+          `Setting permission manager for ${blue(module.appName)} for ${data}`
         )
         break
       case 3:

@@ -67,7 +67,6 @@ test.before('setup and make a successful call', async t => {
   )
 })
 
-
 /* Tests */
 
 test.serial('permissions are not set for any accounts', async t => {
