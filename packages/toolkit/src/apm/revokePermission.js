@@ -25,17 +25,16 @@ export default async (
     )
   }
 
-  const receipts = []
 
   /* eslint-disable-next-line */
-  progressHandler(2, address)
+  progressHandler(2, entity)
 
   // Decode sender
   const accounts = await web3.eth.getAccounts()
   const from = accounts[0]
 
   // Build transaction
-  const transaction = await acl.revoke(repo.options.address, address, from)
+  const transaction = await acl.revoke(repo.options.address, entity, from)
 
   transaction.from = from
   transaction.gasPrice = gasPrice

@@ -6,3 +6,4 @@ export { default as grantNewVersionsPermission } from './grantNewVersionsPermiss
 export { default as apmPublishVersion } from './apmPublishVersion'
 export { default as apmPublishVersionIntent } from './apmPublishVersionIntent'
 export { default as apmGetFile } from './apmGetFile'
+export { default as revokePermission } from './revokePermission'
