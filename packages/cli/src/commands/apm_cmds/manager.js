@@ -9,8 +9,7 @@ export const describe =
 
 export const builder = function(yargs) {
   return yargs.positional('entity', {
-    description:
-      'The address to be the new permission manager ofthe repo',
+    description: 'The address to be the new permission manager ofthe repo',
   })
 }
 

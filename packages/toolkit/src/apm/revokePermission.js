@@ -25,7 +25,6 @@ export default async (
     )
   }
 
-
   /* eslint-disable-next-line */
   progressHandler(2, entity)
 

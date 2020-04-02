@@ -25,7 +25,6 @@ export default async (
     )
   }
 
-
   /* eslint-disable-next-line */
   progressHandler(2, entity)
 
@@ -34,7 +33,11 @@ export default async (
   const from = accounts[0]
 
   // Build transaction
-  const transaction = await acl.setPermissionManager(entity, repo.options.address, from)
+  const transaction = await acl.setPermissionManager(
+    entity,
+    repo.options.address,
+    from
+  )
 
   transaction.from = from
   transaction.gasPrice = gasPrice

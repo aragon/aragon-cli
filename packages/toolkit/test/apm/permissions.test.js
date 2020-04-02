@@ -111,40 +111,48 @@ test.serial('Should throw when no grantees are provided', async t => {
   )
 })
 
-test.serial('revokePermission properly revokes permission for entity', async t => {
-  const entity = grantees[0]
+test.serial(
+  'revokePermission properly revokes permission for entity',
+  async t => {
+    const entity = grantees[0]
 
-  await revokePermission(
-    web3,     
-    apmRepoName,
-    apmOptions,
-    entity,
-    () => {},
-    txOptions)
+    await revokePermission(
+      web3,
+      apmRepoName,
+      apmOptions,
+      entity,
+      () => {},
+      txOptions
+    )
 
-  const hasPermission = await acl.methods
-    .hasPermission(entity, repoAddress, role)
-    .call()
+    const hasPermission = await acl.methods
+      .hasPermission(entity, repoAddress, role)
+      .call()
 
-  t.false(hasPermission)
-})
+    t.false(hasPermission)
+  }
+)
 
-test.serial('apmSetPermissionManager properly sets the permission manager', async t => {
-  const entity = grantees[0]
+test.serial(
+  'apmSetPermissionManager properly sets the permission manager',
+  async t => {
+    const entity = grantees[0]
 
-  await apmSetPermissionManager(
-    web3,     
-    apmRepoName,
-    apmOptions,
-    entity,
-    () => {},
-    txOptions)
+    await apmSetPermissionManager(
+      web3,
+      apmRepoName,
+      apmOptions,
+      entity,
+      () => {},
+      txOptions
+    )
 
-  const permissionManager = await acl.methods
-    .getPermissionManager(repoAddress, role)
-    .call()
+    const permissionManager = await acl.methods
+      .getPermissionManager(repoAddress, role)
+      .call()
 
-  console.log(permissionManager)
+    console.log(permissionManager)
 
-  t.is(entity, permissionManager)
-})
+    t.is(entity, permissionManager)
+  }
+)
