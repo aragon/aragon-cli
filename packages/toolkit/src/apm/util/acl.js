@@ -34,5 +34,19 @@ export default web3 => {
         gas: await getRecommendedGasLimit(web3, estimatedGas),
       }
     },
+
+    revoke: async (repoAddr, grantee, from) => {
+      const acl = await getACL(repoAddr)
+
+      const roleId = await getRoleId(repoAddr)
+      const call = acl.methods.revokePermission(grantee, repoAddr, roleId)
+      const estimatedGas = call.estimateGas({ from })
+
+      return {
+        to: acl.options.address,
+        data: call.encodeABI(),
+        gas: await getRecommendedGasLimit(web3, estimatedGas),
+      }
+    },
   }
 }
