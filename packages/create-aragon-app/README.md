@@ -26,7 +26,7 @@ Once finished, this will open [http://localhost:3000/](http://localhost:3000/) i
 
 _Note: [npx](https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner-55f7d4bd282b) comes with npm 5.2+ and higher. If you use npm 5.1 or earlier, you can't use `npx`. Instead, install `create-aragon-app` globally._
 
-_Note: We also support [yarn](https://yarnpkg.com/getting-started/install) as a package manager during installation. Make sure to have it on your PATH._
+_Note: We also support [yarn](https://yarnpkg.com/getting-started/install) as a package manager during installation and will use it by default if you have it available in your PATH._
 
 # Tests
 
