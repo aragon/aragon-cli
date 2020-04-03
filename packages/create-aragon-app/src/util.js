@@ -5,9 +5,10 @@ const PGK_MANAGER_BIN_NPM = 'npm'
 const PGK_MANAGER_BIN_YARN = 'yarn'
 
 const getNodePackageManager = oldTemplate => {
-  if (commandExistsSync('yarn')) {
-    return oldTemplate ? PGK_MANAGER_BIN_NPM : PGK_MANAGER_BIN_YARN
+  if (commandExistsSync('yarn') && !oldTemplate) {
+    return PGK_MANAGER_BIN_YARN
   }
+
   return PGK_MANAGER_BIN_NPM
 }
 
