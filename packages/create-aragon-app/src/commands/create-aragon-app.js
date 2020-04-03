@@ -2,6 +2,7 @@ const TaskList = require('listr')
 const execa = require('execa')
 const { promisify } = require('util')
 const clone = promisify(require('git-clone'))
+const commandExistsSync = require('command-exists').sync
 //
 const defaultAPMName = require('../helpers/default-apm')
 const isValidAragonId = require('../helpers/is-valid-aragonid')
@@ -160,7 +161,7 @@ exports.handler = async function({
       reporter.info(`Start your Aragon app by typing:
 
     cd ${basename}
-    npm start
+    ${commandExistsSync('yarn') ? 'yarn' : 'npm'} start
   
   Visit https://hack.aragon.org/docs for more information.
   
