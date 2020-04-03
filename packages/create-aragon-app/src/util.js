@@ -1,10 +1,14 @@
+const commandExistsSync = require('command-exists').sync
 const execa = require('execa')
 
 const PGK_MANAGER_BIN_NPM = 'npm'
 const PGK_MANAGER_BIN_YARN = 'yarn'
 
 const getNodePackageManager = oldTemplate => {
-  return oldTemplate ? PGK_MANAGER_BIN_NPM : PGK_MANAGER_BIN_YARN
+  if (commandExistsSync('yarn')) {
+    return oldTemplate ? PGK_MANAGER_BIN_NPM : PGK_MANAGER_BIN_YARN
+  }
+  return PGK_MANAGER_BIN_NPM
 }
 
 const installDeps = (oldTemplate, cwd, task) => {
