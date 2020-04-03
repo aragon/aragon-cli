@@ -1,19 +1,21 @@
 const commandExistsSync = require('command-exists').sync
 const execa = require('execa')
+const fs = require('fs-extra')
+const path = require('path')
 
 const PGK_MANAGER_BIN_NPM = 'npm'
 const PGK_MANAGER_BIN_YARN = 'yarn'
 
-const getNodePackageManager = oldTemplate => {
-  if (commandExistsSync('yarn') && !oldTemplate) {
-    return PGK_MANAGER_BIN_YARN
-  }
-
-  return PGK_MANAGER_BIN_NPM
-}
+const getNodePackageManager = useYarn =>
+  useYarn ? PGK_MANAGER_BIN_YARN : PGK_MANAGER_BIN_NPM
 
 const installDeps = (oldTemplate, cwd, task) => {
-  const bin = getNodePackageManager(oldTemplate)
+  const useYarn = commandExistsSync('yarn') && !oldTemplate
+
+  // If we don use yarn we delete yarn.lock
+  if (!useYarn) fs.removeSync(path.join(cwd, 'yarn.lock'))
+
+  const bin = getNodePackageManager(useYarn)
   const installTask = execa(bin, ['install'], { cwd })
 
   installTask.stdout.on('data', bytes => {
