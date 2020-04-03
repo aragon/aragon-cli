@@ -12,7 +12,7 @@ const getNodePackageManager = useYarn =>
 const installDeps = (oldTemplate, cwd, task) => {
   const useYarn = commandExistsSync('yarn') && !oldTemplate
 
-  // If we don use yarn we delete yarn.lock
+  // If we don't use yarn we delete yarn.lock
   if (!useYarn) fs.removeSync(path.join(cwd, 'yarn.lock'))
 
   const bin = getNodePackageManager(useYarn)
