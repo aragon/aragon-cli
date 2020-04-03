@@ -1,13 +1,14 @@
 const execa = require('execa')
 
 const PGK_MANAGER_BIN_NPM = 'npm'
+const PGK_MANAGER_BIN_YARN = 'yarn'
 
-const getNodePackageManager = () => {
-  return PGK_MANAGER_BIN_NPM
+const getNodePackageManager = oldTemplate => {
+  return oldTemplate ? PGK_MANAGER_BIN_NPM : PGK_MANAGER_BIN_YARN
 }
 
-const installDeps = (cwd, task) => {
-  const bin = getNodePackageManager()
+const installDeps = (oldTemplate, cwd, task) => {
+  const bin = getNodePackageManager(oldTemplate)
   const installTask = execa(bin, ['install'], { cwd })
 
   installTask.stdout.on('data', bytes => {

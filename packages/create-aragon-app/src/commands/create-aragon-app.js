@@ -123,7 +123,7 @@ exports.handler = async function({
         task: async (ctx, task) => {
           task.output =
             'Installing package dependencies... (might take a couple of minutes)'
-          await installDeps(projectPath, task)
+          await installDeps(oldTemplate, projectPath, task)
         },
       },
       {
