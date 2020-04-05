@@ -9,6 +9,12 @@ const PGK_MANAGER_BIN_YARN = 'yarn'
 const getNodePackageManager = useYarn =>
   useYarn ? PGK_MANAGER_BIN_YARN : PGK_MANAGER_BIN_NPM
 
+const replaceNpmScript = async filePath => {
+  const file = fs.readFileSync(filePath, 'utf8')
+  const newFile = file.replace(/npm run/g, 'yarn')
+  fs.writeFileSync(filePath, newFile)
+}
+
 const installDeps = (oldTemplate, cwd, task) => {
   const useYarn = commandExistsSync('yarn') && !oldTemplate
 
@@ -16,6 +22,9 @@ const installDeps = (oldTemplate, cwd, task) => {
   if (!useYarn) {
     fs.removeSync(path.join(cwd, 'yarn.lock'))
     fs.removeSync(path.join(cwd, 'app', 'yarn.lock'))
+  } else {
+    replaceNpmScript(path.join(cwd, 'package.json'))
+    replaceNpmScript(path.join(cwd, 'app', 'package.json'))
   }
 
   const bin = getNodePackageManager(useYarn)
