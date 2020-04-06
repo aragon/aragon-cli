@@ -2052,11 +2052,6 @@
             "negotiator": "0.6.2"
           }
         },
-        "acorn": {
-          "version": "7.1.0",
-          "resolved": "https://registry.npmjs.org/acorn/-/acorn-7.1.0.tgz",
-          "integrity": "sha512-kL5CuoXA/dgxlBbVrflsflzQ3PAas7RYZB52NOm/6839iVYJgKMJ3cQJD+t2i5+qFa8h3MDpEOJiS64E8JLnSQ=="
-        },
         "acorn-jsx": {
           "version": "5.1.0",
           "resolved": "https://registry.npmjs.org/acorn-jsx/-/acorn-jsx-5.1.0.tgz",
@@ -8495,25 +8490,10 @@
                 "negotiator": "0.6.2"
               }
             },
-            "acorn": {
-              "version": "6.3.0",
-              "resolved": "https://registry.npmjs.org/acorn/-/acorn-6.3.0.tgz",
-              "integrity": "sha512-/czfa8BwS88b9gWQVhc8eknunSA2DoJpJyTQkhheIf5E48u1N0R4q/YxxsAeqRrmK9TQ/uYfgLDfZo91UlANIA=="
-            },
             "acorn-dynamic-import": {
               "version": "3.0.0",
               "resolved": "https://registry.npmjs.org/acorn-dynamic-import/-/acorn-dynamic-import-3.0.0.tgz",
-              "integrity": "sha512-zVWV8Z8lislJoOKKqdNMOB+s6+XV5WERty8MnKBeFgwA+19XJjJHs2RP5dzM57FftIs+jQnRToLiWazKr6sSWg==",
-              "requires": {
-                "acorn": "^5.0.0"
-              },
-              "dependencies": {
-                "acorn": {
-                  "version": "5.7.3",
-                  "resolved": "https://registry.npmjs.org/acorn/-/acorn-5.7.3.tgz",
-                  "integrity": "sha512-T/zvzYRfbVojPWahDsE5evJdHb3oJoQfFbsrKM7w5Zcs++Tr257tia3BmMP8XYVjp1S9RZXQMh7gao96BlqZOw=="
-                }
-              }
+              "integrity": "sha512-zVWV8Z8lislJoOKKqdNMOB+s6+XV5WERty8MnKBeFgwA+19XJjJHs2RP5dzM57FftIs+jQnRToLiWazKr6sSWg=="
             },
             "acorn-jsx": {
               "version": "5.0.1",
@@ -11632,7 +11612,6 @@
               "resolved": "https://registry.npmjs.org/espree/-/espree-4.1.0.tgz",
               "integrity": "sha512-I5BycZW6FCVIub93TeVY1s7vjhP9CY6cXCznIRfiig7nRviKZYdRnj/sHEWC6A7WE9RDWOFq9+7OsWSYz8qv2w==",
               "requires": {
-                "acorn": "^6.0.2",
                 "acorn-jsx": "^5.0.0",
                 "eslint-visitor-keys": "^1.0.0"
               }
@@ -20441,7 +20420,6 @@
                 "@webassemblyjs/wasm-edit": "1.5.13",
                 "@webassemblyjs/wasm-opt": "1.5.13",
                 "@webassemblyjs/wasm-parser": "1.5.13",
-                "acorn": "^5.6.2",
                 "acorn-dynamic-import": "^3.0.0",
                 "ajv": "^6.1.0",
                 "ajv-keywords": "^3.1.0",
@@ -20463,11 +20441,6 @@
                 "webpack-sources": "^1.0.1"
               },
               "dependencies": {
-                "acorn": {
-                  "version": "5.7.3",
-                  "resolved": "https://registry.npmjs.org/acorn/-/acorn-5.7.3.tgz",
-                  "integrity": "sha512-T/zvzYRfbVojPWahDsE5evJdHb3oJoQfFbsrKM7w5Zcs++Tr257tia3BmMP8XYVjp1S9RZXQMh7gao96BlqZOw=="
-                },
                 "schema-utils": {
                   "version": "0.4.7",
                   "resolved": "https://registry.npmjs.org/schema-utils/-/schema-utils-0.4.7.tgz",
@@ -30309,10 +30282,9 @@
       }
     },
     "acorn": {
-      "version": "7.1.0",
-      "resolved": "https://registry.npmjs.org/acorn/-/acorn-7.1.0.tgz",
-      "integrity": "sha512-kL5CuoXA/dgxlBbVrflsflzQ3PAas7RYZB52NOm/6839iVYJgKMJ3cQJD+t2i5+qFa8h3MDpEOJiS64E8JLnSQ==",
-      "dev": true
+      "version": "7.1.1",
+      "resolved": "https://registry.npmjs.org/acorn/-/acorn-7.1.1.tgz",
+      "integrity": "sha512-add7dgA5ppRPxCFJoAGfMDi7PIBXq1RtGo7BhbLaxwrXPOmw8gq48Y9ozT01hUKy9byMjlR20EJhu5zlkErEkg=="
     },
     "acorn-jsx": {
       "version": "5.1.0",
@@ -38411,11 +38383,6 @@
             "negotiator": "0.6.2"
           }
         },
-        "acorn": {
-          "version": "6.3.0",
-          "resolved": "https://registry.npmjs.org/acorn/-/acorn-6.3.0.tgz",
-          "integrity": "sha512-/czfa8BwS88b9gWQVhc8eknunSA2DoJpJyTQkhheIf5E48u1N0R4q/YxxsAeqRrmK9TQ/uYfgLDfZo91UlANIA=="
-        },
         "acorn-jsx": {
           "version": "5.0.1",
           "resolved": "https://registry.npmjs.org/acorn-jsx/-/acorn-jsx-5.0.1.tgz",
@@ -41824,7 +41791,6 @@
           "resolved": "https://registry.npmjs.org/espree/-/espree-4.1.0.tgz",
           "integrity": "sha512-I5BycZW6FCVIub93TeVY1s7vjhP9CY6cXCznIRfiig7nRviKZYdRnj/sHEWC6A7WE9RDWOFq9+7OsWSYz8qv2w==",
           "requires": {
-            "acorn": "^6.0.2",
             "acorn-jsx": "^5.0.0",
             "eslint-visitor-keys": "^1.0.0"
           }
@@ -51600,7 +51566,6 @@
             "@webassemblyjs/wasm-edit": "1.5.13",
             "@webassemblyjs/wasm-opt": "1.5.13",
             "@webassemblyjs/wasm-parser": "1.5.13",
-            "acorn": "^5.6.2",
             "ajv": "^6.1.0",
             "ajv-keywords": "^3.1.0",
             "chrome-trace-event": "^1.0.0",
@@ -51620,11 +51585,6 @@
             "webpack-sources": "^1.0.1"
           },
           "dependencies": {
-            "acorn": {
-              "version": "5.7.3",
-              "resolved": "https://registry.npmjs.org/acorn/-/acorn-5.7.3.tgz",
-              "integrity": "sha512-T/zvzYRfbVojPWahDsE5evJdHb3oJoQfFbsrKM7w5Zcs++Tr257tia3BmMP8XYVjp1S9RZXQMh7gao96BlqZOw=="
-            },
             "cacache": {
               "version": "12.0.3",
               "resolved": "https://registry.npmjs.org/cacache/-/cacache-12.0.3.tgz",
