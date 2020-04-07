@@ -4,7 +4,7 @@ import { getAclAddress, resolveAddressOrEnsDomain } from '@aragon/toolkit'
 import { handler as execHandler } from '../../utils/execHandler'
 import { ensureWeb3 } from '../../../../helpers/web3-fallback'
 
-export default async function(
+export default async function (
   dao,
   method,
   params,

@@ -7,7 +7,7 @@ export const command = 'grant [grantees..]'
 export const describe =
   'Grant an address permission to create new versions in this package'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return yargs.positional('grantees', {
     description:
       'The address being granted the permission to publish to the repo',
@@ -16,7 +16,7 @@ export const builder = function(yargs) {
   })
 }
 
-export const handler = async function({
+export const handler = async function ({
   // Globals
   reporter,
   gasPrice,

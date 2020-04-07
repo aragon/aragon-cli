@@ -51,7 +51,7 @@ const BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
 export const command = 'run'
 export const describe = 'Run the current app locally'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return yargs
     .option('client', {
       description: 'Just run the smart contracts, without the Aragon client',
@@ -184,7 +184,7 @@ export const builder = function(yargs) {
     })
 }
 
-export const handler = async function({
+export const handler = async function ({
   // Globals
   reporter,
   gasPrice,
@@ -468,10 +468,7 @@ export const handler = async function({
 
     printResetNotice(reporter, reset)
 
-    const registry = module.appName
-      .split('.')
-      .slice(1)
-      .join('.')
+    const registry = module.appName.split('.').slice(1).join('.')
 
     reporter.info(`This is the configuration for your development deployment:
     ${'Ethereum Node'}: ${blue(network.provider.connection._url)}

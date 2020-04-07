@@ -5,7 +5,7 @@ import listrOpts from '../../../helpers/listr-options'
 
 const LATEST_VERSION = 'latest'
 
-export const args = function(yargs) {
+export const args = function (yargs) {
   return yargs
     .option('apmRepo', {
       describe: 'Name of the aragonPM repo',

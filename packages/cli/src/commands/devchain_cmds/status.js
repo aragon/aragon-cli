@@ -42,7 +42,7 @@ export const task = async ({ port, reset, silent, debug }) => {
   )
 }
 
-export const handler = async function({
+export const handler = async function ({
   port,
   reset = false,
   reporter,

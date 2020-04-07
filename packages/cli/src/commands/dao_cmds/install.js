@@ -26,7 +26,7 @@ import daoArg from './utils/daoArg'
 export const command = 'install <dao> <apmRepo> [apmRepoVersion]'
 export const describe = 'Install an app into a DAO'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return daoArg(yargs)
     .option('apmRepo', {
       describe: 'Name of the aragonPM repo',
@@ -52,7 +52,7 @@ export const builder = function(yargs) {
     })
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   dao,
   gasPrice,

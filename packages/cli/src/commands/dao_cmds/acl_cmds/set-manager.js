@@ -8,11 +8,11 @@ export const command = 'set-manager <dao> <app> <role> <new-manager>'
 export const describe =
   'Set the permission manager for a permission (only the current permission manager can do it)'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return daoArg(yargs)
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   dao,
   app,

@@ -8,11 +8,11 @@ export const command = 'remove-manager <dao> <app> <role>'
 export const describe =
   'Remove permission manager for a permission (can be recreated)'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return daoArg(yargs)
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   dao,
   app,

@@ -54,7 +54,7 @@ export const builder = yargs => {
     })
 }
 
-export const task = async function({
+export const task = async function ({
   clientRepo,
   clientVersion,
   clientPort,

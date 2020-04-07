@@ -8,7 +8,7 @@ import Web3 from 'web3'
 export const command = 'packages [apmRegistry]'
 export const describe = 'List all packages in the registry'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return yargs.option('apmRegistry', {
     description: 'The registry to inspect',
     type: 'string',
@@ -16,7 +16,7 @@ export const builder = function(yargs) {
   })
 }
 
-export const handler = async function({
+export const handler = async function ({
   apmRegistry,
   network,
   apm: apmOptions,

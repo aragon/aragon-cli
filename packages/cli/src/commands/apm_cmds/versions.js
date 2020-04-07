@@ -8,7 +8,7 @@ export const command = 'versions [apmRepo]'
 export const describe =
   'Shows all the previously published versions of a given repository'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return yargs.option('apmRepo', {
     description: 'Name of the APM repository',
     type: 'string',
@@ -16,7 +16,7 @@ export const builder = function(yargs) {
   })
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   apmRepo,
   module,

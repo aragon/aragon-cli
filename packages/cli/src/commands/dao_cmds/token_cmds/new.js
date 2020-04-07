@@ -130,7 +130,7 @@ export const task = async ({
   )
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   network,
   gasPrice,

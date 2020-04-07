@@ -62,7 +62,7 @@ export const builder = yargs => {
     })
 }
 
-export const task = async function({
+export const task = async function ({
   port = 8545,
   networkId,
   hardfork = 'istanbul',

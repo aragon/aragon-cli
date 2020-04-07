@@ -34,7 +34,7 @@ export const builder = yargs => {
   )
 }
 
-export const handler = async function({
+export const handler = async function ({
   aragonId,
   reporter,
   network,

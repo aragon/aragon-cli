@@ -6,7 +6,7 @@ import { extractContractInfoToFile } from '@aragon/toolkit'
 export const command = 'extract-functions [contract]'
 export const describe = 'Extract function information from a Solidity file'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return yargs
     .positional('contract', {
       description: 'Path to the Solidity file to extract functions from',
@@ -20,7 +20,7 @@ export const builder = function(yargs) {
     })
 }
 
-export const handler = async function({ cwd, reporter, contract, output }) {
+export const handler = async function ({ cwd, reporter, contract, output }) {
   let outputPath
 
   const tasks = new TaskList([

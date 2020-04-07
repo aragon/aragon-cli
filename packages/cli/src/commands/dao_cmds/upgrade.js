@@ -19,7 +19,7 @@ import { task as execTask } from './utils/execHandler'
 export const command = 'upgrade <dao> <apmRepo> [apmRepoVersion]'
 export const describe = 'Upgrade an app into a DAO'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return daoArg(yargs)
     .option('apmRepo', {
       describe: 'Name of the aragonPM repo',
@@ -30,7 +30,7 @@ export const builder = function(yargs) {
     })
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   dao,
   gasPrice,

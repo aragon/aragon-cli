@@ -17,7 +17,7 @@ export const builder = yargs => {
     })
 }
 
-export const handler = async function({
+export const handler = async function ({
   apmRepo,
   apmRepoVersion,
   apm: apmOptions,
