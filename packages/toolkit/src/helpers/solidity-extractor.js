@@ -74,11 +74,7 @@ const getRoles = declaration => {
   if (!auths) return []
 
   return auths.map(
-    authStatement =>
-      authStatement
-        .split('(')[1]
-        .split(',')[0]
-        .split(')')[0]
+    authStatement => authStatement.split('(')[1].split(',')[0].split(')')[0]
   )
 }
 

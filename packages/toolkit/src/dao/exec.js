@@ -15,7 +15,7 @@ import { initAragonJS, getTransactionPath } from '../helpers/aragonjs-wrapper'
  * @param {function} params.progressHandler Progress handler
  * @returns {Promise<{ transactionPath, receipt }>} Transaction path and receipt
  */
-export default async function({
+export default async function ({
   dao,
   app,
   method,
