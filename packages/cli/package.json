@@ -29,8 +29,7 @@
     "config",
     "ganache",
     "dist",
-    "schemas",
-    "README.md"
+    "schemas"
   ],
   "repository": {
     "type": "git",
