@@ -28,7 +28,7 @@ export const task = async ({
     [
       {
         title: 'Get Repo',
-        task: async ctx => {
+        task: async (ctx) => {
           if (apmRepoVersion === LATEST_VERSION) {
             ctx.repo = await apm.getLatestVersion(apmRepo, DEFAULT_IPFS_TIMEOUT)
           } else {

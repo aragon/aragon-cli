@@ -9,7 +9,7 @@ import { ensureWeb3 } from '../../../helpers/web3-fallback'
 export const command = 'change-controller <token-address> <new-controller>'
 export const describe = 'Change the controller of a MiniMe token'
 
-export const builder = yargs => {
+export const builder = (yargs) => {
   return yargs
     .positional('token-address', {
       description: 'Address of the MiniMe token',

@@ -13,8 +13,8 @@ const ANSWERS = POSITIVE_ANSWERS.concat(NEGATIVE_ANSWERS)
  */
 module.exports = function askToConfirm(message, cb) {
   return taskInput(`${message} [y]es/[n]o`, {
-    validate: value => ANSWERS.includes(value),
-    done: async answer => {
+    validate: (value) => ANSWERS.includes(value),
+    done: async (answer) => {
       if (POSITIVE_ANSWERS.includes(answer)) return cb()
       else throw Error(`Aborting...`)
     },

@@ -18,7 +18,7 @@ export default async function (
 
   const processedParams = role.startsWith('0x')
     ? params
-    : params.map(param => (param === role ? keccak256(role) : param))
+    : params.map((param) => (param === role ? keccak256(role) : param))
 
   return execHandler({
     dao,

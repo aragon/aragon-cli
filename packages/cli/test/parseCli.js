@@ -13,7 +13,7 @@ async function parseCli(args, timeout) {
     let output = ''
     let completed = false
 
-    const onComplete = err => {
+    const onComplete = (err) => {
       if (!completed) {
         console.log = log
         completed = true
@@ -27,7 +27,7 @@ async function parseCli(args, timeout) {
 
     const log = console.log
     console.log = (...str) => (output = `${output}${str.join(' ')}\n`)
-    cli.parse(args, err => {
+    cli.parse(args, (err) => {
       if (err) return reject(err)
     })
 

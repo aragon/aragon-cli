@@ -20,7 +20,7 @@ export const command = 'start'
 export const describe =
   'Open a test chain for development and pass arguments to ganache'
 
-export const builder = yargs => {
+export const builder = (yargs) => {
   return yargs
     .option('port', {
       description: 'The port to run the local chain on',
@@ -88,7 +88,7 @@ export const task = async function ({
     [
       {
         title: 'Check devchain status',
-        task: async ctx => {
+        task: async (ctx) => {
           const task = await devchainStatusTask({
             port,
             reset,
@@ -137,7 +137,7 @@ export const task = async function ({
 
           const listen = () =>
             new Promise((resolve, reject) => {
-              server.listen(port, err => {
+              server.listen(port, (err) => {
                 if (err) return reject(err)
 
                 task.title = `Local chain started at port ${blue(port)}\n`
@@ -156,7 +156,7 @@ export const task = async function ({
           ctx.mnemonic = MNEMONIC
 
           const ganacheAccounts = server.provider.manager.state.accounts
-          ctx.privateKeys = ctx.accounts.map(address => ({
+          ctx.privateKeys = ctx.accounts.map((address) => ({
             key: ganacheAccounts[address.toLowerCase()].secretKey.toString(
               'hex'
             ),

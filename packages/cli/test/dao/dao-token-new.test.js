@@ -1,7 +1,7 @@
 import test from 'ava'
 import parseCli from '../parseCli'
 
-test.serial('creates a new token', async t => {
+test.serial('creates a new token', async (t) => {
   const stdout = await parseCli([
     'dao',
     'token',

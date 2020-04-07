@@ -23,7 +23,7 @@ export const listApps = (userApps = []) => {
   const appNames = knownAppNames
     .reduce(
       (acc, appName) =>
-        acc.concat(knownAPMRegistries.map(apm => appName + '.' + apm)),
+        acc.concat(knownAPMRegistries.map((apm) => appName + '.' + apm)),
       []
     )
     .concat(userApps)

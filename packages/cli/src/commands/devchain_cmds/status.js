@@ -9,7 +9,7 @@ import listrOpts from '../../helpers/listr-options'
 export const command = 'status'
 export const describe = 'Status of the local devchain.'
 
-export const builder = yargs => {
+export const builder = (yargs) => {
   return yargs.option('port', {
     description: 'The port to check',
     default: 8545,
@@ -21,7 +21,7 @@ export const task = async ({ port, reset, silent, debug }) => {
     [
       {
         title: 'Check port',
-        task: async ctx => {
+        task: async (ctx) => {
           ctx.portTaken = await isPortTaken(port)
           if (ctx.portTaken) {
             const processData = await find('port', port)
@@ -31,8 +31,8 @@ export const task = async ({ port, reset, silent, debug }) => {
       },
       {
         title: 'Kill running process',
-        enabled: ctx => ctx.portTaken && reset,
-        task: async ctx => {
+        enabled: (ctx) => ctx.portTaken && reset,
+        task: async (ctx) => {
           await execa('kill', [ctx.processID])
           return `Process running at port ${blue(port)} was killed.`
         },

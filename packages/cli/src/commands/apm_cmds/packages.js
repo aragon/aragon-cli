@@ -32,7 +32,7 @@ export const handler = async function ({
       task: async (ctx, task) => {
         task.output = `Initializing APM`
 
-        const progressHandler = step => {
+        const progressHandler = (step) => {
           switch (step) {
             case 1:
               task.output = `Fetching APM Registry`
@@ -69,7 +69,7 @@ function displayPackages(packages) {
     head: ['App', 'Repo Address'],
   })
 
-  packages.forEach(aPackage => {
+  packages.forEach((aPackage) => {
     const row = [aPackage.name, aPackage.repo]
     table.push(row)
   })

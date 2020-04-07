@@ -1,6 +1,6 @@
 import flatten from 'truffle-flattener'
 
-export default async sourcePaths => {
+export default async (sourcePaths) => {
   try {
     return flatten(sourcePaths)
   } catch (error) {

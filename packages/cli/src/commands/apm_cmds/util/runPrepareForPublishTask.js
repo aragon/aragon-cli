@@ -67,7 +67,7 @@ export default function runPrepareForPublishTask({
       {
         title: 'Prepare files for publishing',
         enabled: () => !http,
-        task: async ctx => {
+        task: async (ctx) => {
           // If no publishDir, create temporary directory
           const pathToPublish = publishDir || (await tmp.dir()).path
 
@@ -83,7 +83,7 @@ export default function runPrepareForPublishTask({
         title:
           'Check for --http-served-from argument and copy manifest.json to destination',
         enabled: () => http,
-        task: async ctx => {
+        task: async (ctx) => {
           if (!httpServedFrom)
             throw new Error('You need to provide --http-served-from argument')
 

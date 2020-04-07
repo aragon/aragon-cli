@@ -80,7 +80,7 @@ export function configCliMiddleware(argv) {
       wsProvider,
     }
   } catch (e) {
-    const prettyError = message => {
+    const prettyError = (message) => {
       reporter.error(message)
       process.exit(1)
     }

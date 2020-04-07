@@ -65,9 +65,9 @@ export const handler = async function ({
       },
       {
         title: `Fetching ${bold(apmRepoName)}@${apmRepoVersion}`,
-        skip: ctx => ctx.repo, // only run if repo isn't passed
-        task: async ctx => {
-          const progressHandler = step => {
+        skip: (ctx) => ctx.repo, // only run if repo isn't passed
+        task: async (ctx) => {
+          const progressHandler = (step) => {
             switch (step) {
               case 1:
                 console.log(`Initialize aragonPM`)
@@ -89,7 +89,7 @@ export const handler = async function ({
       },
       {
         title: 'Upgrading app',
-        task: async ctx => {
+        task: async (ctx) => {
           const basesNamespace = await getBasesNamespace(dao, web3)
 
           return execTask({
@@ -109,7 +109,7 @@ export const handler = async function ({
     listrOpts(silent, debug)
   )
 
-  return tasks.run().then(ctx => {
+  return tasks.run().then((ctx) => {
     reporter.newLine()
     reporter.success(
       `Successfully executed: "${blue(ctx.transactionPath.description)}"`

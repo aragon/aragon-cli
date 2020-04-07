@@ -21,7 +21,7 @@ export async function startClient(ctx, clientPort, clientPath) {
   }
 
   // TODO: Use -o option to open url. Will remove open dependency
-  execa(bin, ['-p', clientPort], startArguments).catch(err => {
+  execa(bin, ['-p', clientPort], startArguments).catch((err) => {
     throw new Error(err)
   })
 }

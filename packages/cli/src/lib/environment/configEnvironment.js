@@ -75,7 +75,7 @@ function configureNetwork(network, truffleConfig, options) {
 
   const { provider, host, port } = truffleNetwork
 
-  const getProvider = provider => {
+  const getProvider = (provider) => {
     if (provider) {
       if (typeof provider === 'function') return provider()
       else return provider

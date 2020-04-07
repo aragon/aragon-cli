@@ -22,7 +22,7 @@ import listrOpts from '../../helpers/listr-options'
 export const command = 'install'
 export const describe = 'Download and install the go-ipfs binaries.'
 
-export const builder = yargs =>
+export const builder = (yargs) =>
   yargs
     .option('dist-version', {
       description: 'The version of IPFS that will be installed',
@@ -52,21 +52,21 @@ const runPrepareTask = ({ silent, debug, local, projectPath }) => {
     [
       {
         title: 'Determine platform and architecture',
-        task: ctx => {
+        task: (ctx) => {
           ctx.NODE_OS = getPlatform()
           ctx.NODE_ARCH = getArch()
         },
       },
       {
         title: 'Determine golang distribution',
-        task: ctx => {
+        task: (ctx) => {
           ctx.GO_OS = getPlatformForGO()
           ctx.GO_ARCH = getArchForGO()
         },
       },
       {
         title: 'Determine location',
-        task: async ctx => {
+        task: async (ctx) => {
           if (local) {
             ctx.location = projectPath
             if (!isPackage(ctx.location)) {
@@ -98,9 +98,9 @@ const runInstallTask = ({
     [
       {
         title: 'Install IPFS',
-        task: async task => {
+        task: async (task) => {
           await installGoIpfs(local, location, distVersion, distUrl, {
-            logger: text => (task.output = text),
+            logger: (text) => (task.output = text),
           })
         },
       },
@@ -109,7 +109,7 @@ const runInstallTask = ({
   ).run()
 }
 
-export const handler = async argv => {
+export const handler = async (argv) => {
   const {
     debug,
     silent,

@@ -1,13 +1,13 @@
 import test from 'ava'
 import parseCli from '../parseCli'
 
-test.serial('fetches app versions', async t => {
+test.serial('fetches app versions', async (t) => {
   const output = await parseCli(['apm', 'versions', 'voting', '--debug'])
 
   t.assert(output.includes('voting.aragonpm.eth'))
 })
 
-test.serial('fetches app versions with full ens name', async t => {
+test.serial('fetches app versions with full ens name', async (t) => {
   const output = await parseCli([
     'apm',
     'versions',
@@ -18,22 +18,25 @@ test.serial('fetches app versions with full ens name', async t => {
   t.assert(output.includes('finance.aragonpm.eth'))
 })
 
-test.serial('publish fails if not in an aragon project directory', async t => {
-  await t.throwsAsync(() => {
-    return parseCli([
-      'apm',
-      'publish',
-      'major',
-      '--files',
-      'app',
-      '--skip-confirmation',
-      '--no-propagate-content',
-      '--debug',
-    ])
-  })
-})
+test.serial(
+  'publish fails if not in an aragon project directory',
+  async (t) => {
+    await t.throwsAsync(() => {
+      return parseCli([
+        'apm',
+        'publish',
+        'major',
+        '--files',
+        'app',
+        '--skip-confirmation',
+        '--no-propagate-content',
+        '--debug',
+      ])
+    })
+  }
+)
 
-test.serial('grant fails if not in an aragon project directory', async t => {
+test.serial('grant fails if not in an aragon project directory', async (t) => {
   await t.throwsAsync(async () => {
     return parseCli([
       'apm',
@@ -44,7 +47,7 @@ test.serial('grant fails if not in an aragon project directory', async t => {
   })
 })
 
-test.serial('fetches app info', async t => {
+test.serial('fetches app info', async (t) => {
   const output = await parseCli(['apm', 'info', 'finance', '--debug'])
 
   t.assert(
@@ -75,7 +78,7 @@ test.serial('fetches app info', async t => {
   )
 })
 
-test.serial('fetches packages', async t => {
+test.serial('fetches packages', async (t) => {
   const output = await parseCli(['apm', 'packages', '--debug'])
 
   t.assert(output.includes('apm-registry'), 'Missing apm-registry')

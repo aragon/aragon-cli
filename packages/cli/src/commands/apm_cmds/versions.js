@@ -65,7 +65,7 @@ function displayVersionNumbers(apmRepoName, versions, reporter) {
  * @returns {void}
  */
 function displayVersions(versions, reporter) {
-  versions.map(version => {
+  versions.map((version) => {
     if (version && version.content) {
       reporter.success(
         `${blue(version.version)}: ${version.contractAddress} ${

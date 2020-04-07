@@ -20,7 +20,7 @@ export const arappContract = () => {
   return contractName
 }
 
-export const builder = yargs => {
+export const builder = (yargs) => {
   return yargs
     .positional('contract', {
       description:
@@ -58,7 +58,7 @@ export const task = async ({
   const mappings = {
     '@ARAGON_ENS': apmOptions.ensRegistryAddress, // <ens> to ens addr
   }
-  const initArguments = init.map(value => mappings[value] || value)
+  const initArguments = init.map((value) => mappings[value] || value)
 
   const contractName = contract
   const tasks = new TaskList(
@@ -113,7 +113,7 @@ export const task = async ({
       },
       {
         title: 'Generate deployment artifacts',
-        task: async ctx => {
+        task: async (ctx) => {
           ctx.deployArtifacts = await deployArtifacts(ctx.contractArtifacts)
           ctx.deployArtifacts.transactionHash = ctx.transactionHash
         },

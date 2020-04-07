@@ -6,7 +6,7 @@ import { ensureWeb3 } from '../../helpers/web3-fallback'
 export const command = 'info <apmRepo> [apmRepoVersion]'
 export const describe = 'Get information about a package'
 
-export const builder = yargs => {
+export const builder = (yargs) => {
   return yargs
     .option('apmRepo', {
       describe: 'Name of the aragonPM repo',
@@ -27,7 +27,7 @@ export const handler = async function ({
 
   const apmRepoName = defaultAPMName(apmRepo)
 
-  const progressHandler = step => {
+  const progressHandler = (step) => {
     switch (step) {
       case 1:
         console.log(`Initialize aragonPM`)

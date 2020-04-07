@@ -4,7 +4,7 @@ import parseCli from '../parseCli'
 
 const daoAddressRegex = /Created DAO: (.*)\n$/
 
-test.serial('acl view', async t => {
+test.serial('acl view', async (t) => {
   const date = new Date().getTime()
   const id = `newdao${date}`
 
@@ -18,7 +18,7 @@ test.serial('acl view', async t => {
   t.assert(stdout.includes('CREATE_PERMISSIONS_ROLE'))
 })
 
-test.serial('acl grant', async t => {
+test.serial('acl grant', async (t) => {
   const newDaoStdout = await parseCli(['dao', 'new', '--debug'])
   const daoAddress = newDaoStdout.match(daoAddressRegex)[1]
 

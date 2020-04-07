@@ -58,7 +58,7 @@ export const deployContract = async ({
   let transactionHash
 
   const deployPromise = deployTx.send({ from: accounts[0], gasPrice, gas })
-  deployPromise.on('transactionHash', _transactionHash => {
+  deployPromise.on('transactionHash', (_transactionHash) => {
     transactionHash = _transactionHash
   })
   const instance = await deployPromise
