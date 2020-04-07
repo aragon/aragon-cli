@@ -30,7 +30,7 @@ const IPFS_CONFIG_JSON = {
   },
 }
 
-test.before(t => {
+test.before((t) => {
   fs.mkdirpSync(IPFS_PATH)
   fs.writeFileSync(`${IPFS_PATH}/version`, IPFS_VERSION)
 })
@@ -39,12 +39,12 @@ test.after.always(() => {
   fs.removeSync(IPFS_PATH)
 })
 
-test('getRepoVersion should return the version of a repository', async t => {
+test('getRepoVersion should return the version of a repository', async (t) => {
   const version = await getRepoVersion(IPFS_PATH)
   t.is(version, IPFS_VERSION)
 })
 
-test('Get ports from config JSON', t => {
+test('Get ports from config JSON', (t) => {
   const ports = getPorts(IPFS_CONFIG_JSON)
   t.deepEqual(ports, {
     api: '5001',
@@ -53,7 +53,7 @@ test('Get ports from config JSON', t => {
   })
 })
 
-test('Get peer ID from config JSON', t => {
+test('Get peer ID from config JSON', (t) => {
   const peerId = getPeerIDConfig(IPFS_CONFIG_JSON)
   t.is(peerId, PEER_ID)
 })

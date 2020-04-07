@@ -20,7 +20,7 @@ let apps
 
 /* Setup */
 
-test.before('setup', async t => {
+test.before('setup', async (t) => {
   web3 = await getLocalWeb3()
 
   const apmOpts = getApmOptions()
@@ -42,21 +42,21 @@ test.before('setup', async t => {
 
 /* Tests */
 
-test('onDaoAddress is called correctly', t => {
+test('onDaoAddress is called correctly', (t) => {
   t.is(onDaoAddress.callCount, 1)
   t.true(onDaoAddress.getCall(0).calledWith(dao))
 })
 
-test('getApps returns the correct app list', t => {
-  const reducedApps = apps.map(app => {
+test('getApps returns the correct app list', (t) => {
+  const reducedApps = apps.map((app) => {
     return { name: app.name, appId: app.appId }
   })
 
   t.snapshot(reducedApps)
 })
 
-test('getTransactionPath provides an expected path', async t => {
-  const voting = apps.filter(app => app.name === 'Voting')[0]
+test('getTransactionPath provides an expected path', async (t) => {
+  const voting = apps.filter((app) => app.name === 'Voting')[0]
 
   const paths = await getTransactionPath(
     voting.proxyAddress,

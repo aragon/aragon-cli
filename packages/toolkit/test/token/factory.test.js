@@ -8,7 +8,7 @@ import {
   deployMiniMeToken,
 } from '../../src/token/token'
 
-test('deployMiniMeTokenFactory: should deploy the contract', async t => {
+test('deployMiniMeTokenFactory: should deploy the contract', async (t) => {
   const web3 = await getLocalWeb3()
   const progressCallback = sinon.stub()
 
@@ -24,7 +24,7 @@ test('deployMiniMeTokenFactory: should deploy the contract', async t => {
   t.is(progressCallback.callCount, 3)
 })
 
-test('deployMiniMeToken: should deploy the contract', async t => {
+test('deployMiniMeToken: should deploy the contract', async (t) => {
   const tokenName = 'Token name test'
   const tokenSymbol = 'TKN'
   const decimalUnits = '12'

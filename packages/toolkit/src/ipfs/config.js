@@ -8,7 +8,7 @@ import execa from 'execa'
 //
 import { NO_INSTALLATION_MSG } from './constants'
 
-export const isCorsConfigured = async httpClient => {
+export const isCorsConfigured = async (httpClient) => {
   const conf = await httpClient.config.get('API.HTTPHeaders')
   const allowOrigin = CorsAllowAll[0].key.split('.').pop()
   const allowMethods = CorsAllowAll[1].key.split('.').pop()
@@ -22,7 +22,7 @@ export const isCorsConfigured = async httpClient => {
   }
 }
 
-export const configureCors = async httpClient => {
+export const configureCors = async (httpClient) => {
   return Promise.all(
     CorsAllowAll.map(({ key, value }) => httpClient.config.set(key, value))
   )

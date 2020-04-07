@@ -34,17 +34,17 @@ export async function propagateFile(cid, options = {}) {
   const { progressCallback = noop, gateways = DEFAULT_GATEWAYS } = options
 
   const results = await Promise.all(
-    gateways.map(gateway => queryCidAtGateway(gateway, cid))
+    gateways.map((gateway) => queryCidAtGateway(gateway, cid))
   )
 
-  const succeeded = results.filter(status => status.success).length
+  const succeeded = results.filter((status) => status.success).length
   const failed = gateways.length - succeeded
 
   progressCallback(1, { cid, succeeded, failed })
 
   const errors = results
-    .filter(result => result.error)
-    .map(result => result.error)
+    .filter((result) => result.error)
+    .map((result) => result.error)
 
   return {
     succeeded,
@@ -55,7 +55,7 @@ export async function propagateFile(cid, options = {}) {
 
 export async function propagateFiles(CIDs, options = {}) {
   const results = await Promise.all(
-    CIDs.map(cid => propagateFile(cid, options))
+    CIDs.map((cid) => propagateFile(cid, options))
   )
 
   const { gateways = DEFAULT_GATEWAYS } = options

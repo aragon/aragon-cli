@@ -6,7 +6,7 @@ import newDao from '../../src/dao/new'
 import defaultAPMName from '../../src/helpers/default-apm'
 import { getLocalWeb3, isAddress } from '../test-helpers'
 
-test.beforeEach(async t => {
+test.beforeEach(async (t) => {
   const web3 = await getLocalWeb3()
 
   t.context = {
@@ -14,7 +14,7 @@ test.beforeEach(async t => {
   }
 })
 
-test('Deploys DAO with valid template', async t => {
+test('Deploys DAO with valid template', async (t) => {
   const { web3 } = t.context
 
   const repo = await getApmRepo(
@@ -35,7 +35,7 @@ test('Deploys DAO with valid template', async t => {
   t.true(isAddress(daoAddress))
 })
 
-test('Deploys DAO with template with custom newInstance method and args', async t => {
+test('Deploys DAO with template with custom newInstance method and args', async (t) => {
   const { web3 } = t.context
 
   const repo = await getApmRepo(
@@ -64,7 +64,7 @@ test('Deploys DAO with template with custom newInstance method and args', async 
   t.true(isAddress(daoAddress))
 })
 
-test('Throws with invalid newInstance', async t => {
+test('Throws with invalid newInstance', async (t) => {
   const { web3 } = t.context
 
   const repo = await getApmRepo(
@@ -85,7 +85,7 @@ test('Throws with invalid newInstance', async t => {
   )
 })
 
-test('Throws with invalid deploy event', async t => {
+test('Throws with invalid deploy event', async (t) => {
   const { web3 } = t.context
 
   const repo = await getApmRepo(

@@ -6,10 +6,10 @@ export function extractCIDsFromMerkleDAG(merkleDAG, options = {}) {
 
   if (options.recursive && merkleDAG.isDir && merkleDAG.links) {
     merkleDAG.links
-      .map(merkleDAGOfLink =>
+      .map((merkleDAGOfLink) =>
         extractCIDsFromMerkleDAG(merkleDAGOfLink, options)
       )
-      .map(CIDsOfLink => CIDs.push(...CIDsOfLink))
+      .map((CIDsOfLink) => CIDs.push(...CIDsOfLink))
   }
 
   return CIDs

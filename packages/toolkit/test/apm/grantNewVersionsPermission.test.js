@@ -25,7 +25,7 @@ const txOptions = { gasPrice }
 
 /* Utils, similar to ACL.js */
 
-const getACL = async repoAddr => {
+const getACL = async (repoAddr) => {
   const repo = new web3.eth.Contract(aragonAppAbi, repoAddr)
   const daoAddr = await repo.methods.kernel().call()
   const dao = new web3.eth.Contract(kernelAbi, daoAddr)
@@ -34,14 +34,14 @@ const getACL = async repoAddr => {
   return new web3.eth.Contract(aclAbi, aclAddr)
 }
 
-const getRoleId = async repoAddr => {
+const getRoleId = async (repoAddr) => {
   const repo = new web3.eth.Contract(repoAbi, repoAddr)
   return repo.methods.CREATE_VERSION_ROLE().call()
 }
 
 /* Setup and cleanup */
 
-test.before('setup and make a successful call', async t => {
+test.before('setup and make a successful call', async (t) => {
   web3 = await getLocalWeb3()
 
   accounts = await web3.eth.getAccounts()
@@ -67,7 +67,7 @@ test.before('setup and make a successful call', async t => {
 
 /* Tests */
 
-test('permissions are not set for any accounts', async t => {
+test('permissions are not set for any accounts', async (t) => {
   const anyone = accounts[2]
 
   const hasPermission = await acl.methods
@@ -77,7 +77,7 @@ test('permissions are not set for any accounts', async t => {
   t.false(hasPermission)
 })
 
-test('properly sets permissions for grantees', async t => {
+test('properly sets permissions for grantees', async (t) => {
   const grantee = grantees[0]
 
   const hasPermission = await acl.methods
@@ -87,7 +87,7 @@ test('properly sets permissions for grantees', async t => {
   t.true(hasPermission)
 })
 
-test('properly calls the progressHandler', t => {
+test('properly calls the progressHandler', (t) => {
   const receipt = receipts[0]
 
   t.is(progressHandler.callCount, 3)
@@ -96,7 +96,7 @@ test('properly calls the progressHandler', t => {
   t.true(progressHandler.getCall(2).calledWith(3, receipt.transactionHash))
 })
 
-test('Should throw when no grantees are provided', async t => {
+test('Should throw when no grantees are provided', async (t) => {
   await t.throwsAsync(
     grantNewVersionsPermission(
       web3,

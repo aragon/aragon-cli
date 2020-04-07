@@ -15,7 +15,7 @@ let packages
 
 /* Setup and cleanup */
 
-test.before('setup and make a successful call', async t => {
+test.before('setup and make a successful call', async (t) => {
   web3 = await getLocalWeb3()
 
   apmRegistryName = getApmRegistryName()
@@ -33,8 +33,8 @@ test.before('setup and make a successful call', async t => {
 
 /* Tests */
 
-test('contains expected packages', t => {
-  const names = packages.map(p => p.name)
+test('contains expected packages', (t) => {
+  const names = packages.map((p) => p.name)
 
   t.true(names.includes('finance'))
   t.true(names.includes('voting'))
@@ -43,7 +43,7 @@ test('contains expected packages', t => {
   t.true(names.includes('apm-registry'))
 })
 
-test('properly calls the progressHandler', t => {
+test('properly calls the progressHandler', (t) => {
   t.is(progressHandler.callCount, 2)
   t.true(progressHandler.getCall(0).calledWith(1))
   t.true(progressHandler.getCall(1).calledWith(2))

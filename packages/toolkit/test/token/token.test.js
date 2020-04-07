@@ -5,7 +5,7 @@ import miniMeArtifact from '@aragon/apps-shared-minime/build/contracts/MiniMeTok
 import * as tokenLib from '../../src/token/token'
 import { isAddress, isValidTxHash, getLocalWeb3 } from '../test-helpers'
 
-test.beforeEach(async t => {
+test.beforeEach(async (t) => {
   const web3 = await getLocalWeb3()
   const accounts = await web3.eth.getAccounts()
 
@@ -19,7 +19,7 @@ test.afterEach.always(() => {
   sinon.restore()
 })
 
-test('deployMiniMeTokenFactory: should deploy the contract with the right args', async t => {
+test('deployMiniMeTokenFactory: should deploy the contract with the right args', async (t) => {
   // arrange
   const { web3, accounts } = t.context
   // act
@@ -39,7 +39,7 @@ test('deployMiniMeTokenFactory: should deploy the contract with the right args',
   t.snapshot(tx.gas, 'the transaction gas is correct')
 })
 
-test('changeControler: should set the correct controller', async t => {
+test('changeControler: should set the correct controller', async (t) => {
   const { web3, accounts } = t.context
 
   const factory = await tokenLib.deployMiniMeTokenFactory(

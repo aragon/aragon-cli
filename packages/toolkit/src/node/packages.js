@@ -3,9 +3,9 @@ import execa from 'execa'
 import { ensureDir } from 'fs-extra'
 import pkgDir from 'pkg-dir'
 
-export const isPackage = dir => joinPath(dir, 'package.json')
+export const isPackage = (dir) => joinPath(dir, 'package.json')
 
-export const initPackage = async path => {
+export const initPackage = async (path) => {
   await ensureDir(path)
   const { stdout } = await execa('npm', ['init', '--yes'], {
     cwd: path,
@@ -25,4 +25,4 @@ export const getNodePackageManager = () => {
 /**
  * Usage: `const path = getPackageRoot(__dirname)`
  */
-export const getPackageRoot = cwd => pkgDir.sync(cwd)
+export const getPackageRoot = (cwd) => pkgDir.sync(cwd)
