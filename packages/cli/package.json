@@ -124,7 +124,7 @@
     "ganache-cli": "^6.7.0",
     "ganache-core": "^2.9.0",
     "nyc": "^15.0.1",
-    "prettier": "^1.15.3",
+    "prettier": "^2.0.4",
     "proxyquire": "^2.1.0",
     "sinon": "^7.3.1",
     "strip-ansi": "^6.0.0",
