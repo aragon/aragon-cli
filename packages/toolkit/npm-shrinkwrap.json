@@ -5574,9 +5574,9 @@
       "integrity": "sha512-XOnAR/3rntJgbCdGhqdaLIxDLWKLmsZOGhHdBKadEr6gEnJLH52k93Ou+TUdFaPN3hJc3isBZBal3U/XZ15abA=="
     },
     "ethereum-ens": {
-      "version": "0.7.8",
-      "resolved": "https://registry.npmjs.org/ethereum-ens/-/ethereum-ens-0.7.8.tgz",
-      "integrity": "sha512-HJBDmF5/abP/IIM6N7rGHmmlQ4yCKIVK4kzT/Mu05+eZn0i5ZlR25LTAE47SVZ7oyTBvOkNJhxhSkWRvjh7srg==",
+      "version": "0.8.0",
+      "resolved": "https://registry.npmjs.org/ethereum-ens/-/ethereum-ens-0.8.0.tgz",
+      "integrity": "sha512-a8cBTF4AWw1Q1Y37V1LSCS9pRY4Mh3f8vCg5cbXCCEJ3eno1hbI/+Ccv9SZLISYpqQhaglP3Bxb/34lS4Qf7Bg==",
       "requires": {
         "bluebird": "^3.4.7",
         "eth-ens-namehash": "^2.0.0",
@@ -5584,17 +5584,6 @@
         "pako": "^1.0.4",
         "underscore": "^1.8.3",
         "web3": "^1.0.0-beta.34"
-      },
-      "dependencies": {
-        "eth-ens-namehash": {
-          "version": "2.0.8",
-          "resolved": "https://registry.npmjs.org/eth-ens-namehash/-/eth-ens-namehash-2.0.8.tgz",
-          "integrity": "sha1-IprEbsqG1S4MmR58sq74P/D2i88=",
-          "requires": {
-            "idna-uts46-hx": "^2.3.1",
-            "js-sha3": "^0.5.7"
-          }
-        }
       }
     },
     "ethereum-ens-network-map": {
@@ -11157,9 +11146,9 @@
       }
     },
     "pako": {
-      "version": "1.0.10",
-      "resolved": "https://registry.npmjs.org/pako/-/pako-1.0.10.tgz",
-      "integrity": "sha512-0DTvPVU3ed8+HNXOu5Bs+o//Mbdj9VNQMUOe9oKCwh8l0GNwpTDMKCWbRjgtD291AWnkAgkqA/LOnQS8AmS1tw=="
+      "version": "1.0.11",
+      "resolved": "https://registry.npmjs.org/pako/-/pako-1.0.11.tgz",
+      "integrity": "sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw=="
     },
     "parent-module": {
       "version": "1.0.1",
