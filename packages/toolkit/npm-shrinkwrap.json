@@ -12290,9 +12290,9 @@
       "integrity": "sha512-4VlvkRUuCJvr2J6Y0ImW7NvTCriMi7ErOAqWk1y69vAdoNIzCF3yPmgeNzx+RQTLEDFq5sHfscn1MwHxP9hNfA=="
     },
     "rxjs": {
-      "version": "6.5.3",
-      "resolved": "https://registry.npmjs.org/rxjs/-/rxjs-6.5.3.tgz",
-      "integrity": "sha512-wuYsAYYFdWTAnAaPoKGNhfpWwKZbJW+HgAJ+mImp+Epl7BG8oNWBCTyRM8gba9k4lk8BgWdoYm21Mo/RYhhbgA==",
+      "version": "6.5.5",
+      "resolved": "https://registry.npmjs.org/rxjs/-/rxjs-6.5.5.tgz",
+      "integrity": "sha512-WfQI+1gohdf0Dai/Bbmk5L5ItH5tYqm3ki2c5GdWhKjalzjg93N3avFjVStyZZz+A2Em+ZxKH5bNghw9UeylGQ==",
       "requires": {
         "tslib": "^1.9.0"
       }
@@ -14255,9 +14255,9 @@
       }
     },
     "tslib": {
-      "version": "1.10.0",
-      "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.10.0.tgz",
-      "integrity": "sha512-qOebF53frne81cf0S9B41ByenJ3/IuH8yJKngAX35CmiZySA0khhkovshKK+jGCaMnVomla7gVlIcc3EvKPbTQ=="
+      "version": "1.11.1",
+      "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.11.1.tgz",
+      "integrity": "sha512-aZW88SY8kQbU7gpV19lN24LtXh/yD4ZZg6qieAJDDg+YBsJcSmLGK9QpnUjAKVG/xefmvJGd1WUmfpT/g6AJGA=="
     },
     "tsort": {
       "version": "0.0.1",
