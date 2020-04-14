@@ -8,7 +8,7 @@ const defaultTimeout = 15 * 60 * 1000 // ms
 
 const exec = util.promisify(child.exec)
 
-export const isValidTxHash = txHash => /^0x([A-Fa-f0-9]{64})$/.test(txHash)
+export const isValidTxHash = (txHash) => /^0x([A-Fa-f0-9]{64})$/.test(txHash)
 
 export const isAddress = Web3.utils.isAddress
 
@@ -67,8 +67,8 @@ export const getNewDaoAddress = async () => {
 export async function shell(cmd, options) {
   const timeout = options && options.timeout ? options.timeout : defaultTimeout
   return exec(cmd, { timeout })
-    .then(res => (res.stdout || '').trim())
-    .catch(err => {
+    .then((res) => (res.stdout || '').trim())
+    .catch((err) => {
       if (err.signal === 'SIGTERM') {
         throw Error(`cmd "${err.cmd}" timed out (${timeout} ms)`)
       }

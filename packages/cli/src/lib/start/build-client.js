@@ -8,7 +8,7 @@ export async function buildClient(ctx, clientPath) {
     cwd: clientPath || ctx.clientPath,
   }
 
-  return execa(bin, ['run', 'build:local'], startArguments).catch(err => {
+  return execa(bin, ['run', 'build:local'], startArguments).catch((err) => {
     throw new Error(err)
   })
 }

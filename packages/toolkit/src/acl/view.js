@@ -49,20 +49,20 @@ export const getDaoAddressPermissionsApps = ({
     initAragonJS(dao, apm.ensRegistryAddress, {
       provider: web3Provider,
       ipfsConf,
-      onPermissions: _permissions => {
+      onPermissions: (_permissions) => {
         permissions = _permissions
         resolveIfReady()
       },
-      onDaoAddress: addr => {
+      onDaoAddress: (addr) => {
         daoAddress = addr
         resolveIfReady()
       },
     })
-      .then(async wrapper => {
+      .then(async (wrapper) => {
         apps = await getApps(wrapper)
         resolveIfReady()
       })
-      .catch(err => {
+      .catch((err) => {
         err.message = `Error inspecting DAO ${err.message}`
         reject(err)
       })

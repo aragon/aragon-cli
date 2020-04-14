@@ -14,7 +14,7 @@ const apmRepoVersion = '1.0.0'
 
 /* Setup and cleanup */
 
-test.before('setup and make a successful call', async t => {
+test.before('setup and make a successful call', async (t) => {
   web3 = await getLocalWeb3()
 
   apmOptions = getApmOptions()
@@ -33,12 +33,12 @@ test.before('setup and make a successful call', async t => {
 
 /* Tests */
 
-test('produces extected info', t => {
+test('produces extected info', (t) => {
   t.is(info.contractAddress, '0xb31E9e3446767AaDe9E48C4B1B6D13Cc6eDce172')
   t.is(info.version, apmRepoVersion)
 })
 
-test('properly calls the progressHandler', t => {
+test('properly calls the progressHandler', (t) => {
   t.true(progressHandler.calledTwice)
   t.true(progressHandler.getCall(0).calledWith(1))
   t.true(progressHandler.getCall(1).calledWith(2))

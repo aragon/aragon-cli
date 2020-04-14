@@ -18,7 +18,7 @@ export const command = 'view [cid]'
 export const describe =
   'Show metadata about the content: size, links, etc. Uses --ipfs-gateway.'
 
-export const builder = yargs =>
+export const builder = (yargs) =>
   yargs.positional('cid', {
     // TODO add support for "ipfs paths", e.g: QmP49YSJVhQTySqLDFTzFZPG8atf3CLsQSPDVj3iATQkhC/arapp.json
     description: 'A self-describing content-addressed identifier',
@@ -68,7 +68,7 @@ const runViewTask = ({ cid, ipfsReader, silent, debug }) => {
   ).run()
 }
 
-export const handler = async argv => {
+export const handler = async (argv) => {
   /**
    * Interactive input
    */

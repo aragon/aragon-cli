@@ -22,7 +22,7 @@ import defaultAppsRoles from '../../../knownRoles.json'
 export const command = 'view <dao>'
 export const describe = 'Inspect permissions in a DAO'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return daoArg(yargs)
 }
 
@@ -39,7 +39,7 @@ export const builder = function(yargs) {
  * @param  {boolean} args.debug Debug flag
  * @return {Promise<TaskList>} void
  */
-export const handler = async function({
+export const handler = async function ({
   dao,
   network,
   apm,
@@ -101,7 +101,9 @@ export const handler = async function({
     // filter according to cli params will happen here
 
     const table = new Table({
-      head: ['App', 'Action', 'Allowed entities', 'Manager'].map(x => white(x)),
+      head: ['App', 'Action', 'Allowed entities', 'Manager'].map((x) =>
+        white(x)
+      ),
     })
 
     for (const formatedAclPermission of formatedAclPermissions) {
@@ -120,7 +122,7 @@ export const handler = async function({
 
       // 3 - Allowed entities (multiline)
       const allowedFormatted = allowedEntities
-        .map(allowedEntity =>
+        .map((allowedEntity) =>
           (allowedEntity.address || '').toLowerCase() === ANY_ENTITY
             ? `🆓  Any entity`
             : `✅  ${printNameOrAddress(allowedEntity)}`
@@ -151,7 +153,7 @@ export const handler = async function({
  * @return {string}
  *         '0x768043..18c476'
  */
-const shortHex = hex => {
+const shortHex = (hex) => {
   return `${hex.slice(0, 8)}..${hex.slice(-6)}`
 }
 
@@ -173,9 +175,9 @@ const printNameOrAddress = ({ address, name }) =>
  * @param {ArappConfig} module arapp.json contents
  * @return {Object.<string, RoleDefinition>} Unique known roles
  */
-const getKnownRoles = module => {
+const getKnownRoles = (module) => {
   const currentAppRoles = module ? module.roles : []
   const allRoles = defaultAppsRoles.concat(currentAppRoles)
 
-  return keyBy(allRoles, role => keccak256(role.id))
+  return keyBy(allRoles, (role) => keccak256(role.id))
 }

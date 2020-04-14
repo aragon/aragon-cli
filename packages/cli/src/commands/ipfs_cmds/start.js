@@ -17,7 +17,7 @@ export const describe = 'Start and configure the daemon.'
 
 const DETACH_ALIAS = 'D'
 
-export const builder = yargs =>
+export const builder = (yargs) =>
   yargs
     .option('bin-path', {
       description: 'The location of the IPFS binary',
@@ -71,7 +71,7 @@ const runStartTask = ({
       },
       {
         title: 'Start the daemon',
-        task: async ctx => {
+        task: async (ctx) => {
           ctx.processController = await startLocalDaemon(binPath, repoPath, {
             detached,
           })
@@ -82,7 +82,7 @@ const runStartTask = ({
   ).run()
 }
 
-export const handler = async argv => {
+export const handler = async (argv) => {
   const {
     binPath,
     repoPath,

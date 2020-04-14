@@ -8,7 +8,7 @@ import listrOpts from '../../helpers/listr-options'
 // dao id assign command
 const idAssignCommand = 'assign <dao> <aragon-id>'
 const idAssignDescribe = 'Assign an Aragon Id to a DAO address'
-const idAssignBuilder = yargs => {
+const idAssignBuilder = (yargs) => {
   return yargs
     .positional('dao', {
       description: 'DAO address',
@@ -25,7 +25,7 @@ export const command = 'id <dao> <aragon-id>'
 
 export const describe = 'Shortcut for `dao id assign`'
 
-export const builder = yargs => {
+export const builder = (yargs) => {
   return idAssignBuilder(yargs).command(
     idAssignCommand,
     idAssignDescribe,
@@ -34,7 +34,7 @@ export const builder = yargs => {
   )
 }
 
-export const handler = async function({
+export const handler = async function ({
   aragonId,
   reporter,
   network,

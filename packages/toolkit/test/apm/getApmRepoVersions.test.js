@@ -9,7 +9,7 @@ let versions
 
 /* Setup and cleanup */
 
-test.before('setup and make a successful call', async t => {
+test.before('setup and make a successful call', async (t) => {
   web3 = await getLocalWeb3()
 
   apmOptions = getApmOptions()
@@ -18,7 +18,7 @@ test.before('setup and make a successful call', async t => {
   versions = await getApmRepoVersions(web3, apmRepoName, apmOptions)
 })
 
-test('retrieves the expected versions info', t => {
+test('retrieves the expected versions info', (t) => {
   t.is(versions.length, 1)
 
   const version = versions[0]

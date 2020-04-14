@@ -1,6 +1,6 @@
 import * as commands from './ipfs_cmds'
 
-export const builder = yargs =>
+export const builder = (yargs) =>
   yargs
     // the order matters for --help
     .command(commands.install)

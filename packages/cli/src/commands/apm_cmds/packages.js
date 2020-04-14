@@ -8,7 +8,7 @@ import Web3 from 'web3'
 export const command = 'packages [apmRegistry]'
 export const describe = 'List all packages in the registry'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return yargs.option('apmRegistry', {
     description: 'The registry to inspect',
     type: 'string',
@@ -16,7 +16,7 @@ export const builder = function(yargs) {
   })
 }
 
-export const handler = async function({
+export const handler = async function ({
   apmRegistry,
   network,
   apm: apmOptions,
@@ -32,7 +32,7 @@ export const handler = async function({
       task: async (ctx, task) => {
         task.output = `Initializing APM`
 
-        const progressHandler = step => {
+        const progressHandler = (step) => {
           switch (step) {
             case 1:
               task.output = `Fetching APM Registry`
@@ -69,7 +69,7 @@ function displayPackages(packages) {
     head: ['App', 'Repo Address'],
   })
 
-  packages.forEach(aPackage => {
+  packages.forEach((aPackage) => {
     const row = [aPackage.name, aPackage.repo]
     table.push(row)
   })

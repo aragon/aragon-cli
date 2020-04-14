@@ -17,7 +17,7 @@ import { extractContractInfo } from './solidity-extractor'
  * @param {Object} environments
  * @return {Object}
  */
-const decorateEnvrionmentsWithAppId = environments => {
+const decorateEnvrionmentsWithAppId = (environments) => {
   const decoratedEnvrionment = {}
   for (const [key, value] of Object.entries(environments)) {
     decoratedEnvrionment[key] = {
@@ -35,11 +35,11 @@ const decorateEnvrionmentsWithAppId = environments => {
  * @return {FunctionInfo[]} functions with appended ABI
  */
 function decorateFunctionsWithAbi(functions, abi) {
-  const abiFunctions = abi.filter(elem => elem.type === 'function')
-  return functions.map(f => ({
+  const abiFunctions = abi.filter((elem) => elem.type === 'function')
+  return functions.map((f) => ({
     ...f,
     abi: abiFunctions.find(
-      functionAbi =>
+      (functionAbi) =>
         encodeFunctionSignature(functionAbi) === encodeFunctionSignature(f.sig)
     ),
   }))
@@ -49,8 +49,8 @@ function decorateFunctionsWithAbi(functions, abi) {
  * @param {Object} roles
  * @return {Object}
  */
-const getRoles = roles =>
-  roles.map(role => Object.assign(role, { bytes: keccak256(role.id) }))
+const getRoles = (roles) =>
+  roles.map((role) => Object.assign(role, { bytes: keccak256(role.id) }))
 
 /**
  * Construct artifact object

@@ -42,7 +42,7 @@ export async function getAllApps(dao, options) {
     toBlock: 'latest',
   })
 
-  return events.map(event => ({
+  return events.map((event) => ({
     proxyAddress: event.returnValues.proxy,
     appId: event.returnValues.appId,
   }))

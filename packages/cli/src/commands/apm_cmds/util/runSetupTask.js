@@ -19,7 +19,7 @@ import APM from '@aragon/apm'
 // cmds
 import { task as deployTask } from '../../deploy'
 
-const getMajor = version => version.split('.')[0]
+const getMajor = (version) => version.split('.')[0]
 
 /**
  * @typedef {Object} VersionAppInfo
@@ -97,7 +97,7 @@ export default async function runSetupTask({
         title: 'Running prepublish script',
         enabled: () => prepublish,
         task: async (_0, task) => {
-          const abortReason = await runScriptHelper(prepublishScript, log => {
+          const abortReason = await runScriptHelper(prepublishScript, (log) => {
             task.output = log
           })
           if (abortReason) task.skip(abortReason)
@@ -157,7 +157,7 @@ export default async function runSetupTask({
         title: 'Building frontend',
         enabled: () => build && !http,
         task: async (_0, task) => {
-          const abortReason = await runScriptHelper(buildScript, log => {
+          const abortReason = await runScriptHelper(buildScript, (log) => {
             task.output = log
           })
           if (abortReason) task.skip(abortReason)
@@ -170,11 +170,11 @@ export default async function runSetupTask({
       },
       {
         title: 'Deploy contract',
-        enabled: ctx =>
+        enabled: (ctx) =>
           !onlyContent &&
           ((contract && !isAddress(contract)) ||
             (!contract && ctx.shouldDeployContract && !reuse)),
-        task: async ctx => {
+        task: async (ctx) => {
           const deployTaskParams = {
             module,
             contract,

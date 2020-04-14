@@ -14,7 +14,7 @@ const progressHandler = () => {}
 
 /* Setup and cleanup */
 
-test.beforeEach('setup', t => {
+test.beforeEach('setup', (t) => {
   const web3Stub = {
     eth: {
       getAccounts: async () => ['0x1234512345123451234512345123451234512345'],
@@ -58,13 +58,13 @@ test.beforeEach('setup', t => {
   }
 })
 
-test.afterEach('cleanup', t => {
+test.afterEach('cleanup', (t) => {
   sinon.restore()
 })
 
 /* Tests */
 
-test('properly throws when transaction fails', async t => {
+test('properly throws when transaction fails', async (t) => {
   const { grantNewVersionsPermission, web3Stub } = t.context
 
   const progressHandlerSpy = sinon.spy()
@@ -85,7 +85,7 @@ test('properly throws when transaction fails', async t => {
   )
 })
 
-test('Should throw when no grantees are provided', async t => {
+test('Should throw when no grantees are provided', async (t) => {
   const { grantNewVersionsPermission, web3Stub } = t.context
 
   await t.throwsAsync(
@@ -100,7 +100,7 @@ test('Should throw when no grantees are provided', async t => {
   )
 })
 
-test('properly calls the progressHandler when nothing errors', async t => {
+test('properly calls the progressHandler when nothing errors', async (t) => {
   const { grantNewVersionsPermission, web3Stub } = t.context
 
   const progressHandlerSpy = sinon.spy()
@@ -126,7 +126,7 @@ test('properly calls the progressHandler when nothing errors', async t => {
   t.true(progressHandlerSpy.getCall(2).calledWith(3, transactionHash))
 })
 
-test('properly calls web3.eth.sendTransaction() with expected transaction parameters', async t => {
+test('properly calls web3.eth.sendTransaction() with expected transaction parameters', async (t) => {
   const { grantNewVersionsPermission, aclStub, web3Stub } = t.context
 
   const grantResponse = { name: 'grantResponse' }
@@ -164,7 +164,7 @@ test('properly calls web3.eth.sendTransaction() with expected transaction parame
   t.is(callCounter, grantees.length)
 })
 
-test('properly calls acl.grant() with each of the grantee addresses', async t => {
+test('properly calls acl.grant() with each of the grantee addresses', async (t) => {
   const { grantNewVersionsPermission, apmStub, aclStub, web3Stub } = t.context
 
   const repoAddress = '0x1234512345123451234512345123451234512345'
@@ -198,7 +198,7 @@ test('properly calls acl.grant() with each of the grantee addresses', async t =>
   t.true(grantStub.getCall(2).calledWith(repoAddress, grantees[2]))
 })
 
-test('tolerates a progressHandler not being specified', async t => {
+test('tolerates a progressHandler not being specified', async (t) => {
   const { grantNewVersionsPermission, web3Stub } = t.context
 
   await grantNewVersionsPermission(
@@ -213,7 +213,7 @@ test('tolerates a progressHandler not being specified', async t => {
   t.pass()
 })
 
-test('properly throws if apm.getRepository does not find a repository', async t => {
+test('properly throws if apm.getRepository does not find a repository', async (t) => {
   const { grantNewVersionsPermission, apmStub, web3Stub } = t.context
 
   const getRepository = sinon.stub()
@@ -240,7 +240,7 @@ test('properly throws if apm.getRepository does not find a repository', async t 
   )
 })
 
-test('calls apm.getRepository() with the correct parameters', async t => {
+test('calls apm.getRepository() with the correct parameters', async (t) => {
   const { grantNewVersionsPermission, apmStub, web3Stub } = t.context
 
   const getRepository = sinon.stub()
@@ -264,7 +264,7 @@ test('calls apm.getRepository() with the correct parameters', async t => {
   t.true(getRepository.calledOnceWith(apmRepoName))
 })
 
-test('APM constructor gets called with the appropriate parameters', async t => {
+test('APM constructor gets called with the appropriate parameters', async (t) => {
   const { grantNewVersionsPermission, apmStub, web3Stub } = t.context
 
   await grantNewVersionsPermission(

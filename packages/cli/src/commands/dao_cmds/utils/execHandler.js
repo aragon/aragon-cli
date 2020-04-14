@@ -38,7 +38,7 @@ export async function task({
       {
         title: `Executing ${method} on ${dao}`,
         task: async (ctx, task) => {
-          const progressHandler = progress => {
+          const progressHandler = (progress) => {
             switch (progress) {
               case 1:
                 task.output = `Generating transaction`
@@ -91,7 +91,7 @@ export async function task({
 export async function handler(args) {
   const tasks = await task(args)
 
-  return tasks.run().then(ctx => {
+  return tasks.run().then((ctx) => {
     args.reporter.newLine()
     args.reporter.success(
       `Successfully executed: "${blue(ctx.transactionPath.description)}"`

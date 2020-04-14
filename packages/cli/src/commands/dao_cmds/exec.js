@@ -9,7 +9,7 @@ import { parseArgumentStringIfPossible } from '../../util'
 export const command = 'exec <dao> <proxy-address> <fn> [fn-args..]'
 export const describe = 'Executes a call in an app of a DAO'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return daoArg(yargs)
     .positional('proxy-address', {
       description: 'Proxy address of the app with the function to be run',
@@ -24,7 +24,7 @@ export const builder = function(yargs) {
     })
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   dao,
   apm,

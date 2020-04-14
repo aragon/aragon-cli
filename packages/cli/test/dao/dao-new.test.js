@@ -5,7 +5,7 @@ import parseCli from '../parseCli'
 const daoAddressRegex = /Created DAO: (.*)\n$/
 const daoIdAndAddressAddressRegex = /Created DAO: (.*) at (.*)\n$/
 
-test.serial('creates a new DAO', async t => {
+test.serial('creates a new DAO', async (t) => {
   const stdout = await parseCli(['dao', 'new', '--debug'])
   const daoAddress = stdout.match(daoAddressRegex)[1]
 
@@ -13,7 +13,7 @@ test.serial('creates a new DAO', async t => {
   t.assert(/0x[a-fA-F0-9]{40}/.test(daoAddress), 'Invalid DAO address')
 })
 
-test.serial('assigns an Aragon Id with the "--aragon-id" param', async t => {
+test.serial('assigns an Aragon Id with the "--aragon-id" param', async (t) => {
   const date = new Date().getTime()
   const id = `newdao${date}`
 
@@ -24,7 +24,7 @@ test.serial('assigns an Aragon Id with the "--aragon-id" param', async t => {
   t.assert(/0x[a-fA-F0-9]{40}/.test(daoAddress), 'Invalid DAO address')
 })
 
-test.serial('creates a new DAO with a custom template', async t => {
+test.serial('creates a new DAO with a custom template', async (t) => {
   const stdout = await parseCli([
     'dao',
     'new',

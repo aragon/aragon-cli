@@ -36,7 +36,7 @@ export const installGoIpfs = async (
   const logPrefix = `npm ${npmArgs.join(' ')}:`
   const installProcess = execa(npmBinary, npmArgs, exacaOptions)
 
-  installProcess.stdout.on('data', data => {
+  installProcess.stdout.on('data', (data) => {
     if (data) logger(`${logPrefix} ${data}`)
   })
 

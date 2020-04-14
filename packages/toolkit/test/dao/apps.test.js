@@ -8,7 +8,7 @@ import getApmRepo from '../../src/apm/getApmRepo'
 import defaultAPMName from '../../src/helpers/default-apm'
 import { getLocalWeb3 } from '../test-helpers'
 
-test.beforeEach(async t => {
+test.beforeEach(async (t) => {
   const web3 = await getLocalWeb3()
 
   t.context = {
@@ -16,7 +16,7 @@ test.beforeEach(async t => {
   }
 })
 
-test('getAllApps returns the correct apps', async t => {
+test('getAllApps returns the correct apps', async (t) => {
   const { web3 } = t.context
 
   const repo = await getApmRepo(
@@ -49,7 +49,7 @@ test('getAllApps returns the correct apps', async t => {
   )
 })
 
-test('getDaoAddress returns the correct DAO address', async t => {
+test('getDaoAddress returns the correct DAO address', async (t) => {
   const daoAddress = '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'
   const daoName = 'mydaoname' + Math.floor(Math.random() * 1000000)
   const { web3 } = t.context

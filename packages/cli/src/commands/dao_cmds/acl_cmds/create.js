@@ -8,11 +8,11 @@ export const command = 'create <dao> <app> <role> <entity> <manager>'
 export const describe =
   "Create a permission in a DAO (only usable for permissions that haven't been set)"
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return daoArg(yargs)
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   network,
   gasPrice,

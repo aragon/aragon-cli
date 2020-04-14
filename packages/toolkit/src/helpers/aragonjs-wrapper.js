@@ -73,7 +73,7 @@ export async function initAragonJS(
     onPermissions = noop,
   } = {}
 ) {
-  const isDomain = dao => /[a-z0-9]+\.eth/.test(dao)
+  const isDomain = (dao) => /[a-z0-9]+\.eth/.test(dao)
 
   const daoAddress = isDomain(dao)
     ? await resolveEnsDomain(dao, {
@@ -114,7 +114,7 @@ export async function initAragonJS(
   )
 
   wrapper.cancel = () => {
-    Object.values(subscriptions).forEach(subscription => {
+    Object.values(subscriptions).forEach((subscription) => {
       if (subscription) {
         subscription.unsubscribe()
       }
@@ -133,7 +133,7 @@ export async function getApps(wrapper) {
   return (
     wrapper.apps
       // If the app list contains a single app, wait for more
-      .pipe(takeWhile(apps => apps.length <= 1, true))
+      .pipe(takeWhile((apps) => apps.length <= 1, true))
       .toPromise()
   )
 }
@@ -155,12 +155,12 @@ export async function getTransactionPath(appAddress, method, params, wrapper) {
   const apps = await wrapper.apps
     .pipe(
       // If the app list contains a single app, wait for more
-      filter(apps => apps.length > 1),
+      filter((apps) => apps.length > 1),
       first()
     )
     .toPromise()
 
-  if (!apps.some(app => addressesEqual(appAddress, app.proxyAddress))) {
+  if (!apps.some((app) => addressesEqual(appAddress, app.proxyAddress))) {
     throw new Error(`Can't find app ${appAddress}.`)
   }
 

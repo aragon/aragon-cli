@@ -1,7 +1,7 @@
 import test from 'ava'
 import parseCli from '../parseCli'
 
-test.serial('ipfs propagate readme directory', async t => {
+test.serial('ipfs propagate readme directory', async (t) => {
   const stdout = await parseCli([
     'ipfs',
     'propagate',

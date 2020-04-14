@@ -20,14 +20,14 @@ let knownApps
 export const command = 'apps <dao>'
 export const describe = 'Get all the apps in a DAO'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return daoArg(yargs).option('all', {
     description: 'Whether to include apps without permissions as well',
     boolean: true,
   })
 }
 
-const printAppNameFromAppId = appId => {
+const printAppNameFromAppId = (appId) => {
   return knownApps[appId] ? blue(knownApps[appId]) : appId
 }
 
@@ -35,7 +35,7 @@ const printAppNameAndVersion = (appName, version) => {
   return version ? blue(`${appName}@v${version}`) : blue(appName)
 }
 
-const printContent = content => {
+const printContent = (content) => {
   if (!content) {
     return '(No UI available)'
   }
@@ -43,7 +43,7 @@ const printContent = content => {
   return `${content.provider}:${content.location}`
 }
 
-const printApps = apps => {
+const printApps = (apps) => {
   const appsContent = apps
     .map(({ appId, proxyAddress, content, appName, version }) => [
       appName
@@ -52,24 +52,24 @@ const printApps = apps => {
       proxyAddress,
       printContent(content),
     ])
-    .map(row => {
+    .map((row) => {
       row[0] = row[0].replace('.aragonpm.eth', '')
       return row
     })
 
   const table = new Table({
-    head: ['App', 'Proxy address', 'Content'].map(x => white(x)),
+    head: ['App', 'Proxy address', 'Content'].map((x) => white(x)),
   })
-  appsContent.forEach(row => table.push(row))
+  appsContent.forEach((row) => table.push(row))
   console.log(table.toString())
 }
 
-const printPermissionlessApps = apps => {
+const printPermissionlessApps = (apps) => {
   if (apps && apps.length) {
     const tableForPermissionlessApps = new Table({
-      head: ['Permissionless app', 'Proxy address'].map(x => white(x)),
+      head: ['Permissionless app', 'Proxy address'].map((x) => white(x)),
     })
-    apps.forEach(app =>
+    apps.forEach((app) =>
       tableForPermissionlessApps.push([
         printAppNameFromAppId(app.appId).replace('.aragonpm.eth', ''),
         app.proxyAddress,
@@ -79,7 +79,7 @@ const printPermissionlessApps = apps => {
   }
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   dao,
   all,
@@ -120,7 +120,9 @@ export const handler = async function({
             })
           ).filter(
             ({ proxyAddress }) =>
-              !apps.find(app => addressesEqual(app.proxyAddress, proxyAddress))
+              !apps.find((app) =>
+                addressesEqual(app.proxyAddress, proxyAddress)
+              )
           )
         },
       },

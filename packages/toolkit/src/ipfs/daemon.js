@@ -37,7 +37,7 @@ export const startLocalDaemon = (binPath, repoPath, options = {}) => {
  * @param {URL} address a `URL` object
  * @returns {boolean} true if it is running
  */
-export const isLocalDaemonRunning = async address => {
+export const isLocalDaemonRunning = async (address) => {
   address = address || {
     protocol: 'http',
     host: '127.0.0.1',

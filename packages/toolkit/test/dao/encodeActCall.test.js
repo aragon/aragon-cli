@@ -2,11 +2,11 @@ import test from 'ava'
 //
 import encodeActCall from '../../src/dao/encodeActCall'
 
-test('Returns the correct encoded call with no params', t => {
+test('Returns the correct encoded call with no params', (t) => {
   t.is(encodeActCall('myMethod()'), '0x70dce926')
 })
 
-test('Returns the correct encoded call with params', t => {
+test('Returns the correct encoded call with params', (t) => {
   t.is(
     encodeActCall('myMethod(address)', [
       '0x8401Eb5ff34cc943f096A32EF3d5113FEbE8D4Eb',
@@ -25,6 +25,6 @@ test('Returns the correct encoded call with params', t => {
   )
 })
 
-test('Throws with wrong number of params', t => {
+test('Throws with wrong number of params', (t) => {
   t.throws(() => encodeActCall('myMethod(bool,string)', [true]))
 })

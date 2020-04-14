@@ -2,21 +2,21 @@ import test from 'ava'
 //
 import { configEnvironment } from '../../src/lib/environment/configEnvironment'
 
-test('configEnvironment - ignore network', t => {
+test('configEnvironment - ignore network', (t) => {
   const config = configEnvironment({
     ignoreNetwork: true,
   })
   t.deepEqual(config.network, {}, 'networkObj should be empty')
 })
 
-test('configEnvironment - with frame', t => {
+test('configEnvironment - with frame', (t) => {
   const config = configEnvironment({
     useFrame: true,
   })
   t.is(config.network.name, 'frame-rpc', 'Wrong network name')
 })
 
-test('configEnvironment - with frame on rinkeby', t => {
+test('configEnvironment - with frame on rinkeby', (t) => {
   const config = configEnvironment({
     useFrame: true,
     environment: 'aragon:rinkeby',
@@ -24,7 +24,7 @@ test('configEnvironment - with frame on rinkeby', t => {
   t.is(config.network.name, 'frame-rinkeby', 'Wrong network name')
 })
 
-test('configEnvironment - default networks - localhost', t => {
+test('configEnvironment - default networks - localhost', (t) => {
   const config = configEnvironment({
     environment: '',
     arapp: { environments: { default: { network: 'rpc' } } },
@@ -37,7 +37,7 @@ test('configEnvironment - default networks - localhost', t => {
   )
 })
 
-test('configEnvironment - default networks - rinkeby', t => {
+test('configEnvironment - default networks - rinkeby', (t) => {
   const config = configEnvironment({
     environment: 'rinkeby',
     arapp: { environments: { rinkeby: { network: 'rinkeby' } } },
@@ -62,7 +62,7 @@ const arapp = {
   },
 }
 
-test('configEnvironment - custom environment - rinkeby', t => {
+test('configEnvironment - custom environment - rinkeby', (t) => {
   const config = configEnvironment({
     environment: customEnvironment,
     arapp,

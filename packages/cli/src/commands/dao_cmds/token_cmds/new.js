@@ -16,7 +16,7 @@ export const command =
   'new <token-name> <symbol> [decimal-units] [transfer-enabled] [token-factory-address]'
 export const describe = 'Create a new MiniMe token'
 
-export const builder = yargs => {
+export const builder = (yargs) => {
   return yargs
     .positional('token-name', {
       description: 'Full name of the new Token',
@@ -130,7 +130,7 @@ export const task = async ({
   )
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   network,
   gasPrice,
@@ -155,7 +155,7 @@ export const handler = async function({
     silent,
     debug,
   })
-  return tasks.run().then(ctx => {
+  return tasks.run().then((ctx) => {
     reporter.newLine()
     reporter.success(
       `Successfully deployed the token at ${green(ctx.tokenAddress)}`

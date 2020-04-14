@@ -31,7 +31,7 @@ export default async (
   progressHandler(2)
 
   const packages = await Promise.all(
-    newRepoEvents.map(async event => {
+    newRepoEvents.map(async (event) => {
       const args = event.returnValues
       return {
         name: args.name,

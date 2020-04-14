@@ -51,7 +51,7 @@ const BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
 export const command = 'run'
 export const describe = 'Run the current app locally'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return yargs
     .option('client', {
       description: 'Just run the smart contracts, without the Aragon client',
@@ -109,7 +109,7 @@ export const builder = function(yargs) {
         'Arguments to be passed to the function specified in --template-new-instance',
       array: true,
       default: [],
-      coerce: args => {
+      coerce: (args) => {
         return args.map(parseArgumentStringIfPossible)
       },
     })
@@ -147,7 +147,7 @@ export const builder = function(yargs) {
     .option('http', {
       description: 'URL for where your app is served from e.g. localhost:1234',
       default: null,
-      coerce: url => {
+      coerce: (url) => {
         return url && url.substr(0, 7) !== 'http://' ? `http://${url}` : url
       },
     })
@@ -184,7 +184,7 @@ export const builder = function(yargs) {
     })
 }
 
-export const handler = async function({
+export const handler = async function ({
   // Globals
   reporter,
   gasPrice,
@@ -250,7 +250,7 @@ export const handler = async function({
       },
       {
         title: 'Start a local Ethereum network',
-        skip: async ctx => {
+        skip: async (ctx) => {
           const hostURL = new url.URL(network.provider.connection._url)
           if (!(await isPortTaken(hostURL.port))) {
             return false
@@ -272,7 +272,7 @@ export const handler = async function({
       },
       {
         title: 'Setup before publish',
-        task: async ctx => {
+        task: async (ctx) => {
           ctx.publishParams = {
             provider: 'ipfs',
             files,
@@ -302,7 +302,7 @@ export const handler = async function({
       },
       {
         title: 'Prepare for publish',
-        task: async ctx =>
+        task: async (ctx) =>
           runPrepareForPublishTask({
             ...ctx.publishParams,
             module,
@@ -316,7 +316,7 @@ export const handler = async function({
       },
       {
         title: 'Publish app to aragonPM',
-        task: async ctx => {
+        task: async (ctx) => {
           const { dao, proxyAddress, methodName, params } = ctx.intent
 
           return runPublishTask({
@@ -334,7 +334,7 @@ export const handler = async function({
       },
       {
         title: 'Fetch published repo',
-        task: async ctx =>
+        task: async (ctx) =>
           getRepoTask({
             apmRepo: module.appName,
             apm: APM(ctx.web3, apmOptions),
@@ -344,7 +344,7 @@ export const handler = async function({
       {
         title: 'Deploy Template',
         enabled: () => template !== BARE_TEMPLATE,
-        task: ctx => {
+        task: (ctx) => {
           const deployParams = {
             module,
             contract: template,
@@ -362,7 +362,7 @@ export const handler = async function({
       },
       {
         title: `Fetching template ${bold(template)}@latest`,
-        task: async ctx => {
+        task: async (ctx) => {
           ctx.template = await getApmRepo(
             ctx.web3,
             template,
@@ -370,13 +370,13 @@ export const handler = async function({
             'latest'
           )
         },
-        enabled: ctx => !ctx.contractInstance,
+        enabled: (ctx) => !ctx.contractInstance,
       },
       {
         title: 'Create Organization from template',
-        task: async ctx => {
+        task: async (ctx) => {
           const roles = ctx.repo.roles || []
-          const rolesBytes = roles.map(role => role.bytes)
+          const rolesBytes = roles.map((role) => role.bytes)
 
           let fnArgs
 
@@ -431,7 +431,7 @@ export const handler = async function({
     manifest = fs.readJsonSync(manifestPath)
   }
 
-  return tasks.run({ ens: apmOptions.ensRegistryAddress }).then(async ctx => {
+  return tasks.run({ ens: apmOptions.ensRegistryAddress }).then(async (ctx) => {
     if (ctx.portOpen) {
       reporter.warning(
         `The server already listening at port ${blue(
@@ -468,10 +468,7 @@ export const handler = async function({
 
     printResetNotice(reporter, reset)
 
-    const registry = module.appName
-      .split('.')
-      .slice(1)
-      .join('.')
+    const registry = module.appName.split('.').slice(1).join('.')
 
     reporter.info(`This is the configuration for your development deployment:
     ${'Ethereum Node'}: ${blue(network.provider.connection._url)}

@@ -19,7 +19,7 @@ export const command = 'propagate [cid]'
 export const describe =
   'Request the content and its links at several gateways, making the files more distributed within the network. Uses --ipfs-gateway.'
 
-export const builder = yargs =>
+export const builder = (yargs) =>
   yargs.positional('cid', {
     description: 'A self-describing content-addressed identifier',
   })
@@ -93,7 +93,7 @@ export const runPropagateTask = ({ cid, ipfsReader, silent, debug }) => {
   ).run()
 }
 
-export const handler = async argv => {
+export const handler = async (argv) => {
   /**
    * Interactive input
    */

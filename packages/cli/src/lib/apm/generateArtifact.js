@@ -15,8 +15,8 @@ import flattenCode from '../../helpers/flattenCode'
 
 export class MissingFunctionsArtifacts extends Error {}
 
-const getRoles = roles =>
-  roles.map(role => Object.assign(role, { bytes: keccak256(role.id) }))
+const getRoles = (roles) =>
+  roles.map((role) => Object.assign(role, { bytes: keccak256(role.id) }))
 
 /**
  * Load environments from the arapp file
@@ -161,7 +161,7 @@ export async function copyCurrentApplicationArtifacts(
   const uri = `${content.provider}:${content.location}`
 
   const copyFilesData = await Promise.all(
-    copyingFiles.map(async file => {
+    copyingFiles.map(async (file) => {
       try {
         return {
           filePath: path.resolve(outputPath, file),
@@ -185,8 +185,8 @@ export async function copyCurrentApplicationArtifacts(
   }
 
   copyFilesData
-    .filter(item => item)
-    .map(file => {
+    .filter((item) => item)
+    .map((file) => {
       if (file.fileName === ARTIFACT_FILE) {
         const currentArtifactIsIdentical = checkIfNewArticatIsIdentical(
           cwd,

@@ -19,7 +19,7 @@ const readOutput = async () => {
   })
 }
 
-test.before('create a temp directory and resolve paths', t => {
+test.before('create a temp directory and resolve paths', (t) => {
   contractPath = path.resolve('test/helpers/contracts/ParseMe.sol')
 
   tempDir = tmp.dirSync({ unsafeCleanup: true, keep: false })
@@ -27,20 +27,20 @@ test.before('create a temp directory and resolve paths', t => {
   outputPath = path.resolve(tempDir.name, filename)
 })
 
-test.before('call extractContractInfoToFile function', async t => {
+test.before('call extractContractInfoToFile function', async (t) => {
   await extractContractInfoToFile(contractPath, outputPath)
 })
 
-test('generates output', t => {
+test('generates output', (t) => {
   t.true(fs.existsSync(outputPath))
 })
 
-test('output file contains 2 roles', async t => {
+test('output file contains 2 roles', async (t) => {
   const output = await readOutput()
   t.is(output.roles.length, 2)
 })
 
-test('output file contains 3 functions', async t => {
+test('output file contains 3 functions', async (t) => {
   const output = await readOutput()
   t.is(output.functions.length, 3)
 })

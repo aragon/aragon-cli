@@ -108,10 +108,10 @@ export const deployContract = async (
 
   const result = {}
 
-  sendPromise.on('receipt', receipt => {
+  sendPromise.on('receipt', (receipt) => {
     result.address = receipt.contractAddress
   })
-  sendPromise.on('transactionHash', transactionHash => {
+  sendPromise.on('transactionHash', (transactionHash) => {
     result.txHash = transactionHash
   })
 

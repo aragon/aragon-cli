@@ -7,11 +7,11 @@ export const command = 'revoke <dao> <app> <role> <entity>'
 
 export const describe = 'Revoke a permission in a DAO'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return daoArg(yargs)
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   dao,
   app,

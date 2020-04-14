@@ -36,7 +36,7 @@ async function createMembershipOrg(daoName) {
   return matchAddressAtLineContaining(stdout, 'Created DAO')
 }
 
-test.before(async t => {
+test.before(async (t) => {
   // Identify accounts
   const web3 = await getLocalWeb3()
   const accounts = await web3.eth.getAccounts()
@@ -46,7 +46,7 @@ test.before(async t => {
   if (verbose) console.log(`ACCOUNT2`, ACCOUNT2)
 })
 
-test.serial('creates DAO A', async t => {
+test.serial('creates DAO A', async (t) => {
   const name = `DAO_A_${new Date().getTime()}`
 
   DAO_A = await createMembershipOrg(name)
@@ -55,7 +55,7 @@ test.serial('creates DAO A', async t => {
   t.pass()
 })
 
-test.serial('creates DAO B', async t => {
+test.serial('creates DAO B', async (t) => {
   const name = `DAO_B_${new Date().getTime()}`
 
   DAO_B = await createMembershipOrg(name)
@@ -64,7 +64,7 @@ test.serial('creates DAO B', async t => {
   t.pass()
 })
 
-test.serial('retrieves applications from DAO A', async t => {
+test.serial('retrieves applications from DAO A', async (t) => {
   const { stdout } = await runAragonCLI(
     ['dao', 'apps', DAO_A, '--all'],
     verbose
@@ -78,7 +78,7 @@ test.serial('retrieves applications from DAO A', async t => {
   t.pass()
 })
 
-test.serial('retrieves applications from DAO B', async t => {
+test.serial('retrieves applications from DAO B', async (t) => {
   const { stdout } = await runAragonCLI(
     ['dao', 'apps', DAO_B, '--all'],
     verbose
@@ -93,7 +93,7 @@ test.serial('retrieves applications from DAO B', async t => {
   t.pass()
 })
 
-test.serial('creates a vote in DAO B to mint a token for DAO A', async t => {
+test.serial('creates a vote in DAO B to mint a token for DAO A', async (t) => {
   await runAragonCLI([
     'dao',
     'exec',
@@ -107,7 +107,7 @@ test.serial('creates a vote in DAO B to mint a token for DAO A', async t => {
   t.pass()
 })
 
-test.serial('approves vote in DAO B', async t => {
+test.serial('approves vote in DAO B', async (t) => {
   await runAragonCLI(
     ['dao', 'exec', DAO_B, VOTING_B, 'vote', 0, true, true],
     verbose
@@ -118,7 +118,7 @@ test.serial('approves vote in DAO B', async t => {
 
 test.serial(
   'create a vote in DAO B, to add a new member account 2',
-  async t => {
+  async (t) => {
     await runAragonCLI(
       ['dao', 'exec', DAO_B, TOKEN_MANAGER_B, 'mint', ACCOUNT2, '1'],
       verbose
@@ -130,7 +130,7 @@ test.serial(
 
 test.serial(
   'DAO A votes in DAO B to add account 2 (via the agent)',
-  async t => {
+  async (t) => {
     await runAragonCLI(
       [
         'dao',
@@ -149,7 +149,7 @@ test.serial(
   }
 )
 
-test.serial('dao A approves the vote to act on DAO B', async t => {
+test.serial('dao A approves the vote to act on DAO B', async (t) => {
   await runAragonCLI(
     ['dao', 'exec', DAO_A, VOTING_A, 'vote', 0, true, true],
     verbose
@@ -158,7 +158,7 @@ test.serial('dao A approves the vote to act on DAO B', async t => {
   t.pass()
 })
 
-test.serial('account 1 votes in DAO B to add account 2', async t => {
+test.serial('account 1 votes in DAO B to add account 2', async (t) => {
   await runAragonCLI(
     ['dao', 'exec', DAO_B, VOTING_B, 'vote', 1, true, true],
     verbose

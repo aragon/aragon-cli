@@ -14,7 +14,7 @@ const merkleDagNode = {
 // stripAnsi is necessary since it causes problems in CI
 // Where it does not matches the snapshot
 
-test('Should format a merkle DAG node', t => {
+test('Should format a merkle DAG node', (t) => {
   const formatedOutput = stringifyMerkleDAGNode(merkleDagNode)
   t.snapshot(
     stripAnsi(formatedOutput),
@@ -22,7 +22,7 @@ test('Should format a merkle DAG node', t => {
   )
 })
 
-test('Should format a merkle DAG tree', t => {
+test('Should format a merkle DAG tree', (t) => {
   const merkleDagTree = {
     ...merkleDagNode,
     links: [merkleDagNode, merkleDagNode],

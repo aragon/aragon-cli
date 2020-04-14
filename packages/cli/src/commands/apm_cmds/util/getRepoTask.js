@@ -5,7 +5,7 @@ import listrOpts from '../../../helpers/listr-options'
 
 const LATEST_VERSION = 'latest'
 
-export const args = function(yargs) {
+export const args = function (yargs) {
   return yargs
     .option('apmRepo', {
       describe: 'Name of the aragonPM repo',
@@ -28,7 +28,7 @@ export const task = async ({
     [
       {
         title: 'Get Repo',
-        task: async ctx => {
+        task: async (ctx) => {
           if (apmRepoVersion === LATEST_VERSION) {
             ctx.repo = await apm.getLatestVersion(apmRepo, DEFAULT_IPFS_TIMEOUT)
           } else {

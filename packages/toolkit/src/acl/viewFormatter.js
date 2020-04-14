@@ -5,7 +5,7 @@ import '../../@types/acl/typedef'
  * @param {AclPermissions} permissions Permissions
  * @return {AclPermission[]} acl permissions data
  */
-export const flattenAclPermissions = permissions => {
+export const flattenAclPermissions = (permissions) => {
   const aclPermissions = []
   for (const [to, roles] of Object.entries(permissions)) {
     for (const [roleHash, data] of Object.entries(roles)) {
@@ -48,7 +48,7 @@ export const formatAclPermission = (
    * @param  {string} address Proxy address of a possible app
    * @return {AclPermissionAppInfo} app info
    */
-  const getAppInfo = address => {
+  const getAppInfo = (address) => {
     const app = apps.find(({ proxyAddress }) => address === proxyAddress)
     return {
       address,
@@ -79,7 +79,7 @@ export const formatAclPermission = (
  * @return {AclPermissionFormatted[]} Formated acl permissions data
  */
 export function formatAclPermissions(permissions, apps, knownApps, knownRoles) {
-  return flattenAclPermissions(permissions).map(aclPermission =>
+  return flattenAclPermissions(permissions).map((aclPermission) =>
     formatAclPermission(aclPermission, apps, knownApps, knownRoles)
   )
 }
