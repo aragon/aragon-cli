@@ -12,7 +12,7 @@ import { getRecommendedGasLimit } from '../util'
  * @param {string[]} newInstanceArgs New instance arguments
  * @param {string} gasPrice Gas price
  */
-export default async function({
+export default async function ({
   repo,
   web3,
   templateInstance,

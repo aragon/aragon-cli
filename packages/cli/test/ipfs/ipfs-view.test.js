@@ -1,7 +1,7 @@
 import test from 'ava'
 import parseCli from '../parseCli'
 
-test('ipfs view readme directory', async t => {
+test('ipfs view readme directory', async (t) => {
   const stdout = await parseCli([
     'ipfs',
     'view',

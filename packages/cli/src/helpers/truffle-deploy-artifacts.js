@@ -1,7 +1,7 @@
 import flattenCode from '../helpers/flattenCode'
 import { getTruffleConfig } from './truffle-config'
 
-export default async contractArtifacts => {
+export default async (contractArtifacts) => {
   const {
     contractName,
     sourcePath,

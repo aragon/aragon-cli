@@ -21,7 +21,7 @@ export const BARE_TEMPLATE_DEPLOY_EVENT = 'DeployDao'
 export const command = 'new [template] [template-version]'
 export const describe = 'Create a new DAO'
 
-export const builder = yargs => {
+export const builder = (yargs) => {
   return yargs
     .positional('template', {
       description: 'Name of the template to use creating the DAO',
@@ -36,7 +36,7 @@ export const builder = yargs => {
         'Arguments to be passed to the newInstance function (or the function passed with --fn)',
       array: true,
       default: [],
-      coerce: args => {
+      coerce: (args) => {
         return args.map(parseArgumentStringIfPossible)
       },
     })
@@ -92,7 +92,7 @@ export const task = async ({
       },
       {
         title: 'Create new DAO from template',
-        task: async ctx => {
+        task: async (ctx) => {
           daoAddress = await newDao({
             repo,
             web3,
@@ -123,7 +123,7 @@ export const task = async ({
   return tasks
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   network,
   template,

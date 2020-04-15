@@ -8,7 +8,7 @@ import { findProjectRoot } from './util'
 
 const DEFAULT_GAS_PRICE = require('../package.json').aragon.defaultGasPrice
 
-const debugMiddleware = argv => {
+const debugMiddleware = (argv) => {
   argv.reporter.debug(
     `aragonCLI version: ${require('../package.json').version}`
   )
@@ -42,7 +42,7 @@ export function init(cb) {
       // TODO: Use ethgasprice with inquier promt list
       description: 'Gas price in Gwei',
       default: DEFAULT_GAS_PRICE,
-      coerce: gasPrice => {
+      coerce: (gasPrice) => {
         return toWei(gasPrice, 'gwei')
       },
     })

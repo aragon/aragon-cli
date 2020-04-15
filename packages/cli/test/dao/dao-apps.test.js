@@ -2,7 +2,7 @@ import test from 'ava'
 //
 import parseCli from '../parseCli'
 
-test.serial('lists apps from DAO', async t => {
+test.serial('lists apps from DAO', async (t) => {
   const date = new Date().getTime()
   const id = `newdao${date}`
 
@@ -15,7 +15,7 @@ test.serial('lists apps from DAO', async t => {
   t.assert(stdout.includes('kernel'))
 })
 
-test.serial('lists all apps from DAO', async t => {
+test.serial('lists all apps from DAO', async (t) => {
   const date = new Date().getTime()
   const id = `newdao${date}`
 

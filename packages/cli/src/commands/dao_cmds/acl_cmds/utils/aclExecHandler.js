@@ -4,7 +4,7 @@ import { getAclAddress, resolveAddressOrEnsDomain } from '@aragon/toolkit'
 import { handler as execHandler } from '../../utils/execHandler'
 import { ensureWeb3 } from '../../../../helpers/web3-fallback'
 
-export default async function(
+export default async function (
   dao,
   method,
   params,
@@ -18,7 +18,7 @@ export default async function(
 
   const processedParams = role.startsWith('0x')
     ? params
-    : params.map(param => (param === role ? keccak256(role) : param))
+    : params.map((param) => (param === role ? keccak256(role) : param))
 
   return execHandler({
     dao,

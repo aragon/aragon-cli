@@ -18,7 +18,7 @@ export function addressesEqual(first, second) {
   return first === second
 }
 
-export const isAddress = addr => /0x[a-fA-F0-9]{40}/.test(addr)
+export const isAddress = (addr) => /0x[a-fA-F0-9]{40}/.test(addr)
 
 /**
  * Validates an Aragon Id
@@ -45,7 +45,7 @@ export function convertDAOIdToSubdomain(aragonId) {
   return `${aragonId}.${ARAGON_DOMAIN}`
 }
 
-export const expandLink = link => {
+export const expandLink = (link) => {
   const { name, address } = link
   const placeholder = `__${name}${'_'.repeat(38 - name.length)}`
   link.placeholder = placeholder

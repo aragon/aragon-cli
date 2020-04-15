@@ -22,7 +22,7 @@ export const command = 'status'
 export const describe =
   'Show whether the daemon is running and other useful information.'
 
-export const builder = yargs =>
+export const builder = (yargs) =>
   yargs.option('repo-path', {
     description: 'The location of the IPFS repo',
     default: getDefaultRepoPath(),
@@ -33,14 +33,14 @@ const runCheckTask = ({ silent, debug, repoPath }) => {
     [
       {
         title: 'Check installations',
-        task: ctx => {
+        task: (ctx) => {
           ctx.localBinPath = getLocalBinary('ipfs', process.cwd())
           ctx.globalBinPath = getGlobalBinary('ipfs')
         },
       },
       {
         title: 'Check repository',
-        task: async ctx => {
+        task: async (ctx) => {
           ctx.repoExists = existsSync(repoPath)
           if (!ctx.repoExists) return
 
@@ -58,8 +58,8 @@ const runCheckTask = ({ silent, debug, repoPath }) => {
       },
       {
         title: 'Check the daemon',
-        skip: ctx => !ctx.repoExists,
-        task: async ctx => {
+        skip: (ctx) => !ctx.repoExists,
+        task: async (ctx) => {
           ctx.daemonRunning = await isLocalDaemonRunning({
             protocol: 'http',
             host: '127.0.0.1',
@@ -69,8 +69,8 @@ const runCheckTask = ({ silent, debug, repoPath }) => {
       },
       {
         title: 'Check CORS',
-        skip: ctx => !ctx.daemonRunning,
-        task: async ctx => {
+        skip: (ctx) => !ctx.daemonRunning,
+        task: async (ctx) => {
           try {
             ctx.corsEnabled = await isCorsConfigured({
               protocol: 'http',
@@ -82,8 +82,8 @@ const runCheckTask = ({ silent, debug, repoPath }) => {
       },
       {
         title: 'Check MultiAddresses',
-        skip: ctx => !ctx.daemonRunning,
-        task: async ctx => {
+        skip: (ctx) => !ctx.daemonRunning,
+        task: async (ctx) => {
           const [publicIP, internalIP] = await Promise.all([
             publicIp.v4(),
             internalIp.v4(),
@@ -106,7 +106,7 @@ const runCheckTask = ({ silent, debug, repoPath }) => {
   ).run()
 }
 
-export const handler = async argv => {
+export const handler = async (argv) => {
   const { reporter, debug, silent, repoPath } = argv
 
   const {

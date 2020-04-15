@@ -43,7 +43,7 @@ export async function prepareFilesForPublishing(
 
   // Copy files
   await Promise.all(
-    files.map(async file => {
+    files.map(async (file) => {
       const stats = await promisify(fs.lstat)(file)
 
       let destination = tmpDir

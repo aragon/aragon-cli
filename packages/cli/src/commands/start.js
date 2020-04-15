@@ -27,7 +27,7 @@ const DEFAULT_CLIENT_PORT = pkg.aragon.clientPort
 export const command = 'start [client-repo] [client-version]'
 export const describe = 'Start the Aragon GUI (graphical user interface)'
 
-export const builder = yargs => {
+export const builder = (yargs) => {
   return yargs
     .positional('client-repo', {
       description:
@@ -54,7 +54,7 @@ export const builder = yargs => {
     })
 }
 
-export const task = async function({
+export const task = async function ({
   clientRepo,
   clientVersion,
   clientPort,
@@ -76,17 +76,17 @@ export const task = async function({
       },
       {
         title: 'Downloading client',
-        skip: ctx => !!clientPath,
+        skip: (ctx) => !!clientPath,
         task: async (ctx, task) => {
           task.output = 'Downloading client...'
           await downloadClient({ ctx, task, clientRepo, clientVersion })
         },
-        enabled: ctx => !ctx.clientFetch,
+        enabled: (ctx) => !ctx.clientFetch,
       },
       {
         title: 'Installing client dependencies',
         task: async (ctx, task) => installDeps(ctx.clientPath, task),
-        enabled: ctx => !ctx.clientAvailable && !clientPath,
+        enabled: (ctx) => !ctx.clientAvailable && !clientPath,
       },
       {
         title: 'Building Aragon client',
@@ -94,7 +94,7 @@ export const task = async function({
           task.output = 'Building Aragon client...'
           await buildClient(ctx, clientPath)
         },
-        enabled: ctx => !ctx.clientAvailable,
+        enabled: (ctx) => !ctx.clientAvailable,
       },
       {
         title: 'Start IPFS',

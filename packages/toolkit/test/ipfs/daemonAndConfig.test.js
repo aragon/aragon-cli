@@ -38,25 +38,25 @@ test.after.always(async () => {
   await remove(repoPath)
 })
 
-test('should install go-ipfs in a new project', async t => {
+test('should install go-ipfs in a new project', async (t) => {
   const result = await installGoIpfs(true, projectPath)
   t.snapshot(result.command, 'should use the correct command')
 })
 
-test('should initialize the repository at a custom path', async t => {
+test('should initialize the repository at a custom path', async (t) => {
   await ensureRepoInitialized(binPath, repoPath)
 
   t.pass()
 })
 
-test('should configure the ports', async t => {
+test('should configure the ports', async (t) => {
   await setPorts(repoPath, apiPort, gatewayPort, swarmPort)
 
   t.pass()
 })
 
 // eslint-disable-next-line ava/no-skip-test
-test.skip('should run the daemon', async t => {
+test.skip('should run the daemon', async (t) => {
   const { output, detach } = await startLocalDaemon(binPath, repoPath, {
     detached: true,
   })
@@ -77,7 +77,7 @@ test.skip('should run the daemon', async t => {
 })
 
 // eslint-disable-next-line ava/no-skip-test
-test.skip('should configure cors & pin artifacts', async t => {
+test.skip('should configure cors & pin artifacts', async (t) => {
   const httpClient = await getHttpClient(`http://localhost:${apiPort}`)
 
   await configureCors(httpClient)
@@ -89,7 +89,7 @@ test.skip('should configure cors & pin artifacts', async t => {
 })
 
 // eslint-disable-next-line ava/no-skip-test
-test.skip('should stop the daemon', async t => {
+test.skip('should stop the daemon', async (t) => {
   await killProcessOnPort(apiPort)
   const daemonRunning = await isLocalDaemonRunning(apiUrl)
 

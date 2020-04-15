@@ -48,8 +48,8 @@ export const findProjectRoot = () => {
  * @returns {boolean} true if server is returning a valid response
  */
 export function isHttpServerOpen(url) {
-  return new Promise(resolve => {
-    request(url, { method: 'HEAD' }, r => {
+  return new Promise((resolve) => {
+    request(url, { method: 'HEAD' }, (r) => {
       resolve(r.statusCode >= 200 && r.statusCode < 400)
     })
       .on('error', () => resolve(false))
@@ -60,12 +60,12 @@ export function isHttpServerOpen(url) {
 export const installDeps = (cwd, task) => {
   const bin = getNodePackageManager()
   const installTask = execa(bin, ['install'], { cwd })
-  installTask.stdout.on('data', log => {
+  installTask.stdout.on('data', (log) => {
     if (!log) return
     task.output = log
   })
 
-  return installTask.catch(err => {
+  return installTask.catch((err) => {
     throw new Error(
       `${err.message}\n${err.stderr}\n\nFailed to install dependencies. See above output.`
     )
@@ -91,7 +91,7 @@ export const runScriptHelper = async (scriptName, logCallback) => {
   const bin = getNodePackageManager()
   const scriptProcess = execa(bin, ['run', scriptName])
 
-  scriptProcess.stdout.on('data', log => {
+  scriptProcess.stdout.on('data', (log) => {
     if (logCallback) logCallback(`npm run ${scriptName}: ${log}`)
   })
 
@@ -112,7 +112,7 @@ export const runScriptHelper = async (scriptName, logCallback) => {
  * @param {string} target must be a string
  * @returns {boolean} the parsed value
  */
-export const parseAsBoolean = target => {
+export const parseAsBoolean = (target) => {
   if (typeof target !== 'string') {
     throw new Error(
       `Expected ${target} to be of type string, not ${typeof target}`
@@ -138,7 +138,7 @@ export const parseAsBoolean = target => {
  * @param {string} target must be a string
  * @returns {Array} the parsed value
  */
-export const parseAsArray = target => {
+export const parseAsArray = (target) => {
   if (typeof target !== 'string') {
     throw new Error(
       `Expected ${target} to be of type string, not ${typeof target}`
@@ -161,7 +161,7 @@ export const parseAsArray = target => {
  * @param {string} target must be a string
  * @returns {boolean|Array} the parsed value
  */
-export const parseArgumentStringIfPossible = target => {
+export const parseArgumentStringIfPossible = (target) => {
   // convert to boolean: 'false' to false
   try {
     return parseAsBoolean(target)
@@ -177,7 +177,7 @@ export const parseArgumentStringIfPossible = target => {
   return target
 }
 
-export const askForInput = async message => {
+export const askForInput = async (message) => {
   const { reply } = await inquirer.prompt([
     {
       type: 'input',
@@ -200,7 +200,7 @@ export const askForChoice = async (message, choices) => {
   return reply
 }
 
-export const askForConfirmation = async message => {
+export const askForConfirmation = async (message) => {
   const { reply } = await inquirer.prompt([
     {
       type: 'confirm',

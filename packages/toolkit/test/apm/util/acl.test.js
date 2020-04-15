@@ -13,7 +13,7 @@ import { getLocalWeb3 } from '../../test-helpers'
 
 const ensRegistryAddress = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1'
 
-test.beforeEach(async t => {
+test.beforeEach(async (t) => {
   const web3 = await getLocalWeb3()
   const accounts = await web3.eth.getAccounts()
 
@@ -23,7 +23,7 @@ test.beforeEach(async t => {
   }
 })
 
-test('Should prepare a TX to grant permissions to an account', async t => {
+test('Should prepare a TX to grant permissions to an account', async (t) => {
   // arrange
   const { web3, accounts } = t.context
 

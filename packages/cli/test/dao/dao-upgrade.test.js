@@ -2,7 +2,7 @@ import test from 'ava'
 //
 import parseCli from '../parseCli'
 
-test.serial('upgrades an app', async t => {
+test.serial('upgrades an app', async (t) => {
   const date = new Date().getTime()
   const id = `newdao${date}`
 

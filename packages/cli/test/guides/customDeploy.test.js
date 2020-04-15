@@ -13,7 +13,7 @@ const verbose = false
 
 let ACCOUNT1, ACCOUNT2, DAO, ACL, TOKEN, TOKEN_MANAGER, VAULT, FINANCE, VOTING
 
-test.before(async t => {
+test.before(async (t) => {
   // Identify accounts
   const web3 = await getLocalWeb3()
   const accounts = await web3.eth.getAccounts()
@@ -23,7 +23,7 @@ test.before(async t => {
   if (verbose) console.log(`ACCOUNT2`, ACCOUNT2)
 })
 
-test.serial('creates a dao', async t => {
+test.serial('creates a dao', async (t) => {
   const { stdout } = await runAragonCLI(['dao', 'new'], verbose)
   DAO = matchAddressAtLineContaining(stdout, 'Created DAO')
   if (verbose) console.log(`DAO`, DAO)
@@ -31,7 +31,7 @@ test.serial('creates a dao', async t => {
   t.pass()
 })
 
-test.serial('creates a token', async t => {
+test.serial('creates a token', async (t) => {
   const { stdout } = await runAragonCLI(
     ['dao', 'token', 'new', 'Member token', 'MBR', 0],
     verbose
@@ -45,7 +45,7 @@ test.serial('creates a token', async t => {
   t.pass()
 })
 
-test.serial('installs a token manager app', async t => {
+test.serial('installs a token manager app', async (t) => {
   const { stdout } = await runAragonCLI(
     ['dao', 'install', DAO, 'token-manager', '--app-init', 'none'],
     verbose
@@ -59,7 +59,7 @@ test.serial('installs a token manager app', async t => {
   t.pass()
 })
 
-test.serial('retrieves a list of apps', async t => {
+test.serial('retrieves a list of apps', async (t) => {
   const { stdout } = await runAragonCLI(['dao', 'apps', DAO, '--all'], verbose)
   ACL = matchAddressAtLineContaining(stdout, 'acl')
   if (verbose) console.log(`ACL`, ACL)
@@ -67,7 +67,7 @@ test.serial('retrieves a list of apps', async t => {
   t.pass()
 })
 
-test.serial('changes the token controller', async t => {
+test.serial('changes the token controller', async (t) => {
   await runAragonCLI(
     ['dao', 'token', 'change-controller', TOKEN, TOKEN_MANAGER],
     verbose
@@ -76,7 +76,7 @@ test.serial('changes the token controller', async t => {
   t.pass()
 })
 
-test.serial('gives the main account permission to mint', async t => {
+test.serial('gives the main account permission to mint', async (t) => {
   await runAragonCLI(
     [
       'dao',
@@ -94,7 +94,7 @@ test.serial('gives the main account permission to mint', async t => {
   t.pass()
 })
 
-test.serial('initializes the token manager', async t => {
+test.serial('initializes the token manager', async (t) => {
   await runAragonCLI(
     ['dao', 'exec', DAO, TOKEN_MANAGER, 'initialize', TOKEN, 'false', '1'],
     verbose
@@ -103,7 +103,7 @@ test.serial('initializes the token manager', async t => {
   t.pass()
 })
 
-test.serial('mints tokens', async t => {
+test.serial('mints tokens', async (t) => {
   await runAragonCLI(
     ['dao', 'exec', DAO, TOKEN_MANAGER, 'mint', ACCOUNT1, 1],
     verbose
@@ -116,7 +116,7 @@ test.serial('mints tokens', async t => {
   t.pass()
 })
 
-test.serial('installs the voting app', async t => {
+test.serial('installs the voting app', async (t) => {
   const { stdout } = await runAragonCLI(
     [
       'dao',
@@ -137,7 +137,7 @@ test.serial('installs the voting app', async t => {
   t.pass()
 })
 
-test.serial('sets the voting app permissions', async t => {
+test.serial('sets the voting app permissions', async (t) => {
   await runAragonCLI(
     [
       'dao',
@@ -176,7 +176,7 @@ test.serial('sets the voting app permissions', async t => {
   t.pass()
 })
 
-test.serial('installs the vault app', async t => {
+test.serial('installs the vault app', async (t) => {
   const { stdout } = await runAragonCLI(
     ['dao', 'install', DAO, 'vault'],
     verbose
@@ -187,7 +187,7 @@ test.serial('installs the vault app', async t => {
   t.pass()
 })
 
-test.serial('installs the finance app', async t => {
+test.serial('installs the finance app', async (t) => {
   const { stdout } = await runAragonCLI(
     ['dao', 'install', DAO, 'finance', '--app-init-args', VAULT, '2592000'],
     verbose
@@ -198,7 +198,7 @@ test.serial('installs the finance app', async t => {
   t.pass()
 })
 
-test.serial('sets vault app permissions', async t => {
+test.serial('sets vault app permissions', async (t) => {
   await runAragonCLI(
     ['dao', 'acl', 'create', DAO, VAULT, 'TRANSFER_ROLE', FINANCE, VOTING],
     verbose
@@ -207,7 +207,7 @@ test.serial('sets vault app permissions', async t => {
   t.pass()
 })
 
-test.serial('sets finance app permissions', async t => {
+test.serial('sets finance app permissions', async (t) => {
   await runAragonCLI(
     [
       'dao',
@@ -251,13 +251,13 @@ test.serial('sets finance app permissions', async t => {
   t.pass()
 })
 
-test.serial('prints acl permissions', async t => {
+test.serial('prints acl permissions', async (t) => {
   await runAragonCLI(['dao', 'acl', DAO], verbose)
 
   t.pass()
 })
 
-test.serial('cleans permissions', async t => {
+test.serial('cleans permissions', async (t) => {
   await runAragonCLI(
     ['dao', 'acl', 'set-manager', DAO, ACL, 'CREATE_PERMISSIONS_ROLE', VOTING],
     verbose

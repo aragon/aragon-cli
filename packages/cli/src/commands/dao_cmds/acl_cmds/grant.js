@@ -10,14 +10,14 @@ export const command = 'grant <dao> <app> <role> <entity> [params...]'
 export const describe =
   'Grant a permission in a DAO (only permission manager can do it)'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return daoArg(yargs).positional('params', {
     description: 'ACL parameters',
     default: [],
   })
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   dao,
   app,

@@ -5,8 +5,8 @@ import { stringifyTree } from 'stringify-tree'
 export function stringifyMerkleDAG(merkleDAG) {
   return stringifyTree(
     merkleDAG,
-    node => stringifyMerkleDAGNode(node),
-    node => node.links
+    (node) => stringifyMerkleDAGNode(node),
+    (node) => node.links
   )
 }
 

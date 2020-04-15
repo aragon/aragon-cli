@@ -13,7 +13,7 @@ import listrOpts from '../../helpers/listr-options'
 export const command = 'uninstall'
 export const describe = 'Uninstall the go-ipfs binaries.'
 
-export const builder = yargs =>
+export const builder = (yargs) =>
   yargs
     .option('local', {
       description: 'Whether to uninstall IPFS from the project dependencies',
@@ -31,7 +31,7 @@ const runUninstallTask = ({ silent, debug, local }) => {
     [
       {
         title: 'Uninstall IPFS',
-        task: async task => {
+        task: async (task) => {
           const npmBinary = getNodePackageManager()
           const npmArgs = ['uninstall', 'go-ipfs']
           if (!local) {
@@ -41,7 +41,7 @@ const runUninstallTask = ({ silent, debug, local }) => {
           const logPrefix = `npm ${npmArgs.join(' ')}:`
           const uninstallProcess = execa(npmBinary, npmArgs)
 
-          uninstallProcess.stdout.on('data', log => {
+          uninstallProcess.stdout.on('data', (log) => {
             if (log) task.output = `${logPrefix} ${log}`
           })
 
@@ -53,7 +53,7 @@ const runUninstallTask = ({ silent, debug, local }) => {
   ).run()
 }
 
-export const handler = async argv => {
+export const handler = async (argv) => {
   const { debug, silent, skipConfirmation, local, reporter } = argv
   /**
    * Check if it's installed

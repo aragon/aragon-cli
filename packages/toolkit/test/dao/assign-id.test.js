@@ -9,7 +9,7 @@ let daoAddress, daoId
 
 /* Setup and cleanup */
 
-test.before('setup and successful call', async t => {
+test.before('setup and successful call', async (t) => {
   web3 = await getLocalWeb3()
 
   daoAddress = (await web3.eth.getAccounts())[2]
@@ -24,21 +24,21 @@ test.before('setup and successful call', async t => {
 
 /* Tests */
 
-test('isIdAssigned returns false for an id that was not set', async t => {
+test('isIdAssigned returns false for an id that was not set', async (t) => {
   t.false(await isIdAssigned('unassigned', { web3, ensRegistry }))
 })
 
-test('isIdAssigned returns true for an id that was set', async t => {
+test('isIdAssigned returns true for an id that was set', async (t) => {
   t.true(await isIdAssigned(daoId, { web3, ensRegistry }))
 })
 
-test('assignId throws when tyring to re-assign the same address', async t => {
+test('assignId throws when tyring to re-assign the same address', async (t) => {
   await t.throwsAsync(assignId(daoAddress, daoId, { web3, ensRegistry }), {
     message: /VM Exception while processing transaction/,
   })
 })
 
-test('assignId throws when called with an invalid address', async t => {
+test('assignId throws when called with an invalid address', async (t) => {
   await t.throwsAsync(
     assignId('INVALID ADDRESS', 'id', { web3, ensRegistry }),
     { message: /Invalid address/ }

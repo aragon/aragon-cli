@@ -26,7 +26,7 @@ import daoArg from './utils/daoArg'
 export const command = 'install <dao> <apmRepo> [apmRepoVersion]'
 export const describe = 'Install an app into a DAO'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return daoArg(yargs)
     .option('apmRepo', {
       describe: 'Name of the aragonPM repo',
@@ -52,7 +52,7 @@ export const builder = function(yargs) {
     })
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   dao,
   gasPrice,
@@ -89,8 +89,8 @@ export const handler = async function({
       },
       {
         title: `Fetching ${bold(apmRepoName)}@${apmRepoVersion}`,
-        task: async ctx => {
-          const progressHandler = step => {
+        task: async (ctx) => {
+          const progressHandler = (step) => {
             switch (step) {
               case 1:
                 console.log(`Initialize aragonPM`)
@@ -127,7 +127,7 @@ export const handler = async function({
       },
       {
         title: 'Deploying app instance',
-        task: async ctx => {
+        task: async (ctx) => {
           const initPayload = encodeInitPayload(
             web3,
             ctx.repo.abi,
@@ -171,7 +171,7 @@ export const handler = async function({
       },
       {
         title: 'Set permissions',
-        enabled: ctx => setPermissions === 'open' && ctx.appAddress,
+        enabled: (ctx) => setPermissions === 'open' && ctx.appAddress,
         task: async (ctx, task) => {
           if (!ctx.repo.roles || ctx.repo.roles.length === 0) {
             throw new Error(
@@ -179,7 +179,7 @@ export const handler = async function({
             )
           }
 
-          const permissions = ctx.repo.roles.map(role => [
+          const permissions = ctx.repo.roles.map((role) => [
             ANY_ENTITY,
             ctx.appAddress,
             role.bytes,
@@ -193,7 +193,7 @@ export const handler = async function({
           const aclAddress = await getAclAddress(dao, web3)
 
           return Promise.all(
-            permissions.map(params => {
+            permissions.map((params) => {
               return (
                 execTask({
                   dao,
@@ -209,7 +209,7 @@ export const handler = async function({
                   debug,
                 })
                   // execTask returns a TaskList not a promise
-                  .then(tasks => tasks.run())
+                  .then((tasks) => tasks.run())
               )
             })
           )
@@ -219,7 +219,7 @@ export const handler = async function({
     listrOpts(silent, debug)
   )
 
-  return tasks.run().then(ctx => {
+  return tasks.run().then((ctx) => {
     reporter.newLine()
     reporter.info(
       `Successfully executed: "${blue(ctx.transactionPath.description)}"`

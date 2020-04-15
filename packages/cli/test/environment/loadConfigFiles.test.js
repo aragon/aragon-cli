@@ -9,7 +9,7 @@ import {
 const arappPath = 'arapp.json'
 const manifestPath = 'manifest.json'
 
-const tryUnlink = filepath => {
+const tryUnlink = (filepath) => {
   try {
     fs.unlinkSync(filepath)
   } catch (e) {}
@@ -20,12 +20,12 @@ test.after.always(() => {
   tryUnlink(manifestPath)
 })
 
-test('Return undefined if files are NOT found', t => {
+test('Return undefined if files are NOT found', (t) => {
   t.is(loadArappFile(), undefined)
   t.is(loadManifestFile(), undefined)
 })
 
-test('Return file contents if files are found', t => {
+test('Return file contents if files are found', (t) => {
   const arapp = {
     environments: {
       develop: {

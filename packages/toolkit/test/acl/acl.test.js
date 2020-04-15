@@ -17,14 +17,14 @@ const apm = {
   ipfs: ipfsConf,
 }
 
-test.beforeEach(async t => {
+test.beforeEach(async (t) => {
   t.context = {
     dao: await getNewDaoAddress(),
     web3: await getLocalWeb3(),
   }
 })
 
-test('Should get formated permissions for a new dao', async t => {
+test('Should get formated permissions for a new dao', async (t) => {
   // arrange
   const { web3, dao } = t.context
   // act
@@ -37,7 +37,7 @@ test('Should get formated permissions for a new dao', async t => {
   })
   // assert
   t.snapshot(
-    apps.map(app => app.appName),
+    apps.map((app) => app.appName),
     'Should return the correct apps'
   )
   // t.snapshot(

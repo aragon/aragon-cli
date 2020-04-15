@@ -6,7 +6,7 @@ import { withTimeout, noop } from './misc'
 
 export const defaultKillSignal = 'SIGINT'
 
-export const getProcessTree = subprocess => promisify(psTree)(subprocess.pid)
+export const getProcessTree = (subprocess) => promisify(psTree)(subprocess.pid)
 
 export const killProcessTree = async (subprocess, { logger = noop }) => {
   const { children } = await getProcessTree(subprocess)
@@ -15,20 +15,20 @@ export const killProcessTree = async (subprocess, { logger = noop }) => {
     return
   }
 
-  children.forEach(child => {
+  children.forEach((child) => {
     // each child has the properties: COMMAND, PPID, PID, STAT
     logger(`killing process with PID ${child.pid}, child of ${subprocess.pid}`)
     process.kill(child.PID, defaultKillSignal)
   })
 }
 
-export const attachProcess = subprocess => {
+export const attachProcess = (subprocess) => {
   subprocess.stdout.pipe(process.stdout)
   subprocess.stderr.pipe(process.stderr)
   process.stdin.pipe(subprocess.stdin)
 }
 
-export const detachProcess = subprocess => {
+export const detachProcess = (subprocess) => {
   subprocess.stderr.destroy()
   subprocess.stdout.destroy()
   subprocess.stdin.destroy()
@@ -49,13 +49,13 @@ export const startProcess = async ({
     const subprocess = execa(cmd, args, execaOpts)
     logger('spawned subprocess with PID: ', subprocess.pid)
 
-    subprocess.stderr.on('data', data => {
+    subprocess.stderr.on('data', (data) => {
       data = data.toString()
       logger(`stderr: ${data}`)
       if (!data.includes('DeprecationWarning')) reject(new Error(data))
     })
 
-    subprocess.stdout.on('data', data => {
+    subprocess.stdout.on('data', (data) => {
       data = data.toString()
       logger(`stdout: ${data}`)
       // build the output log (to be able to err out if the time is up)

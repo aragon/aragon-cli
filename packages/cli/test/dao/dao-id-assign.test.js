@@ -5,7 +5,7 @@ import parseCli from '../parseCli'
 
 const daoAddressRegex = /Created DAO: (.*)$/
 
-test('assigns an Aragon Id to a DAO address', async t => {
+test('assigns an Aragon Id to a DAO address', async (t) => {
   const { stdout: daoNewStdout } = await runAragonCLI(['dao', 'new', '--debug'])
   const daoAddress = daoNewStdout.match(daoAddressRegex)[1]
 

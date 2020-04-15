@@ -4,7 +4,7 @@ import { ERROR_ICON, WARNING_ICON } from './ReporterIcons'
 
 export * from './ReporterIcons'
 
-export const configure = yargs =>
+export const configure = (yargs) =>
   yargs
     .option('silent', {
       boolean: true,
@@ -21,7 +21,7 @@ export const configure = yargs =>
     .group(['debug', 'silent'], 'Global options:')
     .middleware([middleware])
 
-export const middleware = argv => {
+export const middleware = (argv) => {
   const { silent, debug } = argv
   const reporter = new ConsoleReporter({ silent, debug })
   return { reporter }

@@ -2,7 +2,7 @@ import test from 'ava'
 //
 import { getAppProxyAddressFromReceipt } from '../../src/kernel/kernel'
 
-test('getAppProxyAddressFromReceipt', t => {
+test('getAppProxyAddressFromReceipt', (t) => {
   /**
    * Sample receipt got from a console.log() in
    *

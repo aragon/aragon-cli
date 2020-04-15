@@ -67,7 +67,7 @@ export const ensureLocalDaemon = async ({
   }
 }
 
-export const getHttpClient = async address => {
+export const getHttpClient = async (address) => {
   // try {
   return connectOrThrow(address)
   // } catch (err) {
@@ -116,6 +116,6 @@ export function parseAddressAsURL(address) {
 
 // https://github.com/ipfs/npm-go-ipfs/blob/master/link-ipfs.js#L8
 // https://github.com/ipfs/npm-go-ipfs#publish-a-new-version-of-this-module-with-exact-same-go-ipfs-version
-export const cleanVersion = version => version.replace(/-hacky[0-9]+/, '')
+export const cleanVersion = (version) => version.replace(/-hacky[0-9]+/, '')
 export const getDistName = (version, os, arch) =>
   `go-ipfs_v${version}_${os}-${arch}.tar.gz`

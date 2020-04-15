@@ -7,7 +7,7 @@ const TMP_DIR = '.tmp/node/os'
 const LOCAL_PATH = `${TMP_DIR}/local`
 const PARENT_PATH = `${TMP_DIR}/parent`
 
-test.before(t => {
+test.before((t) => {
   fs.mkdirpSync(`${LOCAL_PATH}/node_modules/.bin`)
   fs.writeFileSync(`${LOCAL_PATH}/node_modules/.bin/truffle`, '')
 
@@ -25,13 +25,13 @@ test.after.always(() => {
   fs.remove(TMP_DIR)
 })
 
-test('getLocalBinary should find the binary path from the local node_modules', t => {
+test('getLocalBinary should find the binary path from the local node_modules', (t) => {
   const binaryPath = getLocalBinary('truffle', LOCAL_PATH)
 
   t.is(normalizePath(binaryPath), `${LOCAL_PATH}/node_modules/.bin/truffle`)
 })
 
-test('getLocalBinary should find the binary path from the parent node_modules', t => {
+test('getLocalBinary should find the binary path from the parent node_modules', (t) => {
   const binaryPath = getLocalBinary(
     'truffle',
     `${PARENT_PATH}/node_modules/package`
@@ -40,7 +40,7 @@ test('getLocalBinary should find the binary path from the parent node_modules', 
   t.is(normalizePath(binaryPath), `${PARENT_PATH}/node_modules/.bin/truffle`)
 })
 
-test("getLocalBinary should find the binary path from the parent node_modules even when it's scoped", t => {
+test("getLocalBinary should find the binary path from the parent node_modules even when it's scoped", (t) => {
   const binaryPath = getLocalBinary(
     'truffle',
     `${PARENT_PATH}/node_modules/@scope/package`
@@ -49,7 +49,7 @@ test("getLocalBinary should find the binary path from the parent node_modules ev
   t.is(normalizePath(binaryPath), `${PARENT_PATH}/node_modules/.bin/truffle`)
 })
 
-test('getBinary should find the binary path', t => {
+test('getBinary should find the binary path', (t) => {
   const binaryPath = getBinary(
     'truffle',
     `${PARENT_PATH}/node_modules/@scope/package`
@@ -58,7 +58,7 @@ test('getBinary should find the binary path', t => {
   t.is(normalizePath(binaryPath), `${PARENT_PATH}/node_modules/.bin/truffle`)
 })
 
-test('getBinary should return null on invalid path', t => {
+test('getBinary should return null on invalid path', (t) => {
   const binaryPath = getBinary(
     'invalid-binary',
     `${PARENT_PATH}/node_modules/@scope/package`

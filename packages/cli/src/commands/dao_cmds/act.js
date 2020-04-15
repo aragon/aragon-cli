@@ -13,7 +13,7 @@ import { parseArgumentStringIfPossible } from '../../util'
 export const command = 'act <agent-address> <target> [signature] [call-args..]'
 export const describe = 'Executes an action from the Agent app'
 
-export const builder = function(yargs) {
+export const builder = function (yargs) {
   return yargs
     .positional('agent-address', {
       description: 'Address of the Agent app proxy',
@@ -45,7 +45,7 @@ export const builder = function(yargs) {
     })
 }
 
-export const handler = async function({
+export const handler = async function ({
   reporter,
   apm,
   network,

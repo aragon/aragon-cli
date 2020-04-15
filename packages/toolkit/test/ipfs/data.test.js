@@ -8,7 +8,7 @@ import {
 const ipfsGateway = 'http://localhost:8080'
 const readmeDirCid = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'
 
-test('Get IPFS readme merkle DAG and CIDs', async t => {
+test('Get IPFS readme merkle DAG and CIDs', async (t) => {
   const ipfsReader = await getHttpClient(ipfsGateway)
 
   const merkleDag = await getMerkleDAG(ipfsReader, readmeDirCid)
@@ -18,7 +18,7 @@ test('Get IPFS readme merkle DAG and CIDs', async t => {
   t.snapshot(cids, 'IPFS readme CID list')
 })
 
-test('Get IPFS readme merkle DAG recursively', async t => {
+test('Get IPFS readme merkle DAG recursively', async (t) => {
   const ipfsReader = await getHttpClient(ipfsGateway)
 
   const merkleDag = await getMerkleDAG(ipfsReader, readmeDirCid, {
