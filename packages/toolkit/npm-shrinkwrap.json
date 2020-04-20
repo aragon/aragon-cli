@@ -43,6 +43,16 @@
         "truffle-hdwallet-provider-privkey": "0.3.0"
       }
     },
+    "@aragon/rpc-messenger": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/@aragon/rpc-messenger/-/rpc-messenger-2.0.0.tgz",
+      "integrity": "sha512-voJVVgI97MIeUQUTjHOH9GLzMjCvJlp6L2MEsj3nGKgj01VkFVZR7AlooDqqNytAnVnLvJmERtuZ2oXE33UtCg==",
+      "requires": {
+        "@babel/runtime": "^7.1.2",
+        "rxjs": "^6.5.2",
+        "uuid": "^3.2.1"
+      }
+    },
     "@aragon/test-helpers": {
       "version": "2.1.0",
       "resolved": "https://registry.npmjs.org/@aragon/test-helpers/-/test-helpers-2.1.0.tgz",
@@ -50,9 +60,9 @@
       "dev": true
     },
     "@aragon/wrapper": {
-      "version": "5.0.0-rc.23",
-      "resolved": "https://registry.npmjs.org/@aragon/wrapper/-/wrapper-5.0.0-rc.23.tgz",
-      "integrity": "sha512-xnhc7d41iTZzZubLAweg+Q5DkiLBy/ZphDbCuRgtO2iX43e31nuvv/BkouqXvRV5wNPAT7J7xy7uAIj9POyzgw==",
+      "version": "5.0.0-rc.26",
+      "resolved": "https://registry.npmjs.org/@aragon/wrapper/-/wrapper-5.0.0-rc.26.tgz",
+      "integrity": "sha512-iCHH5OD7niGx5gDQWiGymZvVtO51YEdSvxMca8vkn9Vlx+k+kplbA/6UjSisADS1Cpgmym5ZIzxP3iOH0tJxuw==",
       "requires": {
         "@aragon/os": "^4.2.1",
         "@aragon/rpc-messenger": "^2.0.0",
@@ -61,7 +71,6 @@
         "dot-prop": "^4.2.0",
         "eth-ens-namehash": "^2.0.8",
         "ethjs-ens": "^2.0.1",
-        "js-sha3": "^0.8.0",
         "localforage": "^1.7.3",
         "localforage-memoryStorageDriver": "^0.9.2",
         "radspec": "^1.5.0",
@@ -71,16 +80,6 @@
         "web3-utils": "^1.2.1"
       },
       "dependencies": {
-        "@aragon/rpc-messenger": {
-          "version": "2.0.0",
-          "resolved": "https://registry.npmjs.org/@aragon/rpc-messenger/-/rpc-messenger-2.0.0.tgz",
-          "integrity": "sha512-voJVVgI97MIeUQUTjHOH9GLzMjCvJlp6L2MEsj3nGKgj01VkFVZR7AlooDqqNytAnVnLvJmERtuZ2oXE33UtCg==",
-          "requires": {
-            "@babel/runtime": "^7.1.2",
-            "rxjs": "^6.5.2",
-            "uuid": "^3.2.1"
-          }
-        },
         "axios": {
           "version": "0.19.2",
           "resolved": "https://registry.npmjs.org/axios/-/axios-0.19.2.tgz",
@@ -88,11 +87,6 @@
           "requires": {
             "follow-redirects": "1.5.10"
           }
-        },
-        "js-sha3": {
-          "version": "0.8.0",
-          "resolved": "https://registry.npmjs.org/js-sha3/-/js-sha3-0.8.0.tgz",
-          "integrity": "sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q=="
         }
       }
     },
@@ -961,11 +955,11 @@
       }
     },
     "@babel/runtime": {
-      "version": "7.7.6",
-      "resolved": "https://registry.npmjs.org/@babel/runtime/-/runtime-7.7.6.tgz",
-      "integrity": "sha512-BWAJxpNVa0QlE5gZdWjSxXtemZyZ9RmrmVozxt3NUXeZhVIJ5ANyqmMc0JDrivBZyxUuQvFxlvH4OWWOogGfUw==",
+      "version": "7.9.2",
+      "resolved": "https://registry.npmjs.org/@babel/runtime/-/runtime-7.9.2.tgz",
+      "integrity": "sha512-NE2DtOdufG7R5vnfQUTehdTfNycfUANEtCa9PssN9O/xmTzP4E08UI797ixaei6hBEVL9BI/PsdJS5x7mWoB9Q==",
       "requires": {
-        "regenerator-runtime": "^0.13.2"
+        "regenerator-runtime": "^0.13.4"
       }
     },
     "@babel/template": {
@@ -12283,9 +12277,9 @@
       "dev": true
     },
     "radspec": {
-      "version": "1.6.1",
-      "resolved": "https://registry.npmjs.org/radspec/-/radspec-1.6.1.tgz",
-      "integrity": "sha512-+gX0viNZfM0BDBrKkiUy+1YI+GDnqkISJiP/qgjmguRF4BluJHFtGsqpojmg0DPci0BT4wpJALBLGsHDt6IG5Q==",
+      "version": "1.6.4",
+      "resolved": "https://registry.npmjs.org/radspec/-/radspec-1.6.4.tgz",
+      "integrity": "sha512-B5WtD/UqPCEBTAl21M54FAX5GHTAS4IWsjGzGRRvqqbBBRptacgij+bh0NSgsFBJ03Eww1G/jHgWUv+hWQyuRA==",
       "requires": {
         "@babel/runtime": "^7.1.2",
         "bn.js": "^4.11.8",
@@ -12526,9 +12520,9 @@
       }
     },
     "regenerator-runtime": {
-      "version": "0.13.3",
-      "resolved": "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.13.3.tgz",
-      "integrity": "sha512-naKIZz2GQ8JWh///G7L3X6LaQUAMp2lvb1rvwwsURe/VXwD6VMfr+/1NuNw3ag8v2kY1aQ/go5SNn79O9JU7yw=="
+      "version": "0.13.5",
+      "resolved": "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.13.5.tgz",
+      "integrity": "sha512-ZS5w8CpKFinUzOwW3c83oPeVXoNsrLsaCoLtJvAClH135j/R77RuymhiSErhm2lKcwSCIpmvIWSbDkIfAqKQlA=="
     },
     "regenerator-transform": {
       "version": "0.14.1",
