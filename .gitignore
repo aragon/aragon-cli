@@ -22,5 +22,3 @@ lerna-debug.log
 # Extra
 packages/cli/src/knownRoles.json
 
-## Lockfiles that are not shrinkwraps
-package-lock.json
