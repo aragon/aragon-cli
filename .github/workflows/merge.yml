@@ -25,20 +25,20 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v1
-      - name: Setup Node.js v${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Install dependencies
-        run: npm install
-      - name: Build
-        run: npm run build
-      - name: Lint
-        run: npm run lint
-      - name: Setup tests
-        run: npm run pretest
-      - name: Test
-        run: npm run test:coverage
-      - name: Cleanup tests
-        run: npm run posttest
+    - uses: actions/checkout@v1
+    - name: Setup Node.js v${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install dependencies
+      run: npm install
+    - name: Build
+      run: npm run build
+    - name: Lint
+      run: npm run lint
+    - name: Setup tests
+      run: npm run pretest
+    - name: Test
+      run: npm run test:coverage
+    - name: Cleanup tests
+      run: npm run posttest
