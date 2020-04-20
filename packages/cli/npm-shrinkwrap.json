@@ -57405,28 +57405,13 @@
       }
     },
     "public-ip": {
-      "version": "3.2.0",
-      "resolved": "https://registry.npmjs.org/public-ip/-/public-ip-3.2.0.tgz",
-      "integrity": "sha512-DBq4o955zhrhESG4z6GkLN9mtY9NT/JOjEV8pvnYy3bjVQOQF0J5lJNwWLbEWwNstyNFJlY7JxCPFq4bdXSabw==",
+      "version": "4.0.1",
+      "resolved": "https://registry.npmjs.org/public-ip/-/public-ip-4.0.1.tgz",
+      "integrity": "sha512-uy7G5RtP7MH9KILMX6cschB9aOxxRwFo0zv7Lf+ZXIw5IrH4EfdKQfACIwUEFilEHtkgJ9lpRfggwi1GVzN2vw==",
       "requires": {
         "dns-socket": "^4.2.0",
         "got": "^9.6.0",
         "is-ip": "^3.1.0"
-      },
-      "dependencies": {
-        "ip-regex": {
-          "version": "4.1.0",
-          "resolved": "https://registry.npmjs.org/ip-regex/-/ip-regex-4.1.0.tgz",
-          "integrity": "sha512-pKnZpbgCTfH/1NLIlOduP/V+WRXzC2MOz3Qo8xmxk8C5GudJLgK5QyLVXOSWy3ParAH7Eemurl3xjv/WXYFvMA=="
-        },
-        "is-ip": {
-          "version": "3.1.0",
-          "resolved": "https://registry.npmjs.org/is-ip/-/is-ip-3.1.0.tgz",
-          "integrity": "sha512-35vd5necO7IitFPjd/YBeqwWnyDWbuLH9ZXQdMfDA8TEo7pv5X8yfrvVO3xbJbLUlERCMvf6X0hTUamQxCYJ9Q==",
-          "requires": {
-            "ip-regex": "^4.0.0"
-          }
-        }
       }
     },
     "pull-defer": {
