@@ -16,12 +16,21 @@ import { bareTemplateAbi } from '../contractAbis'
  */
 export async function newDao(
   templateName = 'bare-template',
-  newInstanceArgs: string[] = [],
-  newInstanceMethod = 'newInstance',
-  deployEvent = 'DeployDao',
-  templateVersion = 'latest',
-  environment: string,
-  templateInstance: any // TODO: optional object options
+  {
+    environment = 'local',
+    newInstanceArgs = [],
+    newInstanceMethod = 'newInstance',
+    deployEvent = 'DeployDao',
+    templateVersion = 'latest',
+    templateInstance,
+  }: {
+    environment: string
+    newInstanceArgs?: string[]
+    newInstanceMethod?: string
+    deployEvent?: string
+    templateVersion?: string
+    templateInstance?: any
+  }
 ): Promise<string> {
   const { web3, gasPrice } = useEnvironment(environment)
 
@@ -45,10 +54,14 @@ export async function newDao(
 
   const newInstanceTx = template.methods[newInstanceMethod](...newInstanceArgs)
 
-  const estimatedGas = 7543829 // await newInstanceTx.estimateGas()
+  const accounts = await web3.eth.getAccounts()
+  const wallet = await web3.eth.accounts.wallet
+
+  const estimatedGas = await newInstanceTx.estimateGas()
+  const gas = await getRecommendedGasLimit(web3, estimatedGas)
   const { events } = await newInstanceTx.send({
-    from: (await web3.eth.getAccounts())[0],
-    gas: await getRecommendedGasLimit(web3, estimatedGas),
+    from: accounts[0] || wallet[0].address,
+    gas,
     gasPrice,
   })
 

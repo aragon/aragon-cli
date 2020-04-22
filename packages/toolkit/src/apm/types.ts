@@ -9,12 +9,6 @@ export interface AragonJsIntent {
   targetContract: string
 }
 
-interface ApmRepoVersion {
-  version: string
-  contract: string
-  contentHash: string
-}
-
 /**
  * Parsed APM version info
  */

@@ -1,5 +1,3 @@
-import Web3 from 'web3'
-
 const DEFAULT_GAS_FUZZ_FACTOR = 1.5
 const LAST_BLOCK_GAS_LIMIT_FACTOR = 0.95
 
@@ -13,11 +11,11 @@ const LAST_BLOCK_GAS_LIMIT_FACTOR = 0.95
  * @returns gasLimit
  */
 export async function getRecommendedGasLimit(
-  web3: Web3,
+  ethereum: any,
   estimatedGas: number,
   gasFuzzFactor: number = DEFAULT_GAS_FUZZ_FACTOR
 ): Promise<number> {
-  const latestBlock = await web3.eth.getBlock('latest')
+  const latestBlock = await ethereum.eth.getBlock('latest')
   const blockGasLimit = latestBlock.gasLimit
 
   const upperGasLimit = Math.round(blockGasLimit * LAST_BLOCK_GAS_LIMIT_FACTOR)

@@ -2,8 +2,8 @@ import Web3 from 'web3'
 import url from 'url'
 import { ethers } from 'ethers'
 //
-import { defaultEnvironments, defaultNetworks } from '../config'
-import { loadArappFile, getTruffleConfig } from './loadConfigFiles'
+import { readAragonConfig } from '../utils/fsUtils'
+import { defaultEnvironments } from '../config'
 import {
   DEFAULT_GAS_PRICE,
   FRAME_ENDPOINT,
@@ -15,32 +15,18 @@ import {
   IPFS_ARAGON_GATEWAY,
   DEVCHAIN_ENS,
 } from './constants'
-import { AragonAppJson, AragonEnvironment } from '../types'
-import { WebsocketProvider, HttpProvider } from 'web3-core'
+import { AragonEnvironment } from '../types'
+import { WebsocketProvider } from 'web3-core'
+import { isHexStrict } from 'web3-utils'
 
-export class NoEnvironmentInArapp extends Error {}
 export class NoEnvironmentInDefaults extends Error {}
 export class NoNetworkInTruffleConfig extends Error {}
 
-const frameHeaders: { [key: string]: string } = { origin: FRAME_ORIGIN }
-
-function getEnvironment(
-  envName: string,
-  arapp?: AragonAppJson
-): AragonEnvironment {
-  if (arapp) {
-    if (!envName) envName = 'default'
-    const environment = arapp.environments[envName]
-    if (!environment) throw new NoEnvironmentInArapp(envName)
-    return environment
-  } else {
-    // if there is no arapp.json and the command is not init default to the "global" config
-    // designed for the dao commands including dao acl
-    if (!envName) envName = 'local'
-    const environment = defaultEnvironments[envName]
-    if (!environment) throw new NoEnvironmentInDefaults(envName)
-    return environment
-  }
+function getEnvironment(envName: string): AragonEnvironment {
+  if (!envName) envName = 'local'
+  const environment = defaultEnvironments[envName]
+  if (!environment) throw new NoEnvironmentInDefaults(envName)
+  return environment
 }
 
 interface ApmOptions {
@@ -92,13 +78,9 @@ function configureApm(
 
 function configureProvider(
   network: string,
-  truffleNetwork: {
-    provider: any
-    host: string
-    port: number
-  },
-  useFrame: boolean
-): any | WebsocketProvider | HttpProvider {
+  useFrame: boolean,
+  providerUrl?: string
+): any | WebsocketProvider {
   if (useFrame) {
     return new Web3.providers.WebsocketProvider(
       FRAME_ENDPOINT,
@@ -106,101 +88,107 @@ function configureProvider(
     )
   }
 
-  if (!truffleNetwork) {
-    throw new NoNetworkInTruffleConfig(network)
-  }
-
-  const { provider, host, port } = truffleNetwork
-
-  if (provider) {
-    if (typeof provider === 'function') return provider()
-    else return provider
-  } else if (host && port) {
-    return new Web3.providers.WebsocketProvider(`ws://${host}:${port}`)
+  if (network === 'rpc') {
+    return new Web3.providers.WebsocketProvider('http://localhost:8545')
   } else {
-    return new Web3.providers.HttpProvider('http://localhost:8545')
+    return providerUrl
+      ? new Web3.providers.WebsocketProvider(providerUrl)
+      : undefined
   }
 }
 
 function configureEthersProvider({
-  host,
-  port,
-  useFrame,
+  network,
+  currentProvider,
   ensAddress,
 }: {
-  host: string
-  port: number
-  useFrame: boolean
-  ensAddress?: string
+  network: string
+  ensAddress: string
+  currentProvider: any | WebsocketProvider
 }): ethers.providers.Provider {
-  const connectionOptions = {
-    url: useFrame
-      ? FRAME_ENDPOINT
-      : host && port
-      ? `http://${host}:${port}`
-      : 'http://localhost:8545',
-    headers: useFrame ? frameHeaders : undefined,
-  }
   const networkOptions = ensAddress
-    ? { name: '', chainId: 0, ensAddress }
+    ? { name: network, chainId: 0, ensAddress }
     : undefined
-  return new ethers.providers.JsonRpcProvider(connectionOptions, networkOptions)
+  return new ethers.providers.Web3Provider(currentProvider, networkOptions)
+}
+
+interface GenericMnemonic {
+  mnemonic: string
+}
+interface ByNetworkMnemonic {
+  rpc?: string
+  keys?: string[] // privateKeys = [ "3f841bf589fdf83a521e55d51afddc34fa65351161eead24f064855fc29c9580" ];
+}
+
+function setAccounts(web3: Web3, networkName: string) {
+  // TODO: Add way to support keystore with decrypt of passwork
+
+  // Standard Aragon key paths
+  const genericName = 'mnemonic.json'
+  const byNetworkName = (network: string): string => `${network}_key.json`
+
+  /**
+   * Utility to ensure and array of strings has hex encoding
+   * @param keys ['34b...456', '0x456...3e2']
+   */
+  const ensureHexEncoding = (keys: string[]): string[] =>
+    keys.map(key => (isHexStrict(key) ? key : `0x${key}`))
+
+  const genericMnemonic = readAragonConfig<GenericMnemonic>(genericName)
+  const byNetwork = readAragonConfig<ByNetworkMnemonic>(
+    byNetworkName(networkName)
+  )
+
+  if (byNetwork && byNetwork.keys) {
+    const keys = ensureHexEncoding(byNetwork.keys)
+    keys.forEach(key => {
+      const wallet = web3.eth.accounts.privateKeyToAccount(key)
+      web3.eth.accounts.wallet.add(wallet)
+    })
+  } else if (genericMnemonic) {
+    const wallet = ethers.Wallet.fromMnemonic(genericMnemonic.mnemonic)
+    web3.eth.accounts.wallet.add(wallet)
+  }
 }
 
 // TODO: Fetch api
 // const configureGasPrice = () => {}
 
-// let previousEnvironment
-// TODO: Add config environment function
-
 interface UseEnvironment extends AragonEnvironment {
   apmOptions: ApmOptions
   web3: Web3
-  wsProvider?: WebsocketProvider
   gasPrice: string
   provider: ethers.providers.Provider
 }
 
+let web3: Web3
+
 export function useEnvironment(env: string): UseEnvironment {
-  // try {
+  // TODO: Add config object
 
   // Parse environment
   const useFrame = RegExp(/frame:(.*)/).test(env)
   env = useFrame ? env.split(/:(.+)/)[1] || env : env
 
-  // Load config files
-  const arapp = loadArappFile()
-  const { networks: truffleNetworks } = arapp
-    ? getTruffleConfig()
-    : defaultNetworks
+  const environment = getEnvironment(env)
 
-  // default environment (no arapp.json) uses different naming
-  const environment = getEnvironment(env, arapp)
+  const { network, registry, gasPrice } = environment
 
-  const { wsRPC, /* apm, */ network, registry, gasPrice } = environment
-
-  const wsProviderUrl =
-    wsRPC ||
-    (network === 'rinkeby'
+  const providerUrl =
+    network === 'rinkeby'
       ? ARAGON_RINKEBY_ENDPOINT
       : network === 'mainnet'
       ? ARAGON_MAINNET_ENDPOINT
-      : null)
+      : undefined
 
-  // NOTE: environment.apm does NOT exist
-  // const ipfsAragonGateway =
-  //   apm && apm.ipfs.gateway // TODO: Refactor apm object
-  //     ? apm.ipfs.gateway
-  //     : network === 'rpc'
-  //     ? IPFS_LOCAL_GATEWAY
-  //     : IPFS_ARAGON_GATEWAY
   const ipfsAragonGateway =
     network === 'rpc' ? IPFS_LOCAL_GATEWAY : IPFS_ARAGON_GATEWAY
+
   const ensAddress = registry || DEVCHAIN_ENS
 
-  const truffleNetwork = truffleNetworks[network]
-  if (!useFrame && !truffleNetwork) {
-    throw new NoNetworkInTruffleConfig(network)
+  if (!web3) {
+    web3 = new Web3(configureProvider(network, useFrame, providerUrl))
+    setAccounts(web3, network)
   }
 
   return {
@@ -211,17 +199,12 @@ export function useEnvironment(env: string): UseEnvironment {
       ensAddress
     ),
     // Todo: Consolidate provider initialization
-    web3: new Web3(configureProvider(network, truffleNetwork, useFrame)),
+    web3,
     provider: configureEthersProvider({
-      host: truffleNetwork.host,
-      port: truffleNetwork.port,
-      useFrame,
+      network,
+      currentProvider: web3.currentProvider,
       ensAddress,
     }),
-    wsProvider: wsProviderUrl
-      ? new Web3.providers.WebsocketProvider(wsProviderUrl)
-      : undefined,
-    gasPrice:
-      gasPrice || truffleNetworks[network].gasPrice || DEFAULT_GAS_PRICE,
+    gasPrice: gasPrice || DEFAULT_GAS_PRICE,
   }
 }

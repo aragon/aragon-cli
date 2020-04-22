@@ -26,10 +26,12 @@ export async function initWrapper(
     onPermissions?: (permissions: any) => void
   }
 ): Promise<any> {
-  const { wsProvider, web3, apmOptions, gasPrice } = useEnvironment(environment)
+  const { web3, apmOptions, gasPrice } = useEnvironment(environment)
 
-  const accounts =
-    (options && options.accounts) || (await web3.eth.getAccounts())
+  const wallet = await web3.eth.accounts.wallet
+  const from = wallet[0] && wallet[0].address
+
+  const accounts = (options && options.accounts) || [from]
 
   const daoAddress = await resolveDaoAddressOrEnsDomain(dao, environment)
 
@@ -44,13 +46,15 @@ export async function initWrapper(
 
   // TODO: don't reinitialize if cached
   const wrapper = new AragonWrapper(daoAddress, {
-    provider: wsProvider || web3.currentProvider,
+    provider: web3.currentProvider,
     defaultGasPriceFn: (): string => gasPrice,
     apm: apmOptions,
   })
 
   try {
-    await wrapper.init({ accounts: { providedAccounts: accounts } })
+    await wrapper.init({
+      accounts: { fetchFromWeb3: true, providedAccounts: accounts },
+    })
   } catch (err) {
     if (err.message === 'connection not open') {
       throw new Error('The wrapper cannot be initialized without a connection')

@@ -1,3 +1,4 @@
+import { ethers } from 'ethers'
 import { useEnvironment } from '../../helpers/useEnvironment'
 import { kernelAbi } from '../../contractAbis'
 
@@ -12,9 +13,10 @@ export async function getBasesNamespace(
   dao: string,
   environment: string
 ): Promise<string> {
-  const { web3 } = useEnvironment(environment)
+  const { provider } = useEnvironment(environment)
 
-  const kernel = new web3.eth.Contract(kernelAbi, dao)
+  const kernel = new ethers.Contract(dao, kernelAbi, provider)
+
   return kernel.methods.APP_BASES_NAMESPACE().call()
 }
 
@@ -31,9 +33,10 @@ export async function getAppBase(
   appId: string,
   environment: string
 ): Promise<string> {
-  const { web3 } = useEnvironment(environment)
+  const { provider } = useEnvironment(environment)
 
-  const kernel = new web3.eth.Contract(kernelAbi, dao)
+  const kernel = new ethers.Contract(dao, kernelAbi, provider)
+
   const basesNamespace = await getBasesNamespace(dao, environment)
   return kernel.methods.getApp(basesNamespace, appId).call()
 }

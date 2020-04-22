@@ -1,4 +1,4 @@
-import { takeWhile, map, filter, first, defaultIfEmpty } from 'rxjs/operators'
+import { filter, first } from 'rxjs/operators'
 //
 import { initWrapper } from '../utils/wrapper'
 import { addressesEqual } from '../../utils/addresses'
@@ -29,20 +29,19 @@ export async function getTransactionPath(
   const wrapper = await initWrapper(dao, environment)
 
   // Wait for app info to load
-  const app = await wrapper.apps
+  const apps = await wrapper.apps
     .pipe(
       // If the app list contains a single app, wait for more
-      takeWhile((apps: AragonApp[]) => apps.length <= 1, true),
-      map((apps: AragonApp[]) =>
-        apps.find(app => addressesEqual(appAddress, app.proxyAddress))
-      ),
-      filter((app: AragonApp | undefined) => Boolean(app)),
-      defaultIfEmpty(null), // If app is not found, default to null
+      filter((apps: AragonApp[]) => apps.length > 1),
       first()
     )
     .toPromise()
 
-  if (!app) throw new Error(`Can't find app ${appAddress}.`)
+  if (
+    !apps.some((app: AragonApp) => addressesEqual(appAddress, app.proxyAddress))
+  ) {
+    throw new Error(`Can't find app ${appAddress}.`)
+  }
 
   // If app is the ACL, call getACLTransactionPath
   return appAddress === wrapper.aclProxy.address

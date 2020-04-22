@@ -1,3 +1,4 @@
+import { ethers } from 'ethers'
 import { useEnvironment } from '../../helpers/useEnvironment'
 import { aragonAppAbi } from '../../contractAbis'
 
@@ -14,9 +15,9 @@ export async function getKernelAddress(
   appAddress: string,
   environment: string
 ): Promise<string> {
-  const { web3 } = useEnvironment(environment)
+  const { provider } = useEnvironment(environment)
 
-  const app = new web3.eth.Contract(aragonAppAbi, appAddress)
+  const app = new ethers.Contract(appAddress, aragonAppAbi, provider)
   const kernel = await app.methods.kernel().call()
 
   if (kernel === ZERO_ADDRESS)

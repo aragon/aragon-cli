@@ -1,3 +1,4 @@
+import { ethers } from 'ethers'
 import { useEnvironment } from '../../helpers/useEnvironment'
 import { kernelAbi } from '../../contractAbis'
 
@@ -12,8 +13,9 @@ export async function getAclAddress(
   dao: string,
   environment: string
 ): Promise<string> {
-  const { web3 } = useEnvironment(environment)
+  const { provider } = useEnvironment(environment)
 
-  const daoInstance = new web3.eth.Contract(kernelAbi, dao)
-  return daoInstance.methods.acl().call()
+  const kernel = new ethers.Contract(dao, kernelAbi, provider)
+
+  return kernel.methods.acl().call()
 }
