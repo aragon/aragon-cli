@@ -20,9 +20,8 @@ test.serial(
 
     // Create a membership DAO.
     console.log(`Creating DAO...`)
-    const daoAddress = await newDao(
-      'membership-template',
-      [
+    const daoAddress = await newDao('membership-template', {
+      newInstanceArgs: [
         'Token name',
         'TKN',
         'daoname' + Math.floor(Math.random() * 1000000),
@@ -31,8 +30,8 @@ test.serial(
         '1296000',
         true,
       ],
-      'newTokenAndInstance'
-    )
+      newInstanceMethod: 'newTokenAndInstance',
+    })
     console.log(`Created DAO: ${daoAddress}`)
 
     // Retrieve Voting app.

@@ -2,7 +2,7 @@ import test from 'ava'
 //
 import { newDao } from '../../src/dao/newDao'
 import { getInstalledApps } from '../../src/dao/kernel/getApps'
-import { getDefaultApmName } from '../../src/utils/defaultApm'
+import { getDefaultApmName } from '../../src/apm/utils'
 import { getTransactionPath } from '../../src/dao/acl/getTransactionPath'
 
 let dao

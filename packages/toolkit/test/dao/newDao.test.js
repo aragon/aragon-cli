@@ -2,7 +2,7 @@ import test from 'ava'
 import { isAddress } from 'web3-utils'
 //
 import { newDao } from '../../src/dao/newDao'
-import { getDefaultApmName } from '../../src/utils/defaultApm'
+import { getDefaultApmName } from '../../src/apm/utils'
 
 test('Deploys DAO with valid template', async t => {
   const daoAddress = await newDao()
