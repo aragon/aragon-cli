@@ -22,3 +22,4 @@ lerna-debug.log
 # Extra
 packages/cli/src/knownRoles.json
 
+npm-shrinkwrap.json
