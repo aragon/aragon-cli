@@ -16,7 +16,7 @@
     "unlink-bin": "npm unlink",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
-    "prepublish": "npm shrinkwrap",
+    "prepublishOnly": "npm shrinkwrap",
     "test": "ava --verbose",
     "test:watch": "ava --watch",
     "test:clean": "rm -rf ./.tmp && npm run test:reset-cache",

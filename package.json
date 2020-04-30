@@ -17,7 +17,7 @@
     "build:watch": "lerna run --parallel build:watch",
     "lint": "lerna run --parallel lint",
     "lint:fix": "lerna run --parallel lint:fix",
-    "prepublish": "lerna run --parallel prepublish",
+    "prepublishOnly": "lerna run --parallel prepublishOnly",
     "pretest": "node scripts/setup-integration-tests.js",
     "posttest": "node scripts/teardown-integration-tests.js",
     "test": "lerna run --parallel test",
