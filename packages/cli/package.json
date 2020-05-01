@@ -16,6 +16,7 @@
     "unlink-bin": "npm unlink",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
+    "prepublishOnly": "npm shrinkwrap",
     "test": "ava --verbose",
     "test:watch": "ava --watch",
     "test:clean": "rm -rf ./.tmp && npm run test:reset-cache",
@@ -90,7 +91,7 @@
     "web3": "^1.2.4",
     "web3-utils": "^1.2.4",
     "which": "^2.0.1",
-    "yargs": "^15.1.0"
+    "yargs": "^15.3.1"
   },
   "devDependencies": {
     "@aragon/apps-agent": "^2.0.0",
