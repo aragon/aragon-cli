@@ -1,4 +1,4 @@
-These are general purpose commands that will help you to set up and interact with your development environment.
+These are general purpose commands that will help you to set up and interact with your development environment. All commands accept the [global options](https://github.com/aragon/aragon-cli/blob/master/docs/Intro.md#global-options).
 
 ## aragon run
 
