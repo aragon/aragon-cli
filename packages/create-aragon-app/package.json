@@ -12,7 +12,7 @@
     "unlink-bin": "npm unlink",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
-    "prepublishOnly": "npm shrinkwrap",
+    "prepublishOnly": "synp --source-file yarn.lock && npm shrinkwrap",
     "test": "ava --verbose",
     "test:watch": "ava --watch",
     "test:clean": "rm -rf ./.tmp && npm run test:reset-cache",
@@ -78,7 +78,8 @@
     "eslint-plugin-standard": "^4.0.0",
     "node-fetch": "^2.3.0",
     "nyc": "^15.0.1",
-    "prettier": "^1.15.3"
+    "prettier": "^1.15.3",
+    "synp": "^1.7.0"
   },
   "engines": {
     "node": ">=10.0.0"

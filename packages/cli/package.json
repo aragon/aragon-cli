@@ -16,7 +16,7 @@
     "unlink-bin": "npm unlink",
     "lint": "eslint src test",
     "lint:fix": "npm run lint -- --fix",
-    "prepublishOnly": "npm shrinkwrap",
+    "prepublishOnly": "synp --source-file yarn.lock && npm shrinkwrap",
     "test": "ava --verbose",
     "test:watch": "ava --watch",
     "test:clean": "rm -rf ./.tmp && npm run test:reset-cache",
@@ -124,11 +124,12 @@
     "eslint-plugin-standard": "^4.0.0",
     "ganache-cli": "^6.7.0",
     "ganache-core": "^2.9.0",
-    "prettier": "^2.0.4",
     "nyc": "^15.0.1",
+    "prettier": "^2.0.4",
     "proxyquire": "^2.1.0",
     "sinon": "^7.3.1",
     "strip-ansi": "^6.0.0",
+    "synp": "^1.7.0",
     "truffle": "^5.1.6"
   },
   "engines": {
