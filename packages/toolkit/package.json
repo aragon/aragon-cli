@@ -9,16 +9,16 @@
   },
   "scripts": {
     "build": "babel src --out-dir dist --source-maps",
-    "build:watch": "npm run build -- --watch",
+    "build:watch": "yarn build -- --watch",
     "lint": "eslint src test",
-    "lint:fix": "npm run lint -- --fix",
+    "lint:fix": "yarn lint -- --fix",
     "test": "ava --verbose",
     "test:watch": "ava --watch",
-    "test:clean": "rm -rf ./.tmp && npm run test:reset-cache",
+    "test:clean": "rm -rf ./.tmp && yarn test:reset-cache",
     "test:reset-cache": "ava --reset-cache",
-    "test:update-snapshots": "npm run test:clean && npm run test -- --update-snapshots",
-    "test:coverage:html": "nyc --all --reporter html  npm run test",
-    "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  npm run test",
+    "test:update-snapshots": "yarn test:clean && yarn test -- --update-snapshots",
+    "test:coverage:html": "nyc --all --reporter html  yarn test",
+    "test:coverage": "nyc --all --reporter text --reporter text-summary --reporter lcovonly  yarn test",
     "test:integration": "ava --verbose ./test-examples/*.test.js"
   },
   "keywords": [
