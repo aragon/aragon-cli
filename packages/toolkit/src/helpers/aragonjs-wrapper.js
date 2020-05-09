@@ -1,5 +1,5 @@
 import Aragon, { ensResolve } from '@aragon/wrapper'
-import { asyncScheduler } from 'rxjs';
+import { asyncScheduler } from 'rxjs'
 import { takeWhile, filter, first, throttleTime } from 'rxjs/operators'
 //
 import { addressesEqual } from '../util'
