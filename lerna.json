@@ -8,5 +8,6 @@
       "allowBranch": ["develop"]
     }
   },
-  "npmClient": "yarn"
+  "npmClient": "yarn",
+  "npmClientArgs": ["--ignore-engines"]
 }
