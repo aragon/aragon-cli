@@ -1,4 +1,4 @@
-The `aragon ipfs` commands can be used to start an IPFS node configured to pin the core Aragon components, inspect hashes, and propagate files to other nodes.
+The `aragon ipfs` commands can be used to start an IPFS node configured to pin the core Aragon components, inspect hashes, and propagate files to other nodes. All commands accept the [global options](https://github.com/aragon/aragon-cli/blob/master/docs/Intro.md#global-options).
 
 ## aragon ipfs
 

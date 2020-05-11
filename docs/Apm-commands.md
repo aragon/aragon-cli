@@ -1,4 +1,4 @@
-The `aragon apm` commands are the easiest way to manage aragonPM repositories.
+The `aragon apm` commands are the easiest way to manage aragonPM repositories. All commands accept the [global options](https://github.com/aragon/aragon-cli/blob/master/docs/Intro.md#global-options).
 
 ## aragon apm packages
 
