@@ -6,7 +6,7 @@
   "command": {
     "version": {
       "allowBranch": ["develop"]
-    },
-    "npmClient": "yarn"
-  }
+    }
+  },
+  "npmClient": "yarn"
 }
