@@ -4,7 +4,7 @@ import { getRecommendedGasLimit } from '../util'
 /**
  * Create a new DAO
  *
- * @param {Object} parmas Parameters
+ * @param {Object} params Parameters
  * @param {Object} repo Template repository
  * @param {Object} web3 web3
  * @param {Object} templateInstance Template instance
