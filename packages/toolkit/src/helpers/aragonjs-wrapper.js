@@ -1,5 +1,6 @@
 import Aragon, { ensResolve } from '@aragon/wrapper'
-import { takeWhile, filter, first } from 'rxjs/operators'
+import { asyncScheduler } from 'rxjs'
+import { takeWhile, filter, first, throttleTime } from 'rxjs/operators'
 //
 import { addressesEqual } from '../util'
 import { noop } from '../node'
@@ -156,6 +157,7 @@ export async function getTransactionPath(appAddress, method, params, wrapper) {
     .pipe(
       // If the app list contains a single app, wait for more
       filter((apps) => apps.length > 1),
+      throttleTime(3000, asyncScheduler, { trailing: true }),
       first()
     )
     .toPromise()

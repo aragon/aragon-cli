@@ -1,4 +1,4 @@
-The `aragon dao` commands can be used for interacting with your DAO directly from the command line. These commands are also available directly using the `dao` alias.
+The `aragon dao` commands can be used for interacting with your DAO directly from the command line. These commands are also available directly using the `dao` alias. All commands accept the [global options](https://github.com/aragon/aragon-cli/blob/master/docs/Intro.md#global-options).
 
 > **Note**<br>
 > The default mnemonic of the Aragon CLI is the same for all users. If you are going to deploy a DAO to public networks it is highly recommended that you use your own web3 provider. Instructions on that can be found [here](https://hack.aragon.org/docs/guides-faq#set-a-private-key)
