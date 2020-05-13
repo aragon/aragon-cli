@@ -2,7 +2,7 @@
 
 ## Package manager
 
-[Yarn](https://yarnpkg.com) is the default package manager used for the develpment of aragonCLI.
+[Yarn](https://yarnpkg.com) is preferred over npm for local development of aragonCLI.
 
 ## Dependabot
 
@@ -42,4 +42,3 @@ yarn add ignore@4
 ```sh
 yarn add ignore@latest
 ```
-
