@@ -133,7 +133,7 @@
     "truffle": "^5.1.6"
   },
   "engines": {
-    "node": ">=10.0.0 <11.0.0 >=12.0.0"
+    "node": ">=10.0.0 <11 || >=12.0.0 <13"
   },
   "aragon": {
     "clientRepo": "https://github.com/aragon/aragon",
