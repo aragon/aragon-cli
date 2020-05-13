@@ -3,7 +3,7 @@ import { startProcess, noop, isPortTaken } from '@aragon/toolkit/dist/node'
 //
 import { DEVCHAIN_START_TIMEOUT } from '../commands/devchain_cmds/utils/constants'
 
-export const ensureDevchain = async ({ port, logger = noop }) => {
+export const ensureDevchain = async ({ port, logger = noop, reset }) => {
   if (await isPortTaken(port)) {
     logger(`Devchain already started on: ${port}`)
     return
@@ -15,7 +15,7 @@ export const ensureDevchain = async ({ port, logger = noop }) => {
   try {
     const { detach } = await startProcess({
       cmd: 'node',
-      args: [binPath, 'devchain', '--port', port],
+      args: [binPath, 'devchain', '--port', port].concat(reset ? ['--reset'] : []),
       readyOutput: 'Devchain running at',
       execaOpts: {
         detached: true,
