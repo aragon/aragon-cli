@@ -5,12 +5,12 @@ import { getRecommendedGasLimit } from '../util'
  * Create a new DAO
  *
  * @param {Object} params Parameters
- * @param {Object} repo Template repository
- * @param {Object} web3 web3
- * @param {Object} templateInstance Template instance
- * @param {string} newInstanceMethod New instance method name
- * @param {string[]} newInstanceArgs New instance arguments
- * @param {string} gasPrice Gas price
+ * @param {Object} params.repo Template repository
+ * @param {Object} params.web3 web3
+ * @param {Object} params.templateInstance Template instance
+ * @param {string} params.newInstanceMethod New instance method name
+ * @param {string[]} params.newInstanceArgs New instance arguments
+ * @param {string} params.gasPrice Gas price
  */
 export default async function ({
   repo,
