@@ -47,7 +47,7 @@
     "get-folder-size": "^2.0.1",
     "go-platform": "^1.0.0",
     "ipfs-http-client": "^41.0.1",
-    "is-ipfs": "^1.0.0",
+    "is-ipfs": "^1.0.3",
     "kill-port": "^1.6.0",
     "pkg-dir": "^4.2.0",
     "ps-tree": "^1.2.0",
