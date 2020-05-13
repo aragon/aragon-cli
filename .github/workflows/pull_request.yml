@@ -10,7 +10,6 @@ jobs:
       matrix:
         node-version: [
           12,
-          11,
           10
         ]
         os: [
@@ -18,12 +17,9 @@ jobs:
           macOS-latest
         ]
         exclude:
-          # excludes node 10 and 11 on macOS
+          # excludes node 10 on macOS
           - os: macOS-latest
             node-version: 10
-          - os: macOS-latest
-            node-version: 11
-
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v1
@@ -32,14 +28,14 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: Install dependencies
-      run: npm install
+      run: yarn install --frozen-lockfile
     - name: Build
-      run: npm run build
+      run: yarn build
     - name: Lint
-      run: npm run lint
+      run: yarn lint
     - name: Setup tests
-      run: npm run pretest
+      run: yarn pretest
     - name: Test
-      run: npm run test:coverage
+      run: yarn test:coverage
     - name: Cleanup tests
-      run: npm run posttest
+      run: yarn posttest

@@ -13,9 +13,9 @@ jobs:
       with:
         node-version: 11
         registry-url: https://registry.npmjs.org/
-    - run: npm install
-    - run: npm run build
-    - run: npm run git:clean
-    - run: npm run publish:nightly
+    - run: yarn install
+    - run: yarn build
+    - run: yarn git:clean
+    - run: yarn publish:nightly
       env:
         NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

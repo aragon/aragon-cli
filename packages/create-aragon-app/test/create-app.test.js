@@ -7,7 +7,7 @@ const testSandbox = './.tmp'
 const projectName = 'foobar'
 const projectPath = `${testSandbox}/${projectName}`
 
-test.before(async t => {
+test.before(async (t) => {
   if (await pathExists(projectPath)) await remove(projectPath)
 })
 
@@ -15,7 +15,7 @@ test.after.always(async () => {
   await remove(projectPath)
 })
 
-test('should create a new aragon app based on the buidler boilerplate', async t => {
+test('should create a new aragon app based on the buidler boilerplate', async (t) => {
   ensureDirSync(testSandbox)
 
   const repoPath = `${projectPath}/.git`

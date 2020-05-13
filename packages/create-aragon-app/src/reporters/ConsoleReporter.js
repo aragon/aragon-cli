@@ -24,7 +24,7 @@ const ICON_MAP = {
   },
 }
 
-const getIcon = name => {
+const getIcon = (name) => {
   const { color, symbol } = ICON_MAP[name]
   return chalk[color](figures[symbol])
 }

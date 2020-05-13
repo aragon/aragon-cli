@@ -36,7 +36,7 @@ export async function prepareTemplate(dirPath, basename, appName) {
     // 'placeholder-app-name.open.aragonpm.eth',
   ]
 
-  defaultRegistries.forEach(registry => {
+  defaultRegistries.forEach((registry) => {
     replace({
       regex: registry,
       replacement: appName,

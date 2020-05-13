@@ -7,19 +7,19 @@
   },
   "scripts": {
     "build": "babel src --out-dir dist --source-maps",
-    "build:watch": "npm run build -- --watch",
+    "build:watch": "yarn build -- --watch",
     "link-bin": "npm link",
     "unlink-bin": "npm unlink",
     "lint": "eslint src test",
-    "lint:fix": "npm run lint -- --fix",
-    "prepublishOnly": "npm shrinkwrap",
+    "lint:fix": "yarn lint -- --fix",
+    "prepublishOnly": "synp --source-file yarn.lock && npm shrinkwrap",
     "test": "ava --verbose",
     "test:watch": "ava --watch",
-    "test:clean": "rm -rf ./.tmp && npm run test:reset-cache",
+    "test:clean": "rm -rf ./.tmp && yarn test:reset-cache",
     "test:reset-cache": "ava --reset-cache",
-    "test:update-snapshots": "npm run test:clean && npm run test -- --update-snapshots",
-    "test:coverage:html": "nyc --all --reporter html  npm run test",
-    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly npm run test"
+    "test:update-snapshots": "yarn test:clean && yarn test -- --update-snapshots",
+    "test:coverage:html": "nyc --all --reporter html  yarn test",
+    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly yarn test"
   },
   "files": [
     "dist"
@@ -46,7 +46,7 @@
     "chalk": "^4.0.0",
     "command-exists": "^1.2.8",
     "engine-check": "^1.0.1",
-    "execa": "^4.0.0",
+    "execa": "^4.0.1",
     "figures": "^3.0.0",
     "fs-extra": "^9.0.0",
     "git-clone": "^0.1.0",
@@ -68,7 +68,7 @@
     "babel-plugin-istanbul": "^5.2.0",
     "core-js": "^3.1.4",
     "eslint": "^6.0.1",
-    "eslint-config-prettier": "^6.0.0",
+    "eslint-config-prettier": "^6.11.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-ava": "^10.0.0",
     "eslint-plugin-import": "^2.14.0",
@@ -78,10 +78,11 @@
     "eslint-plugin-standard": "^4.0.0",
     "node-fetch": "^2.3.0",
     "nyc": "^15.0.1",
-    "prettier": "^1.15.3"
+    "prettier": "^2.0.5",
+    "synp": "^1.7.0"
   },
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=10.0.0 <11 || >=12.0.0 <13"
   },
   "ava": {
     "require": [
