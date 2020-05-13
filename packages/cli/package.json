@@ -114,7 +114,7 @@
     "babel-plugin-istanbul": "^5.2.0",
     "core-js": "^3.1.4",
     "eslint": "^6.0.1",
-    "eslint-config-prettier": "^6.0.0",
+    "eslint-config-prettier": "^6.11.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-ava": "^10.0.0",
     "eslint-plugin-import": "^2.14.0",
