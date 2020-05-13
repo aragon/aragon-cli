@@ -9,5 +9,5 @@
     }
   },
   "npmClient": "yarn",
-  "npmClientArgs": ["--ignore-engines"]
+  "npmClientArgs": []
 }
