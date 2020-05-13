@@ -55,7 +55,7 @@
     "stringify-tree": "^1.0.2",
     "web3": "^1.2.4",
     "web3-eth-abi": "^1.2.4",
-    "web3-utils": "^1.2.4"
+    "web3-utils": "^1.2.7"
   },
   "devDependencies": {
     "@aragon/test-helpers": "^2.1.0",
