@@ -30,7 +30,7 @@ exports.command = '$0 <name> [template]'
 
 exports.describe = 'Create a new aragon application'
 
-exports.builder = yargs => {
+exports.builder = (yargs) => {
   return yargs
     .positional('name', {
       description: 'The application name (appname.aragonpm.eth)',
@@ -58,7 +58,7 @@ exports.builder = yargs => {
     })
 }
 
-exports.handler = async function({
+exports.handler = async function ({
   reporter,
   name,
   template,
@@ -141,7 +141,7 @@ exports.handler = async function({
       },
       {
         title: 'Installing IPFS',
-        enabled: ctx => oldTemplate && install && ctx.ipfsMissing,
+        enabled: (ctx) => oldTemplate && install && ctx.ipfsMissing,
         task: async (ctx, task) => {
           await execa(
             'npx',

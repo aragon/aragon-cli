@@ -3,7 +3,7 @@ import yargs from 'yargs'
 //
 import * as AragonReporter from './reporters/AragonReporter'
 
-const debugMiddleware = argv => {
+const debugMiddleware = (argv) => {
   argv.reporter.debug(
     `create-aragon-app version: ${require('../package.json').version}`
   )

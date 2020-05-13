@@ -10,15 +10,15 @@ const dirPath = './.tmp'
 const basename = 'aragon-app'
 const projectPath = './.tmp/aragon-app'
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   fs.ensureDirSync(projectPath)
 })
 
-test.afterEach(t => {
+test.afterEach((t) => {
   fs.removeSync(projectPath)
 })
 
-test('project name validation', t => {
+test('project name validation', (t) => {
   t.is(isValidAragonId('testproject'), true)
   t.is(isValidAragonId('project2'), true)
   t.is(isValidAragonId('test-project'), true)
@@ -27,7 +27,7 @@ test('project name validation', t => {
   t.is(isValidAragonId('test_project'), false)
 })
 
-test.serial('check if project folder already exists', async t => {
+test.serial('check if project folder already exists', async (t) => {
   try {
     await checkProjectExists(dirPath, basename)
     t.fail()
@@ -36,7 +36,7 @@ test.serial('check if project folder already exists', async t => {
   }
 })
 
-test.serial('prepare project template', async t => {
+test.serial('prepare project template', async (t) => {
   const repoPath = `${projectPath}/.git`
   const arappPath = `${projectPath}/arapp.json`
   const packageJsonPath = `${projectPath}/package.json`

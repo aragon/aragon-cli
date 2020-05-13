@@ -2,7 +2,7 @@ import test from 'ava'
 //
 import { runCreateAragonApp } from './util'
 
-test('should return the correct version', async t => {
+test('should return the correct version', async (t) => {
   // act
   const { stdout } = await runCreateAragonApp(['--help'])
   // assert
