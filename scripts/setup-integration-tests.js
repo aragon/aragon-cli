@@ -32,4 +32,5 @@ ensureLocalDaemon({
 ensureDevchain({
   port: DEVCHAIN_PORT,
   logger,
+  reset: true
 })
