@@ -15,7 +15,9 @@ export const ensureDevchain = async ({ port, logger = noop, reset }) => {
   try {
     const { detach } = await startProcess({
       cmd: 'node',
-      args: [binPath, 'devchain', '--port', port].concat(reset ? ['--reset'] : []),
+      args: [binPath, 'devchain', '--port', port].concat(
+        reset ? ['--reset'] : []
+      ),
       readyOutput: 'Devchain running at',
       execaOpts: {
         detached: true,
