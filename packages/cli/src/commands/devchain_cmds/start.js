@@ -3,7 +3,7 @@ import ncp from 'ncp'
 import os from 'os'
 import path from 'path'
 import rimraf from 'rimraf'
-import mkdirp from 'mkdirp'
+import { mkdirp } from 'fs-extra'
 import fs from 'fs'
 import Web3 from 'web3'
 import { blue, red, green, yellow } from 'chalk'
@@ -76,7 +76,6 @@ export const task = async function ({
   debug,
 }) {
   const removeDir = promisify(rimraf)
-  const mkDir = promisify(mkdirp)
   const recursiveCopy = promisify(ncp)
 
   const snapshotPath = path.join(
@@ -111,7 +110,7 @@ export const task = async function ({
         title: 'Setting up a new chain from latest Aragon snapshot',
         task: async (ctx, task) => {
           await removeDir(snapshotPath)
-          await mkDir(path.resolve(snapshotPath, '..'))
+          await mkdirp(path.resolve(snapshotPath, '..'))
           const snapshot = getAragonGanacheFiles()
           await recursiveCopy(snapshot, snapshotPath)
         },
