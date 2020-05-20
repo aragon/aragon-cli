@@ -1,0 +1,59 @@
+{
+    "environments": {
+      "default": {
+        "appName": "voting-aggregator.open.aragonpm.eth",
+        "network": "rpc"
+      },
+      "mainnet": {
+        "appName": "voting-aggregator.hatch.aragonpm.eth",
+        "network": "mainnet",
+        "registry": "0x314159265dd8dbb310642f98f50c066173c1259b",
+        "wsRPC": "wss://mainnet.eth.aragon.network/ws"
+      },
+      "rinkeby": {
+        "appName": "voting-aggregator.hatch.aragonpm.eth",
+        "network": "rinkeby",
+        "registry": "0x98Df287B6C145399Aaa709692c8D308357bC085D",
+        "wsRPC": "wss://rinkeby.eth.aragon.network/ws"
+      },
+      "ropsten": {
+        "appName": "voting-aggregator.hatch.aragonpm.eth",
+        "network": "ropsten",
+        "registry": "0x6afe2cacee211ea9179992f89dc61ff25c61e923",
+        "wsRPC": "wss://rinkeby.eth.aragon.network/ws"
+      },
+      "staging": {
+        "appName": "voting-aggregator.hatch.aragonpm.eth",
+        "network": "rinkeby",
+        "registry": "0xfe03625ea880a8cba336f9b5ad6e15b0a3b5a939",
+        "wsRPC": "wss://rinkeby.eth.aragon.network/ws"
+      }
+    },
+    "roles": [
+      {
+        "name": "Add new power sources",
+        "id": "ADD_POWER_SOURCE_ROLE",
+        "params": [
+          "Source address",
+          "Source weight"
+        ]
+      },
+      {
+        "name": "Manage power sources",
+        "id": "MANAGE_POWER_SOURCE_ROLE ",
+        "params": [
+          "Enabling source"
+        ]
+      },
+      {
+        "name": "Manage power source weights",
+        "id": "MANAGE_WEIGHTS_ROLE",
+        "params": [
+          "New weight",
+          "Old weight"
+        ]
+      }
+    ],
+    "path": "contracts/VotingAggregator.sol"
+  }
+  
