@@ -613,6 +613,20 @@
             "inputs": [
                 {
                     "name": "_sourceAddr",
+                    "type": "string"
+                }
+            ],
+            "name": "disableSource",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "_sourceAddr",
                     "type": "address"
                 }
             ],

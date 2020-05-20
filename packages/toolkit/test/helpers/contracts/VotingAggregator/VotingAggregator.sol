@@ -183,6 +183,16 @@ contract VotingAggregator is IERC20WithCheckpointing, IForwarder, IsContract, ER
     }
 
     /**
+     * Overloaded function
+     */
+    function disableSource(string _sourceAddr)
+        external
+        authP(MANAGE_POWER_SOURCE_ROLE, arr(uint256(0)))
+    {
+
+    }
+
+    /**
      * @notice Enable power source at `_sourceAddr`
      * @param _sourceAddr Power source's address
      */
