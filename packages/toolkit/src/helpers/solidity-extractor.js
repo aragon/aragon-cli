@@ -29,7 +29,7 @@ const expandTypeForSignature = (type) => {
 
 // extracts function signature from function declaration
 const getSignature = (declaration, abi) => {
-  let [name, params=""] = declaration
+  const [name, params = ''] = declaration
     .match(/^\s*function ([^]*?)\)/m)[1]
     .split('(')
 
@@ -45,21 +45,22 @@ const getSignature = (declaration, abi) => {
   // If a single ABI node is found with function name and same number of parameters,
   // generate the signature from ABI. Otherwise, generate it from source.
   const functionAbis = abi
-    .filter(node => node.name === name)
-    .filter(node => node.inputs.length === trimmedParams.length)
+    .filter((node) => node.name === name)
+    .filter((node) => node.inputs.length === trimmedParams.length)
 
   if (functionAbis.length === 1) {
-    return `${functionAbis[0].name}(${functionAbis[0].inputs.map(input => input.type)})`
-  }
-  else {
+    return `${functionAbis[0].name}(${functionAbis[0].inputs.map(
+      (input) => input.type
+    )})`
+  } else {
     const types = trimmedParams
       .map((param) => param.split(' ').filter((s) => s.length > 0)[0])
       .map((type) => typeOrAddress(type))
       .map((type) => expandTypeForSignature(type))
       .join(',')
 
-      return `${name}(${types})`
-  }  
+    return `${name}(${types})`
+  }
 }
 
 const getNotice = (declaration) => {
