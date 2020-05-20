@@ -66,7 +66,7 @@ export async function generateApplicationArtifact(arapp, abi, sourceCode) {
 
   // Given a Solidity file, parses it and returns an object with the form:
   // > {roles: [{ },...], functions: [{ },...]}
-  const { functions, roles } = await extractContractInfo(sourceCode)
+  const { functions, roles } = await extractContractInfo(sourceCode, abi)
 
   // Includes abi for each function
   // > [{ sig: , role: , notice: , abi: }]

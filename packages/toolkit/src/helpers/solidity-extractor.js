@@ -28,8 +28,8 @@ const expandTypeForSignature = (type) => {
 }
 
 // extracts function signature from function declaration
-const getSignature = (declaration) => {
-  let [name, params] = declaration
+const getSignature = (declaration, abi) => {
+  let [name, params=""] = declaration
     .match(/^\s*function ([^]*?)\)/m)[1]
     .split('(')
 
@@ -37,19 +37,29 @@ const getSignature = (declaration) => {
     return 'fallback'
   }
 
-  if (params) {
-    // Has parameters
-    params = params
-      .replace(/\n/gm, '')
-      .replace(/\t/gm, '')
-      .split(',')
+  const trimmedParams = params
+    .replace(/\n/gm, '')
+    .replace(/\t/gm, '')
+    .split(',')
+
+  // If a single ABI node is found with function name and same number of parameters,
+  // generate the signature from ABI. Otherwise, generate it from source.
+  const functionAbis = abi
+    .filter(node => node.name === name)
+    .filter(node => node.inputs.length === trimmedParams.length)
+
+  if (functionAbis.length === 1) {
+    return `${functionAbis[0].name}(${functionAbis[0].inputs.map(input => input.type)})`
+  }
+  else {
+    const types = trimmedParams
       .map((param) => param.split(' ').filter((s) => s.length > 0)[0])
       .map((type) => typeOrAddress(type))
       .map((type) => expandTypeForSignature(type))
       .join(',')
-  }
 
-  return `${name}(${params})`
+      return `${name}(${types})`
+  }  
 }
 
 const getNotice = (declaration) => {
@@ -78,7 +88,7 @@ const getRoles = (declaration) => {
   )
 }
 
-const extractFunctions = async (sourceCode) => {
+const extractFunctions = async (sourceCode, abi) => {
   // Everything between every 'function' and '{' and its @notice.
   const functionDeclarations = sourceCode.match(
     /(@notice|^\s*function)(?:[^]*?){/gm
@@ -93,7 +103,7 @@ const extractFunctions = async (sourceCode) => {
       modifiesStateAndIsPublic(functionDeclaration)
     )
     .map((functionDeclaration) => ({
-      sig: getSignature(functionDeclaration),
+      sig: getSignature(functionDeclaration, abi),
       roles: getRoles(functionDeclaration),
       notice: getNotice(functionDeclaration),
     }))
@@ -139,8 +149,8 @@ const extractRoles = async (functionDescriptors) => {
     ...
   ]
 */
-export const extractContractInfo = async (sourceCode) => {
-  const functionDescriptors = await extractFunctions(sourceCode)
+export const extractContractInfo = async (sourceCode, abi) => {
+  const functionDescriptors = await extractFunctions(sourceCode, abi)
   const roleDescriptors = await extractRoles(functionDescriptors)
 
   return {
