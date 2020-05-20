@@ -2,6 +2,7 @@ import path from 'path'
 import { blue } from 'chalk'
 import TaskList from 'listr'
 import { extractContractInfoToFile } from '@aragon/toolkit'
+import { exists, readJson } from 'fs-extra'
 
 export const command = 'extract-functions [contract]'
 export const describe = 'Extract function information from a Solidity file'
@@ -29,8 +30,23 @@ export const handler = async function ({ cwd, reporter, contract, output }) {
       task: async () => {
         const contractPath = path.resolve(cwd, contract)
         const filename = path.basename(contractPath).replace('.sol', '.json')
+        const contractArtifactPath = path.resolve(
+          cwd,
+          'build/contracts',
+          filename
+        )
+
+        if (!(await exists(contractArtifactPath))) {
+          throw new Error(`Could not find artifact ${contractArtifactPath}`)
+        }
+
+        const contractArtifact = await readJson(contractArtifactPath)
         outputPath = path.resolve(output, filename)
-        await extractContractInfoToFile(contractPath, outputPath)
+        await extractContractInfoToFile(
+          contractPath,
+          contractArtifact.abi,
+          outputPath
+        )
       },
     },
   ])

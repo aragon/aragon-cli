@@ -28,7 +28,7 @@ test.before('create a temp directory and resolve paths', (t) => {
 })
 
 test.before('call extractContractInfoToFile function', async (t) => {
-  await extractContractInfoToFile(contractPath, outputPath)
+  await extractContractInfoToFile(contractPath, [], outputPath)
 })
 
 test('generates output', (t) => {
