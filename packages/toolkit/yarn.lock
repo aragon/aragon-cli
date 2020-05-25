@@ -1019,6 +1019,18 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
+"@types/lodash.flatten@^4.4.4":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@types/lodash.flatten/-/lodash.flatten-4.4.6.tgz#b74c3267c87e44e603137d4621e8a9396b6551f5"
+  integrity sha512-omCBl4M8EJSmf2DZqh4/zwjgXQpzC7YO/PXTcG8rI9r7xun8CohrHeNx8HZRkqWc61uJfIaZop9MwJEXPVssHw==
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash@*":
+  version "4.14.152"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.152.tgz#7e7679250adce14e749304cdb570969f77ec997c"
+  integrity sha512-Vwf9YF2x1GE3WNeUMjT5bTHa2DqgUo87ocdgTScupY2JclZ5Nn7W2RLM/N0+oreexUk8uaVugR81NnTY/jNNXg==
+
 "@types/minimatch@*":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
@@ -9215,10 +9227,11 @@ string_decoder@~0.10.x:
   integrity sha1-YuIDvEF2bGwoyfyEMB2rHFMQ+pQ=
 
 stringify-tree@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/stringify-tree/-/stringify-tree-1.0.2.tgz#51580eea02658e2e59fe0617729673b788d25996"
-  integrity sha512-GXeFo1ce+XxmnJ0H3fnA76JBMKcH/EUNrfKQH6tOT0eoOh3wNY2ykkfNrU7cDcFx8CyXX6zfDgfZI6v3NfkTGw==
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/stringify-tree/-/stringify-tree-1.1.1.tgz#6745c3382dc700cc4c65d8a7d7d89ecf5e73f7e7"
+  integrity sha512-lVfVX+HJ9Gx2NUv0vJTRhqCPYlgzbdR25MF34Md1Bjq6jvJocOLgfHhusYtBSKi/bwpkgLGjtF/dVZlBbA6oZw==
   dependencies:
+    "@types/lodash.flatten" "^4.4.4"
     lodash.flatten "^4.4.0"
 
 strip-ansi@^3.0.0:
