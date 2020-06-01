@@ -71,7 +71,7 @@
     "ganache-core": "^2.9.0",
     "git-clone": "^0.1.0",
     "http-server": "^0.12.1",
-    "ignore": "^4.0.6",
+    "ignore": "^5.1.8",
     "inquirer": "^7.0.0",
     "internal-ip": "^6.0.0",
     "is-ipfs": "^1.0.3",
