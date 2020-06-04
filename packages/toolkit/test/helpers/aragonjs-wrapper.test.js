@@ -37,8 +37,6 @@ test.before('setup', async (t) => {
     onDaoAddress,
   })
 
-  await new Promise((resolve, reject) => setTimeout(resolve, 30000))
-
   apps = await getApps(wrapper)
 })
 
