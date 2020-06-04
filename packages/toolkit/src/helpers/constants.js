@@ -5,7 +5,7 @@ export const NO_MANAGER = '0x0000000000000000000000000000000000000000'
 export const ARAGON_DOMAIN = 'aragonid.eth'
 export const DEFAULT_APM_REGISTRY = 'aragonpm.eth'
 
-export const DEFAULT_IPFS_TIMEOUT = 300000
+export const DEFAULT_IPFS_TIMEOUT = 600000
 
 export const REGISTRAR_GAS_LIMIT = '1000000'
 export const DEFAULT_GAS_FUZZ_FACTOR = 1.5
