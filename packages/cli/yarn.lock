@@ -7,10 +7,21 @@
   resolved "https://registry.yarnpkg.com/@aragon/abis/-/abis-1.1.0.tgz#e94e94c57d50fd736856751b6224905e6f0e9e86"
   integrity sha512-SbdF3JkU+57N19GEENtUvs/nsjOKdK+YlG35o3qdhK8AMZO+AWZU3wb5FyezR4hHHDZfijxhzYTXGIf0zNAdPQ==
 
-"@aragon/apm@3.1.3", "@aragon/apm@^3.1.3":
+"@aragon/apm@3.1.3":
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/@aragon/apm/-/apm-3.1.3.tgz#acc2f530421f20b3374dde3d6ece598e7a9626cf"
   integrity sha512-OUwzz9hDbQCtZ6PgJFZyqMgY0N+63DdLKfeJmzaM2srSPOc4z74ygwbnGYvDpltBkISNr38oaybhIvGDjhLgaw==
+  dependencies:
+    "@aragon/os" "^4.0.0"
+    axios "^0.18.0"
+    ethjs-ens "^2.0.1"
+    ipfs-api "^26.1.2"
+    semver "^5.5.0"
+
+"@aragon/apm@^3.1.4":
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/@aragon/apm/-/apm-3.1.4.tgz#f440d7d9339efb653887aa1a7de0b947e08dda5c"
+  integrity sha512-Vmu9OS4epu0kBArY/AP7oNSXxHLVIQZpPPEMIswr3ZjAwOUofnz6H2g34Skx1h9Fao1uE9bYFx0fZP7AkWW3sg==
   dependencies:
     "@aragon/os" "^4.0.0"
     axios "^0.18.0"
