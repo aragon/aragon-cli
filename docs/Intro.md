@@ -11,7 +11,7 @@ The following must be installed prior to installation:
 - Node + npm
 
   - Version of Node we recommend to be [the latest LTS version, available to download here](https://nodejs.org/en/).
-  - After downloading and unpacking, you must add the /bin folder to you \$PATH.s
+  - After downloading and unpacking, you must add the /bin folder to you \$PATH.
 
 For Linux:
 
@@ -87,7 +87,7 @@ You can also define an `~/.aragon/mnemonic.json` file like:
 
 #### Install IPFS
 
-Since `v6.0.0` we separate the instalation of `go-ipfs` from the aragonCLI. If you do not have it installed globally on your system we have a couple of comands to help with that:`aragon ipfs install` and `aragon ipfs uninstall`.
+Since `v6.0.0` we separate the installation of `go-ipfs` from the aragonCLI. If you do not have it installed globally on your system we have a couple of commands to help with that:`aragon ipfs install` and `aragon ipfs uninstall`.
 
 ## Global options
 
@@ -122,7 +122,7 @@ npx create-aragon-app <app-name> [boilerplate]
 - `boilerplate`: (optional) the Github repo name or alias for a boilerplate to set up your app. The currently available boilerplates are:
   - `react`: this boilerplate contains a very basic Counter app and a webapp for interacting with it. It showcases the end-to-end interaction with an Aragon app, from the contracts to the webapp. Also comes with a DAO Template which will allow for using your app to interact with other Aragon apps like the Voting app. You can read more about DAO Template [here](templates-intro.md).
   - `bare`: this boilerplate will just set up your app directory structure but contains no functional code.
-  - `tutorial`: this boilerplate is the one used in Your first Aragon app guide.
+  - `tutorial`: this boilerplate is the one used in your first Aragon app guide.
 
 > **Note**<br>
 > This is an independent package, it's not necessary to have `@aragon/cli` installed to use it.
