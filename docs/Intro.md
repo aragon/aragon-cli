@@ -11,7 +11,7 @@ The following must be installed prior to installation:
 - Node + npm
 
   - Version of Node we recommend to be [the latest LTS version, available to download here](https://nodejs.org/en/).
-  - After downloading and unpacking, you must add the /bin folder to you \$PATH.s
+  - After downloading and unpacking, you must add the /bin folder to you \$PATH.
 
 For Linux:
 
