@@ -168,7 +168,8 @@ export function useEnvironment(env: string): UseEnvironment {
 
   // Load config files
   const arapp = loadArappFile()
-  const { networks: truffleNetworks } = getTruffleConfig() || defaultNetworks
+  const { networks: truffleNetworks } =
+    getTruffleConfig(true) || defaultNetworks
 
   // default environment (no arapp.json) uses different naming
   const environment = getEnvironment(env, arapp)

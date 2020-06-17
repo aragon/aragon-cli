@@ -78,10 +78,12 @@ export function loadManifestFile(): AragonManifest | undefined {
 }
 
 /**
- * Loads the truffle config file. If it's non existent, it returns null
- * @return {Object|undefined}
+ * Loads the truffle config file. If it's non existent, it returns null if `noThrow` is
+ * true, otherwise it throws an error.
+ * @param {boolean} noThrow Whether to throw or not if the file isn't found
+ * @return {Object|null}
  */
-export function getTruffleConfig(): any {
+export function getTruffleConfig(noThrow = false): any | null {
   if (fs.existsSync(`${findProjectRoot()}/truffle.js`)) {
     const truffleConfig = require(`${findProjectRoot()}/truffle.js`)
     return truffleConfig
@@ -92,5 +94,6 @@ export function getTruffleConfig(): any {
     return truffleConfig
   }
 
-  throw new Error(`Didn't find any truffle.js file`)
+  if (noThrow) return null
+  else throw new Error(`Didn't find any truffle.js file`)
 }
