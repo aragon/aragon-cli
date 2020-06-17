@@ -84,14 +84,18 @@ export function loadManifestFile(): AragonManifest | undefined {
  * @return {Object|null}
  */
 export function getTruffleConfig(noThrow = false): any | null {
-  if (fs.existsSync(`${findProjectRoot()}/truffle.js`)) {
-    const truffleConfig = require(`${findProjectRoot()}/truffle.js`)
-    return truffleConfig
-  }
+  const projectRoot = findProjectRoot(noThrow)
 
-  if (fs.existsSync(`${findProjectRoot()}/truffle-config.js`)) {
-    const truffleConfig = require(`${findProjectRoot()}/truffle-config.js`)
-    return truffleConfig
+  if (projectRoot) {
+    if (fs.existsSync(`${projectRoot}/truffle.js`)) {
+      const truffleConfig = require(`${projectRoot}/truffle.js`)
+      return truffleConfig
+    }
+
+    if (fs.existsSync(`${projectRoot}/truffle-config.js`)) {
+      const truffleConfig = require(`${projectRoot}/truffle-config.js`)
+      return truffleConfig
+    }
   }
 
   if (noThrow) return null

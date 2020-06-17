@@ -11,14 +11,15 @@ interface ContractArtifacts {
 
 /**
  * Finds an arapp.json or truffle config file path moving directories recursively up
+ * @param {boolean} noThrow Whether to throw or not if the root path isn't found
  */
-export function findProjectRoot(): string {
+export function findProjectRoot(noThrow = false): string {
   const rootPath =
     findUp.sync('arapp.json') ||
     findUp.sync('truffle-config.js') ||
     findUp.sync('truffle.js')
-  if (!rootPath) throw new Error('Cannot find root directory.')
-  return path.dirname(rootPath)
+  if (!rootPath && !noThrow) throw new Error('Cannot find root directory.')
+  return rootPath ? path.dirname(rootPath) : ''
 }
 
 /**
