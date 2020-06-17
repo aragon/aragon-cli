@@ -10,12 +10,12 @@ interface ContractArtifacts {
 }
 
 /**
- * Finds an arapp.json path moving directories recursively up
+ * Finds an arapp.json or truffle config file path moving directories recursively up
  */
 export function findProjectRoot(): string {
-  const arappPath = findUp.sync('arapp.json')
-  if (!arappPath) throw new Error('This directory is not an Aragon project')
-  return path.dirname(arappPath)
+  const rootPath = findUp.sync('arapp.json') || findUp.sync('truffle-config.js') || findUp.sync('truffle.js')
+  if (!rootPath) throw new Error('Cannot find root directory.')
+  return path.dirname(rootPath)
 }
 
 /**
