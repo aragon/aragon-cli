@@ -134,8 +134,8 @@
     "node": ">=10.0.0 <11 || >=12.0.0 <13"
   },
   "aragon": {
-    "clientRepo": "https://github.com/aragon/aragon",
-    "clientVersion": "fba89d9d60749c2d2a360db08a03a732119e624e",
+    "clientRepo": "https://github.com/0xGabi/aragon",
+    "clientVersion": "456815dbc991a6d08904e8ff462bdb1f4d42dc6c",
     "clientPort": "3000",
     "defaultGasPrice": "2",
     "defaultIpfsTimeout": "300000"
