@@ -92,7 +92,7 @@ const supportsAragonConnect = (networkId) => {
 }
 
 const getAppsFromAragonConnect = async (dao, networkId) => {
-  const org = await connect(dao, ['thegraph'], { chainId: networkId })
+  const org = await connect(dao, 'thegraph', { chainId: networkId })
 
   return (await org.apps()).map((app) => ({
     appId: app.appId,
