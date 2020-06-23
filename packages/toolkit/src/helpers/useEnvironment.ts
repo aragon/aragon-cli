@@ -162,22 +162,19 @@ interface UseEnvironment extends AragonEnvironment {
 }
 
 export function useEnvironment(env: string): UseEnvironment {
-  // try {
-
   // Parse environment
   const useFrame = RegExp(/frame:(.*)/).test(env)
   env = useFrame ? env.split(/:(.+)/)[1] || env : env
 
   // Load config files
   const arapp = loadArappFile()
-  const { networks: truffleNetworks } = arapp
-    ? getTruffleConfig()
-    : defaultNetworks
+  const { networks: truffleNetworks } =
+    getTruffleConfig(true) || defaultNetworks
 
   // default environment (no arapp.json) uses different naming
   const environment = getEnvironment(env, arapp)
 
-  const { wsRPC, /* apm, */ network, registry, gasPrice } = environment
+  const { wsRPC, network, registry } = environment
 
   const wsProviderUrl =
     wsRPC ||
@@ -221,7 +218,6 @@ export function useEnvironment(env: string): UseEnvironment {
     wsProvider: wsProviderUrl
       ? new Web3.providers.WebsocketProvider(wsProviderUrl)
       : undefined,
-    gasPrice:
-      gasPrice || truffleNetworks[network].gasPrice || DEFAULT_GAS_PRICE,
+    gasPrice: truffleNetworks[network].gasPrice || DEFAULT_GAS_PRICE,
   }
 }
