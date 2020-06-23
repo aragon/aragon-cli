@@ -1,6 +1,7 @@
 import TaskList from 'listr'
 import Table from 'cli-table'
 import { blue, green, white } from 'chalk'
+import { connect } from '@aragon/connect'
 import Web3 from 'web3'
 import {
   getDaoAddress,
@@ -40,7 +41,9 @@ const printContent = (content) => {
     return '(No UI available)'
   }
 
-  return `${content.provider}:${content.location}`
+  return typeof content === 'string'
+    ? content
+    : `${content.provider}:${content.location}`
 }
 
 const printApps = (apps) => {
@@ -79,6 +82,27 @@ const printPermissionlessApps = (apps) => {
   }
 }
 
+/**
+ * Returns true if the provided Ethereum network id supports
+ * Aragon Connect. Currently `true` for mainnet and Rinkeby
+ * @param {number} Ethereum network id
+ */
+const supportsAragonConnect = (networkId) => {
+  return networkId === 1 || networkId === 4
+}
+
+const getAppsFromAragonConnect = async (dao, networkId) => {
+  const org = await connect(dao, 'thegraph', { chainId: networkId })
+
+  return (await org.apps()).map((app) => ({
+    appId: app.appId,
+    appName: app.appName,
+    proxyAddress: app.address,
+    version: app.version,
+    content: app.contentUri,
+  }))
+}
+
 export const handler = async function ({
   reporter,
   dao,
@@ -106,8 +130,12 @@ export const handler = async function ({
             ipfs,
             provider: wsProvider || web3.currentProvider,
           }
-          apps = await getInstalledApps(dao, options)
+
           daoAddress = await getDaoAddress(dao, options)
+
+          apps = supportsAragonConnect(network.network_id)
+            ? await getAppsFromAragonConnect(dao, network.network_id)
+            : await getInstalledApps(dao, options)
         },
       },
       {
