@@ -60,9 +60,9 @@
     "@truffle/hdwallet-provider" "^1.0.0"
 
 "@aragon/wrapper@^5.0.0-rc.23":
-  version "5.0.0-rc.26"
-  resolved "https://registry.yarnpkg.com/@aragon/wrapper/-/wrapper-5.0.0-rc.26.tgz#4af566635b891e88327acf0ff113ea90b472a29e"
-  integrity sha512-iCHH5OD7niGx5gDQWiGymZvVtO51YEdSvxMca8vkn9Vlx+k+kplbA/6UjSisADS1Cpgmym5ZIzxP3iOH0tJxuw==
+  version "5.0.0-rc.27"
+  resolved "https://registry.yarnpkg.com/@aragon/wrapper/-/wrapper-5.0.0-rc.27.tgz#945ead7f6504c42c0a8f4897f3a2f7cc526ac26a"
+  integrity sha512-ixbOYf/9dVV1xOIeBs8SF+vTx2mv0hxxSVZ5ExvBW91ILpqM3JHuCoITeuGdg7tvPS5/riKCmAJcbGB7SOlI0Q==
   dependencies:
     "@aragon/os" "^4.2.1"
     "@aragon/rpc-messenger" "^2.0.0"
@@ -75,9 +75,9 @@
     localforage-memoryStorageDriver "^0.9.2"
     radspec "^1.5.0"
     rxjs "^6.5.2"
-    web3 "^1.2.1"
-    web3-eth-abi "^1.2.1"
-    web3-utils "^1.2.1"
+    web3 "^1.2.6"
+    web3-eth-abi "^1.2.6"
+    web3-utils "^1.2.6"
 
 "@babel/cli@^7.7.4":
   version "7.10.3"
@@ -10328,7 +10328,7 @@ web3-eth-abi@1.2.1:
     underscore "1.9.1"
     web3-utils "1.2.1"
 
-web3-eth-abi@1.2.9, web3-eth-abi@^1.2.1, web3-eth-abi@^1.2.4:
+web3-eth-abi@1.2.9, web3-eth-abi@^1.2.1, web3-eth-abi@^1.2.4, web3-eth-abi@^1.2.6:
   version "1.2.9"
   resolved "https://registry.yarnpkg.com/web3-eth-abi/-/web3-eth-abi-1.2.9.tgz#14bedd7e4be04fcca35b2ac84af1400574cd8280"
   integrity sha512-3YwUYbh/DMfDbhMWEebAdjSd5bj3ZQieOjLzWFHU23CaLEqT34sUix1lba+hgUH/EN6A7bKAuKOhR3p0OvTn7Q==
@@ -10635,7 +10635,7 @@ web3-utils@1.2.1:
     underscore "1.9.1"
     utf8 "3.0.0"
 
-web3-utils@1.2.9, web3-utils@^1.2.1, web3-utils@^1.2.7:
+web3-utils@1.2.9, web3-utils@^1.2.1, web3-utils@^1.2.6, web3-utils@^1.2.7:
   version "1.2.9"
   resolved "https://registry.yarnpkg.com/web3-utils/-/web3-utils-1.2.9.tgz#abe11735221627da943971ef1a630868fb9c61f3"
   integrity sha512-9hcpuis3n/LxFzEVjwnVgvJzTirS2S9/MiNAa7l4WOEoywY+BSNwnRX4MuHnjkh9NY25B6QOjuNG6FNnSjTw1w==
@@ -10662,7 +10662,7 @@ web3@1.2.1:
     web3-shh "1.2.1"
     web3-utils "1.2.1"
 
-web3@^1.0.0-beta.34, web3@^1.2.1, web3@^1.2.4:
+web3@^1.0.0-beta.34, web3@^1.2.4, web3@^1.2.6:
   version "1.2.9"
   resolved "https://registry.yarnpkg.com/web3/-/web3-1.2.9.tgz#cbcf1c0fba5e213a6dfb1f2c1f4b37062e4ce337"
   integrity sha512-Mo5aBRm0JrcNpN/g4VOrDzudymfOnHRC3s2VarhYxRA8aWgF5rnhQ0ziySaugpic1gksbXPe105pUWyRqw8HUA==
