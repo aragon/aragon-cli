@@ -115,6 +115,7 @@ export const handler = async function({
   deployEvent,
   apm: apmOptions,
   aragonId,
+  gasPrice,
   silent,
   debug,
 }) {
@@ -131,6 +132,7 @@ export const handler = async function({
     fnArgs,
     deployEvent,
     aragonId,
+    gasPrice,
     silent,
     debug,
   })

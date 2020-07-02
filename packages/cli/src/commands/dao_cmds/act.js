@@ -55,6 +55,7 @@ export const handler = async function({
   callArgs,
   callData,
   ethValue,
+  gasPrice,
   wsProvider,
 }) {
   const web3 = await ensureWeb3(network)
@@ -74,6 +75,7 @@ export const handler = async function({
     reporter,
     apm,
     network,
+    gasPrice,
     wsProvider,
     web3,
   })
