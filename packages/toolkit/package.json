@@ -66,7 +66,7 @@
     "ava": "^3.8.2",
     "babel-plugin-istanbul": "^5.2.0",
     "bn.js": "^5.0.0",
-    "eslint": "^6.8.0",
+    "eslint": "^7.4.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-ava": "^10.0.0",
