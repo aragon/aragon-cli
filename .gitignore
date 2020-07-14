@@ -18,6 +18,7 @@ coverage
 
 # Tools
 lerna-debug.log
+*/*/typechain
 
 # Extra
 packages/cli/src/knownRoles.json

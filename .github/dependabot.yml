@@ -1,0 +1,8 @@
+version: 2
+update_configs:
+- package-ecosystem: "npm"
+  directory: "/"
+  schedule:
+    interval: "monthly"
+    time: "15:00"
+  target-branch: master
