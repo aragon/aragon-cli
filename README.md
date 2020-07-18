@@ -1,4 +1,4 @@
-![aragonCLI logo](/docs/assets/brand/aragoncli.png)
+<p align="center"><img width="50%" src="docs/assets/brand/aragoncli.svg"></p>
 
 <div align="center">
   <!-- Downloads -->
