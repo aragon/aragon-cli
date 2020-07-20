@@ -5122,9 +5122,9 @@ symbol-observable@^1.1.0:
   integrity sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ==
 
 synp@^1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/synp/-/synp-1.7.0.tgz#86712e3a26f00fd1eb9fb171ed757df6085ec32f"
-  integrity sha512-9dkzcC9IjZqFF96Me3RhBg1r1cnmAOGer48o/U06cvFvXS1ktXW8GrQZHmt/lkOIhccIUWViRJREz5ilzPHRaQ==
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/synp/-/synp-1.7.1.tgz#8a822870c47752da3515e785ef57359c8bb91e6c"
+  integrity sha512-iRC7igm153reAjnxXj/BIeErtBB7JnUYYqgha0/RxXMOR5/KpGhuZ+6JfctInVhcw28HkWsU+ShtJl9O8UY7bg==
   dependencies:
     "@yarnpkg/lockfile" "^1.0.0"
     colors "^1.1.2"
