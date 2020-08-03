@@ -1,22 +1,19 @@
-import Web3 from 'web3'
 import url from 'url'
 import { ethers } from 'ethers'
-//
-import { defaultEnvironments, defaultNetworks } from '../config'
-import { loadArappFile, getTruffleConfig } from './loadConfigFiles'
+
+import { defaultEnvironments } from './config'
+import { loadArappFile } from './utils/loadConfigFiles'
 import {
-  DEFAULT_GAS_PRICE,
   FRAME_ENDPOINT,
   FRAME_ORIGIN,
   ARAGON_RINKEBY_ENDPOINT,
   ARAGON_MAINNET_ENDPOINT,
+  XDAI_ENDPOINT,
   IPFS_RPC,
   IPFS_LOCAL_GATEWAY,
   IPFS_ARAGON_GATEWAY,
-  DEVCHAIN_ENS,
 } from './constants'
-import { AragonAppJson, AragonEnvironment } from '../types'
-import { WebsocketProvider, HttpProvider } from 'web3-core'
+import { AragonAppJson, AragonEnvironment } from './types'
 
 export class NoEnvironmentInArapp extends Error {}
 export class NoEnvironmentInDefaults extends Error {}
@@ -28,19 +25,18 @@ function getEnvironment(
   envName: string,
   arapp?: AragonAppJson
 ): AragonEnvironment {
+  if (!envName) envName = 'rinkeby'
+
+  let environment
   if (arapp) {
-    if (!envName) envName = 'default'
-    const environment = arapp.environments[envName]
-    if (!environment) throw new NoEnvironmentInArapp(envName)
-    return environment
+    environment = arapp.environments[envName]
   } else {
     // if there is no arapp.json and the command is not init default to the "global" config
     // designed for the dao commands including dao acl
-    if (!envName) envName = 'local'
-    const environment = defaultEnvironments[envName]
-    if (!environment) throw new NoEnvironmentInDefaults(envName)
-    return environment
+    environment = defaultEnvironments[envName]
   }
+  if (!environment) throw new NoEnvironmentInDefaults(envName)
+  return environment
 }
 
 interface ApmOptions {
@@ -90,74 +86,39 @@ function configureApm(
   }
 }
 
-function configureProvider(
-  network: string,
-  truffleNetwork: {
-    provider: any
-    host: string
-    port: number
-  },
-  useFrame: boolean
-): any | WebsocketProvider | HttpProvider {
-  if (useFrame) {
-    return new Web3.providers.WebsocketProvider(
-      FRAME_ENDPOINT,
-      { headers: { origin: FRAME_ORIGIN } } // Provider options
-    )
-  }
-
-  if (!truffleNetwork) {
-    throw new NoNetworkInTruffleConfig(network)
-  }
-
-  const { provider, host, port } = truffleNetwork
-
-  if (provider) {
-    if (typeof provider === 'function') return provider()
-    else return provider
-  } else if (host && port) {
-    return new Web3.providers.WebsocketProvider(`ws://${host}:${port}`)
-  } else {
-    return new Web3.providers.HttpProvider('http://localhost:8545')
-  }
-}
-
 function configureEthersProvider({
-  host,
-  port,
   useFrame,
   ensAddress,
+  wsProviderUrl,
 }: {
-  host: string
-  port: number
   useFrame: boolean
   ensAddress?: string
+  wsProviderUrl: string
 }): ethers.providers.Provider {
-  const connectionOptions = {
-    url: useFrame
-      ? FRAME_ENDPOINT
-      : host && port
-      ? `http://${host}:${port}`
-      : 'http://localhost:8545',
-    headers: useFrame ? frameHeaders : undefined,
-  }
   const networkOptions = ensAddress
     ? { name: '', chainId: 0, ensAddress }
     : undefined
-  return new ethers.providers.JsonRpcProvider(connectionOptions, networkOptions)
-}
 
-// TODO: Fetch api
-// const configureGasPrice = () => {}
+  if (useFrame) {
+    const connectionOptions = {
+      url: FRAME_ENDPOINT,
+      headers: frameHeaders,
+    }
+    return new ethers.providers.JsonRpcProvider(
+      connectionOptions,
+      networkOptions
+    )
+  } else {
+    return new ethers.providers.JsonRpcProvider(wsProviderUrl, networkOptions)
+  }
+}
 
 // let previousEnvironment
 // TODO: Add config environment function
 
 interface UseEnvironment extends AragonEnvironment {
   apmOptions: ApmOptions
-  web3: Web3
-  wsProvider?: WebsocketProvider
-  gasPrice: string
+  chainId: number
   provider: ethers.providers.Provider
 }
 
@@ -168,8 +129,6 @@ export function useEnvironment(env: string): UseEnvironment {
 
   // Load config files
   const arapp = loadArappFile()
-  const { networks: truffleNetworks } =
-    getTruffleConfig(true) || defaultNetworks
 
   // default environment (no arapp.json) uses different naming
   const environment = getEnvironment(env, arapp)
@@ -180,25 +139,16 @@ export function useEnvironment(env: string): UseEnvironment {
     wsRPC ||
     (network === 'rinkeby'
       ? ARAGON_RINKEBY_ENDPOINT
-      : network === 'mainnet'
-      ? ARAGON_MAINNET_ENDPOINT
-      : null)
+      : network === 'xdai'
+      ? XDAI_ENDPOINT
+      : ARAGON_MAINNET_ENDPOINT)
 
-  // NOTE: environment.apm does NOT exist
-  // const ipfsAragonGateway =
-  //   apm && apm.ipfs.gateway // TODO: Refactor apm object
-  //     ? apm.ipfs.gateway
-  //     : network === 'rpc'
-  //     ? IPFS_LOCAL_GATEWAY
-  //     : IPFS_ARAGON_GATEWAY
+  const chainId = network === 'rinkeby' ? 4 : network === 'xdai' ? 100 : 1
+
   const ipfsAragonGateway =
     network === 'rpc' ? IPFS_LOCAL_GATEWAY : IPFS_ARAGON_GATEWAY
-  const ensAddress = registry || DEVCHAIN_ENS
 
-  const truffleNetwork = truffleNetworks[network]
-  if (!useFrame && !truffleNetwork) {
-    throw new NoNetworkInTruffleConfig(network)
-  }
+  const ensAddress = registry
 
   return {
     ...environment,
@@ -207,17 +157,11 @@ export function useEnvironment(env: string): UseEnvironment {
       ipfsAragonGateway,
       ensAddress
     ),
-    // Todo: Consolidate provider initialization
-    web3: new Web3(configureProvider(network, truffleNetwork, useFrame)),
     provider: configureEthersProvider({
-      host: truffleNetwork.host,
-      port: truffleNetwork.port,
       useFrame,
       ensAddress,
+      wsProviderUrl,
     }),
-    wsProvider: wsProviderUrl
-      ? new Web3.providers.WebsocketProvider(wsProviderUrl)
-      : undefined,
-    gasPrice: truffleNetworks[network].gasPrice || DEFAULT_GAS_PRICE,
+    chainId,
   }
 }

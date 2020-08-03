@@ -1,8 +1,5 @@
-import { takeWhile, map, filter, first, defaultIfEmpty } from 'rxjs/operators'
-//
-import { initWrapper } from '../utils/wrapper'
-import { addressesEqual } from '../../utils/addresses'
-import { AragonApp } from '../../types'
+import { connect } from '@aragon/connect'
+import { useEnvironment } from '../../useEnvironment'
 
 type TransactionPath = any
 
@@ -24,28 +21,14 @@ export async function getTransactionPath(
   appAddress: string,
   method: string,
   params: any[],
+  account: string,
   environment: string
 ): Promise<TransactionPath> {
-  const wrapper = await initWrapper(dao, environment)
+  const { chainId } = useEnvironment(environment)
 
-  // Wait for app info to load
-  const app = await wrapper.apps
-    .pipe(
-      // If the app list contains a single app, wait for more
-      takeWhile((apps: AragonApp[]) => apps.length <= 1, true),
-      map((apps: AragonApp[]) =>
-        apps.find(app => addressesEqual(appAddress, app.proxyAddress))
-      ),
-      filter((app: AragonApp | undefined) => Boolean(app)),
-      defaultIfEmpty(null), // If app is not found, default to null
-      first()
-    )
-    .toPromise()
+  const org = await connect(dao, 'thegraph', { chainId })
 
-  if (!app) throw new Error(`Can't find app ${appAddress}.`)
+  const intent = org.appIntent(appAddress, method, params)
 
-  // If app is the ACL, call getACLTransactionPath
-  return appAddress === wrapper.aclProxy.address
-    ? wrapper.getACLTransactionPath(method, params)
-    : wrapper.getTransactionPath(appAddress, method, params)
+  return intent.paths(account)
 }

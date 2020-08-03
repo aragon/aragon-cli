@@ -15,7 +15,7 @@ import {
   AragonApmRepoData,
 } from './types'
 import { AragonManifest, AragonArtifact } from '../types'
-import { defaultIpfsGateway } from '../params'
+import { IPFS_LOCAL_GATEWAY } from '../constants'
 import { isAddress } from 'web3-utils'
 
 /**
@@ -102,7 +102,7 @@ export function Repo(
       const ipfsGateway =
         (options || {}).ipfsGateway ||
         (optionsGlobal || {}).ipfsGateway ||
-        defaultIpfsGateway
+        IPFS_LOCAL_GATEWAY
       const url = getFetchUrlFromContentUri(contentUri, { ipfsGateway })
 
       const [manifest, artifact] = await Promise.all([

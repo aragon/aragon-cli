@@ -1,0 +1,9 @@
+{
+  "environment": "rinkeby",
+  "FundName": "testingorg",
+  "DaoTokenName": "Token",
+  "DaoTokenSymbol": "TKN",
+  "DaoFinanceAppPeriod": "1296000",
+  "DaoVotingAppSettings": ["500000000000000000", "50000000000000000", "604800"],
+  "DaoMembers": ["0xB5680c97357E455dcdc11646Bd8c8876E2cc2bB7"]
+}

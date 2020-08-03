@@ -1,6 +1,6 @@
 import { writeJson, readFile } from 'fs-extra'
 //
-import { extractContractInfo } from '../utils/solidityExtractor'
+import { extractContractInfo } from './solidityExtractor'
 
 // TODO: Move away from Toolkit
 

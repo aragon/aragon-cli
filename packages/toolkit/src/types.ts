@@ -67,27 +67,11 @@ export interface AragonEnvironments {
 
 export interface AragonEnvironment {
   network: string
-  registry?: string
+  registry: string
   appName?: string
   gasPrice?: string
   wsRPC?: string
   appId?: string
-}
-
-/**
- * App object returned by the aragon-js wrapper
- */
-export interface AragonApp {
-  abi: AbiItem[]
-  name: string // 'Kernel'
-  appName: string // 'kernel.aragonpm.eth'
-  roles: any[]
-  functions: any[]
-  isAragonOsInternalApp: boolean
-  proxyAddress: string // '0x76804359E7b668845D209f4a0391D5482a18C476'
-  appId: string
-  codeAddress: string
-  isForwarder: boolean
 }
 
 export interface AclPermissions {

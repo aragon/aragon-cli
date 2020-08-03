@@ -1,4 +1,4 @@
-import { useEnvironment } from '../../helpers/useEnvironment'
+import { useEnvironment } from '../../useEnvironment'
 import { aragonAppAbi } from '../../contractAbis'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'

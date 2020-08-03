@@ -9,4 +9,3 @@ import defaultEnvironmentsSrc from './environments.default.json'
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 export const defaultEnvironments: AragonEnvironments = defaultEnvironmentsSrc
-export const defaultNetworks = require('@aragon/truffle-config-v5')

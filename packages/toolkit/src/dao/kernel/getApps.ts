@@ -1,7 +1,5 @@
-import { takeWhile } from 'rxjs/operators'
-//
-import { useEnvironment } from '../../helpers/useEnvironment'
-import { initWrapper } from '../utils/wrapper'
+import { connect, App } from '@aragon/connect'
+import { useEnvironment } from '../../useEnvironment'
 import { kernelAbi } from '../../contractAbis'
 
 type AragonApp = any
@@ -16,14 +14,19 @@ type AragonApp = any
 export async function getInstalledApps(
   dao: string,
   environment: string
-): Promise<AragonApp[]> {
-  const wrapper = await initWrapper(dao, environment)
-  return (
-    wrapper.apps
-      // If the app list contains a single app, wait for more
-      .pipe(takeWhile((apps: AragonApp[]) => apps.length <= 1, true))
-      .toPromise()
-  )
+): Promise<App[]> {
+  const { chainId } = useEnvironment(environment)
+
+  const org = await connect(dao, 'thegraph', { chainId })
+
+  const apps = await org.apps()
+
+  const installedApps = apps.filter(async app => {
+    const roles = await app.roles()
+    const permission = roles.find(roles => roles.permissions)
+  })
+
+  return org.apps()
 }
 
 /**
@@ -36,23 +39,10 @@ export async function getInstalledApps(
 export async function getAllApps(
   dao: string,
   environment: string
-): Promise<
-  {
-    proxyAddress: string
-    appId: string
-  }[]
-> {
-  const { web3 } = useEnvironment(environment)
+): Promise<App[]> {
+  const { chainId } = useEnvironment(environment)
 
-  const kernel = new web3.eth.Contract(kernelAbi, dao)
+  const org = await connect(dao, 'thegraph', { chainId })
 
-  const events = await kernel.getPastEvents('NewAppProxy', {
-    fromBlock: await kernel.methods.getInitializationBlock().call(),
-    toBlock: 'latest',
-  })
-
-  return events.map(event => ({
-    proxyAddress: event.returnValues.proxy,
-    appId: event.returnValues.appId,
-  }))
+  return org.apps()
 }

@@ -1,6 +1,5 @@
 import { getContract } from '../../util'
-import { getRecommendedGasLimit } from './getRecommendedGasLimit'
-import { useEnvironment } from '../../helpers/useEnvironment'
+import { useEnvironment } from '../../useEnvironment'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 

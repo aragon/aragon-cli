@@ -1,50 +1,25 @@
-import { initWrapper } from '../utils/wrapper'
-import { AragonApp, AclPermissions } from '../../types'
-
-// TODO: Stop using wrapper
+import { connect, App, Permission } from '@aragon/connect'
+import { useEnvironment } from '../../useEnvironment'
 
 /**
  * Retrieve DAO ACL permissions
  * @param dao DAO address or ENS name
  * @param environment Envrionment
  */
-export function getAppPermissions(
+export async function getAppPermissions(
   dao: string,
   environment: string
 ): Promise<{
-  permissions: AclPermissions[]
-  apps: AragonApp[]
+  permissions: Permission[]
+  apps: App[]
   daoAddress: string
 }> {
-  return new Promise((resolve, reject) => {
-    let permissions: AclPermissions[] | undefined
-    let apps: AragonApp[] | undefined
-    let daoAddress: string | undefined
+  const { chainId } = useEnvironment(environment)
 
-    const resolveIfReady = (): void => {
-      if (permissions && apps && daoAddress) {
-        resolve({ permissions, apps, daoAddress })
-      }
-    }
+  const org = await connect(dao, 'thegraph', { chainId })
 
-    initWrapper(dao, environment, {
-      // Permissions Object:
-      // { app -> role -> { manager, allowedEntities -> [ entities with permission ] } }
-      onPermissions: (_permissions: AclPermissions[]) => {
-        permissions = _permissions
-        resolveIfReady()
-      },
-      onDaoAddress: (addr: string) => {
-        daoAddress = addr
-        resolveIfReady()
-      },
-      onApps: (_apps: AragonApp[]) => {
-        apps = _apps
-        resolveIfReady()
-      },
-    }).catch(err => {
-      err.message = `Error inspecting DAO ${err.message}`
-      reject(err)
-    })
-  })
+  const apps = await org.apps()
+  const permissions = await org.permissions()
+
+  return { permissions, apps, daoAddress: org.address }
 }

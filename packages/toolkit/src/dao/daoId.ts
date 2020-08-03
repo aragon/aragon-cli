@@ -1,12 +1,8 @@
 import { sha3, isAddress } from 'web3-utils'
 import { convertDAOIdToSubdomain } from '../utils/aragonId'
-import { useEnvironment } from '../helpers/useEnvironment'
-import { REGISTRAR_GAS_LIMIT, ARAGON_DOMAIN } from '../helpers/constants'
+import { useEnvironment } from '../useEnvironment'
+import { REGISTRAR_GAS_LIMIT, ARAGON_DOMAIN } from '../constants'
 import { ififsResolvingRegistrarAbi } from '../contractAbis'
-// Note: Must use require because 'ethereum-ens' is an untyped library
-// without type definitions or @types/ethereum-ens
-/* eslint-disable @typescript-eslint/no-var-requires */
-const ENS = require('ethereum-ens')
 
 /**
  * Assign an id to an existing DAO address.

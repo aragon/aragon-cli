@@ -1,6 +1,6 @@
 import { getRecommendedGasLimit } from './utils/getRecommendedGasLimit'
 import { getApmRepo } from '../apm'
-import { useEnvironment } from '../helpers/useEnvironment'
+import { useEnvironment } from '../useEnvironment'
 import { bareTemplateAbi } from '../contractAbis'
 
 /**
@@ -20,10 +20,10 @@ export async function newDao(
   newInstanceMethod = 'newInstance',
   deployEvent = 'DeployDao',
   templateVersion = 'latest',
-  environment: string,
-  templateInstance: any // TODO: optional object options
+  templateInstance: any, // TODO: optional object options
+  environment: string
 ): Promise<string> {
-  const { web3, gasPrice } = useEnvironment(environment)
+  const { provider } = useEnvironment(environment)
 
   let template
 

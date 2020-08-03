@@ -76,28 +76,3 @@ ${ajv.errorsText(validate.errors, { dataVar: 'arapp', separator: '\n' })}`
 export function loadManifestFile(): AragonManifest | undefined {
   return loadJsonFileIfFound('manifest.json')
 }
-
-/**
- * Loads the truffle config file. If it's non existent, it returns null if `noThrow` is
- * true, otherwise it throws an error.
- * @param {boolean} noThrow Whether to throw or not if the file isn't found
- * @return {Object|null}
- */
-export function getTruffleConfig(noThrow = false): any | null {
-  const projectRoot = findProjectRoot(noThrow)
-
-  if (projectRoot) {
-    if (fs.existsSync(`${projectRoot}/truffle.js`)) {
-      const truffleConfig = require(`${projectRoot}/truffle.js`)
-      return truffleConfig
-    }
-
-    if (fs.existsSync(`${projectRoot}/truffle-config.js`)) {
-      const truffleConfig = require(`${projectRoot}/truffle-config.js`)
-      return truffleConfig
-    }
-  }
-
-  if (noThrow) return null
-  else throw new Error(`Didn't find any truffle.js file`)
-}

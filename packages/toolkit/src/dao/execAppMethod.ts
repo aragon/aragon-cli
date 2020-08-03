@@ -1,5 +1,5 @@
 import { getTransactionPath } from './acl/getTransactionPath'
-import { useEnvironment } from '../helpers/useEnvironment'
+import { useEnvironment } from '../useEnvironment'
 import { TransactionReceipt } from 'web3-core'
 import { TransactionRevertInstructionError } from 'web3-core-helpers'
 

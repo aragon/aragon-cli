@@ -1,5 +1,5 @@
-import * as parser from 'solidity-parser-antlr'
 import path from 'path'
+import * as parser from 'solidity-parser-antlr'
 
 export interface AragonContractFunction {
   name: string

@@ -1,4 +1,4 @@
-import { useEnvironment } from '../../helpers/useEnvironment'
+import { useEnvironment } from '../../useEnvironment'
 import { kernelAbi } from '../../contractAbis'
 
 /**
