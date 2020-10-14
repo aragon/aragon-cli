@@ -48,7 +48,7 @@ It can also be built and installed from source:
 
 ```sh
 git clone https://github.com/aragon/aragon-cli.git
-cd packages/aragon-cli
+cd aragon-cli/packages
 npm install
 npm link
 ```
