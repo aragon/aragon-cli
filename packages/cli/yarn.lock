@@ -6796,9 +6796,9 @@ inquirer@^7.0.0:
     through "^2.3.6"
 
 internal-ip@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/internal-ip/-/internal-ip-6.0.0.tgz#be57b018e8e6994048134e6f4262fcd3d467e6e7"
-  integrity sha512-TgdC/bqCeRUXHXFLY21mHGyi47WAAnxW5M/VXgr7XB5qbP7smFyVXRmIcec/RQ6oP4dUpxqecOOHwzBVpp5t4A==
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/internal-ip/-/internal-ip-6.1.0.tgz#3ce3a9155dc9e2a423af0059efcf5f4b0de3399c"
+  integrity sha512-Cs1iaqrl3z3KJ2ejWyfKkMcuv9NTEJWXtUBSGVc+Eg9BjBLS0k11CsOkf/p5quOkVhhRuq9zwZ/PuJpPUuDP9Q==
   dependencies:
     default-gateway "^6.0.0"
     ipaddr.js "^1.9.1"
