@@ -1,58 +1,40 @@
-import test from 'ava'
-import sinon from 'sinon'
-import proxyquire from 'proxyquire'
 import { convertDAOIdToSubdomain } from '@aragon/toolkit'
-//
 import { parseArgumentStringIfPossible } from '../src/util'
 
-test.beforeEach((t) => {
-  const fsStub = {
-    existsSync: sinon.stub(),
-  }
+// jest
+describe("utils tests", () => {
 
-  const { default: util } = proxyquire.noCallThru().load('../src/util', {
-    fs: fsStub,
+  test('parseArgumentStringIfPossible should parse a boolean string', () => {
+    expect(parseArgumentStringIfPossible('true')).toEqual(true)
+    expect(parseArgumentStringIfPossible('True')).toEqual(true)
+    expect(parseArgumentStringIfPossible('TRUE')).toEqual(true)
+    expect(parseArgumentStringIfPossible('false')).toEqual(false)
+    expect(parseArgumentStringIfPossible('False')).toEqual(false)
+  })
+  
+  test('parseArgumentStringIfPossible should parse an array as string', () => {
+    expect(parseArgumentStringIfPossible('["test"]')).toStrictEqual(['test'])
+    expect(parseArgumentStringIfPossible('[1, 2, "3"]')).toStrictEqual([1, 2, '3'])
+    expect(parseArgumentStringIfPossible('["hello", 1, "true"]')).toStrictEqual([
+      'hello',
+      1,
+      'true',
+    ])
+  })
+  
+  test('convertDAOIdToSubdomain returns the correct format', () => {
+    const daoId = 'dao1'
+    expect(convertDAOIdToSubdomain(daoId)).toEqual(`${daoId}.aragonid.eth`)
+  })
+  
+  test('convertDAOIdToSubdomain returns the same value when called with a subdomain', () => {
+    const daoId = 'daotest2.aragonid.eth'
+    expect(convertDAOIdToSubdomain(daoId)).toEqual(daoId)
+  })
+  
+  test('convertDAOIdToSubdomain throws when called with an invalid DAO id', () => {
+    const daoId = 'my dao'
+    expect(() => convertDAOIdToSubdomain(daoId)).toThrow()
   })
 
-  t.context = {
-    util,
-    fsStub,
-  }
-})
-
-test.afterEach.always(() => {
-  sinon.restore()
-})
-
-test('parseArgumentStringIfPossible should parse a boolean string', (t) => {
-  t.is(parseArgumentStringIfPossible('true'), true)
-  t.is(parseArgumentStringIfPossible('True'), true)
-  t.is(parseArgumentStringIfPossible('TRUE'), true)
-  t.is(parseArgumentStringIfPossible('false'), false)
-  t.is(parseArgumentStringIfPossible('False'), false)
-})
-
-test('parseArgumentStringIfPossible should parse an array as string', (t) => {
-  t.deepEqual(parseArgumentStringIfPossible('["test"]'), ['test'])
-  t.deepEqual(parseArgumentStringIfPossible('[1, 2, "3"]'), [1, 2, '3'])
-  t.deepEqual(parseArgumentStringIfPossible('["hello", 1, "true"]'), [
-    'hello',
-    1,
-    'true',
-  ])
-})
-
-test('convertDAOIdToSubdomain returns the correct format', (t) => {
-  const daoId = 'dao1'
-  t.is(convertDAOIdToSubdomain(daoId), `${daoId}.aragonid.eth`)
-})
-
-test('convertDAOIdToSubdomain returns the same value when called with a subdomain', (t) => {
-  const daoId = 'daotest2.aragonid.eth'
-  t.is(convertDAOIdToSubdomain(daoId), daoId)
-})
-
-test('convertDAOIdToSubdomain throws when called with an invalid DAO id', (t) => {
-  const daoId = 'my dao'
-  t.throws(() => convertDAOIdToSubdomain(daoId))
 })
