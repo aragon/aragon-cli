@@ -1,8 +1,7 @@
-import test from 'ava'
-//
 import { runCreateAragonApp } from './util'
+import { test, expect } from 'jest'
 
-test('should return the correct version', async (t) => {
+test('should return the correct version', async () => {
   // act
   const result = await runCreateAragonApp(['--version'])
 
@@ -11,5 +10,5 @@ test('should return the correct version', async (t) => {
   delete result.stdout
 
   // assert
-  t.snapshot(result)
+  expect(result).toMatchSnapshot()
 })

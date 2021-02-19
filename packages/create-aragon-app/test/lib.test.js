@@ -1,5 +1,5 @@
-import test from 'ava'
 import fs from 'fs-extra'
+import { test, expect, beforeEach, afterEach, fail } from 'jest'
 
 import { checkProjectExists, prepareTemplate } from '../src/lib'
 import isValidAragonId from '../src/helpers/is-valid-aragonid'
@@ -10,33 +10,31 @@ const dirPath = './.tmp'
 const basename = 'aragon-app'
 const projectPath = './.tmp/aragon-app'
 
-test.beforeEach((t) => {
+beforeEach(() => {
   fs.ensureDirSync(projectPath)
 })
 
-test.afterEach((t) => {
+afterEach(() => {
   fs.removeSync(projectPath)
 })
 
-test('project name validation', (t) => {
-  t.is(isValidAragonId('testproject'), true)
-  t.is(isValidAragonId('project2'), true)
-  t.is(isValidAragonId('test-project'), true)
+test('project name validation', () => {
+  expect(isValidAragonId('testproject')).toBe(true)
+  expect(isValidAragonId('project2')).toBe(true)
+  expect(isValidAragonId('test-project')).toBe(true)
 
-  t.is(isValidAragonId('testProject'), false)
-  t.is(isValidAragonId('test_project'), false)
+  expect(isValidAragonId('testProject')).toBe(false)
+  expect(isValidAragonId('test_project')).toBe(false)
 })
 
-test.serial('check if project folder already exists', async (t) => {
+test('check if project folder already exists', async () => {
   try {
     await checkProjectExists(dirPath, basename)
-    t.fail()
-  } catch (err) {
-    t.pass()
-  }
+    fail('it should not reach here')
+  } catch (err) {}
 })
 
-test.serial('prepare project template', async (t) => {
+test('prepare project template', async () => {
   const repoPath = `${projectPath}/.git`
   const arappPath = `${projectPath}/arapp.json`
   const packageJsonPath = `${projectPath}/package.json`
@@ -69,10 +67,14 @@ test.serial('prepare project template', async (t) => {
   const project = await fs.readJson(arappPath)
   const packageJson = await fs.readJson(packageJsonPath)
 
-  t.falsy(await fs.pathExists(repoPath))
-  t.is(undefined, packageJson.license)
-  t.falsy(fs.pathExistsSync(licensePath))
-  t.is(`${appName}`, project.environments.default.appName)
-  t.is(`${basename}.open.aragonpm.eth`, project.environments.staging.appName)
-  t.is(`${basename}.open.aragonpm.eth`, project.environments.production.appName)
+  expect(await fs.pathExists(repoPath)).toBeFalsy()
+  expect(undefined).toBe(packageJson.license)
+  expect(fs.pathExistsSync(licensePath)).toBeFalsy()
+  expect(`${appName}`).toBe(project.environments.default.appName)
+  expect(`${basename}.open.aragonpm.eth`).toBe(
+    project.environments.staging.appName
+  )
+  expect(`${basename}.open.aragonpm.eth`).toBe(
+    project.environments.production.appName
+  )
 })
