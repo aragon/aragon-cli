@@ -1,6 +1,6 @@
-import test from 'ava'
-import sinon from 'sinon'
-import proxyquire from 'proxyquire'
+import grantNewVersionsPermission from '../../src/apm/grantNewVersionsPermission'
+import APM from '@aragon/apm'
+import ACL from '../../src/apm/util/acl'
 
 /* Default values */
 
@@ -12,9 +12,13 @@ const txOptions = { gasPrice }
 const grantees = ['0x1234512345123451234512345123451234512345']
 const progressHandler = () => {}
 
-/* Setup and cleanup */
+jest.mock('@aragon/apm')
+jest.mock('../../src/apm/util/acl')
 
-test.beforeEach('setup', (t) => {
+/* Setup and cleanup */
+let context
+
+beforeEach(() => {
   const web3Stub = {
     eth: {
       getAccounts: async () => ['0x1234512345123451234512345123451234512345'],
@@ -27,69 +31,51 @@ test.beforeEach('setup', (t) => {
     },
   }
 
-  const apmStub = sinon.stub()
-  apmStub.returns({
-    getRepository: async () => {
+  APM.mockResolvedValue({
+    getRepository: () => {
       return {
         options: { address: '0x1234512345123451234512345123451234512345' },
       }
     },
   })
-
-  const aclStub = sinon.stub()
-  aclStub.returns({
+  ACL.mockResolvedValue({
     grant: () => {
       return {}
     },
   })
 
-  const { default: grantNewVersionsPermission } = proxyquire
-    .noCallThru()
-    .load('../../src/apm/grantNewVersionsPermission', {
-      '@aragon/apm': apmStub,
-      './util/acl': aclStub,
-    })
-
-  t.context = {
-    grantNewVersionsPermission,
-    apmStub,
-    aclStub,
+  context = {
     web3Stub,
   }
 })
 
-test.afterEach('cleanup', (t) => {
-  sinon.restore()
-})
-
 /* Tests */
 
-test('properly throws when transaction fails', async (t) => {
-  const { grantNewVersionsPermission, web3Stub } = t.context
+test('properly throws when transaction fails', async () => {
+  const { web3Stub } = context
 
-  const progressHandlerSpy = sinon.spy()
+  web3Stub.eth.sendTransaction = () => {
+    throw 'Some Error'
+  }
 
-  const sendTransactionStub = sinon.stub()
-  sendTransactionStub.throws('Some error')
-  web3Stub.eth.sendTransaction = sendTransactionStub
-
-  await t.throwsAsync(
-    grantNewVersionsPermission(
+  try {
+    await grantNewVersionsPermission(
       web3Stub,
       apmRepoName,
       apmOptions,
       grantees,
-      progressHandlerSpy,
+      null,
       txOptions
     )
-  )
+    fail('it should not reach here')
+  } catch (error) {}
 })
 
-test('Should throw when no grantees are provided', async (t) => {
-  const { grantNewVersionsPermission, web3Stub } = t.context
+test('Should throw when no grantees are provided', async () => {
+  const { web3Stub } = context
 
-  await t.throwsAsync(
-    grantNewVersionsPermission(
+  try {
+    await grantNewVersionsPermission(
       web3Stub,
       apmRepoName,
       apmOptions,
@@ -97,19 +83,16 @@ test('Should throw when no grantees are provided', async (t) => {
       null,
       txOptions
     )
-  )
+    fail('it should not reach here')
+  } catch (error) {}
 })
 
-test('properly calls the progressHandler when nothing errors', async (t) => {
-  const { grantNewVersionsPermission, web3Stub } = t.context
+test('properly calls the progressHandler when nothing errors', async () => {
+  const { web3Stub } = context
 
-  const progressHandlerSpy = sinon.spy()
-
+  const progressHandlerSpy = jest.fn()
   const transactionHash =
     '0x1234512345123451234512345123451234512345123451234512345123451234'
-  const sendTransactionStub = sinon.stub()
-  sendTransactionStub.returns({ transactionHash })
-  web3Stub.eth.sendTransaction = sendTransactionStub
 
   await grantNewVersionsPermission(
     web3Stub,
@@ -120,31 +103,34 @@ test('properly calls the progressHandler when nothing errors', async (t) => {
     txOptions
   )
 
-  t.is(progressHandlerSpy.callCount, 3)
-  t.true(progressHandlerSpy.getCall(0).calledWith(1))
-  t.true(progressHandlerSpy.getCall(1).calledWith(2, grantees[0]))
-  t.true(progressHandlerSpy.getCall(2).calledWith(3, transactionHash))
+  expect(progressHandlerSpy).toHaveBeenCalledTimes(3)
+  expect(progressHandlerSpy).toHaveBeenCalledWith(1)
+  expect(progressHandlerSpy).toHaveBeenCalledWith(2, grantees[0])
+  expect(progressHandlerSpy).toHaveBeenCalledWith(3, transactionHash)
 })
 
-test('properly calls web3.eth.sendTransaction() with expected transaction parameters', async (t) => {
-  const { grantNewVersionsPermission, aclStub, web3Stub } = t.context
+test('properly calls web3.eth.sendTransaction() with expected transaction parameters', async () => {
+  const { web3Stub } = context
 
-  const grantResponse = { name: 'grantResponse' }
-  const grantStub = sinon.stub()
-  grantStub.returns(grantResponse)
-  aclStub.returns({ grant: grantStub })
-
-  const sendTransactionStub = sinon.stub()
-  sendTransactionStub.returns({
-    transactionHash:
-      '0x1234512345123451234512345123451234512345123451234512345123451234',
+  ACL.mockResolvedValue({
+    grant: () => {
+      return { name: 'grantResponse' }
+    },
   })
-  web3Stub.eth.sendTransaction = sendTransactionStub
+
+  const sendTransactionStub = jest.fn(web3Stub.eth.sendTransaction)
 
   const grantees = ['0x01', '0x02', '0x02']
 
+  const enhancedWeb3Stub = {
+    eth: {
+      getAccounts: async () => ['0x1234512345123451234512345123451234512345'],
+      sendTransaction: sendTransactionStub,
+    },
+  }
+
   await grantNewVersionsPermission(
-    web3Stub,
+    enhancedWeb3Stub,
     apmRepoName,
     apmOptions,
     grantees,
@@ -153,33 +139,28 @@ test('properly calls web3.eth.sendTransaction() with expected transaction parame
   )
 
   let callCounter = 0
-  for (let i = 0; i < sendTransactionStub.callCount; i++) {
-    const stubCall = sendTransactionStub.getCall(i)
-    const arg = stubCall.args[0]
+  for (let i = 0; i < sendTransactionStub.mock.calls.length; i++) {
+    const stubCall = sendTransactionStub.mock.calls[i]
+    const arg = stubCall[0]
     if (arg.name && arg.name === 'grantResponse') {
       callCounter++
     }
   }
 
-  t.is(callCounter, grantees.length)
+  expect(callCounter).toBe(grantees.length)
 })
 
-test('properly calls acl.grant() with each of the grantee addresses', async (t) => {
-  const { grantNewVersionsPermission, apmStub, aclStub, web3Stub } = t.context
+test('properly calls acl.grant() with each of the grantee addresses', async () => {
+  const { web3Stub } = context
 
-  const repoAddress = '0x1234512345123451234512345123451234512345'
-  apmStub.returns({
-    getRepository: async () => {
-      return {
-        options: { address: repoAddress },
-      }
-    },
+  const grantMock = jest.fn(() => {
+    return {}
+  })
+  ACL.mockResolvedValue({
+    grant: grantMock,
   })
 
-  const grantStub = sinon.stub()
-  grantStub.returns({})
-
-  aclStub.returns({ grant: grantStub })
+  const repoAddress = '0x1234512345123451234512345123451234512345'
 
   const grantees = ['0x01', '0x02', '0x02']
 
@@ -192,38 +173,16 @@ test('properly calls acl.grant() with each of the grantee addresses', async (t) 
     txOptions
   )
 
-  t.true(grantStub.calledThrice)
-  t.true(grantStub.getCall(0).calledWith(repoAddress, grantees[0]))
-  t.true(grantStub.getCall(1).calledWith(repoAddress, grantees[1]))
-  t.true(grantStub.getCall(2).calledWith(repoAddress, grantees[2]))
+  expect(grantMock).toHaveBeenCalledTimes(3)
+  expect(grantMock).toHaveBeenCalledWith(repoAddress, grantees[0])
+  expect(grantMock).toHaveBeenCalledWith(repoAddress, grantees[1])
+  expect(grantMock).toHaveBeenCalledWith(repoAddress, grantees[2])
 })
 
-test('tolerates a progressHandler not being specified', async (t) => {
-  const { grantNewVersionsPermission, web3Stub } = t.context
+test('tolerates a progressHandler not being specified', async () => {
+  const { web3Stub } = context
 
-  await grantNewVersionsPermission(
-    web3Stub,
-    apmRepoName,
-    apmOptions,
-    grantees,
-    progressHandler,
-    txOptions
-  )
-
-  t.pass()
-})
-
-test('properly throws if apm.getRepository does not find a repository', async (t) => {
-  const { grantNewVersionsPermission, apmStub, web3Stub } = t.context
-
-  const getRepository = sinon.stub()
-  getRepository.returns(null)
-
-  apmStub.returns({
-    getRepository,
-  })
-
-  const error = await t.throwsAsync(async () => {
+  try {
     await grantNewVersionsPermission(
       web3Stub,
       apmRepoName,
@@ -232,24 +191,49 @@ test('properly throws if apm.getRepository does not find a repository', async (t
       progressHandler,
       txOptions
     )
-  })
-
-  t.is(
-    error.message,
-    `Repository ${apmRepoName} does not exist and it's registry does not exist`
-  )
+  } catch (error) {
+    fail('it should not reach here')
+  }
 })
 
-test('calls apm.getRepository() with the correct parameters', async (t) => {
-  const { grantNewVersionsPermission, apmStub, web3Stub } = t.context
+test('properly throws if apm.getRepository does not find a repository', async () => {
+  const { web3Stub } = context
 
-  const getRepository = sinon.stub()
-  getRepository.returns({
-    options: { address: '0x1234512345123451234512345123451234512345' },
+  APM.mockResolvedValue({
+    getRepository: () => null,
   })
 
-  apmStub.returns({
-    getRepository,
+  try {
+    await grantNewVersionsPermission(
+      web3Stub,
+      apmRepoName,
+      apmOptions,
+      grantees,
+      progressHandler,
+      txOptions
+    )
+    fail('it should not reach here')
+  } catch (error) {
+    expect(
+      error
+        .toString()
+        .includes(
+          `Repository ${apmRepoName} does not exist and it's registry does not exist`
+        )
+    ).toBe(true)
+  }
+})
+
+test('calls apm.getRepository() with the correct parameters', async () => {
+  const { web3Stub } = context
+
+  const getRepositoryMock = jest.fn(() => {
+    return {
+      options: { address: '0x1234512345123451234512345123451234512345' },
+    }
+  })
+  APM.mockResolvedValue({
+    getRepository: getRepositoryMock,
   })
 
   await grantNewVersionsPermission(
@@ -261,11 +245,20 @@ test('calls apm.getRepository() with the correct parameters', async (t) => {
     txOptions
   )
 
-  t.true(getRepository.calledOnceWith(apmRepoName))
+  expect(getRepositoryMock).toHaveBeenCalledTimes(1)
 })
 
-test('APM constructor gets called with the appropriate parameters', async (t) => {
-  const { grantNewVersionsPermission, apmStub, web3Stub } = t.context
+test('APM constructor gets called with the appropriate parameters', async () => {
+  const { web3Stub } = context
+
+  const getRepositoryMock = jest.fn(() => {
+    return {
+      options: { address: '0x1234512345123451234512345123451234512345' },
+    }
+  })
+  APM.mockResolvedValue({
+    getRepository: getRepositoryMock,
+  })
 
   await grantNewVersionsPermission(
     web3Stub,
@@ -276,5 +269,6 @@ test('APM constructor gets called with the appropriate parameters', async (t) =>
     txOptions
   )
 
-  t.true(apmStub.calledOnceWith(web3Stub, apmOptions))
+  expect(APM).toHaveBeenCalledWith(web3Stub, apmOptions)
+  expect(getRepositoryMock).toHaveBeenCalledTimes(1)
 })

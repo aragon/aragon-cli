@@ -1,4 +1,3 @@
-import test from 'ava'
 import sinon from 'sinon'
 //
 import getApmRepo from '../../src/apm/getApmRepo'
@@ -19,8 +18,8 @@ let onDaoAddress
 let apps
 
 /* Setup */
-
-test.before('setup', async (t) => {
+jest.setTimeout(60000)
+beforeAll(async () => {
   web3 = await getLocalWeb3()
 
   const apmOpts = getApmOptions()
@@ -42,20 +41,20 @@ test.before('setup', async (t) => {
 
 /* Tests */
 
-test('onDaoAddress is called correctly', (t) => {
-  t.is(onDaoAddress.callCount, 1)
-  t.true(onDaoAddress.getCall(0).calledWith(dao))
+test('onDaoAddress is called correctly', () => {
+  expect(onDaoAddress.callCount).toBe(1)
+  expect(onDaoAddress.getCall(0).calledWith(dao)).toBe(true)
 })
 
-test('getApps returns the correct app list', (t) => {
+test('getApps returns the correct app list', () => {
   const reducedApps = apps.map((app) => {
     return { name: app.name, appId: app.appId }
   })
 
-  t.snapshot(reducedApps)
+  expect(reducedApps).toMatchSnapshot()
 })
 
-test('getTransactionPath provides an expected path', async (t) => {
+test('getTransactionPath provides an expected path', async () => {
   const voting = apps.filter((app) => app.name === 'Voting')[0]
 
   const paths = await getTransactionPath(
@@ -65,7 +64,7 @@ test('getTransactionPath provides an expected path', async (t) => {
     wrapper
   )
 
-  t.is(paths.length, 3)
+  expect(paths.length).toBe(3)
 
   /* Accessing the description prop currently throws an exception in node 10
   t.true(
