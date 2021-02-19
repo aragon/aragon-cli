@@ -1,5 +1,4 @@
 import { runCreateAragonApp } from './util'
-import { test, expect } from 'jest'
 
 test('should return the correct version', async () => {
   // act

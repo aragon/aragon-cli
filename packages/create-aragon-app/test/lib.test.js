@@ -1,5 +1,4 @@
 import fs from 'fs-extra'
-import { test, expect, beforeEach, afterEach, fail } from 'jest'
 
 import { checkProjectExists, prepareTemplate } from '../src/lib'
 import isValidAragonId from '../src/helpers/is-valid-aragonid'

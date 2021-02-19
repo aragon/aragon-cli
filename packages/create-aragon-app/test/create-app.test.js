@@ -1,5 +1,4 @@
 import { remove, ensureDirSync, pathExists, readJson } from 'fs-extra'
-import { test, expect, beforeAll } from 'jest'
 //
 import { normalizeOutput, runCreateAragonApp } from './util'
 
