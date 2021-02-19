@@ -1,5 +1,3 @@
-import test from 'ava'
-//
 import getApmRepoVersions from '../../src/apm/getApmRepoVersions'
 import { getLocalWeb3, getApmOptions } from '../test-helpers'
 
@@ -8,8 +6,8 @@ let apmOptions, apmRepoName
 let versions
 
 /* Setup and cleanup */
-
-test.before('setup and make a successful call', async (t) => {
+jest.setTimeout(60000)
+beforeAll(async () => {
   web3 = await getLocalWeb3()
 
   apmOptions = getApmOptions()
@@ -18,12 +16,10 @@ test.before('setup and make a successful call', async (t) => {
   versions = await getApmRepoVersions(web3, apmRepoName, apmOptions)
 })
 
-test('retrieves the expected versions info', (t) => {
-  t.is(versions.length, 1)
+test('retrieves the expected versions info', () => {
+  expect(versions.length).toBe(1)
 
   const version = versions[0]
-  t.is(version.name, 'Voting')
-  t.is(version.version, '1.0.0')
-
-  t.pass()
+  expect(version.name).toBe('Voting')
+  expect(version.version).toBe('1.0.0')
 })

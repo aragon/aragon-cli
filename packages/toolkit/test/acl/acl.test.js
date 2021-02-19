@@ -1,8 +1,8 @@
-import test from 'ava'
-//
+import { jsonInterfaceMethodToString } from 'web3-utils'
 import { getDaoAddressPermissionsApps } from '../../src/acl/view'
 import { getLocalWeb3, getNewDaoAddress } from '../test-helpers'
 
+jest.setTimeout(60000)
 const ipfsConf = {
   rpc: {
     protocol: 'http',
@@ -16,17 +16,17 @@ const apm = {
   ensRegistryAddress: '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1',
   ipfs: ipfsConf,
 }
-
-test.beforeEach(async (t) => {
-  t.context = {
+let context
+beforeEach(async () => {
+  context = {
     dao: await getNewDaoAddress(),
     web3: await getLocalWeb3(),
   }
 })
 
-test('Should get formated permissions for a new dao', async (t) => {
+test('Should get formated permissions for a new dao', async () => {
   // arrange
-  const { web3, dao } = t.context
+  const { web3, dao } = context
   // act
   // eslint-disable-next-line
   const { /* permissions, */ apps } = await getDaoAddressPermissionsApps({
@@ -36,8 +36,7 @@ test('Should get formated permissions for a new dao', async (t) => {
     apm,
   })
   // assert
-  t.snapshot(
-    apps.map((app) => app.appName),
+  expect(apps.map((app) => app.appName)).toMatchSnapshot(
     'Should return the correct apps'
   )
   // t.snapshot(

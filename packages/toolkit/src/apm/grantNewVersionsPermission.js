@@ -14,7 +14,7 @@ export default async (
   }
 
   const apm = await APM(web3, apmOptions)
-  const acl = ACL(web3)
+  const acl = await ACL(web3)
 
   progressHandler(1)
 
