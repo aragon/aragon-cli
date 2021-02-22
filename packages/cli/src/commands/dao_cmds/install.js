@@ -83,7 +83,9 @@ export const handler = async function ({
 
   // Verify that user has permissions to install
   if (!(await userHasCreatePermissionRole(dao, userAddress, web3)))
-    throw Error(`This address ${userAddress} does not have permission to install ${apmRepoName}`);
+    throw Error(
+      `This address ${userAddress} does not have permission to install ${apmRepoName}`
+    )
 
   const tasks = new TaskList(
     [
@@ -196,7 +198,7 @@ export const handler = async function ({
           ])
 
           if (!ctx.accounts) {
-            ctx.accounts = accounts;
+            ctx.accounts = accounts
           }
 
           const aclAddress = await getAclAddress(dao, web3)
