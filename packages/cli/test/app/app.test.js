@@ -1,13 +1,14 @@
-import test from 'ava'
 import parseCli from '../parseCli'
 
-test.serial('fetches app versions', async (t) => {
+jest.setTimeout(60000)
+
+test('fetches app versions', async () => {
   const output = await parseCli(['apm', 'versions', 'voting', '--debug'])
 
-  t.assert(output.includes('voting.aragonpm.eth'))
+  expect(output.includes('voting.aragonpm.eth')).toBe(true)
 })
 
-test.serial('fetches app versions with full ens name', async (t) => {
+test('fetches app versions with full ens name', async () => {
   const output = await parseCli([
     'apm',
     'versions',
@@ -15,85 +16,90 @@ test.serial('fetches app versions with full ens name', async (t) => {
     '--debug',
   ])
 
-  t.assert(output.includes('finance.aragonpm.eth'))
+  expect(output.includes('finance.aragonpm.eth')).toBe(true)
 })
 
-test.serial(
-  'publish fails if not in an aragon project directory',
-  async (t) => {
-    await t.throwsAsync(() => {
-      return parseCli([
-        'apm',
-        'publish',
-        'major',
-        '--files',
-        'app',
-        '--skip-confirmation',
-        '--no-propagate-content',
-        '--debug',
-      ])
-    })
-  }
-)
+test('publish fails if not in an aragon project directory', async () => {
+  try {
+    await parseCli([
+      'apm',
+      'publish',
+      'major',
+      '--files',
+      'app',
+      '--skip-confirmation',
+      '--no-propagate-content',
+      '--debug',
+    ])
+    fail('it should not reach here')
+  } catch (error) {}
+})
 
-test.serial('grant fails if not in an aragon project directory', async (t) => {
-  await t.throwsAsync(async () => {
-    return parseCli([
+test('grant fails if not in an aragon project directory', async () => {
+  try {
+    await parseCli([
       'apm',
       'grant',
       '0x8401Eb5ff34cc943f096A32EF3d5113FEbE8D4Eb',
       '--debug',
     ])
-  })
+    fail('it should not reach here')
+  } catch (error) {}
 })
 
-test.serial('fetches app info', async (t) => {
+test('fetches app info', async () => {
   const output = await parseCli(['apm', 'info', 'finance', '--debug'])
 
-  t.assert(
-    output.includes('"name": "Finance"'),
+  expect(output.includes('"name": "Finance"')).toEqual(
+    true,
     "App info doesn't contain name"
   )
-  t.assert(
-    output.includes('"author": "Aragon Association",'),
+  expect(output.includes('"author": "Aragon Association",')).toEqual(
+    true,
     "App info doesn't contain author"
   )
-  t.assert(
+  expect(
     output.includes(
       '"description": "Manage an organization\'s financial assets"'
-    ),
-    "App info doesn't contain description"
-  )
-  t.assert(
+    )
+  ).toEqual(true, "App info doesn't contain description")
+  expect(
     output.includes(
       '"changelog_url": "https://github.com/aragon/aragon-apps/releases"'
-    ),
-    "App info doesn't contain changelog url"
-  )
-  t.assert(
+    )
+  ).toEqual(true, "App info doesn't contain changelog url")
+  expect(
     output.includes(
       '"source_url": "https://github.com/aragon/aragon-apps/blob/master/apps/finance"'
-    ),
-    "App info doesn't contain source url"
-  )
+    )
+  ).toEqual(true, "App info doesn't contain source url")
 })
 
-test.serial('fetches packages', async (t) => {
+test('fetches packages', async () => {
   const output = await parseCli(['apm', 'packages', '--debug'])
 
-  t.assert(output.includes('apm-registry'), 'Missing apm-registry')
-  t.assert(output.includes('apm-enssub'), 'Missing apm-enssub')
-  t.assert(output.includes('apm-repo'), 'Missing apm-repo')
-  t.assert(output.includes('aragon'), 'Missing aragon')
-  t.assert(output.includes('agent'), 'Missing agent')
-  t.assert(output.includes('finance'), 'Missing finance')
-  t.assert(output.includes('token-manager'), 'Missing token-manager')
-  t.assert(output.includes('vault'), 'Missing vault')
-  t.assert(output.includes('voting'), 'Missing voting')
-  t.assert(output.includes('bare-template'), 'Missing bare-template')
-  t.assert(output.includes('company-template'), 'Missing company-template')
-  t.assert(
-    output.includes('membership-template'),
+  expect(output.includes('apm-registry')).toEqual(true, 'Missing apm-registry')
+  expect(output.includes('apm-enssub')).toEqual(true, 'Missing apm-enssub')
+  expect(output.includes('apm-repo')).toEqual(true, 'Missing apm-repo')
+  expect(output.includes('aragon')).toEqual(true, 'Missing aragon')
+  expect(output.includes('agent')).toEqual(true, 'Missing agent')
+  expect(output.includes('finance')).toEqual(true, 'Missing finance')
+  expect(output.includes('token-manager')).toEqual(
+    true,
+    'Missing token-manager'
+  )
+  expect(output.includes('vault')).toEqual(true, 'Missing vault')
+  expect(output.includes('voting')).toEqual(true, 'Missing voting')
+  expect(output.includes('bare-template')).toEqual(
+    true,
+    'Missing bare-template'
+  )
+  expect(output.includes('company-template')).toEqual(
+    true,
+    'Missing company-template'
+  )
+  expect(output.includes('membership-template')).toEqual(
+    true,
     'Missing membership-template'
   )
 })

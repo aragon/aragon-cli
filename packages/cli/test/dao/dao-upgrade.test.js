@@ -1,8 +1,6 @@
-import test from 'ava'
-//
 import parseCli from '../parseCli'
 
-test.serial('upgrades an app', async (t) => {
+test('upgrades an app', async () => {
   const date = new Date().getTime()
   const id = `newdao${date}`
 
@@ -10,6 +8,9 @@ test.serial('upgrades an app', async (t) => {
   await parseCli(['dao', 'install', id, 'vault', '--debug'])
   const stdout = await parseCli(['dao', 'upgrade', id, 'vault', '--debug'])
 
-  t.assert(stdout.includes('Start IPFS'))
-  t.assert(stdout.includes('Successfully executed'), 'Unable to upgrade vault')
+  expect(stdout.includes('Start IPFS')).toBe(true)
+  expect(stdout.includes('Successfully executed')).toEqual(
+    true,
+    'Unable to upgrade vault'
+  )
 })

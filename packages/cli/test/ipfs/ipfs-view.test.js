@@ -1,7 +1,6 @@
-import test from 'ava'
 import parseCli from '../parseCli'
 
-test('ipfs view readme directory', async (t) => {
+test('ipfs view readme directory', async () => {
   const stdout = await parseCli([
     'ipfs',
     'view',
@@ -9,7 +8,16 @@ test('ipfs view readme directory', async (t) => {
     '--debug',
   ])
 
-  t.assert(stdout.includes('about'), "Directory doesn't contain about file")
-  t.assert(stdout.includes('help'), "Directory doesn't contain help file")
-  t.assert(stdout.includes('contact'), "Directory doesn't contain contact file")
+  expect(stdout.includes('about')).toEqual(
+    true,
+    "Directory doesn't contain about file"
+  )
+  expect(stdout.includes('help')).toEqual(
+    true,
+    "Directory doesn't contain help file"
+  )
+  expect(stdout.includes('contact')).toEqual(
+    true,
+    "Directory doesn't contain contact file"
+  )
 })

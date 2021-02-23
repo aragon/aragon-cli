@@ -1,4 +1,3 @@
-import test from 'ava'
 import fs from 'fs'
 //
 import {
@@ -15,17 +14,17 @@ const tryUnlink = (filepath) => {
   } catch (e) {}
 }
 
-test.after.always(() => {
+test('tryUnlink', () => {
   tryUnlink(arappPath)
   tryUnlink(manifestPath)
 })
 
-test('Return undefined if files are NOT found', (t) => {
-  t.is(loadArappFile(), undefined)
-  t.is(loadManifestFile(), undefined)
+test('Return undefined if files are NOT found', () => {
+  expect(loadArappFile()).toBe(undefined)
+  expect(loadManifestFile()).toBe(undefined)
 })
 
-test('Return file contents if files are found', (t) => {
+test('Return file contents if files are found', () => {
   const arapp = {
     environments: {
       develop: {
@@ -37,6 +36,6 @@ test('Return file contents if files are found', (t) => {
   fs.writeFileSync(arappPath, JSON.stringify(arapp))
   fs.writeFileSync(manifestPath, JSON.stringify(arapp))
 
-  t.deepEqual(loadArappFile(), arapp)
-  t.deepEqual(loadManifestFile(), arapp)
+  expect(loadArappFile()).toEqual(arapp)
+  expect(loadManifestFile()).toEqual(arapp)
 })

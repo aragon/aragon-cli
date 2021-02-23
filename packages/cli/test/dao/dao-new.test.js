@@ -1,30 +1,34 @@
-import test from 'ava'
-//
 import parseCli from '../parseCli'
 
 const daoAddressRegex = /Created DAO: (.*)\n$/
 const daoIdAndAddressAddressRegex = /Created DAO: (.*) at (.*)\n$/
 
-test.serial('creates a new DAO', async (t) => {
+test('creates a new DAO', async () => {
   const stdout = await parseCli(['dao', 'new', '--debug'])
   const daoAddress = stdout.match(daoAddressRegex)[1]
 
-  t.assert(stdout.includes('Start IPFS'))
-  t.assert(/0x[a-fA-F0-9]{40}/.test(daoAddress), 'Invalid DAO address')
+  expect(stdout.includes('Start IPFS')).toBe(true)
+  expect(/0x[a-fA-F0-9]{40}/.test(daoAddress)).toEqual(
+    true,
+    'Invalid DAO address'
+  )
 })
 
-test.serial('assigns an Aragon Id with the "--aragon-id" param', async (t) => {
+test('assigns an Aragon Id with the "--aragon-id" param', async () => {
   const date = new Date().getTime()
   const id = `newdao${date}`
 
   const stdout = await parseCli(['dao', 'new', '--debug', '--aragon-id', id])
   const [, daoId, daoAddress] = stdout.match(daoIdAndAddressAddressRegex)
 
-  t.assert(daoId === id, 'Invalid Aragon Id')
-  t.assert(/0x[a-fA-F0-9]{40}/.test(daoAddress), 'Invalid DAO address')
+  expect(daoId === id).toEqual(true, 'Invalid Aragon Id')
+  expect(/0x[a-fA-F0-9]{40}/.test(daoAddress)).toEqual(
+    true,
+    'Invalid DAO address'
+  )
 })
 
-test.serial('creates a new DAO with a custom template', async (t) => {
+test('creates a new DAO with a custom template', async () => {
   const stdout = await parseCli([
     'dao',
     'new',
@@ -46,10 +50,13 @@ test.serial('creates a new DAO with a custom template', async (t) => {
 
   const appStdout = await parseCli(['dao', 'apps', daoAddress, '--debug'])
 
-  t.assert(appStdout.includes('voting'))
-  t.assert(appStdout.includes('token-manager'))
-  t.assert(appStdout.includes('finance'))
-  t.assert(appStdout.includes('agent'))
+  expect(appStdout.includes('voting')).toBe(true)
+  expect(appStdout.includes('token-manager')).toBe(true)
+  expect(appStdout.includes('finance')).toBe(true)
+  expect(appStdout.includes('agent')).toBe(true)
 
-  t.assert(/0x[a-fA-F0-9]{40}/.test(daoAddress), 'Invalid DAO address')
+  expect(/0x[a-fA-F0-9]{40}/.test(daoAddress)).toEqual(
+    true,
+    'Invalid DAO address'
+  )
 })
