@@ -1,7 +1,6 @@
-import test from 'ava'
 import parseCli from '../parseCli'
 
-test.serial('creates a new token', async (t) => {
+test('creates a new token', async () => {
   const stdout = await parseCli([
     'dao',
     'token',
@@ -11,12 +10,12 @@ test.serial('creates a new token', async (t) => {
     '--debug',
   ])
 
-  t.assert(
-    stdout.includes('Successfully deployed the token'),
+  expect(stdout.includes('Successfully deployed the token')).toEqual(
+    true,
     "Can't deploy token"
   )
-  t.assert(
-    stdout.includes('Successfully deployed the token factory'),
+  expect(stdout.includes('Successfully deployed the token factory')).toEqual(
+    true,
     "Can't deploy token factory"
   )
 })

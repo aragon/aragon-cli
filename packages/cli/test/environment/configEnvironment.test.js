@@ -1,48 +1,42 @@
-import test from 'ava'
-//
 import { configEnvironment } from '../../src/lib/environment/configEnvironment'
 
-test('configEnvironment - ignore network', (t) => {
+test('configEnvironment - ignore network', () => {
   const config = configEnvironment({
     ignoreNetwork: true,
   })
-  t.deepEqual(config.network, {}, 'networkObj should be empty')
+  expect(config.network).toEqual({})
 })
 
-test('configEnvironment - with frame', (t) => {
+test('configEnvironment - with frame', () => {
   const config = configEnvironment({
     useFrame: true,
   })
-  t.is(config.network.name, 'frame-rpc', 'Wrong network name')
+  expect(config.network.name).toBe('frame-rpc')
 })
 
-test('configEnvironment - with frame on rinkeby', (t) => {
+test('configEnvironment - with frame on rinkeby', () => {
   const config = configEnvironment({
     useFrame: true,
     environment: 'aragon:rinkeby',
   })
-  t.is(config.network.name, 'frame-rinkeby', 'Wrong network name')
+  expect(config.network.name).toBe('frame-rinkeby')
 })
 
-test('configEnvironment - default networks - localhost', (t) => {
+test('configEnvironment - default networks - localhost', () => {
   const config = configEnvironment({
     environment: '',
     arapp: { environments: { default: { network: 'rpc' } } },
   })
-  t.is(config.network.name, 'rpc', 'Wrong network name')
-  t.is(
-    config.network.provider.connection._url,
-    'ws://localhost:8545',
-    'Wrong network provider WS url'
-  )
+  expect(config.network.name).toBe('rpc')
+  expect(config.network.provider.connection._url).toBe('ws://localhost:8545')
 })
 
-test('configEnvironment - default networks - rinkeby', (t) => {
+test('configEnvironment - default networks - rinkeby', () => {
   const config = configEnvironment({
     environment: 'rinkeby',
     arapp: { environments: { rinkeby: { network: 'rinkeby' } } },
   })
-  t.is(config.network.name, 'rinkeby', 'Wrong network name')
+  expect(config.network.name).toBe('rinkeby')
 })
 
 const customEnvironment = 'custom-environment'
@@ -62,22 +56,16 @@ const arapp = {
   },
 }
 
-test('configEnvironment - custom environment - rinkeby', (t) => {
+test('configEnvironment - custom environment - rinkeby', () => {
   const config = configEnvironment({
     environment: customEnvironment,
     arapp,
   })
 
   const selectedEnv = arapp.environments[customEnvironment]
-  t.is(config.network.name, selectedEnv.network, 'Wrong network name')
-  t.is(
-    config.apm.ensRegistryAddress,
-    selectedEnv.registry,
-    'Wrong registry address'
-  )
-  t.is(
-    config.wsProvider.connection._url,
-    'wss://rinkeby.eth.aragon.network/ws',
-    'Wrong network provider WS url'
+  expect(config.network.name).toBe(selectedEnv.network)
+  expect(config.apm.ensRegistryAddress).toBe(selectedEnv.registry)
+  expect(config.wsProvider.connection._url).toBe(
+    'wss://rinkeby.eth.aragon.network/ws'
   )
 })
