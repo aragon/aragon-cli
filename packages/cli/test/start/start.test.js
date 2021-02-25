@@ -1,5 +1,7 @@
 import parseCli from '../parseCli'
 
+jest.setTimeout(60000)
+
 const START_CMD_TIMEOUT = 40000
 
 test('start opens a web server', async () => {
