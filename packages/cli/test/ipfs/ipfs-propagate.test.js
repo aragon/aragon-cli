@@ -1,5 +1,7 @@
 import parseCli from '../parseCli'
 
+jest.setTimeout(60000)
+
 test('ipfs propagate readme directory', async () => {
   const stdout = await parseCli([
     'ipfs',
