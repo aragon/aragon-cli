@@ -2,6 +2,8 @@ import { remove, ensureDirSync, pathExists, readJson } from 'fs-extra'
 //
 import { normalizeOutput, runCreateAragonApp } from './util'
 
+jest.setTimeout(60000)
+
 const testSandbox = './.tmp'
 const projectName = 'foobar'
 const projectPath = `${testSandbox}/${projectName}`
