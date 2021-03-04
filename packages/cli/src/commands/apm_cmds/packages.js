@@ -68,11 +68,9 @@ function displayPackages(packages) {
   const table = new Table({
     head: ['App', 'Latest Version'],
   })
-  
   packages.forEach((aPackage) => {
     const row = [aPackage.name, aPackage.version]
     table.push(row)
   })
- 
   console.log('\n', table.toString())
 }
