@@ -3,6 +3,8 @@ import parseCli from '../parseCli'
 const daoAddressRegex = /Created DAO: (.*)\n$/
 const daoIdAndAddressAddressRegex = /Created DAO: (.*) at (.*)\n$/
 
+jest.setTimeout(60000)
+
 test('creates a new DAO', async () => {
   const stdout = await parseCli(['dao', 'new', '--debug'])
   const daoAddress = stdout.match(daoAddressRegex)[1]

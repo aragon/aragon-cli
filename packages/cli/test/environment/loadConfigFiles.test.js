@@ -14,7 +14,7 @@ const tryUnlink = (filepath) => {
   } catch (e) {}
 }
 
-test('tryUnlink', () => {
+afterAll(() => {
   tryUnlink(arappPath)
   tryUnlink(manifestPath)
 })

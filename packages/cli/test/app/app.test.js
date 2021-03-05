@@ -2,13 +2,13 @@ import parseCli from '../parseCli'
 
 jest.setTimeout(60000)
 
-test('fetches app versions', async () => {
+test.only('fetches app versions', async () => {
   const output = await parseCli(['apm', 'versions', 'voting', '--debug'])
 
   expect(output.includes('voting.aragonpm.eth')).toBe(true)
 })
 
-test('fetches app versions with full ens name', async () => {
+test.only('fetches app versions with full ens name', async () => {
   const output = await parseCli([
     'apm',
     'versions',
@@ -19,7 +19,7 @@ test('fetches app versions with full ens name', async () => {
   expect(output.includes('finance.aragonpm.eth')).toBe(true)
 })
 
-test('publish fails if not in an aragon project directory', async () => {
+test.only('publish fails if not in an aragon project directory', async () => {
   try {
     await parseCli([
       'apm',
@@ -35,7 +35,7 @@ test('publish fails if not in an aragon project directory', async () => {
   } catch (error) {}
 })
 
-test('grant fails if not in an aragon project directory', async () => {
+test.only('grant fails if not in an aragon project directory', async () => {
   try {
     await parseCli([
       'apm',
@@ -47,7 +47,7 @@ test('grant fails if not in an aragon project directory', async () => {
   } catch (error) {}
 })
 
-test('fetches app info', async () => {
+test.only('fetches app info', async () => {
   const output = await parseCli(['apm', 'info', 'finance', '--debug'])
 
   expect(output.includes('"name": "Finance"')).toEqual(
@@ -75,7 +75,7 @@ test('fetches app info', async () => {
   ).toEqual(true, "App info doesn't contain source url")
 })
 
-test('fetches packages', async () => {
+test.only('fetches packages', async () => {
   const output = await parseCli(['apm', 'packages', '--debug'])
 
   expect(output.includes('apm-registry')).toEqual(true, 'Missing apm-registry')

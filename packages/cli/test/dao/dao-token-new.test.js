@@ -1,5 +1,7 @@
 import parseCli from '../parseCli'
 
+jest.setTimeout(60000)
+
 test('creates a new token', async () => {
   const stdout = await parseCli([
     'dao',

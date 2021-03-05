@@ -13,7 +13,7 @@ let ACCOUNT1, ACCOUNT2
 let DAO_A, AGENT_A, VOTING_A
 let DAO_B, TOKEN_MANAGER_B, VOTING_B
 
-jest.setTimeout(60000)
+jest.setTimeout(160000)
 
 async function createMembershipOrg(daoName) {
   const { stdout } = await runAragonCLI([
