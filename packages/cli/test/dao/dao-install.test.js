@@ -1,5 +1,7 @@
 import parseCli from '../parseCli'
 
+jest.setTimeout(60000)
+
 test('installs a new app', async () => {
   const date = new Date().getTime()
   const id = `newdao${date}`
