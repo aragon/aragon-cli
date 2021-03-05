@@ -2,7 +2,9 @@ import { runAragonCLI } from '../util'
 import parseCli from '../parseCli'
 
 const daoAddressRegex = /Created DAO: (.*)$/
+
 jest.setTimeout(60000)
+
 test('assigns an Aragon Id to a DAO address', async () => {
   const { stdout: daoNewStdout } = await runAragonCLI(['dao', 'new', '--debug'])
   const daoAddress = daoNewStdout.match(daoAddressRegex)[1]

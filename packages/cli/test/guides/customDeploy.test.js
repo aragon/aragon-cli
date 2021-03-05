@@ -12,6 +12,7 @@ const verbose = false
 let ACCOUNT1, ACCOUNT2, DAO, ACL, TOKEN, TOKEN_MANAGER, VAULT, FINANCE, VOTING
 
 jest.setTimeout(160000)
+
 beforeAll(async () => {
   // Identify accounts
   const web3 = await getLocalWeb3()
