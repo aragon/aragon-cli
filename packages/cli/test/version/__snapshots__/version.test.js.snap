@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should return the correct version 1`] = `
+Object {
+  "all": undefined,
+  "command": "node dist/index.js --version",
+  "exitCode": 0,
+  "failed": false,
+  "isCanceled": false,
+  "killed": false,
+  "stderr": "",
+  "timedOut": false,
+}
+`;
