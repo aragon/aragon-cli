@@ -25,6 +25,7 @@ test('Returns the correct encoded call with params', () => {
 test('Throws with wrong number of params', () => {
   try {
     encodeActCall('myMethod(bool,string)', [true])
+    // eslint-disable-next-line no-undef
     fail('it should not reach here')
   } catch (error) {}
 })

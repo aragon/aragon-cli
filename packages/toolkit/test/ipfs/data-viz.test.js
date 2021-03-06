@@ -15,7 +15,9 @@ const merkleDagNode = {
 
 test('Should format a merkle DAG node', () => {
   const formatedOutput = stringifyMerkleDAGNode(merkleDagNode)
-  expect(stripAnsi(formatedOutput)).toMatchSnapshot('The formated display output is correct')
+  expect(stripAnsi(formatedOutput)).toMatchSnapshot(
+    'The formated display output is correct'
+  )
 })
 
 test('Should format a merkle DAG tree', () => {
@@ -24,5 +26,7 @@ test('Should format a merkle DAG tree', () => {
     links: [merkleDagNode, merkleDagNode],
   }
   const formatedOutput = stringifyMerkleDAG(merkleDagTree)
-  expect(stripAnsi(formatedOutput)).toMatchSnapshot('The formated display output is correct')
+  expect(stripAnsi(formatedOutput)).toMatchSnapshot(
+    'The formated display output is correct'
+  )
 })

@@ -33,6 +33,7 @@ test('isIdAssigned returns true for an id that was set', async () => {
 test('assignId throws when tyring to re-assign the same address', async () => {
   try {
     await assignId(daoAddress, daoId, { web3, ensRegistry })
+    // eslint-disable-next-line no-undef
     fail('it should not reach here')
   } catch (error) {
     expect(
@@ -44,6 +45,7 @@ test('assignId throws when tyring to re-assign the same address', async () => {
 test('assignId throws when called with an invalid address', async () => {
   try {
     await assignId('INVALID ADDRESS', 'id', { web3, ensRegistry })
+    // eslint-disable-next-line no-undef
     fail('it should not reach here')
   } catch (error) {
     expect(error.toString().includes('Invalid address')).toBe(true)

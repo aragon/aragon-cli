@@ -15,6 +15,7 @@ test('Throws if kernel address is null', async () => {
 
   try {
     await getAppKernel(web3, '0x8401Eb5ff34cc943f096A32EF3d5113FEbE8D4Eb')
+    // eslint-disable-next-line no-undef
     fail('it should not reach here')
   } catch (error) {}
 })

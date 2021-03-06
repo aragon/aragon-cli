@@ -16,6 +16,7 @@ test('start opens a web server', async () => {
 test('run fails if not in an aragon project directory', async () => {
   try {
     await parseCli(['run'])
+    // eslint-disable-next-line no-undef
     fail('it should not reach here')
   } catch (error) {}
 })

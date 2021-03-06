@@ -1,4 +1,3 @@
-import { jsonInterfaceMethodToString } from 'web3-utils'
 import { getDaoAddressPermissionsApps } from '../../src/acl/view'
 import { getLocalWeb3, getNewDaoAddress } from '../test-helpers'
 

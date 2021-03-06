@@ -29,6 +29,7 @@ test('project name validation', () => {
 test('check if project folder already exists', async () => {
   try {
     await checkProjectExists(dirPath, basename)
+    // eslint-disable-next-line no-undef
     fail('it should not reach here')
   } catch (err) {}
 })

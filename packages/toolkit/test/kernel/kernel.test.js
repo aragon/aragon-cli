@@ -1,4 +1,4 @@
-import { getAppProxyAddressFromReceipt } from '../../src/kernel/kernel';
+import { getAppProxyAddressFromReceipt } from '../../src/kernel/kernel'
 
 test('getAppProxyAddressFromReceipt', () => {
   /**
