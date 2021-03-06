@@ -83,6 +83,7 @@ test('Throws with invalid newInstance', async () => {
       newInstanceArgs: [],
       deployEvent: 'DeployDao',
     })
+    // eslint-disable-next-line no-undef
     fail('it should not reach here')
   } catch (error) {}
 })
@@ -105,6 +106,7 @@ test('Throws with invalid deploy event', async () => {
       newInstanceArgs: [],
       deployEvent: 'invalid',
     })
+    // eslint-disable-next-line no-undef
     fail('it should not reach here')
   } catch (error) {}
 })

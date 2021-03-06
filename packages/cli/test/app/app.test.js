@@ -31,6 +31,7 @@ test('publish fails if not in an aragon project directory', async () => {
       '--no-propagate-content',
       '--debug',
     ])
+    // eslint-disable-next-line no-undef
     fail('it should not reach here')
   } catch (error) {}
 })
@@ -43,6 +44,7 @@ test('grant fails if not in an aragon project directory', async () => {
       '0x8401Eb5ff34cc943f096A32EF3d5113FEbE8D4Eb',
       '--debug',
     ])
+    // eslint-disable-next-line no-undef
     fail('it should not reach here')
   } catch (error) {}
 })

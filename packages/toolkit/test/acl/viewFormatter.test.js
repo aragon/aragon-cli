@@ -1,4 +1,7 @@
-import { flattenAclPermissions, formatAclPermissions } from '../../src/acl/viewFormatter'
+import {
+  flattenAclPermissions,
+  formatAclPermissions,
+} from '../../src/acl/viewFormatter'
 
 test('viewFormatter > flattenAclPermissions', () => {
   const toAppAddress1 = '0xbc4d08eb94caf68faf73be40780b68b1de369d15'

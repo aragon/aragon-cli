@@ -55,6 +55,7 @@ test('properly throws when transaction fails', async () => {
   const { web3Stub } = context
 
   web3Stub.eth.sendTransaction = () => {
+    // eslint-disable-next-line no-throw-literal
     throw 'Some Error'
   }
 
@@ -67,6 +68,7 @@ test('properly throws when transaction fails', async () => {
       null,
       txOptions
     )
+    // eslint-disable-next-line no-undef
     fail('it should not reach here')
   } catch (error) {}
 })
@@ -83,6 +85,7 @@ test('Should throw when no grantees are provided', async () => {
       null,
       txOptions
     )
+    // eslint-disable-next-line no-undef
     fail('it should not reach here')
   } catch (error) {}
 })
@@ -192,6 +195,7 @@ test('tolerates a progressHandler not being specified', async () => {
       txOptions
     )
   } catch (error) {
+    // eslint-disable-next-line no-undef
     fail('it should not reach here')
   }
 })
@@ -212,6 +216,7 @@ test('properly throws if apm.getRepository does not find a repository', async ()
       progressHandler,
       txOptions
     )
+    // eslint-disable-next-line no-undef
     fail('it should not reach here')
   } catch (error) {
     expect(

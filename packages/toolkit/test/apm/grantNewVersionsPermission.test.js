@@ -107,6 +107,7 @@ test('Should throw when no grantees are provided', async () => {
       null,
       txOptions
     )
+    // eslint-disable-next-line no-undef
     fail('it should not reach here')
   } catch (error) {}
 })

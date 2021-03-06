@@ -1,4 +1,4 @@
-import parseCli from '../parseCli';
+import parseCli from '../parseCli'
 
 jest.setTimeout(60000)
 

@@ -37,6 +37,7 @@ test('convertDAOIdToSubdomain throws when called with an invalid DAO id', () => 
   const daoId = 'my dao'
   try {
     convertDAOIdToSubdomain(daoId)
+    // eslint-disable-next-line no-undef
     fail('it should not reach here')
   } catch (error) {}
 })
