@@ -34,10 +34,6 @@ beforeAll(() => {
   fs.writeFileSync(`${IPFS_PATH}/version`, IPFS_VERSION)
 })
 
-// test('removeSync(IPFS_PATH)', () => {
-//   fs.removeSync(IPFS_PATH)
-// })
-
 test('getRepoVersion should return the version of a repository', async () => {
   const version = await getRepoVersion(IPFS_PATH)
   expect(version).toBe(IPFS_VERSION)
@@ -55,4 +51,8 @@ test('Get ports from config JSON', () => {
 test('Get peer ID from config JSON', () => {
   const peerId = getPeerIDConfig(IPFS_CONFIG_JSON)
   expect(peerId).toBe(PEER_ID)
+})
+
+test('removeSync(IPFS_PATH)', () => {
+  fs.removeSync(IPFS_PATH)
 })

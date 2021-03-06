@@ -1,4 +1,4 @@
-
+import { remove } from 'fs-extra'
 import {
   startLocalDaemon,
   ensureRepoInitialized,
@@ -30,12 +30,6 @@ jest.setTimeout(60000)
 beforeAll(async () => {
   await initPackage(projectPath)
 })
-
-// test('kill process and remove project paths...', async () => {
-//   await killProcessOnPort(apiPort)
-//   await remove(projectPath)
-//   await remove(repoPath)
-// })
 
 test('should install go-ipfs in a new project', async () => {
   const result = await installGoIpfs(true, projectPath)
@@ -92,4 +86,10 @@ test.skip('should stop the daemon', async () => {
   const daemonRunning = await isLocalDaemonRunning(apiUrl)
 
   expect(daemonRunning).toBe(false)
+})
+
+test('kill process and remove project paths...', async () => {
+  await killProcessOnPort(apiPort)
+  await remove(projectPath)
+  await remove(repoPath)
 })
