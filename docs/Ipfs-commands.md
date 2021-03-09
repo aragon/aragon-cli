@@ -43,6 +43,8 @@ Options:
 - `--local`: Whether to install IPFS as a project dependency. Defaults `false`.
 - `--skip-confirmation`: Whether to skip the confirmation step. Defaults to `false`.
 
+Please note: It's been documented that this command in some rare cases may not work as intended, most likely due to the IPFS mirrors. If you believe this is happening, try [downloading and installing IPFS from their site.](https://docs.ipfs.io/install/)
+
 ## aragon ipfs uninstall
 
 Uninstall the go-ipfs binaries.
