@@ -32,11 +32,11 @@ export const handler = async function ({
   const repo = await apm.getRepository(module.appName)
   const dao = await repo.methods.kernel().call()
 
-  for (const entity in grantees) {
+  for (const entity of grantees) {
     await ACLGrantHandler({
       reporter,
       dao,
-      app: module.appName,
+      app: repo.options.address,
       role: 'CREATE_VERSION_ROLE',
       entity,
       network,
