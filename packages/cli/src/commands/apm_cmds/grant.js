@@ -1,5 +1,5 @@
-import { blue } from 'chalk'
-import { grantNewVersionsPermission } from '@aragon/toolkit'
+import APM from '@aragon/apm'
+import { handler as ACLGrantHandler } from '../dao_cmds/acl_cmds/grant'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
 
@@ -27,35 +27,23 @@ export const handler = async function ({
   grantees,
 }) {
   const web3 = await ensureWeb3(network)
+  const apm = await APM(web3, apmOptions)
 
-  const progressHandler = (step, data) => {
-    switch (step) {
-      case 1:
-        reporter.info(`Fetching repository`)
-        break
-      case 2:
-        // eslint-disable-next-line no-case-declarations
-        const address = data
-        reporter.info(
-          `Granting permission to publish on ${blue(
-            module.appName
-          )} for ${address}`
-        )
-        break
-      case 3:
-        // eslint-disable-next-line no-case-declarations
-        const txHash = data
-        reporter.success(`Successful transaction (${blue(txHash)})`)
-        break
-    }
+  const repo = await apm.getRepository(module.appName)
+  const dao = await repo.methods.kernel().call()
+
+  for (const entity in grantees) {
+    await ACLGrantHandler({
+      reporter,
+      dao,
+      app: module.appName,
+      role: 'CREATE_VERSION_ROLE',
+      entity,
+      network,
+      provider: web3.currentProvider,
+      apm,
+      gasPrice: gasPrice || network.gasPrice,
+      params: [],
+    })
   }
-
-  await grantNewVersionsPermission(
-    web3,
-    module.appName,
-    apmOptions,
-    grantees,
-    progressHandler,
-    { gasPrice: gasPrice || network.gasPrice }
-  )
 }
