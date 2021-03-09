@@ -22,6 +22,7 @@ export const handler = async function ({
   gasPrice,
   network,
   module,
+  wsProvider,
   apm: apmOptions,
   // Arguments
   grantees,
@@ -40,7 +41,7 @@ export const handler = async function ({
       role: 'CREATE_VERSION_ROLE',
       entity,
       network,
-      provider: web3.currentProvider,
+      provider: wsProvider || web3.currentProvider,
       apm,
       gasPrice: gasPrice || network.gasPrice,
       params: [],
