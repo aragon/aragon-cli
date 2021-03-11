@@ -86,5 +86,7 @@ export const handler = async function ({
   reporter.success(
     `Successfully executed: "${blue(transactionPath.description)}"`
   )
-  await web3.currentProvider.connection.close()
+  if (await web3.currentProvider.connection) {
+    await web3.currentProvider.connection.close()
+  }
 }

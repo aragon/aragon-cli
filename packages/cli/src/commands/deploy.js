@@ -116,7 +116,9 @@ export const task = async ({
         task: async (ctx) => {
           ctx.deployArtifacts = await deployArtifacts(ctx.contractArtifacts)
           ctx.deployArtifacts.transactionHash = ctx.transactionHash
-          await web3.currentProvider.connection.close()
+          if (await web3.currentProvider.connection) {
+            await web3.currentProvider.connection.close()
+          }
         },
       },
     ],
