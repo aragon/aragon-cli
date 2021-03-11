@@ -119,4 +119,5 @@ Run aragon start, and go to
   
 to verify that the vote containing multiple votes was created.
 `)
+  await web3.currentProvider.connection.close()
 })

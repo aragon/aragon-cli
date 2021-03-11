@@ -11,15 +11,19 @@ import { getLocalWeb3 } from '../../test-helpers'
 
 jest.setTimeout(60000)
 const ensRegistryAddress = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1'
-let context
+let context, web3
 beforeEach(async () => {
-  const web3 = await getLocalWeb3()
+  web3 = await getLocalWeb3()
   const accounts = await web3.eth.getAccounts()
 
   context = {
     web3,
     accounts,
   }
+})
+
+afterAll(async () => {
+  await web3.currentProvider.connection.close()
 })
 
 test('Should prepare a TX to grant permissions to an account', async () => {

@@ -20,6 +20,10 @@ beforeAll(async () => {
   await assignId(daoAddress, daoId, { web3, ensRegistry })
 })
 
+afterAll(async () => {
+  await web3.currentProvider.connection.close()
+})
+
 /* Tests */
 
 test('isIdAssigned returns false for an id that was not set', async () => {

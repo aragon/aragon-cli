@@ -23,6 +23,10 @@ beforeEach(async () => {
   }
 })
 
+afterAll(async () => {
+  await context.web3.currentProvider.connection.close()
+})
+
 test('Should get formated permissions for a new dao', async () => {
   // arrange
   const { web3, dao } = context

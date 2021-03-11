@@ -146,7 +146,14 @@ export const task = async function ({
           await listen()
 
           ctx.web3 = new Web3(
-            new Web3.providers.WebsocketProvider(`ws://localhost:${port}`)
+            new Web3.providers.WebsocketProvider(`ws://localhost:${port}`),
+            {
+              timeout: 500,
+              clientConfig: {
+                keepalive: false,
+                keepaliveInterval: 500,
+              },
+            }
           )
           const accounts = await ctx.web3.eth.getAccounts()
 
@@ -161,6 +168,7 @@ export const task = async function ({
             ),
             address,
           }))
+          await ctx.web3.currentProvider.connection.close()
         },
       },
     ],

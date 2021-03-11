@@ -219,7 +219,7 @@ export const handler = async function ({
     listrOpts(silent, debug)
   )
 
-  return tasks.run().then((ctx) => {
+  return tasks.run().then(async (ctx) => {
     reporter.newLine()
     reporter.info(
       `Successfully executed: "${blue(ctx.transactionPath.description)}"`
@@ -241,5 +241,6 @@ export const handler = async function ({
         'The app could not be initialized, check the --app-init flag. Functions protected behind the ACL will not work until the app is initialized.'
       )
     }
+    await web3.currentProvider.connection.close()
   })
 }

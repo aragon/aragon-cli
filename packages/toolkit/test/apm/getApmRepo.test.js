@@ -30,6 +30,10 @@ beforeAll(async () => {
   )
 })
 
+afterAll(async () => {
+  await web3.currentProvider.connection.close()
+})
+
 /* Tests */
 
 test('produces extected info', () => {

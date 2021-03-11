@@ -39,6 +39,10 @@ beforeAll(async () => {
   apps = await getApps(wrapper)
 })
 
+afterAll(async () => {
+  await web3.currentProvider.connection.close()
+})
+
 /* Tests */
 
 test('onDaoAddress is called correctly', () => {

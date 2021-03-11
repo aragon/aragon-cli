@@ -5,14 +5,18 @@ import newDao from '../../src/dao/new'
 import defaultAPMName from '../../src/helpers/default-apm'
 import { getLocalWeb3, isAddress } from '../test-helpers'
 
-let context
+let context, web3
 jest.setTimeout(60000)
 beforeEach(async () => {
-  const web3 = await getLocalWeb3()
+  web3 = await getLocalWeb3()
 
   context = {
     web3,
   }
+})
+
+afterAll(async () => {
+  await web3.currentProvider.connection.close()
 })
 
 test('Deploys DAO with valid template', async () => {

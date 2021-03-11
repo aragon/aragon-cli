@@ -8,8 +8,16 @@ import {
 } from '../../src/token/token'
 
 jest.setTimeout(60000)
+let web3
+beforeEach(async () => {
+  web3 = await getLocalWeb3()
+})
+
+afterEach(async () => {
+  await web3.currentProvider.connection.close()
+})
+
 test('deployMiniMeTokenFactory: should deploy the contract', async () => {
-  const web3 = await getLocalWeb3()
   const progressCallback = sinon.stub()
 
   const receipt = await deployMiniMeTokenFactory(
@@ -29,7 +37,6 @@ test('deployMiniMeToken: should deploy the contract', async () => {
   const tokenSymbol = 'TKN'
   const decimalUnits = '12'
 
-  const web3 = await getLocalWeb3()
   const progressCallback = sinon.stub()
 
   const factory = await deployMiniMeTokenFactory(

@@ -16,6 +16,10 @@ beforeAll(async () => {
   versions = await getApmRepoVersions(web3, apmRepoName, apmOptions)
 })
 
+afterAll(async () => {
+  await web3.currentProvider.connection.close()
+})
+
 test('retrieves the expected versions info', () => {
   expect(versions.length).toBe(1)
 

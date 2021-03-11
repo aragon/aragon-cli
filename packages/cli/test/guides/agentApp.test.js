@@ -36,14 +36,19 @@ async function createMembershipOrg(daoName) {
   return matchAddressAtLineContaining(stdout, 'Created DAO')
 }
 
+let web3
 beforeAll(async () => {
   // Identify accounts
-  const web3 = await getLocalWeb3()
+  web3 = await getLocalWeb3()
   const accounts = await web3.eth.getAccounts()
   ACCOUNT1 = accounts[0]
   ACCOUNT2 = accounts[1]
   if (verbose) console.log(`ACCOUNT1`, ACCOUNT1)
   if (verbose) console.log(`ACCOUNT2`, ACCOUNT2)
+})
+
+afterAll(async () => {
+  await web3.currentProvider.connection.close()
 })
 
 test('creates DAO A', async () => {
