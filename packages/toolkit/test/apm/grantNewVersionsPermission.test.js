@@ -64,6 +64,10 @@ beforeAll(async () => {
   )
 })
 
+afterAll(async () => {
+  await web3.currentProvider.connection.close()
+})
+
 /* Tests */
 
 test('permissions are not set for any accounts', async () => {

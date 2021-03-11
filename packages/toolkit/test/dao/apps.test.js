@@ -7,14 +7,18 @@ import getApmRepo from '../../src/apm/getApmRepo'
 import defaultAPMName from '../../src/helpers/default-apm'
 import { getLocalWeb3 } from '../test-helpers'
 
-let context
+let context, web3
 jest.setTimeout(60000)
 beforeEach(async () => {
-  const web3 = await getLocalWeb3()
+  web3 = await getLocalWeb3()
 
   context = {
     web3,
   }
+})
+
+afterAll(async () => {
+  await web3.currentProvider.connection.close()
 })
 
 test('getAllApps returns the correct apps', async () => {

@@ -5,15 +5,19 @@ import * as tokenLib from '../../src/token/token'
 import { isAddress, isValidTxHash, getLocalWeb3 } from '../test-helpers'
 
 jest.setTimeout(60000)
-let context
+let context, web3
 beforeEach(async () => {
-  const web3 = await getLocalWeb3()
+  web3 = await getLocalWeb3()
   const accounts = await web3.eth.getAccounts()
 
   context = {
     web3,
     accounts,
   }
+})
+
+afterAll(async () => {
+  await web3.currentProvider.connection.close()
 })
 
 test('sinon.restore()', () => {

@@ -30,6 +30,10 @@ beforeAll(async () => {
   )
 })
 
+afterAll(async () => {
+  await web3.currentProvider.connection.close()
+})
+
 /* Tests */
 
 test('contains expected packages', () => {

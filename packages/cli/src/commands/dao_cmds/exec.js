@@ -35,6 +35,7 @@ export const handler = async function ({
   fnArgs,
   wsProvider,
 }) {
+  const web3 = await ensureWeb3(network)
   const task = await execHandler({
     dao,
     app: proxyAddress,
@@ -45,7 +46,7 @@ export const handler = async function ({
     apm,
     network,
     wsProvider,
-    web3: await ensureWeb3(network),
+    web3,
   })
   const { transactionPath } = await task.run()
 
@@ -53,4 +54,5 @@ export const handler = async function ({
   reporter.success(
     `Successfully executed: "${blue(transactionPath.description)}"`
   )
+  await web3.currentProvider.connection.close()
 }

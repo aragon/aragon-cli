@@ -10,17 +10,22 @@ import {
 const verbose = false
 
 let ACCOUNT1, ACCOUNT2, DAO, ACL, TOKEN, TOKEN_MANAGER, VAULT, FINANCE, VOTING
+let web3
 
 jest.setTimeout(160000)
 
 beforeAll(async () => {
   // Identify accounts
-  const web3 = await getLocalWeb3()
+  web3 = await getLocalWeb3()
   const accounts = await web3.eth.getAccounts()
   ACCOUNT1 = accounts[0]
   ACCOUNT2 = accounts[1]
   if (verbose) console.log(`ACCOUNT1`, ACCOUNT1)
   if (verbose) console.log(`ACCOUNT2`, ACCOUNT2)
+})
+
+afterAll(async () => {
+  await web3.currentProvider.connection.close()
 })
 
 test('creates a dao', async () => {

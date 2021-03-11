@@ -255,7 +255,13 @@ export const handler = async function ({
           if (!(await isPortTaken(hostURL.port))) {
             return false
           } else {
-            ctx.web3 = new Web3(network.provider)
+            ctx.web3 = new Web3(network.provider, {
+              timeout: 500,
+              clientConfig: {
+                keepalive: false,
+                keepaliveInterval: 500,
+              },
+            })
             ctx.accounts = await ctx.web3.eth.getAccounts()
             return 'Connected to the provided Ethereum network'
           }

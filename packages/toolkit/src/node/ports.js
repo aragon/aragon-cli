@@ -4,7 +4,16 @@ import net from 'net'
 export { killProcessOnPort }
 
 export const isPortTaken = async (port, opts) => {
-  opts = Object.assign({ timeout: 1000 }, opts)
+  opts = Object.assign(
+    {
+      timeout: 500,
+      clientConfig: {
+        keepalive: false,
+        keepaliveInterval: 500,
+      },
+    },
+    opts
+  )
 
   return new Promise((resolve) => {
     const socket = new net.Socket()

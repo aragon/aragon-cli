@@ -22,7 +22,15 @@ export const handler = async function ({
   apm: apmOptions,
   wsProvider,
 }) {
-  const web3 = wsProvider ? new Web3(wsProvider) : await ensureWeb3(network)
+  const web3 = wsProvider
+    ? new Web3(wsProvider, {
+        timeout: 500,
+        clientConfig: {
+          keepalive: false,
+          keepaliveInterval: 500,
+        },
+      })
+    : await ensureWeb3(network)
 
   let packages
 

@@ -33,5 +33,8 @@
       "pre-commit": "yarn lint",
       "pre-push": "yarn test"
     }
+  },
+  "dependencies": {
+    "why-is-node-running": "^2.2.0"
   }
 }

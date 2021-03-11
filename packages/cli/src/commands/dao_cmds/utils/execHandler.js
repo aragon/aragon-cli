@@ -91,10 +91,11 @@ export async function task({
 export async function handler(args) {
   const tasks = await task(args)
 
-  return tasks.run().then((ctx) => {
+  return tasks.run().then(async (ctx) => {
     args.reporter.newLine()
     args.reporter.success(
       `Successfully executed: "${blue(ctx.transactionPath.description)}"`
     )
+    await args.web3.currentProvider.connection.close()
   })
 }

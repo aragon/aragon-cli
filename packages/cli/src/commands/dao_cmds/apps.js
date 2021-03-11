@@ -144,7 +144,13 @@ export const handler = async function ({
         task: async (ctx, task) => {
           appsWithoutPermissions = (
             await getAllApps(daoAddress, {
-              web3: new Web3(wsProvider || web3.currentProvider),
+              web3: new Web3(wsProvider || web3.currentProvider, {
+                timeout: 500,
+                clientConfig: {
+                  keepalive: false,
+                  keepaliveInterval: 500,
+                },
+              }),
             })
           ).filter(
             ({ proxyAddress }) =>
@@ -165,4 +171,5 @@ export const handler = async function ({
 
   printApps(apps)
   printPermissionlessApps(appsWithoutPermissions)
+  await web3.currentProvider.connection.close()
 }
