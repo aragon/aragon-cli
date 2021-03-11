@@ -96,6 +96,8 @@ export async function handler(args) {
     args.reporter.success(
       `Successfully executed: "${blue(ctx.transactionPath.description)}"`
     )
-    await args.web3.currentProvider.connection.close()
+    if (await await args.web3.currentProvider.connection) {
+      await args.web3.currentProvider.connection.close()
+    }
   })
 }

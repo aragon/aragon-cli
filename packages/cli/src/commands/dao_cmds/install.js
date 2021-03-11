@@ -241,6 +241,8 @@ export const handler = async function ({
         'The app could not be initialized, check the --app-init flag. Functions protected behind the ACL will not work until the app is initialized.'
       )
     }
-    await web3.currentProvider.connection.close()
+    if (await web3.currentProvider.connection) {
+      await web3.currentProvider.connection.close()
+    }
   })
 }

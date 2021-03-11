@@ -35,7 +35,10 @@ export const handler = async function ({
         task.title = `Fetching ${bold(apmRepoName)} published versions`
 
         versions = await getApmRepoVersions(web3, apmRepoName, apmOptions)
-        await web3.currentProvider.connection.close()
+
+        if (await web3.currentProvider.connection) {
+          await web3.currentProvider.connection.close()
+        }
       },
     },
   ])

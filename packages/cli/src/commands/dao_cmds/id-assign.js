@@ -68,5 +68,7 @@ export const handler = async function ({
   await tasks.run()
   reporter.newLine()
   reporter.success(`${green(aragonId)} successfully assigned to ${dao}`)
-  await web3.currentProvider.connection.close()
+  if (await web3.currentProvider.connection) {
+    await web3.currentProvider.connection.close()
+  }
 }

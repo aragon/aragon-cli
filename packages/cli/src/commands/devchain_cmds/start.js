@@ -168,7 +168,9 @@ export const task = async function ({
             ),
             address,
           }))
-          await ctx.web3.currentProvider.connection.close()
+          if (await ctx.web3.currentProvider.connection) {
+            await ctx.web3.currentProvider.connection.close()
+          }
         },
       },
     ],

@@ -171,5 +171,8 @@ export const handler = async function ({
 
   printApps(apps)
   printPermissionlessApps(appsWithoutPermissions)
-  await web3.currentProvider.connection.close()
+
+  if (await web3.currentProvider.connection) {
+    await web3.currentProvider.connection.close()
+  }
 }
