@@ -1,3 +1,1 @@
-const teardown = require("./teardown-logic")
-
-teardown()
+require("./teardown-logic")()

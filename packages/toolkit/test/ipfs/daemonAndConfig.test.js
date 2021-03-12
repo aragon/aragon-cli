@@ -26,7 +26,7 @@ const projectPath = './.tmp/ipfs-tests/project'
 const repoPath = './.tmp/ipfs-tests/repo'
 const binPath = './.tmp/ipfs-tests/project/node_modules/.bin/ipfs'
 
-jest.setTimeout(60000)
+jest.setTimeout(160000)
 beforeAll(async () => {
   await initPackage(projectPath)
 })
