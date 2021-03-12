@@ -15,21 +15,11 @@ const apm = {
   ensRegistryAddress: '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1',
   ipfs: ipfsConf,
 }
-let context
-beforeEach(async () => {
-  context = {
-    dao: await getNewDaoAddress(),
-    web3: await getLocalWeb3(),
-  }
-})
-
-afterAll(async () => {
-  await context.web3.currentProvider.connection.close()
-})
 
 test('Should get formated permissions for a new dao', async () => {
   // arrange
-  const { web3, dao } = context
+  const dao = await getNewDaoAddress()
+  const web3 = await getLocalWeb3()
   // act
   // eslint-disable-next-line
   const { /* permissions, */ apps } = await getDaoAddressPermissionsApps({
@@ -38,6 +28,7 @@ test('Should get formated permissions for a new dao', async () => {
     ipfsConf,
     apm,
   })
+  await web3.currentProvider.connection.close()
   // assert
   expect(apps.map((app) => app.appName)).toMatchSnapshot(
     'Should return the correct apps'

@@ -15,4 +15,6 @@ module.exports = {
 
   // Jest Runner
   runner: 'jest-serial-runner',
+
+  globalTeardown: '../../scripts/teardown-logic.js',
 }

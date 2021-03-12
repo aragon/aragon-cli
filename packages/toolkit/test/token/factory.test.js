@@ -14,7 +14,9 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
-  await web3.currentProvider.connection.close()
+  if (web3.currentProvider && web3.currentProvider.connection) {
+    await web3.currentProvider.connection.close()
+  }
 })
 
 test('deployMiniMeTokenFactory: should deploy the contract', async () => {

@@ -15,7 +15,7 @@ beforeEach(async () => {
   }
 })
 
-afterAll(async () => {
+afterEach(async () => {
   await web3.currentProvider.connection.close()
 })
 
