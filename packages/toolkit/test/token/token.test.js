@@ -16,8 +16,10 @@ beforeEach(async () => {
   }
 })
 
-afterAll(async () => {
-  await web3.currentProvider.connection.close()
+afterEach(async () => {
+  if (web3.currentProvider && web3.currentProvider.connection) {
+    await web3.currentProvider.connection.close()
+  }
 })
 
 test('sinon.restore()', () => {

@@ -9,12 +9,19 @@ import {
 } from '../dist/index'
 
 jest.setTimeout(60000)
-test('Create a single vote with multiple votes encoded in an EVM script', async () => {
-  // Connect web3.
-  const web3 = new Web3(
-    new Web3.providers.WebsocketProvider(`ws://localhost:8545`)
-  )
 
+let web3
+
+beforeAll(() => {
+  // Connect web3.
+  web3 = new Web3(new Web3.providers.WebsocketProvider(`ws://localhost:8545`))
+})
+
+afterAll(async () => {
+  await web3.currentProvider.connection.close()
+})
+
+test('Create a single vote with multiple votes encoded in an EVM script', async () => {
   // Retrieve web3 accounts.
   const accounts = await web3.eth.getAccounts()
   const acc0 = accounts[0]
@@ -119,5 +126,4 @@ Run aragon start, and go to
   
 to verify that the vote containing multiple votes was created.
 `)
-  await web3.currentProvider.connection.close()
 })
