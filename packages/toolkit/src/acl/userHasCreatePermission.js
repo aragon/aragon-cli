@@ -9,7 +9,7 @@ const aclAbi = require('@aragon/os/build/contracts/ACL').abi
  * @param  {web3} web3 Web3
  * @return {boolean} Address has create role permission
  */
-export default async (daoAddr, address, web3) => {
+export async function userHasCreatePermission(daoAddr, address, web3) {
   const dao = new web3.eth.Contract(kernelAbi, daoAddr)
   const aclAddr = await dao.methods.acl().call()
   const acl = new web3.eth.Contract(aclAbi, aclAddr)

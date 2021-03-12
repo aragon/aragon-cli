@@ -16,7 +16,7 @@ import {
   getDefaultRepoPath,
   isLocalDaemonRunning,
   getApmRepo,
-  userHasCreatePermissionRole,
+  userHasCreatePermission,
 } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
@@ -82,7 +82,7 @@ export const handler = async function ({
   if (!userAddress) throw Error(`Error getting accounts from web3`)
 
   // Verify that user has permissions to install
-  if (!(await userHasCreatePermissionRole(dao, userAddress, web3)))
+  if (!(await userHasCreatePermission(dao, userAddress, web3)))
     throw Error(
       `This address ${userAddress} does not have permission to install ${apmRepoName}`
     )
