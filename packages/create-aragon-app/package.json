@@ -83,14 +83,6 @@
   "engines": {
     "node": ">=10.0.0 <11 || >=12.0.0 <13"
   },
-  "ava": {
-    "require": [
-      "@babel/register"
-    ],
-    "files": [
-      "test/**/*.test.js"
-    ]
-  },
   "nyc": {
     "include": [
       "src/**/*.js"
@@ -127,7 +119,6 @@
     },
     "extends": [
       "standard",
-      "plugin:ava/recommended",
       "plugin:prettier/recommended"
     ],
     "parser": "babel-eslint"

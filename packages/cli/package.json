@@ -141,14 +141,6 @@
     "defaultGasPrice": "2",
     "defaultIpfsTimeout": "300000"
   },
-  "ava": {
-    "require": [
-      "@babel/register"
-    ],
-    "files": [
-      "test/**/*.test.js"
-    ]
-  },
   "nyc": {
     "include": [
       "src/**/*.js",
@@ -192,7 +184,6 @@
     },
     "extends": [
       "standard",
-      "plugin:ava/recommended",
       "plugin:prettier/recommended"
     ],
     "parser": "babel-eslint"
