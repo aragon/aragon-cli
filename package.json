@@ -35,6 +35,7 @@
     }
   },
   "dependencies": {
+    "leaked-handles": "^5.2.0",
     "why-is-node-running": "^2.2.0"
   }
 }
