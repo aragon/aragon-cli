@@ -33,9 +33,5 @@
       "pre-commit": "yarn lint",
       "pre-push": "yarn test"
     }
-  },
-  "dependencies": {
-    "leaked-handles": "^5.2.0",
-    "why-is-node-running": "^2.2.0"
   }
 }
