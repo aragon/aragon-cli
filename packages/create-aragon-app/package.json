@@ -17,9 +17,9 @@
     "test:watch": "jest test/ --watch",
     "test:clean": "rm -rf ./.tmp && yarn test:reset-cache",
     "test:reset-cache": "jest test/ --clearCache",
-    "test:update-snapshots": "yarn test:clean && yarn test -- --updateSnapshot",
+    "test:update-snapshots": "yarn test --updateSnapshot",
     "test:coverage:html": "nyc --all --reporter html  yarn test",
-    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly yarn test"
+    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly yarn test:update-snapshots"
   },
   "files": [
     "dist"
