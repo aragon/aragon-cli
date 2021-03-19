@@ -109,13 +109,10 @@ export const handler = async function ({
     listrOpts(silent, debug)
   )
 
-  return tasks.run().then(async (ctx) => {
+  return tasks.run().then((ctx) => {
     reporter.newLine()
     reporter.success(
       `Successfully executed: "${blue(ctx.transactionPath.description)}"`
     )
-    if (await web3.currentProvider.connection) {
-      await web3.currentProvider.connection.close()
-    }
   })
 }

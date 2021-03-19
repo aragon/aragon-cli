@@ -1,30 +1,40 @@
 import { configEnvironment } from '../../src/lib/environment/configEnvironment'
 
+let config
+afterEach(async () => {
+  if (config.wsProvider?.connection) {
+    await config.wsProvider.connection.close()
+    await config.wsProvider.removeAllListeners()
+  }
+  if (config.network.provider?.engine) {
+    config.network.provider.engine.stop()
+  }
+})
+
 test('configEnvironment - ignore network', () => {
-  const config = configEnvironment({
+  config = configEnvironment({
     ignoreNetwork: true,
   })
   expect(config.network).toEqual({})
 })
 
 test('configEnvironment - with frame', () => {
-  const config = configEnvironment({
+  config = configEnvironment({
     useFrame: true,
   })
   expect(config.network.name).toBe('frame-rpc')
 })
 
 test('configEnvironment - with frame on rinkeby', async () => {
-  const config = configEnvironment({
+  config = configEnvironment({
     useFrame: true,
     environment: 'aragon:rinkeby',
   })
   expect(config.network.name).toBe('frame-rinkeby')
-  await config.wsProvider.connection.close()
 })
 
 test('configEnvironment - default networks - localhost', () => {
-  const config = configEnvironment({
+  config = configEnvironment({
     environment: '',
     arapp: { environments: { default: { network: 'rpc' } } },
   })
@@ -33,13 +43,11 @@ test('configEnvironment - default networks - localhost', () => {
 })
 
 test('configEnvironment - default networks - rinkeby', async () => {
-  const config = configEnvironment({
+  config = configEnvironment({
     environment: 'rinkeby',
     arapp: { environments: { rinkeby: { network: 'rinkeby' } } },
   })
   expect(config.network.name).toBe('rinkeby')
-  await config.wsProvider.connection.close()
-  config.network.provider.engine.stop()
 })
 
 const customEnvironment = 'custom-environment'
@@ -60,7 +68,7 @@ const arapp = {
 }
 
 test('configEnvironment - custom environment - rinkeby', async () => {
-  const config = configEnvironment({
+  config = configEnvironment({
     environment: customEnvironment,
     arapp,
   })
@@ -71,6 +79,4 @@ test('configEnvironment - custom environment - rinkeby', async () => {
   expect(config.wsProvider.connection._url).toBe(
     'wss://rinkeby.eth.aragon.network/ws'
   )
-  await config.wsProvider.connection.close()
-  config.network.provider.engine.stop()
 })

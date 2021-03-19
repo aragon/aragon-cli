@@ -3,6 +3,7 @@ import * as child from 'child_process'
 import Web3 from 'web3'
 import execa from 'execa'
 import os from 'os'
+import web3WebsocketOptions from '../src/helpers/web3-websocket'
 
 const defaultTimeout = 15 * 60 * 1000 // ms
 
@@ -15,13 +16,7 @@ export const isAddress = Web3.utils.isAddress
 export const getLocalWeb3 = async () => {
   const web3 = new Web3(
     new Web3.providers.WebsocketProvider(`ws://localhost:8545`),
-    {
-      timeout: 10000,
-      clientConfig: {
-        keepalive: false,
-        keepaliveInterval: 500,
-      },
-    }
+    web3WebsocketOptions
   )
   const connected = await web3.eth.net.isListening()
   if (!connected) throw new Error('Web3 connection failed')

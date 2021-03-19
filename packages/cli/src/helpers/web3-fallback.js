@@ -1,16 +1,11 @@
 import Web3 from 'web3'
+import web3WebsocketOptions from './web3-websocket'
 
 export const ensureWeb3 = async (network) => {
   let web3
 
   try {
-    web3 = new Web3(network.provider, {
-      timeout: 10000,
-      clientConfig: {
-        keepalive: false,
-        keepaliveInterval: 500,
-      },
-    })
+    web3 = new Web3(network.provider, web3WebsocketOptions)
     const connected = await web3.eth.net.isListening()
     if (connected) return web3
   } catch (err) {

@@ -162,7 +162,5 @@ export const handler = async function ({
       ? `Created DAO: ${green(aragonId)} at ${green(ctx.daoAddress)}`
       : `Created DAO: ${green(ctx.daoAddress)}`
   )
-  if (await web3.currentProvider.connection) {
-    await web3.currentProvider.connection.close()
-  }
+  await web3.currentProvider.connection?.close()
 }

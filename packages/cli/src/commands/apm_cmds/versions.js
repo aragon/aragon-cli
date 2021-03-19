@@ -36,9 +36,7 @@ export const handler = async function ({
 
         versions = await getApmRepoVersions(web3, apmRepoName, apmOptions)
 
-        if (await web3.currentProvider.connection) {
-          await web3.currentProvider.connection.close()
-        }
+        await web3.currentProvider.connection?.close()
       },
     },
   ])

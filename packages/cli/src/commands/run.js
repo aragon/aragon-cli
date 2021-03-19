@@ -26,6 +26,7 @@ import {
 } from '../util'
 import { task as getRepoTask } from './apm_cmds/util/getRepoTask'
 import runPrepareForPublishTask from './apm_cmds/util/runPrepareForPublishTask'
+import web3WebsocketOptions from '../helpers/web3-websocket'
 
 // cmds
 import {
@@ -255,13 +256,7 @@ export const handler = async function ({
           if (!(await isPortTaken(hostURL.port))) {
             return false
           } else {
-            ctx.web3 = new Web3(network.provider, {
-              timeout: 10000,
-              clientConfig: {
-                keepalive: false,
-                keepaliveInterval: 500,
-              },
-            })
+            ctx.web3 = new Web3(network.provider, web3WebsocketOptions)
             ctx.accounts = await ctx.web3.eth.getAccounts()
             return 'Connected to the provided Ethereum network'
           }

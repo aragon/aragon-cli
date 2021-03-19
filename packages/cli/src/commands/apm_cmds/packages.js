@@ -5,6 +5,8 @@ import { getApmRegistryPackages } from '@aragon/toolkit'
 import { ensureWeb3 } from '../../helpers/web3-fallback'
 import Web3 from 'web3'
 
+import web3WebsocketOptions from '../../helpers/web3-websocket'
+
 export const command = 'packages [apmRegistry]'
 export const describe = 'List all packages in the registry'
 
@@ -23,13 +25,7 @@ export const handler = async function ({
   wsProvider,
 }) {
   const web3 = wsProvider
-    ? new Web3(wsProvider, {
-        timeout: 10000,
-        clientConfig: {
-          keepalive: false,
-          keepaliveInterval: 500,
-        },
-      })
+    ? new Web3(wsProvider, web3WebsocketOptions)
     : await ensureWeb3(network)
 
   let packages

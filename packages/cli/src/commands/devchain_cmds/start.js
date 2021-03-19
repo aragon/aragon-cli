@@ -15,6 +15,7 @@ import listrOpts from '../../helpers/listr-options'
 import pjson from '../../../package.json'
 import { task as devchainStatusTask } from './status'
 import { BLOCK_GAS_LIMIT, MNEMONIC } from './utils/constants'
+import web3WebsocketOptions from '../../helpers/web3-websocket'
 
 export const command = 'start'
 export const describe =
@@ -147,13 +148,7 @@ export const task = async function ({
 
           ctx.web3 = new Web3(
             new Web3.providers.WebsocketProvider(`ws://localhost:${port}`),
-            {
-              timeout: 10000,
-              clientConfig: {
-                keepalive: false,
-                keepaliveInterval: 500,
-              },
-            }
+            web3WebsocketOptions
           )
           const accounts = await ctx.web3.eth.getAccounts()
 

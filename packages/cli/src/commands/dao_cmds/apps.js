@@ -16,6 +16,8 @@ import listrOpts from '../../helpers/listr-options'
 import daoArg from './utils/daoArg'
 import { listApps } from './utils/knownApps'
 
+import web3WebsocketOptions from '../../helpers/web3-websocket'
+
 let knownApps
 
 export const command = 'apps <dao>'
@@ -144,13 +146,10 @@ export const handler = async function ({
         task: async (ctx, task) => {
           appsWithoutPermissions = (
             await getAllApps(daoAddress, {
-              web3: new Web3(wsProvider || web3.currentProvider, {
-                timeout: 10000,
-                clientConfig: {
-                  keepalive: false,
-                  keepaliveInterval: 500,
-                },
-              }),
+              web3: new Web3(
+                wsProvider || web3.currentProvider,
+                web3WebsocketOptions
+              ),
             })
           ).filter(
             ({ proxyAddress }) =>
@@ -172,7 +171,5 @@ export const handler = async function ({
   printApps(apps)
   printPermissionlessApps(appsWithoutPermissions)
 
-  if (await web3.currentProvider.connection) {
-    await web3.currentProvider.connection.close()
-  }
+  await web3.currentProvider.connection?.close()
 }
