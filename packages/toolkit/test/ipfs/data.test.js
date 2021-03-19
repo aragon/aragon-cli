@@ -7,6 +7,7 @@ import {
 const ipfsGateway = 'http://localhost:8080'
 const readmeDirCid = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'
 
+jest.setTimeout(60000)
 test('Get IPFS readme merkle DAG and CIDs', async () => {
   const ipfsReader = await getHttpClient(ipfsGateway)
 
