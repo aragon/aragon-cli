@@ -24,7 +24,7 @@ export const handler = async function ({
 }) {
   const web3 = wsProvider
     ? new Web3(wsProvider, {
-        timeout: 500,
+        timeout: 10000,
         clientConfig: {
           keepalive: false,
           keepaliveInterval: 500,

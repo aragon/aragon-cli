@@ -145,7 +145,7 @@ export const handler = async function ({
           appsWithoutPermissions = (
             await getAllApps(daoAddress, {
               web3: new Web3(wsProvider || web3.currentProvider, {
-                timeout: 500,
+                timeout: 10000,
                 clientConfig: {
                   keepalive: false,
                   keepaliveInterval: 500,

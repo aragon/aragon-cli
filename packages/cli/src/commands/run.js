@@ -256,7 +256,7 @@ export const handler = async function ({
             return false
           } else {
             ctx.web3 = new Web3(network.provider, {
-              timeout: 500,
+              timeout: 10000,
               clientConfig: {
                 keepalive: false,
                 keepaliveInterval: 500,

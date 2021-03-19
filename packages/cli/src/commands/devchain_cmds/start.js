@@ -148,7 +148,7 @@ export const task = async function ({
           ctx.web3 = new Web3(
             new Web3.providers.WebsocketProvider(`ws://localhost:${port}`),
             {
-              timeout: 500,
+              timeout: 10000,
               clientConfig: {
                 keepalive: false,
                 keepaliveInterval: 500,

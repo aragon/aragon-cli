@@ -5,7 +5,7 @@ export const ensureWeb3 = async (network) => {
 
   try {
     web3 = new Web3(network.provider, {
-      timeout: 500,
+      timeout: 10000,
       clientConfig: {
         keepalive: false,
         keepaliveInterval: 500,
