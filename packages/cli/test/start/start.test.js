@@ -1,7 +1,7 @@
 import parseCli from '../parseCli'
 const { killProcessOnPort } = require('../../../toolkit')
 
-jest.setTimeout(60000)
+jest.setTimeout(160000)
 
 const START_CMD_TIMEOUT = 60000
 
