@@ -1,5 +1,7 @@
 import TaskList from 'listr'
 import { blue, green, bold } from 'chalk'
+import { hash as namehash } from 'eth-ens-namehash'
+import { connect } from '@aragon/connect'
 import {
   ANY_ENTITY,
   NO_MANAGER,
@@ -17,6 +19,7 @@ import {
   isLocalDaemonRunning,
   getApmRepo,
   userHasCreatePermission,
+  hasAppManagerPermission,
 } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
@@ -87,6 +90,17 @@ export const handler = async function ({
       `This address ${userAddress} does not have permission to install ${apmRepoName}`
     )
 
+  const progressHandler = (step) => {
+    switch (step) {
+      case 1:
+        console.log(`Initialize aragonPM`)
+        break
+      case 2:
+        console.log(`Fetching...`)
+        break
+    }
+  }
+
   const tasks = new TaskList(
     [
       {
@@ -101,17 +115,6 @@ export const handler = async function ({
       {
         title: `Fetching ${bold(apmRepoName)}@${apmRepoVersion}`,
         task: async (ctx) => {
-          const progressHandler = (step) => {
-            switch (step) {
-              case 1:
-                console.log(`Initialize aragonPM`)
-                break
-              case 2:
-                console.log(`Fetching...`)
-                break
-            }
-          }
-
           ctx.repo = await getApmRepo(
             web3,
             apmRepoName,
@@ -119,6 +122,28 @@ export const handler = async function ({
             apmRepoVersion,
             progressHandler
           )
+        },
+      },
+      {
+        title: `Fetching App Manager permissions`,
+        task: async (ctx, task) => {
+          const org = await connect(dao, 'thegraph', {
+            chainId: network.network_id,
+          })
+          const votingName = namehash('voting.aragonpm.eth')
+          const installedVoting = (await org.apps()).find(
+            (app) => app.appId === votingName
+          ).address
+
+          if (installedVoting !== ZERO_ADDRESS) {
+            ctx.managedByVoting = await hasAppManagerPermission(
+              dao,
+              installedVoting,
+              web3
+            )
+          } else {
+            ctx.managedByVoting = false
+          }
         },
       },
       {
@@ -243,6 +268,13 @@ export const handler = async function ({
     } else {
       reporter.warning(
         'After the app instance is created, you will need to assign permissions to it for it appear as an app in the DAO.'
+      )
+    }
+
+    if (ctx.managedByVoting) {
+      reporter.newLine()
+      reporter.info(
+        'A new vote has been created in your Voting app to complete the installation.'
       )
     }
 
