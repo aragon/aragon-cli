@@ -91,17 +91,6 @@ export const handler = async function ({
       `This address ${userAddress} does not have permission to install ${apmRepoName}`
     )
 
-  const progressHandler = (step) => {
-    switch (step) {
-      case 1:
-        console.log(`Initialize aragonPM`)
-        break
-      case 2:
-        console.log(`Fetching...`)
-        break
-    }
-  }
-
   const tasks = new TaskList(
     [
       {
@@ -116,6 +105,17 @@ export const handler = async function ({
       {
         title: `Fetching ${bold(apmRepoName)}@${apmRepoVersion}`,
         task: async (ctx) => {
+          const progressHandler = (step) => {
+            switch (step) {
+              case 1:
+                console.log(`Initialize aragonPM`)
+                break
+              case 2:
+                console.log(`Fetching...`)
+                break
+            }
+          }
+
           ctx.repo = await getApmRepo(
             web3,
             apmRepoName,
