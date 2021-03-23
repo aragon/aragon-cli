@@ -1,21 +1,22 @@
-import test from 'ava'
 import { remove, ensureDirSync, pathExists, readJson } from 'fs-extra'
 //
 import { normalizeOutput, runCreateAragonApp } from './util'
+
+jest.setTimeout(60000)
 
 const testSandbox = './.tmp'
 const projectName = 'foobar'
 const projectPath = `${testSandbox}/${projectName}`
 
-test.before(async (t) => {
+beforeAll(async () => {
   if (await pathExists(projectPath)) await remove(projectPath)
 })
 
-test.after.always(async () => {
+test('remove(projectPath)', async () => {
   await remove(projectPath)
 })
 
-test('should create a new aragon app based on the buidler boilerplate', async (t) => {
+test('should create a new aragon app based on the buidler boilerplate', async () => {
   ensureDirSync(testSandbox)
 
   const repoPath = `${projectPath}/.git`
@@ -34,11 +35,11 @@ test('should create a new aragon app based on the buidler boilerplate', async (t
   const packageJson = await readJson(packageJsonPath)
   const arapp = await readJson(arappPath)
 
-  t.true(normalizeOutput(stdout).includes('Created new application'))
-  t.true(await pathExists(projectPath))
-  t.true(await pathExists(arappPath))
-  t.falsy(await pathExists(repoPath))
-  t.falsy(await pathExists(licensePath))
-  t.is(undefined, packageJson.license)
-  t.is(`${projectName}.aragonpm.eth`, arapp.environments.default.appName)
+  expect(normalizeOutput(stdout).includes('Created new application')).toBe(true)
+  expect(await pathExists(projectPath)).toBe(true)
+  expect(await pathExists(arappPath)).toBe(true)
+  expect(await pathExists(repoPath)).toBeFalsy()
+  expect(await pathExists(licensePath)).toBeFalsy()
+  expect(undefined).toBe(packageJson.license)
+  expect(`${projectName}.aragonpm.eth`).toBe(arapp.environments.default.appName)
 })
