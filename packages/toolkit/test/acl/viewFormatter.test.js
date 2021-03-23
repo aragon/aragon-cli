@@ -1,11 +1,9 @@
-import test from 'ava'
-//
 import {
   flattenAclPermissions,
   formatAclPermissions,
 } from '../../src/acl/viewFormatter'
 
-test('viewFormatter > flattenAclPermissions', (t) => {
+test('viewFormatter > flattenAclPermissions', () => {
   const toAppAddress1 = '0xbc4d08eb94caf68faf73be40780b68b1de369d15'
   const toAppAddress2 = '0xb123451234512345123451234512345123451234'
   const roleHash =
@@ -29,7 +27,7 @@ test('viewFormatter > flattenAclPermissions', (t) => {
   }
   const flattenedAclPermissions = flattenAclPermissions(permissions)
 
-  t.deepEqual(flattenedAclPermissions, [
+  expect(flattenedAclPermissions).toEqual([
     {
       to: toAppAddress1,
       role: roleHash,
@@ -45,7 +43,7 @@ test('viewFormatter > flattenAclPermissions', (t) => {
   ])
 })
 
-test('viewFormatter > formatAclPermissions', (t) => {
+test('viewFormatter > formatAclPermissions', () => {
   // Mock addresses, appIds and names
 
   const toAppAddress = '0x' + 'a'.repeat(40)
@@ -115,7 +113,7 @@ test('viewFormatter > formatAclPermissions', (t) => {
 
   // Make sure that human names are assigned correctly for both roles
 
-  t.deepEqual(formattedAclPermissions, [
+  expect(formattedAclPermissions).toEqual([
     {
       to: { address: toAppAddress, name: toAppName },
       manager: { address: managerAppAddress, name: managerAppName },

@@ -1,6 +1,4 @@
-import { serial as test } from 'ava'
 import { remove } from 'fs-extra'
-
 import {
   startLocalDaemon,
   ensureRepoInitialized,
@@ -28,70 +26,70 @@ const projectPath = './.tmp/ipfs-tests/project'
 const repoPath = './.tmp/ipfs-tests/repo'
 const binPath = './.tmp/ipfs-tests/project/node_modules/.bin/ipfs'
 
-test.before(async () => {
+jest.setTimeout(160000)
+beforeAll(async () => {
   await initPackage(projectPath)
 })
 
-test.after.always(async () => {
-  await killProcessOnPort(apiPort)
-  await remove(projectPath)
-  await remove(repoPath)
-})
-
-test('should install go-ipfs in a new project', async (t) => {
+test('should install go-ipfs in a new project', async () => {
   const result = await installGoIpfs(true, projectPath)
-  t.snapshot(result.command, 'should use the correct command')
+  expect(result.command).toMatchSnapshot('should use the correct command')
 })
 
-test('should initialize the repository at a custom path', async (t) => {
+test('should initialize the repository at a custom path', async () => {
   await ensureRepoInitialized(binPath, repoPath)
-
-  t.pass()
 })
 
-test('should configure the ports', async (t) => {
+test('should configure the ports', async () => {
   await setPorts(repoPath, apiPort, gatewayPort, swarmPort)
-
-  t.pass()
 })
 
-// eslint-disable-next-line ava/no-skip-test
-test.skip('should run the daemon', async (t) => {
+test.skip('should run the daemon', async () => {
   const { output, detach } = await startLocalDaemon(binPath, repoPath, {
     detached: true,
   })
   detach()
   const daemonRunning = await isLocalDaemonRunning(apiUrl)
 
-  t.true(daemonRunning)
-  t.true(output.includes('Daemon is ready'))
-  t.true(output.includes(`API server listening on /ip4/0.0.0.0/tcp/${apiPort}`))
-  t.true(output.includes(`WebUI: http://0.0.0.0:${apiPort}/webui`))
-  t.true(output.includes(`Swarm listening on /ip4/127.0.0.1/tcp/${swarmPort}`))
-  t.true(output.includes(`Swarm announcing /ip4/127.0.0.1/tcp/${swarmPort}`))
-  t.true(
+  expect(daemonRunning).toBe(true)
+  expect(output.includes('Daemon is ready')).toBe(true)
+  expect(
+    output.includes(`API server listening on /ip4/0.0.0.0/tcp/${apiPort}`)
+  ).toBe(true)
+  expect(output.includes(`WebUI: http://0.0.0.0:${apiPort}/webui`)).toBe(true)
+  expect(
+    output.includes(`Swarm listening on /ip4/127.0.0.1/tcp/${swarmPort}`)
+  ).toBe(true)
+  expect(
+    output.includes(`Swarm announcing /ip4/127.0.0.1/tcp/${swarmPort}`)
+  ).toBe(true)
+  expect(
     output.includes(
       `Gateway (readonly) server listening on /ip4/0.0.0.0/tcp/${gatewayPort}`
     )
-  )
+  ).toBe(true)
 })
 
-// eslint-disable-next-line ava/no-skip-test
-test.skip('should configure cors & pin artifacts', async (t) => {
+test.skip('should configure cors & pin artifacts', async () => {
   const httpClient = await getHttpClient(`http://localhost:${apiPort}`)
 
   await configureCors(httpClient)
   const corsConfigured = await isCorsConfigured(httpClient)
   const hashes = await pinArtifacts(httpClient)
 
-  t.true(corsConfigured)
-  t.snapshot(hashes)
+  expect(corsConfigured).toBe(true)
+  expect(hashes).toMatchSnapshot()
 })
 
-// eslint-disable-next-line ava/no-skip-test
-test.skip('should stop the daemon', async (t) => {
+test.skip('should stop the daemon', async () => {
   await killProcessOnPort(apiPort)
   const daemonRunning = await isLocalDaemonRunning(apiUrl)
 
-  t.false(daemonRunning)
+  expect(daemonRunning).toBe(false)
+})
+
+test('kill process and remove project paths...', async () => {
+  await killProcessOnPort(apiPort)
+  await remove(projectPath)
+  await remove(repoPath)
 })

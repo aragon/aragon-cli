@@ -1,4 +1,3 @@
-import test from 'ava'
 import sinon from 'sinon'
 //
 import { getLocalWeb3 } from '../test-helpers'
@@ -8,8 +7,19 @@ import {
   deployMiniMeToken,
 } from '../../src/token/token'
 
-test('deployMiniMeTokenFactory: should deploy the contract', async (t) => {
-  const web3 = await getLocalWeb3()
+jest.setTimeout(60000)
+let web3
+beforeEach(async () => {
+  web3 = await getLocalWeb3()
+})
+
+afterEach(async () => {
+  if (web3.currentProvider && web3.currentProvider.connection) {
+    await web3.currentProvider.connection.close()
+  }
+})
+
+test('deployMiniMeTokenFactory: should deploy the contract', async () => {
   const progressCallback = sinon.stub()
 
   const receipt = await deployMiniMeTokenFactory(
@@ -19,17 +29,16 @@ test('deployMiniMeTokenFactory: should deploy the contract', async (t) => {
     progressCallback
   )
 
-  t.true(receipt.txHash !== undefined)
-  t.true(web3.utils.isAddress(receipt.address))
-  t.is(progressCallback.callCount, 3)
+  expect(receipt.txHash !== undefined).toBe(true)
+  expect(web3.utils.isAddress(receipt.address)).toBe(true)
+  expect(progressCallback.callCount).toBe(3)
 })
 
-test('deployMiniMeToken: should deploy the contract', async (t) => {
+test('deployMiniMeToken: should deploy the contract', async () => {
   const tokenName = 'Token name test'
   const tokenSymbol = 'TKN'
   const decimalUnits = '12'
 
-  const web3 = await getLocalWeb3()
   const progressCallback = sinon.stub()
 
   const factory = await deployMiniMeTokenFactory(
@@ -51,9 +60,9 @@ test('deployMiniMeToken: should deploy the contract', async (t) => {
     progressCallback
   )
 
-  t.true(receipt.txHash !== undefined)
-  t.true(web3.utils.isAddress(receipt.address))
-  t.is(progressCallback.callCount, 3)
+  expect(receipt.txHash !== undefined).toBe(true)
+  expect(web3.utils.isAddress(receipt.address)).toBe(true)
+  expect(progressCallback.callCount).toBe(3)
 
   const tokenJson = await getContract(
     '@aragon/apps-shared-minime',
@@ -61,7 +70,7 @@ test('deployMiniMeToken: should deploy the contract', async (t) => {
   )
 
   const token = new web3.eth.Contract(tokenJson.abi, receipt.address)
-  t.is(tokenName, await token.methods.name().call())
-  t.is(tokenSymbol, await token.methods.symbol().call())
-  t.is(decimalUnits, await token.methods.decimals().call())
+  expect(tokenName).toBe(await token.methods.name().call())
+  expect(tokenSymbol).toBe(await token.methods.symbol().call())
+  expect(decimalUnits).toBe(await token.methods.decimals().call())
 })

@@ -1,4 +1,3 @@
-import test from 'ava'
 import { ens } from '@aragon/aragen'
 //
 import getApmRepo from '../../src/apm/getApmRepo'
@@ -6,16 +5,22 @@ import newDao from '../../src/dao/new'
 import defaultAPMName from '../../src/helpers/default-apm'
 import { getLocalWeb3, isAddress } from '../test-helpers'
 
-test.beforeEach(async (t) => {
-  const web3 = await getLocalWeb3()
+let context, web3
+jest.setTimeout(60000)
+beforeEach(async () => {
+  web3 = await getLocalWeb3()
 
-  t.context = {
+  context = {
     web3,
   }
 })
 
-test('Deploys DAO with valid template', async (t) => {
-  const { web3 } = t.context
+afterEach(async () => {
+  await web3.currentProvider.connection.close()
+})
+
+test('Deploys DAO with valid template', async () => {
+  const { web3 } = context
 
   const repo = await getApmRepo(
     web3,
@@ -32,11 +37,11 @@ test('Deploys DAO with valid template', async (t) => {
     deployEvent: 'DeployDao',
   })
 
-  t.true(isAddress(daoAddress))
+  expect(isAddress(daoAddress)).toBe(true)
 })
 
-test('Deploys DAO with template with custom newInstance method and args', async (t) => {
-  const { web3 } = t.context
+test('Deploys DAO with template with custom newInstance method and args', async () => {
+  const { web3 } = context
 
   const repo = await getApmRepo(
     web3,
@@ -61,11 +66,11 @@ test('Deploys DAO with template with custom newInstance method and args', async 
     deployEvent: 'DeployDao',
   })
 
-  t.true(isAddress(daoAddress))
+  expect(isAddress(daoAddress)).toBe(true)
 })
 
-test('Throws with invalid newInstance', async (t) => {
-  const { web3 } = t.context
+test('Throws with invalid newInstance', async () => {
+  const { web3 } = context
 
   const repo = await getApmRepo(
     web3,
@@ -74,19 +79,21 @@ test('Throws with invalid newInstance', async (t) => {
     'latest'
   )
 
-  await t.throwsAsync(
-    newDao({
+  try {
+    await newDao({
       repo,
       web3,
       newInstanceMethod: 'invalid',
       newInstanceArgs: [],
       deployEvent: 'DeployDao',
     })
-  )
+    // eslint-disable-next-line no-undef
+    fail('it should not reach here')
+  } catch (error) {}
 })
 
-test('Throws with invalid deploy event', async (t) => {
-  const { web3 } = t.context
+test('Throws with invalid deploy event', async () => {
+  const { web3 } = context
 
   const repo = await getApmRepo(
     web3,
@@ -95,13 +102,15 @@ test('Throws with invalid deploy event', async (t) => {
     'latest'
   )
 
-  await t.throwsAsync(
-    newDao({
+  try {
+    await newDao({
       repo,
       web3,
       newInstanceMethod: 'newInstance',
       newInstanceArgs: [],
       deployEvent: 'invalid',
     })
-  )
+    // eslint-disable-next-line no-undef
+    fail('it should not reach here')
+  } catch (error) {}
 })

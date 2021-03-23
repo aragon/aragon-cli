@@ -1,4 +1,3 @@
-import test from 'ava'
 import sinon from 'sinon'
 //
 import grantNewVersionsPermission from '../../src/apm/grantNewVersionsPermission'
@@ -40,8 +39,8 @@ const getRoleId = async (repoAddr) => {
 }
 
 /* Setup and cleanup */
-
-test.before('setup and make a successful call', async (t) => {
+jest.setTimeout(60000)
+beforeAll(async () => {
   web3 = await getLocalWeb3()
 
   accounts = await web3.eth.getAccounts()
@@ -65,40 +64,46 @@ test.before('setup and make a successful call', async (t) => {
   )
 })
 
+afterAll(async () => {
+  await web3.currentProvider.connection.close()
+})
+
 /* Tests */
 
-test('permissions are not set for any accounts', async (t) => {
+test('permissions are not set for any accounts', async () => {
   const anyone = accounts[2]
 
   const hasPermission = await acl.methods
     .hasPermission(anyone, repoAddress, role)
     .call()
 
-  t.false(hasPermission)
+  expect(hasPermission).toBe(false)
 })
 
-test('properly sets permissions for grantees', async (t) => {
+test('properly sets permissions for grantees', async () => {
   const grantee = grantees[0]
 
   const hasPermission = await acl.methods
     .hasPermission(grantee, repoAddress, role)
     .call()
 
-  t.true(hasPermission)
+  expect(hasPermission).toBe(true)
 })
 
-test('properly calls the progressHandler', (t) => {
+test('properly calls the progressHandler', () => {
   const receipt = receipts[0]
 
-  t.is(progressHandler.callCount, 3)
-  t.true(progressHandler.getCall(0).calledWith(1))
-  t.true(progressHandler.getCall(1).calledWith(2, grantees[0]))
-  t.true(progressHandler.getCall(2).calledWith(3, receipt.transactionHash))
+  expect(progressHandler.callCount).toBe(3)
+  expect(progressHandler.getCall(0).calledWith(1)).toBe(true)
+  expect(progressHandler.getCall(1).calledWith(2, grantees[0])).toBe(true)
+  expect(
+    progressHandler.getCall(2).calledWith(3, receipt.transactionHash)
+  ).toBe(true)
 })
 
-test('Should throw when no grantees are provided', async (t) => {
-  await t.throwsAsync(
-    grantNewVersionsPermission(
+test('Should throw when no grantees are provided', async () => {
+  try {
+    await grantNewVersionsPermission(
       web3,
       apmRepoName,
       apmOptions,
@@ -106,5 +111,7 @@ test('Should throw when no grantees are provided', async (t) => {
       null,
       txOptions
     )
-  )
+    // eslint-disable-next-line no-undef
+    fail('it should not reach here')
+  } catch (error) {}
 })

@@ -1,8 +1,6 @@
-import test from 'ava'
 import { propagateFiles } from '../../src/ipfs'
 
-// eslint-disable-next-line ava/no-skip-test
-test.skip('Get IPFS readme merkle DAG and CIDs', async (t) => {
+test.skip('Get IPFS readme merkle DAG and CIDs', async () => {
   const ipfsGateway = 'https://ipfs.eth.aragon.network/ipfs'
   const readmeDirCid = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG'
 
@@ -10,7 +8,7 @@ test.skip('Get IPFS readme merkle DAG and CIDs', async (t) => {
     gateways: [ipfsGateway],
   })
 
-  t.deepEqual(results, {
+  expect(results).toEqual({
     errors: [],
     failed: 0,
     gateways: [ipfsGateway],

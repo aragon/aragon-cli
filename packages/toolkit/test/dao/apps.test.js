@@ -1,4 +1,3 @@
-import test from 'ava'
 import { ens } from '@aragon/aragen'
 //
 import { assignId } from '../../src//dao/assign-id'
@@ -8,16 +7,22 @@ import getApmRepo from '../../src/apm/getApmRepo'
 import defaultAPMName from '../../src/helpers/default-apm'
 import { getLocalWeb3 } from '../test-helpers'
 
-test.beforeEach(async (t) => {
-  const web3 = await getLocalWeb3()
+let context, web3
+jest.setTimeout(60000)
+beforeEach(async () => {
+  web3 = await getLocalWeb3()
 
-  t.context = {
+  context = {
     web3,
   }
 })
 
-test('getAllApps returns the correct apps', async (t) => {
-  const { web3 } = t.context
+afterEach(async () => {
+  await web3.currentProvider.connection.close()
+})
+
+test('getAllApps returns the correct apps', async () => {
+  const { web3 } = context
 
   const repo = await getApmRepo(
     web3,
@@ -36,23 +41,19 @@ test('getAllApps returns the correct apps', async (t) => {
 
   const intalledApps = await getAllApps(daoAddress, { web3 })
 
-  t.is(intalledApps.length, 2)
-  t.is(
-    intalledApps[0].appId,
-    '0xe3262375f45a6e2026b7e7b18c2b807434f2508fe1a2a3dfb493c7df8f4aad6a',
-    'ACL app id'
+  expect(intalledApps.length).toBe(2)
+  expect(intalledApps[0].appId).toBe(
+    '0xe3262375f45a6e2026b7e7b18c2b807434f2508fe1a2a3dfb493c7df8f4aad6a'
   )
-  t.is(
-    intalledApps[1].appId,
-    '0xddbcfd564f642ab5627cf68b9b7d374fb4f8a36e941a75d89c87998cef03bd61',
-    'EVM app id'
+  expect(intalledApps[1].appId).toBe(
+    '0xddbcfd564f642ab5627cf68b9b7d374fb4f8a36e941a75d89c87998cef03bd61'
   )
 })
 
-test('getDaoAddress returns the correct DAO address', async (t) => {
+test('getDaoAddress returns the correct DAO address', async () => {
   const daoAddress = '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7'
   const daoName = 'mydaoname' + Math.floor(Math.random() * 1000000)
-  const { web3 } = t.context
+  const { web3 } = context
 
   await assignId(daoAddress, daoName, { web3, ensRegistry: ens })
 
@@ -61,5 +62,5 @@ test('getDaoAddress returns the correct DAO address', async (t) => {
     registryAddress: ens,
   })
 
-  t.is(result, daoName)
+  expect(result).toBe(daoName)
 })
