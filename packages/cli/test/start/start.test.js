@@ -3,7 +3,7 @@ const { killProcessOnPort } = require('../../../toolkit')
 
 jest.setTimeout(160000)
 
-const START_CMD_TIMEOUT = 60000
+const START_CMD_TIMEOUT = 160000
 
 test('start opens a web server', async () => {
   const output = await parseCli(
