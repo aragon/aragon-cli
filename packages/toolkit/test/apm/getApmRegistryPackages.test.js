@@ -1,4 +1,3 @@
-import test from 'ava'
 import sinon from 'sinon'
 //
 import getApmRegistryPackages from '../../src/apm/getApmRegistryPackages'
@@ -14,8 +13,8 @@ let progressHandler
 let packages
 
 /* Setup and cleanup */
-
-test.before('setup and make a successful call', async (t) => {
+jest.setTimeout(60000)
+beforeAll(async () => {
   web3 = await getLocalWeb3()
 
   apmRegistryName = getApmRegistryName()
@@ -31,20 +30,24 @@ test.before('setup and make a successful call', async (t) => {
   )
 })
 
-/* Tests */
-
-test('contains expected packages', (t) => {
-  const names = packages.map((p) => p.name)
-
-  t.true(names.includes('finance'))
-  t.true(names.includes('voting'))
-  t.true(names.includes('agent'))
-  t.true(names.includes('company-template'))
-  t.true(names.includes('apm-registry'))
+afterAll(async () => {
+  await web3.currentProvider.connection.close()
 })
 
-test('properly calls the progressHandler', (t) => {
-  t.is(progressHandler.callCount, 2)
-  t.true(progressHandler.getCall(0).calledWith(1))
-  t.true(progressHandler.getCall(1).calledWith(2))
+/* Tests */
+
+test('contains expected packages', () => {
+  const names = packages.map((p) => p.name)
+
+  expect(names.includes('finance')).toBe(true)
+  expect(names.includes('voting')).toBe(true)
+  expect(names.includes('agent')).toBe(true)
+  expect(names.includes('company-template')).toBe(true)
+  expect(names.includes('apm-registry')).toBe(true)
+})
+
+test('properly calls the progressHandler', () => {
+  expect(progressHandler.callCount).toBe(2)
+  expect(progressHandler.getCall(0).calledWith(1)).toBe(true)
+  expect(progressHandler.getCall(1).calledWith(2)).toBe(true)
 })

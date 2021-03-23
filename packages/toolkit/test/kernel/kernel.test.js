@@ -1,8 +1,6 @@
-import test from 'ava'
-//
 import { getAppProxyAddressFromReceipt } from '../../src/kernel/kernel'
 
-test('getAppProxyAddressFromReceipt', (t) => {
+test('getAppProxyAddressFromReceipt', () => {
   /**
    * Sample receipt got from a console.log() in
    *
@@ -54,5 +52,5 @@ test('getAppProxyAddressFromReceipt', (t) => {
   }
 
   const appAddress = getAppProxyAddressFromReceipt(dao, sampleReceipt)
-  t.is(appAddress, '0xb1abaADBBe50d99C5CdF6F2A3a3BBf6a900C2785')
+  expect(appAddress).toBe('0xb1abaADBBe50d99C5CdF6F2A3a3BBf6a900C2785')
 })

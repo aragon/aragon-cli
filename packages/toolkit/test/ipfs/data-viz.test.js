@@ -1,4 +1,3 @@
-import test from 'ava'
 import stripAnsi from 'strip-ansi'
 import {
   stringifyMerkleDAG,
@@ -14,22 +13,20 @@ const merkleDagNode = {
 // stripAnsi is necessary since it causes problems in CI
 // Where it does not matches the snapshot
 
-test('Should format a merkle DAG node', (t) => {
+test('Should format a merkle DAG node', () => {
   const formatedOutput = stringifyMerkleDAGNode(merkleDagNode)
-  t.snapshot(
-    stripAnsi(formatedOutput),
+  expect(stripAnsi(formatedOutput)).toMatchSnapshot(
     'The formated display output is correct'
   )
 })
 
-test('Should format a merkle DAG tree', (t) => {
+test('Should format a merkle DAG tree', () => {
   const merkleDagTree = {
     ...merkleDagNode,
     links: [merkleDagNode, merkleDagNode],
   }
   const formatedOutput = stringifyMerkleDAG(merkleDagTree)
-  t.snapshot(
-    stripAnsi(formatedOutput),
+  expect(stripAnsi(formatedOutput)).toMatchSnapshot(
     'The formated display output is correct'
   )
 })
