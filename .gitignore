@@ -25,3 +25,7 @@ packages/cli/src/knownRoles.json
 
 npm-shrinkwrap.json
 package-lock.json
+
+packages/*/test/__snapshots__/
+packages/*/test/*/__snapshots__/
+packages/*/test/*/*/__snapshots__/

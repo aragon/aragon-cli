@@ -13,13 +13,13 @@
     "lint": "eslint src test",
     "lint:fix": "yarn lint -- --fix",
     "prepublishOnly": "synp --source-file yarn.lock && npm shrinkwrap",
-    "test": "ava --verbose --timeout=10m",
-    "test:watch": "ava --watch --timeout=10m",
+    "test": "jest test/",
+    "test:watch": "jest test/ --watch",
     "test:clean": "rm -rf ./.tmp && yarn test:reset-cache",
-    "test:reset-cache": "ava --reset-cache --timeout=10m",
-    "test:update-snapshots": "yarn test:clean && yarn test -- --update-snapshots",
+    "test:reset-cache": "jest test/ --clearCache",
+    "test:update-snapshots": "yarn test --updateSnapshot",
     "test:coverage:html": "nyc --all --reporter html  yarn test",
-    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly yarn test"
+    "test:coverage": "nyc --all --reporter=text --reporter=text-summary --reporter=lcovonly yarn test:update-snapshots"
   },
   "files": [
     "dist"
@@ -63,19 +63,18 @@
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
     "@babel/register": "^7.0.0",
-    "ava": "^3.8.2",
     "babel-eslint": "^10.0.1",
     "babel-plugin-istanbul": "^6.0.0",
     "core-js": "^3.1.4",
     "eslint": "^7.4.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-ava": "^10.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
+    "jest": "^26.6.3",
     "node-fetch": "^2.3.0",
     "nyc": "^15.0.1",
     "prettier": "^2.0.5",
@@ -83,14 +82,6 @@
   },
   "engines": {
     "node": ">=10.0.0 <11 || >=12.0.0 <13"
-  },
-  "ava": {
-    "require": [
-      "@babel/register"
-    ],
-    "files": [
-      "test/**/*.test.js"
-    ]
   },
   "nyc": {
     "include": [
@@ -123,11 +114,11 @@
   "eslintConfig": {
     "env": {
       "es6": true,
-      "node": true
+      "node": true,
+      "jest": true
     },
     "extends": [
       "standard",
-      "plugin:ava/recommended",
       "plugin:prettier/recommended"
     ],
     "parser": "babel-eslint"
