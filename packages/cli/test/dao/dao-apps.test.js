@@ -1,21 +1,21 @@
-import test from 'ava'
-//
 import parseCli from '../parseCli'
 
-test.serial('lists apps from DAO', async (t) => {
+jest.setTimeout(60000)
+
+test('lists apps from DAO', async () => {
   const date = new Date().getTime()
   const id = `newdao${date}`
 
   await parseCli(['dao', 'new', '--debug', '--aragon-id', id])
   const stdout = await parseCli(['dao', 'apps', id, '--debug'])
 
-  t.assert(stdout.includes('App'))
-  t.assert(stdout.includes('Proxy address'))
-  t.assert(stdout.includes('Content'))
-  t.assert(stdout.includes('kernel'))
+  expect(stdout.includes('App')).toBe(true)
+  expect(stdout.includes('Proxy address')).toBe(true)
+  expect(stdout.includes('Content')).toBe(true)
+  expect(stdout.includes('kernel')).toBe(true)
 })
 
-test.serial('lists all apps from DAO', async (t) => {
+test('lists all apps from DAO', async () => {
   const date = new Date().getTime()
   const id = `newdao${date}`
 
@@ -26,5 +26,5 @@ test.serial('lists all apps from DAO', async (t) => {
 
   const stdout = await parseCli(['dao', 'apps', id, '--all', '--debug'])
 
-  t.assert(stdout.includes('Permissionless app'))
+  expect(stdout.includes('Permissionless app')).toBe(true)
 })

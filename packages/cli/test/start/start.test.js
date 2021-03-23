@@ -1,19 +1,25 @@
-import test from 'ava'
 import parseCli from '../parseCli'
+const { killProcessOnPort } = require('../../../toolkit')
 
-const START_CMD_TIMEOUT = 40000
+jest.setTimeout(160000)
 
-test.serial('start opens a web server', async (t) => {
+const START_CMD_TIMEOUT = 160000
+
+test('start opens a web server', async () => {
   const output = await parseCli(
     ['start', '--auto-open', 'false', '--debug'],
     START_CMD_TIMEOUT
   )
 
-  t.assert(output.includes('started on port'))
+  expect(output.includes('started on port')).toBe(true)
+
+  await killProcessOnPort(parseInt(output.substring(output.length - 5)))
 })
 
-test.serial('run fails if not in an aragon project directory', async (t) => {
-  await t.throwsAsync(async () => {
-    return parseCli(['run'])
-  })
+test('run fails if not in an aragon project directory', async () => {
+  try {
+    await parseCli(['run'])
+    // eslint-disable-next-line no-undef
+    fail('it should not reach here')
+  } catch (error) {}
 })
