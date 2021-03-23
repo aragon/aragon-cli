@@ -15,6 +15,7 @@ import listrOpts from '../../helpers/listr-options'
 
 import daoArg from './utils/daoArg'
 import { listApps } from './utils/knownApps'
+import { supportsAragonConnect } from './utils/supportsAragonConnect'
 
 let knownApps
 
@@ -80,15 +81,6 @@ const printPermissionlessApps = (apps) => {
     )
     console.log(tableForPermissionlessApps.toString())
   }
-}
-
-/**
- * Returns true if the provided Ethereum network id supports
- * Aragon Connect. Currently `true` for mainnet and Rinkeby
- * @param {number} Ethereum network id
- */
-const supportsAragonConnect = (networkId) => {
-  return networkId === 1 || networkId === 4
 }
 
 const getAppsFromAragonConnect = async (dao, networkId) => {

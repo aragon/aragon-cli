@@ -26,6 +26,7 @@ import { ensureWeb3 } from '../../helpers/web3-fallback'
 import listrOpts from '../../helpers/listr-options'
 import { task as execTask } from './utils/execHandler'
 import daoArg from './utils/daoArg'
+import { supportsAragonConnect } from './utils/supportsAragonConnect'
 
 export const command = 'install <dao> <apmRepo> [apmRepoVersion]'
 export const describe = 'Install an app into a DAO'
@@ -126,6 +127,11 @@ export const handler = async function ({
       },
       {
         title: `Fetching App Manager permissions`,
+        skip: () => {
+          if (!supportsAragonConnect(network.network_id)) {
+            return 'Network not supported by Aragon Connect'
+          }
+        },
         task: async (ctx, task) => {
           const org = await connect(dao, 'thegraph', {
             chainId: network.network_id,
@@ -141,8 +147,6 @@ export const handler = async function ({
               installedVoting,
               web3
             )
-          } else {
-            ctx.managedByVoting = false
           }
         },
       },
