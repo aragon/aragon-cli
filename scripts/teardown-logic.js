@@ -3,6 +3,7 @@ const { killProcessOnPort } = require('../packages/toolkit')
 const IPFS_API_PORT = 5001
 const DEVCHAIN_PORT = 8545
 const FRAME_PORT = 1248
+const WEBSERVER_PORT = 3000
 
 const LOGGER_PREFIX = '[cli-monorepo:posttest]'
 
@@ -15,13 +16,14 @@ module.exports = function() {
     killProcessOnPort(IPFS_API_PORT),
     killProcessOnPort(DEVCHAIN_PORT),
     killProcessOnPort(FRAME_PORT),
+    killProcessOnPort(WEBSERVER_PORT),
   ])
     .then(() => {
-      logger(`Processes killed on ports: ${IPFS_API_PORT}, ${DEVCHAIN_PORT}, ${FRAME_PORT}`)
+      logger(`Processes killed on ports: ${IPFS_API_PORT}, ${DEVCHAIN_PORT}, ${FRAME_PORT}, ${WEBSERVER_PORT}`)
     })
     .catch(() => {
       logger(
-        `Cannot kill processes on ports: ${IPFS_API_PORT}, ${DEVCHAIN_PORT}, ${FRAME_PORT}}`
+        `Cannot kill processes on ports: ${IPFS_API_PORT}, ${DEVCHAIN_PORT}, ${FRAME_PORT}, ${WEBSERVER_PORT}}`
       )
     })
 }

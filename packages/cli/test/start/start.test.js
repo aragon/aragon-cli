@@ -1,9 +1,8 @@
 import parseCli from '../parseCli'
-const { killProcessOnPort } = require('../../../toolkit')
 
-jest.setTimeout(160000)
+jest.setTimeout(60000)
 
-const START_CMD_TIMEOUT = 160000
+const START_CMD_TIMEOUT = 40000
 
 test('start opens a web server', async () => {
   const output = await parseCli(
@@ -12,8 +11,6 @@ test('start opens a web server', async () => {
   )
 
   expect(output.includes('started on port')).toBe(true)
-
-  await killProcessOnPort(parseInt(output.substring(output.length - 5)))
 })
 
 test('run fails if not in an aragon project directory', async () => {
