@@ -15,4 +15,6 @@ module.exports = {
 
   // Verbose mode
   verbose: true,
+
+  testPathIgnorePatterns: ['.tmp'],
 }
