@@ -17,7 +17,7 @@
     "lint": "eslint src test",
     "lint:fix": "yarn lint -- --fix",
     "prepublishOnly": "synp --source-file yarn.lock && npm shrinkwrap",
-    "test": "jest ./test --runInBand ",
+    "test": "jest ./test --runInBand --forceExit",
     "test:watch": "jest ./test --watch",
     "test:clean": "rm -rf ./.tmp && yarn test:reset-cache",
     "test:reset-cache": "jest ./test --clearCache",
