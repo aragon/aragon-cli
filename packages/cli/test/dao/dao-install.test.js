@@ -39,8 +39,16 @@ test('check if user has permission to install', async () => {
   const dao = await parseCli(['dao', 'new', '--debug'])
   const daoAddress = dao.slice(-43, -1)
 
-  const hasPermission = await userHasCreatePermission(daoAddress, userAddressWithPermission, web3)
-  const noPermission = await userHasCreatePermission(daoAddress, userAddressWithoutPermission, web3)
+  const hasPermission = await userHasCreatePermission(
+    daoAddress,
+    userAddressWithPermission,
+    web3
+  )
+  const noPermission = await userHasCreatePermission(
+    daoAddress,
+    userAddressWithoutPermission,
+    web3
+  )
 
   expect(hasPermission).toEqual(true)
   expect(noPermission).toEqual(false)
