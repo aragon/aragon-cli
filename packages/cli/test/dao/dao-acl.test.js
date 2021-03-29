@@ -1,24 +1,24 @@
-import test from 'ava'
-//
 import parseCli from '../parseCli'
 
 const daoAddressRegex = /Created DAO: (.*)\n$/
 
-test.serial('acl view', async (t) => {
+jest.setTimeout(60000)
+
+test('acl view', async () => {
   const date = new Date().getTime()
   const id = `newdao${date}`
 
   await parseCli(['dao', 'new', '--debug', '--aragon-id', id])
   const stdout = await parseCli(['dao', 'acl', 'view', id, '--debug'])
 
-  t.assert(stdout.includes('App'))
-  t.assert(stdout.includes('Action'))
-  t.assert(stdout.includes('Allowed entities'))
-  t.assert(stdout.includes('Manager'))
-  t.assert(stdout.includes('CREATE_PERMISSIONS_ROLE'))
+  expect(stdout.includes('App')).toBe(true)
+  expect(stdout.includes('Action')).toBe(true)
+  expect(stdout.includes('Allowed entities')).toBe(true)
+  expect(stdout.includes('Manager')).toBe(true)
+  expect(stdout.includes('CREATE_PERMISSIONS_ROLE')).toBe(true)
 })
 
-test.serial('acl grant', async (t) => {
+test('acl grant', async () => {
   const newDaoStdout = await parseCli(['dao', 'new', '--debug'])
   const daoAddress = newDaoStdout.match(daoAddressRegex)[1]
 
@@ -33,8 +33,8 @@ test.serial('acl grant', async (t) => {
     '--debug',
   ])
 
-  t.assert(
-    stdout.includes('Successfully executed'),
+  expect(stdout.includes('Successfully executed')).toEqual(
+    true,
     'Unable to grant APP_MANAGER_ROLE role'
   )
 })

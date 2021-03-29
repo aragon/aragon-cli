@@ -1,10 +1,11 @@
-import test from 'ava'
 import { runAragonCLI } from '../util'
 
-test('should return the correct version', async (t) => {
+jest.setTimeout(60000)
+
+test('should return the correct version', async () => {
   const result = await runAragonCLI(['--version'])
 
   delete result.stdout
 
-  t.snapshot(result)
+  expect(result).toMatchSnapshot()
 })

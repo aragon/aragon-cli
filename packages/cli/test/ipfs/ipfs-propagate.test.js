@@ -1,7 +1,8 @@
-import test from 'ava'
 import parseCli from '../parseCli'
 
-test.serial('ipfs propagate readme directory', async (t) => {
+jest.setTimeout(60000)
+
+test('ipfs propagate readme directory', async () => {
   const stdout = await parseCli([
     'ipfs',
     'propagate',
@@ -9,5 +10,5 @@ test.serial('ipfs propagate readme directory', async (t) => {
     '--debug',
   ])
 
-  t.assert(stdout.includes('Requests succeeded:'))
+  expect(stdout.includes('Requests succeeded:')).toBe(true)
 })

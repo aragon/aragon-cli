@@ -1,4 +1,3 @@
-import test from 'ava'
 import fs from 'fs-extra'
 //
 import { getPorts, getPeerIDConfig, getRepoVersion } from '../../src/ipfs'
@@ -30,30 +29,30 @@ const IPFS_CONFIG_JSON = {
   },
 }
 
-test.before((t) => {
+beforeAll(() => {
   fs.mkdirpSync(IPFS_PATH)
   fs.writeFileSync(`${IPFS_PATH}/version`, IPFS_VERSION)
 })
 
-test.after.always(() => {
-  fs.removeSync(IPFS_PATH)
-})
-
-test('getRepoVersion should return the version of a repository', async (t) => {
+test('getRepoVersion should return the version of a repository', async () => {
   const version = await getRepoVersion(IPFS_PATH)
-  t.is(version, IPFS_VERSION)
+  expect(version).toBe(IPFS_VERSION)
 })
 
-test('Get ports from config JSON', (t) => {
+test('Get ports from config JSON', () => {
   const ports = getPorts(IPFS_CONFIG_JSON)
-  t.deepEqual(ports, {
+  expect(ports).toEqual({
     api: '5001',
     gateway: '8080',
     swarm: '4001',
   })
 })
 
-test('Get peer ID from config JSON', (t) => {
+test('Get peer ID from config JSON', () => {
   const peerId = getPeerIDConfig(IPFS_CONFIG_JSON)
-  t.is(peerId, PEER_ID)
+  expect(peerId).toBe(PEER_ID)
+})
+
+test('removeSync(IPFS_PATH)', () => {
+  fs.removeSync(IPFS_PATH)
 })
