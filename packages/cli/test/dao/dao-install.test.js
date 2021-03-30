@@ -53,4 +53,3 @@ test('check if user has permission to install', async () => {
   expect(hasPermission).toEqual(true)
   expect(noPermission).toEqual(false)
 })
-
