@@ -10,6 +10,9 @@ test('installs a new app', async () => {
   const stdout = await parseCli(['dao', 'install', id, 'vault', '--debug'])
 
   expect(stdout.includes('Start IPFS')).toBe(true)
+  expect(stdout.includes('Fetching App Manager permissions [skipped]')).toBe(
+    true
+  )
   expect(stdout.includes('Installed vault.aragonpm.eth')).toEqual(
     true,
     'Unable to install vault'
