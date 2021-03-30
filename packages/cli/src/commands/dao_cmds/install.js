@@ -1,5 +1,7 @@
 import TaskList from 'listr'
 import { blue, green, bold } from 'chalk'
+import { hash as namehash } from 'eth-ens-namehash'
+import { connect } from '@aragon/connect'
 import {
   ANY_ENTITY,
   NO_MANAGER,
@@ -17,12 +19,14 @@ import {
   isLocalDaemonRunning,
   getApmRepo,
   userHasCreatePermission,
+  hasAppManagerPermission,
 } from '@aragon/toolkit'
 //
 import { ensureWeb3 } from '../../helpers/web3-fallback'
 import listrOpts from '../../helpers/listr-options'
 import { task as execTask } from './utils/execHandler'
 import daoArg from './utils/daoArg'
+import { supportsAragonConnect } from './utils/supportsAragonConnect'
 
 export const command = 'install <dao> <apmRepo> [apmRepoVersion]'
 export const describe = 'Install an app into a DAO'
@@ -119,6 +123,31 @@ export const handler = async function ({
             apmRepoVersion,
             progressHandler
           )
+        },
+      },
+      {
+        title: `Fetching App Manager permissions`,
+        skip: () => {
+          if (!supportsAragonConnect(network.network_id)) {
+            return 'Network not supported by Aragon Connect'
+          }
+        },
+        task: async (ctx, task) => {
+          const org = await connect(dao, 'thegraph', {
+            chainId: network.network_id,
+          })
+          const votingName = namehash('voting.aragonpm.eth')
+          const installedVoting = (await org.apps()).find(
+            (app) => app.appId === votingName
+          ).address
+
+          if (installedVoting !== ZERO_ADDRESS) {
+            ctx.managedByVoting = await hasAppManagerPermission(
+              dao,
+              installedVoting,
+              web3
+            )
+          }
         },
       },
       {
@@ -243,6 +272,13 @@ export const handler = async function ({
     } else {
       reporter.warning(
         'After the app instance is created, you will need to assign permissions to it for it appear as an app in the DAO.'
+      )
+    }
+
+    if (ctx.managedByVoting) {
+      reporter.newLine()
+      reporter.info(
+        'A new vote has been created in your Voting app to complete the installation.'
       )
     }
 
