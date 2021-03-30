@@ -166,7 +166,6 @@ test('installs the vault app', async () => {
     ['dao', 'install', DAO, 'vault'],
     verbose
   )
-  console.log(stdout)
   VAULT = matchAddressAtLineContaining(stdout, 'Installed vault')
   if (verbose) console.log(`VAULT`, VAULT)
 })
