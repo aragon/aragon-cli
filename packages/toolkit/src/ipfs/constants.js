@@ -18,5 +18,7 @@ export const DEFAULT_DAEMON_ARGS = ['--migrate']
 export const NO_INSTALLATION_MSG =
   'IPFS is not installed. Use `aragon ipfs install` before proceeding.'
 
-export const GO_IMPL_DIST_VERSION = '0.4.22'
+// version 0.4.22 is deprecated
+// Either update it, or remove it completely to install latest stable version
+// export const GO_IMPL_DIST_VERSION = '0.4.22'
 export const GO_IMPL_DIST_URL = 'https://dist.ipfs.io'
