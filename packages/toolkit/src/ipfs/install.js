@@ -1,12 +1,11 @@
 import execa from 'execa'
 //
 import { noop, getNodePackageManager } from '../node'
-import { GO_IMPL_DIST_URL, GO_IMPL_DIST_VERSION } from './constants'
+import { GO_IMPL_DIST_URL } from './constants'
 
 export const installGoIpfs = async (
   local,
   location,
-  distVersion = GO_IMPL_DIST_VERSION,
   distUrl = GO_IMPL_DIST_URL,
   options = {}
 ) => {
@@ -29,7 +28,7 @@ export const installGoIpfs = async (
   }
   const npmArgs = [
     'install',
-    `go-ipfs@${distVersion}`,
+    'go-ipfs',
     local ? '--save' : '--global',
   ]
 
@@ -45,7 +44,7 @@ export const installGoIpfs = async (
   } catch (err) {
     if (err.stderr && err.stderr.includes('No matching version found')) {
       throw new Error(
-        `NPM cannot find version ${distVersion}. For more versions see: http://npmjs.com/package/go-ipfs?activeTab=versions`
+        `NPM cannot find the latest version. For more versions see: http://npmjs.com/package/go-ipfs?activeTab=versions`
       )
     } else {
       throw new Error(err)
