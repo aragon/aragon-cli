@@ -4,7 +4,7 @@
   "devDependencies": {
     "codecov": "^3.6.1",
     "husky": "^4.2.1",
-    "lerna": "^3.14.1"
+    "lerna": "^4.0.0"
   },
   "scripts": {
     "clean": "git clean -fixd",
