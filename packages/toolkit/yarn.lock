@@ -60,9 +60,9 @@
     "@truffle/hdwallet-provider" "^1.0.0"
 
 "@aragon/wrapper@^5.0.0-rc.23":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@aragon/wrapper/-/wrapper-5.0.0.tgz#62284f054d1eca66cd37860bd362cde1d8703ef8"
-  integrity sha512-uNqkyzg/ZQrFjRQ4wNNT26pcOoOl/V3bYGZyI+V/Ecsbwh6AqCB6vE3P54K4OvkC5ONSLFA6LZWAIP2k91X6TQ==
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@aragon/wrapper/-/wrapper-5.3.0.tgz#e1978c8410533ded2cb3ed9219f4f847b68185c7"
+  integrity sha512-hCr2TkxjrKIlayZPfY8Huc5tQHRWnDJ8Y/O0ragBQGZKPlnsmHj/LH5WhaYISrZ8XP2H1qvLPXcFIPP/ljbt4Q==
   dependencies:
     "@aragon/os" "^4.2.1"
     "@aragon/rpc-messenger" "^2.0.0"
