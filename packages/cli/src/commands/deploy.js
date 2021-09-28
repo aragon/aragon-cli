@@ -13,8 +13,10 @@ export const command = 'deploy [contract]'
 export const describe = 'Deploys contract code of the app to the chain'
 
 export const arappContract = () => {
-  const contractPath = require(path.resolve(findProjectRoot(), 'arapp.json'))
-    .path
+  const contractPath = require(path.resolve(
+    findProjectRoot(),
+    'arapp.json'
+  )).path
   const contractName = path.basename(contractPath).split('.')[0]
 
   return contractName

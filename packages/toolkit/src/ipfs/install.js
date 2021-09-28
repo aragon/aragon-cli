@@ -26,11 +26,7 @@ export const installGoIpfs = async (
       // TARGET_VERSION: distVersion
     },
   }
-  const npmArgs = [
-    'install',
-    'go-ipfs',
-    local ? '--save' : '--global',
-  ]
+  const npmArgs = ['install', 'go-ipfs', local ? '--save' : '--global']
 
   const logPrefix = `npm ${npmArgs.join(' ')}:`
   const installProcess = execa(npmBinary, npmArgs, exacaOptions)
