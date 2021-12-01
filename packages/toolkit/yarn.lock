@@ -60,9 +60,9 @@
     "@truffle/hdwallet-provider" "^1.0.0"
 
 "@aragon/wrapper@^5.0.0-rc.23":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@aragon/wrapper/-/wrapper-5.0.0.tgz#62284f054d1eca66cd37860bd362cde1d8703ef8"
-  integrity sha512-uNqkyzg/ZQrFjRQ4wNNT26pcOoOl/V3bYGZyI+V/Ecsbwh6AqCB6vE3P54K4OvkC5ONSLFA6LZWAIP2k91X6TQ==
+  version "5.5.1"
+  resolved "https://registry.yarnpkg.com/@aragon/wrapper/-/wrapper-5.5.1.tgz#284961cf9c9e8a84504364594063e8b41057154e"
+  integrity sha512-CFRNG61cxjUmVUeKRdkR5Qi7LUjEyMYduj1R8VXtxF4aY89G3KgtmpO1OXdKgLlwq+ZrOVkF3j34yhY8MzE3gw==
   dependencies:
     "@aragon/os" "^4.2.1"
     "@aragon/rpc-messenger" "^2.0.0"
@@ -73,7 +73,7 @@
     ethjs-ens "^2.0.1"
     localforage "^1.7.3"
     localforage-memoryStorageDriver "^0.9.2"
-    radspec "^1.8.0"
+    radspec "^1.12.0"
     rxjs "^6.5.2"
     web3 "1.2.6"
     web3-eth-abi "1.2.6"
@@ -8908,10 +8908,10 @@ query-string@^5.0.1:
     object-assign "^4.1.0"
     strict-uri-encode "^1.0.0"
 
-radspec@^1.8.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/radspec/-/radspec-1.8.0.tgz#462f25a2f3ada799bf9368462b8ccb6c5e89dc30"
-  integrity sha512-z36e6LG7o2dxrFLhaIBmy5ohUwtTJKXPBBqYdAMeF8bxKogPzcKbviZe4rdahA0jQSKOHkFp2cj2hXkOk65+6Q==
+radspec@^1.12.0:
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/radspec/-/radspec-1.12.0.tgz#880d6b9c839ae676edbe09443846a10d467eccc8"
+  integrity sha512-saDAxoy3bxYJvmg2pMupg5FbvW4F0C5QzNMPnkW4Z6B6iHd/1xjeRfzdmZ6WU4OVGbSldR21QjTQjpNEZ3Uo8Q==
   dependencies:
     "@babel/runtime" "^7.1.2"
     bn.js "^4.11.8"
