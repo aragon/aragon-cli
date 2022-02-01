@@ -57,7 +57,7 @@
     "@aragon/connect": "^0.2.0",
     "@aragon/toolkit": "^0.0.5",
     "@aragon/truffle-config-v5": "^1.0.0",
-    "ajv": "^6.6.2",
+    "ajv": "^8.9.0",
     "bn.js": "^5.0.0",
     "chalk": "^4.0.0",
     "cli-table": "^0.3.1",
