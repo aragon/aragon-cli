@@ -26,7 +26,7 @@ export const LATEST_VERSION = 'latest'
 export const FRAME_ENDPOINT = 'ws://localhost:1248'
 export const FRAME_ORIGIN = 'aragonCLI'
 
-export const ARAGON_RINKEBY_ENDPOINT = 'wss://rinkeby.eth.aragon.network/ws'
+export const ARAGON_GOERLI_ENDPOINT = 'wss://goerli.eth.aragon.network/ws'
 export const ARAGON_MAINNET_ENDPOINT = 'wss://mainnet.eth.aragon.network/ws'
 
 export const IPFS_RPC = 'http://localhost:5001#default'

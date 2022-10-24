@@ -4,7 +4,7 @@ import { AsyncSendable } from 'ethers/providers'
 
 export const aragonRpcMainnet = 'https://mainnet.eth.aragon.network'
 export const aragonRpcRopsten = 'https://ropsten.eth.aragon.network'
-export const aragonRpcRinkeby = 'https://rinkeby.eth.aragon.network'
+export const aragonRpcGoerli = 'https://goerli.eth.aragon.network'
 export const aragonRpcKovan = 'https://kovan.eth.aragon.network'
 export const aragenRpc = 'http://localhost:8545'
 export const aragenEnsAddress = '0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1'
@@ -27,15 +27,10 @@ export interface ProviderOptions {
   timeout?: number
 }
 
-type DefaultNetworkTag =
-  | 'homestead'
-  | 'rinkeby'
-  | 'ropsten'
-  | 'kovan'
-  | 'goerli'
+type DefaultNetworkTag = 'homestead' | 'goerli' | 'ropsten' | 'kovan' | 'goerli'
 const defaultNetworkTags: DefaultNetworkTag[] = [
   'homestead',
-  'rinkeby',
+  'goerli',
   'ropsten',
   'kovan',
   'goerli',
@@ -44,12 +39,12 @@ const defaultNetworkTags: DefaultNetworkTag[] = [
 type AragonNetworkTag =
   | 'aragon:mainnet'
   | 'aragon:ropsten'
-  | 'aragon:rinkeby'
+  | 'aragon:goerli'
   | 'aragon:kovan'
 const aragonNetworkTags: AragonNetworkTag[] = [
   'aragon:mainnet',
   'aragon:ropsten',
-  'aragon:rinkeby',
+  'aragon:goerli',
   'aragon:kovan',
 ]
 
@@ -58,10 +53,10 @@ const aragonNetworkTags: AragonNetworkTag[] = [
  *
  * @param providerArg Provider argument
  * - Aragon network name {AragonNetworkTag}
- *   'aragon:mainnet', 'aragon:ropsten', 'aragon:rinkeby', 'aragon:kovan'
+ *   'aragon:mainnet', 'aragon:ropsten', 'aragon:goerli', 'aragon:kovan'
  *   Connects to Aragon's public nodes
  * - Default network name {DefaultNetworkTag}
- *   'homestead', 'rinkeby', 'ropsten', 'kovan', 'goerli'
+ *   'homestead', 'goerli', 'ropsten', 'kovan', 'goerli'
  *   Connects to a public RPC endpoint (Infura, Etherscan)
  *   If no token is provided the default ethers token is used.
  *   You can provide your Infura project ID with the option `infuraProjectId`
@@ -125,8 +120,8 @@ export function parseProviderArgument(
           return getProviderFromUrl(aragonRpcMainnet)
         case 'aragon:ropsten':
           return getProviderFromUrl(aragonRpcRopsten)
-        case 'aragon:rinkeby':
-          return getProviderFromUrl(aragonRpcRinkeby)
+        case 'aragon:goerli':
+          return getProviderFromUrl(aragonRpcGoerli)
         case 'aragon:kovan':
           return getProviderFromUrl(aragonRpcKovan)
         default:

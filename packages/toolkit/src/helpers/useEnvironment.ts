@@ -8,7 +8,7 @@ import {
   DEFAULT_GAS_PRICE,
   FRAME_ENDPOINT,
   FRAME_ORIGIN,
-  ARAGON_RINKEBY_ENDPOINT,
+  ARAGON_GOERLI_ENDPOINT,
   ARAGON_MAINNET_ENDPOINT,
   IPFS_RPC,
   IPFS_LOCAL_GATEWAY,
@@ -178,8 +178,8 @@ export function useEnvironment(env: string): UseEnvironment {
 
   const wsProviderUrl =
     wsRPC ||
-    (network === 'rinkeby'
-      ? ARAGON_RINKEBY_ENDPOINT
+    (network === 'goerli'
+      ? ARAGON_GOERLI_ENDPOINT
       : network === 'mainnet'
       ? ARAGON_MAINNET_ENDPOINT
       : null)
