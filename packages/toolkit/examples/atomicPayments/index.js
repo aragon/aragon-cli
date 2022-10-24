@@ -46,8 +46,8 @@ async function main() {
   const url =
     environment === 'mainnet'
       ? 'https://mainnet.aragon.org/'
-      : environment === 'rinkeby'
-      ? 'http://rinkeby.aragon.org/'
+      : environment === 'goerli'
+      ? 'http://goerli.aragon.org/'
       : 'http:localhost:3000/'
 
   console.log(`

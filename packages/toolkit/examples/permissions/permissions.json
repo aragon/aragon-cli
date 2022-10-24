@@ -2,7 +2,7 @@
   "daoAddress": "0x12b013C23F1918EaC4b5342117f0B202E048566C",
   "aclAddress": "0xe60942b6809cbe8dc206ca91fd87c2e853c4cec5",
   "votingAddress": "0x709e31ba29fb84000f20045590ec664bfc3cdc1d",
-  "environment": "rinkeby",
+  "environment": "goerli",
   "create": [
   ],
   "grant": [
