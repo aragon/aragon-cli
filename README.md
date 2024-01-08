@@ -1,3 +1,5 @@
+
+
 <p align="center"><img width="50%" src="docs/assets/brand/aragoncli.svg"></p>
 
 <div align="center">
@@ -41,6 +43,8 @@
     </a>
   </h4>
 </div>
+
+> **⚠️ DEPRECATED REPO ⚠️**: This repository is no longer in use. Please refer to the [Aragon OSx CLI repository](https://github.com/aragon/osx-cli).
 
 # aragonCLI
 
